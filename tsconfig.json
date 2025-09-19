@@ -1,26 +1,61 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
     "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
+
+    /* Bundler mode */
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting - Strict mode for healthcare compliance */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    /* Healthcare data privacy */
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+
+    /* Path mapping */
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/components/*": ["./components/*"],
+      "@/pages/*": ["./pages/*"],
+      "@/services/*": ["./services/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/contexts/*": ["./contexts/*"],
+      "@/types/*": ["./types/*"],
+      "@/lib/*": ["./lib/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src",
+    "components",
+    "pages",
+    "services",
+    "hooks",
+    "contexts",
+    "types",
+    "lib",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": ["node_modules", "dist", "build"]
 }

@@ -1,0 +1,336 @@
+openapi: 3.0.3
+info:
+  title: FisioFlow Body Map API
+  version: 1.0.0
+  description: Interactive body mapping and pain point tracking
+
+paths:
+  /api/patients/{patient_id}/pain-points:
+    get:
+      summary: Get patient pain points
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: body_region
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Patient pain points
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PainPoint'
+                  timeline:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PainTimelineEntry'
+
+    post:
+      summary: Add new pain point
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePainPointRequest'
+      responses:
+        '201':
+          description: Pain point created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PainPoint'
+
+  /api/pain-points/{id}:
+    get:
+      summary: Get pain point details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Pain point details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PainPointDetails'
+
+    put:
+      summary: Update pain point
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePainPointRequest'
+      responses:
+        '200':
+          description: Pain point updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PainPoint'
+
+    delete:
+      summary: Delete pain point
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Pain point deleted successfully
+
+  /api/patients/{patient_id}/body-map/export:
+    get:
+      summary: Export body map as PDF
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: date_range
+          in: query
+          schema:
+            type: string
+            enum: [week, month, all]
+            default: month
+      responses:
+        '200':
+          description: PDF export of body map
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+
+  /api/body-regions:
+    get:
+      summary: Get available body regions
+      responses:
+        '200':
+          description: List of body regions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BodyRegion'
+
+components:
+  schemas:
+    PainPoint:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        patient_id:
+          type: string
+          format: uuid
+        session_id:
+          type: string
+          format: uuid
+          nullable: true
+        body_region:
+          type: string
+        body_side:
+          type: string
+          enum: [left, right, bilateral, center]
+        coordinates_x:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        coordinates_y:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        pain_intensity:
+          type: integer
+          minimum: 0
+          maximum: 10
+        pain_description:
+          type: string
+          nullable: true
+        pain_type:
+          type: string
+          enum: [acute, chronic, intermittent]
+          nullable: true
+        triggers:
+          type: string
+          nullable: true
+        date_recorded:
+          type: string
+          format: date
+        created_at:
+          type: string
+          format: date-time
+
+    PainPointDetails:
+      allOf:
+        - $ref: '#/components/schemas/PainPoint'
+        - type: object
+          properties:
+            session:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                appointment_date:
+                  type: string
+                  format: date
+                therapist_name:
+                  type: string
+              nullable: true
+
+    CreatePainPointRequest:
+      type: object
+      required:
+        - body_region
+        - body_side
+        - coordinates_x
+        - coordinates_y
+        - pain_intensity
+      properties:
+        session_id:
+          type: string
+          format: uuid
+        body_region:
+          type: string
+        body_side:
+          type: string
+          enum: [left, right, bilateral, center]
+        coordinates_x:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        coordinates_y:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        pain_intensity:
+          type: integer
+          minimum: 0
+          maximum: 10
+        pain_description:
+          type: string
+        pain_type:
+          type: string
+          enum: [acute, chronic, intermittent]
+        triggers:
+          type: string
+        date_recorded:
+          type: string
+          format: date
+
+    UpdatePainPointRequest:
+      type: object
+      properties:
+        pain_intensity:
+          type: integer
+          minimum: 0
+          maximum: 10
+        pain_description:
+          type: string
+        pain_type:
+          type: string
+          enum: [acute, chronic, intermittent]
+        triggers:
+          type: string
+
+    PainTimelineEntry:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        average_pain:
+          type: number
+          format: float
+        point_count:
+          type: integer
+        sessions:
+          type: array
+          items:
+            type: object
+            properties:
+              session_id:
+                type: string
+                format: uuid
+              therapist_name:
+                type: string
+
+    BodyRegion:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+          enum: [head, torso, upper_limb, lower_limb]
+        coordinates:
+          type: object
+          properties:
+            x:
+              type: number
+              format: float
+            y:
+              type: number
+              format: float
+            width:
+              type: number
+              format: float
+            height:
+              type: number
+              format: float

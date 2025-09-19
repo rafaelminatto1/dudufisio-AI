@@ -1,11 +1,11 @@
 {
-  "name": "FisioFlow",
-  "short_name": "FisioFlow",
+  "name": "DuduFisio-AI",
+  "short_name": "DuduFisio-AI",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0ea5e9",
-  "description": "Sistema de gestão de clínica de fisioterapia.",
+  "description": "Sistema de gestão de clínica de fisioterapia com assistente de IA.",
   "icons": [
     {
       "src": "icon-192.png",

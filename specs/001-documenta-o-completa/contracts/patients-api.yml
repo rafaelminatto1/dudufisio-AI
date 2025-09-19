@@ -1,0 +1,314 @@
+openapi: 3.0.3
+info:
+  title: FisioFlow Patients API
+  version: 1.0.0
+  description: Patient management endpoints for FisioFlow clinic management system
+
+paths:
+  /api/patients:
+    get:
+      summary: List patients with search and filtering
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by name, CPF, or phone
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive]
+        - name: age_min
+          in: query
+          schema:
+            type: integer
+        - name: age_max
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of patients
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Patient'
+                  total:
+                    type: integer
+                  has_more:
+                    type: boolean
+
+    post:
+      summary: Create new patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePatientRequest'
+      responses:
+        '201':
+          description: Patient created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+
+  /api/patients/{id}:
+    get:
+      summary: Get patient details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Patient details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientDetails'
+        '404':
+          description: Patient not found
+
+    put:
+      summary: Update patient information
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePatientRequest'
+      responses:
+        '200':
+          description: Patient updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+
+    delete:
+      summary: Soft delete patient (inactivate)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Patient inactivated successfully
+
+  /api/patients/{id}/photo:
+    post:
+      summary: Upload patient photo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                photo:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Photo uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  photo_url:
+                    type: string
+
+components:
+  schemas:
+    Patient:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        cpf:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        profession:
+          type: string
+          nullable: true
+        marital_status:
+          type: string
+          enum: [single, married, divorced, widowed]
+          nullable: true
+        emergency_contact_name:
+          type: string
+          nullable: true
+        emergency_contact_phone:
+          type: string
+          nullable: true
+        photo_url:
+          type: string
+          nullable: true
+        general_notes:
+          type: string
+          nullable: true
+        active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    PatientDetails:
+      allOf:
+        - $ref: '#/components/schemas/Patient'
+        - type: object
+          properties:
+            appointments_count:
+              type: integer
+            last_appointment:
+              type: string
+              format: date-time
+              nullable: true
+            next_appointment:
+              type: string
+              format: date-time
+              nullable: true
+
+    CreatePatientRequest:
+      type: object
+      required:
+        - full_name
+        - cpf
+        - birth_date
+        - phone
+      properties:
+        full_name:
+          type: string
+          maxLength: 200
+        cpf:
+          type: string
+          pattern: '^[0-9]{11}$'
+        birth_date:
+          type: string
+          format: date
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          type: string
+          maxLength: 500
+        profession:
+          type: string
+          maxLength: 100
+        marital_status:
+          type: string
+          enum: [single, married, divorced, widowed]
+        emergency_contact_name:
+          type: string
+          maxLength: 200
+        emergency_contact_phone:
+          type: string
+        general_notes:
+          type: string
+
+    UpdatePatientRequest:
+      type: object
+      properties:
+        full_name:
+          type: string
+          maxLength: 200
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          type: string
+          maxLength: 500
+        profession:
+          type: string
+          maxLength: 100
+        marital_status:
+          type: string
+          enum: [single, married, divorced, widowed]
+        emergency_contact_name:
+          type: string
+          maxLength: 200
+        emergency_contact_phone:
+          type: string
+        general_notes:
+          type: string
+
+    ValidationError:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string

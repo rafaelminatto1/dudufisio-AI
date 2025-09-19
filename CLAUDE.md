@@ -1,6 +1,6 @@
-# CLAUDE.md
+# DuduFisio-AI - CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Este arquivo fornece orientações para Claude Code (claude.ai/code) ao trabalhar com o código neste repositório do DuduFisio-AI.
 
 ## Development Commands
 

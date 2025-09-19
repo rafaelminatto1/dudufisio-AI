@@ -1,8 +1,8 @@
 
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Comprehensive FisioFlow System
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `001-documenta-o-completa` | **Date**: 2025-01-19 | **Spec**: [spec.md](spec.md)
+**Input**: Feature specification from `/specs/001-documenta-o-completa/spec.md`
 
 ## Execution Flow (/plan command scope)
 ```
@@ -31,18 +31,18 @@
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
-[Extract from feature spec: primary requirement + technical approach from research]
+Comprehensive physiotherapy clinic management system for FisioFlow clinic (744 patients, 669 monthly appointments) requiring patient management, interactive body mapping, appointment scheduling, exercise library with prescription capabilities, reporting/analytics dashboard, and financial management. System must support role-based access (Admin, Fisioterapeuta, Estagiário, Paciente), ensure LGPD compliance, maintain performance standards (<2s load, <1MB bundles), and provide responsive PWA experience.
 
 ## Technical Context
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: TypeScript 5.5+ with React 19, strict type checking enabled
+**Primary Dependencies**: React Router DOM, React Hook Form, Zod validation, Supabase Auth, @google/genai, TailwindCSS, shadcn/ui, Framer Motion, Recharts, Lucide React
+**Storage**: Supabase (PostgreSQL with RLS policies), file storage for images/videos
+**Testing**: Jest for unit tests, React Testing Library, Playwright for E2E testing
+**Target Platform**: Web application (mobile-first responsive), PWA capabilities
+**Project Type**: Web application (single React SPA with Supabase backend)
+**Performance Goals**: <2s page load (3G), <500ms API responses, 60fps animations, <1MB bundle chunks
+**Constraints**: LGPD compliance, healthcare data privacy, <100MB memory usage, offline-capable PWA
+**Scale/Scope**: 744+ patients, 669+ appointments/month, 4 user roles, 6 core modules, 33 functional requirements
 
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
@@ -104,7 +104,7 @@ ios/ or android/
 └── [platform-specific structure]
 ```
 
-**Structure Decision**: [DEFAULT to Option 1 unless Technical Context indicates web/mobile app]
+**Structure Decision**: Web application structure - using React SPA architecture with existing project structure (pages/, components/, services/, hooks/, contexts/)
 
 ## Phase 0: Outline & Research
 1. **Extract unknowns from Technical Context** above:
@@ -165,17 +165,44 @@ ios/ or android/
 **Task Generation Strategy**:
 - Load `.specify/templates/tasks-template.md` as base
 - Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
-- Each contract → contract test task [P]
-- Each entity → model creation task [P] 
-- Each user story → integration test task
-- Implementation tasks to make tests pass
+- API contracts → contract test tasks [P] (patients, appointments, body-map)
+- Data entities → TypeScript model creation [P] (8 core entities)
+- User journeys → integration test scenarios (admin, therapist, patient flows)
+- UI components → component implementation (body map, calendar, exercise library)
+- Service layer → business logic implementation (authentication, data access)
 
 **Ordering Strategy**:
-- TDD order: Tests before implementation 
-- Dependency order: Models before services before UI
-- Mark [P] for parallel execution (independent files)
+- **Setup Phase**: Project structure, dependencies, environment configuration
+- **TDD Phase**: Contract tests, model validation, integration tests (MUST FAIL first)
+- **Data Layer**: TypeScript interfaces, Supabase schemas, RLS policies
+- **Service Layer**: Authentication, data services, business logic
+- **UI Components**: Core components, pages, responsive layouts
+- **Integration**: Real-time features, file uploads, PDF generation
+- **Performance**: Bundle optimization, lazy loading, PWA features
+- Mark [P] for parallel execution (different files/independent modules)
 
-**Estimated Output**: 25-30 numbered, ordered tasks in tasks.md
+**Task Categories by Module**:
+1. **Authentication & Authorization** (4-5 tasks)
+2. **Patient Management** (6-8 tasks)
+3. **Appointment Scheduling** (7-9 tasks)
+4. **Interactive Body Mapping** (5-7 tasks)
+5. **Exercise Library & Prescription** (8-10 tasks)
+6. **Reporting & Analytics** (6-8 tasks)
+7. **Financial Management** (4-6 tasks)
+8. **Performance & Deployment** (4-5 tasks)
+
+**Estimated Output**: 45-55 numbered, ordered tasks in tasks.md
+- Setup: T001-T005
+- Tests: T006-T020 (contract/integration tests)
+- Models: T021-T030 (TypeScript interfaces)
+- Services: T031-T040 (business logic)
+- Components: T041-T055 (UI implementation)
+
+**Parallelization Strategy**:
+- Independent API contracts can be tested simultaneously [P]
+- Different page components can be built in parallel [P]
+- Service functions for different modules can be developed concurrently [P]
+- UI components within same module must be sequential (dependencies)
 
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
@@ -199,18 +226,18 @@ ios/ or android/
 *This checklist is updated during execution flow*
 
 **Phase Status**:
-- [ ] Phase 0: Research complete (/plan command)
-- [ ] Phase 1: Design complete (/plan command)
-- [ ] Phase 2: Task planning complete (/plan command - describe approach only)
+- [x] Phase 0: Research complete (/plan command)
+- [x] Phase 1: Design complete (/plan command)
+- [x] Phase 2: Task planning complete (/plan command - describe approach only)
 - [ ] Phase 3: Tasks generated (/tasks command)
 - [ ] Phase 4: Implementation complete
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
-- [ ] Initial Constitution Check: PASS
-- [ ] Post-Design Constitution Check: PASS
-- [ ] All NEEDS CLARIFICATION resolved
-- [ ] Complexity deviations documented
+- [x] Initial Constitution Check: PASS
+- [x] Post-Design Constitution Check: PASS
+- [x] All NEEDS CLARIFICATION resolved
+- [x] Complexity deviations documented (none required)
 
 ---
 *Based on Constitution v1.0.0 - See `.specify/memory/constitution.md`*

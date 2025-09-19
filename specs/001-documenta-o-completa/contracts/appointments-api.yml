@@ -1,0 +1,415 @@
+openapi: 3.0.3
+info:
+  title: FisioFlow Appointments API
+  version: 1.0.0
+  description: Appointment scheduling and management endpoints
+
+paths:
+  /api/appointments:
+    get:
+      summary: List appointments with filtering
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: therapist_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: patient_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [scheduled, completed, cancelled, no_show]
+        - name: view
+          in: query
+          schema:
+            type: string
+            enum: [daily, weekly, monthly]
+            default: weekly
+      responses:
+        '200':
+          description: List of appointments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Appointment'
+                  view_config:
+                    $ref: '#/components/schemas/ViewConfig'
+
+    post:
+      summary: Create new appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAppointmentRequest'
+      responses:
+        '201':
+          description: Appointment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '409':
+          description: Scheduling conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConflictError'
+
+  /api/appointments/{id}:
+    get:
+      summary: Get appointment details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Appointment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentDetails'
+
+    put:
+      summary: Update appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAppointmentRequest'
+      responses:
+        '200':
+          description: Appointment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+
+    delete:
+      summary: Cancel appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cancellation_reason:
+                  type: string
+      responses:
+        '200':
+          description: Appointment cancelled successfully
+
+  /api/appointments/conflicts:
+    post:
+      summary: Check for scheduling conflicts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - therapist_id
+                - appointment_date
+                - start_time
+                - duration_minutes
+              properties:
+                therapist_id:
+                  type: string
+                  format: uuid
+                appointment_date:
+                  type: string
+                  format: date
+                start_time:
+                  type: string
+                  format: time
+                duration_minutes:
+                  type: integer
+                exclude_appointment_id:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Conflict check result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  has_conflicts:
+                    type: boolean
+                  conflicts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ConflictInfo'
+
+  /api/appointments/{id}/session:
+    post:
+      summary: Create session notes for appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+
+components:
+  schemas:
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        patient_id:
+          type: string
+          format: uuid
+        therapist_id:
+          type: string
+          format: uuid
+        appointment_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+        duration_minutes:
+          type: integer
+        status:
+          type: string
+          enum: [scheduled, completed, cancelled, no_show]
+        appointment_type:
+          type: string
+          enum: [avaliacao, retorno, sessao, reavaliacao]
+        cancellation_reason:
+          type: string
+          nullable: true
+        patient:
+          $ref: '#/components/schemas/PatientSummary'
+        therapist:
+          $ref: '#/components/schemas/TherapistSummary'
+        created_at:
+          type: string
+          format: date-time
+
+    AppointmentDetails:
+      allOf:
+        - $ref: '#/components/schemas/Appointment'
+        - type: object
+          properties:
+            session:
+              $ref: '#/components/schemas/Session'
+              nullable: true
+
+    CreateAppointmentRequest:
+      type: object
+      required:
+        - patient_id
+        - therapist_id
+        - appointment_date
+        - start_time
+        - appointment_type
+      properties:
+        patient_id:
+          type: string
+          format: uuid
+        therapist_id:
+          type: string
+          format: uuid
+        appointment_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+        duration_minutes:
+          type: integer
+          default: 60
+        appointment_type:
+          type: string
+          enum: [avaliacao, retorno, sessao, reavaliacao]
+
+    UpdateAppointmentRequest:
+      type: object
+      properties:
+        appointment_date:
+          type: string
+          format: date
+        start_time:
+          type: string
+          format: time
+        duration_minutes:
+          type: integer
+        status:
+          type: string
+          enum: [scheduled, completed, cancelled, no_show]
+        cancellation_reason:
+          type: string
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        appointment_id:
+          type: string
+          format: uuid
+        procedures_performed:
+          type: string
+          nullable: true
+        pain_level_before:
+          type: integer
+          minimum: 0
+          maximum: 10
+          nullable: true
+        pain_level_after:
+          type: integer
+          minimum: 0
+          maximum: 10
+          nullable: true
+        progress_notes:
+          type: string
+          nullable: true
+        next_session_notes:
+          type: string
+          nullable: true
+        exercises_prescribed:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    CreateSessionRequest:
+      type: object
+      properties:
+        procedures_performed:
+          type: string
+        pain_level_before:
+          type: integer
+          minimum: 0
+          maximum: 10
+        pain_level_after:
+          type: integer
+          minimum: 0
+          maximum: 10
+        progress_notes:
+          type: string
+        next_session_notes:
+          type: string
+        exercises_prescribed:
+          type: string
+
+    PatientSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        phone:
+          type: string
+
+    TherapistSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+
+    ViewConfig:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        therapists:
+          type: array
+          items:
+            $ref: '#/components/schemas/TherapistSummary'
+
+    ConflictError:
+      type: object
+      properties:
+        error:
+          type: string
+        conflicts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConflictInfo'
+
+    ConflictInfo:
+      type: object
+      properties:
+        appointment_id:
+          type: string
+          format: uuid
+        patient_name:
+          type: string
+        start_time:
+          type: string
+          format: time
+        end_time:
+          type: string
+          format: time

@@ -7,8 +7,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FisioFlow",
-  description: "Sistema de gestão para sua clínica de fisioterapia.",
+  title: "DuduFisio-AI",
+  description: "Sistema de gestão para sua clínica de fisioterapia com assistente de IA.",
 };
 
 export default function RootLayout({
