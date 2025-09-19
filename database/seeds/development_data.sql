@@ -1,9 +1,17 @@
 -- =============================================
--- DEVELOPMENT SEED DATA
+-- DEVELOPMENT SEED DATA FOR DUDUFISIO-AI
 -- =============================================
 
--- Note: This script assumes you have already created users in Supabase Auth
--- You'll need to replace the UUIDs below with actual auth.users IDs
+-- IMPORTANTE: Primeiro crie os usuários no Supabase Auth Dashboard
+-- Depois atualize os IDs abaixo com os IDs reais do auth.users
+
+-- Usuários sugeridos para criar no Supabase Auth:
+-- 1. admin@dudufisio.com / senha123 (Admin)
+-- 2. eduardo@dudufisio.com / senha123 (Fisioterapeuta)
+-- 3. mariana@dudufisio.com / senha123 (Fisioterapeuta)
+-- 4. recepcao@dudufisio.com / senha123 (Recepcionista)
+-- 5. joao.silva@email.com / senha123 (Paciente)
+-- 6. maria.santos@email.com / senha123 (Paciente)
 
 -- Sample UUIDs (replace these with actual auth.users IDs)
 -- Admin: 'a1111111-1111-1111-1111-111111111111'
