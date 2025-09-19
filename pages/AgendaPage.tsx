@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { format } from 'date-fns/format';
-import { addDays } from 'date-fns/addDays';
-import { startOfWeek } from 'date-fns/startOfWeek';
-import { isSameDay } from 'date-fns/isSameDay';
-import { isToday } from 'date-fns/isToday';
-import { setHours } from 'date-fns/setHours';
-import { setMinutes } from 'date-fns/setMinutes';
+import { format, addDays, startOfWeek, addMonths, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
@@ -14,58 +8,41 @@ import { EnrichedAppointment, Appointment, AppointmentStatus, Therapist, Patient
 import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
-import { useData } from '../contexts/DataContext';
-import AppointmentCard from '../components/AppointmentCard';
+import { useData } from '../contexts/AppContext';
 import AppointmentDetailModal from '../components/AppointmentDetailModal';
 import AppointmentFormModal from '../components/AppointmentFormModal';
+import AgendaViewSelector, { AgendaViewType } from '../components/agenda/AgendaViewSelector';
+import DailyView from '../components/agenda/DailyView';
+import WeeklyView from '../components/agenda/WeeklyView';
+import MonthlyView from '../components/agenda/MonthlyView';
+import ListView from '../components/agenda/ListView';
 import { cn } from '../lib/utils';
 
-const START_HOUR = 7;
-const END_HOUR = 21;
-const SLOT_DURATION = 30; // minutes
-const PIXELS_PER_MINUTE = 2;
-
-const timeSlots = Array.from({ length: (END_HOUR - START_HOUR) * (60 / SLOT_DURATION) }, (_, i) => {
-    const totalMinutes = START_HOUR * 60 + i * SLOT_DURATION;
-    const hour = Math.floor(totalMinutes / 60);
-    const minute = totalMinutes % 60;
-    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-});
-
-const CurrentTimeIndicator: React.FC = () => {
-    const [top, setTop] = useState(0);
-
-    useEffect(() => {
-        const updatePosition = () => {
-            const now = new Date();
-            const minutesFromStart = (now.getHours() - START_HOUR) * 60 + now.getMinutes();
-            setTop(minutesFromStart * PIXELS_PER_MINUTE);
-        };
-
-        updatePosition();
-        const interval = setInterval(updatePosition, 60000); // Update every minute
-        return () => clearInterval(interval);
-    }, []);
-
-    if (top < 0 || top > (END_HOUR - START_HOUR) * 60 * PIXELS_PER_MINUTE) {
-        return null;
-    }
-
-    return (
-        <div className="absolute left-0 right-0 z-10" style={{ top: `${top}px` }}>
-            <div className="relative h-px bg-red-500">
-                <div className="absolute -left-1.5 -top-1.5 w-3 h-3 bg-red-500 rounded-full"></div>
-            </div>
-        </div>
-    );
-};
 
 export default function AgendaPage() {
     const [currentDate, setCurrentDate] = useState(new Date());
-    const weekStart = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 1 }), [currentDate]);
-    const weekEnd = useMemo(() => addDays(weekStart, 6), [weekStart]);
-    
-    const { appointments, refetch } = useAppointments(weekStart, weekEnd);
+    const [currentView, setCurrentView] = useState<AgendaViewType>('weekly');
+
+    // Calculate date ranges based on current view
+    const { startDate, endDate } = useMemo(() => {
+        switch (currentView) {
+            case 'daily':
+                return { startDate: currentDate, endDate: currentDate };
+            case 'weekly':
+                const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+                return { startDate: weekStart, endDate: addDays(weekStart, 6) };
+            case 'monthly':
+                return { startDate: startOfMonth(currentDate), endDate: endOfMonth(currentDate) };
+            case 'list':
+                const listStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+                return { startDate: listStart, endDate: addDays(listStart, 13) }; // 2 weeks
+            default:
+                const defaultStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+                return { startDate: defaultStart, endDate: addDays(defaultStart, 6) };
+        }
+    }, [currentDate, currentView]);
+
+    const { appointments, refetch } = useAppointments(startDate, endDate);
     const { therapists } = useData();
     const [patients, setPatients] = useState<Patient[]>([]);
     const [isLoadingData, setIsLoadingData] = useState(true);
@@ -79,8 +56,6 @@ export default function AgendaPage() {
     
     // Drag & Drop states
     const [draggedAppointmentId, setDraggedAppointmentId] = useState<string | null>(null);
-    
-    const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
     useEffect(() => {
         const fetchPatientsData = async () => {
@@ -225,98 +200,150 @@ export default function AgendaPage() {
     const fullSelectedPatient = useMemo(() => patients.find(p => p.id === selectedAppointment?.patientId), [patients, selectedAppointment]);
     const selectedTherapistData = useMemo(() => therapists.find(t => t.id === selectedAppointment?.therapistId), [therapists, selectedAppointment]);
 
+    // Navigation handlers
+    const handlePrevious = () => {
+        switch (currentView) {
+            case 'daily':
+                setCurrentDate(addDays(currentDate, -1));
+                break;
+            case 'weekly':
+                setCurrentDate(addDays(currentDate, -7));
+                break;
+            case 'monthly':
+                setCurrentDate(subMonths(currentDate, 1));
+                break;
+            case 'list':
+                setCurrentDate(addDays(currentDate, -14));
+                break;
+        }
+    };
+
+    const handleNext = () => {
+        switch (currentView) {
+            case 'daily':
+                setCurrentDate(addDays(currentDate, 1));
+                break;
+            case 'weekly':
+                setCurrentDate(addDays(currentDate, 7));
+                break;
+            case 'monthly':
+                setCurrentDate(addMonths(currentDate, 1));
+                break;
+            case 'list':
+                setCurrentDate(addDays(currentDate, 14));
+                break;
+        }
+    };
+
+    const handleToday = () => {
+        setCurrentDate(new Date());
+    };
+
+    const handleDateClick = (date: Date) => {
+        setCurrentDate(date);
+        if (currentView === 'monthly') {
+            setCurrentView('daily');
+        }
+    };
+
+    const getViewTitle = () => {
+        switch (currentView) {
+            case 'daily':
+                return format(currentDate, "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR });
+            case 'weekly':
+                const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+                const weekEnd = addDays(weekStart, 6);
+                return `${format(weekStart, "d 'de' MMMM", { locale: ptBR })} - ${format(weekEnd, "d 'de' MMMM yyyy", { locale: ptBR })}`;
+            case 'monthly':
+                return format(currentDate, "MMMM 'de' yyyy", { locale: ptBR });
+            case 'list':
+                return 'Lista de Agendamentos';
+            default:
+                return 'Agenda';
+        }
+    };
+
+    const renderView = () => {
+        const commonProps = {
+            appointments,
+            therapists,
+            onAppointmentClick: handleAppointmentClick,
+            onDragStart: handleDragStart,
+            onDragEnd: handleDragEnd,
+            onDragOver: handleDragOver,
+            draggedAppointmentId
+        };
+
+        switch (currentView) {
+            case 'daily':
+                return (
+                    <DailyView
+                        {...commonProps}
+                        selectedDate={currentDate}
+                        onSlotClick={handleSlotClick}
+                        onDrop={handleDrop}
+                    />
+                );
+            case 'weekly':
+                return (
+                    <WeeklyView
+                        {...commonProps}
+                        currentDate={currentDate}
+                        onSlotClick={handleSlotClick}
+                        onDrop={handleDrop}
+                    />
+                );
+            case 'monthly':
+                return (
+                    <MonthlyView
+                        currentDate={currentDate}
+                        appointments={appointments}
+                        onDateClick={handleDateClick}
+                        onPrevMonth={() => setCurrentDate(subMonths(currentDate, 1))}
+                        onNextMonth={() => setCurrentDate(addMonths(currentDate, 1))}
+                    />
+                );
+            case 'list':
+                return (
+                    <ListView
+                        {...commonProps}
+                        selectedDate={currentDate}
+                        onDateRangeChange={(start, end) => {
+                            // Handle date range change if needed
+                        }}
+                    />
+                );
+            default:
+                return null;
+        }
+    };
+
     return (
         <div className="flex flex-col h-full bg-slate-50">
             <header className="p-4 bg-white rounded-t-2xl shadow-sm border-b z-20">
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center">
-                    <div>
-                        <h1 className="text-xl font-bold text-slate-800">Agenda da Clínica</h1>
-                        <p className="text-sm text-slate-500">{format(weekStart, "d 'de' MMMM", { locale: ptBR })} - {format(weekEnd, "d 'de' MMMM yyyy", { locale: ptBR })}</p>
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+                        <div>
+                            <h1 className="text-xl font-bold text-slate-800">Agenda da Clínica</h1>
+                            <p className="text-sm text-slate-500">{getViewTitle()}</p>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                            <button onClick={handlePrevious} className="p-2 rounded-lg hover:bg-slate-100"><ChevronLeft size={20} /></button>
+                            <button onClick={handleToday} className="px-4 py-2 text-sm font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Hoje</button>
+                            <button onClick={handleNext} className="p-2 rounded-lg hover:bg-slate-100"><ChevronRight size={20} /></button>
+                             <button onClick={() => { setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id }); setIsFormOpen(true); }} className="ml-4 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 flex items-center shadow-sm"><Plus size={16} className="mr-2"/>Agendar</button>
+                        </div>
                     </div>
-                    <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                        <button onClick={() => setCurrentDate(addDays(currentDate, -7))} className="p-2 rounded-lg hover:bg-slate-100"><ChevronLeft size={20} /></button>
-                        <button onClick={() => setCurrentDate(new Date())} className="px-4 py-2 text-sm font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Hoje</button>
-                        <button onClick={() => setCurrentDate(addDays(currentDate, 7))} className="p-2 rounded-lg hover:bg-slate-100"><ChevronRight size={20} /></button>
-                         <button onClick={() => { setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id }); setIsFormOpen(true); }} className="ml-4 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 flex items-center shadow-sm"><Plus size={16} className="mr-2"/>Agendar</button>
-                    </div>
+
+                    <AgendaViewSelector
+                        currentView={currentView}
+                        onViewChange={setCurrentView}
+                    />
                 </div>
             </header>
-            
-            <div className="flex-1 flex flex-col overflow-auto bg-white rounded-b-2xl shadow-sm">
-                <div className="sticky top-0 bg-white z-10 grid grid-cols-[auto_1fr] shadow-sm">
-                    <div className="w-16 border-r border-b"></div>
-                    <div className="grid grid-cols-7">
-                        {weekDays.map(day => (
-                            <div key={day.toISOString()} className={cn("text-center border-r border-b last:border-r-0 py-2", isToday(day) && "bg-sky-50")}>
-                                <p className="text-xs font-medium text-slate-500 uppercase">{format(day, 'EEE', { locale: ptBR })}</p>
-                                <p className={cn("text-2xl font-bold mt-1", isToday(day) ? "text-sky-600" : "text-slate-900")}>{format(day, 'd')}</p>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="w-16 border-r"></div>
-                    <div className="grid grid-cols-7">
-                        {weekDays.map(day => (
-                            <div key={day.toISOString()} className="grid grid-cols-subgrid col-span-1 border-r last:border-r-0" style={{ gridTemplateColumns: `repeat(${therapists.length}, 1fr)` }}>
-                                {therapists.map(therapist => (
-                                    <div key={therapist.id} className="text-center text-xs font-semibold py-1 border-r last:border-r-0" style={{color: `var(--color-${therapist.color}-600, #333)`}}>
-                                        {therapist.name.split(' ')[1] || therapist.name}
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-                </div>
 
-                <div className="flex-1 grid grid-cols-[auto_1fr] overflow-y-auto">
-                    <div className="w-16 border-r">
-                        {timeSlots.map(time => (
-                            <div key={time} className="h-12 text-right pr-2 text-xs text-slate-400 font-medium -mt-1.5 pt-1.5 border-t border-slate-200">
-                                {time.endsWith('00') ? time : ''}
-                            </div>
-                        ))}
-                    </div>
-                    
-                    <div className="grid grid-cols-7 relative">
-                        {weekDays.map((day) => (
-                            <div key={day.toISOString()} className="grid grid-cols-subgrid col-span-1 border-r last:border-r-0 relative" style={{ gridTemplateColumns: `repeat(${therapists.length}, 1fr)`}}>
-                                {therapists.map((therapist) => (
-                                    <div 
-                                        key={therapist.id} 
-                                        className="relative border-r last:border-r-0 h-full"
-                                        onClick={(e) => {
-                                            const rect = e.currentTarget.getBoundingClientRect();
-                                            const clickY = e.clientY - rect.top;
-                                            const minutesFromTop = clickY / PIXELS_PER_MINUTE;
-                                            const snappedMinutes = Math.floor(minutesFromTop / SLOT_DURATION) * SLOT_DURATION;
-                                            const hour = START_HOUR + Math.floor(snappedMinutes / 60);
-                                            const minute = snappedMinutes % 60;
-                                            handleSlotClick(day, `${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`, therapist.id)
-                                        }}
-                                        onDragOver={handleDragOver}
-                                        onDrop={(e) => handleDrop(e, day, therapist.id)}
-                                    >
-                                        {timeSlots.map(time => <div key={time} className="h-12 border-t border-slate-200"></div>)}
-                                        {appointments
-                                            .filter(app => app.therapistId === therapist.id && isSameDay(app.startTime, day))
-                                            .map(app => (
-                                                <AppointmentCard
-                                                    key={app.id}
-                                                    appointment={app}
-                                                    startHour={START_HOUR}
-                                                    pixelsPerMinute={PIXELS_PER_MINUTE}
-                                                    isBeingDragged={draggedAppointmentId === app.id}
-                                                    onClick={() => handleAppointmentClick(app)}
-                                                    onDragStart={(e) => handleDragStart(e, app)}
-                                                    onDragEnd={handleDragEnd}
-                                                />
-                                            ))}
-                                    </div>
-                                ))}
-                                {isToday(day) && <CurrentTimeIndicator />}
-                            </div>
-                        ))}
-                    </div>
-                </div>
+            <div className="flex-1 flex flex-col overflow-hidden bg-white rounded-b-2xl shadow-sm p-4">
+                {renderView()}
             </div>
 
             <AnimatePresence>

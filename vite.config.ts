@@ -8,53 +8,21 @@ export default defineConfig(({ mode }) => {
     return {
       plugins: [
         react(),
-        VitePWA({
-          registerType: 'autoUpdate',
-          includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
-          manifest: {
-            name: 'FisioFlow - Gestão de Clínica',
-            short_name: 'FisioFlow',
-            description: 'Sistema completo de gestão para clínicas de fisioterapia',
-            theme_color: '#0ea5e9',
-            background_color: '#ffffff',
-            display: 'standalone',
-            orientation: 'portrait',
-            scope: '/',
-            start_url: '/',
-            icons: [
-              {
-                src: 'pwa-192x192.png',
-                sizes: '192x192',
-                type: 'image/png'
-              },
-              {
-                src: 'pwa-512x512.png',
-                sizes: '512x512',
-                type: 'image/png'
-              }
-            ]
-          },
-          workbox: {
-            globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
-            runtimeCaching: [
-              {
-                urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
-                handler: 'NetworkFirst',
-                options: {
-                  cacheName: 'supabase-cache',
-                  expiration: {
-                    maxEntries: 10,
-                    maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-                  },
-                  cacheableResponse: {
-                    statuses: [0, 200]
-                  }
-                }
-              }
-            ]
-          }
-        })
+        // VitePWA temporarily disabled due to Service Worker conflicts
+        // VitePWA({...})
       ],
+      server: {
+        host: 'localhost',
+        port: 5173,
+        strictPort: true,
+        hmr: {
+          port: 5173
+        },
+        watch: {
+          usePolling: false,
+          interval: 100
+        }
+      },
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
@@ -69,7 +37,12 @@ export default defineConfig(({ mode }) => {
           '@/contexts': path.resolve(__dirname, './contexts'),
           '@/types': path.resolve(__dirname, './types'),
           '@/lib': path.resolve(__dirname, './lib')
-        }
+        },
+        dedupe: ['react', 'react-dom']
+      },
+      optimizeDeps: {
+        include: ['react', 'react-dom', 'react-router-dom'],
+        exclude: ['@vite/client', '@vite/env']
       },
       build: {
         rollupOptions: {

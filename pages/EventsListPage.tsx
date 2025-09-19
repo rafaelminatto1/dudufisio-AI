@@ -8,7 +8,7 @@ import { useToast } from '../contexts/ToastContext';
 import Skeleton from '../components/ui/Skeleton';
 import EventCard from '../components/events/EventCard';
 import EventFormModal from '../components/events/EventFormModal';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 
 const EventsListPage: React.FC = () => {
     const [events, setEvents] = useState<Event[]>([]);

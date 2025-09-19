@@ -1,6 +1,6 @@
 import React from 'react';
 import PageHeader from '../../components/PageHeader';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import { Users, Activity, CheckCircle } from 'lucide-react';
 
 const StatCard = ({ title, value, icon }: { title: string; value: string; icon: React.ReactNode }) => (

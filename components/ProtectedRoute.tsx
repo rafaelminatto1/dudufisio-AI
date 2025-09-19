@@ -2,9 +2,8 @@
 
 'use client';
 import React from 'react';
-// FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AppContext';
 import PageLoader from './ui/PageLoader';
 import { Role } from '../types';
 
@@ -15,23 +14,24 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const location = ReactRouterDOM.useLocation();
 
   if (isLoading) {
     return <PageLoader />;
   }
 
   if (!isAuthenticated) {
-    return <ReactRouterDOM.Navigate to="/login" state={{ from: location }} replace />;
+    // Use window.location for navigation as fallback
+    window.location.href = '/login';
+    return <PageLoader />;
   }
   
   if (!allowedRoles.includes(user!.role)) {
     // If user is logged in but tries to access a page they don't have permission for,
     // redirect them to their default dashboard.
     const defaultRoute = user!.role === Role.Patient ? '/portal/dashboard' : '/dashboard';
-    return <ReactRouterDOM.Navigate to={defaultRoute} replace />;
+    window.location.href = defaultRoute;
+    return <PageLoader />;
   }
-
 
   return <>{children}</>;
 };

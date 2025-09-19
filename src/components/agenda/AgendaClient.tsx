@@ -146,18 +146,6 @@ export default function AgendaClient({ initialAppointments, therapists, patients
               ))}
             </div>
             <div className="w-16 border-r"></div>
-            <div className="grid" style={{ gridTemplateColumns: `repeat(${therapists.length}, 1fr)` }}>
-                {therapists.map(therapist => (
-                    <div key={therapist.id} className="grid grid-cols-7 border-r last:border-r-0">
-                        {weekDays.map(day => (
-                             <div key={day.toISOString()} className={cn("text-center border-r last:border-r-0 py-2", isToday(day) && "bg-sky-50")}>
-                                <p className="text-xs font-medium text-slate-500 uppercase">{format(day, 'EEE', { locale: ptBR })}</p>
-                                <p className={cn("text-2xl font-bold mt-1", isToday(day) ? "text-sky-600" : "text-slate-900")}>{format(day, 'd')}</p>
-                            </div>
-                        ))}
-                    </div>
-                ))}
-            </div>
           </div>
           {/* Main Grid */}
           <div className="flex-1 grid grid-cols-[auto_1fr] overflow-y-auto">

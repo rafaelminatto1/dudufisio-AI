@@ -14,7 +14,7 @@ const KPICards: React.FC<KPICardsProps> = ({ stats, isLoading }) => {
     if (isLoading || !stats) {
         return (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />)}
+                {Array.from({ length: 4 }).map((_, i) => <Skeleton key={`kpi-skeleton-${i}`} className="h-32 rounded-2xl" />)}
             </div>
         );
     }

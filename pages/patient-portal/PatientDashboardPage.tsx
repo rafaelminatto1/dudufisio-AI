@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
 import PageHeader from '../../components/PageHeader';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import * as treatmentService from '../../services/treatmentService';
 import * as exerciseService from '../../services/exerciseService';
 import { useData } from '../../contexts/DataContext';

@@ -50,10 +50,10 @@ const AppointmentHeatmap: React.FC<AppointmentHeatmapProps> = ({ appointments })
                 {heatmapData.map(row => (
                     <tr key={row.day}>
                         <td className="p-1 font-medium text-slate-500 text-right pr-2">{row.day.substring(0,3)}</td>
-                        {hours.map(h => {
+                        {hours.map((h, hourIndex) => {
                             const value = row[h as keyof AppointmentHeatmapData] as number;
                             return (
-                                <td key={h} className="p-1">
+                                <td key={`${row.day}-${h}-${hourIndex}`} className="p-1">
                                     <div className={`w-full h-6 rounded ${getColor(value)}`} title={`${value} agendamentos`}></div>
                                 </td>
                             );

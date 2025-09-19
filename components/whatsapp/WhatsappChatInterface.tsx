@@ -1,7 +1,7 @@
 // components/whatsapp/WhatsappChatInterface.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import * as treatmentService from '../../services/treatmentService';
 import * as whatsappService from '../../services/whatsappService';
 import { Patient } from '../../types';

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import PageHeader from '../../components/PageHeader';
 import { Document } from '../../types';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import { useToast } from '../../contexts/ToastContext';
 import Skeleton from '../../components/ui/Skeleton';
 import { FileText, Download, FileType, Receipt, TestTube2 } from 'lucide-react';

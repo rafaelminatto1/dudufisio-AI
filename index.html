@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0ea5e9" />
     <title>DuduFisio-AI</title>
-    <link rel="manifest" href="/manifest.json" />
+    <!-- <link rel="manifest" href="/manifest.json" /> -->
 
     <!-- Fase 1: Otimizações de Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,110 +16,7 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Fase 2: O importmap foi removido. Um bundler como o Vite agora gerencia as dependências. -->
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      html, body, #root {
-        height: 100%;
-        font-family: 'Inter', sans-serif;
-      }
-      /* Custom scrollbar for a more modern look */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #94a3b8;
-        border-radius: 10px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #64748b;
-      }
-
-      /* App Shell Loader Styles */
-      .app-shell-loader {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        width: 100%;
-      }
-      .app-shell-loader .loader-container {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .app-shell-loader .spinner {
-        position: absolute;
-        width: 96px; /* 24 * 4 */
-        height: 96px;
-        border-radius: 50%;
-        border: 3px solid #93c5fd; /* sky-300 */
-        border-top-color: #0ea5e9; /* sky-500 */
-        animation: spin 1s linear infinite;
-      }
-      .app-shell-loader .logo {
-        width: 64px; /* 16 * 4 */
-        height: 64px;
-        color: #0ea5e9; /* sky-500 */
-      }
-      .app-shell-loader p {
-        margin-top: 1.5rem; /* 24px */
-        font-size: 1.125rem; /* 18px */
-        font-weight: 600;
-        color: #334155; /* slate-700 */
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.1.1/",
-    "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.1",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.544.0",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.20.0",
-    "recharts": "https://aistudiocdn.com/recharts@^3.2.1",
-    "clsx": "https://aistudiocdn.com/clsx@^2.1.1",
-    "vitest": "https://aistudiocdn.com/vitest@^3.2.4",
-    "tailwind-merge": "https://aistudiocdn.com/tailwind-merge@^3.3.1",
-    "zod": "https://aistudiocdn.com/zod@^4.1.9",
-    "@testing-library/jest-dom/": "https://aistudiocdn.com/@testing-library/jest-dom@^6.8.0/",
-    "tailwindcss": "https://aistudiocdn.com/tailwindcss@^4.1.13",
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.14",
-    "axios": "https://aistudiocdn.com/axios@^1.12.2",
-    "next/": "https://aistudiocdn.com/next@^15.5.3/",
-    "next": "https://aistudiocdn.com/next@^15.5.3",
-    "date-fns/": "https://aistudiocdn.com/date-fns@^4.1.0/",
-    "date-fns": "https://aistudiocdn.com/date-fns@^4.1.0",
-    "@testing-library/react": "https://aistudiocdn.com/@testing-library/react@^16.3.0",
-    "@tailwindcss/forms": "https://aistudiocdn.com/@tailwindcss/forms@^0.5.10",
-    "bcryptjs": "https://aistudiocdn.com/bcryptjs@^3.0.2",
-    "react-hook-form": "https://aistudiocdn.com/react-hook-form@^7.62.0",
-    "@hookform/resolvers/": "https://aistudiocdn.com/@hookform/resolvers@^5.2.2/",
-    "class-variance-authority": "https://aistudiocdn.com/class-variance-authority@^0.7.1",
-    "html2pdf.js": "https://aistudiocdn.com/html2pdf.js@^0.12.1",
-    "next-auth/": "https://aistudiocdn.com/next-auth@^4.24.11/",
-    "next-auth": "https://aistudiocdn.com/next-auth@^4.24.11",
-    "redis": "https://aistudiocdn.com/redis@^5.8.2",
-    "@radix-ui/react-toast": "https://aistudiocdn.com/@radix-ui/react-toast@^1.2.15",
-    "@next-auth/prisma-adapter": "https://aistudiocdn.com/@next-auth/prisma-adapter@^1.0.7",
-    "@prisma/client": "https://aistudiocdn.com/@prisma/client@^6.16.2"
-  }
-}
-</script>
-<link rel="stylesheet" href="/index.css">
+    <!-- Import map removido - Vite gerencia as dependências -->
 </head>
   <body class="bg-slate-50 antialiased">
     <div id="root">
@@ -143,6 +40,7 @@
       </div>
     </div>
     <script type="module" src="/index.tsx"></script>
+    <!-- Service Worker temporarily disabled due to fetch errors
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -154,5 +52,6 @@
         });
       }
     </script>
+    -->
   </body>
 </html>

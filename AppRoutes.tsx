@@ -74,104 +74,444 @@ const AppRoutes: React.FC = () => {
     return (
       <Suspense fallback={<PageLoader />}>
         <ReactRouterDOM.Routes>
+          {/* Login Route - No Authentication Required */}
           <ReactRouterDOM.Route path="/login" element={<LoginPage />} />
-          
-           {/* Patient Portal Routes */}
-           <ReactRouterDOM.Route 
-            path="/portal/*"
+
+          {/* Patient Portal Routes - Flattened Structure */}
+          <ReactRouterDOM.Route path="/portal" element={<ReactRouterDOM.Navigate to="/portal/dashboard" replace />} />
+          <ReactRouterDOM.Route
+            path="/portal/dashboard"
             element={
               <ProtectedRoute allowedRoles={[Role.Patient]}>
-                <PatientPortalLayout>
-                   <ReactRouterDOM.Routes>
-                      <ReactRouterDOM.Route path="/" element={<ReactRouterDOM.Navigate to="/portal/dashboard" replace />} />
-                      <ReactRouterDOM.Route path="/dashboard" element={<PatientDashboardPage />} />
-                      <ReactRouterDOM.Route path="/meu-progresso" element={<PatientProgressPage />} />
-                      <ReactRouterDOM.Route path="/my-exercises" element={<MyExercisesPage />} />
-                      <ReactRouterDOM.Route path="/pain-diary" element={<PatientPainDiaryPage />} />
-                      <ReactRouterDOM.Route path="/partner-services" element={<VoucherStorePage />} />
-                      <ReactRouterDOM.Route path="/my-vouchers" element={<MyVouchersPage />} />
-                      <ReactRouterDOM.Route path="/notifications" element={<NotificationCenterPage />} />
-                      <ReactRouterDOM.Route path="/gamification" element={<GamificationPage />} />
-                      <ReactRouterDOM.Route path="/appointments" element={<MyAppointmentsPage />} />
-                      <ReactRouterDOM.Route path="/documents" element={<DocumentsPage />} />
-                   </ReactRouterDOM.Routes>
-                </PatientPortalLayout>
+                <PatientPortalLayout><PatientDashboardPage /></PatientPortalLayout>
               </ProtectedRoute>
-            } 
+            }
           />
-
-          {/* Partner Portal Routes */}
-           <ReactRouterDOM.Route 
-            path="/partner/*"
+          <ReactRouterDOM.Route
+            path="/portal/meu-progresso"
             element={
-              <ProtectedRoute allowedRoles={[Role.EducadorFisico]}>
-                <PartnerLayout>
-                   <ReactRouterDOM.Routes>
-                      <ReactRouterDOM.Route path="/" element={<ReactRouterDOM.Navigate to="/partner/dashboard" replace />} />
-                      <ReactRouterDOM.Route path="/dashboard" element={<EducatorDashboardPage />} />
-                      <ReactRouterDOM.Route path="/clients" element={<ClientListPage />} />
-                      <ReactRouterDOM.Route path="/clients/:id" element={<ClientDetailPage />} />
-                      <ReactRouterDOM.Route path="/exercises" element={<PartnerExerciseLibraryPage />} />
-                      <ReactRouterDOM.Route path="/financials" element={<FinancialsPage />} />
-                   </ReactRouterDOM.Routes>
-                </PartnerLayout>
+              <ProtectedRoute allowedRoles={[Role.Patient]}>
+                <PatientPortalLayout><PatientProgressPage /></PatientPortalLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/portal/my-exercises"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Patient]}>
+                <PatientPortalLayout><MyExercisesPage /></PatientPortalLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/portal/pain-diary"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Patient]}>
+                <PatientPortalLayout><PatientPainDiaryPage /></PatientPortalLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/portal/partner-services"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Patient]}>
+                <PatientPortalLayout><VoucherStorePage /></PatientPortalLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/portal/my-vouchers"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Patient]}>
+                <PatientPortalLayout><MyVouchersPage /></PatientPortalLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/portal/notifications"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Patient]}>
+                <PatientPortalLayout><NotificationCenterPage /></PatientPortalLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/portal/gamification"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Patient]}>
+                <PatientPortalLayout><GamificationPage /></PatientPortalLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/portal/appointments"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Patient]}>
+                <PatientPortalLayout><MyAppointmentsPage /></PatientPortalLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/portal/documents"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Patient]}>
+                <PatientPortalLayout><DocumentsPage /></PatientPortalLayout>
               </ProtectedRoute>
             }
           />
 
-          {/* Therapist Portal Routes (Catch-all) */}
-          <ReactRouterDOM.Route 
-            path="/*"
+          {/* Partner Portal Routes - Flattened Structure */}
+          <ReactRouterDOM.Route path="/partner" element={<ReactRouterDOM.Navigate to="/partner/dashboard" replace />} />
+          <ReactRouterDOM.Route
+            path="/partner/dashboard"
             element={
-              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
-                <MainLayout>
-                  <ReactRouterDOM.Routes>
-                    <ReactRouterDOM.Route path="/" element={<ReactRouterDOM.Navigate to="/dashboard" replace />} />
-                    <ReactRouterDOM.Route path="/dashboard" element={<DashboardPage />} />
-                    <ReactRouterDOM.Route path="/clinical-analytics" element={<ClinicalAnalyticsPage />} />
-                    <ReactRouterDOM.Route path="/financials" element={<FinancialDashboardPage />} />
-                    <ReactRouterDOM.Route path="/patients" element={<PatientListPage />} />
-                    <ReactRouterDOM.Route path="/patients/:id" element={<PatientDetailPage />} />
-                    <ReactRouterDOM.Route path="/agenda" element={<AgendaPage />} />
-                    <ReactRouterDOM.Route path="/events" element={<EventsListPage />} />
-                    <ReactRouterDOM.Route path="/events/:id" element={<EventDetailPage />} />
-                    <ReactRouterDOM.Route path="/acompanhamento" element={<AcompanhamentoPage />} />
-                    <ReactRouterDOM.Route path="/notifications" element={<NotificationCenterPage />} />
-                    <ReactRouterDOM.Route path="/whatsapp" element={<WhatsAppPage />} />
-                    <ReactRouterDOM.Route path="/groups" element={<GroupsPage />} />
-                    <ReactRouterDOM.Route path="/tasks" element={<KanbanPage />} />
-                    <ReactRouterDOM.Route path="/avaliacoes" element={<SpecialtyAssessmentsPage />} />
-                    <ReactRouterDOM.Route path="/exercises" element={<ExerciseLibraryPage />} />
-                    <ReactRouterDOM.Route path="/materials" element={<ClinicalLibraryPage />} />
-                    <ReactRouterDOM.Route path="/materials/:id" element={<MaterialDetailPage />} />
-                    <ReactRouterDOM.Route path="/gerar-laudo" element={<EvaluationReportPage />} />
-                    <ReactRouterDOM.Route path="/gerar-evolucao" element={<SessionEvolutionPage />} />
-                    <ReactRouterDOM.Route path="/gerar-hep" element={<HepGeneratorPage />} />
-                    <ReactRouterDOM.Route path="/analise-risco" element={<RiskAnalysisPage />} />
-                    <ReactRouterDOM.Route path="/email-inativos" element={<InactivePatientEmailPage />} />
-                    <ReactRouterDOM.Route path="/mentoria" element={<MentoriaPage />} />
-                    <ReactRouterDOM.Route path="/partnerships" element={<PartnershipPage />} />
-                    <ReactRouterDOM.Route path="/inventory" element={<InventoryDashboardPage />} />
-                    <ReactRouterDOM.Route path="/medical-report/new/:patientId" element={<MedicalReportPage />} />
-                    <ReactRouterDOM.Route path="/medical-report/edit/:reportId" element={<MedicalReportPage />} />
-                    <ReactRouterDOM.Route path="/reports" element={<ReportsPage />} />
-                    <ReactRouterDOM.Route path="/audit-log" element={<AuditLogPage />} />
-                    <ReactRouterDOM.Route path="/settings" element={<SettingsPage />} />
-                    <ReactRouterDOM.Route path="/subscription" element={<SubscriptionPage />} />
-                    <ReactRouterDOM.Route path="/legal" element={<LegalPage />} />
-                    <ReactRouterDOM.Route path="/knowledge-base" element={<KnowledgeBasePage />} />
-                    <ReactRouterDOM.Route path="/ia-economica" element={<EconomicPage />} />
-                    <ReactRouterDOM.Route path="/ai-settings" element={<AiSettingsPage />} />
-                    <ReactRouterDOM.Route path="/agenda-settings" element={<AgendaSettingsPage />} />
-                    <ReactRouterDOM.Route path="/atendimento/:appointmentId" element={<AtendimentoPage />} />
-                    <ReactRouterDOM.Route path="/teleconsulta/:appointmentId" element={<TeleconsultaPage />} />
-                    <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/dashboard" replace />} />
-                  </ReactRouterDOM.Routes>
-                </MainLayout>
+              <ProtectedRoute allowedRoles={[Role.EducadorFisico]}>
+                <PartnerLayout><EducatorDashboardPage /></PartnerLayout>
               </ProtectedRoute>
-            } 
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/partner/clients"
+            element={
+              <ProtectedRoute allowedRoles={[Role.EducadorFisico]}>
+                <PartnerLayout><ClientListPage /></PartnerLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/partner/clients/:id"
+            element={
+              <ProtectedRoute allowedRoles={[Role.EducadorFisico]}>
+                <PartnerLayout><ClientDetailPage /></PartnerLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/partner/exercises"
+            element={
+              <ProtectedRoute allowedRoles={[Role.EducadorFisico]}>
+                <PartnerLayout><PartnerExerciseLibraryPage /></PartnerLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/partner/financials"
+            element={
+              <ProtectedRoute allowedRoles={[Role.EducadorFisico]}>
+                <PartnerLayout><FinancialsPage /></PartnerLayout>
+              </ProtectedRoute>
+            }
           />
 
+          {/* Therapist Portal Routes - Flattened Structure */}
+          <ReactRouterDOM.Route path="/" element={<ReactRouterDOM.Navigate to="/dashboard" replace />} />
+          <ReactRouterDOM.Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><DashboardPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/clinical-analytics"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><ClinicalAnalyticsPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/financials"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><FinancialDashboardPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/patients"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><PatientListPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/patients/:id"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><PatientDetailPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/agenda"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><AgendaPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/events"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><EventsListPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/events/:id"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><EventDetailPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/acompanhamento"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><AcompanhamentoPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/notifications"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><NotificationCenterPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/whatsapp"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><WhatsAppPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/groups"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><GroupsPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/tasks"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><KanbanPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/avaliacoes"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><SpecialtyAssessmentsPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/exercises"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><ExerciseLibraryPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/materials"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><ClinicalLibraryPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/materials/:id"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><MaterialDetailPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/gerar-laudo"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><EvaluationReportPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/gerar-evolucao"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><SessionEvolutionPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/gerar-hep"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><HepGeneratorPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/analise-risco"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><RiskAnalysisPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/email-inativos"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><InactivePatientEmailPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/mentoria"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><MentoriaPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/partnerships"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><PartnershipPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/inventory"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><InventoryDashboardPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/medical-report/new/:patientId"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><MedicalReportPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/medical-report/edit/:reportId"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><MedicalReportPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/reports"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><ReportsPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/audit-log"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><AuditLogPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/settings"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><SettingsPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/subscription"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><SubscriptionPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/legal"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><LegalPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/knowledge-base"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><KnowledgeBasePage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/ia-economica"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><EconomicPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/ai-settings"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><AiSettingsPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/agenda-settings"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><AgendaSettingsPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/atendimento/:appointmentId"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><AtendimentoPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <ReactRouterDOM.Route
+            path="/teleconsulta/:appointmentId"
+            element={
+              <ProtectedRoute allowedRoles={[Role.Therapist, Role.Admin]}>
+                <MainLayout><TeleconsultaPage /></MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Fallback Route */}
+          <ReactRouterDOM.Route path="*" element={<ReactRouterDOM.Navigate to="/dashboard" replace />} />
         </ReactRouterDOM.Routes>
       </Suspense>
     );

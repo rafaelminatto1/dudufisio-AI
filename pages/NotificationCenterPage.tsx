@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PageHeader from '../components/PageHeader';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import { useNotifications } from '../hooks/useNotifications';
 import { Notification, Role } from '../types';
 import * as notificationService from '../services/notificationService';

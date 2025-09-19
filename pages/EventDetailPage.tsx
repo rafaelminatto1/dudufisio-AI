@@ -11,7 +11,7 @@ import { ChevronLeft, Edit, Users, QrCode, BarChart, UserCheck } from 'lucide-re
 import EventDashboardMetrics from '../components/events/EventDashboardMetrics';
 import ParticipantTable from '../components/events/ParticipantTable';
 import CheckInModal from '../components/events/CheckInModal';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import EventDetailHeader from '../components/events/EventDetailHeader';
 import ProviderTable from '../components/events/ProviderTable';
 import EventFormModal from '../components/events/EventFormModal';

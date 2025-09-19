@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import PageHeader from '../../components/PageHeader';
 import { FinancialSummary, Transaction } from '../../types';
 import * as financialService from '../../services/financialService';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import { useToast } from '../../contexts/ToastContext';
 import StatCard from '../../components/dashboard/StatCard';
 import { DollarSign, BarChart2, Zap, Shield } from 'lucide-react';
