@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Notification } from '../types';
 import * as notificationService from '../services/notificationService';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AppContext';
 
 export const useNotifications = (userId?: string) => {
     const [notifications, setNotifications] = useState<Notification[]>([]);

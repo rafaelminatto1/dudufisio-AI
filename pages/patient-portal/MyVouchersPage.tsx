@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import PageHeader from '../../components/PageHeader';
 import { Voucher } from '../../types';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import * as voucherService from '../../services/voucherService';
 import PurchasedVoucherCard from '../../components/patient-portal/PurchasedVoucherCard';
 import Skeleton from '../../components/ui/Skeleton';

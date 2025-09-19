@@ -9,7 +9,7 @@ import {
     AlertTriangle, Mail, BrainCircuit, ClipboardList, PieChart, DollarSign, 
     SlidersHorizontal, Bell, MessageSquare, Handshake, Package, Ticket, Activity, Users2, BookMarked
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import { useNotifications } from '../hooks/useNotifications';
 
 const NavLinkComponent = ({ to, icon: Icon, label, isCollapsed, badgeCount }: { to: string, icon: React.ElementType, label: string, isCollapsed: boolean, badgeCount?: number }) => (

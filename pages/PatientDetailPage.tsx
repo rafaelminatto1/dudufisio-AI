@@ -402,7 +402,7 @@ const PatientDetailPage: React.FC = () => {
                         <InfoCard title="Condições / Queixas" icon={<Heart />}>
                             <ul className="space-y-3">
                                 {patient.conditions.map((condition, index) => (
-                                    <li key={index} className="p-3 bg-slate-50 rounded-lg">
+                                    <li key={`condition-${condition.name}-${index}`} className="p-3 bg-slate-50 rounded-lg">
                                         <p className="font-semibold text-slate-800">{condition.name}</p>
                                     </li>
                                 ))}
@@ -416,7 +416,7 @@ const PatientDetailPage: React.FC = () => {
                                 {patient.surgeries.map((surgery, index) => {
                                     const timeSince = calculateTimeSince(surgery.date);
                                     return (
-                                    <li key={index} className="p-3 bg-slate-50 rounded-lg">
+                                    <li key={`surgery-${surgery.name}-${index}`} className="p-3 bg-slate-50 rounded-lg">
                                         <p className="font-semibold text-slate-800">{surgery.name}</p>
                                         <div className="text-xs text-slate-500 mt-1">
                                             <span>{timeSince.weeks} semanas</span>
@@ -502,7 +502,7 @@ const PatientDetailPage: React.FC = () => {
                             <InfoCard title="Anexos do Paciente" icon={<Paperclip />}>
                                  <div className="space-y-3 mb-4">
                                     {(patient.attachments || []).map((file, index) => (
-                                        <a key={index} href={file.url} target="_blank" rel="noopener noreferrer" className="flex items-center p-2 bg-slate-50 rounded-lg hover:bg-slate-100">
+                                        <a key={`attachment-${file.name}-${index}`} href={file.url} target="_blank" rel="noopener noreferrer" className="flex items-center p-2 bg-slate-50 rounded-lg hover:bg-slate-100">
                                             <FileText className="w-5 h-5 text-slate-500 mr-3" />
                                             <span className="text-sm text-slate-700 font-medium truncate">{file.name}</span>
                                         </a>

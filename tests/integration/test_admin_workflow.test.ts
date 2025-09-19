@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 // Mock components that don't exist yet - THIS TEST MUST FAIL
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider } from "../contexts/AppContext"';
 import { AdminDashboard } from '@/pages/AdminDashboard';
 import { UserManagement } from '@/components/admin/UserManagement';
 

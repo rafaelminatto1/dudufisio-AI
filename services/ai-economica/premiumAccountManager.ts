@@ -29,10 +29,13 @@ class PremiumAccountManager {
   private ai: GoogleGenAI;
 
   constructor() {
-    if (!process.env.API_KEY) {
-      throw new Error("API_KEY is not set for PremiumAccountManager.");
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!apiKey) {
+      console.warn("VITE_GEMINI_API_KEY is not set for PremiumAccountManager. AI features will be disabled.");
+      this.ai = null as any; // Will be handled in queryGemini method
+    } else {
+      this.ai = new GoogleGenAI({ apiKey });
     }
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   }
 
   async selectBestProvider(queryType: QueryType): Promise<PremiumProvider | null> {
@@ -114,6 +117,10 @@ class PremiumAccountManager {
   }
 
   private async queryGemini(query: AIQuery): Promise<AIResponse> {
+    if (!this.ai) {
+      throw new Error("Gemini AI is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     const result = await this.ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: query.text,

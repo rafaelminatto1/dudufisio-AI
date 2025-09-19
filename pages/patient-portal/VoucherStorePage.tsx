@@ -12,7 +12,7 @@ import * as voucherService from '../../services/voucherService';
 import VoucherPlanCard from '../../components/patient-portal/VoucherPlanCard';
 import VoucherPurchaseModal from '../../components/patient-portal/VoucherPurchaseModal';
 import Skeleton from '../../components/ui/Skeleton';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import { useToast } from '../../contexts/ToastContext';
 
 const VoucherStorePage: React.FC = () => {

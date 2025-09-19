@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import { Stethoscope, Loader } from 'lucide-react';
 import { Role } from '../types';
 
@@ -13,11 +13,11 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { login } = useAuth();
+
   const navigate = ReactRouterDOM.useNavigate();
   const location = ReactRouterDOM.useLocation();
-  
   const from = (location.state as any)?.from?.pathname || '/';
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -2,7 +2,7 @@
 // pages/patient-portal/GamificationPage.tsx
 import React from 'react';
 import PageHeader from '../../components/PageHeader';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import { useGamification } from '../../hooks/useGamification';
 import Skeleton from '../../components/ui/Skeleton';
 import LevelProgress from '../../components/patient-portal/gamification/LevelProgress';

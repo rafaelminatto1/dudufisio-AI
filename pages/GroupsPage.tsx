@@ -7,7 +7,7 @@ import GroupCard from '../components/GroupCard';
 import GroupFormModal from '../components/GroupFormModal';
 import Skeleton from '../components/ui/Skeleton';
 import { useToast } from '../contexts/ToastContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import { useData } from '../contexts/DataContext';
 
 const GroupsPage: React.FC = () => {

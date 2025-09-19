@@ -4,13 +4,12 @@ import { mockMedicalReports, mockUsers, mockPatients, mockSoapNotes, mockClinicI
 import { GoogleGenAI } from "@google/genai";
 import html2pdf from 'html2pdf.js/';
 
-if (!process.env.API_KEY) {
-  // In a real app, you might have a fallback or a more user-friendly error.
-  // For this context, we'll log an error.
-  console.error("API_KEY is not set in environment variables.");
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+if (!apiKey) {
+  console.warn("VITE_GEMINI_API_KEY is not set in environment variables. AI features will be disabled.");
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 
 let reports: MedicalReport[] = [...mockMedicalReports];
@@ -71,6 +70,10 @@ export const generateReport = async (patientId: string, recipientDoctor: string,
         5. Sintetize as evoluções em um parágrafo coeso na seção "Evolução Clínica".
     `;
     
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
          const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',

@@ -1,29 +1,32 @@
 
+import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { AuthProvider } from './contexts/AuthContext';
+import { AppProvider } from './contexts/AppContext';
 import { ToastProvider } from './contexts/ToastContext';
 import ErrorBoundary from './components/ErrorBoundary';
-import { DataProvider } from './contexts/DataContext';
+import * as ReactRouterDOM from 'react-router-dom';
 
-// Re-rendering the application to refresh the preview.
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error("Could not find root element to mount to");
 }
 
 const root = ReactDOM.createRoot(rootElement);
+
 root.render(
   <React.StrictMode>
     <ErrorBoundary>
-      <ToastProvider>
-        <AuthProvider>
-          <DataProvider>
+      <ReactRouterDOM.HashRouter>
+        <AppProvider>
+          <ToastProvider>
             <App />
-          </DataProvider>
-        </AuthProvider>
-      </ToastProvider>
+          </ToastProvider>
+        </AppProvider>
+      </ReactRouterDOM.HashRouter>
     </ErrorBoundary>
   </React.StrictMode>
 );
+
+console.log('🚀 React Router application initialized successfully');

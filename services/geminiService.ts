@@ -3,11 +3,12 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ClinicalMaterialData, Patient, SoapNote } from "../types";
 
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY is not set in environment variables.");
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+if (!apiKey) {
+  console.warn("VITE_GEMINI_API_KEY is not set in environment variables. AI features will be disabled.");
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 const PROMPT_TEMPLATE = `
 # Persona
@@ -97,6 +98,10 @@ export const generateEvaluationReport = async (data: EvaluationFormData): Promis
         prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key]);
     }
     
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -166,6 +171,10 @@ export const generateSessionEvolution = async (data: SessionEvolutionFormData): 
         prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key]);
     }
     
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -291,6 +300,10 @@ Dr. Roberto
 CREFITO: 12345-F
 `;
 
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -360,6 +373,10 @@ export const generateRiskAnalysis = async (data: RiskAnalysisFormData): Promise<
         prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key]);
     }
     
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -449,6 +466,10 @@ export const generatePatientProgressSummary = async (data: PatientProgressData):
         prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key]);
     }
 
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -489,6 +510,10 @@ Escreva uma mensagem de lembrete amigável e informativa no formato de texto par
 7.  O tom deve ser positivo e encorajador.
 `;
     
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -538,6 +563,10 @@ O resultado deve ser **APENAS o código HTML** do corpo do e-mail, sem \`\`\`htm
 Equipe FisioFlow</p>
 `;
     
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -596,6 +625,10 @@ export const generateClinicalMaterialContent = async (data: ClinicalMaterialData
     prompt = prompt.replace(new RegExp(`{{nome_material}}`, 'g'), data.nome_material);
     prompt = prompt.replace(new RegExp(`{{tipo_material}}`, 'g'), data.tipo_material);
     
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -635,6 +668,10 @@ export interface ParsedTreatmentPlan {
 
 export const parseProtocolForTreatmentPlan = async (protocolContent: string): Promise<ParsedTreatmentPlan> => {
     const prompt = PROMPT_TEMPLATE_PARSE_PROTOCOL.replace('{{protocolContent}}', protocolContent);
+
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
 
     try {
         const response = await ai.models.generateContent({
@@ -712,6 +749,10 @@ export const generatePatientClinicalSummary = async (patient: Patient, notes: So
         .replace('{{diagnostico}}', patient.conditions?.[0]?.name || 'Não especificado')
         .replace('{{historico_sessoes}}', historico_sessoes);
         
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
+
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -752,6 +793,10 @@ export const generateRetentionSuggestion = async (data: RetentionSuggestionData)
     let prompt = PROMPT_TEMPLATE_RETENTION
         .replace(new RegExp(`{{nome_paciente}}`, 'g'), data.nome_paciente.split(' ')[0])
         .replace(new RegExp(`{{motivo_alerta}}`, 'g'), data.motivo_alerta);
+
+    if (!ai) {
+        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
+    }
 
     try {
         const response = await ai.models.generateContent({

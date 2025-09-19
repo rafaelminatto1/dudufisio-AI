@@ -56,7 +56,7 @@ const TeamProductivityChart: React.FC<TeamProductivityChartProps> = ({ appointme
                     <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{ backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '0.5rem' }}/>
                     <Bar dataKey="atendimentos" barSize={20}>
                         {productivityData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
+                            <Cell key={`productivity-${index}-${entry.name}`} fill={entry.color} />
                         ))}
                     </Bar>
                 </BarChart>

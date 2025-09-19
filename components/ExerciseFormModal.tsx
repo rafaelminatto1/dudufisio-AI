@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, PlusCircle, Trash2 } from 'lucide-react';
 import { Exercise } from '../types';
 import { useToast } from '../contexts/ToastContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 
 interface ExerciseFormModalProps {
     isOpen: boolean;

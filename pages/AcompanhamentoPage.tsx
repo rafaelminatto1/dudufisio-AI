@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import PageHeader from '../components/PageHeader';
 import { useData } from '../contexts/DataContext';
 import { useToast } from '../contexts/ToastContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import * as acompanhamentoService from '../services/acompanhamentoService';
 import { Patient, Appointment, AlertPatient, AlertType } from '../types';
 import Skeleton from '../components/ui/Skeleton';

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import PageHeader from '../../components/PageHeader';
 import PainTrendChart from '../../components/patient-portal/PainTrendChart';
 import { useToast } from '../../contexts/ToastContext';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from "../contexts/AppContext"';
 import * as patientService from '../../services/patientService';
 import { Patient, PainPoint } from '../../types';
 import Skeleton from '../../components/ui/Skeleton';

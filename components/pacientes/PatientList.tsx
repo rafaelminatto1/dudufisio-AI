@@ -125,7 +125,7 @@ export default function PatientList({ initialData }: PatientListProps) {
             <PatientForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             
             <div className="divide-y divide-slate-200">
-                {isPending && Array.from({ length: 5 }).map((_, i) => <PatientRowSkeleton key={i} />)}
+                {isPending && Array.from({ length: 5 }).map((_, i) => <PatientRowSkeleton key={`patient-skeleton-${i}`} />)}
                 
                 {!isPending && patients.map(patient => (
                     <div
