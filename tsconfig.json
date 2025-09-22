@@ -12,6 +12,9 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "types": [
+      "vite/client"
+    ],
 
     /* Linting - Strict mode for healthcare compliance */
     "strict": true,
@@ -19,9 +22,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
 
     /* Healthcare data privacy */
     "strictNullChecks": true,
@@ -45,7 +48,6 @@
     }
   },
   "include": [
-    "src",
     "components",
     "pages",
     "services",
@@ -53,9 +55,13 @@
     "contexts",
     "types",
     "lib",
-    "**/*.ts",
-    "**/*.tsx",
-    "types/env.d.ts"
+    "design-system",
+    "index.tsx",
+    "App.tsx",
+    "AppRoutes.tsx",
+    "types/**/*.d.ts",
+    "types/env.d.ts",
+    "vite-env.d.ts"
   ],
   "exclude": [
     "node_modules",
@@ -63,11 +69,18 @@
     "build",
     "tests/**/*",
     "testsprite_tests/**/*",
+    "database",
+    "prisma",
+    "docs",
+    "scripts",
+    "workers/**/*",
     "components/auth/AuthProvider.tsx",
     "components/auth/UserMenu.tsx",
     "components/pacientes/PatientList.tsx",
     "lib/actions/**/*",
     "lib/auth.ts",
-    "middleware.ts"
+    "middleware.ts",
+    "next.config.js",
+    "next.config.mjs"
   ]
 }

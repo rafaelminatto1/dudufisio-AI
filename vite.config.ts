@@ -4,6 +4,12 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  esbuild: {
+    drop: ['console', 'debugger']
+  },
+  define: {
+    'process.env': 'import.meta.env'
+  },
   server: {
     port: 5173,
     host: 'localhost',
