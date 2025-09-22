@@ -15,7 +15,6 @@ const getInitialFormData = (): Omit<Intern, 'id' | 'avatarUrl'> => ({
   institution: '',
   startDate: new Date().toISOString().split('T')[0] as string,
   status: InternStatus.Active,
-  averageGrade: undefined,
 });
 
 const InternFormModal: React.FC<InternFormModalProps> = ({ isOpen, onClose, onSave, internToEdit }) => {
@@ -24,10 +23,8 @@ const InternFormModal: React.FC<InternFormModalProps> = ({ isOpen, onClose, onSa
 
     useEffect(() => {
         if (internToEdit) {
-            setFormData({
-                ...internToEdit,
-                averageGrade: internToEdit.averageGrade,
-            });
+            const { id, avatarUrl, ...editData } = internToEdit;
+            setFormData(editData);
         } else {
             setFormData(getInitialFormData());
         }
@@ -43,7 +40,7 @@ const InternFormModal: React.FC<InternFormModalProps> = ({ isOpen, onClose, onSa
 
     const handleSaveClick = async () => {
         setIsSaving(true);
-        await onSave({ ...formData, id: internToEdit?.id as string | undefined });
+        await onSave({ ...formData, ...(internToEdit?.id && { id: internToEdit.id }) });
         setIsSaving(false);
     };
 

@@ -4,8 +4,8 @@ import { X } from 'lucide-react';
 interface VideoPlayerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  videoUrl?: string;
-  title?: string;
+  videoUrl?: string | undefined;
+  title?: string | undefined;
 }
 
 const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ isOpen, onClose, videoUrl, title }) => {

@@ -7,7 +7,7 @@ interface GroupFormModalProps {
   onClose: () => void;
   onSave: (name: string) => void;
   mode: 'create' | 'edit' | 'copy';
-  initialName?: string;
+  initialName?: string | undefined;
 }
 
 const GroupFormModal: React.FC<GroupFormModalProps> = ({ isOpen, onClose, onSave, mode, initialName = '' }) => {

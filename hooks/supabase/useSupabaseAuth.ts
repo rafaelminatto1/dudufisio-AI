@@ -27,7 +27,7 @@ export const useSupabaseAuth = () => {
           const profile = await authService.getUserProfile(user.id);
           setAuthState({
             user,
-            profile,
+            profile: profile as UserProfile,
             loading: false,
             error: null,
           });
@@ -52,12 +52,12 @@ export const useSupabaseAuth = () => {
     initAuth();
 
     // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
         const profile = await authService.getUserProfile(session.user.id);
         setAuthState({
           user: session.user,
-          profile,
+          profile: profile as UserProfile,
           loading: false,
           error: null,
         });
@@ -108,7 +108,7 @@ export const useSupabaseAuth = () => {
       const { user, profile } = await authService.signUp(data);
       setAuthState({
         user,
-        profile,
+        profile: profile as UserProfile,
         loading: false,
         error: null,
       });
@@ -160,7 +160,7 @@ export const useSupabaseAuth = () => {
       const updatedProfile = await authService.updateProfile(authState.user.id, updates);
       setAuthState(prev => ({
         ...prev,
-        profile: updatedProfile,
+        profile: updatedProfile as UserProfile,
         loading: false,
         error: null,
       }));

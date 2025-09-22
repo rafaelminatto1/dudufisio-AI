@@ -3,7 +3,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ClinicalMaterialData, Patient, SoapNote } from "../types";
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
 if (!apiKey) {
   console.warn("VITE_GEMINI_API_KEY is not set in environment variables. AI features will be disabled.");
 }
@@ -95,7 +95,7 @@ export const generateEvaluationReport = async (data: EvaluationFormData): Promis
     };
     
     for (const key in replacements) {
-        prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key]);
+        prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key] || '');
     }
     
     if (!ai) {
@@ -104,10 +104,10 @@ export const generateEvaluationReport = async (data: EvaluationFormData): Promis
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         console.error("Error generating evaluation report:", error);
         throw new Error("Falha ao gerar o laudo com a IA. Por favor, tente novamente.");
@@ -168,7 +168,7 @@ export const generateSessionEvolution = async (data: SessionEvolutionFormData): 
     };
     
     for (const key in replacements) {
-        prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key]);
+        prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key] || '');
     }
     
     if (!ai) {
@@ -177,10 +177,10 @@ export const generateSessionEvolution = async (data: SessionEvolutionFormData): 
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         console.error("Error generating session evolution:", error);
         throw new Error("Falha ao gerar a evolução com a IA. Por favor, tente novamente.");
@@ -306,10 +306,10 @@ CREFITO: 12345-F
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         console.error("Error generating HEP:", error);
         throw new Error("Falha ao gerar o plano de exercícios com a IA. Por favor, tente novamente.");
@@ -370,7 +370,7 @@ export const generateRiskAnalysis = async (data: RiskAnalysisFormData): Promise<
     };
     
     for (const key in replacements) {
-        prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key]);
+        prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key] || '');
     }
     
     if (!ai) {
@@ -379,10 +379,10 @@ export const generateRiskAnalysis = async (data: RiskAnalysisFormData): Promise<
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         console.error("Error generating risk analysis:", error);
         throw new Error("Falha ao gerar a análise de risco com a IA. Por favor, tente novamente.");
@@ -463,7 +463,7 @@ export const generatePatientProgressSummary = async (data: PatientProgressData):
     };
     
     for (const key in replacements) {
-        prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key]);
+        prompt = prompt.replace(new RegExp(`{{${key}}}`, 'g'), replacements[key] || '');
     }
 
     if (!ai) {
@@ -472,10 +472,10 @@ export const generatePatientProgressSummary = async (data: PatientProgressData):
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         console.error("Error generating patient progress summary:", error);
         throw new Error("Falha ao gerar o resumo de progresso com a IA.");
@@ -516,10 +516,10 @@ Escreva uma mensagem de lembrete amigável e informativa no formato de texto par
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         console.error("Error generating appointment reminder:", error);
         throw new Error("Falha ao gerar o lembrete com a IA.");
@@ -569,7 +569,7 @@ Equipe FisioFlow</p>
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
         
@@ -631,10 +631,10 @@ export const generateClinicalMaterialContent = async (data: ClinicalMaterialData
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         console.error("Error generating clinical material content:", error);
         throw new Error("Falha ao gerar o conteúdo do material com a IA.");
@@ -675,7 +675,7 @@ export const parseProtocolForTreatmentPlan = async (protocolContent: string): Pr
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
@@ -755,10 +755,10 @@ export const generatePatientClinicalSummary = async (patient: Patient, notes: So
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         console.error("Error generating clinical summary:", error);
         throw new Error("Falha ao gerar o resumo clínico com a IA.");
@@ -791,7 +791,7 @@ export interface RetentionSuggestionData {
 
 export const generateRetentionSuggestion = async (data: RetentionSuggestionData): Promise<string> => {
     let prompt = PROMPT_TEMPLATE_RETENTION
-        .replace(new RegExp(`{{nome_paciente}}`, 'g'), data.nome_paciente.split(' ')[0])
+        .replace(new RegExp(`{{nome_paciente}}`, 'g'), data.nome_paciente.split(' ')[0] || data.nome_paciente)
         .replace(new RegExp(`{{motivo_alerta}}`, 'g'), data.motivo_alerta);
 
     if (!ai) {
@@ -800,10 +800,10 @@ export const generateRetentionSuggestion = async (data: RetentionSuggestionData)
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-2.0-flash-001',
             contents: prompt,
         });
-        return response.text;
+        return response.text || '';
     } catch (error) {
         console.error("Error generating retention suggestion:", error);
         throw new Error("Falha ao gerar a sugestão com a IA.");

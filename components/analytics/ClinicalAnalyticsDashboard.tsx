@@ -62,7 +62,7 @@ const ClinicalAnalyticsDashboard: React.FC = () => {
                 <YAxis type="category" dataKey="name" width={120} stroke="#64748b" fontSize={12} interval={0} />
                 <Tooltip formatter={(value) => `${value}%`} />
                 <Bar dataKey="successRate" name="Taxa de Sucesso" barSize={15}>
-                  {successByPathology.map((entry, index) => (
+                  {successByPathology.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Bar>

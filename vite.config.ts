@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
@@ -20,7 +21,14 @@ export default defineConfig({
     dedupe: ['react', 'react-dom'],
     alias: {
       'react': 'react',
-      'react-dom': 'react-dom'
+      'react-dom': 'react-dom',
+      '@/components': path.resolve(__dirname, './components'),
+      '@/pages': path.resolve(__dirname, './pages'),
+      '@/services': path.resolve(__dirname, './services'),
+      '@/hooks': path.resolve(__dirname, './hooks'),
+      '@/contexts': path.resolve(__dirname, './contexts'),
+      '@/types': path.resolve(__dirname, './types'),
+      '@/lib': path.resolve(__dirname, './lib')
     }
   },
   optimizeDeps: {

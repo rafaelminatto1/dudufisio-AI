@@ -77,7 +77,7 @@ const PatientProgressPage: React.FC = () => {
                 const latestNote = notesData[0];
 
                 const data: PatientProgressData = {
-                    nome_paciente: user.name.split(' ')[0],
+                    nome_paciente: user.name.split(' ')[0] || user.name,
                     dor_inicial: initialNote.painScale?.toString() || 'N/A',
                     dor_atual: latestNote.painScale?.toString() || 'N/A',
                     limitacao_inicial: initialNote.subjective,

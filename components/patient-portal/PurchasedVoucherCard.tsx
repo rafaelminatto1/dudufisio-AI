@@ -1,7 +1,7 @@
 // components/patient-portal/PurchasedVoucherCard.tsx
 import React from 'react';
 import { Voucher } from '../../types';
-import { Calendar, CheckCircle, Clock } from 'lucide-react';
+import { Calendar, CheckCircle } from 'lucide-react';
 
 interface PurchasedVoucherCardProps {
     voucher: Voucher;

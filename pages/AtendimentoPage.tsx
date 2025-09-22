@@ -3,10 +3,10 @@
 
 // pages/AtendimentoPage.tsx
 'use client';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
-import { Save, BrainCircuit, Loader, Target, ListChecks, FileText, Edit, Trash2, Paperclip, Upload, CheckCircle } from 'lucide-react';
+import { Save, BrainCircuit, Loader, Target, ListChecks, FileText, CheckCircle } from 'lucide-react';
 import { usePageData } from '../hooks/usePageData';
 import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
@@ -17,7 +17,6 @@ import { Appointment, Patient, SoapNote, TreatmentPlan, ExercisePrescription, Ap
 import PageLoader from '../components/ui/PageLoader';
 import InfoCard from '../components/ui/InfoCard';
 import PainScale from '../components/PainScale';
-import InteractiveBodyMap from '../components/InteractiveBodyMap';
 import { aiOrchestratorService } from '../services/ai/aiOrchestratorService';
 import RichTextEditor from '../components/ui/RichTextEditor';
 
@@ -56,7 +55,7 @@ const AtendimentoPage: React.FC = () => {
     
     // Body map states
     const [painPoints, setPainPoints] = useState<PainPoint[]>([]);
-    const [isPainModalOpen, setIsPainModalOpen] = useState(false);
+    const [, setIsPainModalOpen] = useState(false);
     const [currentPainPoint, setCurrentPainPoint] = useState<PainPoint | null>(null);
     
     const fetchAllData = useCallback(async () => {
@@ -108,14 +107,14 @@ const AtendimentoPage: React.FC = () => {
                 .map(([metricId, value]) => ({ metricId, value: Number(value) }));
 
             const noteData: Partial<SoapNote> & { patientId: string } = {
-                id: currentNote?.id,
+                ...(currentNote?.id && { id: currentNote.id }),
                 patientId: patient.id,
                 date: new Date().toLocaleDateString('pt-BR'),
                 subjective,
                 objective: fullObjective,
                 assessment,
                 plan,
-                painScale,
+                ...(painScale !== undefined && { painScale }),
                 bodyParts: painPoints.map(p => p.part),
                 metricResults: formattedMetricResults,
                 // attachments are handled only on final save for now
@@ -178,8 +177,8 @@ const AtendimentoPage: React.FC = () => {
           const content = response.content;
           const assessmentMatch = content.match(/AVALIAÇÃO:([\s\S]*?)PLANO:/i);
           const planMatch = content.match(/PLANO:([\s\S]*)/i);
-          if (assessmentMatch) setAssessment(assessmentMatch[1].trim());
-          if (planMatch) setPlanState(planMatch[1].trim());
+          if (assessmentMatch && assessmentMatch[1]) setAssessment(assessmentMatch[1].trim());
+          if (planMatch && planMatch[1]) setPlanState(planMatch[1].trim());
           showToast('Sugestão gerada pela IA.', 'info');
         } catch (error) { showToast('Erro ao gerar sugestão.', 'error'); } finally { setIsAiLoading(false); }
     };

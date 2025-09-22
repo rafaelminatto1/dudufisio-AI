@@ -69,7 +69,7 @@ export const sendAppointmentConfirmation = async (appointment: Appointment, pati
     const date = appointment.startTime.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
     const time = appointment.startTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     
-    const content = `Olá, ${patient.name.split(' ')[0]}! 👋 Sua consulta de ${appointment.type} foi confirmada para ${date} às ${time}. Mal podemos esperar para te ver! - Equipe FisioFlow`;
+    const content = `Olá, ${patient.name.split(' ')[0] || patient.name}! 👋 Sua consulta de ${appointment.type} foi confirmada para ${date} às ${time}. Mal podemos esperar para te ver! - Equipe FisioFlow`;
     
     return await sendMessage(patient, content, 'confirmation');
 };
@@ -77,7 +77,7 @@ export const sendAppointmentConfirmation = async (appointment: Appointment, pati
 /**
  * Sends a templated appointment reminder message.
  */
-export const sendAppointmentReminder = async (appointment: Appointment, patient: Patient, hoursBefore: number): Promise<SendMessageResult> => {
+export const sendAppointmentReminder = async (appointment: Appointment, patient: Patient, _hoursBefore: number): Promise<SendMessageResult> => {
      const time = appointment.startTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
     const content = `Lembrete FisioFlow: Sua consulta é hoje às ${time}. Por favor, chegue com alguns minutos de antecedência. Até já!`;
@@ -89,7 +89,7 @@ export const sendAppointmentReminder = async (appointment: Appointment, patient:
  * Sends the Home Exercise Plan (HEP) to the patient.
  */
 export const sendHep = async (patient: Patient, hepContent: string): Promise<SendMessageResult> => {
-    const content = `Olá, ${patient.name.split(' ')[0]}! Seu fisioterapeuta enviou seu plano de exercícios. Acesse pelo portal ou veja o resumo:\n\n${hepContent}`;
+    const content = `Olá, ${patient.name.split(' ')[0] || patient.name}! Seu fisioterapeuta enviou seu plano de exercícios. Acesse pelo portal ou veja o resumo:\n\n${hepContent}`;
     
     return await sendMessage(patient, content, 'hep');
 };

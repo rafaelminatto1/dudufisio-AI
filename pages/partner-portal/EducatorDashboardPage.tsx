@@ -1,6 +1,6 @@
 import React from 'react';
 import PageHeader from '../../components/PageHeader';
-import { useAuth } from "../contexts/AppContext";
+import { useAuth } from "@/contexts/AppContext";
 import { Users, Activity, CheckCircle } from 'lucide-react';
 
 const StatCard = ({ title, value, icon }: { title: string; value: string; icon: React.ReactNode }) => (
@@ -23,7 +23,7 @@ const EducatorDashboardPage: React.FC = () => {
     return (
         <>
             <PageHeader
-                title={`Boas-vindas, ${user?.name.split(' ')[0]}!`}
+                title={`Boas-vindas, ${user?.name.split(' ')[0] || user?.name}!`}
                 subtitle="Acompanhe os pacientes encaminhados e seus progressos."
             />
 

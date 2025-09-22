@@ -6,7 +6,7 @@ interface EventFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (event: Omit<Event, 'id' | 'registrations' | 'providers'> & { id?: string }) => Promise<void>;
-  eventToEdit?: Event;
+  eventToEdit?: Event | undefined;
 }
 
 const getInitialFormData = (): Omit<Event, 'id' | 'registrations' | 'providers'> => ({
@@ -62,7 +62,7 @@ const EventFormModal: React.FC<EventFormModalProps> = ({ isOpen, onClose, onSave
     };
 
     const handleSaveClick = async () => {
-        await onSave({ ...formData, id: eventToEdit?.id });
+        await onSave({ ...formData, ...(eventToEdit?.id && { id: eventToEdit.id }) });
     };
 
     const formatDateForInput = (date: Date) => {

@@ -12,13 +12,13 @@ interface SaturdayScaleModalProps {
 const SaturdayScaleModal: React.FC<SaturdayScaleModalProps> = ({ isOpen, onClose, appointments }) => {
     
     const saturdaySchedule = useMemo(() => {
-        if (!isOpen) return { date: null, schedule: {} };
+        if (!isOpen) return { date: null, schedule: {} as Record<string, string[]> };
 
         const today = new Date();
         const dayOfWeek = today.getDay();
         // If today is Sunday (0), we want to go 6 days forward. If it's Monday (1), 5 days... If it's Saturday (6), 0 days.
         // So, the logic is (6 - dayOfWeek). This works for Sun-Sat (0-6).
-        const daysUntilSaturday = (6 - dayOfWeek + 7) % 7; 
+        const daysUntilSaturday = (6 - dayOfWeek + 7) % 7;
         const nextSaturday = new Date(today);
         nextSaturday.setDate(today.getDate() + daysUntilSaturday);
         nextSaturday.setHours(0, 0, 0, 0);
@@ -37,7 +37,7 @@ const SaturdayScaleModal: React.FC<SaturdayScaleModalProps> = ({ isOpen, onClose
             acc[time].push(app.patientName);
             return acc;
         }, {} as Record<string, string[]>);
-        
+
         // Sort schedule by time
         const sortedSchedule = Object.fromEntries(
             Object.entries(schedule).sort(([timeA], [timeB]) => timeA.localeCompare(timeB))
@@ -70,7 +70,7 @@ const SaturdayScaleModal: React.FC<SaturdayScaleModalProps> = ({ isOpen, onClose
                                 <li key={time}>
                                     <div className="px-2 py-1 bg-slate-100 rounded-md font-bold text-slate-700 text-sm mb-2">{time}</div>
                                     <ul className="space-y-1 pl-4">
-                                        {saturdaySchedule.schedule[time].map((patientName, index) => (
+                                        {saturdaySchedule.schedule[time]?.map((patientName: string, index: number) => (
                                             <li key={`${time}-${index}-${patientName}`} className="text-slate-600 list-disc list-inside">{patientName}</li>
                                         ))}
                                     </ul>

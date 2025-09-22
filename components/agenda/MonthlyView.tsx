@@ -73,7 +73,7 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
           </div>
 
           <div className="grid grid-cols-7" style={{ minHeight: '600px' }}>
-            {calendarDays.map((date, index) => {
+            {calendarDays.map((date) => {
               const dayAppointments = getAppointmentsForDay(date);
               const isCurrentMonth = date >= monthStart && date <= monthEnd;
               const isCurrentDay = isToday(date);

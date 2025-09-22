@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Edit2, Trash2, Copy, Clock, DollarSign, CheckCircle, XCircle, Phone } from 'lucide-react';
+import { Edit2, Trash2, Copy, DollarSign, CheckCircle, XCircle, Phone } from 'lucide-react';
 import { EnrichedAppointment, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
 

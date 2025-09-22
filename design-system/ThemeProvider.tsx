@@ -85,30 +85,30 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Apply CSS custom properties
     const cssVars = {
       // Primary colors
-      '--color-primary-50': primaryColor[50],
-      '--color-primary-100': primaryColor[100],
-      '--color-primary-200': primaryColor[200],
-      '--color-primary-300': primaryColor[300],
-      '--color-primary-400': primaryColor[400],
-      '--color-primary-500': primaryColor[500],
-      '--color-primary-600': primaryColor[600],
-      '--color-primary-700': primaryColor[700],
-      '--color-primary-800': primaryColor[800],
-      '--color-primary-900': primaryColor[900],
-      '--color-primary-950': primaryColor[950],
+      '--color-primary-50': (primaryColor as any)[50],
+      '--color-primary-100': (primaryColor as any)[100],
+      '--color-primary-200': (primaryColor as any)[200],
+      '--color-primary-300': (primaryColor as any)[300],
+      '--color-primary-400': (primaryColor as any)[400],
+      '--color-primary-500': (primaryColor as any)[500],
+      '--color-primary-600': (primaryColor as any)[600],
+      '--color-primary-700': (primaryColor as any)[700],
+      '--color-primary-800': (primaryColor as any)[800],
+      '--color-primary-900': (primaryColor as any)[900],
+      '--color-primary-950': (primaryColor as any)[950],
 
       // Semantic colors
-      '--color-background': isDark ? designTokens.colors.neutral[900] : designTokens.colors.neutral[0],
-      '--color-foreground': isDark ? designTokens.colors.neutral[50] : designTokens.colors.neutral[900],
-      '--color-muted': isDark ? designTokens.colors.neutral[800] : designTokens.colors.neutral[100],
-      '--color-muted-foreground': isDark ? designTokens.colors.neutral[400] : designTokens.colors.neutral[600],
-      '--color-card': isDark ? designTokens.colors.neutral[800] : designTokens.colors.neutral[0],
-      '--color-card-foreground': isDark ? designTokens.colors.neutral[50] : designTokens.colors.neutral[900],
-      '--color-border': isDark ? designTokens.colors.neutral[700] : designTokens.colors.neutral[200],
-      '--color-input': isDark ? designTokens.colors.neutral[700] : designTokens.colors.neutral[200],
+      '--color-background': isDark ? (designTokens.colors.neutral as any)[900] : (designTokens.colors.neutral as any)[0],
+      '--color-foreground': isDark ? (designTokens.colors.neutral as any)[50] : (designTokens.colors.neutral as any)[900],
+      '--color-muted': isDark ? (designTokens.colors.neutral as any)[800] : (designTokens.colors.neutral as any)[100],
+      '--color-muted-foreground': isDark ? (designTokens.colors.neutral as any)[400] : (designTokens.colors.neutral as any)[600],
+      '--color-card': isDark ? (designTokens.colors.neutral as any)[800] : (designTokens.colors.neutral as any)[0],
+      '--color-card-foreground': isDark ? (designTokens.colors.neutral as any)[50] : (designTokens.colors.neutral as any)[900],
+      '--color-border': isDark ? (designTokens.colors.neutral as any)[700] : (designTokens.colors.neutral as any)[200],
+      '--color-input': isDark ? (designTokens.colors.neutral as any)[700] : (designTokens.colors.neutral as any)[200],
 
       // Border radius
-      '--border-radius': designTokens.borderRadius[theme.borderRadius],
+      '--border-radius': (designTokens.borderRadius as any)[theme.borderRadius],
 
       // Font size adjustments
       '--font-size-multiplier': theme.fontSize === 'sm' ? '0.875' : theme.fontSize === 'lg' ? '1.125' : '1',
@@ -155,7 +155,7 @@ export const useTheme = (): ThemeContextType => {
 
 // Theme configuration component
 export const ThemeCustomizer: React.FC<{ className?: string }> = ({ className = '' }) => {
-  const { theme, isDark, updateTheme, resetTheme } = useTheme();
+  const { theme, updateTheme, resetTheme } = useTheme();
 
   return (
     <div className={`space-y-6 ${className}`}>

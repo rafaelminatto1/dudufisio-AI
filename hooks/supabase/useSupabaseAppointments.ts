@@ -261,7 +261,7 @@ export const useSupabaseWeekAppointments = (date: Date, therapistId?: string) =>
 
   // Subscribe to real-time updates for the week
   useEffect(() => {
-    const channel = appointmentService.subscribeToAppointmentChanges((payload) => {
+    const channel = appointmentService.subscribeToAppointmentChanges((_payload) => {
       loadAppointments(); // Reload on any change
     });
 
@@ -285,7 +285,7 @@ export const useSupabaseTodayAppointments = (therapistId?: string) => {
   return useSupabaseAppointments({
     startDate: today,
     endDate: today,
-    therapistId,
+    ...(therapistId && { therapistId }),
   });
 };
 
@@ -324,7 +324,7 @@ export const useSupabaseUpcomingAppointments = (patientId: string | null, limit 
   useEffect(() => {
     if (!patientId) return;
 
-    const channel = appointmentService.subscribeToPatientAppointments(patientId, (payload) => {
+    const channel = appointmentService.subscribeToPatientAppointments(patientId, (_payload) => {
       loadAppointments();
     });
 

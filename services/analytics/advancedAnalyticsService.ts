@@ -406,7 +406,7 @@ class AdvancedAnalyticsService {
           timestamp: event.timestamp,
           page: event.page,
           user_agent: event.userAgent,
-        })));
+        })) as any);
 
       if (error) {
         // Re-queue events if failed to save

@@ -1,5 +1,5 @@
 import React from 'react';
-import { format, setHours, setMinutes, isSameDay, isToday } from 'date-fns';
+import { format, isSameDay, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { EnrichedAppointment, Therapist } from '../../types';

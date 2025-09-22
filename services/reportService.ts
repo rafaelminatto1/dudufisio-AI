@@ -4,7 +4,7 @@ import { mockMedicalReports, mockUsers, mockPatients, mockSoapNotes, mockClinicI
 import { GoogleGenAI } from "@google/genai";
 import html2pdf from 'html2pdf.js/';
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
 if (!apiKey) {
   console.warn("VITE_GEMINI_API_KEY is not set in environment variables. AI features will be disabled.");
 }

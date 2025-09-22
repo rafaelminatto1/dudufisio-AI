@@ -45,8 +45,9 @@ export const useLazyImage = (src: string, options: IntersectionObserverInit = {}
     if (!src || !imgRef.current) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
+      (entries) => {
+        const entry = entries[0];
+        if (entry?.isIntersecting) {
           setImageSrc(src);
           observer.disconnect();
         }
@@ -281,7 +282,7 @@ export const usePerformanceMonitor = (componentName: string) => {
     const renderTime = performance.now() - renderStart.current;
 
     // Log performance metrics in development
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env['NODE_ENV'] === 'development') {
       console.log(`${componentName} render #${renderCount.current}: ${renderTime.toFixed(2)}ms`);
     }
 

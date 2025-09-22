@@ -6,7 +6,7 @@ import { useData } from '../contexts/DataContext';
 import { useToast } from '../contexts/ToastContext';
 import { useAuth } from "../contexts/AppContext";
 import * as acompanhamentoService from '../services/acompanhamentoService';
-import { Patient, Appointment, AlertPatient, AlertType } from '../types';
+import { Patient, Appointment, AlertPatient } from '../types';
 import Skeleton from '../components/ui/Skeleton';
 import AlertCard from '../components/acompanhamento/AlertCard';
 import ObservationModal from '../components/acompanhamento/ObservationModal';

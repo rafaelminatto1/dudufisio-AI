@@ -1,6 +1,6 @@
 // components/inventory/StockMovementModal.tsx
 import React, { useState } from 'react';
-import { X, Save, Plus, Minus, Loader } from 'lucide-react';
+import { X, Plus, Minus, Loader } from 'lucide-react';
 import { InventoryItem, MovementType } from '../../types';
 import { useToast } from '../../contexts/ToastContext';
 

@@ -199,7 +199,9 @@ export interface EnrichedAppointment extends Appointment {
     therapistColor: string;
     typeColor: string;
     patientPhone: string;
-    patientMedicalAlerts?: string;
+    patientMedicalAlerts?: string | undefined;
+    therapistName: string;
+    notes?: string;
 }
 
 export interface AvailabilityBlock {

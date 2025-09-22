@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns/format';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { 
   X, Calendar, Clock, User, FileText, 
-  DollarSign, Check, ChevronRight,
+  Check, ChevronRight,
   Stethoscope, Activity, Heart, Brain
 } from 'lucide-react';
 import { PatientSearchInput } from './PatientSearchInput';
@@ -85,7 +85,7 @@ export default function BookingModal({ slot, onClose, onSuccess }: BookingModalP
     try {
       const startTime = new Date(slot.date);
       const [hour, minute] = slot.time.split(':');
-      startTime.setHours(parseInt(hour, 10), parseInt(minute, 10), 0, 0);
+      startTime.setHours(parseInt(hour || '0', 10), parseInt(minute || '0', 10), 0, 0);
 
       const endTime = new Date(startTime.getTime() + duration * 60000);
       

@@ -1,19 +1,17 @@
 import React, { useState, useMemo } from 'react';
-import { format, isSameDay, startOfDay, endOfDay, isWithinInterval } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
-import { Filter, Calendar, Clock, User, Phone, DollarSign } from 'lucide-react';
+import { Filter, Calendar, Clock, User, DollarSign } from 'lucide-react';
 
 interface ListViewProps {
   appointments: EnrichedAppointment[];
   therapists: Therapist[];
-  selectedDate: Date;
   onAppointmentClick: (appointment: EnrichedAppointment) => void;
-  onDateRangeChange: (start: Date, end: Date) => void;
 }
 
 type FilterStatus = 'all' | AppointmentStatus;
@@ -22,9 +20,7 @@ type SortBy = 'date' | 'patient' | 'therapist' | 'status';
 const ListView: React.FC<ListViewProps> = ({
   appointments,
   therapists,
-  selectedDate,
-  onAppointmentClick,
-  onDateRangeChange
+  onAppointmentClick
 }) => {
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
   const [filterTherapist, setFilterTherapist] = useState<string>('all');
@@ -66,10 +62,8 @@ const ListView: React.FC<ListViewProps> = ({
     switch (status) {
       case AppointmentStatus.Scheduled:
         return 'bg-blue-100 text-blue-800';
-      case AppointmentStatus.Confirmed:
-        return 'bg-green-100 text-green-800';
       case AppointmentStatus.Completed:
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-green-100 text-green-800';
       case AppointmentStatus.Canceled:
         return 'bg-red-100 text-red-800';
       case AppointmentStatus.NoShow:
@@ -83,8 +77,6 @@ const ListView: React.FC<ListViewProps> = ({
     switch (status) {
       case AppointmentStatus.Scheduled:
         return 'Agendado';
-      case AppointmentStatus.Confirmed:
-        return 'Confirmado';
       case AppointmentStatus.Completed:
         return 'Realizado';
       case AppointmentStatus.Canceled:
@@ -127,7 +119,6 @@ const ListView: React.FC<ListViewProps> = ({
                 >
                   <option value="all">Todos os status</option>
                   <option value={AppointmentStatus.Scheduled}>Agendado</option>
-                  <option value={AppointmentStatus.Confirmed}>Confirmado</option>
                   <option value={AppointmentStatus.Completed}>Realizado</option>
                   <option value={AppointmentStatus.Canceled}>Cancelado</option>
                   <option value={AppointmentStatus.NoShow}>Não Compareceu</option>

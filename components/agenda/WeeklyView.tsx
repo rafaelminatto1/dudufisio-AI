@@ -1,5 +1,5 @@
 import React from 'react';
-import { format, addDays, startOfWeek, isSameDay, isToday, setHours, setMinutes } from 'date-fns';
+import { format, addDays, startOfWeek, isSameDay, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { EnrichedAppointment, Therapist } from '../../types';
@@ -194,7 +194,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                       )}
                       title={therapist.name}
                     >
-                      {therapist.name.split(' ')[0]}
+                      {therapist.name.split(' ')[0] || therapist.name}
                     </div>
                   ))}
                 </div>
@@ -217,10 +217,10 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                       const snappedMinutes = Math.floor(minutesFromTop / SLOT_DURATION) * SLOT_DURATION;
                       const hour = START_HOUR + Math.floor(snappedMinutes / 60);
                       const minute = snappedMinutes % 60;
-                      onSlotClick(day, `${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`, therapists[0]?.id);
+                      onSlotClick(day, `${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`, therapists[0]?.id || '');
                     }}
                     onDragOver={onDragOver}
-                    onDrop={(e) => onDrop(e, day, therapists[0]?.id)}
+                    onDrop={(e) => onDrop(e, day, therapists[0]?.id || '')}
                   />
                 ))}
 

@@ -1,7 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Appointment, Therapist, AppointmentStatus } from '../../types';
+import { Appointment, Therapist } from '../../types';
 import StatCard from '../dashboard/StatCard';
 import { DollarSign, BarChart2, CheckCircle, Clock } from 'lucide-react';
 

@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { format, addDays, startOfWeek, addMonths, subMonths, startOfMonth, endOfMonth, setHours, setMinutes } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { useAppointments } from '../hooks/useAppointments';
-import { EnrichedAppointment, Appointment, AppointmentStatus, Therapist, Patient } from '../types';
+import { EnrichedAppointment, Appointment, AppointmentStatus, Patient } from '../types';
 import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
-import { useData } from '../contexts/AppContext';
+import { useData } from '@/contexts/AppContext';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import { Role } from '../types';
 import AppointmentDetailModal from '../components/AppointmentDetailModal';
@@ -18,7 +18,6 @@ import DailyView from '../components/agenda/DailyView';
 import ImprovedWeeklyView from '../components/agenda/ImprovedWeeklyView';
 import MonthlyView from '../components/agenda/MonthlyView';
 import ListView from '../components/agenda/ListView';
-import { cn } from '../lib/utils';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
@@ -51,7 +50,7 @@ export default function AgendaPage() {
     const { therapists } = useData();
     const { user } = useSupabaseAuth();
     const [patients, setPatients] = useState<Patient[]>([]);
-    const [isLoadingData, setIsLoadingData] = useState(true);
+    const [, setIsLoadingData] = useState(true);
     const { showToast } = useToast();
 
     // Modal states
@@ -100,8 +99,8 @@ export default function AgendaPage() {
     }, [showToast]);
 
     const handleSlotClick = (day: Date, time: string, therapistId: string) => {
-        const [hour, minute] = time.split(':');
-        const clickedDate = setMinutes(setHours(day, parseInt(hour)), parseInt(minute));
+        const [hour = '0', minute = '0'] = time.split(':');
+        const clickedDate = setMinutes(setHours(day, parseInt(hour, 10)), parseInt(minute, 10));
         
         setInitialFormData({ date: clickedDate, therapistId });
         setAppointmentToEdit(null);
@@ -292,6 +291,7 @@ export default function AgendaPage() {
 
     const renderView = () => {
         const commonProps = {
+            appointments: filteredAppointments,
             filteredAppointments,
             therapists,
             onAppointmentClick: handleAppointmentClick,
@@ -337,11 +337,9 @@ export default function AgendaPage() {
             case 'list':
                 return (
                     <ListView
-                        {...commonProps}
-                        selectedDate={currentDate}
-                        onDateRangeChange={(start, end) => {
-                            // Handle date range change if needed
-                        }}
+                        appointments={filteredAppointments}
+                        therapists={therapists}
+                        onAppointmentClick={handleAppointmentClick}
                     />
                 );
             default:
@@ -363,7 +361,7 @@ export default function AgendaPage() {
                             <button onClick={handleToday} className="px-4 py-2 text-sm font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Hoje</button>
                             <button onClick={handleNext} className="p-2 rounded-lg hover:bg-slate-100"><ChevronRight size={20} /></button>
                             {user?.role !== Role.Patient && (
-                                <button onClick={() => { setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id }); setIsFormOpen(true); }} className="ml-4 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 flex items-center shadow-sm"><Plus size={16} className="mr-2"/>Agendar</button>
+                                <button onClick={() => { setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' }); setIsFormOpen(true); }} className="ml-4 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 flex items-center shadow-sm"><Plus size={16} className="mr-2"/>Agendar</button>
                             )}
                         </div>
                     </div>
@@ -400,7 +398,7 @@ export default function AgendaPage() {
                         onClose={() => { setIsFormOpen(false); setAppointmentToEdit(null); }}
                         onSave={handleSaveAppointment}
                         onDelete={handleDeleteAppointment}
-                        appointmentToEdit={appointmentToEdit}
+                        appointmentToEdit={appointmentToEdit as Appointment || undefined}
                         initialData={initialFormData}
                         patients={patients}
                         therapists={therapists}

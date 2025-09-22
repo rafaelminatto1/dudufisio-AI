@@ -29,7 +29,7 @@ class PremiumAccountManager {
   private ai: GoogleGenAI;
 
   constructor() {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
       console.warn("VITE_GEMINI_API_KEY is not set for PremiumAccountManager. AI features will be disabled.");
       this.ai = null as any; // Will be handled in queryGemini method
@@ -126,12 +126,13 @@ class PremiumAccountManager {
         contents: query.text,
     });
     
-    const tokensUsed = (query.text.length + result.text.length) / 4;
-    
+    const resultText = result.text || '';
+    const tokensUsed = (query.text.length + resultText.length) / 4;
+
     return {
         id: `resp_${Date.now()}`,
         queryId: query.id,
-        content: result.text,
+        content: resultText,
         confidence: 0.85,
         source: ResponseSource.PREMIUM,
         provider: PremiumProvider.GEMINI_PRO,

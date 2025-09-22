@@ -133,7 +133,7 @@ export const getPatients = async ({ limit = 15, cursor, searchTerm, statusFilter
 
     const patientSlice = filteredPatients.slice(startIndex, startIndex + limit);
     
-    const nextCursor = patientSlice.length === limit ? patientSlice[patientSlice.length - 1].id : null;
+    const nextCursor = patientSlice.length === limit && patientSlice[patientSlice.length - 1] ? patientSlice[patientSlice.length - 1].id : null;
 
     const patientSummaries: PatientSummary[] = patientSlice.map(p => ({
         id: p.id,

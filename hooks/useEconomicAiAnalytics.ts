@@ -1,7 +1,7 @@
 // hooks/useEconomicAiAnalytics.ts
 import { useState, useEffect } from 'react';
 import { aiService } from '../services/ai-economica/aiService';
-import { EconomicAiStats, EconomicAiLog, PremiumProvider, UsageStatus, ResponseSource } from '../services/ai-economica/types/ai-economica.types';
+import { EconomicAiStats, EconomicAiLog, PremiumProvider, UsageStatus } from '../services/ai-economica/types/ai-economica.types';
 
 // Mocked provider status since the service doesn't expose it directly.
 const getMockProviderStatus = async (): Promise<ProviderStatus[]> => {

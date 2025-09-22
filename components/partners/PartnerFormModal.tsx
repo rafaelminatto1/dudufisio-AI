@@ -54,7 +54,7 @@ const PartnerFormModal: React.FC<PartnerFormModalProps> = ({ isOpen, onClose, on
 
     const handleSaveClick = async () => {
         setIsSaving(true);
-        await onSave({ ...formData, id: partnerToEdit?.id });
+        await onSave({ ...formData, ...(partnerToEdit?.id && { id: partnerToEdit.id }) });
         setIsSaving(false);
     };
 
