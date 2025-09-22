@@ -5,7 +5,7 @@ import PageHeader from '../components/PageHeader';
 import { ProviderSettings } from '../services/ai-economica/aiProviders';
 import { PremiumProvider } from '../services/ai-economica/types/ai-economica.types';
 import { settingsService, AiSettings } from '../services/ai-economica/settingsService';
-import { SlidersHorizontal, Save, Power, KeyRound, AlertTriangle } from 'lucide-react';
+import { Save, KeyRound, AlertTriangle } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 
 interface ProviderCardProps {
@@ -65,16 +65,24 @@ const AiSettingsPage: React.FC = () => {
     }, []);
 
     const handleToggleProvider = (key: string, enabled: boolean) => {
-        setProviderConfigs(prev => ({
-            ...prev,
-            [key]: { ...prev[key], enabled }
-        }));
+        setProviderConfigs(prev => {
+            const current = prev[key];
+            if (!current) return prev;
+
+            return {
+                ...prev,
+                [key]: { ...current, enabled }
+            };
+        });
     };
 
     const handleSave = () => {
         const providerSettings: Record<string, { enabled: boolean }> = {};
         for (const key in providerConfigs) {
-            providerSettings[key] = { enabled: providerConfigs[key].enabled };
+            const config = providerConfigs[key];
+            if (config) {
+                providerSettings[key] = { enabled: config.enabled };
+            }
         }
         const newSettings: AiSettings = {
             providers: providerSettings,

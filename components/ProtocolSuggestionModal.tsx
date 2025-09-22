@@ -33,7 +33,7 @@ const ProtocolSuggestionModal: React.FC<ProtocolSuggestionModalProps> = ({ isOpe
                 setSelectedProtocol(null);
                 setProtocolContent('');
                 try {
-                    const diagnosis = patient.conditions![0].name;
+                    const diagnosis = patient.conditions?.[0]?.name || '';
                     const result = await protocolService.getProtocolSuggestions(diagnosis);
                     setSuggestions(result);
                 } catch (error) {

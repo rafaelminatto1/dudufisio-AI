@@ -626,7 +626,7 @@ class TissIntegrationService {
 </soap:Envelope>`;
   }
 
-  private parseRetornoXML(responseXML: any, responseTime: number, statusHTTP: number): TissRetorno {
+  private parseRetornoXML(_responseXML: any, _responseTime: number, _statusHTTP: number): TissRetorno {
     // Extrair dados do retorno TISS (simplificado)
     // Em produção, seria necessário parsing completo do XML de retorno
 
@@ -680,7 +680,7 @@ class TissIntegrationService {
     }
   }
 
-  private parseRetornoConsulta(responseXML: any): TissRetorno {
+  private parseRetornoConsulta(_responseXML: any): TissRetorno {
     // Parse simplificado - em produção seria completo
     return {
       protocoloRecebimento: 'CONSULTA_123',
@@ -983,7 +983,7 @@ class TissIntegrationService {
 
   // Métodos utilitários
 
-  async validarCarteirinha(numeroCarteira: string, registroANS: string): Promise<{
+  async validarCarteirinha(_numeroCarteira: string, registroANS: string): Promise<{
     valida: boolean;
     nomeBeneficiario?: string;
     validadeCarteira?: string;

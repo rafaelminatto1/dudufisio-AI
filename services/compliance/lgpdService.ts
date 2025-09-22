@@ -114,8 +114,8 @@ class LGPDComplianceService {
     try {
       for (const purpose of this.DEFAULT_PURPOSES) {
         const { error } = await supabase
-          .from('data_processing_purposes')
-          .upsert(purpose, { onConflict: 'id' });
+          .from('data_processing_purposes' as any)
+          .upsert(purpose as any, { onConflict: 'id' });
 
         if (error) throw error;
       }
@@ -156,8 +156,8 @@ class LGPDComplianceService {
         };
 
         const { error } = await supabase
-          .from('user_consents')
-          .insert(consent);
+          .from('user_consents' as any)
+          .insert(consent as any);
 
         if (error) throw error;
 
@@ -193,7 +193,7 @@ class LGPDComplianceService {
   ): Promise<void> {
     try {
       const { data: existingConsent, error: fetchError } = await supabase
-        .from('user_consents')
+        .from('user_consents' as any)
         .select('*')
         .eq('id', consentId)
         .eq('user_id', userId)
@@ -202,7 +202,7 @@ class LGPDComplianceService {
       if (fetchError) throw fetchError;
 
       const { error: updateError } = await supabase
-        .from('user_consents')
+        .from('user_consents' as any)
         .update({
           granted: true,
           granted_at: new Date().toISOString(),
@@ -241,7 +241,7 @@ class LGPDComplianceService {
   ): Promise<void> {
     try {
       const { data: existingConsent, error: fetchError } = await supabase
-        .from('user_consents')
+        .from('user_consents' as any)
         .select('*')
         .eq('id', consentId)
         .eq('user_id', userId)
@@ -250,7 +250,7 @@ class LGPDComplianceService {
       if (fetchError) throw fetchError;
 
       const { error: updateError } = await supabase
-        .from('user_consents')
+        .from('user_consents' as any)
         .update({
           granted: false,
           revoked_at: new Date().toISOString(),
@@ -296,7 +296,7 @@ class LGPDComplianceService {
       };
 
       const { error } = await supabase
-        .from('data_portability_requests')
+        .from('data_portability_requests' as any)
         .insert({
           id: request.id,
           user_id: request.userId,
@@ -329,10 +329,10 @@ class LGPDComplianceService {
         { data: consents },
       ] = await Promise.all([
         supabase.from('user_profiles').select('*').eq('id', userId),
-        supabase.from('appointments').select('*').eq('patient_id', userId),
-        supabase.from('treatment_sessions').select('*').eq('patient_id', userId),
-        supabase.from('payment_transactions').select('*').eq('customer_id', userId),
-        supabase.from('user_consents').select('*').eq('user_id', userId),
+        supabase.from('appointments' as any).select('*').eq('patient_id', userId),
+        supabase.from('treatment_sessions' as any).select('*').eq('patient_id', userId),
+        supabase.from('payment_transactions' as any).select('*').eq('customer_id', userId),
+        supabase.from('user_consents' as any).select('*').eq('user_id', userId),
       ]);
 
       return {
@@ -390,7 +390,7 @@ class LGPDComplianceService {
       };
 
       const { error } = await supabase
-        .from('audit_trail')
+        .from('audit_trail' as any)
         .insert({
           id: auditEntry.id,
           user_id: auditEntry.userId,
@@ -426,17 +426,17 @@ class LGPDComplianceService {
         { data: auditEntries },
       ] = await Promise.all([
         supabase
-          .from('user_consents')
+          .from('user_consents' as any)
           .select('*')
           .gte('granted_at', startDate)
           .lte('granted_at', endDate),
         supabase
-          .from('data_portability_requests')
+          .from('data_portability_requests' as any)
           .select('*')
           .gte('requested_at', startDate)
           .lte('requested_at', endDate),
         supabase
-          .from('audit_trail')
+          .from('audit_trail' as any)
           .select('*')
           .gte('timestamp', startDate)
           .lte('timestamp', endDate),
@@ -508,7 +508,7 @@ Esta autorização pode ser revogada a qualquer momento através das configuraç
     setTimeout(async () => {
       try {
         const { data: request } = await supabase
-          .from('data_portability_requests')
+          .from('data_portability_requests' as any)
           .select('*')
           .eq('id', requestId)
           .single();
@@ -519,7 +519,7 @@ Esta autorização pode ser revogada a qualquer momento através das configuraç
         const exportUrl = await this.generateExportFile(userData, request.format);
 
         await supabase
-          .from('data_portability_requests')
+          .from('data_portability_requests' as any)
           .update({
             status: 'completed',
             completed_at: new Date().toISOString(),
@@ -530,7 +530,7 @@ Esta autorização pode ser revogada a qualquer momento através das configuraç
       } catch (error) {
         console.error('Erro ao processar portabilidade:', error);
         await supabase
-          .from('data_portability_requests')
+          .from('data_portability_requests' as any)
           .update({ status: 'rejected' })
           .eq('id', requestId);
       }
@@ -554,7 +554,7 @@ Esta autorização pode ser revogada a qualquer momento através das configuraç
 
     // Verificar período de retenção médica (20 anos)
     const { data: recentTreatments } = await supabase
-      .from('treatment_sessions')
+      .from('treatment_sessions' as any)
       .select('*')
       .eq('patient_id', userId)
       .gte('session_date', new Date(Date.now() - 20 * 365 * 24 * 60 * 60 * 1000).toISOString());
@@ -582,7 +582,7 @@ Esta autorização pode ser revogada a qualquer momento através das configuraç
     };
 
     await supabase
-      .from('user_profiles')
+      .from('user_profiles' as any)
       .update(anonymizedData)
       .eq('id', userId);
   }

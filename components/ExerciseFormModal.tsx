@@ -8,8 +8,8 @@ interface ExerciseFormModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: (exercise: Omit<Exercise, 'id'> & { id?: string }) => Promise<void>;
-    exerciseToEdit?: Exercise;
-    defaultCategory?: string;
+    exerciseToEdit?: Exercise | undefined;
+    defaultCategory?: string | undefined;
     allCategories: string[];
     saveAsSuggestion?: boolean;
 }

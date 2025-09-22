@@ -1,7 +1,7 @@
 // components/patient/PatientClinicalDashboard.tsx
 import React, { useMemo, useState } from 'react';
 import { Patient, Appointment, SoapNote, TreatmentPlan, AppointmentStatus, PainPoint } from '../../types';
-import { BarChart as ChartIcon, TrendingDown, CalendarCheck, Clock, Activity, Loader, Sparkles, MapPin } from 'lucide-react';
+import { TrendingDown, CalendarCheck, Clock, Activity, Loader, Sparkles, MapPin } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import * as geminiService from '../../services/geminiService';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
@@ -49,9 +49,11 @@ const PatientClinicalDashboard: React.FC<PatientClinicalDashboardProps> = ({ pat
         let painEvolution = 'N/A';
         const notesWithPain = notes.filter(n => typeof n.painScale === 'number');
         if (notesWithPain.length >= 2) {
-            const firstPain = notesWithPain[notesWithPain.length - 1].painScale!;
-            const lastPain = notesWithPain[0].painScale!;
-            painEvolution = `${firstPain}/10 ➔ ${lastPain}/10`;
+            const firstNote = notesWithPain[notesWithPain.length - 1];
+            const lastNote = notesWithPain[0];
+            if (firstNote && lastNote && typeof firstNote.painScale === 'number' && typeof lastNote.painScale === 'number') {
+                painEvolution = `${firstNote.painScale}/10 ➔ ${lastNote.painScale}/10`;
+            }
         }
 
         const nextAppointment = appointments

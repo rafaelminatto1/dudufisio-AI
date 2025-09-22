@@ -65,7 +65,7 @@ const KanbanPage: React.FC = () => {
         try {
             const projectsData = await taskService.getProjects();
             setProjects(projectsData);
-            if (projectsData.length > 0 && !selectedProjectId) {
+            if (projectsData.length > 0 && !selectedProjectId && projectsData[0]) {
                 setSelectedProjectId(projectsData[0].id);
             }
         } catch (error) {

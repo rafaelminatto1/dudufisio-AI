@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSupabasePatients } from '../../hooks/supabase/useSupabasePatients';
 import { useSupabaseAppointments } from '../../hooks/supabase/useSupabaseAppointments';
 import { subscriptions } from '../../services/supabase/realtimeService';
-import { useAuth } from "../contexts/AppContext";
+import { useAuth } from "@/contexts/AppContext";
 import { Loader2, AlertCircle, CheckCircle, Users, Calendar, Bell } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -17,7 +17,7 @@ import { ptBR } from 'date-fns/locale';
  * - Error handling
  */
 export const SupabaseExample: React.FC = () => {
-  const { user, profile, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { patients, loading: patientsLoading, error: patientsError, createPatient } = useSupabasePatients();
   const { appointments, loading: appointmentsLoading, error: appointmentsError } = useSupabaseAppointments();
   
@@ -45,7 +45,7 @@ export const SupabaseExample: React.FC = () => {
     // Subscribe to therapist presence
     const presenceSub = subscriptions.therapistPresence(
       user.id,
-      { name: profile?.fullName, role: profile?.role },
+      { name: user.name || 'Unknown', role: user.role },
       {
         onSync: () => {
           setRealtimeStatus('connected');
@@ -63,7 +63,7 @@ export const SupabaseExample: React.FC = () => {
       notificationSub.unsubscribe();
       presenceSub.unsubscribe();
     };
-  }, [user, profile]);
+  }, [user]);
 
   // Example: Create a new patient with error handling
   const handleCreatePatient = async () => {
@@ -149,7 +149,7 @@ export const SupabaseExample: React.FC = () => {
     );
   };
 
-  if (!isAuthenticated()) {
+  if (!isAuthenticated) {
     return (
       <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
         <p className="text-yellow-800">Por favor, faça login para acessar esta página.</p>
@@ -180,7 +180,7 @@ export const SupabaseExample: React.FC = () => {
         {/* User info */}
         <div className="bg-gray-50 rounded p-4">
           <p className="text-sm text-gray-600">
-            Logado como: <strong>{profile?.fullName}</strong> ({profile?.role})
+            Logado como: <strong>{user?.name}</strong> ({user?.role})
           </p>
         </div>
       </div>

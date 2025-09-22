@@ -8,7 +8,7 @@ declare global {
 
 const redisClientSingleton = () => {
   const client = createClient({
-    url: process.env.REDIS_URL || 'redis://localhost:6379',
+    url: process.env['REDIS_URL'] || 'redis://localhost:6379',
   });
   
   client.on('error', (err) => console.error('Redis Client Error', err));
@@ -22,7 +22,7 @@ const redisClientSingleton = () => {
 
 const redis = globalThis.redis ?? redisClientSingleton();
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env['NODE_ENV'] !== 'production') {
   globalThis.redis = redis;
 }
 

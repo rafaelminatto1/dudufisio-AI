@@ -111,8 +111,8 @@ class PaymentService {
         type: 'card' as const,
         enabled: true,
         config: {
-          accessToken: import.meta.env.VITE_MERCADOPAGO_ACCESS_TOKEN,
-          publicKey: import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY,
+          accessToken: (import.meta as any).env.VITE_MERCADOPAGO_ACCESS_TOKEN,
+          publicKey: (import.meta as any).env.VITE_MERCADOPAGO_PUBLIC_KEY,
         }
       },
       {
@@ -121,8 +121,8 @@ class PaymentService {
         type: 'card' as const,
         enabled: true,
         config: {
-          publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY,
-          secretKey: import.meta.env.VITE_STRIPE_SECRET_KEY,
+          publishableKey: (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY,
+          secretKey: (import.meta as any).env.VITE_STRIPE_SECRET_KEY,
         }
       },
       {
@@ -131,8 +131,8 @@ class PaymentService {
         type: 'pix' as const,
         enabled: true,
         config: {
-          apiKey: import.meta.env.VITE_ASAAS_API_KEY,
-          environment: import.meta.env.VITE_ASAAS_ENVIRONMENT || 'sandbox',
+          apiKey: (import.meta as any).env.VITE_ASAAS_API_KEY,
+          environment: (import.meta as any).env.VITE_ASAAS_ENVIRONMENT || 'sandbox',
         }
       },
       {
@@ -141,7 +141,7 @@ class PaymentService {
         type: 'pix' as const,
         enabled: true,
         config: {
-          pixKey: import.meta.env.VITE_PIX_KEY,
+          pixKey: (import.meta as any).env.VITE_PIX_KEY,
           merchantName: 'DuduFisio AI',
           merchantCity: 'São Paulo',
         }
@@ -305,7 +305,7 @@ class PaymentService {
       };
 
       // Salvar no banco
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('subscriptions')
         .insert({
           id: subscription.id,
@@ -328,7 +328,7 @@ class PaymentService {
 
   async cancelSubscription(subscriptionId: string): Promise<void> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('subscriptions')
         .update({
           status: 'canceled',
@@ -367,7 +367,7 @@ class PaymentService {
       };
 
       // Salvar no banco
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('invoices')
         .insert({
           id: invoice.id,
@@ -411,13 +411,13 @@ class PaymentService {
 
       // Se for padrão, remover padrão dos outros
       if (data.isDefault) {
-        await supabase
+        await (supabase as any)
           .from('payment_methods')
           .update({ is_default: false })
           .eq('user_id', data.userId);
       }
 
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('payment_methods')
         .insert({
           id: paymentMethod.id,
@@ -440,7 +440,7 @@ class PaymentService {
 
   async getPaymentMethods(userId: string): Promise<PaymentMethod[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('payment_methods')
         .select('*')
         .eq('user_id', userId)
@@ -466,7 +466,7 @@ class PaymentService {
   // Transaction History
   async getTransactionHistory(userId: string, limit: number = 50): Promise<PaymentIntent[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('payment_transactions')
         .select('*')
         .eq('customer_id', userId)
@@ -512,7 +512,7 @@ class PaymentService {
       // Implementar lógica específica por provedor
 
       // Atualizar status no banco
-      const { error: updateError } = await supabase
+      const { error: updateError } = await (supabase as any)
         .from('payment_transactions')
         .update({
           status: 'refunded',
@@ -536,7 +536,7 @@ class PaymentService {
 
   // Private helper methods
   private async savePaymentIntent(intent: PaymentIntent): Promise<void> {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('payment_transactions')
       .insert({
         id: intent.id,

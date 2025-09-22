@@ -2,8 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { PatientFormData } from '../validations/patient';
+import { useWatch } from 'react-hook-form';
 
 /**
  * Hook customizado para gerenciar a lógica do formulário de paciente,

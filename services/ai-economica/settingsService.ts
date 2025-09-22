@@ -23,7 +23,10 @@ export const settingsService = {
         // Default settings from config file
         const providerSettings: Record<string, { enabled: boolean }> = {};
         for (const key in AI_PROVIDERS_CONFIG) {
-            providerSettings[key] = { enabled: AI_PROVIDERS_CONFIG[key].enabled };
+            const config = AI_PROVIDERS_CONFIG[key];
+            if (config) {
+                providerSettings[key] = { enabled: config.enabled };
+            }
         }
         return {
             providers: providerSettings,
@@ -44,10 +47,13 @@ export const settingsService = {
         const mergedConfigs: Record<string, ProviderSettings> = {};
 
         for (const key in AI_PROVIDERS_CONFIG) {
-            mergedConfigs[key] = {
-                ...AI_PROVIDERS_CONFIG[key],
-                enabled: settings.providers[key]?.enabled ?? AI_PROVIDERS_CONFIG[key].enabled,
-            };
+            const config = AI_PROVIDERS_CONFIG[key];
+            if (config) {
+                mergedConfigs[key] = {
+                    ...config,
+                    enabled: settings.providers[key]?.enabled ?? config.enabled,
+                };
+            }
         }
         return mergedConfigs;
     }

@@ -55,7 +55,7 @@ const ItemFormModal: React.FC<ItemFormModalProps> = ({ isOpen, onClose, onSave, 
             alert('Nome e Categoria são obrigatórios.');
             return;
         }
-        onSave({ ...formData, id: itemToEdit?.id });
+        onSave({ ...formData, ...(itemToEdit?.id && { id: itemToEdit.id }) });
     };
 
     const title = itemToEdit ? 'Editar Item do Inventário' : 'Novo Item no Inventário';

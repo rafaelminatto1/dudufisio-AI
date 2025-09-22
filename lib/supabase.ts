@@ -96,18 +96,18 @@ export const batchInsert = async <T extends Record<string, any>>(
   chunkSize = 100
 ) => {
   const results = [];
-  
+
   for (let i = 0; i < data.length; i += chunkSize) {
     const chunk = data.slice(i, i + chunkSize);
     const { data: insertedData, error } = await supabase
-      .from(table)
-      .insert(chunk)
+      .from(table as any)
+      .insert(chunk as any)
       .select();
-    
+
     if (error) throw error;
     results.push(...(insertedData || []));
   }
-  
+
   return results;
 };
 
@@ -117,7 +117,7 @@ export const uploadFile = async (
   path: string,
   file: File
 ) => {
-  const { data, error } = await supabase.storage
+  const { data: _data, error } = await supabase.storage
     .from(bucket)
     .upload(path, file, {
       cacheControl: '3600',

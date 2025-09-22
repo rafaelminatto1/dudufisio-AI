@@ -1,6 +1,6 @@
 import { supabase, handleSupabaseError } from '../../lib/supabase';
 import { User, Role } from '../../types';
-import type { AuthError, AuthResponse, User as SupabaseUser } from '@supabase/supabase-js';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 export interface AuthState {
   user: User | null;
@@ -139,7 +139,7 @@ class SupabaseAuthService {
           phone: userData.phone,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-        });
+        } as any);
 
       if (profileError) {
         console.error('Profile creation error:', profileError);
@@ -331,10 +331,10 @@ class SupabaseAuthService {
       return {
         id: supabaseUser.id,
         email: supabaseUser.email || '',
-        name: profile?.name || supabaseUser.user_metadata?.name || 'Usuário',
-        role: profile?.role || supabaseUser.user_metadata?.role || Role.Patient,
-        phone: profile?.phone || supabaseUser.user_metadata?.phone || '',
-        avatarUrl: profile?.avatar_url || supabaseUser.user_metadata?.avatar_url || '',
+        name: profile?.name || supabaseUser.user_metadata?.['name'] || 'Usuário',
+        role: profile?.role || supabaseUser.user_metadata?.['role'] || Role.Patient,
+        phone: profile?.phone || supabaseUser.user_metadata?.['phone'] || '',
+        avatarUrl: profile?.avatar_url || supabaseUser.user_metadata?.['avatar_url'] || '',
         emailVerified: !!supabaseUser.email_confirmed_at,
         createdAt: supabaseUser.created_at,
         lastSignIn: supabaseUser.last_sign_in_at,
@@ -346,10 +346,10 @@ class SupabaseAuthService {
       return {
         id: supabaseUser.id,
         email: supabaseUser.email || '',
-        name: supabaseUser.user_metadata?.name || 'Usuário',
-        role: supabaseUser.user_metadata?.role || Role.Patient,
-        phone: supabaseUser.user_metadata?.phone || '',
-        avatarUrl: supabaseUser.user_metadata?.avatar_url || '',
+        name: supabaseUser.user_metadata?.['name'] || 'Usuário',
+        role: supabaseUser.user_metadata?.['role'] || Role.Patient,
+        phone: supabaseUser.user_metadata?.['phone'] || '',
+        avatarUrl: supabaseUser.user_metadata?.['avatar_url'] || '',
         emailVerified: !!supabaseUser.email_confirmed_at,
         createdAt: supabaseUser.created_at,
         lastSignIn: supabaseUser.last_sign_in_at,
@@ -418,8 +418,8 @@ class SupabaseAuthService {
     const isUsingDemoCredentials = demoEmails.includes(credentials.email) &&
                                    credentials.password === 'demo123456';
 
-    const supabaseNotConfigured = !import.meta.env.VITE_SUPABASE_ANON_KEY ||
-                                  import.meta.env.VITE_SUPABASE_ANON_KEY === 'your_anon_key_here';
+    const supabaseNotConfigured = !(import.meta as any).env.VITE_SUPABASE_ANON_KEY ||
+                                  (import.meta as any).env.VITE_SUPABASE_ANON_KEY === 'your_anon_key_here';
 
     return isUsingDemoCredentials || supabaseNotConfigured;
   }

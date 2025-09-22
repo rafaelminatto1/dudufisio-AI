@@ -52,8 +52,7 @@ const InfoPill: React.FC<{ label: string; value: React.ReactNode }> = ({ label, 
 );
 
 
-export default function PatientDetailClient({ patient: initialPatient }: PatientDetailClientProps) {
-  const [patient, setPatient] = useState(initialPatient);
+export default function PatientDetailClient({ patient }: PatientDetailClientProps) {
   const [activeTab, setActiveTab] = useState('historico');
   const [isSoapModalOpen, setIsSoapModalOpen] = useState(false);
 

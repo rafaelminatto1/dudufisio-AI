@@ -55,7 +55,13 @@ class EventService {
     if (eventData.id) {
         const index = this.eventsData.findIndex(e => e.id === eventData.id);
         if (index > -1) {
-            const updatedEvent = { ...this.eventsData[index], ...eventData };
+            const updatedEvent: Event = {
+                ...this.eventsData[index],
+                ...eventData,
+                id: this.eventsData[index].id, // Ensure id is preserved
+                registrations: this.eventsData[index].registrations,
+                providers: this.eventsData[index].providers,
+            };
             this.eventsData[index] = updatedEvent;
             this.emit('events:changed');
             return updatedEvent;
@@ -83,6 +89,9 @@ class EventService {
     }
 
     const registration = this.registrationsData[regIndex];
+    if (!registration) {
+        throw new Error("Inscrição não encontrada.");
+    }
     if (registration.status === RegistrationStatus.Attended) {
         throw new Error("Participante já fez check-in.");
     }
@@ -98,11 +107,14 @@ class EventService {
     // Also update the event's registration array for consistency
     const eventIndex = this.eventsData.findIndex(e => e.id === registration.eventId);
     if (eventIndex > -1) {
-        const eventRegIndex = this.eventsData[eventIndex].registrations.findIndex(r => r.id === registrationId);
-        if (eventRegIndex > -1) {
-            this.eventsData[eventIndex].registrations[eventRegIndex] = updatedRegistration;
-        } else {
-             this.eventsData[eventIndex].registrations.push(updatedRegistration);
+        const event = this.eventsData[eventIndex];
+        if (event) {
+            const eventRegIndex = event.registrations.findIndex(r => r.id === registrationId);
+            if (eventRegIndex > -1) {
+                event.registrations[eventRegIndex] = updatedRegistration;
+            } else {
+                event.registrations.push(updatedRegistration);
+            }
         }
     }
     
@@ -116,12 +128,15 @@ class EventService {
     for (const event of this.eventsData) {
         const providerIndex = event.providers.findIndex(p => p.id === providerId);
         if (providerIndex > -1) {
-            if (event.providers[providerIndex].status !== ProviderStatus.Applied) {
-                throw new Error("Apenas inscrições com status 'Inscrito' podem ser confirmadas.");
+            const provider = event.providers[providerIndex];
+            if (provider) {
+                if (provider.status !== ProviderStatus.Applied) {
+                    throw new Error("Apenas inscrições com status 'Inscrito' podem ser confirmadas.");
+                }
+                provider.status = ProviderStatus.Confirmed;
+                this.emit('events:changed');
+                return provider;
             }
-            event.providers[providerIndex].status = ProviderStatus.Confirmed;
-            this.emit('events:changed');
-            return event.providers[providerIndex];
         }
     }
     
@@ -134,12 +149,15 @@ class EventService {
     for (const event of this.eventsData) {
         const providerIndex = event.providers.findIndex(p => p.id === providerId);
         if (providerIndex > -1) {
-            if (event.providers[providerIndex].status !== ProviderStatus.Confirmed) {
-                throw new Error("Apenas prestadores confirmados podem receber pagamento.");
+            const provider = event.providers[providerIndex];
+            if (provider) {
+                if (provider.status !== ProviderStatus.Confirmed) {
+                    throw new Error("Apenas prestadores confirmados podem receber pagamento.");
+                }
+                provider.status = ProviderStatus.Paid;
+                this.emit('events:changed');
+                return provider;
             }
-            event.providers[providerIndex].status = ProviderStatus.Paid;
-            this.emit('events:changed');
-            return event.providers[providerIndex];
         }
     }
     

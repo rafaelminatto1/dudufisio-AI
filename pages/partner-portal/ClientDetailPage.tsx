@@ -9,7 +9,7 @@ import * as ReactRouterDOM from 'react-router-dom';
 import PageHeader from '../../components/PageHeader';
 import { Patient, Voucher, SoapNote } from '../../types';
 import * as partnershipService from '../../services/partnershipService';
-import { useAuth } from "../contexts/AppContext";
+import { useAuth } from "@/contexts/AppContext";
 import PageLoader from '../../components/ui/PageLoader';
 import { useToast } from '../../contexts/ToastContext';
 import { ChevronLeft, FileText, LineChart, Notebook, User } from 'lucide-react';

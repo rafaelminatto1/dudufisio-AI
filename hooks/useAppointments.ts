@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Appointment, EnrichedAppointment, Patient, Therapist, AppointmentTypeColors } from '../types';
 import * as appointmentService from '../services/appointmentService';
-import { useData } from '../contexts/AppContext';
+import { useData } from '@/contexts/AppContext';
 import { eventService } from '../services/eventService';
 
 interface UseAppointmentsResult {
@@ -90,6 +90,7 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
         therapistColor: therapistMap.get(app.therapistId)?.color || 'slate',
         typeColor: AppointmentTypeColors[app.type] || 'slate',
         patientMedicalAlerts: patientMap.get(app.patientId)?.medicalAlerts,
+        therapistName: therapistMap.get(app.therapistId)?.name || 'Unknown Therapist',
     }));
   }, [appointments, patients, therapists]);
 

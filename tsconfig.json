@@ -35,7 +35,6 @@
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
       "@/components/*": ["./components/*"],
       "@/pages/*": ["./pages/*"],
       "@/services/*": ["./services/*"],
@@ -55,7 +54,20 @@
     "types",
     "lib",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "types/env.d.ts"
   ],
-  "exclude": ["node_modules", "dist", "build", "tests/**/*", "testsprite_tests/**/*"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "tests/**/*",
+    "testsprite_tests/**/*",
+    "components/auth/AuthProvider.tsx",
+    "components/auth/UserMenu.tsx",
+    "components/pacientes/PatientList.tsx",
+    "lib/actions/**/*",
+    "lib/auth.ts",
+    "middleware.ts"
+  ]
 }

@@ -34,8 +34,8 @@ const ExerciseLibraryPage: React.FC = () => {
   const [maxDifficulty, setMaxDifficulty] = useState<number>(5);
 
   const [isExerciseModalOpen, setIsExerciseModalOpen] = useState(false);
-  const [exerciseToEdit, setExerciseToEdit] = useState<Exercise | undefined>(undefined);
-  const [defaultCategory, setDefaultCategory] = useState<string | undefined>(undefined);
+  const [exerciseToEdit, setExerciseToEdit] = useState<Exercise | undefined>();
+  const [defaultCategory, setDefaultCategory] = useState<string | undefined>();
 
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [groupModalState, setGroupModalState] = useState<{ mode: 'create' | 'edit' | 'copy', name?: string }>({ mode: 'create' });
@@ -44,7 +44,7 @@ const ExerciseLibraryPage: React.FC = () => {
   const [playingVideo, setPlayingVideo] = useState<{ url: string; title: string } | null>(null);
 
   useEffect(() => {
-    if (!isLoading && categories.length > 0 && openCategories.length === 0) {
+    if (!isLoading && categories.length > 0 && openCategories.length === 0 && categories[0]) {
       setOpenCategories([categories[0]]);
     }
   }, [isLoading, categories, openCategories.length]);
@@ -105,7 +105,7 @@ const ExerciseLibraryPage: React.FC = () => {
   };
 
   const handleOpenGroupModal = (mode: 'create' | 'edit' | 'copy', name?: string) => {
-    setGroupModalState({ mode, name });
+    setGroupModalState({ mode, ...(name && { name }) });
     setIsGroupModalOpen(true);
   };
 

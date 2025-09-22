@@ -1,6 +1,6 @@
 // hooks/useFinancialData.ts
 import { useState, useEffect, useCallback } from 'react';
-import { FinancialTransaction, TransactionType, Patient } from '../types';
+import { FinancialTransaction, TransactionType } from '../types';
 import * as financialService from '../services/financialService';
 import * as patientService from '../services/patientService';
 
@@ -66,10 +66,10 @@ const useFinancialData = (period: TimePeriod) => {
              const [dayB, monthB] = b.date.split(' de ');
              // A simple sort for "dd de mmm" format
              const monthOrder = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-             const monthIndexA = monthOrder.indexOf(monthA);
-             const monthIndexB = monthOrder.indexOf(monthB);
+             const monthIndexA = monthOrder.indexOf(monthA || '');
+             const monthIndexB = monthOrder.indexOf(monthB || '');
              if (monthIndexA !== monthIndexB) return monthIndexA - monthIndexB;
-             return parseInt(dayA) - parseInt(dayB);
+             return parseInt(dayA || '0') - parseInt(dayB || '0');
         });
 
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { Exercise, PainPoint } from '../../types';
 import VideoFeed from './VideoFeed';
 import PainMap from '../patient/PainMap';
-import { MonitorPlay, Map } from 'lucide-react';
+import { MonitorPlay } from 'lucide-react';
 
 type SharedContent = 
     | { type: 'exercise'; data: Exercise }

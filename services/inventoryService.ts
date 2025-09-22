@@ -31,8 +31,13 @@ export const saveItem = async (itemData: Omit<InventoryItem, 'id'> & { id?: stri
         // Update
         const index = items.findIndex(i => i.id === itemData.id);
         if (index > -1) {
-            items[index] = { ...items[index], ...itemData };
-            return items[index];
+            const updatedItem: InventoryItem = {
+                ...items[index],
+                ...itemData,
+                id: items[index].id, // Ensure id is preserved
+            };
+            items[index] = updatedItem;
+            return updatedItem;
         }
         throw new Error("Item not found");
     } else {

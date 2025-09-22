@@ -1,4 +1,4 @@
-import { Patient, Appointment, SoapNote, AppointmentStatus, TreatmentPlan, ExercisePrescription, AuditLogEntry, Therapist, AppointmentType, RecurrenceRule, KnowledgeBaseEntry, User, Role, Exercise, Group, VoucherPlan, Voucher, Document, Task, TaskStatus, TaskPriority, Notification, PatientAttachment, Achievement, MedicalReport, FinancialTransaction, TransactionType, ExpenseCategory, Intern, InternStatus, EducationalCase, Project, ProjectStatus, Partner, InventoryCategory, Supplier, InventoryItem, ItemStatus, StockMovement, MovementType, Event, EventType, EventStatus, EventRegistration, RegistrationStatus, EventProvider, ProviderStatus, PatientStatus } from '../types';
+import { Patient, Appointment, SoapNote, AppointmentStatus, TreatmentPlan, ExercisePrescription, AuditLogEntry, Therapist, AppointmentType, RecurrenceRule, KnowledgeBaseEntry, User, Role, Exercise, Group, VoucherPlan, Voucher, Document, Task, TaskStatus, TaskPriority, Notification, Achievement, MedicalReport, FinancialTransaction, TransactionType, ExpenseCategory, Intern, InternStatus, EducationalCase, Project, ProjectStatus, Partner, InventoryCategory, Supplier, InventoryItem, ItemStatus, StockMovement, MovementType, Event, EventType, EventStatus, EventRegistration, RegistrationStatus, EventProvider, ProviderStatus, PatientStatus } from '../types';
 import { CalendarCheck, Flame, Medal, Shield, Star, Trophy } from 'lucide-react';
 
 export const mockUsers: User[] = [
@@ -243,33 +243,33 @@ const getFutureDate = (days: number, hours: number, minutes: number = 0) => {
 
 
 export const mockAppointments: Appointment[] = [
-    { id: 'app1', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(0, 9), endTime: getFutureDate(0, 10), title: 'Avaliação de joelho', type: AppointmentType.Evaluation, status: AppointmentStatus.Scheduled, value: 150, paymentStatus: 'pending', sessionNumber: 1, totalSessions: 10 },
-    { id: 'app2', patientId: '2', patientName: 'Bruno Gomes', patientAvatarUrl: mockPatients[1].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(0, 10), endTime: getFutureDate(0, 11), title: 'Tratamento de lombar', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending', sessionNumber: 3, totalSessions: 8 },
-    { id: 'app3', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(1, 14), endTime: getFutureDate(1, 15), title: 'Sessão de fortalecimento', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending', sessionNumber: 2, totalSessions: 10 },
-    { id: 'app4', patientId: '3', patientName: 'Carla Dias', patientAvatarUrl: mockPatients[2].avatarUrl, therapistId: 'therapist_3', startTime: getFutureDate(2, 11), endTime: getFutureDate(2, 12), title: 'Consulta de retorno', type: AppointmentType.Return, status: AppointmentStatus.Scheduled, value: 100, paymentStatus: 'paid' },
-    { id: 'app5', patientId: '2', patientName: 'Bruno Gomes', patientAvatarUrl: mockPatients[1].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(4, 9), endTime: getFutureDate(4, 10), title: 'Sessão de acompanhamento', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending', sessionNumber: 4, totalSessions: 8 },
-    { id: 'app6', patientId: '4', patientName: 'Daniel Almeida', patientAvatarUrl: mockPatients[3].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(-1, 11), endTime: getFutureDate(-1, 11, 30), title: 'Pós-alta', type: AppointmentType.Return, status: AppointmentStatus.Completed, value: 80, paymentStatus: 'paid' },
-    { id: 'app7', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(-2, 9), endTime: getFutureDate(-2, 10), title: 'Avaliação de joelho', type: AppointmentType.Evaluation, status: AppointmentStatus.Completed, value: 150, paymentStatus: 'paid' },
-    { id: 'app8', patientId: '2', patientName: 'Bruno Gomes', patientAvatarUrl: mockPatients[1].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(-3, 10), endTime: getFutureDate(-3, 11), title: 'Tratamento de lombar', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 120, paymentStatus: 'paid' },
-    { id: 'app9', patientId: '3', patientName: 'Carla Dias', patientAvatarUrl: mockPatients[2].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(-4, 14), endTime: getFutureDate(-4, 15), title: 'Sessão', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 120, paymentStatus: 'paid' },
-    { id: 'app10', patientId: '5', patientName: 'Fernando Oliveira', patientAvatarUrl: mockPatients[4].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(0, 11), endTime: getFutureDate(0, 12), title: 'Fascite Plantar', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
-    { id: 'app11', patientId: '6', patientName: 'Lúcia Martins', patientAvatarUrl: mockPatients[5].avatarUrl, therapistId: 'therapist_3', startTime: getFutureDate(1, 10), endTime: getFutureDate(1, 11), title: 'Cervicalgia', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
-    { id: 'app12', patientId: '7', patientName: 'Mário Santos', patientAvatarUrl: mockPatients[6].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(1, 16), endTime: getFutureDate(1, 17), title: 'Pós-op Quadril', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
-    { id: 'app13', patientId: '8', patientName: 'Júlia Pereira', patientAvatarUrl: mockPatients[7].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(2, 15), endTime: getFutureDate(2, 16), title: 'Pós-op LCA', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
-    { id: 'app14', patientId: '5', patientName: 'Fernando Oliveira', patientAvatarUrl: mockPatients[4].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(-3, 11), endTime: getFutureDate(-3, 12), title: 'Fascite Plantar', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 120, paymentStatus: 'paid' },
+    { id: 'app1', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(0, 9), endTime: getFutureDate(0, 10), title: 'Avaliação de joelho', type: AppointmentType.Evaluation, status: AppointmentStatus.Scheduled, value: 150, paymentStatus: 'pending', sessionNumber: 1, totalSessions: 10 },
+    { id: 'app2', patientId: '2', patientName: 'Bruno Gomes', patientAvatarUrl: mockPatients[1]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(0, 10), endTime: getFutureDate(0, 11), title: 'Tratamento de lombar', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending', sessionNumber: 3, totalSessions: 8 },
+    { id: 'app3', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(1, 14), endTime: getFutureDate(1, 15), title: 'Sessão de fortalecimento', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending', sessionNumber: 2, totalSessions: 10 },
+    { id: 'app4', patientId: '3', patientName: 'Carla Dias', patientAvatarUrl: mockPatients[2]?.avatarUrl || '', therapistId: 'therapist_3', startTime: getFutureDate(2, 11), endTime: getFutureDate(2, 12), title: 'Consulta de retorno', type: AppointmentType.Return, status: AppointmentStatus.Scheduled, value: 100, paymentStatus: 'paid' },
+    { id: 'app5', patientId: '2', patientName: 'Bruno Gomes', patientAvatarUrl: mockPatients[1]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(4, 9), endTime: getFutureDate(4, 10), title: 'Sessão de acompanhamento', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending', sessionNumber: 4, totalSessions: 8 },
+    { id: 'app6', patientId: '4', patientName: 'Daniel Almeida', patientAvatarUrl: mockPatients[3]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(-1, 11), endTime: getFutureDate(-1, 11, 30), title: 'Pós-alta', type: AppointmentType.Return, status: AppointmentStatus.Completed, value: 80, paymentStatus: 'paid' },
+    { id: 'app7', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(-2, 9), endTime: getFutureDate(-2, 10), title: 'Avaliação de joelho', type: AppointmentType.Evaluation, status: AppointmentStatus.Completed, value: 150, paymentStatus: 'paid' },
+    { id: 'app8', patientId: '2', patientName: 'Bruno Gomes', patientAvatarUrl: mockPatients[1]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(-3, 10), endTime: getFutureDate(-3, 11), title: 'Tratamento de lombar', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 120, paymentStatus: 'paid' },
+    { id: 'app9', patientId: '3', patientName: 'Carla Dias', patientAvatarUrl: mockPatients[2]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(-4, 14), endTime: getFutureDate(-4, 15), title: 'Sessão', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 120, paymentStatus: 'paid' },
+    { id: 'app10', patientId: '5', patientName: 'Fernando Oliveira', patientAvatarUrl: mockPatients[4]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(0, 11), endTime: getFutureDate(0, 12), title: 'Fascite Plantar', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
+    { id: 'app11', patientId: '6', patientName: 'Lúcia Martins', patientAvatarUrl: mockPatients[5]?.avatarUrl || '', therapistId: 'therapist_3', startTime: getFutureDate(1, 10), endTime: getFutureDate(1, 11), title: 'Cervicalgia', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
+    { id: 'app12', patientId: '7', patientName: 'Mário Santos', patientAvatarUrl: mockPatients[6]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(1, 16), endTime: getFutureDate(1, 17), title: 'Pós-op Quadril', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
+    { id: 'app13', patientId: '8', patientName: 'Júlia Pereira', patientAvatarUrl: mockPatients[7]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(2, 15), endTime: getFutureDate(2, 16), title: 'Pós-op LCA', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
+    { id: 'app14', patientId: '5', patientName: 'Fernando Oliveira', patientAvatarUrl: mockPatients[4]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(-3, 11), endTime: getFutureDate(-3, 12), title: 'Fascite Plantar', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 120, paymentStatus: 'paid' },
     
     // Additional appointments to populate the schedule
-    { id: 'app_new_1', patientId: '6', patientName: 'Lúcia Martins', patientAvatarUrl: mockPatients[5].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(0, 10), endTime: getFutureDate(0, 11), title: 'Sessão Cervicalgia', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
-    { id: 'app_new_2', patientId: '7', patientName: 'Mário Santos', patientAvatarUrl: mockPatients[6].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(0, 14), endTime: getFutureDate(0, 15), title: 'Pós-op Quadril', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
-    { id: 'app_new_3', patientId: '8', patientName: 'Júlia Pereira', patientAvatarUrl: mockPatients[7].avatarUrl, therapistId: 'therapist_3', startTime: getFutureDate(0, 9), endTime: getFutureDate(0, 10), title: 'Retorno ao esporte', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
-    { id: 'app_new_4', patientId: '2', patientName: 'Bruno Gomes', patientAvatarUrl: mockPatients[1].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(0, 13), endTime: getFutureDate(0, 14), title: 'Terapia Manual Lombar', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
-    { id: 'app_new_5', patientId: '6', patientName: 'Lúcia Martins', patientAvatarUrl: mockPatients[5].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(1, 11), endTime: getFutureDate(1, 12), title: 'Sessão Cervicalgia', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
-    { id: 'app_new_6', patientId: '7', patientName: 'Mário Santos', patientAvatarUrl: mockPatients[6].avatarUrl, therapistId: 'therapist_3', startTime: getFutureDate(2, 15), endTime: getFutureDate(2, 16), title: 'Pós-op Quadril', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
-    { id: 'app_new_7', patientId: '3', patientName: 'Carla Dias', patientAvatarUrl: mockPatients[2].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(3, 10), endTime: getFutureDate(3, 11), title: 'Reavaliação', type: AppointmentType.Evaluation, status: AppointmentStatus.Scheduled, value: 150, paymentStatus: 'pending' },
-    { id: 'app_new_8', patientId: '4', patientName: 'Daniel Almeida', patientAvatarUrl: mockPatients[3].avatarUrl, therapistId: 'therapist_3', startTime: getFutureDate(-7, 14), endTime: getFutureDate(-7, 15), title: 'Sessão de manutenção', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 100, paymentStatus: 'paid' },
-    { id: 'app_new_9', patientId: '5', patientName: 'Fernando Oliveira', patientAvatarUrl: mockPatients[4].avatarUrl, therapistId: 'therapist_1', startTime: getFutureDate(-14, 16), endTime: getFutureDate(-14, 17), title: 'Fortalecimento', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 120, paymentStatus: 'paid' },
-    { id: 'app_new_10', patientId: '6', patientName: 'Lúcia Martins', patientAvatarUrl: mockPatients[5].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(-21, 9), endTime: getFutureDate(-21, 10), title: 'Pilates Clínico', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 130, paymentStatus: 'paid' },
-    { id: 'app_new_11', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0].avatarUrl, therapistId: 'therapist_2', startTime: getFutureDate(0, 15), endTime: getFutureDate(0, 16), title: 'Terapia Manual Ombro', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
+    { id: 'app_new_1', patientId: '6', patientName: 'Lúcia Martins', patientAvatarUrl: mockPatients[5]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(0, 10), endTime: getFutureDate(0, 11), title: 'Sessão Cervicalgia', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
+    { id: 'app_new_2', patientId: '7', patientName: 'Mário Santos', patientAvatarUrl: mockPatients[6]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(0, 14), endTime: getFutureDate(0, 15), title: 'Pós-op Quadril', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
+    { id: 'app_new_3', patientId: '8', patientName: 'Júlia Pereira', patientAvatarUrl: mockPatients[7]?.avatarUrl || '', therapistId: 'therapist_3', startTime: getFutureDate(0, 9), endTime: getFutureDate(0, 10), title: 'Retorno ao esporte', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
+    { id: 'app_new_4', patientId: '2', patientName: 'Bruno Gomes', patientAvatarUrl: mockPatients[1]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(0, 13), endTime: getFutureDate(0, 14), title: 'Terapia Manual Lombar', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
+    { id: 'app_new_5', patientId: '6', patientName: 'Lúcia Martins', patientAvatarUrl: mockPatients[5]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(1, 11), endTime: getFutureDate(1, 12), title: 'Sessão Cervicalgia', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
+    { id: 'app_new_6', patientId: '7', patientName: 'Mário Santos', patientAvatarUrl: mockPatients[6]?.avatarUrl || '', therapistId: 'therapist_3', startTime: getFutureDate(2, 15), endTime: getFutureDate(2, 16), title: 'Pós-op Quadril', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'paid' },
+    { id: 'app_new_7', patientId: '3', patientName: 'Carla Dias', patientAvatarUrl: mockPatients[2]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(3, 10), endTime: getFutureDate(3, 11), title: 'Reavaliação', type: AppointmentType.Evaluation, status: AppointmentStatus.Scheduled, value: 150, paymentStatus: 'pending' },
+    { id: 'app_new_8', patientId: '4', patientName: 'Daniel Almeida', patientAvatarUrl: mockPatients[3]?.avatarUrl || '', therapistId: 'therapist_3', startTime: getFutureDate(-7, 14), endTime: getFutureDate(-7, 15), title: 'Sessão de manutenção', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 100, paymentStatus: 'paid' },
+    { id: 'app_new_9', patientId: '5', patientName: 'Fernando Oliveira', patientAvatarUrl: mockPatients[4]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(-14, 16), endTime: getFutureDate(-14, 17), title: 'Fortalecimento', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 120, paymentStatus: 'paid' },
+    { id: 'app_new_10', patientId: '6', patientName: 'Lúcia Martins', patientAvatarUrl: mockPatients[5]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(-21, 9), endTime: getFutureDate(-21, 10), title: 'Pilates Clínico', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 130, paymentStatus: 'paid' },
+    { id: 'app_new_11', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(0, 15), endTime: getFutureDate(0, 16), title: 'Terapia Manual Ombro', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
 
 ];
 
@@ -287,7 +287,7 @@ while(recurrenceDate.getTime() <= new Date(recurrenceRule.until).getTime()) {
         id: `app_recurr_${recurrenceDate.getTime()}`,
         patientId: '1',
         patientName: 'Ana Beatriz Costa',
-        patientAvatarUrl: mockPatients[0].avatarUrl,
+        patientAvatarUrl: mockPatients[0]?.avatarUrl || '',
         therapistId: 'therapist_3',
         startTime: new Date(recurrenceDate),
         endTime: new Date(recurrenceDate.getTime() + 60 * 60 * 1000), // 1 hour
@@ -607,10 +607,10 @@ export const mockGroups: Group[] = [
         therapistId: 'therapist_2', // Dra. Camila
         capacity: { max: 6, current: 4 },
         members: [
-            { patientId: '1', patientName: 'Ana Beatriz Costa', joinDate: '2024-06-01', status: 'active', level: 'intermediate', avatarUrl: mockPatients[0].avatarUrl, points: 1250 },
-            { patientId: '3', patientName: 'Carla Dias', joinDate: '2024-06-05', status: 'active', level: 'beginner', avatarUrl: mockPatients[2].avatarUrl, points: 980 },
-            { patientId: '4', patientName: 'Daniel Almeida', joinDate: '2024-06-10', status: 'active', level: 'beginner', avatarUrl: mockPatients[3].avatarUrl, points: 1500 },
-            { patientId: '2', patientName: 'Bruno Gomes', joinDate: '2024-06-01', status: 'active', level: 'intermediate', avatarUrl: mockPatients[1].avatarUrl, points: 1100 },
+            { patientId: '1', patientName: 'Ana Beatriz Costa', joinDate: '2024-06-01', status: 'active', level: 'intermediate', avatarUrl: mockPatients[0]?.avatarUrl || '', points: 1250 },
+            { patientId: '3', patientName: 'Carla Dias', joinDate: '2024-06-05', status: 'active', level: 'beginner', avatarUrl: mockPatients[2]?.avatarUrl || '', points: 980 },
+            { patientId: '4', patientName: 'Daniel Almeida', joinDate: '2024-06-10', status: 'active', level: 'beginner', avatarUrl: mockPatients[3]?.avatarUrl || '', points: 1500 },
+            { patientId: '2', patientName: 'Bruno Gomes', joinDate: '2024-06-01', status: 'active', level: 'intermediate', avatarUrl: mockPatients[1]?.avatarUrl || '', points: 1100 },
         ],
         schedule: {
             days: ['Terça', 'Quinta'],
@@ -711,7 +711,7 @@ export const mockPurchasedVouchers: Voucher[] = [
         id: 'voucher_1',
         code: 'VF-ABC123',
         patientId: '5', // Fernando Oliveira
-        plan: sampleVoucherPlans[1], // Performance
+        plan: sampleVoucherPlans[1]!, // Performance
         status: 'activated',
         purchaseDate: new Date(new Date().setDate(new Date().getDate() - 5)), // 5 days ago in current month
         activationDate: new Date(new Date().setDate(new Date().getDate() - 5)),
@@ -722,7 +722,7 @@ export const mockPurchasedVouchers: Voucher[] = [
         id: 'voucher_2',
         code: 'VF-DEF456',
         patientId: '6', // Lúcia Martins
-        plan: sampleVoucherPlans[0], // Foco
+        plan: sampleVoucherPlans[0]!, // Foco
         status: 'activated',
         purchaseDate: new Date(new Date().setDate(new Date().getDate() - 2)), // 2 days ago in current month
         activationDate: new Date(new Date().setDate(new Date().getDate() - 2)),
@@ -733,7 +733,7 @@ export const mockPurchasedVouchers: Voucher[] = [
         id: 'voucher_3',
         code: 'VF-GHI789',
         patientId: '8', // Júlia Pereira
-        plan: sampleVoucherPlans[2], // Premium
+        plan: sampleVoucherPlans[2]!, // Premium
         status: 'activated',
         purchaseDate: new Date(new Date().setMonth(new Date().getMonth() - 1)), // last month
         activationDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
@@ -825,7 +825,7 @@ export const mockSuppliers: Supplier[] = [
 const getDateInFuture = (days: number): string => {
     const date = new Date();
     date.setDate(date.getDate() + days);
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split('T')[0]!;
 };
 
 export const mockInventoryItems: InventoryItem[] = [

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Loader, Spinner, Stethoscope } from 'lucide-react';
+import { Loader, Stethoscope } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 // Loading Spinner Component
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   color?: 'primary' | 'secondary' | 'accent' | 'muted';
-  className?: string;
+  className?: string | undefined;
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
@@ -92,7 +92,7 @@ interface LoadingPageProps {
   message?: string;
   submessage?: string;
   logo?: boolean;
-  className?: string;
+  className?: string | undefined;
 }
 
 export const LoadingPage: React.FC<LoadingPageProps> = ({
@@ -134,7 +134,7 @@ interface LoadingCardProps {
   lines?: number;
   showAvatar?: boolean;
   showActions?: boolean;
-  className?: string;
+  className?: string | undefined;
 }
 
 export const LoadingCard: React.FC<LoadingCardProps> = ({
@@ -183,7 +183,7 @@ interface LoadingTableProps {
   rows?: number;
   columns?: number;
   showHeader?: boolean;
-  className?: string;
+  className?: string | undefined;
 }
 
 export const LoadingTable: React.FC<LoadingTableProps> = ({
@@ -265,7 +265,7 @@ export const LoadingButton: React.FC<LoadingButtonProps> = ({
 interface LoadingListProps {
   items?: number;
   showThumbnails?: boolean;
-  className?: string;
+  className?: string | undefined;
 }
 
 export const LoadingList: React.FC<LoadingListProps> = ({
@@ -294,7 +294,7 @@ export const LoadingList: React.FC<LoadingListProps> = ({
 // Loading Chart placeholder
 interface LoadingChartProps {
   height?: number;
-  className?: string;
+  className?: string | undefined;
 }
 
 export const LoadingChart: React.FC<LoadingChartProps> = ({

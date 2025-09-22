@@ -1,7 +1,7 @@
 // components/pacientes/PatientForm.tsx
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { patientFormSchema, PatientFormData } from '@/lib/validations/patient';

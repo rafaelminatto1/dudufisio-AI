@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { format, addDays, startOfWeek, isSameDay, isToday, setHours, setMinutes } from 'date-fns';
+import { format, addDays, startOfWeek, isSameDay, isToday } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
@@ -72,7 +72,7 @@ const groupOverlappingAppointments = (appointments: EnrichedAppointment[]) => {
     if (!groupedByTherapist[app.therapistId]) {
       groupedByTherapist[app.therapistId] = [];
     }
-    groupedByTherapist[app.therapistId].push(app);
+    groupedByTherapist[app.therapistId]!.push(app);
   });
 
   const result: Array<{
@@ -133,10 +133,11 @@ const MultiTherapistAppointmentCard: React.FC<{
   onDragStart,
   onDragEnd,
   width,
-  leftOffset,
-  therapistId
+  leftOffset
 }) => {
   const appointment = appointments[0]; // Apenas um agendamento por card agora
+  if (!appointment) return null;
+
   const top = ((appointment.startTime.getHours() - startHour) * 60 + appointment.startTime.getMinutes()) * pixelsPerMinute;
   const durationInMinutes = (appointment.endTime.getTime() - appointment.startTime.getTime()) / (60 * 1000);
   const height = Math.max(durationInMinutes * pixelsPerMinute, 40);
@@ -177,10 +178,10 @@ const MultiTherapistAppointmentCard: React.FC<{
     >
       <div className="flex-grow min-h-0 flex flex-col">
         <div className="font-semibold text-xs leading-tight">
-          {appointment.patientName.split(' ')[0]}
+          {appointment.patientName.split(' ')[0] || appointment.patientName}
           {appointment.patientName.split(' ')[1] && (
             <div className="text-xs opacity-90 leading-tight">
-              {appointment.patientName.split(' ')[1]}
+              {appointment.patientName.split(' ')[1] || ''}
             </div>
           )}
         </div>
@@ -237,12 +238,13 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
     const newEndTime = new Date(appointment.endTime);
     newEndTime.setDate(newEndTime.getDate() + 7);
 
-    const newAppointment = {
-      ...appointment,
-      id: `app_${Date.now()}`,
-      startTime: newStartTime,
-      endTime: newEndTime
-    };
+    // Unused variable removed: newAppointment
+    // const newAppointment = {
+    //   ...appointment,
+    //   id: `app_${Date.now()}`,
+    //   startTime: newStartTime,
+    //   endTime: newEndTime
+    // };
 
     onSlotClick(newStartTime, format(newStartTime, 'HH:mm'), appointment.therapistId);
   };
@@ -308,7 +310,7 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                         )}
                         title={therapist.name}
                       >
-                        {therapist.name.split(' ')[0]}
+                        {therapist.name.split(' ')[0] || therapist.name}
                       </div>
                     ))}
                   </div>
@@ -318,14 +320,14 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                 <div className="relative" style={{ height: `${(END_HOUR - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }}>
                   {/* Drop zones para cada terapeuta */}
                   <div className="absolute inset-0 grid grid-cols-3">
-                    {therapists.slice(0, 3).map((therapist, therapistIndex) => (
+                    {therapists.slice(0, 3).map((therapist) => (
                       <div
                         key={therapist.id}
                         className="border-r border-slate-100 last:border-r-0"
                         onDragOver={onDragOver}
                         onDrop={(e) => onDrop(e, day, therapist.id)}
                       >
-                        {timeSlots.map((time, index) => (
+                        {timeSlots.map((time) => (
                           <div
                             key={time}
                             className="border-t border-slate-100 hover:bg-blue-50 transition-colors cursor-pointer"
@@ -348,8 +350,8 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                   </div>
 
                   {/* Appointments */}
-                  {groupedAppointments.map((group, index) => (
-                    <MultiTherapistAppointmentCard
+                  {groupedAppointments.map((group) => (
+                    group.appointments[0] && <MultiTherapistAppointmentCard
                       key={group.appointments[0].id}
                       appointments={group.appointments}
                       startHour={START_HOUR}

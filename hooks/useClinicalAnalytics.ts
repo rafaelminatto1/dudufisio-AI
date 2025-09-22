@@ -1,6 +1,6 @@
 // hooks/useClinicalAnalytics.ts
 import { useState, useEffect } from 'react';
-import { mockSoapNotes, mockAppointments, mockPatients } from '../data/mockData';
+import { mockAppointments, mockPatients } from '../data/mockData';
 import { AppointmentStatus } from '../types';
 
 interface Kpis {

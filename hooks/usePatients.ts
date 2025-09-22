@@ -43,7 +43,15 @@ export const usePatients = (): UsePatientsResult => {
     }
     setError(null);
     try {
-      const result = await patientService.getPatients({ ...filters, cursor, limit: 15 });
+      const result = await patientService.getPatients({
+        ...(filters.searchTerm && { searchTerm: filters.searchTerm }),
+        ...(filters.statusFilter && { statusFilter: filters.statusFilter }),
+        ...(filters.startDate && { startDate: filters.startDate }),
+        ...(filters.endDate && { endDate: filters.endDate }),
+        ...(filters.therapistId && { therapistId: filters.therapistId }),
+        ...(cursor !== null && cursor !== undefined && { cursor }),
+        limit: 15
+      });
       setPatients(prev => cursor ? [...prev, ...result.patients] : result.patients);
       setNextCursor(result.nextCursor);
       setHasMore(!!result.nextCursor);

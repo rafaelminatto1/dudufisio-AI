@@ -52,9 +52,11 @@ const calculateStreak = (dates: Date[]): number => {
     
     for (let i = 1; i < uniqueDates.length; i++) {
         const currentDate = uniqueDates[i];
-        const expectedPreviousDate = new Date(lastDate);
-        expectedPreviousDate.setDate(lastDate.getDate() - 1);
-        
+        if (!currentDate) break;
+
+        const expectedPreviousDate = new Date(lastDate!);
+        expectedPreviousDate.setDate(lastDate!.getDate() - 1);
+
         if (currentDate.getTime() === expectedPreviousDate.getTime()) {
             currentStreak++;
             lastDate = currentDate;

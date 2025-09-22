@@ -1,0 +1,367 @@
+     99  No overload matches this call.
+     58  Object is possibly 'undefined'.
+     18  Type 'string | undefined' is not assignable to type 'string'.
+     15  Type '{ isOpen
+     15  Property 'env' does not exist on type 'ImportMeta'.
+     13  Type '{ id
+      9  Property 'patients' does not exist on type '{ appointments
+      9  Cannot find module '../contexts/AppContext' or its corresponding type declarations.
+      9  Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+      7  'data' is declared but its value is never read.
+      7  Argument of type '{ id
+      6  Type '{ className
+      6  Property 'phone' does not exist on type '{ appointment_date
+      6  Property 'Confirmed' does not exist on type 'typeof AppointmentStatus'.
+      5  Type '{ name
+      5  Property 'role' does not exist on type '{ appointment_date
+      5  Property 'pain_level_before' does not exist on type '{ appointment_date
+      5  Property 'pain_level_after' does not exist on type '{ appointment_date
+      5  Property 'NEXT_PUBLIC_SUPABASE_URL' comes from an index signature, so it must be accessed with ['NEXT_PUBLIC_SUPABASE_URL'].
+      5  Property 'NEXT_PUBLIC_SUPABASE_ANON_KEY' comes from an index signature, so it must be accessed with ['NEXT_PUBLIC_SUPABASE_ANON_KEY'].
+      5  Property 'full_name' does not exist on type '{ appointment_date
+      5  Property 'email' does not exist on type '{ appointment_date
+      5  'entry' is declared but its value is never read.
+      4  Type '{ key
+      4  Type 'Date' is not assignable to type 'string'.
+      4  'startDate' is declared but its value is never read.
+      4  Property 'specialization' does not exist on type '{ appointment_date
+      4  Property 'professional_id' does not exist on type '{ appointment_date
+      4  Property 'active' does not exist on type '{ appointment_date
+      4  'previousStartDate' is declared but its value is never read.
+      4  'latestNote' is possibly 'undefined'.
+      4  'item' is possibly 'undefined'.
+      4  'existingPlan' is possibly 'undefined'.
+      4  'endDate' is declared but its value is never read.
+      4  'certificate' is declared but its value is never read.
+      4  'alert' is declared but its value is never read.
+      3  Type 'VoucherPlan | undefined' is not assignable to type 'VoucherPlan'.
+      3  'Therapist' is declared but its value is never read.
+      3  'React' is declared but its value is never read.
+      3  Property 'therapistName' does not exist on type 'EnrichedAppointment'.
+      3  Property 'sessions' does not exist on type '{ appointments
+      3  Property 'NODE_ENV' comes from an index signature, so it must be accessed with ['NODE_ENV'].
+      3  Property 'Cancelled' does not exist on type 'typeof AppointmentStatus'. Did you mean 'Canceled'?
+      3  Property 'appointment_id' does not exist on type '{ appointment_date
+      3  'error' is declared but its value is never read.
+      3  'educatorId' is declared but its value is never read.
+      3  'Edit' is declared but its value is never read.
+      3  Binding element 'token' implicitly has an 'any' type.
+      3  'bestResult' is possibly 'undefined'.
+      2  'VoucherPlan' is declared but its value is never read.
+      2  'User' is declared but its value is never read.
+      2  'userId' is declared but its value is never read.
+      2  'useRef' is declared but its value is never read.
+      2  Type '{ title
+      2  Type 'string | null' is not assignable to type 'string | undefined'.
+      2  Type 'string | null' is not assignable to type 'string'.
+      2  Type 'string' is not assignable to type 'Date'.
+      2  Type 'MedicalReport | undefined' is not assignable to type 'MedicalReport'.
+      2  Type 'InventoryItem | undefined' is not assignable to type 'InventoryItem'.
+      2  Type '{ id?
+      2  Type 'EventProvider | undefined' is not assignable to type 'EventProvider'.
+      2  Type 'Date | undefined' is not assignable to type 'Date | null'.
+      2  Type '{ area
+      2  Type '{ address?
+      2  'Trash2' is declared but its value is never read.
+      2  'ShieldCheck' is declared but its value is never read.
+      2  'Search' is declared but its value is never read.
+      2  'Role' is declared but its value is never read.
+      2  'responseXML' is declared but its value is never read.
+      2  'response.text' is possibly 'undefined'.
+      2  'registration' is possibly 'undefined'.
+      2  Property 'userId' does not exist on type 'Partial<Patient>'.
+      2  Property 'user_id' does not exist on type '{ appointment_date
+      2  Property 'type' does not exist on type '{ appointment_date
+      2  Property 'transaction_type' does not exist on type 'SelectQueryError<"column 'amount' does not exist on 'appointments'.">'.
+      2  Property 'therapistId' does not exist on type 'Partial<Patient>'.
+      2  Property 'role' comes from an index signature, so it must be accessed with ['role'].
+      2  Property 'procedures_performed' does not exist on type '{ appointment_date
+      2  Property 'phone' comes from an index signature, so it must be accessed with ['phone'].
+      2  Property 'notes' does not exist on type 'Partial<Appointment>'.
+      2  Property 'notes' does not exist on type 'EnrichedAppointment'.
+      2  Property 'name' comes from an index signature, so it must be accessed with ['name'].
+      2  Property 'metadata' does not exist on type '{ appointment_date
+      2  Property 'medicalHistory' does not exist on type 'Partial<Patient>'.
+      2  Property 'location' does not exist on type 'Partial<Appointment>'.
+      2  Property 'InProgress' does not exist on type 'typeof AppointmentStatus'.
+      2  Property 'GCP_PROJECT_ID' comes from an index signature, so it must be accessed with ['GCP_PROJECT_ID'].
+      2  Property 'description' does not exist on type 'Partial<Appointment>'.
+      2  Property 'description' does not exist on type '{ appointment_date
+      2  Property 'dateOfBirth' does not exist on type 'Partial<Patient>'.
+      2  Property 'AWS_ACCESS_KEY_ID' comes from an index signature, so it must be accessed with ['AWS_ACCESS_KEY_ID'].
+      2  Property 'avatar_url' comes from an index signature, so it must be accessed with ['avatar_url'].
+      2  Property 'appointments' is missing in type '{ selectedDate
+      2  Property 'amount' does not exist on type 'SelectQueryError<"column 'amount' does not exist on 'appointments'.">'.
+      2  Property 'amount' does not exist on type '{ appointment_date
+      2  'Phone' is declared but its value is never read.
+      2  'period' is declared but its value is never read.
+      2  'peerId' is declared but its value is never read.
+      2  'payload' is declared but its value is never read.
+      2  'password' is declared but its value is never read.
+      2  Object literal may only specify known properties, and 'user_id' does not exist in type '{ appointment_date?
+      2  Object literal may only specify known properties, and 'granted' does not exist in type '{ appointment_date?
+      2  Not all code paths return a value.
+      2  'nextAppointment' is possibly 'undefined'.
+      2  'isSidebarOpen' is declared but its value is never read.
+      2  'initialNote' is possibly 'undefined'.
+      2  'info' is possibly 'undefined'.
+      2  'handleSupabaseError' is declared but its value is never read.
+      2  'firstDate' is possibly 'undefined'.
+      2  'Filter' is declared but its value is never read.
+      2  'events' is declared but its value is never read.
+      2  'event' is declared but its value is never read.
+      2  'config' is possibly 'undefined'.
+      2  'Clock' is declared but its value is never read.
+      2  'CheckCircle' is declared but its value is never read.
+      2  Cannot find module 'next-auth/react' or its corresponding type declarations.
+      2  Argument of type '"session"' is not assignable to parameter of type '"error" | "user" | "navigation" | "http" | "console"'.
+      2  Argument of type '(prev
+      2  Argument of type 'MediaStream | undefined' is not assignable to parameter of type 'MediaStream'.
+      2  Argument of type 'MediaStreamTrack | undefined' is not assignable to parameter of type 'MediaStreamTrack | null'.
+      2  Argument of type 'Date' is not assignable to parameter of type 'string'.
+      1  'XCircle' is declared but its value is never read.
+      1  'WhiteBoardData' is declared but never used.
+      1  'whiteBoardCanvas' is declared but its value is never read.
+      1  'useToast' is declared but its value is never read.
+      1  'userData' is declared but its value is never read.
+      1  'useMemo' is declared but its value is never read.
+      1  'useFormContext' is declared but its value is never read.
+      1  'useEffect' is declared but its value is never read.
+      1  'useCallback' is declared but its value is never read.
+      1  'Upload' is declared but its value is never read.
+      1  Type '{ urls
+      1  Type '{ treatmentGoals
+      1  Type '{ title?
+      1  Type '{ timestamp
+      1  Type '{ therapistColor
+      1  Type '(string | undefined)[]' is not assignable to type 'string[]'.
+      1  Type 'string' is not assignable to type '"pending" | "failed" | "processing" | "succeeded" | "canceled"'.
+      1  Type 'string' is not assignable to type '"pending" | "failed" | "authorized" | "captured" | "refunded"'.
+      1  Type '{ status
+      1  Type '{ patientPhone
+      1  Type '{ patient
+      1  Type '{ metadata?
+      1  Type 'EnrichedAppointment | null' is not assignable to type 'Appointment'.
+      1  Type '{ enabled
+      1  Type '{ date
+      1  Type '(credentials
+      1  Type '{ context
+      1  Type '{ content
+      1  Type '{ codigo
+      1  Type '{ clinicalCase
+      1  Type '{ camera
+      1  Type '{ appointment_date
+      1  'TrendingUp' is declared but its value is never read.
+      1  'TrackedMetric' is declared but its value is never read.
+      1  'timestamp' is declared but its value is never read.
+      1  'Target' is declared but its value is never read.
+      1  'statusHTTP' is declared but its value is never read.
+      1  'startOfDay' is declared but its value is never read.
+      1  'start' is declared but its value is never read.
+      1  'Spinner' is declared but its value is never read.
+      1  'SlidersHorizontal' is declared but its value is never read.
+      1  'signature' is declared but its value is never read.
+      1  'Settings' is declared but its value is never read.
+      1  'setPatient' is declared but its value is never read.
+      1  'setMinutes' is declared but its value is never read.
+      1  'setHours' is declared but its value is never read.
+      1  'setFactorId' is declared but its value is never read.
+      1  'Session' is declared but never used.
+      1  'selectedDate' is declared but its value is never read.
+      1  'Save' is declared but its value is never read.
+      1  'RoleGuard' is declared but its value is never read.
+      1  'result.text' is possibly 'undefined'.
+      1  'responseTime' is declared but its value is never read.
+      1  'ResponseSource' is declared but its value is never read.
+      1  'refetchDataContext' is declared but its value is never read.
+      1  'qrCodeString' is declared but its value is never read.
+      1  'QrCode' is declared but its value is never read.
+      1  'provider' is declared but its value is never read.
+      1  'ProviderConfig' is declared but its value is never read.
+      1  Property 'userId' does not exist on type 'Omit<Patient, "id" | "createdAt" | "updatedAt">'.
+      1  Property 'type' does not exist on type '{ appointment_date?
+      1  Property 'TURN_USERNAME' comes from an index signature, so it must be accessed with ['TURN_USERNAME'].
+      1  Property 'TURN_PASSWORD' comes from an index signature, so it must be accessed with ['TURN_PASSWORD'].
+      1  Property 'TSA_URL' comes from an index signature, so it must be accessed with ['TSA_URL'].
+      1  Property 'title' does not exist on type '{ appointment_date?
+      1  Property 'title' does not exist on type '{ appointment_date
+      1  Property 'therapistId' does not exist on type 'Omit<Patient, "id" | "createdAt" | "updatedAt">'.
+      1  Property 'role' does not exist on type 'SelectQueryError<"column 'role' does not exist on 'appointments'.">'.
+      1  Property 'resource' comes from an index signature, so it must be accessed with ['resource'].
+      1  Property 'REDIS_URL' comes from an index signature, so it must be accessed with ['REDIS_URL'].
+      1  Property 'recurrence_rule' does not exist on type '{ appointment_date?
+      1  Property 'recurrence_rule' does not exist on type '{ appointment_date
+      1  Property 'purpose_id' does not exist on type '{ appointment_date
+      1  Property 'provider_transaction_id' does not exist on type '{ appointment_date
+      1  Property 'provider' does not exist on type '{ appointment_date
+      1  Property 'pixKey' comes from an index signature, so it must be accessed with ['pixKey'].
+      1  Property 'payment_method_id' does not exist on type '{ appointment_date
+      1  Property 'notes' does not exist on type 'Omit<Appointment, "id" | "createdAt" | "updatedAt">'.
+      1  Property 'NEXT_PUBLIC_WEBSOCKET_URL' comes from an index signature, so it must be accessed with ['NEXT_PUBLIC_WEBSOCKET_URL'].
+      1  Property 'NEXTAUTH_SECRET' comes from an index signature, so it must be accessed with ['NEXTAUTH_SECRET'].
+      1  Property 'name' does not exist on type '{ appointment_date
+      1  Property 'medicalHistory' does not exist on type 'Omit<Patient, "id" | "createdAt" | "updatedAt">'.
+      1  Property 'location' does not exist on type 'Omit<Appointment, "id" | "createdAt" | "updatedAt">'.
+      1  Property 'location' does not exist on type '{ appointment_date?
+      1  Property 'location' does not exist on type '{ appointment_date
+      1  Property 'loadEventStart' does not exist on type 'PerformanceResourceTiming'.
+      1  Property 'loadEventEnd' does not exist on type 'PerformanceResourceTiming'.
+      1  Property 'is_default' does not exist on type '{ appointment_date
+      1  Property 'insurance_provider' does not exist on type '{ appointment_date
+      1  Property 'gender' does not exist on type '{ appointment_date
+      1  Property 'GCP_STORAGE_BUCKET' comes from an index signature, so it must be accessed with ['GCP_STORAGE_BUCKET'].
+      1  Property 'format' does not exist on type '{ appointment_date
+      1  Property 'details' does not exist on type '{ appointment_date
+      1  Property 'description' does not exist on type 'Omit<Appointment, "id" | "createdAt" | "updatedAt">'.
+      1  Property 'description' does not exist on type '{ appointment_date?
+      1  Property 'dateOfBirth' does not exist on type 'Omit<Patient, "id" | "createdAt" | "updatedAt">'.
+      1  Property 'customer_id' does not exist on type '{ appointment_date
+      1  Property 'currency' does not exist on type '{ appointment_date
+      1  Property 'cpf' does not exist on type '{ appointment_date
+      1  Property 'birth_date' does not exist on type '{ appointment_date
+      1  Property 'BACKUP_ENCRYPTION_KEY' comes from an index signature, so it must be accessed with ['BACKUP_ENCRYPTION_KEY'].
+      1  Property 'AWS_SECRET_ACCESS_KEY' comes from an index signature, so it must be accessed with ['AWS_SECRET_ACCESS_KEY'].
+      1  Property 'AWS_S3_BACKUP_BUCKET' comes from an index signature, so it must be accessed with ['AWS_S3_BACKUP_BUCKET'].
+      1  Property 'AWS_REGION' comes from an index signature, so it must be accessed with ['AWS_REGION'].
+      1  Property 'avatar_url' does not exist on type '{ appointment_date
+      1  Property 'authLoading' does not exist on type 'AuthContextType'.
+      1  Property '[AppointmentStatus.Canceled]' is missing in type '{ [AppointmentStatus.Confirmed]
+      1  Property 'appointments' is missing in type '{ currentDate
+      1  Property 'appointment_date' does not exist on type 'SelectQueryError<"could not find the relation between appointments and appointment_id">'.
+      1  Property 'address_zip_code' does not exist on type '{ appointment_date
+      1  Property 'address_street' does not exist on type '{ appointment_date
+      1  Property 'address_state' does not exist on type '{ appointment_date
+      1  Property 'address_number' does not exist on type '{ appointment_date
+      1  Property 'address_city' does not exist on type '{ appointment_date
+      1  'PROMPT_TEMPLATE_HEP' is declared but its value is never read.
+      1  'prev' is declared but its value is never read.
+      1  'Power' is declared but its value is never read.
+      1  'Plus' is declared but its value is never read.
+      1  'planId' is declared but its value is never read.
+      1  'pin' is declared but its value is never read.
+      1  'pdfBuffer' is declared but its value is never read.
+      1  'Patient' is declared but never used.
+      1  'Patient' is declared but its value is never read.
+      1  'PatientFormData' is declared but its value is never read.
+      1  'PatientAttachment' is declared but its value is never read.
+      1  'partnerId' is declared but its value is never read.
+      1  'participantId' is declared but its value is never read.
+      1  Parameter 'req' implicitly has an 'any' type.
+      1  Parameter 'proc' implicitly has an 'any' type.
+      1  Parameter 'p' implicitly has an 'any' type.
+      1  Parameter 'key' implicitly has an 'any' type.
+      1  Parameter 'err' implicitly has an 'any' type.
+      1  Parameter 'credentials' implicitly has an 'any' type.
+      1  'Paperclip' is declared but its value is never read.
+      1  'PainPoint' is declared but its value is never read.
+      1  'onDateRangeChange' is declared but its value is never read.
+      1  Object literal may only specify known properties, and 'mediaSource' does not exist in type 'MediaTrackConstraints'.
+      1  Object literal may only specify known properties, and 'is_default' does not exist in type '{ appointment_date?
+      1  Object literal may only specify known properties, and 'dateOfBirth' does not exist in type 'Patient'.
+      1  'numeroCarteira' is declared but its value is never read.
+      1  'nextCursor' is declared but its value is never read.
+      1  'mutationObserver' is declared but its value is never read.
+      1  Module '"lucide-react"' has no exported member 'Spinner'.
+      1  Module '"@google/genai"' has no exported member 'GoogleGenerativeAI'.
+      1  'mockSoapNotes' is declared but its value is never read.
+      1  'mockPatients' is declared but its value is never read.
+      1  'mins' is possibly 'undefined'.
+      1  'method' is declared but its value is never read.
+      1  'MessageSquare' is declared but its value is never read.
+      1  'MapPin' is declared but its value is never read.
+      1  'Map' is declared but its value is never read.
+      1  'Mail' is declared but its value is never read.
+      1  'ListTodo' is declared but its value is never read.
+      1  'Legend' is declared but its value is never read.
+      1  'lastDate' is possibly 'null'.
+      1  'isWithinInterval' is declared but its value is never read.
+      1  'isSameDay' is declared but its value is never read.
+      1  'isPainModalOpen' is declared but its value is never read.
+      1  'isLoadingData' is declared but its value is never read.
+      1  'isDark' is declared but its value is never read.
+      1  'InteractiveBodyMap' is declared but its value is never read.
+      1  'index' is declared but its value is never read.
+      1  'icpBrasilRoots' is declared but its value is never read.
+      1  'htmlContent' is possibly 'undefined'.
+      1  'hours' is possibly 'undefined'.
+      1  'hoursBefore' is declared but its value is never read.
+      1  'Heart' is declared but its value is never read.
+      1  'handleSelectPart' is declared but its value is never read.
+      1  'handleSavePainPoint' is declared but its value is never read.
+      1  'handleFileChange' is declared but its value is never read.
+      1  'format' is declared but its value is never read.
+      1  'FileText' is declared but its value is never read.
+      1  'file' is possibly 'undefined'.
+      1  'Eye' is declared but its value is never read.
+      1  'ExpenseCategory' is declared but its value is never read.
+      1  'exercisesFormatted' is declared but its value is never read.
+      1  'EventProvider' is declared but its value is never read.
+      1  'errors' is declared but its value is never read.
+      1  'entry' is possibly 'undefined'.
+      1  'endOfDay' is declared but its value is never read.
+      1  'end' is declared but its value is never read.
+      1  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ mercadopago
+      1  Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ [k
+      1  Element implicitly has an 'any' type because expression of type '950' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '900' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '800' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '700' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '600' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '50' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '500' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '400' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '300' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '200' can't be used to index type '{ readonly 50
+      1  Element implicitly has an 'any' type because expression of type '100' can't be used to index type '{ readonly 50
+      1  'documentHash' is declared but its value is never read.
+      1  'debug' is declared but its value is never read.
+      1  'currentDate' is possibly 'undefined'.
+      1  Could not find a declaration file for module 'html2pdf.js/'. '/home/rafael/Documentos/projetos/gemini/dudufisio-AI/node_modules/html2pdf.js/dist/html2pdf.js' implicitly has an 'any' type.
+      1  Conversion of type '{ id
+      1  'contentManager' is declared but its value is never read.
+      1  'Condition' is declared but its value is never read.
+      1  'cn' is declared but its value is never read.
+      1  'ChevronRight' is declared but its value is never read.
+      1  'ChevronLeft' is declared but its value is never read.
+      1  'chatHistory' is declared but its value is never read.
+      1  'ChartIcon' is declared but its value is never read.
+      1  'certData' is declared but its value is never read.
+      1  'capabilities' is declared but its value is never read.
+      1  Cannot find module 'web-vitals' or its corresponding type declarations.
+      1  Cannot find module 'redis' or its corresponding type declarations.
+      1  Cannot find module './prisma' or its corresponding type declarations.
+      1  Cannot find module '@prisma/client' or its corresponding type declarations.
+      1  Cannot find module 'next/server' or its corresponding type declarations.
+      1  Cannot find module 'next/navigation' or its corresponding type declarations.
+      1  Cannot find module 'next/cache' or its corresponding type declarations.
+      1  Cannot find module 'next-auth/providers/credentials' or its corresponding type declarations.
+      1  Cannot find module '@next-auth/prisma-adapter' or its corresponding type declarations.
+      1  Cannot find module 'next-auth' or its corresponding type declarations.
+      1  Cannot find module 'next-auth/middleware' or its corresponding type declarations.
+      1  Cannot find module './NewSoapNoteModal' or its corresponding type declarations.
+      1  Cannot find module '@/lib/prisma' or its corresponding type declarations.
+      1  Cannot find module '@/lib/hooks/use-debounce' or its corresponding type declarations.
+      1  Cannot find module './ClinicalHistoryTimeline' or its corresponding type declarations.
+      1  Cannot find module 'bcryptjs' or its corresponding type declarations.
+      1  Binding element 'user' implicitly has an 'any' type.
+      1  Binding element 'session' implicitly has an 'any' type.
+      1  'AuthResponse' is declared but never used.
+      1  'AuthError' is declared but never used.
+      1  Argument of type 'Uint8Array<ArrayBufferLike>' is not assignable to parameter of type 'BufferSource'.
+      1  Argument of type '{ type
+      1  Argument of type '{ time
+      1  Argument of type 'string' is not assignable to parameter of type '"AUTH_REQUIRED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS"'.
+      1  Argument of type '{ startDate
+      1  Argument of type '{ patientId
+      1  Argument of type '{ name
+      1  Argument of type '{ mode
+      1  Argument of type 'MediaStreamTrack | undefined' is not assignable to parameter of type 'MediaStreamTrack'.
+      1  Argument of type 'File | null | undefined' is not assignable to parameter of type 'SetStateAction<File | null>'.
+      1  Argument of type '{ cursor
+      1  'AppointmentType' is declared but its value is never read.
+      1  'AppointmentStatus' is declared but its value is never read.
+      1  'Appointment' is declared but never used.
+      1  'Appointment' is declared but its value is never read.
+      1  'AlertType' is declared but its value is never read.
+      1  'AlertCircle' is declared but its value is never read.
+      1  'a' is declared but its value is never read.

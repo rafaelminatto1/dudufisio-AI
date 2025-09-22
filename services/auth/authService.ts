@@ -19,14 +19,19 @@ export interface SignUpData {
 export interface UserProfile {
   id: string;
   email: string;
-  fullName: string;
-  phone?: string;
-  role: 'admin' | 'therapist' | 'receptionist' | 'patient';
-  specialization?: string;
+  full_name: string;
+  phone?: string | null;
+  role: string;
+  specialization?: string | null;
+  professional_id?: string | null;
+  active: boolean | null;
+  created_at: string | null;
+  updated_at: string | null;
+  // Backward compatibility aliases
+  fullName?: string;
   professionalId?: string;
-  active: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string | null;
+  updatedAt?: string | null;
 }
 
 class AuthService {
@@ -81,7 +86,7 @@ class AuthService {
           role: signUpData.role,
           specialization: signUpData.specialization,
           professional_id: signUpData.professionalId,
-        })
+        } as any)
         .select()
         .single();
 
@@ -139,10 +144,10 @@ class AuthService {
         id: data.id,
         email: data.email,
         fullName: data.full_name,
-        phone: data.phone,
+        phone: data.phone ?? undefined,
         role: data.role,
-        specialization: data.specialization,
-        professionalId: data.professional_id,
+        specialization: data.specialization ?? undefined,
+        professionalId: data.professional_id ?? undefined,
         active: data.active,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
@@ -175,10 +180,10 @@ class AuthService {
         id: data.id,
         email: data.email,
         fullName: data.full_name,
-        phone: data.phone,
+        phone: data.phone ?? undefined,
         role: data.role,
-        specialization: data.specialization,
-        professionalId: data.professional_id,
+        specialization: data.specialization ?? undefined,
+        professionalId: data.professional_id ?? undefined,
         active: data.active,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
@@ -325,10 +330,10 @@ class AuthService {
         id: data.id,
         email: data.email,
         fullName: data.full_name,
-        phone: data.phone,
+        phone: data.phone ?? undefined,
         role: data.role,
-        specialization: data.specialization,
-        professionalId: data.professional_id,
+        specialization: data.specialization ?? undefined,
+        professionalId: data.professional_id ?? undefined,
         active: data.active,
         createdAt: data.created_at,
         updatedAt: data.updated_at,

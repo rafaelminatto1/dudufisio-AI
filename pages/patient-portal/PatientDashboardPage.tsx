@@ -103,7 +103,7 @@ const PatientDashboardPage: React.FC = () => {
     return (
          <>
             <PageHeader
-                title={`Bem-vindo(a), ${user?.name.split(' ')[0]}!`}
+                title={`Bem-vindo(a), ${user?.name.split(' ')[0] || user?.name}!`}
                 subtitle="Sua jornada de recuperação começa aqui. O que vamos fazer hoje?"
             />
             <div className="space-y-6">

@@ -16,7 +16,7 @@ const EventsListPage: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<EventStatus | 'All'>('All');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [eventToEdit, setEventToEdit] = useState<Event | undefined>(undefined);
+    const [eventToEdit, setEventToEdit] = useState<Event | undefined>();
     
     const { showToast } = useToast();
     const { user } = useAuth();

@@ -49,7 +49,7 @@ const TransactionFormModal: React.FC<TransactionFormModalProps> = ({ isOpen, onC
             return;
         }
         setIsSaving(true);
-        await onSave({ ...formData, id: transactionToEdit?.id });
+        await onSave({ ...formData, ...(transactionToEdit?.id && { id: transactionToEdit.id }) });
         setIsSaving(false);
     };
 

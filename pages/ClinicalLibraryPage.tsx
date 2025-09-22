@@ -59,7 +59,7 @@ const ClinicalLibraryPage: React.FC = () => {
 
   useEffect(() => {
       // Open the first category by default on load if not searching
-      if(!isLoading && categories.length > 0 && !searchTerm) {
+      if(!isLoading && categories && categories.length > 0 && !searchTerm && categories[0]) {
           setOpenCategoryId(categories[0].id);
       }
   }, [isLoading, categories, searchTerm]);
@@ -84,9 +84,9 @@ const ClinicalLibraryPage: React.FC = () => {
 
   useEffect(() => {
     // If search filters down to one category, open it.
-    if(searchTerm && filteredCategories && filteredCategories.length > 0) {
+    if(searchTerm && filteredCategories && filteredCategories.length > 0 && filteredCategories[0]) {
         setOpenCategoryId(filteredCategories[0].id);
-    } else if (!searchTerm && categories.length > 0) {
+    } else if (!searchTerm && categories && categories.length > 0 && categories[0]) {
         setOpenCategoryId(categories[0].id);
     } else {
         setOpenCategoryId(null);

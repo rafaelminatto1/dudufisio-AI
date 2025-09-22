@@ -1,7 +1,7 @@
 // components/whatsapp/WhatsappChatInterface.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot } from 'lucide-react';
-import { useAuth } from "../contexts/AppContext";
+import { useAuth } from "@/contexts/AppContext";
 import * as treatmentService from '../../services/treatmentService';
 import * as whatsappService from '../../services/whatsappService';
 import { Patient } from '../../types';
@@ -20,7 +20,11 @@ const WhatsappChatInterface: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const { user } = useAuth(); // We'll use the logged-in user as the "patient"
-    const mockPatient: Partial<Patient> = { id: user?.id, name: user?.name, whatsappConsent: 'opt-in' };
+    const mockPatient: Partial<Patient> = {
+        ...(user?.id && { id: user.id }),
+        ...(user?.name && { name: user.name }),
+        whatsappConsent: 'opt-in'
+    };
 
     useEffect(() => {
         const initialBotMessage = {
