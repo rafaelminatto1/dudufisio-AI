@@ -1,6 +1,5 @@
 
-
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, Type } from "@google/genai";
 import { ClinicalMaterialData, Patient, SoapNote } from "../types";
 
 const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
@@ -8,7 +7,7 @@ if (!apiKey) {
   console.warn("VITE_GEMINI_API_KEY is not set in environment variables. AI features will be disabled.");
 }
 
-const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
+const ai = apiKey ? new GoogleGenerativeAI(apiKey as string) : null;
 
 const PROMPT_TEMPLATE = `
 # Persona
