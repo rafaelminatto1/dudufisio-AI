@@ -1,7 +1,28 @@
 import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabase';
 import type { Database } from '../../types/database';
-import { format, addDays, startOfWeek, endOfWeek } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+// Local date helpers to avoid external dependencies during build
+function formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function addDaysLocal(base: Date, days: number): Date {
+  const copy = new Date(base);
+  copy.setDate(copy.getDate() + days);
+  return copy;
+}
+
+function getWeekStartEndMonday(date: Date): { start: Date; end: Date } {
+  const copy = new Date(date);
+  const day = copy.getDay(); // 0 (Sun) .. 6 (Sat)
+  // Monday-based week: compute diff to Monday
+  const diffToMonday = ((day + 6) % 7); // 0 if Monday, 6 if Sunday
+  const start = addDaysLocal(copy, -diffToMonday);
+  const end = addDaysLocal(start, 6);
+  return { start, end };
+}
 
 type Appointment = Database['public']['Tables']['appointments']['Row'];
 type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
@@ -232,14 +253,18 @@ class AppointmentService {
     excludeId?: string
   ) {
     try {
-      const { data, error } = await supabase.rpc('check_appointment_conflict', {
+      // Avoid sending nulls for optional params; Supabase typed client treats undefined as omitted
+      const args: Record<string, string> = {
         p_therapist_id: therapistId,
         p_date: date,
         p_start_time: startTime,
         p_end_time: endTime,
-        p_room: room || null,
-        p_exclude_id: excludeId || null,
-      });
+      };
+
+      if (room !== undefined) args['p_room'] = room;
+      if (excludeId !== undefined) args['p_exclude_id'] = excludeId;
+
+      const { data, error } = await supabase.rpc('check_appointment_conflict', args);
 
       if (error) throw error;
       return data || [];
@@ -277,7 +302,7 @@ class AppointmentService {
           const endTime = this.addMinutes(time, duration);
 
           // Check if this slot conflicts with any existing appointment
-          const hasConflict = appointments?.some(apt => {
+          const hasConflict = appointments?.some((apt: { start_time: string; end_time: string }) => {
             return (
               (time >= apt.start_time && time < apt.end_time) ||
               (endTime > apt.start_time && endTime <= apt.end_time) ||
@@ -285,11 +310,14 @@ class AppointmentService {
             );
           });
 
-          slots.push({
+          const slot: TimeSlot = {
             time,
             available: !hasConflict,
-            reason: hasConflict ? 'Horário ocupado' : undefined,
-          });
+          };
+          if (hasConflict) {
+            slot.reason = 'Horário ocupado';
+          }
+          slots.push(slot);
         }
       }
 
@@ -302,12 +330,11 @@ class AppointmentService {
   // Get week appointments
   async getWeekAppointments(date: Date, therapistId?: string) {
     try {
-      const weekStart = startOfWeek(date, { locale: ptBR });
-      const weekEnd = endOfWeek(date, { locale: ptBR });
+      const { start: weekStart, end: weekEnd } = getWeekStartEndMonday(date);
 
       const filters: AppointmentFilters = {
-        startDate: format(weekStart, 'yyyy-MM-dd'),
-        endDate: format(weekEnd, 'yyyy-MM-dd'),
+        startDate: formatDate(weekStart),
+        endDate: formatDate(weekEnd),
       };
 
       if (therapistId) {
@@ -323,7 +350,7 @@ class AppointmentService {
   // Get today's appointments
   async getTodayAppointments(therapistId?: string) {
     try {
-      const today = format(new Date(), 'yyyy-MM-dd');
+      const today = formatDate(new Date());
       
       const filters: AppointmentFilters = {
         startDate: today,
@@ -343,7 +370,7 @@ class AppointmentService {
   // Get upcoming appointments for patient
   async getUpcomingAppointments(patientId: string, limit = 5) {
     try {
-      const today = format(new Date(), 'yyyy-MM-dd');
+      const today = formatDate(new Date());
       
       const { data, error } = await supabase
         .from('appointments')
@@ -379,13 +406,13 @@ class AppointmentService {
         if (i > 0) {
           switch (recurrenceType) {
             case 'daily':
-              currentDate = addDays(currentDate, 1);
+              currentDate = addDaysLocal(currentDate, 1);
               break;
             case 'weekly':
-              currentDate = addDays(currentDate, 7);
+              currentDate = addDaysLocal(currentDate, 7);
               break;
             case 'biweekly':
-              currentDate = addDays(currentDate, 14);
+              currentDate = addDaysLocal(currentDate, 14);
               break;
             case 'monthly':
               currentDate.setMonth(currentDate.getMonth() + 1);
@@ -395,7 +422,7 @@ class AppointmentService {
 
         appointments.push({
           ...baseAppointment,
-          appointment_date: format(currentDate, 'yyyy-MM-dd'),
+          appointment_date: formatDate(currentDate),
         });
       }
 
@@ -458,7 +485,9 @@ class AppointmentService {
 
   // Helper function to add minutes to time
   private addMinutes(time: string, minutes: number): string {
-    const [hours, mins] = time.split(':').map(Number);
+    const [hoursStr, minsStr] = time.split(':');
+    const hours = Number(hoursStr ?? 0);
+    const mins = Number(minsStr ?? 0);
     const totalMinutes = hours * 60 + mins + minutes;
     const newHours = Math.floor(totalMinutes / 60);
     const newMinutes = totalMinutes % 60;
@@ -472,16 +501,16 @@ class AppointmentService {
       
       const stats = {
         total: appointments.length,
-        scheduled: appointments.filter(a => a.status === 'scheduled').length,
-        confirmed: appointments.filter(a => a.status === 'confirmed').length,
-        completed: appointments.filter(a => a.status === 'completed').length,
-        cancelled: appointments.filter(a => a.status === 'cancelled').length,
-        noShow: appointments.filter(a => a.status === 'no_show').length,
+        scheduled: appointments.filter((a: Appointment) => a.status === 'scheduled').length,
+        confirmed: appointments.filter((a: Appointment) => a.status === 'confirmed').length,
+        completed: appointments.filter((a: Appointment) => a.status === 'completed').length,
+        cancelled: appointments.filter((a: Appointment) => a.status === 'cancelled').length,
+        noShow: appointments.filter((a: Appointment) => a.status === 'no_show').length,
         byType: {
-          evaluation: appointments.filter(a => a.appointment_type === 'evaluation').length,
-          session: appointments.filter(a => a.appointment_type === 'session').length,
-          return: appointments.filter(a => a.appointment_type === 'return').length,
-          group: appointments.filter(a => a.appointment_type === 'group').length,
+          evaluation: appointments.filter((a: Appointment) => a.appointment_type === 'evaluation').length,
+          session: appointments.filter((a: Appointment) => a.appointment_type === 'session').length,
+          return: appointments.filter((a: Appointment) => a.appointment_type === 'return').length,
+          group: appointments.filter((a: Appointment) => a.appointment_type === 'group').length,
         },
       };
 
