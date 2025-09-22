@@ -32,7 +32,13 @@ export const updateLog = async (messageId: string, updates: Partial<WhatsappMess
     const logs = getLogsFromStorage();
     const index = logs.findIndex(log => log.id === messageId);
     if (index > -1) {
-        logs[index] = { ...logs[index], ...updates };
+        const updatedMessage: WhatsappMessage = {
+            ...logs[index],
+            ...updates,
+            // Ensure createdAt is always a Date object
+            createdAt: updates.createdAt instanceof Date ? updates.createdAt : logs[index].createdAt
+        };
+        logs[index] = updatedMessage;
         saveLogsToStorage(logs);
     }
 };

@@ -143,12 +143,17 @@ class AuthService {
       return {
         id: data.id,
         email: data.email,
-        fullName: data.full_name,
+        full_name: data.full_name,
         phone: data.phone ?? undefined,
         role: data.role,
         specialization: data.specialization ?? undefined,
-        professionalId: data.professional_id ?? undefined,
+        professional_id: data.professional_id ?? undefined,
         active: data.active,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+        // Backward compatibility aliases
+        fullName: data.full_name,
+        professionalId: data.professional_id ?? undefined,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
       };
@@ -164,10 +169,10 @@ class AuthService {
       const { data, error } = await supabase
         .from('users')
         .update({
-          full_name: updates.fullName,
+          full_name: updates.fullName || updates.full_name,
           phone: updates.phone,
           specialization: updates.specialization,
-          professional_id: updates.professionalId,
+          professional_id: updates.professionalId || updates.professional_id,
           updated_at: new Date().toISOString(),
         })
         .eq('id', userId)
@@ -179,12 +184,17 @@ class AuthService {
       return {
         id: data.id,
         email: data.email,
-        fullName: data.full_name,
+        full_name: data.full_name,
         phone: data.phone ?? undefined,
         role: data.role,
         specialization: data.specialization ?? undefined,
-        professionalId: data.professional_id ?? undefined,
+        professional_id: data.professional_id ?? undefined,
         active: data.active,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+        // Backward compatibility aliases
+        fullName: data.full_name,
+        professionalId: data.professional_id ?? undefined,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
       };

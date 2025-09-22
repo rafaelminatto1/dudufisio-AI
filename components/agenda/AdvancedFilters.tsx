@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { Card } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Separator } from '../ui/separator';
@@ -25,7 +23,6 @@ import {
   Calendar as CalendarIcon,
   User,
   Clock,
-  DollarSign,
   Search,
   Save,
   Trash2
@@ -70,13 +67,12 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
 
   const statusOptions = [
     { value: AppointmentStatus.Scheduled, label: 'Agendado', color: 'blue' },
-    { value: AppointmentStatus.Confirmed, label: 'Confirmado', color: 'green' },
     { value: AppointmentStatus.Completed, label: 'Concluído', color: 'green' },
     { value: AppointmentStatus.Canceled, label: 'Cancelado', color: 'red' },
     { value: AppointmentStatus.NoShow, label: 'Faltou', color: 'orange' },
   ];
 
-  const handleFilterChange = (key: keyof FilterOptions, value: any) => {
+  const handleFilterChange = (key: keyof FilterOptions, value: string | number | boolean | Date | undefined) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     onFiltersChange(newFilters);
@@ -233,7 +229,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 <label className="text-sm font-medium mb-1 block">Fisioterapeuta</label>
                 <Select
                   value={filters.therapistId || ''}
-                  onValueChange={(value) => handleFilterChange('therapistId', value)}
+                  onValueChange={(value: string) => handleFilterChange('therapistId', value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar fisioterapeuta" />
@@ -260,7 +256,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 <label className="text-sm font-medium mb-1 block">Status</label>
                 <Select
                   value={filters.status || ''}
-                  onValueChange={(value) => handleFilterChange('status', value)}
+                  onValueChange={(value: string) => handleFilterChange('status', value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar status" />
@@ -296,7 +292,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                       <Calendar
                         mode="single"
                         selected={filters.dateFrom}
-                        onSelect={(date) => handleFilterChange('dateFrom', date)}
+                        onSelect={(date: Date | undefined) => handleFilterChange('dateFrom', date)}
                         initialFocus
                       />
                     </PopoverContent>
@@ -313,7 +309,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                       <Calendar
                         mode="single"
                         selected={filters.dateTo}
-                        onSelect={(date) => handleFilterChange('dateTo', date)}
+                        onSelect={(date: Date | undefined) => handleFilterChange('dateTo', date)}
                         initialFocus
                       />
                     </PopoverContent>
@@ -345,7 +341,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                 <label className="text-sm font-medium mb-1 block">Observações</label>
                 <Select
                   value={filters.hasNotes?.toString() || ''}
-                  onValueChange={(value) => handleFilterChange('hasNotes', value === 'true')}
+                  onValueChange={(value: string) => handleFilterChange('hasNotes', value === 'true')}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Filtrar por observações" />

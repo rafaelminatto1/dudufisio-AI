@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { format, addDays, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+import { format, addDays, subDays, startOfWeek, endOfWeek } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
-import { Input } from '../ui/input';
-import { Badge } from '../ui/badge';
 import { 
   Command,
   CommandEmpty,
@@ -30,9 +28,8 @@ import {
   ChevronRight, 
   Calendar as CalendarIcon,
   Search,
-  Filter,
   Plus,
-  Today,
+  CalendarDays as Today,
   Clock,
   Users,
   DollarSign

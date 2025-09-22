@@ -2,24 +2,28 @@ import React from 'react';
 import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, isToday, startOfWeek, endOfWeek } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { Card, CardContent } from '../ui/card';
-import { EnrichedAppointment } from '../../types';
+import { EnrichedAppointment, Therapist } from '../../types';
 import { cn } from '../../lib/utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface MonthlyViewProps {
   currentDate: Date;
   appointments: EnrichedAppointment[];
+  therapists: Therapist[];
   onDateClick: (date: Date) => void;
-  onPrevMonth: () => void;
-  onNextMonth: () => void;
+  onPrevMonth?: () => void;
+  onNextMonth?: () => void;
+  onAppointmentClick?: (appointment: EnrichedAppointment) => void;
 }
 
 const MonthlyView: React.FC<MonthlyViewProps> = ({
   currentDate,
   appointments,
+  therapists: _therapists,
   onDateClick,
   onPrevMonth,
-  onNextMonth
+  onNextMonth,
+  onAppointmentClick
 }) => {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -41,24 +45,28 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
           {format(currentDate, "MMMM 'de' yyyy", { locale: ptBR })}
         </h2>
         <div className="flex items-center gap-2">
-          <button
-            onClick={onPrevMonth}
-            className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
-          >
-            <ChevronLeft size={20} />
-          </button>
+          {onPrevMonth && (
+            <button
+              onClick={onPrevMonth}
+              className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
+            >
+              <ChevronLeft size={20} />
+            </button>
+          )}
           <button
             onClick={() => onDateClick(new Date())}
             className="px-4 py-2 text-sm font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
           >
             Hoje
           </button>
-          <button
-            onClick={onNextMonth}
-            className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
-          >
-            <ChevronRight size={20} />
-          </button>
+          {onNextMonth && (
+            <button
+              onClick={onNextMonth}
+              className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
+            >
+              <ChevronRight size={20} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -103,10 +111,14 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
                       <div
                         key={appointment.id}
                         className={cn(
-                          "text-xs p-1 rounded text-white truncate",
+                          "text-xs p-1 rounded text-white truncate cursor-pointer hover:opacity-80 transition-opacity",
                           `bg-${appointment.therapistColor}-500`
                         )}
                         title={`${appointment.patientName} - ${format(appointment.startTime, 'HH:mm')}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onAppointmentClick?.(appointment);
+                        }}
                       >
                         {format(appointment.startTime, 'HH:mm')} {appointment.patientName}
                       </div>

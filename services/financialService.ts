@@ -1,5 +1,5 @@
 // services/financialService.ts
-import { FinancialTransaction, TransactionType, ExpenseCategory, AppointmentStatus, Appointment, AppointmentType, FinancialSummary, Transaction } from '../types';
+import { FinancialTransaction, TransactionType, ExpenseCategory, AppointmentStatus, Appointment, FinancialSummary, Transaction } from '../types';
 import { mockExpenses, mockAppointments, mockPurchasedVouchers, mockPatients } from '../data/mockData';
 import { TimePeriod } from '../hooks/useFinancialData';
 

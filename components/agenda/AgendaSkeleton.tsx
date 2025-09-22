@@ -1,5 +1,5 @@
 import React from 'react';
-import { Skeleton } from '../ui/skeleton';
+import Skeleton from '../ui/Skeleton';
 import { Card } from '../ui/card';
 
 interface AgendaSkeletonProps {

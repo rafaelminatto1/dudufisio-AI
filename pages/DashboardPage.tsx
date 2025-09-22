@@ -74,13 +74,15 @@ const DashboardPage: React.FC = () => {
 
         return todays.map(app => {
             const patient = patientMap.get(app.patientId);
+            const therapist = therapistMap.get(app.therapistId);
             return {
                 ...app,
-                therapistColor: therapistMap.get(app.therapistId)?.color || 'slate',
+                therapistColor: therapist?.color || 'slate',
+                therapistName: therapist?.name || 'Unknown',
                 typeColor: AppointmentTypeColors[app.type] || 'slate',
                 patientPhone: patient?.phone || '',
                 patientMedicalAlerts: patient?.medicalAlerts,
-            };
+            } as EnrichedAppointment;
         });
     }, [appointments, patients, therapists]);
 

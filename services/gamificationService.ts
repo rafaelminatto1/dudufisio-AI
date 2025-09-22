@@ -40,7 +40,7 @@ const calculateStreak = (dates: Date[]): number => {
 
     // Check if there is an activity today or yesterday to start the streak from
     let currentStreak = 0;
-    let lastDate: Date | null = null;
+    let lastDate: Date | undefined = undefined;
     
     const firstDate = uniqueDates[0];
     if (firstDate.getTime() === today.getTime() || firstDate.getTime() === yesterday.getTime()) {
@@ -54,8 +54,9 @@ const calculateStreak = (dates: Date[]): number => {
         const currentDate = uniqueDates[i];
         if (!currentDate) break;
 
-        const expectedPreviousDate = new Date(lastDate!);
-        expectedPreviousDate.setDate(lastDate!.getDate() - 1);
+        if (!lastDate) break;
+        const expectedPreviousDate = new Date(lastDate);
+        expectedPreviousDate.setDate(lastDate.getDate() - 1);
 
         if (currentDate.getTime() === expectedPreviousDate.getTime()) {
             currentStreak++;

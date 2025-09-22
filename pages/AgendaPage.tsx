@@ -329,6 +329,7 @@ export default function AgendaPage() {
                     <MonthlyView
                         currentDate={currentDate}
                         appointments={filteredAppointments}
+                        therapists={therapists}
                         onDateClick={handleDateClick}
                         onPrevMonth={() => setCurrentDate(subMonths(currentDate, 1))}
                         onNextMonth={() => setCurrentDate(addMonths(currentDate, 1))}

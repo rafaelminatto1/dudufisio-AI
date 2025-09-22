@@ -10,18 +10,19 @@ import { useToast } from '../contexts/ToastContext';
 
 interface AppointmentDetailModalProps {
   appointment: EnrichedAppointment | null;
-  patient: Patient | undefined;
-  therapist: Therapist | undefined;
+  patient?: Patient | undefined;
+  therapist?: Therapist | undefined;
+  isOpen?: boolean;
   onClose: () => void;
   onEdit: (appointment: EnrichedAppointment) => void;
-  onDelete: (appointmentId: string, seriesId?: string) => void;
-  onStatusChange: (appointment: Appointment, newStatus: AppointmentStatus) => void;
-  onPaymentStatusChange: (appointment: Appointment, newStatus: 'paid' | 'pending') => void;
-  onPackagePayment: (appointment: Appointment) => void;
-  onUpdateValue: (appointmentId: string, newValue: number) => void;
+  onDelete?: (appointmentId: string, seriesId?: string) => void;
+  onStatusChange?: (appointment: Appointment, newStatus: AppointmentStatus) => void;
+  onPaymentStatusChange?: (appointment: Appointment, newStatus: 'paid' | 'pending') => void;
+  onPackagePayment?: (appointment: Appointment) => void;
+  onUpdateValue?: (appointmentId: string, newValue: number) => void;
 }
 
-const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appointment, patient, therapist, onClose, onEdit, onDelete, onStatusChange, onPaymentStatusChange, onPackagePayment, onUpdateValue }) => {
+const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appointment, patient, therapist, isOpen: _isOpen, onClose, onEdit, onDelete, onStatusChange, onPaymentStatusChange, onPackagePayment, onUpdateValue }) => {
     const navigate = ReactRouterDOM.useNavigate();
     const { showToast: _showToast } = useToast();
     const [isEditingValue, setIsEditingValue] = useState(false);
@@ -32,15 +33,15 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
         setIsEditingValue(false);
     }, [appointment]);
 
-    if (!appointment || !patient || !therapist) return null;
+    if (!appointment) return null;
 
     const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onStatusChange(appointment, e.target.value as AppointmentStatus);
+        onStatusChange?.(appointment, e.target.value as AppointmentStatus);
     };
 
     const handleValueSave = () => {
         if (localValue !== appointment.value) {
-            onUpdateValue(appointment.id, localValue);
+            onUpdateValue?.(appointment.id, localValue);
         }
         setIsEditingValue(false);
     };
@@ -72,9 +73,9 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
                 </header>
 
                 <div className="p-4 space-y-3">
-                    <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Fisioterapeuta:</span><span className="font-semibold text-slate-800">{therapist.name}</span></div>
-                    <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Paciente:</span><ReactRouterDOM.Link to={`/patients/${patient.id}`} className="font-semibold text-blue-600 hover:underline truncate">{patient.name}</ReactRouterDOM.Link></div>
-                    <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Celular:</span><span className="font-semibold text-slate-800">{patient.phone || 'Não informado'}</span></div>
+                    <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Fisioterapeuta:</span><span className="font-semibold text-slate-800">{therapist?.name || appointment.therapistName || 'N/A'}</span></div>
+                    <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Paciente:</span><ReactRouterDOM.Link to={`/patients/${patient?.id || appointment.patientId}`} className="font-semibold text-blue-600 hover:underline truncate">{patient?.name || appointment.patientName}</ReactRouterDOM.Link></div>
+                    <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Celular:</span><span className="font-semibold text-slate-800">{patient?.phone || appointment.patientPhone || 'Não informado'}</span></div>
                     
                     {appointment.sessionNumber && appointment.totalSessions && (
                         <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Sessão:</span><span className="font-semibold text-slate-800">{appointment.sessionNumber} de {appointment.totalSessions}</span></div>
@@ -113,7 +114,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
                         <span className="w-24 text-slate-500 shrink-0">Pagamento:</span>
                         <div className="flex gap-2">
                             <button
-                                onClick={() => onPaymentStatusChange(appointment, 'paid')}
+                                onClick={() => onPaymentStatusChange?.(appointment, 'paid')}
                                 disabled={appointment.paymentStatus === 'paid'}
                                 className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors disabled:cursor-not-allowed ${
                                     appointment.paymentStatus === 'paid'
@@ -124,7 +125,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
                                 Pagou
                             </button>
                             <button
-                                onClick={() => onPaymentStatusChange(appointment, 'pending')}
+                                onClick={() => onPaymentStatusChange?.(appointment, 'pending')}
                                 disabled={appointment.paymentStatus === 'pending'}
                                 className={`px-3 py-1 text-xs font-semibold rounded-full transition-colors disabled:cursor-not-allowed ${
                                     appointment.paymentStatus === 'pending'
@@ -160,7 +161,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
                 <div className="p-4 border-t space-y-3">
                      {appointment.totalSessions && appointment.totalSessions > 1 && (
                          <button
-                            onClick={() => onPackagePayment(appointment)}
+                            onClick={() => onPackagePayment?.(appointment)}
                             className="w-full text-center bg-teal-50 border border-teal-200 text-teal-700 font-bold py-2 px-4 rounded-lg hover:bg-teal-100 flex items-center justify-center"
                         >
                             <DollarSign className="w-4 h-4 mr-2" />
@@ -183,7 +184,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
                             <Edit className="w-5 h-5" />
                         </button>
                         <button
-                            onClick={() => onDelete(appointment.id, appointment.seriesId)}
+                            onClick={() => onDelete?.(appointment.id, appointment.seriesId)}
                             className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
                             title="Excluir Agendamento"
                         >

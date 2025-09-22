@@ -1,20 +1,15 @@
 import React from 'react';
 import { EnrichedAppointment } from '../../types';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { Card } from '../ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Separator } from '../ui/separator';
-import { 
-  User, 
-  Clock, 
-  Calendar, 
+import {
+  Clock,
+  Calendar,
   Plus,
   Circle,
   CheckCircle,
-  AlertCircle,
   DollarSign
 } from 'lucide-react';
 import { getTherapistColor } from '../../design-system/tokens';
@@ -61,12 +56,12 @@ const EnhancedTherapistColumn: React.FC<EnhancedTherapistColumnProps> = ({
     app.startTime.toDateString() === selectedDate.toDateString()
   );
 
-  const completedAppointments = todayAppointments.filter(app => 
-    app.status === 'completed'
+  const completedAppointments = todayAppointments.filter(app =>
+    app.status.toString() === 'completed'
   ).length;
 
-  const pendingAppointments = todayAppointments.filter(app => 
-    app.status === 'scheduled' || app.status === 'confirmed'
+  const pendingAppointments = todayAppointments.filter(app =>
+    app.status.toString() === 'scheduled' || app.status.toString() === 'confirmed'
   ).length;
 
   const totalValue = todayAppointments.reduce((sum, app) => 

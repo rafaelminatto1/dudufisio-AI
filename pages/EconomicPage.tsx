@@ -1,7 +1,7 @@
 
 
 import React, { useState, useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import PageHeader from '../components/PageHeader';
 import { useEconomicAiAnalytics, ProviderStatus } from '../hooks/useEconomicAiAnalytics';
 import { EconomicAiLog, ResponseSource, PremiumProvider } from '../services/ai-economica/types/ai-economica.types';

@@ -30,8 +30,11 @@ export const saveIntern = async (internData: Omit<Intern, 'id' | 'avatarUrl'> & 
         // Create
         const newIntern: Intern = {
             id: `intern_${Date.now()}`,
-            ...internData,
+            name: internData.name,
+            institution: internData.institution,
+            startDate: internData.startDate,
             status: internData.status || InternStatus.Active,
+            averageGrade: internData.averageGrade,
             avatarUrl: `https://i.pravatar.cc/150?u=intern_${Date.now()}`
         };
         interns.unshift(newIntern);
@@ -54,7 +57,7 @@ export const saveCase = async (caseData: Omit<EducationalCase, 'id' | 'createdAt
         const newCase: EducationalCase = {
             id: `case_${Date.now()}`,
             ...caseData,
-            createdBy: mockTherapists[0].name, // Mock creator
+            createdBy: mockTherapists[0]?.name || 'Sistema', // Mock creator
             createdAt: new Date().toISOString().split('T')[0],
         };
         cases.unshift(newCase);

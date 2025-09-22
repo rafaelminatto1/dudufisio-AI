@@ -1,11 +1,8 @@
-
-
 import React from 'react';
-import TestApp from './TestApp';
-import ErrorBoundary from './components/ErrorBoundary';
+import AppRoutes from './AppRoutes';
 
 const App: React.FC = () => {
-  return <TestApp />;
+  return <AppRoutes />;
 };
 
 export default App;

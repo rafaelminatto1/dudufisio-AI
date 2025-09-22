@@ -196,10 +196,10 @@ class PatientService {
 
       // Calculate financial balance
       const balance = financialResult.data?.reduce((acc, transaction) => {
-        if (transaction.transaction_type === 'payment') {
-          return acc + transaction.amount;
-        } else if (transaction.transaction_type === 'refund') {
-          return acc - transaction.amount;
+        if ((transaction as any).transaction_type === 'payment') {
+          return acc + (transaction as any).amount;
+        } else if ((transaction as any).transaction_type === 'refund') {
+          return acc - (transaction as any).amount;
         }
         return acc;
       }, 0) || 0;

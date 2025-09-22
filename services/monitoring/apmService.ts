@@ -341,7 +341,7 @@ class APMService {
             this.trackMetric({
               type: 'api_request',
               name: 'resource_load_time',
-              value: resourceEntry.loadEventEnd - resourceEntry.loadEventStart,
+              value: resourceEntry.responseEnd - resourceEntry.requestStart,
               unit: 'ms',
               tags: {
                 resource: resourceEntry.name,
