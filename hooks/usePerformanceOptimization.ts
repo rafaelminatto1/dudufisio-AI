@@ -322,6 +322,7 @@ export const useMemoryOptimization = () => {
       const interval = setInterval(updateMemoryUsage, 5000);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, []);
 
   const forceGarbageCollection = useCallback(() => {
@@ -362,6 +363,7 @@ export const useConnectionQuality = () => {
       connection.addEventListener('change', updateConnection);
       return () => connection.removeEventListener('change', updateConnection);
     }
+    return undefined;
   }, []);
 
   return connectionQuality;

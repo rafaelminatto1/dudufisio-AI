@@ -31,10 +31,14 @@ export const saveItem = async (itemData: Omit<InventoryItem, 'id'> & { id?: stri
         // Update
         const index = items.findIndex(i => i.id === itemData.id);
         if (index > -1) {
+            const existingItem = items[index];
+            if (!existingItem) {
+                throw new Error("Item not found");
+            }
             const updatedItem: InventoryItem = {
-                ...items[index],
+                ...existingItem,
                 ...itemData,
-                id: items[index].id, // Ensure id is preserved
+                id: existingItem.id, // Ensure id is preserved
             };
             items[index] = updatedItem;
             return updatedItem;
@@ -62,6 +66,8 @@ export const addStockMovement = async (
     if (itemIndex === -1) throw new Error("Item not found");
 
     const item = items[itemIndex];
+    if (!item) throw new Error("Item not found");
+
     const previousStock = item.currentStock;
     let newStock = previousStock;
 
@@ -85,7 +91,7 @@ export const addStockMovement = async (
         movementType,
         quantity,
         reason,
-        userId: mockUsers[0].id, // Mock user
+        userId: mockUsers[0]?.id || 'unknown-user', // Mock user
         createdAt: new Date().toISOString(),
     };
     movements.unshift(newMovement);

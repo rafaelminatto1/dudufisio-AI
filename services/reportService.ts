@@ -108,11 +108,15 @@ export const sendReport = async (reportId: number): Promise<MedicalReport> => {
     if (index === -1) {
         throw new Error("Relatório não encontrado.");
     }
-    if (reports[index].status !== 'finalized') {
+    const report = reports[index];
+    if (!report) {
+        throw new Error("Relatório não encontrado.");
+    }
+    if (report.status !== 'finalized') {
         throw new Error("Apenas relatórios finalizados podem ser enviados.");
     }
-    reports[index].status = 'sent';
-    return reports[index];
+    report.status = 'sent';
+    return report;
 };
 
 export const generatePdf = async (report: MedicalReport, patient: Patient): Promise<void> => {

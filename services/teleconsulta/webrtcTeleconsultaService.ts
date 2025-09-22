@@ -563,7 +563,10 @@ class WebRTCTeleconsultaService {
       if (videoSender && videoSender.track) {
         const params = videoSender.getParameters();
         if (params.encodings && params.encodings.length > 0) {
-          params.encodings[0].maxBitrate = Math.max(100000, params.encodings[0].maxBitrate! * 0.8);
+          const encoding = params.encodings[0];
+          if (encoding) {
+            encoding.maxBitrate = Math.max(100000, (encoding.maxBitrate || 1000000) * 0.8);
+          }
           await videoSender.setParameters(params);
         }
       }
@@ -835,9 +838,12 @@ class WebRTCTeleconsultaService {
       }
 
       // Handle screen share end
-      screenStream.getVideoTracks()[0].onended = () => {
-        this.stopScreenShare(screenShareSession.id);
-      };
+      const videoTrack = screenStream.getVideoTracks()[0];
+      if (videoTrack) {
+        videoTrack.onended = () => {
+          this.stopScreenShare(screenShareSession.id);
+        };
+      }
 
       this.isScreenSharing = true;
 

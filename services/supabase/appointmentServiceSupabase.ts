@@ -32,8 +32,8 @@ class SupabaseAppointmentService {
       patient_id: appointment.patientId,
       therapist_id: appointment.therapistId,
       appointment_date: appointment.startTime.toISOString().split('T')[0],
-      start_time: appointment.startTime.toISOString().split('T')[1].slice(0, 8),
-      end_time: appointment.endTime.toISOString().split('T')[1].slice(0, 8),
+      start_time: appointment.startTime.toISOString().split('T')[1]?.slice(0, 8) || '00:00:00',
+      end_time: appointment.endTime.toISOString().split('T')[1]?.slice(0, 8) || '00:00:00',
       appointment_type: appointment.type,
       status: appointment.status || 'Agendado',
       price: appointment.value || null,
@@ -51,10 +51,10 @@ class SupabaseAppointmentService {
     if (appointment.therapistId) update.therapist_id = appointment.therapistId;
     if (appointment.startTime) {
       update.appointment_date = appointment.startTime.toISOString().split('T')[0];
-      update.start_time = appointment.startTime.toISOString().split('T')[1].slice(0, 8);
+      update.start_time = appointment.startTime.toISOString().split('T')[1]?.slice(0, 8) || '00:00:00';
     }
     if (appointment.endTime) {
-      update.end_time = appointment.endTime.toISOString().split('T')[1].slice(0, 8);
+      update.end_time = appointment.endTime.toISOString().split('T')[1]?.slice(0, 8) || '00:00:00';
     }
     if (appointment.status) update.status = appointment.status;
     if (appointment.type) update.appointment_type = appointment.type;

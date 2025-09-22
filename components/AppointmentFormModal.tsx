@@ -16,15 +16,16 @@ interface AppointmentFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (appointment: Appointment) => Promise<boolean>;
-  onDelete: (id: string, seriesId?: string) => Promise<boolean>;
+  onDelete?: (id: string, seriesId?: string) => Promise<boolean>;
+  appointment?: Appointment;
   appointmentToEdit?: Appointment;
   initialData?: { date: Date, therapistId?: string };
-  patients: Patient[];
-  therapists: Therapist[];
-  allAppointments: Appointment[];
+  patients?: Patient[];
+  therapists?: Therapist[];
+  allAppointments?: Appointment[];
 }
 
-const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onClose, onSave, onDelete: _onDelete, appointmentToEdit, initialData, patients, therapists, allAppointments }) => {
+const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onClose, onSave, onDelete: _onDelete, appointment: _appointment, appointmentToEdit, initialData, patients = [], therapists = [], allAppointments = [] }) => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | PatientSummary | null>(null);
   const [appointmentType, setAppointmentType] = useState(AppointmentType.Session);
   const [duration, setDuration] = useState(60);

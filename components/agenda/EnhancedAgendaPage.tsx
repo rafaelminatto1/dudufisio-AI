@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { format, addDays, startOfWeek, addMonths, subMonths, startOfMonth, endOfMonth } from 'date-fns';
-import { ptBR } from 'date-fns/locale/pt-BR';
-import { ScrollArea } from '../ui/scroll-area';
-import { Separator } from '../ui/separator';
+import { addDays, startOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+import { ScrollArea } from '../../@/components/ui/scroll-area';
 import { useAppointments } from '../../hooks/useAppointments';
-import { EnrichedAppointment, AppointmentStatus, Patient } from '../../types';
+import { EnrichedAppointment, Patient } from '../../types';
 import { useToast } from '../../contexts/ToastContext';
 import { useData } from '../../contexts/AppContext';
 import { useSupabaseAuth } from '../../contexts/SupabaseAuthContext';
@@ -14,7 +12,6 @@ import AppointmentFormModal from '../AppointmentFormModal';
 import EnhancedAgendaHeader from './EnhancedAgendaHeader';
 import AgendaSkeleton from './AgendaSkeleton';
 import AgendaEmptyState from './AgendaEmptyState';
-import EnhancedAppointmentCard from './EnhancedAppointmentCard';
 import DailyView from './DailyView';
 import ImprovedWeeklyView from './ImprovedWeeklyView';
 import MonthlyView from './MonthlyView';
@@ -51,7 +48,7 @@ export default function EnhancedAgendaPage() {
   const { appointments, refetch } = useAppointments(startDate, endDate);
   const { therapists } = useData();
   const { user } = useSupabaseAuth();
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [patients] = useState<Patient[]>([]);
   const { showToast } = useToast();
 
   // Modal states
@@ -159,11 +156,11 @@ export default function EnhancedAgendaPage() {
     e.preventDefault();
   };
 
-  const handleDrop = async (e: React.DragEvent<HTMLDivElement>, targetDate: Date, therapistId: string) => {
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>, targetDate: Date, _therapistId: string) => {
     e.preventDefault();
     const appointmentId = e.dataTransfer.getData('text/plain');
     const appointment = appointments.find(app => app.id === appointmentId);
-    
+
     if (!appointment) return;
 
     // Calculate new time based on drop position
@@ -178,7 +175,7 @@ export default function EnhancedAgendaPage() {
     newStartTime.setHours(hour, minute, 0, 0);
 
     const duration = appointment.endTime.getTime() - appointment.startTime.getTime();
-    const newEndTime = new Date(newStartTime.getTime() + duration);
+    new Date(newStartTime.getTime() + duration);
 
     try {
       // Update appointment
@@ -319,6 +316,7 @@ export default function EnhancedAgendaPage() {
           onSave={async () => {
             await refetch();
             setAppointmentToEdit(null);
+            return true;
           }}
         />
       )}
@@ -331,7 +329,16 @@ export default function EnhancedAgendaPage() {
           onSave={async () => {
             await refetch();
             setIsFormOpen(false);
+            return true;
           }}
+          onDelete={async () => {
+            await refetch();
+            setIsFormOpen(false);
+            return true;
+          }}
+          patients={patients}
+          therapists={therapists}
+          allAppointments={appointments}
         />
       )}
     </div>

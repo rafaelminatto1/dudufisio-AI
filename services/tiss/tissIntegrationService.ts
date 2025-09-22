@@ -749,7 +749,7 @@ class TissIntegrationService {
 
   private async gerarNumeroLote(): Promise<string> {
     // Gerar número de lote
-    const hoje = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    const hoje = new Date().toISOString().split('T')[0]?.replace(/-/g, '') || '';
     const { data } = await this.supabase
       .from('tiss_controle_numeracao')
       .select('ultimo_numero')

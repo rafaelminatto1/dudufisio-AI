@@ -220,8 +220,10 @@ class LGPDComplianceService {
         entityType: 'consent',
         entityId: consentId,
         previousData: existingConsent,
-        newData: { ...existingConsent, granted: true },
-        ...metadata,
+        newData: { ...(existingConsent as any), granted: true },
+        ipAddress: metadata.ipAddress,
+        userAgent: metadata.userAgent,
+        sessionId: metadata.sessionId,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
@@ -247,7 +249,7 @@ class LGPDComplianceService {
         .eq('user_id', userId)
         .single();
 
-      if (fetchError) throw fetchError;
+      if (fetchError || !existingConsent) throw fetchError || new Error('Consent not found');
 
       const { error: updateError } = await supabase
         .from('user_consents' as any)
@@ -266,13 +268,15 @@ class LGPDComplianceService {
         entityType: 'consent',
         entityId: consentId,
         previousData: existingConsent,
-        newData: { ...existingConsent, granted: false, revokedAt: new Date().toISOString() },
-        ...metadata,
+        newData: { ...(existingConsent as any), granted: false, revokedAt: new Date().toISOString() },
+        ipAddress: metadata.ipAddress,
+        userAgent: metadata.userAgent,
+        sessionId: metadata.sessionId,
         timestamp: new Date().toISOString(),
       });
 
       // Processar revogação (deletar dados se necessário)
-      await this.processConsentRevocation(userId, existingConsent.purpose_id);
+      await this.processConsentRevocation(userId, (existingConsent as any).purpose_id);
     } catch (error) {
       console.error('Erro ao revogar consentimento:', error);
       throw new Error('Falha ao revogar consentimento');
@@ -515,8 +519,8 @@ Esta autorização pode ser revogada a qualquer momento através das configuraç
 
         if (!request) return;
 
-        const userData = await this.getUserData(request.user_id);
-        const exportUrl = await this.generateExportFile(userData, request.format);
+        const userData = await this.getUserData((request as any).user_id);
+        const exportUrl = await this.generateExportFile(userData, (request as any).format);
 
         await supabase
           .from('data_portability_requests' as any)

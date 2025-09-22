@@ -55,12 +55,16 @@ class EventService {
     if (eventData.id) {
         const index = this.eventsData.findIndex(e => e.id === eventData.id);
         if (index > -1) {
+            const existingEvent = this.eventsData[index];
+            if (!existingEvent) {
+                throw new Error("Event not found");
+            }
             const updatedEvent: Event = {
-                ...this.eventsData[index],
+                ...existingEvent,
                 ...eventData,
-                id: this.eventsData[index].id, // Ensure id is preserved
-                registrations: this.eventsData[index].registrations,
-                providers: this.eventsData[index].providers,
+                id: existingEvent.id, // Ensure id is preserved
+                registrations: existingEvent.registrations,
+                providers: existingEvent.providers,
             };
             this.eventsData[index] = updatedEvent;
             this.emit('events:changed');

@@ -15,8 +15,6 @@ import {
   XCircle, 
   AlertCircle,
   DollarSign,
-  Phone,
-  Mail
 } from 'lucide-react';
 
 interface EnhancedAppointmentCardProps {
@@ -44,19 +42,6 @@ const getStatusIcon = (status: AppointmentStatus) => {
   }
 };
 
-const getStatusVariant = (status: AppointmentStatus) => {
-  switch (status) {
-    case AppointmentStatus.Completed:
-      return 'default' as const;
-    case AppointmentStatus.Canceled:
-    case AppointmentStatus.NoShow:
-      return 'destructive' as const;
-    case AppointmentStatus.Scheduled:
-      return 'secondary' as const;
-    default:
-      return 'outline' as const;
-  }
-};
 
 const formatTime = (date: Date) => {
   return date.toLocaleTimeString('pt-BR', { 
@@ -93,8 +78,8 @@ const EnhancedAppointmentCard: React.FC<EnhancedAppointmentCardProps> = ({
   const isPast = appointment.endTime < new Date();
 
   // Get therapist color from design system
-  const therapistColor = getTherapistColor(appointment.therapistId || 1);
-  const statusColor = getAppointmentStatusColor(appointment.status.toLowerCase());
+  const therapistColor = getTherapistColor(parseInt(appointment.therapistId || '1'));
+  getAppointmentStatusColor(appointment.status.toLowerCase());
 
   const cardContent = (
     <Card

@@ -13,11 +13,7 @@ import { Separator } from '../ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { 
   Clock, 
-  User, 
   Calendar, 
-  MapPin, 
-  Phone, 
-  Mail, 
   DollarSign,
   Edit,
   Trash2,
@@ -28,7 +24,7 @@ import {
   Stethoscope,
   FileText
 } from 'lucide-react';
-import { getTherapistColor, getAppointmentStatusColor } from '../../design-system/tokens';
+import { getTherapistColor } from '../../design-system/tokens';
 
 interface AppointmentDetailPopoverProps {
   appointment: EnrichedAppointment;
@@ -90,7 +86,7 @@ const AppointmentDetailPopover: React.FC<AppointmentDetailPopoverProps> = ({
       .slice(0, 2);
   };
 
-  const therapistColor = getTherapistColor(appointment.therapistId || 1);
+  const therapistColor = getTherapistColor(parseInt(appointment.therapistId || '1'));
 
   return (
     <Popover>
