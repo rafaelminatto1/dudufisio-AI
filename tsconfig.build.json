@@ -1,0 +1,31 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "components",
+    "pages",
+    "services",
+    "hooks",
+    "contexts",
+    "types",
+    "lib",
+    "App.tsx",
+    "AppRoutes.tsx",
+    "index.tsx",
+    "vite-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "tests/**/*",
+    "testsprite_tests/**/*",
+    "**/*.test.*",
+    "**/*.spec.*",
+    "middleware.ts",
+    "next.config.*"
+  ]
+}
+

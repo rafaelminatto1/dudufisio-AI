@@ -1,7 +1,5 @@
 import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabase';
 import type { Database } from '../../types/database';
-
-type Patient = Database['public']['Tables']['patients']['Row'];
 type PatientInsert = Database['public']['Tables']['patients']['Insert'];
 type PatientUpdate = Database['public']['Tables']['patients']['Update'];
 
@@ -33,7 +31,8 @@ class PatientService {
       }
 
       if (filters?.insuranceProvider) {
-        query = query.eq('insurance_provider', filters.insuranceProvider);
+        // Align with schema: patients.insurance_info
+        query = query.eq('insurance_info', filters.insuranceProvider);
       }
 
       const { data, error } = await query.order('created_at', { ascending: false });
@@ -88,10 +87,12 @@ class PatientService {
   // Create new patient
   async createPatient(patient: PatientInsert) {
     try {
-      // Check if CPF already exists
-      const existing = await this.getPatientByCPF(patient.cpf);
-      if (existing) {
-        throw new Error('CPF já cadastrado no sistema');
+      // Check if CPF already exists (only if provided)
+      if (patient.cpf) {
+        const existing = await this.getPatientByCPF(patient.cpf);
+        if (existing) {
+          throw new Error('CPF já cadastrado no sistema');
+        }
       }
 
       const { data, error } = await supabase
@@ -159,7 +160,7 @@ class PatientService {
         appointmentsResult,
         sessionsResult,
         painPointsResult,
-        financialResult,
+        paymentsResult,
       ] = await Promise.all([
         // Total appointments
         supabase
@@ -181,28 +182,24 @@ class PatientService {
           .eq('patient_id', patientId)
           .eq('status', 'active'),
         
-        // Financial balance
+        // Payments (align with schema: payment_transactions)
         supabase
-          .from('financial_transactions')
-          .select('amount, transaction_type')
-          .eq('patient_id', patientId)
+          .from('payment_transactions')
+          .select('amount, status')
+          .eq('customer_id', patientId)
           .eq('status', 'completed'),
       ]);
 
       if (appointmentsResult.error) throw appointmentsResult.error;
       if (sessionsResult.error) throw sessionsResult.error;
       if (painPointsResult.error) throw painPointsResult.error;
-      if (financialResult.error) throw financialResult.error;
+      if (paymentsResult.error) throw paymentsResult.error;
 
       // Calculate financial balance
-      const balance = financialResult.data?.reduce((acc, transaction) => {
-        if (transaction.transaction_type === 'payment') {
-          return acc + transaction.amount;
-        } else if (transaction.transaction_type === 'refund') {
-          return acc - transaction.amount;
-        }
-        return acc;
-      }, 0) || 0;
+      const balance = (paymentsResult.data?.reduce((acc: number, transaction: { amount: number; status: string }) => {
+        // Consider only completed amounts as positive for now
+        return acc + (typeof transaction.amount === 'number' ? transaction.amount : 0);
+      }, 0)) || 0;
 
       return {
         totalAppointments: appointmentsResult.count || 0,
@@ -242,7 +239,7 @@ class PatientService {
 
       if (error) throw error;
 
-      const patientIds = [...new Set(data?.map(a => a.patient_id) || [])];
+      const patientIds = [...new Set((data || []).map((a: { patient_id: string }) => a.patient_id))];
 
       if (patientIds.length === 0) return [];
 
@@ -306,7 +303,21 @@ class PatientService {
         'Status',
       ];
 
-      const rows = patients.map(patient => [
+      const rows = (patients as Array<{
+        full_name: string;
+        email: string | null;
+        phone: string | null;
+        cpf: string | null;
+        birth_date: string | null;
+        gender: string | null;
+        address_street: string | null;
+        address_number: string | null;
+        address_city: string | null;
+        address_state: string | null;
+        address_zip: string | null;
+        insurance_info: string | null;
+        status: string | null;
+      }>).map((patient) => [
         patient.full_name,
         patient.email,
         patient.phone,
@@ -316,14 +327,14 @@ class PatientService {
         `${patient.address_street || ''} ${patient.address_number || ''}`,
         patient.address_city || '',
         patient.address_state || '',
-        patient.address_zip_code || '',
-        patient.insurance_provider || '',
+        patient.address_zip || '',
+        patient.insurance_info || '',
         patient.status,
       ]);
 
       const csvContent = [
         headers.join(','),
-        ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
+        ...rows.map((row: (string | null)[]) => row.map((cell: string | null) => `"${cell ?? ''}"`).join(',')),
       ].join('\n');
 
       return csvContent;
