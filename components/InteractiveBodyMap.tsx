@@ -80,7 +80,7 @@ const InteractiveBodyMap: React.FC<InteractiveBodyMapProps> = ({ selectedParts, 
              <svg viewBox="100 0 110 150" className="w-1/2 max-w-[150px]" onClick={e => handleSvgClick(e, 'back')}>
                 {/* Re-use front parts for the back view outline */}
                 {parts.front.map(p => (
-                     <path key={p.id + "_back_outline"} d={p.d.replace(/M (\d+),/g, (match, p1) => `M ${210 - parseInt(p1)},` ).replace(/A (\d+),(\d+) 0 1 1 (\d+),/g, (match, r1, r2, p1) => `A ${r1},${r2} 0 1 0 ${210-parseInt(p1)},`)} className="fill-slate-200/50" stroke="#cbd5e1" strokeWidth="0.5" />
+                     <path key={p.id + "_back_outline"} d={p.d.replace(/M (\d+),/g, (_match, p1) => `M ${210 - parseInt(p1)},` ).replace(/A (\d+),(\d+) 0 1 1 (\d+),/g, (_match, r1, r2, p1) => `A ${r1},${r2} 0 1 0 ${210-parseInt(p1)},`)} className="fill-slate-200/50" stroke="#cbd5e1" strokeWidth="0.5" />
                 ))}
                 {/* Back-specific parts */}
                 {parts.back.map(p => (

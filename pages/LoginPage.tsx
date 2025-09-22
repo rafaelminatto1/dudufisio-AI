@@ -1,24 +1,32 @@
 
 
-'use client';
 import React, { useState } from 'react';
-// FIX: Use namespace import for react-router-dom to fix module resolution issues.
-import * as ReactRouterDOM from 'react-router-dom';
-import { useAuth } from "../contexts/AppContext"';
 import { Stethoscope, Loader } from 'lucide-react';
 import { Role } from '../types';
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  onLogin: (user: any) => void;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('roberto@fisioflow.com');
   const [password, setPassword] = useState('password123');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
+  // Mock login function for now
+  const mockLogin = async (email: string, password: string) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-  const navigate = ReactRouterDOM.useNavigate();
-  const location = ReactRouterDOM.useLocation();
-  const from = (location.state as any)?.from?.pathname || '/';
+    // Return different users based on email for testing portals
+    if (email.includes('ana.costa')) {
+      return { id: '2', name: 'Ana Costa', email, role: Role.Patient, avatarUrl: '' };
+    } else if (email.includes('juliana')) {
+      return { id: '3', name: 'Juliana Santos', email, role: Role.EducadorFisico, avatarUrl: '' };
+    } else {
+      return { id: '1', name: 'Roberto Silva', email, role: Role.Admin, avatarUrl: '' };
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,17 +34,9 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const user = await login(email, password);
-      
-      // Redirect based on role
-      let destination = from === '/' ? '/dashboard' : from;
-      if (user.role === Role.Patient) {
-        destination = from === '/' ? '/portal/dashboard' : from;
-      } else if (user.role === Role.EducadorFisico) {
-        destination = from === '/' ? '/partner/dashboard' : from;
-      }
-        
-      navigate(destination, { replace: true });
+      const user = await mockLogin(email, password);
+      onLogin(user);
+      setError('');
     } catch (err: any) {
       setError(err.message || 'Falha no login. Verifique suas credenciais.');
     } finally {

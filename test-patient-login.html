@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Portal do Paciente - DuduFisio AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .login-info {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4ade80;
+        }
+        .test-button {
+            background: #4ade80;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .test-button:hover {
+            background: #22c55e;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .step {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border-left: 3px solid #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste do Portal do Paciente - DuduFisio AI</h1>
+
+        <div class="login-info">
+            <h3>📋 Credenciais de Teste para Portal do Paciente</h3>
+            <p><strong>Email:</strong> patient@dudufisio.com</p>
+            <p><strong>Senha:</strong> demo123456</p>
+            <p><strong>Usuário:</strong> Ana Beatriz Costa (Paciente)</p>
+        </div>
+
+        <div class="step">
+            <h4>Passos para testar:</h4>
+            <ol>
+                <li>Abra a aplicação principal</li>
+                <li>Use as credenciais acima para fazer login</li>
+                <li>Verifique se o portal do paciente carrega corretamente</li>
+                <li>Teste a navegação entre as seções</li>
+            </ol>
+        </div>
+
+        <a href="http://localhost:5174" class="test-button" target="_blank">
+            🚀 Abrir Aplicação Principal
+        </a>
+
+        <h2>🖥️ Aplicação em iFrame (para testes rápidos)</h2>
+        <iframe id="app-frame" src="http://localhost:5174"></iframe>
+
+        <div class="login-info">
+            <h4>📱 Outras Credenciais Disponíveis:</h4>
+            <ul>
+                <li><strong>Admin:</strong> admin@dudufisio.com / demo123456</li>
+                <li><strong>Terapeuta:</strong> therapist@dudufisio.com / demo123456</li>
+                <li><strong>Educador Físico:</strong> educator@dudufisio.com / demo123456</li>
+            </ul>
+        </div>
+
+        <script>
+            // Log para monitorar carregamento
+            const iframe = document.getElementById('app-frame');
+            iframe.onload = function() {
+                console.log('✅ Aplicação carregada no iframe');
+            };
+            iframe.onerror = function() {
+                console.log('❌ Erro ao carregar aplicação no iframe');
+            };
+        </script>
+    </div>
+</body>
+</html>

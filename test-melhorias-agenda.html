@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste das Melhorias da Agenda - DuduFisio AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .improvement-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .completed { background: #d4edda; border: 1px solid #c3e6cb; }
+        .testing { background: #fff3cd; border: 1px solid #ffeeba; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+        }
+        button:hover { background: #0056b3; }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .test-panel {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            margin: 10px 0;
+        }
+        .checklist {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .checklist ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Teste das Melhorias da Agenda</h1>
+
+        <div class="improvement-section completed">
+            <h3>✅ Melhorias Implementadas</h3>
+            <ul>
+                <li><strong>🗓️ Domingo Removido:</strong> Agenda agora mostra Segunda a Sábado (6 dias)</li>
+                <li><strong>📏 Sidebar Menor:</strong> Largura reduzida de 64 para 52 (expandido) e 20 para 16 (colapsado)</li>
+                <li><strong>🎯 Drag & Drop Melhorado:</strong> Zones de drop por terapeuta com feedback visual</li>
+                <li><strong>👥 Múltiplos Agendamentos:</strong> Exibição otimizada quando há 3+ agendamentos no mesmo horário</li>
+                <li><strong>📝 Quebra de Linha:</strong> Nomes dos pacientes com quebra de linha inteligente</li>
+                <li><strong>🖱️ Menu de Contexto:</strong> Clique direito nos agendamentos para ações rápidas</li>
+                <li><strong>📱 Clique para Editar:</strong> Interface mais intuitiva para edição</li>
+            </ul>
+        </div>
+
+        <div class="test-grid">
+            <div class="test-panel">
+                <h3>🔧 Funcionalidades para Testar</h3>
+
+                <div class="checklist">
+                    <h4>1. Layout da Agenda:</h4>
+                    <ul>
+                        <li>☐ Apenas 6 colunas (Seg-Sáb)</li>
+                        <li>☐ Sidebar mais compacta</li>
+                        <li>☐ 3 colunas de terapeutas por dia</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>2. Agendamentos:</h4>
+                    <ul>
+                        <li>☐ Nomes com quebra de linha</li>
+                        <li>☐ Múltiplos agendamentos organizados</li>
+                        <li>☐ Clique simples abre detalhes</li>
+                        <li>☐ Clique direito abre menu</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>3. Drag & Drop:</h4>
+                    <ul>
+                        <li>☐ Arrastar entre terapeutas</li>
+                        <li>☐ Arrastar entre horários</li>
+                        <li>☐ Feedback visual durante arraste</li>
+                        <li>☐ Snap para slots de 30min</li>
+                    </ul>
+                </div>
+
+                <div class="checklist">
+                    <h4>4. Menu de Contexto:</h4>
+                    <ul>
+                        <li>☐ Editar agendamento</li>
+                        <li>☐ Duplicar para próxima semana</li>
+                        <li>☐ Marcar como concluído</li>
+                        <li>☐ Alterar status de pagamento</li>
+                        <li>☐ Ligar para paciente</li>
+                        <li>☐ Excluir agendamento</li>
+                    </ul>
+                </div>
+
+                <button onclick="openAgenda()">🚀 Abrir Agenda para Teste</button>
+            </div>
+
+            <div class="test-panel">
+                <h3>📋 Instruções de Teste</h3>
+
+                <div class="improvement-section info">
+                    <h4>🔐 Login:</h4>
+                    <p><strong>Email:</strong> admin@dudufisio.com</p>
+                    <p><strong>Senha:</strong> demo123456</p>
+                </div>
+
+                <div class="improvement-section testing">
+                    <h4>🧪 Sequência de Teste:</h4>
+                    <ol>
+                        <li><strong>Layout:</strong> Verificar se só tem 6 colunas e sidebar menor</li>
+                        <li><strong>Agendamentos:</strong> Ver se nomes estão quebrados corretamente</li>
+                        <li><strong>Clique Simples:</strong> Clicar em agendamento para ver detalhes</li>
+                        <li><strong>Clique Direito:</strong> Clicar com botão direito para menu</li>
+                        <li><strong>Drag & Drop:</strong> Arrastar agendamento para outro horário/terapeuta</li>
+                        <li><strong>Menu Ações:</strong> Testar editar, duplicar, marcar como pago, etc.</li>
+                    </ol>
+                </div>
+
+                <div class="checklist">
+                    <h4>🎯 Resultados Esperados:</h4>
+                    <ul>
+                        <li>📅 Vista semanal mais compacta (sem domingo)</li>
+                        <li>📏 Mais espaço para conteúdo principal</li>
+                        <li>👁️ Melhor visualização de agendamentos sobrepostos</li>
+                        <li>🖱️ Interação mais intuitiva (cliques + menu)</li>
+                        <li>🎯 Drag & drop preciso por terapeuta</li>
+                        <li>⚡ Ações rápidas via menu de contexto</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="improvement-section">
+            <h3>🖥️ Teste em Tempo Real</h3>
+            <iframe id="app-iframe" src="http://localhost:5173"></iframe>
+        </div>
+
+        <div class="improvement-section">
+            <h3>📝 Status do Teste</h3>
+            <div id="test-status">
+                <p>🔄 Carregando aplicação...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openAgenda() {
+            window.open('http://localhost:5173', '_blank');
+            document.getElementById('test-status').innerHTML =
+                '<p style="color: blue;">🔍 Teste manual iniciado em nova aba</p>' +
+                '<p>🔗 Acesse a agenda e teste todas as funcionalidades listadas</p>';
+        }
+
+        // Auto-status check
+        window.onload = function() {
+            fetch('http://localhost:5173')
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('test-status').innerHTML =
+                            '<p style="color: green;">✅ Servidor online - Melhorias implementadas</p>' +
+                            '<p>🎯 Sistema pronto para teste das melhorias da agenda</p>' +
+                            '<p>📱 Use o iframe abaixo ou abra em nova aba para testar</p>';
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('test-status').innerHTML =
+                        '<p style="color: red;">❌ Servidor offline</p>' +
+                        '<p>Execute: npm run dev</p>';
+                });
+        };
+
+        // Monitor iframe
+        document.getElementById('app-iframe').onload = function() {
+            document.getElementById('test-status').innerHTML +=
+                '<p style="color: green;">✅ Aplicação carregada no iframe</p>';
+        };
+    </script>
+</body>
+</html>

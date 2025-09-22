@@ -12,6 +12,8 @@ import { useToast } from '../contexts/ToastContext';
 import { usePatients } from '../hooks/usePatients';
 import { useDebounce } from '../hooks/useDebounce';
 import { useData } from '../contexts/DataContext';
+import { RoleGuard } from '../components/RoleGuard';
+import { Role } from '../types';
 
 
 const PatientRow: React.FC<{ patient: PatientSummary }> = ({ patient }) => {
@@ -105,7 +107,7 @@ const PatientListPage: React.FC = () => {
   };
 
   return (
-    <>
+    <RoleGuard allowedRoles={[Role.Admin, Role.Therapist, Role.EducadorFisico]}>
       <PageHeader
         title="Gestão de Pacientes"
         subtitle="Adicione, visualize e gerencie as informações dos seus pacientes."
@@ -199,7 +201,7 @@ const PatientListPage: React.FC = () => {
           <p className="text-sm text-slate-400">Você chegou ao fim da lista.</p>
         )}
       </div>
-    </>
+    </RoleGuard>
   );
 };
 

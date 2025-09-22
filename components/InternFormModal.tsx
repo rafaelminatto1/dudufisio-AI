@@ -13,7 +13,7 @@ interface InternFormModalProps {
 const getInitialFormData = (): Omit<Intern, 'id' | 'avatarUrl'> => ({
   name: '',
   institution: '',
-  startDate: new Date().toISOString().split('T')[0],
+  startDate: new Date().toISOString().split('T')[0] as string,
   status: InternStatus.Active,
   averageGrade: undefined,
 });
@@ -26,7 +26,7 @@ const InternFormModal: React.FC<InternFormModalProps> = ({ isOpen, onClose, onSa
         if (internToEdit) {
             setFormData({
                 ...internToEdit,
-                averageGrade: internToEdit.averageGrade || undefined,
+                averageGrade: internToEdit.averageGrade,
             });
         } else {
             setFormData(getInitialFormData());
@@ -43,7 +43,7 @@ const InternFormModal: React.FC<InternFormModalProps> = ({ isOpen, onClose, onSa
 
     const handleSaveClick = async () => {
         setIsSaving(true);
-        await onSave({ ...formData, id: internToEdit?.id });
+        await onSave({ ...formData, id: internToEdit?.id as string | undefined });
         setIsSaving(false);
     };
 

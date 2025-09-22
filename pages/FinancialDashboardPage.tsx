@@ -10,6 +10,8 @@ import MetricCard from '../components/MetricCard';
 import TransactionFormModal from '../components/financial/TransactionFormModal';
 import TransactionList from '../components/financial/TransactionList';
 import * as financialService from '../services/financialService';
+import { RoleGuard } from '../components/RoleGuard';
+import { Role } from '../types';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF4560', '#775DD0'];
 
@@ -52,7 +54,8 @@ const FinancialDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <RoleGuard allowedRoles={[Role.Admin, Role.Therapist]}>
+      <div className="space-y-8">
       <PageHeader
         title="Controle Financeiro"
         subtitle="Visão completa da saúde financeira da sua clínica."
@@ -123,7 +126,8 @@ const FinancialDashboardPage: React.FC = () => {
         onAddExpense={() => handleOpenModal()}
         onEditExpense={handleOpenModal}
       />
-    </div>
+      </div>
+    </RoleGuard>
   );
 };
 

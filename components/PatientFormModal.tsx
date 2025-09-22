@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Save, User, AlertCircle } from 'lucide-react';
+import { X, Save } from 'lucide-react';
 // FIX: Import PatientStatus enum.
 import { Patient, PatientStatus } from '../types';
 import { useToast } from '../contexts/ToastContext';
@@ -41,7 +41,7 @@ const PatientFormModal: React.FC<PatientFormModalProps> = ({ isOpen, onClose, on
     if (patientToEdit) {
       setFormData({
           ...patientToEdit,
-          birthDate: patientToEdit.birthDate ? new Date(patientToEdit.birthDate).toISOString().split('T')[0] : '',
+          birthDate: (patientToEdit.birthDate ? new Date(patientToEdit.birthDate).toISOString().split('T')[0] : '') as string,
           allergies: patientToEdit.allergies || '',
           medicalAlerts: patientToEdit.medicalAlerts || '',
       });

@@ -9,14 +9,14 @@ import {
     AlertTriangle, Mail, BrainCircuit, ClipboardList, PieChart, DollarSign, 
     SlidersHorizontal, Bell, MessageSquare, Handshake, Package, Ticket, Activity, Users2, BookMarked
 } from 'lucide-react';
-import { useAuth } from "../contexts/AppContext"';
+import { useAuth } from "../contexts/AppContext";
 import { useNotifications } from '../hooks/useNotifications';
 
 const NavLinkComponent = ({ to, icon: Icon, label, isCollapsed, badgeCount }: { to: string, icon: React.ElementType, label: string, isCollapsed: boolean, badgeCount?: number }) => (
     <ReactRouterDOM.NavLink
       to={to}
       className={({ isActive }) =>
-        `flex items-center p-2.5 rounded-lg transition-colors duration-200 ${
+        `flex items-center p-2 rounded-lg transition-colors duration-200 ${
           isActive
             ? 'bg-sky-50 text-sky-600 font-semibold'
             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -25,7 +25,7 @@ const NavLinkComponent = ({ to, icon: Icon, label, isCollapsed, badgeCount }: { 
       title={isCollapsed ? label : undefined}
     >
         <div className="relative flex items-center w-full">
-            <Icon className={`w-5 h-5 shrink-0 ${isCollapsed ? '' : 'mr-3'}`} />
+            <Icon className={`w-4 h-4 shrink-0 ${isCollapsed ? '' : 'mr-2'}`} />
             {!isCollapsed && <span className="truncate flex-1 text-sm">{label}</span>}
             
             {!isCollapsed && badgeCount && badgeCount > 0 ? (
@@ -103,10 +103,10 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <div className={`transition-all duration-300 ease-in-out bg-white border-r border-slate-200 flex flex-col ${isCollapsed ? 'w-20' : 'w-64'}`}>
-      <div className="flex items-center p-4 border-b border-slate-200 h-16 shrink-0">
-        {!isCollapsed && <Stethoscope className="w-8 h-8 text-sky-500" />}
-        {!isCollapsed && <span className="text-xl font-bold text-slate-800 ml-2">Fisio<span className="text-sky-500">Flow</span></span>}
+    <div className={`transition-all duration-300 ease-in-out bg-white border-r border-slate-200 flex flex-col ${isCollapsed ? 'w-16' : 'w-52'}`}>
+      <div className="flex items-center p-3 border-b border-slate-200 h-14 shrink-0">
+        {!isCollapsed && <Stethoscope className="w-6 h-6 text-sky-500" />}
+        {!isCollapsed && <span className="text-lg font-bold text-slate-800 ml-2">Fisio<span className="text-sky-500">Flow</span></span>}
         <button onClick={() => setIsCollapsed(!isCollapsed)} className={`p-1.5 rounded-full text-slate-500 hover:bg-slate-100 ${isCollapsed ? 'mx-auto' : 'ml-auto'}`}>
           {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
         </button>

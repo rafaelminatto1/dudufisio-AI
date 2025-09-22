@@ -8,7 +8,7 @@ import { Plus, ListTodo } from 'lucide-react';
 import TaskCard from '../components/TaskCard';
 import TaskFormModal from '../components/TaskFormModal';
 import Skeleton from '../components/ui/Skeleton';
-import { useAuth } from "../contexts/AppContext"';
+import { useAuth } from "../contexts/AppContext";
 import { useToast } from '../contexts/ToastContext';
 import { useData } from '../contexts/DataContext';
 

@@ -61,18 +61,18 @@ const Breadcrumbs: React.FC = () => {
                 let label = breadcrumbNameMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
 
                 // Handle dynamic segments
-                if (params.id && segment === params.id) {
+                if (params['id'] && segment === params['id']) {
                     if (location.pathname.startsWith('/patients/')) {
                         try {
-                            const patient = await patientService.getPatientById(params.id);
+                            const patient = await patientService.getPatientById(params['id']);
                             label = patient?.name || 'Paciente';
                         } catch (e) {
                             label = 'Paciente';
                         }
                     }
-                } else if (params.reportId && segment === params.reportId) {
+                } else if (params['reportId'] && segment === params['reportId']) {
                      label = 'Editar Laudo';
-                } else if (params.patientId && segment === params.patientId) {
+                } else if (params['patientId'] && segment === params['patientId']) {
                      label = 'Novo Laudo';
                 }
                 

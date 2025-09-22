@@ -1,7 +1,7 @@
 // pages/patient-portal/PatientProgressPage.tsx
 import React, { useState, useEffect } from 'react';
 import PageHeader from '../../components/PageHeader';
-import { useAuth } from "../contexts/AppContext"';
+import { useAuth } from "../../contexts/AppContext";
 import * as soapNoteService from '../../services/soapNoteService';
 import * as patientService from '../../services/patientService'; // <-- Add this
 import { generatePatientProgressSummary, PatientProgressData } from '../../services/geminiService';

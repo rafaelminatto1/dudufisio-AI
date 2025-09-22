@@ -1,6 +1,6 @@
 // components/MetricEvolutionChart.tsx
 import React, { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { SoapNote, TrackedMetric } from '../types';
 import InfoCard from './ui/InfoCard';
 import { LineChart as LineChartIcon } from 'lucide-react';

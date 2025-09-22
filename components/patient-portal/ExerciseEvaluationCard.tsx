@@ -2,7 +2,7 @@
 // components/patient-portal/ExerciseEvaluationCard.tsx
 import React, { useState, useEffect } from 'react';
 import { Exercise, ExercisePrescription, ExerciseEvaluation } from '../../types';
-import { useAuth } from "../contexts/AppContext"';
+import { useAuth } from "../contexts/AppContext";
 import PainScale from '../PainScale';
 import { Save, Loader, CheckCircle, Smile, Meh, Frown } from 'lucide-react';
 

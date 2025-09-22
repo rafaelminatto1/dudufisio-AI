@@ -1,32 +1,22 @@
 
-import './index.css';
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import App from './App';
-import { AppProvider } from './contexts/AppContext';
-import { ToastProvider } from './contexts/ToastContext';
-import ErrorBoundary from './components/ErrorBoundary';
-import * as ReactRouterDOM from 'react-router-dom';
+import './index.css';
+
+console.log('🚀 Starting React application...');
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
+  console.error('❌ Root element not found!');
+} else {
+  console.log('✅ Root element found, creating React app...');
+
+  try {
+    const root = createRoot(rootElement);
+    root.render(<App />);
+    console.log('🎉 React application rendered successfully!');
+  } catch (error) {
+    console.error('💥 Error rendering React app:', error);
+  }
 }
-
-const root = ReactDOM.createRoot(rootElement);
-
-root.render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <ReactRouterDOM.HashRouter>
-        <AppProvider>
-          <ToastProvider>
-            <App />
-          </ToastProvider>
-        </AppProvider>
-      </ReactRouterDOM.HashRouter>
-    </ErrorBoundary>
-  </React.StrictMode>
-);
-
-console.log('🚀 React Router application initialized successfully');

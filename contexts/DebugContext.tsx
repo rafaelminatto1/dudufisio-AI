@@ -12,7 +12,7 @@ const DebugContext = createContext<DebugContextType | undefined>(undefined);
 
 export const DebugProvider: React.FC<{ children: ReactNode; enabled?: boolean }> = ({
   children,
-  enabled = process.env.NODE_ENV === 'development'
+  enabled = process.env['NODE_ENV'] === 'development'
 }) => {
   const logRouterChange = (location: any) => {
     if (!enabled) return;

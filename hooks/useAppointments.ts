@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Appointment, EnrichedAppointment, Patient, Therapist, AppointmentTypeColors } from '../types';
 import * as appointmentService from '../services/appointmentService';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../contexts/AppContext';
 import { eventService } from '../services/eventService';
 
 interface UseAppointmentsResult {

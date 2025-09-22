@@ -28,6 +28,9 @@ import ProtocolSuggestionModal from '../components/ProtocolSuggestionModal';
 import PatientClinicalDashboard from '../components/patient/PatientClinicalDashboard';
 import PainPointModal from '../components/patient/PainPointModal';
 import { eventService } from '../services/eventService';
+import { RoleGuard } from '../components/RoleGuard';
+import { Role } from '../types';
+import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 
 const InfoPill: React.FC<{ icon: React.ReactNode; label: string; value: React.ReactNode }> = ({ icon, label, value }) => (
     <div className="flex items-start">
@@ -109,6 +112,7 @@ const TabButton: React.FC<{ icon: React.ElementType, label: string; isActive: bo
 const PatientDetailPage: React.FC = () => {
     const { id } = ReactRouterDOM.useParams<{ id: string }>();
     const { therapists } = useData();
+    const { user } = useSupabaseAuth();
     
     const [patient, setPatient] = useState<Patient | null>(null);
     const [patientAppointments, setPatientAppointments] = useState<Appointment[]>([]);
@@ -126,6 +130,25 @@ const PatientDetailPage: React.FC = () => {
     const [noteForDetail, setNoteForDetail] = useState<SoapNote | null>(null);
     const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
     const [isProtocolModalOpen, setIsProtocolModalOpen] = useState(false);
+
+    // Check if user has permission to view this patient
+    const canViewPatient = useMemo(() => {
+        if (!user || !id) return false;
+
+        switch (user.role) {
+            case Role.Patient:
+                // Patients can only view their own profile
+                return user.patientId === id;
+            case Role.EducadorFisico:
+                // TODO: Check if this patient is assigned to this educator
+                return true; // For now, allow access
+            case Role.Therapist:
+            case Role.Admin:
+                return true;
+            default:
+                return false;
+        }
+    }, [user, id]);
     const [painMapModal, setPainMapModal] = useState<{ isOpen: boolean; pointToEdit: Partial<PainPoint> | null }>({ isOpen: false, pointToEdit: null });
     
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -324,6 +347,21 @@ const PatientDetailPage: React.FC = () => {
 
 
     if (isLoading) return <PageLoader />;
+    if (!canViewPatient) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md text-center">
+                    <div className="w-12 h-12 text-red-500 mx-auto mb-4">🚫</div>
+                    <h3 className="text-lg font-semibold text-red-800 mb-2">
+                        Acesso Negado
+                    </h3>
+                    <p className="text-red-600">
+                        Você não tem permissão para visualizar este paciente.
+                    </p>
+                </div>
+            </div>
+        );
+    }
     if (pageError || !patient) return <div className="text-center p-10 text-red-500">{pageError || 'Paciente não encontrado.'}</div>;
     
     const birthDate = new Date(patient.birthDate);

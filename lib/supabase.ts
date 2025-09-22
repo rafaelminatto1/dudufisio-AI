@@ -4,11 +4,21 @@ import type { Database } from '../types/database';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+// Check if we have valid Supabase credentials
+const hasValidCredentials = supabaseUrl &&
+  supabaseAnonKey &&
+  supabaseAnonKey !== 'your_anon_key_here' &&
+  supabaseUrl.includes('supabase.co');
+
+if (!hasValidCredentials) {
+  console.warn('⚠️ Supabase credentials not configured. Using development mode.');
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+// Use dummy values for development if real credentials are not available
+const finalSupabaseUrl = hasValidCredentials ? supabaseUrl : 'https://dummy.supabase.co';
+const finalSupabaseAnonKey = hasValidCredentials ? supabaseAnonKey : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1bW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUxOTI4MDAsImV4cCI6MTk2MDc2ODgwMH0.dummy';
+
+export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,

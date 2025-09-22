@@ -24,7 +24,7 @@ export interface ApiError {
   error: string;
   message: string;
   details?: ValidationError[] | string;
-  code?: string;
+  code: string;
   timestamp: string;
 }
 
@@ -309,7 +309,7 @@ export function isAuthenticationError(error: any): error is AuthenticationError 
     ERROR_CODES.AUTH_REQUIRED,
     ERROR_CODES.TOKEN_EXPIRED,
     ERROR_CODES.INVALID_CREDENTIALS
-  ].includes(error.code as ErrorCode);
+  ].includes(error.code || '');
 }
 
 export function isAuthorizationError(error: any): error is AuthorizationError {
@@ -319,7 +319,7 @@ export function isAuthorizationError(error: any): error is AuthorizationError {
 export function createApiResponse<T>(data: T, message?: string): ApiResponse<T> {
   return {
     data,
-    message,
+    message: message || 'Success',
     timestamp: new Date().toISOString()
   };
 }
@@ -343,7 +343,7 @@ export function createPaginatedResponse<T>(
       pages,
       has_more
     },
-    message,
+    message: message || 'Success',
     timestamp: new Date().toISOString()
   };
 }
@@ -357,8 +357,8 @@ export function createApiError(
   return {
     error,
     message,
-    code,
-    details,
+    code: code || 'UNKNOWN_ERROR',
+    details: details || [],
     timestamp: new Date().toISOString()
   };
 }
