@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --project tsconfig.build.json && vite build",
+    "build": "vite build",
+    "build:check": "tsc --project tsconfig.build.json && vite build",
     "start": "vite preview",
     "test": "jest",
     "test:watch": "jest --watch",
