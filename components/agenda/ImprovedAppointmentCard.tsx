@@ -1,7 +1,7 @@
 import React from 'react';
-import { EnrichedAppointment, AppointmentStatus } from '../types';
-import { cn } from '../lib/utils';
-import { Repeat, Clock, User } from 'lucide-react';
+import { EnrichedAppointment, AppointmentStatus } from '../../types';
+import { cn } from '../../lib/utils';
+import { Repeat, Clock } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Card, CardContent } from '../ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';

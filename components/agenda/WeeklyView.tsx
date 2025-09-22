@@ -135,13 +135,13 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
   draggedAppointmentId
 }) => {
   const weekStart = React.useMemo(() => startOfWeek(currentDate, { weekStartsOn: 1 }), [currentDate]);
-  const weekDays = React.useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
+  const weekDays = React.useMemo(() => Array.from({ length: 6 }, (_, i) => addDays(weekStart, i)), [weekStart]); // Segunda a Sábado
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header with therapist names */}
       <div className="mb-4">
-        <div className="grid grid-cols-7 gap-2">
+        <div className="grid grid-cols-6 gap-2">
           {weekDays.map(day => {
             const dayAppointments = appointments.filter(app => isSameDay(app.startTime, day));
             return (
@@ -179,7 +179,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
         </div>
 
         {/* Days grid */}
-        <div className="flex-1 grid grid-cols-7 gap-px bg-slate-200 overflow-auto">
+        <div className="flex-1 grid grid-cols-6 gap-px bg-slate-200 overflow-auto">
           {weekDays.map((day) => (
             <div key={day.toISOString()} className="bg-white">
               {/* Therapist header */}

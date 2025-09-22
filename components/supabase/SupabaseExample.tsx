@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSupabasePatients } from '../../hooks/supabase/useSupabasePatients';
 import { useSupabaseAppointments } from '../../hooks/supabase/useSupabaseAppointments';
 import { subscriptions } from '../../services/supabase/realtimeService';
-import { useAuth } from "../contexts/AppContext"';
+import { useAuth } from "../contexts/AppContext";
 import { Loader2, AlertCircle, CheckCircle, Users, Calendar, Bell } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

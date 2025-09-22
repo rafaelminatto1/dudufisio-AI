@@ -7,10 +7,10 @@ import React, { useMemo } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
 import { Patient, AppointmentStatus, AlertPatient } from '../../types';
-import { Phone, MessageSquare, CalendarPlus, StickyNote, CheckCircle, XCircle, BrainCircuit, AlertTriangle } from 'lucide-react';
+import { Phone, MessageSquare, CalendarPlus, StickyNote, BrainCircuit, AlertTriangle } from 'lucide-react';
 import { useData } from '../../contexts/DataContext';
 import { useToast } from '../../contexts/ToastContext';
-import { useAuth } from "../contexts/AppContext"';
+import { useAuth } from "../../contexts/AppContext";
 import * as patientService from '../../services/patientService';
 
 interface AlertCardProps {

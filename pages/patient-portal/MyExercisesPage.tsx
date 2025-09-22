@@ -2,7 +2,7 @@
 // pages/patient-portal/MyExercisesPage.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import PageHeader from '../../components/PageHeader';
-import { useAuth } from "../contexts/AppContext"';
+import { useAuth } from "../../contexts/AppContext";
 import { useToast } from '../../contexts/ToastContext';
 import * as treatmentService from '../../services/treatmentService';
 import * as exerciseService from '../../services/exerciseService';

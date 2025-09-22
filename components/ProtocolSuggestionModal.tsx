@@ -1,6 +1,6 @@
 
 // components/ProtocolSuggestionModal.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Lightbulb, Loader, ArrowLeft, CheckCircle } from 'lucide-react';
 import { Patient, Protocol, TreatmentPlan, ExercisePrescription } from '../types';
 import { useToast } from '../contexts/ToastContext';

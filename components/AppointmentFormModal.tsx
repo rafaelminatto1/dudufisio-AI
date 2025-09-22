@@ -24,7 +24,7 @@ interface AppointmentFormModalProps {
   allAppointments: Appointment[];
 }
 
-const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onClose, onSave, onDelete, appointmentToEdit, initialData, patients, therapists, allAppointments }) => {
+const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onClose, onSave, onDelete: _onDelete, appointmentToEdit, initialData, patients, therapists, allAppointments }) => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | PatientSummary | null>(null);
   const [appointmentType, setAppointmentType] = useState(AppointmentType.Session);
   const [duration, setDuration] = useState(60);
@@ -87,7 +87,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     
     const startTime = new Date(slotDate);
     const [hour, minute] = slotTime.split(':');
-    startTime.setHours(parseInt(hour), parseInt(minute), 0, 0);
+    startTime.setHours(parseInt(hour || '0'), parseInt(minute || '0'), 0, 0);
     
     const endTime = new Date(startTime.getTime() + duration * 60000);
 
@@ -105,8 +105,8 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       observations: notes,
       value: appointmentToEdit?.value || 120,
       paymentStatus: appointmentToEdit?.paymentStatus || 'pending',
-      recurrenceRule: recurrenceRule,
-      seriesId: appointmentToEdit?.seriesId,
+      recurrenceRule: recurrenceRule || { frequency: 'weekly', days: [], until: '' },
+      seriesId: recurrenceRule ? (appointmentToEdit?.seriesId || `series_${Date.now()}`) : '',
     };
     
     const appointmentsToSave = generateRecurrences(baseAppointment);

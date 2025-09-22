@@ -137,23 +137,23 @@ function validateCPF(cpf: string): boolean {
   // Calculate verification digits
   let sum = 0;
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(digits[i]) * (10 - i);
+    sum += parseInt(digits[i] || '0') * (10 - i);
   }
 
   let remainder = sum % 11;
   const firstDigit = remainder < 2 ? 0 : 11 - remainder;
 
-  if (parseInt(digits[9]) !== firstDigit) return false;
+  if (parseInt(digits[9] || '0') !== firstDigit) return false;
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(digits[i]) * (11 - i);
+    sum += parseInt(digits[i] || '0') * (11 - i);
   }
 
   remainder = sum % 11;
   const secondDigit = remainder < 2 ? 0 : 11 - remainder;
 
-  return parseInt(digits[10]) === secondDigit;
+  return parseInt(digits[10] || '0') === secondDigit;
 }
 
 // Helper functions

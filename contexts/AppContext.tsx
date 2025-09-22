@@ -1,19 +1,20 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { User, Therapist, Patient, Appointment } from '../types';
-import * as authService from '../services/authService';
+import { useSupabaseAuth } from './SupabaseAuthContext';
 import * as therapistService from '../services/therapistService';
 import * as patientService from '../services/patientService';
 import * as appointmentService from '../services/appointmentService';
 import PageLoader from '../components/ui/PageLoader';
+import { useDebug } from './DebugContext';
 
 interface AppContextType {
-  // Auth state
+  // Auth state (from SupabaseAuthContext)
   user: User | null;
   isAuthenticated: boolean;
   authLoading: boolean;
-  login: (email: string, password: string) => Promise<User>;
-  logout: () => void;
-  
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+
   // Data state
   therapists: Therapist[];
   patients: Patient[];
@@ -26,28 +27,28 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Auth state
-  const [user, setUser] = useState<User | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
-  
+  // Safe debug usage
+  let debug;
+  try {
+    debug = useDebug();
+  } catch (error) {
+    debug = {
+      logContextAccess: () => {},
+      logHookCall: () => {},
+      logRouterChange: () => {},
+      enabled: false
+    };
+  }
+
+  // Get auth state from SupabaseAuthContext
+  const { user, isAuthenticated, authLoading, login, logout } = useSupabaseAuth();
+
   // Data state
   const [therapists, setTherapists] = useState<Therapist[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  // Auth functions
-  const login = async (email: string, password: string) => {
-    const loggedInUser = await authService.login(email, password);
-    setUser(loggedInUser);
-    return loggedInUser;
-  };
-
-  const logout = () => {
-    authService.logout();
-    setUser(null);
-  };
 
   // Data functions
   const fetchData = useCallback(async () => {
@@ -70,23 +71,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, []);
 
-  // Initialize auth
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const sessionUser = authService.getSession();
-        if (sessionUser) {
-          setUser(sessionUser);
-        }
-      } catch (error) {
-        console.error("Session check failed:", error);
-        setUser(null);
-      } finally {
-        setAuthLoading(false);
-      }
-    };
-    checkSession();
-  }, []);
+  // Remove auth initialization as it's handled by SupabaseAuthContext
 
   // Fetch data when authenticated
   useEffect(() => {
@@ -116,13 +101,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }
 
   const value: AppContextType = {
-    // Auth
+    // Auth (from SupabaseAuthContext)
     user,
-    isAuthenticated: !!user,
+    isAuthenticated,
     authLoading,
     login,
     logout,
-    
+
     // Data
     therapists,
     patients,
@@ -139,13 +124,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   );
 };
 
-export const useApp = (): AppContextType => {
+function useApp(): AppContextType {
   const context = useContext(AppContext);
+
   if (context === undefined) {
     throw new Error('useApp must be used within an AppProvider');
   }
+
   return context;
-};
+}
+
+export { useApp };
 
 // Backward compatibility hooks
 export const useAuth = () => {

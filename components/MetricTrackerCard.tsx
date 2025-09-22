@@ -1,7 +1,7 @@
 // components/MetricTrackerCard.tsx
 import React, { useState } from 'react';
 import { TrackedMetric } from '../types';
-import { BarChart, Plus, Trash2, Power, PowerOff } from 'lucide-react';
+import { BarChart, Plus, Power, PowerOff } from 'lucide-react';
 import InfoCard from './ui/InfoCard';
 
 interface MetricTrackerCardProps {

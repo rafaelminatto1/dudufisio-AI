@@ -18,7 +18,7 @@ const getInitialFormData = (therapists: Therapist[], projectId: string): Omit<Ta
     description: '',
     status: TaskStatus.ToDo,
     priority: TaskPriority.Medium,
-    dueDate: new Date().toISOString().split('T')[0],
+    dueDate: new Date().toISOString().split('T')[0] as string,
     assignedUserId: therapists[0]?.id || '',
 });
 

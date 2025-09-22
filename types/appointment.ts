@@ -174,7 +174,9 @@ export const conflictCheckSchema = z.object({
 
 // Helper functions
 export function getAppointmentEndTime(startTime: string, durationMinutes: number): string {
-  const [hours, minutes] = startTime.split(':').map(Number);
+  const timeParts = startTime.split(':').map(Number);
+  const hours = timeParts[0] || 0;
+  const minutes = timeParts[1] || 0;
   const startDate = new Date();
   startDate.setHours(hours, minutes, 0, 0);
 
@@ -185,7 +187,9 @@ export function getAppointmentEndTime(startTime: string, durationMinutes: number
 
 export function formatAppointmentDateTime(date: string, time: string): string {
   const appointmentDate = new Date(date);
-  const [hours, minutes] = time.split(':');
+  const timeParts = time.split(':');
+  const hours = timeParts[0] || '0';
+  const minutes = timeParts[1] || '0';
   appointmentDate.setHours(parseInt(hours), parseInt(minutes));
 
   return appointmentDate.toLocaleString('pt-BR', {

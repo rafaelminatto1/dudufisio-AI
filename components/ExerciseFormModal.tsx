@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, PlusCircle, Trash2 } from 'lucide-react';
 import { Exercise } from '../types';
 import { useToast } from '../contexts/ToastContext';
-import { useAuth } from "../contexts/AppContext"';
+import { useAuth } from "../contexts/AppContext";
 
 interface ExerciseFormModalProps {
     isOpen: boolean;
@@ -44,7 +44,7 @@ const ExerciseFormModal: React.FC<ExerciseFormModalProps> = ({ isOpen, onClose, 
                 ...exerciseToEdit,
                 bodyParts: exerciseToEdit.bodyParts,
                 equipment: exerciseToEdit.equipment,
-                contraindications: exerciseToEdit.contraindications,
+                contraindications: exerciseToEdit.contraindications || [],
                 modifications: exerciseToEdit.modifications || { easier: '', harder: '' },
             });
         } else {
@@ -94,18 +94,21 @@ const ExerciseFormModal: React.FC<ExerciseFormModalProps> = ({ isOpen, onClose, 
             // A simple way to get a thumbnail from a youtube link
             let thumbnailUrl = formData.media.thumbnailUrl;
             if (formData.media.videoUrl?.includes('youtube.com/watch?v=')) {
-                const videoId = formData.media.videoUrl.split('v=')[1].split('&')[0];
-                thumbnailUrl = `https://img.youtube.com/vi/${videoId}/0.jpg`;
+                const urlParts = formData.media.videoUrl.split('v=');
+                if (urlParts.length > 1) {
+                    const videoId = urlParts[1]?.split('&')[0] || '';
+                    thumbnailUrl = `https://img.youtube.com/vi/${videoId}/0.jpg`;
+                }
             } else if (!thumbnailUrl) {
                 thumbnailUrl = `https://via.placeholder.com/480x360.png/E2E8F0/64748B?text=${encodeURIComponent(formData.name)}`;
             }
             
             const submissionData: Omit<Exercise, 'id'> & { id?: string } = {
-                id: exerciseToEdit?.id,
+                ...(exerciseToEdit?.id && { id: exerciseToEdit.id }),
                 ...formData,
                 media: { ...formData.media, thumbnailUrl },
                 status: saveAsSuggestion ? 'pending_approval' : 'approved',
-                authorId: saveAsSuggestion ? user?.id : undefined,
+                authorId: saveAsSuggestion ? (user?.id || '') : '',
             };
 
             await onSave(submissionData);

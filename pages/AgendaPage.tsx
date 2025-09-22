@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { format, addDays, startOfWeek, addMonths, subMonths, startOfMonth, endOfMonth } from 'date-fns';
+import { format, addDays, startOfWeek, addMonths, subMonths, startOfMonth, endOfMonth, setHours, setMinutes } from 'date-fns';
 import { ptBR } from 'date-fns/locale/pt-BR';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
@@ -9,15 +9,20 @@ import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
 import { useData } from '../contexts/AppContext';
+import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
+import { Role } from '../types';
 import AppointmentDetailModal from '../components/AppointmentDetailModal';
 import AppointmentFormModal from '../components/AppointmentFormModal';
 import AgendaViewSelector, { AgendaViewType } from '../components/agenda/AgendaViewSelector';
 import DailyView from '../components/agenda/DailyView';
-import WeeklyView from '../components/agenda/WeeklyView';
+import ImprovedWeeklyView from '../components/agenda/ImprovedWeeklyView';
 import MonthlyView from '../components/agenda/MonthlyView';
 import ListView from '../components/agenda/ListView';
 import { cn } from '../lib/utils';
 
+// Constants for calendar
+const PIXELS_PER_MINUTE = 2;
+const START_HOUR = 6;
 
 export default function AgendaPage() {
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -44,6 +49,7 @@ export default function AgendaPage() {
 
     const { appointments, refetch } = useAppointments(startDate, endDate);
     const { therapists } = useData();
+    const { user } = useSupabaseAuth();
     const [patients, setPatients] = useState<Patient[]>([]);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const { showToast } = useToast();
@@ -56,6 +62,27 @@ export default function AgendaPage() {
     
     // Drag & Drop states
     const [draggedAppointmentId, setDraggedAppointmentId] = useState<string | null>(null);
+
+    // Filter appointments based on user role
+    const filteredAppointments = useMemo(() => {
+        if (!user) return appointments;
+
+        switch (user.role) {
+            case Role.Patient:
+                // Patients only see their own appointments
+                return appointments.filter(appointment => appointment.patientId === user.patientId);
+
+            case Role.EducadorFisico:
+                // Educators only see appointments with their clients
+                return appointments.filter(appointment => appointment.therapistId === user.id);
+
+            case Role.Therapist:
+            case Role.Admin:
+            default:
+                // Therapists and Admins see all appointments
+                return appointments;
+        }
+    }, [appointments, user]);
 
     useEffect(() => {
         const fetchPatientsData = async () => {
@@ -107,7 +134,7 @@ export default function AgendaPage() {
     };
     
     const handleDeleteAppointment = async (appointmentId: string, seriesId?: string): Promise<boolean> => {
-        const appointmentToDelete = appointments.find(a => a.id === appointmentId);
+        const appointmentToDelete = filteredAppointments.find(a => a.id === appointmentId);
         if (!appointmentToDelete) return false;
         
         const confirmed = window.confirm(seriesId ? 'Excluir esta e todas as futuras ocorrências?' : 'Tem certeza que deseja excluir este agendamento?');
@@ -148,7 +175,7 @@ export default function AgendaPage() {
     };
     
     const handleUpdateValue = async (appointmentId: string, newValue: number) => {
-        const appointment = appointments.find(a => a.id === appointmentId);
+        const appointment = filteredAppointments.find(a => a.id === appointmentId);
         if (appointment) {
             try {
                 await appointmentService.saveAppointment({ ...appointment, value: newValue });
@@ -265,7 +292,7 @@ export default function AgendaPage() {
 
     const renderView = () => {
         const commonProps = {
-            appointments,
+            filteredAppointments,
             therapists,
             onAppointmentClick: handleAppointmentClick,
             onDragStart: handleDragStart,
@@ -286,18 +313,22 @@ export default function AgendaPage() {
                 );
             case 'weekly':
                 return (
-                    <WeeklyView
+                    <ImprovedWeeklyView
                         {...commonProps}
                         currentDate={currentDate}
                         onSlotClick={handleSlotClick}
                         onDrop={handleDrop}
+                        onEdit={handleEditClick}
+                        onDelete={(id) => handleDeleteAppointment(id)}
+                        onStatusChange={handleStatusChange}
+                        onPaymentStatusChange={handlePaymentStatusChange}
                     />
                 );
             case 'monthly':
                 return (
                     <MonthlyView
                         currentDate={currentDate}
-                        appointments={appointments}
+                        appointments={filteredAppointments}
                         onDateClick={handleDateClick}
                         onPrevMonth={() => setCurrentDate(subMonths(currentDate, 1))}
                         onNextMonth={() => setCurrentDate(addMonths(currentDate, 1))}
@@ -331,7 +362,9 @@ export default function AgendaPage() {
                             <button onClick={handlePrevious} className="p-2 rounded-lg hover:bg-slate-100"><ChevronLeft size={20} /></button>
                             <button onClick={handleToday} className="px-4 py-2 text-sm font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Hoje</button>
                             <button onClick={handleNext} className="p-2 rounded-lg hover:bg-slate-100"><ChevronRight size={20} /></button>
-                             <button onClick={() => { setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id }); setIsFormOpen(true); }} className="ml-4 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 flex items-center shadow-sm"><Plus size={16} className="mr-2"/>Agendar</button>
+                            {user?.role !== Role.Patient && (
+                                <button onClick={() => { setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id }); setIsFormOpen(true); }} className="ml-4 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 flex items-center shadow-sm"><Plus size={16} className="mr-2"/>Agendar</button>
+                            )}
                         </div>
                     </div>
 
@@ -371,7 +404,7 @@ export default function AgendaPage() {
                         initialData={initialFormData}
                         patients={patients}
                         therapists={therapists}
-                        allAppointments={appointments}
+                        allAppointments={filteredAppointments}
                     />
                 )}
             </AnimatePresence>

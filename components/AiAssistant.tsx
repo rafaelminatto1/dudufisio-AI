@@ -25,7 +25,11 @@ const SourceIcon: React.FC<{ source: Message['source'] }> = ({ source }) => {
     };
     
     const config = iconConfig[source as string] || iconConfig['default'];
-    const IconComponent = config.icon;
+    const IconComponent = config?.icon;
+
+    if (!config || !IconComponent) {
+        return null;
+    }
 
     return (
         <span title={config.title} className={config.color}>

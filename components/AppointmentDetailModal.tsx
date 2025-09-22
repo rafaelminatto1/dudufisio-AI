@@ -23,7 +23,7 @@ interface AppointmentDetailModalProps {
 
 const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appointment, patient, therapist, onClose, onEdit, onDelete, onStatusChange, onPaymentStatusChange, onPackagePayment, onUpdateValue }) => {
     const navigate = ReactRouterDOM.useNavigate();
-    const { showToast } = useToast();
+    const { showToast: _showToast } = useToast();
     const [isEditingValue, setIsEditingValue] = useState(false);
     const [localValue, setLocalValue] = useState(appointment?.value || 0);
 

@@ -7,7 +7,7 @@ import React from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
 import { LayoutGrid, Users, LogOut, Stethoscope, Activity, DollarSign } from 'lucide-react';
-import { useAuth } from "../contexts/AppContext"';
+import { useAuth } from "../contexts/AppContext";
 
 const PartnerSidebar: React.FC = () => {
   const { user, logout } = useAuth();

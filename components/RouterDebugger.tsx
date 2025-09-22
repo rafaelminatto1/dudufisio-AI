@@ -6,7 +6,7 @@ interface RouterDebuggerProps {
 }
 
 const RouterDebugger: React.FC<RouterDebuggerProps> = ({ enabled = true }) => {
-  if (!enabled || process.env.NODE_ENV === 'production') {
+  if (!enabled || process.env['NODE_ENV'] === 'production') {
     return null;
   }
 

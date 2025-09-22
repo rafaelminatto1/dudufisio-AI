@@ -277,7 +277,7 @@ export const mockAppointments: Appointment[] = [
 const recurrenceRule: RecurrenceRule = {
     frequency: 'weekly',
     days: [new Date().getDay()], // Every week on today's day
-    until: new Date(new Date().setMonth(new Date().getMonth() + 2)).toISOString().split('T')[0],
+    until: new Date(new Date().setMonth(new Date().getMonth() + 2)).toISOString().split('T')[0] as string,
 };
 
 const recurringSeriesId = `series_${Date.now()}`;
@@ -659,11 +659,11 @@ export const mockProjects: Project[] = [
 ];
 
 export const mockTasks: Task[] = [
-  { id: 'task1', projectId: 'proj_1', title: 'Preparar laudo da Ana Costa', description: 'Revisar notas SOAP e exames de imagem para o laudo final.', status: TaskStatus.ToDo, priority: TaskPriority.High, dueDate: tomorrow.toISOString().split('T')[0], assignedUserId: 'therapist_1', actorUserId: 'therapist_2' },
-  { id: 'task2', projectId: 'proj_2', title: 'Ligar para fornecedor do software', description: 'Verificar status da implantação e agendar treinamento.', status: TaskStatus.ToDo, priority: TaskPriority.Medium, dueDate: tomorrow.toISOString().split('T')[0], assignedUserId: 'therapist_3', actorUserId: 'therapist_1' },
-  { id: 'task3', projectId: 'proj_1', title: 'Pesquisar novo protocolo para fascite plantar', description: 'Buscar evidências recentes sobre terapia por ondas de choque.', status: TaskStatus.InProgress, priority: TaskPriority.Low, dueDate: nextWeek.toISOString().split('T')[0], assignedUserId: 'therapist_2', actorUserId: 'therapist_2' },
-  { id: 'task4', projectId: 'proj_2', title: 'Finalizar relatório mensal', description: 'Compilar dados de faturamento e atendimentos do mês.', status: TaskStatus.InProgress, priority: TaskPriority.High, dueDate: tomorrow.toISOString().split('T')[0], assignedUserId: 'therapist_1', actorUserId: 'therapist_1' },
-  { id: 'task5', projectId: 'proj_1', title: 'Revisar HEP de Bruno Gomes', description: 'Verificar progressão dos exercícios e ajustar cargas.', status: TaskStatus.Done, priority: TaskPriority.Medium, dueDate: new Date().toISOString().split('T')[0], assignedUserId: 'therapist_2', actorUserId: 'therapist_1' },
+  { id: 'task1', projectId: 'proj_1', title: 'Preparar laudo da Ana Costa', description: 'Revisar notas SOAP e exames de imagem para o laudo final.', status: TaskStatus.ToDo, priority: TaskPriority.High, dueDate: tomorrow.toISOString().split('T')[0] as string, assignedUserId: 'therapist_1', actorUserId: 'therapist_2' },
+  { id: 'task2', projectId: 'proj_2', title: 'Ligar para fornecedor do software', description: 'Verificar status da implantação e agendar treinamento.', status: TaskStatus.ToDo, priority: TaskPriority.Medium, dueDate: tomorrow.toISOString().split('T')[0] as string, assignedUserId: 'therapist_3', actorUserId: 'therapist_1' },
+  { id: 'task3', projectId: 'proj_1', title: 'Pesquisar novo protocolo para fascite plantar', description: 'Buscar evidências recentes sobre terapia por ondas de choque.', status: TaskStatus.InProgress, priority: TaskPriority.Low, dueDate: nextWeek.toISOString().split('T')[0] as string, assignedUserId: 'therapist_2', actorUserId: 'therapist_2' },
+  { id: 'task4', projectId: 'proj_2', title: 'Finalizar relatório mensal', description: 'Compilar dados de faturamento e atendimentos do mês.', status: TaskStatus.InProgress, priority: TaskPriority.High, dueDate: tomorrow.toISOString().split('T')[0] as string, assignedUserId: 'therapist_1', actorUserId: 'therapist_1' },
+  { id: 'task5', projectId: 'proj_1', title: 'Revisar HEP de Bruno Gomes', description: 'Verificar progressão dos exercícios e ajustar cargas.', status: TaskStatus.Done, priority: TaskPriority.Medium, dueDate: new Date().toISOString().split('T')[0] as string, assignedUserId: 'therapist_2', actorUserId: 'therapist_1' },
 ];
 
 export const mockNotifications: Notification[] = [

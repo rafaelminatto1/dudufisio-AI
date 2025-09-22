@@ -677,10 +677,4 @@ export interface FinancialMetrics {
   }>;
 }
 
-// Export types for external use
-export type {
-  TransactionTypeType,
-  PaymentMethodType,
-  TransactionStatusType,
-  InsuranceClaimStatusType
-};
+// Types already exported above

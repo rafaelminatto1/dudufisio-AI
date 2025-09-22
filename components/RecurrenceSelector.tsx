@@ -29,7 +29,7 @@ const RecurrenceSelector: React.FC<RecurrenceSelectorProps> = ({ recurrenceRule,
             onChange({
                 frequency: 'weekly',
                 days: [today.getDay()],
-                until: untilDate.toISOString().split('T')[0]
+                until: untilDate.toISOString().split('T')[0] as string
             });
         }
     };

@@ -17,6 +17,10 @@ export interface User {
   avatarUrl: string;
   phone?: string;
   patientId?: string;
+  emailVerified?: boolean;
+  createdAt?: string;
+  lastSignIn?: string | null;
+  mfaEnabled?: boolean;
 }
 
 export interface Therapist {

@@ -98,7 +98,7 @@ const NewSoapNoteModal: React.FC<NewSoapNoteModalProps> = ({ isOpen, onClose, on
         assessment,
         plan,
         bodyParts: selectedParts,
-        painScale: painScale,
+        painScale: painScale as number,
       });
       showToast('Nota SOAP salva com sucesso!', 'success');
       resetForm();

@@ -38,7 +38,7 @@ const CaseFormModal: React.FC<CaseFormModalProps> = ({ isOpen, onClose, onSave, 
 
     const handleSaveClick = async () => {
         setIsSaving(true);
-        await onSave({ ...formData, id: caseToEdit?.id });
+        await onSave({ ...formData, id: caseToEdit?.id as string | undefined });
         setIsSaving(false);
     };
 
