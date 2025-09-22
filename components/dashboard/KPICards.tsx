@@ -2,7 +2,7 @@
 import React from 'react';
 import { DollarSign, Users, BarChart3, Star } from 'lucide-react';
 import StatCard from './StatCard';
-import Skeleton from '../ui/Skeleton';
+import { Skeleton } from '../ui/skeleton';
 import { DashboardStats } from '../../hooks/useDashboardStats';
 
 interface KPICardsProps {

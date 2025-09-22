@@ -11,7 +11,7 @@ import * as exerciseService from '../../services/exerciseService';
 import { useData } from '../../contexts/DataContext';
 import { Exercise, ExercisePrescription, Appointment, AppointmentStatus } from '../../types';
 import { NotebookText, Dumbbell, Calendar, ChevronRight } from 'lucide-react';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 
 interface EnrichedExercise extends Exercise {
     prescription: ExercisePrescription;

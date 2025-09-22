@@ -5,7 +5,7 @@ import WhatsappChatInterface from '../components/whatsapp/WhatsappChatInterface'
 import { WhatsappMessage } from '../types';
 import * as whatsappLogService from '../services/whatsappLogService';
 import { MessageSquare, List, Bot, Loader, Check, CheckCheck, XCircle } from 'lucide-react';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 
 const LogRow: React.FC<{ log: WhatsappMessage }> = ({ log }) => {
     const statusInfo: Record<WhatsappMessage['status'], { text: string; color: string; icon: React.ReactNode }> = {

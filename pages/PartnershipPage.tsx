@@ -5,7 +5,7 @@ import { Partner, Patient, VoucherPlan } from '../types';
 import * as partnershipService from '../services/partnershipService';
 import * as patientService from '../services/patientService';
 import { useToast } from '../contexts/ToastContext';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import PartnerList from '../components/partners/PartnerList';
 import SellVoucherCard from '../components/partners/SellVoucherCard';
 import PartnerFormModal from '../components/partners/PartnerFormModal';

@@ -5,7 +5,7 @@ import PageHeader from '../components/PageHeader';
 import { Event, EventStatus } from '../types';
 import { eventService } from '../services/eventService';
 import { useToast } from '../contexts/ToastContext';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import EventCard from '../components/events/EventCard';
 import EventFormModal from '../components/events/EventFormModal';
 import { useAuth } from "../contexts/AppContext";

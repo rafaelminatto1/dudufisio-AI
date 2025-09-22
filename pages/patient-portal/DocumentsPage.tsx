@@ -5,7 +5,7 @@ import PageHeader from '../../components/PageHeader';
 import { Document } from '../../types';
 import { useAuth } from "../../contexts/AppContext";
 import { useToast } from '../../contexts/ToastContext';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import { FileText, Download, FileType, Receipt, TestTube2 } from 'lucide-react';
 import { mockDocuments } from '../../data/mockData';
 

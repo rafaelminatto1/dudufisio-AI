@@ -6,7 +6,7 @@ import { useToast } from '../../contexts/ToastContext';
 import { useAuth } from "../../contexts/AppContext";
 import * as patientService from '../../services/patientService';
 import { Patient, PainPoint } from '../../types';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import InteractiveBodyMap from '../../components/InteractiveBodyMap';
 import PainPointModal from '../../components/patient/PainPointModal';
 import { eventService } from '../../services/eventService';

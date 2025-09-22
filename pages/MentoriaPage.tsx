@@ -5,7 +5,7 @@ import PageHeader from '../components/PageHeader';
 import { Intern, EducationalCase, InternStatus } from '../types';
 import * as mentoriaService from '../services/mentoriaService';
 import { useToast } from '../contexts/ToastContext';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import MentoriaStats from '../components/mentoria/MentoriaStats';
 import InternsTable from '../components/mentoria/InternsTable';
 import CasesList from '../components/mentoria/CasesList';

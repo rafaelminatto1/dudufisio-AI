@@ -2,7 +2,7 @@
 import React from 'react';
 import useAssessmentSpecialties from '../hooks/useAssessmentSpecialties';
 import { Specialty } from '../types';
-import Skeleton from './ui/Skeleton';
+import { Skeleton } from './ui/skeleton';
 
 interface SpecialtyAssessmentGalleryProps {
   onSelectSpecialty: (specialty: Specialty) => void;

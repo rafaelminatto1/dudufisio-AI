@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import PageHeader from '../../components/PageHeader';
 import { Appointment, Therapist } from '../../types';
 import { useAuth } from "../../contexts/AppContext";
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import { Calendar } from 'lucide-react';
 import AppointmentCard from '../../components/patient-portal/AppointmentCard';
 import { useData } from '../../contexts/DataContext';

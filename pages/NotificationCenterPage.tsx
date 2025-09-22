@@ -6,7 +6,7 @@ import { Notification, Role } from '../types';
 import * as notificationService from '../services/notificationService';
 import { useToast } from '../contexts/ToastContext';
 import { Bell, Send, CheckCheck, Loader, MessageSquare, Inbox, CalendarClock, ClipboardList, Megaphone, Dumbbell } from 'lucide-react';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 
 // A simple time ago function for display
 const timeAgo = (date: Date): string => {

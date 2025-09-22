@@ -11,7 +11,7 @@ import { generateClinicalMaterialContent } from '../services/geminiService';
 import { ClinicalMaterialData } from '../types';
 import PageHeader from '../components/PageHeader';
 import MarkdownRenderer from '../components/ui/MarkdownRenderer';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import { ChevronLeft } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 

@@ -8,7 +8,7 @@ import * as ReactRouterDOM from 'react-router-dom';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import * as taskService from '../../../services/taskService';
 import { ClipboardList, ChevronsUp, ChevronUp, ChevronsDown } from 'lucide-react';
-import Skeleton from '../../ui/Skeleton';
+import { Skeleton } from '../../ui/skeleton';
 
 const PendingTasks: React.FC = () => {
     const [tasks, setTasks] = useState<Task[]>([]);

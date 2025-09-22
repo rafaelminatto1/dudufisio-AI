@@ -7,7 +7,7 @@ import { useToast } from '../../contexts/ToastContext';
 import * as treatmentService from '../../services/treatmentService';
 import * as exerciseService from '../../services/exerciseService';
 import { TreatmentPlan, ExercisePrescription, Exercise, ExerciseEvaluation } from '../../types';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import { Dumbbell } from 'lucide-react';
 import ExerciseEvaluationCard from '../../components/patient-portal/ExerciseEvaluationCard';
 import * as evaluationService from '../../services/evaluationService';

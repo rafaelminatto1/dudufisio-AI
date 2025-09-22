@@ -4,7 +4,7 @@ import { Patient, SoapNote, TreatmentPlan } from '../../types';
 import * as soapNoteService from '../../services/soapNoteService';
 import * as treatmentService from '../../services/treatmentService';
 import { Target, FileText, UserCircle, AlertTriangle } from 'lucide-react';
-import Skeleton from '../ui/Skeleton';
+import { Skeleton } from '../ui/skeleton';
 
 interface PatientInfoPanelProps {
     patient: Patient;

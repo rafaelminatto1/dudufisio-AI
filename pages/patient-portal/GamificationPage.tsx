@@ -4,7 +4,7 @@ import React from 'react';
 import PageHeader from '../../components/PageHeader';
 import { useAuth } from "../../contexts/AppContext";
 import { useGamification } from '../../hooks/useGamification';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import LevelProgress from '../../components/patient-portal/gamification/LevelProgress';
 import StreakTracker from '../../components/patient-portal/gamification/StreakTracker';
 import AchievementCard from '../../components/patient-portal/gamification/AchievementCard';

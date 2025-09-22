@@ -5,7 +5,7 @@ import { Voucher } from '../../types';
 import { useAuth } from "../../contexts/AppContext";
 import * as voucherService from '../../services/voucherService';
 import PurchasedVoucherCard from '../../components/patient-portal/PurchasedVoucherCard';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../contexts/ToastContext';
 import { Ticket } from 'lucide-react';
 

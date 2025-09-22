@@ -7,7 +7,7 @@ import { useToast } from '../contexts/ToastContext';
 import * as protocolService from '../services/protocolService';
 import * as geminiService from '../services/geminiService';
 import * as treatmentService from '../services/treatmentService';
-import Skeleton from './ui/Skeleton';
+import { Skeleton } from './ui/skeleton';
 import MarkdownRenderer from './ui/MarkdownRenderer';
 
 interface ProtocolSuggestionModalProps {

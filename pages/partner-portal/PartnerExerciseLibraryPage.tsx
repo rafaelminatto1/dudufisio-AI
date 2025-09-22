@@ -6,7 +6,7 @@ import { Exercise } from '../../types';
 import * as exerciseService from '../../services/exerciseService';
 import ExerciseCard from '../../components/ExerciseCard';
 import ExerciseFormModal from '../../components/ExerciseFormModal';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../contexts/ToastContext';
 import VideoPlayerModal from '../../components/VideoPlayerModal';
 

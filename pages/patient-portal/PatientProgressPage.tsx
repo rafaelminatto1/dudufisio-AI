@@ -6,7 +6,7 @@ import * as soapNoteService from '../../services/soapNoteService';
 import * as patientService from '../../services/patientService'; // <-- Add this
 import { generatePatientProgressSummary, PatientProgressData } from '../../services/geminiService';
 import { useToast } from '../../contexts/ToastContext';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import { Frown, Meh, Smile, Laugh, TrendingUp, BarChart } from 'lucide-react'; // <-- Add BarChart
 import MarkdownRenderer from '../../components/ui/MarkdownRenderer';
 import { Patient, SoapNote } from '../../types'; // <-- Add Patient and SoapNote

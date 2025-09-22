@@ -5,7 +5,7 @@ import { Group, Therapist } from '../types';
 import * as groupService from '../services/groupService';
 import GroupCard from '../components/GroupCard';
 import GroupFormModal from '../components/GroupFormModal';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import { useToast } from '../contexts/ToastContext';
 import { useAuth } from "../contexts/AppContext";
 import { useData } from '../contexts/DataContext';

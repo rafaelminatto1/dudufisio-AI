@@ -8,7 +8,7 @@ import { useToast } from '../../contexts/ToastContext';
 import StatCard from '../../components/dashboard/StatCard';
 import { DollarSign, BarChart2, Zap, Shield } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 
 const FinancialsPage: React.FC = () => {
     const [summary, setSummary] = useState<FinancialSummary | null>(null);

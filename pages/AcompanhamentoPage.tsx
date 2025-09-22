@@ -7,7 +7,7 @@ import { useToast } from '../contexts/ToastContext';
 import { useAuth } from "../contexts/AppContext";
 import * as acompanhamentoService from '../services/acompanhamentoService';
 import { Patient, Appointment, AlertPatient } from '../types';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import AlertCard from '../components/acompanhamento/AlertCard';
 import ObservationModal from '../components/acompanhamento/ObservationModal';
 import AppointmentFormModal from '../components/AppointmentFormModal';
