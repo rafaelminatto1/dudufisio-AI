@@ -1,16 +1,16 @@
 {
   "status": "commited",
-  "type": "frontend",
+  "type": "backend",
   "scope": "codebase",
   "localEndpoint": "http://localhost:5173",
+  "backendAuthType": "public",
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "Execute todos os testes para detectar erros, problemas de performance, bugs de UI e problemas de acessibilidade no sistema de fisioterapia",
+    "additionalInstruction": "Foque em identificar possíveis problemas de deploy na Vercel, incluindo: 1) Configurações de build, 2) Variáveis de ambiente, 3) Problemas de roteamento, 4) Erros de bundle/compilação, 5) Problemas de performance, 6) Compatibilidade com Vercel Edge Runtime",
     "envs": {
       "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
     }
-  },
-  "proxy": "http://ccbe2f7a-c3d9-4014-930b-001b26760ef2:eIGnejgczkmH3XdYLN9wrMBE4M0jzcFw@tun.testsprite.com:8080"
+  }
 }

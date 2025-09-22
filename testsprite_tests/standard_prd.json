@@ -4,277 +4,594 @@
     "date": "2025-09-13",
     "prepared_by": "Software Development Manager"
   },
-  "product_overview": "DuduFisio-AI is a comprehensive management system tailored for physiotherapy clinics that unites traditional clinical management functionalities with advanced artificial intelligence assistance to optimize patient care, clinical documentation, and operational management.",
+  "product_overview": "DuduFisio-AI is an integrated management system tailored for physiotherapy clinics, combining traditional clinical management capabilities with advanced Artificial Intelligence to optimize patient care, clinical documentation, and operational efficiency.",
   "core_goals": [
     "Digitize and automate physiotherapy clinical processes",
-    "Enhance clinical documentation quality through AI-driven support",
+    "Enhance the quality of clinical documentation using AI",
     "Increase operational efficiency and patient satisfaction"
   ],
   "key_features": [
-    "Comprehensive patient management with interactive body pain mapping and advanced search capabilities",
-    "Robust multi-view appointment scheduling system with conflict prevention and recurring booking functionality",
-    "Rich clinical documentation with SOAP notes editor, auto-save, version history, and customizable templates",
-    "AI assistant providing automated report generation, treatment protocol suggestions, risk analysis, clinical query responses, and financial insights",
-    "Extensive exercise library with multimedia content, personalized prescribing, and safety alerts",
-    "Dedicated patient portal with secure access to personal data, prescription views, appointment management, and direct communication",
-    "Interactive dashboards and customizable reports covering clinical metrics and financial analytics",
-    "Thorough financial management including transactions, revenue reports, and multiple payment integrations",
-    "Inventory management system with stock alerts and historical tracking",
-    "Task management features with prioritization and notification system",
-    "Compliance with LGPD and robust security measures including 2FA and data encryption",
-    "Integration with external APIs such as Google Gemini AI, payment services, notification systems, and calendar sync"
+    "Comprehensive Patient Management with CRUD, medical history, interactive body map, and advanced search",
+    "Advanced Appointment Scheduling with conflict detection, recurrence, notifications, and multi-therapist support",
+    "Rich Clinical Documentation (SOAP) with a rich-text editor, auto-save, version control, and AI-generated reports",
+    "AI Assistant providing automatic report generation, treatment protocol suggestions, risk analysis, clinical queries, and economic insights",
+    "Exercise Library categorized by specialty with rich media and personalized prescription",
+    "Patient Portal for secure access to personal data, prescribed exercises, scheduling, and communication",
+    "Dashboard and Reports featuring operational metrics, financial indicators, clinical analytics, and export capabilities",
+    "Financial Management supporting multiple payment methods including PIX, with revenue and delinquency tracking",
+    "Inventory Management with stock control, alerts, and movement tracking",
+    "Task Management system with prioritization, progress tracking, and notifications"
   ],
   "user_flow_summary": [
-    "User logs in via secure authentication system (supports 2FA and social login)",
-    "Administrators manage clinic data including patients, staff, inventory, and finances",
-    "Fisioterapeutas schedule and manage appointments, document clinical notes using rich editor, and prescribe exercises",
-    "Patients access their portal to view records, exercises, and communicate with the clinic",
-    "AI assistant analyzes clinical data to generate reports and suggest treatments",
-    "Users review dashboards for analytics and financial reports",
-    "Notifications and reminders are sent automatically for appointments and tasks",
-    "System maintains data compliance with LGPD and performs automated backups"
+    "Administrator logs in and accesses a 360° dashboard with financial and operational controls",
+    "Physiotherapist manages patient records, documents clinical notes, schedules and conducts appointments, and leverages AI assistance",
+    "Intern views patient data and appointments with restricted permissions for observation and learning",
+    "Patient securely logs into portal to view their medical records, prescribed exercises, appointment schedules, and communicates with the clinic",
+    "User accesses appointment scheduling interface to create, view, or modify appointments with conflict prevention and notifications",
+    "Users interact with AI assistant to generate reports and receive clinical and financial insights",
+    "Administrators generate and review reports and analytics to monitor clinic performance and financial status",
+    "Users perform financial transactions via multi-provider payment integrations"
   ],
   "validation_criteria": [
-    "System supports role-based access control and session management with 2FA",
-    "Patient registration validates CPF, prevents duplicates, and supports secure media uploads",
-    "Appointment scheduling prevents overlapping conflicts and supports recurring bookings",
-    "Clinical documentation editor supports rich text, auto-save, version control, and template use",
-    "AI-generated clinical reports achieve 95% accuracy in laudo generation",
-    "Exercise library supports multimedia and provides alert for contraindications",
-    "Patient portal securely exposes personal data, appointments, and communication channels",
-    "Financial transactions recorded accurately with multiple payment method integrations",
-    "System complies with LGPD data protection requirements",
-    "System maintains 99.5% uptime and pages load in under 2 seconds on 3G connections",
-    "Comprehensive automated tests cover authentication, scheduling, documentation, AI integration, and notification features"
+    "Successful CRUD operations on patients with validation and history persistence",
+    "Appointment scheduling handles recurrence and prevents conflicts effectively",
+    "Rich-text editor for clinical notes supports auto-save and version history",
+    "AI assistant returns accurate and timely clinical and financial recommendations",
+    "User authentication and role-based access control enforce permissions and security",
+    "Patient portal securely delivers personalized medical data and scheduling",
+    "Financial transactions processed successfully via integrated payment providers",
+    "Data handled in compliance with LGPD including consent management and audit trails",
+    "Application performance meets requirements for load times, responsiveness, and concurrent users",
+    "Error handling and logging functionalities capture and report issues reliably"
   ],
   "code_summary": {
     "tech_stack": [
       "TypeScript",
-      "React",
+      "React 19",
       "Vite",
       "Supabase",
-      "PostgreSQL",
       "TailwindCSS",
       "shadcn/ui",
+      "Google Gemini AI",
+      "React Router DOM",
+      "React Hook Form",
+      "Zod",
       "Framer Motion",
       "Recharts",
-      "Jest",
-      "React Testing Library"
+      "Lucide React",
+      "WebRTC",
+      "PWA"
     ],
     "features": [
       {
-        "name": "Sistema de Autenticação",
-        "description": "Sistema completo de autenticação com Supabase, suporte a 2FA, login social e gestão de sessões",
+        "name": "Patient Management API",
+        "description": "Comprehensive patient management system with CRUD operations, medical history tracking, and patient portal access",
         "files": [
-          "contexts/SupabaseAuthContext.tsx",
-          "services/auth/supabaseAuthService.ts",
-          "services/auth/authService.ts",
-          "types/user.ts"
-        ]
-      },
-      {
-        "name": "Gestão de Pacientes",
-        "description": "Sistema completo de cadastro, edição e visualização de pacientes com histórico clínico",
-        "files": [
-          "components/pacientes/PatientForm.tsx",
-          "components/pacientes/PatientList.tsx",
-          "components/pacientes/PatientDetailClient.tsx",
-          "components/PatientFormModal.tsx",
           "services/patientService.ts",
-          "services/supabase/patientService.ts"
-        ]
+          "services/supabase/patientService.ts",
+          "services/supabase/patientServiceSupabase.ts",
+          "pages/PatientListPage.tsx",
+          "pages/PatientDetailPage.tsx",
+          "pages/PatientFormPage.tsx",
+          "components/patient/PatientCard.tsx",
+          "components/PatientFormModal.tsx"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Patient Management API",
+            "version": "1.0.0",
+            "description": "API for managing patients in the fisiotherapy clinic system"
+          },
+          "paths": {
+            "/api/patients": {
+              "get": {
+                "summary": "Get all patients",
+                "responses": {
+                  "200": {
+                    "description": "List of patients",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Patient"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "post": {
+                "summary": "Create new patient",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Patient"
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "201": {
+                    "description": "Patient created successfully"
+                  }
+                }
+              }
+            },
+            "/api/patients/{id}": {
+              "get": {
+                "summary": "Get patient by ID",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Patient details",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Patient"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "components": {
+            "schemas": {
+              "Patient": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "birthDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "medicalHistory": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       {
-        "name": "Sistema de Agendamento",
-        "description": "Sistema avançado de agendamento com múltiplas visualizações (diária, semanal, mensal) e gestão de conflitos",
+        "name": "Appointment Scheduling API",
+        "description": "Advanced appointment scheduling system with conflict detection, recurrence support, and real-time updates",
         "files": [
-          "components/agenda/DailyView.tsx",
-          "components/agenda/WeeklyView.tsx",
-          "components/agenda/MonthlyView.tsx",
-          "components/agenda/ListView.tsx",
-          "components/agenda/BookingModal.tsx",
-          "components/AppointmentCard.tsx",
-          "components/AppointmentFormModal.tsx",
           "services/appointmentService.ts",
           "services/supabase/appointmentService.ts",
+          "services/supabase/appointmentServiceSupabase.ts",
           "services/scheduling/conflictDetection.ts",
-          "services/scheduling/recurrenceService.ts"
-        ]
+          "services/scheduling/recurrenceService.ts",
+          "services/schedulingRulesEngine.ts",
+          "components/agenda/AppointmentCalendar.tsx",
+          "components/agenda/AppointmentForm.tsx",
+          "components/AppointmentFormModal.tsx",
+          "components/AppointmentCard.tsx"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Appointment Scheduling API",
+            "version": "1.0.0",
+            "description": "API for managing appointments and scheduling in the fisiotherapy clinic"
+          },
+          "paths": {
+            "/api/appointments": {
+              "get": {
+                "summary": "Get appointments",
+                "parameters": [
+                  {
+                    "name": "date",
+                    "in": "query",
+                    "schema": {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  },
+                  {
+                    "name": "therapistId",
+                    "in": "query",
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "List of appointments",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Appointment"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "post": {
+                "summary": "Create new appointment",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Appointment"
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "201": {
+                    "description": "Appointment created successfully"
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       {
-        "name": "Mapa Corporal Interativo",
-        "description": "Sistema de mapeamento de dor e pontos de tratamento no corpo humano",
+        "name": "AI Integration API",
+        "description": "Google Gemini AI integration for clinical decision support, multimodal analysis, and intelligent recommendations",
         "files": [
-          "components/InteractiveBodyMap.tsx",
-          "components/patient/PainMap.tsx",
-          "components/patient/PainPointModal.tsx",
-          "components/patient/bodyPaths.ts",
-          "components/PainScale.tsx"
-        ]
-      },
-      {
-        "name": "Biblioteca de Exercícios",
-        "description": "Sistema de prescrição e gestão de exercícios terapêuticos",
-        "files": [
-          "components/ExerciseCard.tsx",
-          "components/ExerciseFormModal.tsx",
-          "services/exerciseService.ts",
-          "services/exerciseLibraryService.ts",
-          "data/mockExerciseLibrary.ts"
-        ]
-      },
-      {
-        "name": "Sistema de Relatórios e Analytics",
-        "description": "Dashboard com métricas clínicas, relatórios financeiros e analytics avançados",
-        "files": [
-          "components/analytics/ClinicalAnalyticsDashboard.tsx",
-          "components/dashboard/KPICards.tsx",
-          "components/dashboard/RevenueChart.tsx",
-          "components/dashboard/TeamProductivityChart.tsx",
-          "components/reports/FinancialReport.tsx",
-          "components/reports/PatientReport.tsx",
-          "services/analytics/advancedAnalyticsService.ts",
-          "services/reportService.ts"
-        ]
-      },
-      {
-        "name": "Sistema de Teleconsulta",
-        "description": "Funcionalidade de consultas remotas com WebRTC e compartilhamento de conteúdo",
-        "files": [
-          "components/teleconsulta/VideoFeed.tsx",
-          "components/teleconsulta/ControlBar.tsx",
-          "components/teleconsulta/PatientInfoPanel.tsx",
-          "components/teleconsulta/ExerciseSharePanel.tsx",
-          "components/teleconsulta/PainMapSharePanel.tsx",
-          "services/teleconsulta/webrtcTeleconsultaService.ts"
-        ]
-      },
-      {
-        "name": "Sistema de Gamificação",
-        "description": "Sistema de gamificação para engajamento de pacientes",
-        "files": [
-          "components/patient-portal/gamification/",
-          "services/gamificationService.ts"
-        ]
-      },
-      {
-        "name": "Gestão Financeira",
-        "description": "Sistema de gestão financeira com transações e relatórios",
-        "files": [
-          "components/financial/TransactionFormModal.tsx",
-          "components/financial/TransactionList.tsx",
-          "services/financialService.ts",
-          "services/payment/paymentService.ts"
-        ]
-      },
-      {
-        "name": "Sistema de Inventário",
-        "description": "Gestão de materiais clínicos e equipamentos",
-        "files": [
-          "components/inventory/ItemCard.tsx",
-          "components/inventory/ItemFormModal.tsx",
-          "components/inventory/StockLevel.tsx",
-          "components/inventory/ExpiryWarning.tsx",
-          "services/inventoryService.ts"
-        ]
-      },
-      {
-        "name": "Sistema de Mentoria",
-        "description": "Sistema de mentoria para estagiários e supervisão clínica",
-        "files": [
-          "components/mentoria/CasesList.tsx",
-          "components/mentoria/InternsTable.tsx",
-          "components/mentoria/MentoriaStats.tsx",
-          "services/mentoriaService.ts"
-        ]
-      },
-      {
-        "name": "Assistente de IA",
-        "description": "Sistema de IA para sugestões clínicas e análise de dados",
-        "files": [
-          "components/AiAssistant.tsx",
-          "components/acompanhamento/AiSuggestionModal.tsx",
-          "services/ai/aiOrchestratorService.ts",
+          "services/geminiService.ts",
           "services/ai/multimodalAiService.ts",
-          "services/geminiService.ts"
-        ]
+          "services/ai/aiOrchestratorService.ts",
+          "services/ai/knowledgeService.ts",
+          "services/ai-economica/aiService.ts",
+          "services/ai-economica/premiumAccountManager.ts",
+          "components/AiAssistant.tsx",
+          "components/ProtocolSuggestionModal.tsx"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "AI Integration API",
+            "version": "1.0.0",
+            "description": "API for AI-powered features including clinical decision support and multimodal analysis"
+          },
+          "paths": {
+            "/api/ai/analyze": {
+              "post": {
+                "summary": "Analyze clinical data with AI",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "posture",
+                              "movement",
+                              "xray",
+                              "general"
+                            ]
+                          },
+                          "data": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "AI analysis result",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "analysis": {
+                              "type": "string"
+                            },
+                            "recommendations": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       {
-        "name": "Portal do Paciente",
-        "description": "Interface dedicada para pacientes acessarem seus dados e exercícios",
+        "name": "Authentication & Authorization API",
+        "description": "Supabase-based authentication with role-based access control, 2FA support, and LGPD compliance",
         "files": [
-          "components/patient-portal/PatientSidebar.tsx",
-          "components/patient-portal/AppointmentCard.tsx",
-          "components/patient-portal/ExerciseEvaluationCard.tsx",
-          "components/patient-portal/PainTrendChart.tsx",
-          "layouts/PatientPortalLayout.tsx"
-        ]
+          "services/auth/supabaseAuthService.ts",
+          "services/auth/authService.ts",
+          "contexts/SupabaseAuthContext.tsx",
+          "contexts/AuthContext.tsx",
+          "pages/auth/LoginPage.tsx",
+          "pages/auth/TwoFactorSetupPage.tsx",
+          "components/auth/LoginForm.tsx",
+          "components/ProtectedRoute.tsx",
+          "components/RoleGuard.tsx"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Authentication API",
+            "version": "1.0.0",
+            "description": "API for user authentication and authorization with role-based access control"
+          },
+          "paths": {
+            "/api/auth/login": {
+              "post": {
+                "summary": "User login",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "email": {
+                            "type": "string",
+                            "format": "email"
+                          },
+                          "password": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "Login successful",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       {
-        "name": "Sistema de Compliance LGPD",
-        "description": "Funcionalidades de conformidade com a LGPD para proteção de dados",
+        "name": "Payment Processing API",
+        "description": "Multi-provider payment processing with Stripe, Mercado Pago, and PIX integration",
         "files": [
-          "services/compliance/lgpdService.ts"
-        ]
+          "services/payment/paymentService.ts",
+          "services/financialService.ts",
+          "components/financial/PaymentForm.tsx",
+          "components/financial/InvoiceGenerator.tsx"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Payment Processing API",
+            "version": "1.0.0",
+            "description": "API for processing payments through multiple providers"
+          },
+          "paths": {
+            "/api/payments": {
+              "post": {
+                "summary": "Process payment",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "amount": {
+                            "type": "number"
+                          },
+                          "provider": {
+                            "type": "string",
+                            "enum": [
+                              "stripe",
+                              "mercadopago",
+                              "pix"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "Payment processed successfully"
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       {
-        "name": "Sistema de Backup Multi-Cloud",
-        "description": "Sistema de backup automatizado para múltiplas nuvens",
+        "name": "Teleconsultation API",
+        "description": "WebRTC-based teleconsultation system for remote patient consultations",
         "files": [
-          "services/backup/multiCloudBackupService.ts"
-        ]
+          "services/teleconsulta/webrtcTeleconsultaService.ts",
+          "components/teleconsulta/TeleconsultaRoom.tsx",
+          "components/teleconsulta/VideoCallInterface.tsx"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Teleconsultation API",
+            "version": "1.0.0",
+            "description": "API for WebRTC-based teleconsultation services"
+          },
+          "paths": {
+            "/api/teleconsulta/session": {
+              "post": {
+                "summary": "Create teleconsultation session",
+                "responses": {
+                  "200": {
+                    "description": "Session created successfully",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "sessionId": {
+                              "type": "string"
+                            },
+                            "token": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       {
-        "name": "Sistema de Assinatura Digital",
-        "description": "Funcionalidade de assinatura digital para documentos clínicos",
+        "name": "LGPD Compliance API",
+        "description": "LGPD compliance service for data processing purposes, consent management, and audit trails",
         "files": [
-          "services/digital-signature/digitalSignatureService.ts"
-        ]
+          "services/compliance/lgpdService.ts",
+          "components/compliance/ConsentManager.tsx"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "LGPD Compliance API",
+            "version": "1.0.0",
+            "description": "API for LGPD compliance and data protection"
+          },
+          "paths": {
+            "/api/compliance/consent": {
+              "post": {
+                "summary": "Record user consent",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "purpose": {
+                            "type": "string"
+                          },
+                          "consent": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "Consent recorded successfully"
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       {
-        "name": "Integração WhatsApp",
-        "description": "Sistema de comunicação via WhatsApp para pacientes",
+        "name": "Monitoring & APM API",
+        "description": "Application Performance Monitoring with real-time metrics, error tracking, and business intelligence",
         "files": [
-          "components/whatsapp/WhatsappChatInterface.tsx",
-          "services/whatsappService.ts",
-          "services/whatsappLogService.ts"
-        ]
-      },
-      {
-        "name": "Sistema de Notificações",
-        "description": "Sistema de notificações em tempo real",
-        "files": [
-          "services/notificationService.ts",
-          "services/supabase/realtimeService.ts"
-        ]
-      },
-      {
-        "name": "Sistema de Avaliações",
-        "description": "Sistema de avaliações clínicas e formulários especializados",
-        "files": [
-          "components/forms/SportsAssessmentForm.tsx",
-          "components/SpecialtyAssessmentGallery.tsx",
-          "services/evaluationService.ts"
-        ]
-      },
-      {
-        "name": "Sistema de Grupos",
-        "description": "Gestão de grupos de pacientes e exercícios em grupo",
-        "files": [
-          "components/GroupCard.tsx",
-          "components/GroupFormModal.tsx",
-          "services/groupService.ts"
-        ]
-      },
-      {
-        "name": "Sistema de Vouchers",
-        "description": "Sistema de vouchers e planos de tratamento",
-        "files": [
-          "components/partners/SellVoucherCard.tsx",
-          "components/patient-portal/VoucherPlanCard.tsx",
-          "components/patient-portal/VoucherPurchaseModal.tsx",
-          "services/voucherService.ts"
-        ]
+          "services/monitoring/apmService.ts",
+          "services/analytics/advancedAnalyticsService.ts",
+          "components/analytics/DashboardMetrics.tsx",
+          "components/analytics/PerformanceChart.tsx"
+        ],
+        "api_doc": {
+          "openapi": "3.0.0",
+          "info": {
+            "title": "Monitoring & APM API",
+            "version": "1.0.0",
+            "description": "API for application monitoring and analytics"
+          },
+          "paths": {
+            "/api/monitoring/metrics": {
+              "get": {
+                "summary": "Get application metrics",
+                "responses": {
+                  "200": {
+                    "description": "Application metrics",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "performance": {
+                              "type": "object"
+                            },
+                            "errors": {
+                              "type": "object"
+                            },
+                            "business": {
+                              "type": "object"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     ]
   }
