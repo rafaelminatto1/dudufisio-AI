@@ -45,7 +45,8 @@ export default defineConfig({
       '@/hooks': path.resolve(__dirname, './hooks'),
       '@/contexts': path.resolve(__dirname, './contexts'),
       '@/types': path.resolve(__dirname, './types'),
-      '@/lib': path.resolve(__dirname, './lib')
+      '@/lib': path.resolve(__dirname, './lib'),
+      '../services/geminiService': path.resolve(__dirname, './services/geminiService.mock.ts')
     }
   },
   optimizeDeps: {
