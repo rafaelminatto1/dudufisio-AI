@@ -1,731 +1,231 @@
 {
   "tech_stack": [
     "TypeScript",
-    "React 19.1.1",
+    "React",
     "Vite",
-    "React Router DOM",
-    "Tailwind CSS",
-    "Radix UI",
     "Supabase",
-    "Google Gemini AI",
-    "Jest 30.1.3",
+    "PostgreSQL",
+    "TailwindCSS",
+    "shadcn/ui",
     "Framer Motion",
     "Recharts",
-    "React Hook Form",
-    "Zod",
-    "Lucide React",
-    "HTML5",
-    "CSS3",
-    "JavaScript ES6+",
-    "Node.js",
-    "PostgreSQL",
-    "Redis",
-    "Docker",
-    "@testing-library/react",
-    "@testing-library/user-event"
+    "Jest",
+    "React Testing Library"
   ],
   "features": [
     {
-      "name": "Sistema de Autenticação e Autorização",
-      "description": "Sistema completo de autenticação com diferentes níveis de acesso (Admin, Fisioterapeuta, Estagiário, Paciente, Educador Físico) baseado em roles e permissões",
+      "name": "Sistema de Autenticação",
+      "description": "Sistema completo de autenticação com Supabase, suporte a 2FA, login social e gestão de sessões",
       "files": [
-        "components/auth/AuthProvider.tsx",
-        "components/auth/UserMenu.tsx",
-        "contexts/AuthContext.tsx",
-        "components/ProtectedRoute.tsx",
-        "services/authService.ts",
-        "lib/auth.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Authentication API",
-          "version": "1.0.0",
-          "description": "API para autenticação e autorização de usuários"
-        },
-        "paths": {
-          "/auth/login": {
-            "post": {
-              "summary": "Login de usuário",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "email": {"type": "string"},
-                        "password": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              },
-              "responses": {
-                "200": {
-                  "description": "Login bem-sucedido",
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "user": {"type": "object"},
-                          "token": {"type": "string"}
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+        "contexts/SupabaseAuthContext.tsx",
+        "services/auth/supabaseAuthService.ts",
+        "services/auth/authService.ts",
+        "types/user.ts"
+      ]
     },
     {
       "name": "Gestão de Pacientes",
-      "description": "Sistema completo de cadastro, visualização e gestão de pacientes com histórico médico, alertas, comunicação e mapa corporal interativo",
+      "description": "Sistema completo de cadastro, edição e visualização de pacientes com histórico clínico",
       "files": [
-        "pages/PatientListPage.tsx",
-        "pages/PatientDetailPage.tsx",
-        "components/PatientFormModal.tsx",
-        "components/PatientTooltip.tsx",
+        "components/pacientes/PatientForm.tsx",
         "components/pacientes/PatientList.tsx",
+        "components/pacientes/PatientDetailClient.tsx",
+        "components/PatientFormModal.tsx",
         "services/patientService.ts",
-        "hooks/usePatients.ts",
-        "types/patient.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Patient Management API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/pacientes": {
-            "get": {
-              "summary": "Listar pacientes",
-              "responses": {
-                "200": {
-                  "description": "Lista de pacientes",
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "array",
-                        "items": {"$ref": "#/components/schemas/Patient"}
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "post": {
-              "summary": "Criar novo paciente",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {"$ref": "#/components/schemas/Patient"}
-                  }
-                }
-              }
-            }
-          }
-        },
-        "components": {
-          "schemas": {
-            "Patient": {
-              "type": "object",
-              "properties": {
-                "id": {"type": "string"},
-                "nome": {"type": "string"},
-                "cpf": {"type": "string"},
-                "email": {"type": "string"},
-                "telefone": {"type": "string"},
-                "dataNascimento": {"type": "string"},
-                "endereco": {"type": "object"}
-              }
-            }
-          }
-        }
-      }
+        "services/supabase/patientService.ts"
+      ]
     },
     {
       "name": "Sistema de Agendamento",
-      "description": "Calendário completo com agendamentos, recorrência, prevenção de conflitos e gestão de disponibilidade de profissionais",
+      "description": "Sistema avançado de agendamento com múltiplas visualizações (diária, semanal, mensal) e gestão de conflitos",
       "files": [
-        "pages/AgendaPage.tsx",
-        "components/AgendaTimeline.tsx",
-        "components/AppointmentCard.tsx",
-        "components/AppointmentDetailModal.tsx",
-        "components/AppointmentFormModal.tsx",
-        "components/AppointmentTimeline.tsx",
+        "components/agenda/DailyView.tsx",
+        "components/agenda/WeeklyView.tsx",
+        "components/agenda/MonthlyView.tsx",
+        "components/agenda/ListView.tsx",
         "components/agenda/BookingModal.tsx",
-        "components/agenda/PatientSearchInput.tsx",
+        "components/AppointmentCard.tsx",
+        "components/AppointmentFormModal.tsx",
         "services/appointmentService.ts",
-        "services/availabilityService.ts",
-        "services/scheduling/recurrenceService.ts",
+        "services/supabase/appointmentService.ts",
         "services/scheduling/conflictDetection.ts",
-        "hooks/useAppointments.ts",
-        "types/appointment.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Appointment Scheduling API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/appointments": {
-            "get": {
-              "summary": "Listar agendamentos",
-              "parameters": [
-                {
-                  "name": "date",
-                  "in": "query",
-                  "schema": {"type": "string"}
-                }
-              ]
-            },
-            "post": {
-              "summary": "Criar novo agendamento",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {"$ref": "#/components/schemas/Appointment"}
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+        "services/scheduling/recurrenceService.ts"
+      ]
     },
     {
-      "name": "Dashboard e Analytics",
-      "description": "Dashboards com métricas, KPIs, gráficos e análises clínicas e financeiras em tempo real",
+      "name": "Mapa Corporal Interativo",
+      "description": "Sistema de mapeamento de dor e pontos de tratamento no corpo humano",
       "files": [
-        "pages/DashboardPage.tsx",
-        "pages/ClinicalAnalyticsPage.tsx",
-        "pages/FinancialDashboardPage.tsx",
-        "components/dashboard/KPICards.tsx",
-        "components/dashboard/AppointmentHeatmap.tsx",
-        "components/dashboard/TeamProductivityChart.tsx",
-        "components/dashboard/StatCard.tsx",
-        "components/dashboard/PatientFlowChart.tsx",
-        "components/dashboard/RevenueChart.tsx",
-        "components/analytics/ClinicalAnalyticsDashboard.tsx",
-        "components/analytics/MetricCard.tsx",
-        "services/dashboardService.ts",
-        "hooks/useDashboardStats.ts",
-        "hooks/useClinicalAnalytics.ts",
-        "hooks/useFinancialData.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Dashboard Analytics API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/dashboard/stats": {
-            "get": {
-              "summary": "Obter estatísticas do dashboard",
-              "responses": {
-                "200": {
-                  "description": "Estatísticas do dashboard",
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "totalPatients": {"type": "number"},
-                          "totalAppointments": {"type": "number"},
-                          "revenue": {"type": "number"},
-                          "productivity": {"type": "number"}
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Acompanhamento Clínico e SOAP",
-      "description": "Sistema de acompanhamento de sessões, notas SOAP com auto-save, evolução e documentação clínica completa",
-      "files": [
-        "pages/AcompanhamentoPage.tsx",
-        "components/NewSoapNoteModal.tsx",
-        "components/ClinicalHistoryTimeline.tsx",
-        "components/acompanhamento/AiSuggestionModal.tsx",
-        "components/acompanhamento/AlertCard.tsx",
-        "components/acompanhamento/ObservationModal.tsx",
-        "services/acompanhamentoService.ts",
-        "services/soapNoteService.ts",
-        "services/treatmentService.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Clinical Documentation API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/soap-notes": {
-            "post": {
-              "summary": "Criar nota SOAP",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "patientId": {"type": "string"},
-                        "subjective": {"type": "string"},
-                        "objective": {"type": "string"},
-                        "assessment": {"type": "string"},
-                        "plan": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Inteligência Artificial - Google Gemini",
-      "description": "Integração com Google Gemini AI para sugestões clínicas, geração de laudos, análise de risco e assistente inteligente",
-      "files": [
-        "services/geminiService.ts",
-        "services/ai/aiOrchestratorService.ts",
-        "services/ai/knowledgeService.ts",
-        "services/ai/cacheService.ts",
-        "services/ai-economica/aiService.ts",
-        "services/ai-economica/aiProviders.ts",
-        "services/ai-economica/knowledgeBaseService.ts",
-        "pages/HepGeneratorPage.tsx",
-        "pages/RiskAnalysisPage.tsx",
-        "pages/EvaluationReportPage.tsx",
-        "pages/SessionEvolutionPage.tsx",
-        "components/ProtocolSuggestionModal.tsx",
-        "components/AiAssistant.tsx",
-        "hooks/useEconomicAiAnalytics.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "AI Assistant API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/ai/generate-report": {
-            "post": {
-              "summary": "Gerar relatório usando IA",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "patientData": {"type": "object"},
-                        "sessionNotes": {"type": "string"},
-                        "reportType": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "/api/ai/suggest-protocol": {
-            "post": {
-              "summary": "Sugerir protocolo de tratamento",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "condition": {"type": "string"},
-                        "patientHistory": {"type": "object"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+        "components/InteractiveBodyMap.tsx",
+        "components/patient/PainMap.tsx",
+        "components/patient/PainPointModal.tsx",
+        "components/patient/bodyPaths.ts",
+        "components/PainScale.tsx"
+      ]
     },
     {
       "name": "Biblioteca de Exercícios",
-      "description": "Sistema completo de exercícios com categorias, vídeos, prescrições personalizadas e avaliações",
+      "description": "Sistema de prescrição e gestão de exercícios terapêuticos",
       "files": [
-        "pages/ExerciseLibraryPage.tsx",
         "components/ExerciseCard.tsx",
         "components/ExerciseFormModal.tsx",
         "services/exerciseService.ts",
         "services/exerciseLibraryService.ts",
-        "hooks/useExercises.ts",
-        "hooks/useExerciseLibrary.ts",
-        "types/exercise.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Exercise Library API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/exercises": {
-            "get": {
-              "summary": "Listar exercícios",
-              "parameters": [
-                {
-                  "name": "category",
-                  "in": "query",
-                  "schema": {"type": "string"}
-                }
-              ]
-            },
-            "post": {
-              "summary": "Criar novo exercício",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "name": {"type": "string"},
-                        "description": {"type": "string"},
-                        "category": {"type": "string"},
-                        "videoUrl": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+        "data/mockExerciseLibrary.ts"
+      ]
     },
     {
-      "name": "Portal do Paciente",
-      "description": "Portal dedicado para pacientes com dashboard, exercícios prescritos, gamificação, documentos e comunicação",
+      "name": "Sistema de Relatórios e Analytics",
+      "description": "Dashboard com métricas clínicas, relatórios financeiros e analytics avançados",
       "files": [
-        "layouts/PatientPortalLayout.tsx",
-        "pages/patient-portal/PatientDashboardPage.tsx",
-        "pages/patient-portal/PatientPainDiaryPage.tsx",
-        "pages/patient-portal/PatientProgressPage.tsx",
-        "pages/patient-portal/VoucherStorePage.tsx",
-        "pages/patient-portal/MyVouchersPage.tsx",
-        "pages/patient-portal/GamificationPage.tsx",
-        "pages/patient-portal/MyAppointmentsPage.tsx",
-        "pages/patient-portal/DocumentsPage.tsx",
-        "pages/patient-portal/MyExercisesPage.tsx",
-        "services/gamificationService.ts",
-        "services/voucherService.ts",
-        "hooks/useGamification.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Patient Portal API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/patient-portal/dashboard": {
-            "get": {
-              "summary": "Dashboard do paciente",
-              "responses": {
-                "200": {
-                  "description": "Dados do dashboard do paciente"
-                }
-              }
-            }
-          },
-          "/api/patient-portal/exercises": {
-            "get": {
-              "summary": "Exercícios prescritos",
-              "responses": {
-                "200": {
-                  "description": "Lista de exercícios do paciente"
-                }
-              }
-            }
-          }
-        }
-      }
+        "components/analytics/ClinicalAnalyticsDashboard.tsx",
+        "components/dashboard/KPICards.tsx",
+        "components/dashboard/RevenueChart.tsx",
+        "components/dashboard/TeamProductivityChart.tsx",
+        "components/reports/FinancialReport.tsx",
+        "components/reports/PatientReport.tsx",
+        "services/analytics/advancedAnalyticsService.ts",
+        "services/reportService.ts"
+      ]
+    },
+    {
+      "name": "Sistema de Teleconsulta",
+      "description": "Funcionalidade de consultas remotas com WebRTC e compartilhamento de conteúdo",
+      "files": [
+        "components/teleconsulta/VideoFeed.tsx",
+        "components/teleconsulta/ControlBar.tsx",
+        "components/teleconsulta/PatientInfoPanel.tsx",
+        "components/teleconsulta/ExerciseSharePanel.tsx",
+        "components/teleconsulta/PainMapSharePanel.tsx",
+        "services/teleconsulta/webrtcTeleconsultaService.ts"
+      ]
+    },
+    {
+      "name": "Sistema de Gamificação",
+      "description": "Sistema de gamificação para engajamento de pacientes",
+      "files": [
+        "components/patient-portal/gamification/",
+        "services/gamificationService.ts"
+      ]
     },
     {
       "name": "Gestão Financeira",
-      "description": "Sistema completo de gestão financeira com transações, relatórios, análises e controle de pagamentos",
+      "description": "Sistema de gestão financeira com transações e relatórios",
       "files": [
-        "pages/FinancialDashboardPage.tsx",
-        "components/financial/FinancialDashboard.tsx",
-        "components/financial/TransactionForm.tsx",
+        "components/financial/TransactionFormModal.tsx",
+        "components/financial/TransactionList.tsx",
         "services/financialService.ts",
-        "hooks/useFinancialData.ts",
-        "types/financial.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Financial Management API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/financial/transactions": {
-            "get": {
-              "summary": "Listar transações",
-              "parameters": [
-                {
-                  "name": "dateFrom",
-                  "in": "query",
-                  "schema": {"type": "string"}
-                },
-                {
-                  "name": "dateTo",
-                  "in": "query",
-                  "schema": {"type": "string"}
-                }
-              ]
-            }
-          }
-        }
-      }
+        "services/payment/paymentService.ts"
+      ]
+    },
+    {
+      "name": "Sistema de Inventário",
+      "description": "Gestão de materiais clínicos e equipamentos",
+      "files": [
+        "components/inventory/ItemCard.tsx",
+        "components/inventory/ItemFormModal.tsx",
+        "components/inventory/StockLevel.tsx",
+        "components/inventory/ExpiryWarning.tsx",
+        "services/inventoryService.ts"
+      ]
+    },
+    {
+      "name": "Sistema de Mentoria",
+      "description": "Sistema de mentoria para estagiários e supervisão clínica",
+      "files": [
+        "components/mentoria/CasesList.tsx",
+        "components/mentoria/InternsTable.tsx",
+        "components/mentoria/MentoriaStats.tsx",
+        "services/mentoriaService.ts"
+      ]
+    },
+    {
+      "name": "Assistente de IA",
+      "description": "Sistema de IA para sugestões clínicas e análise de dados",
+      "files": [
+        "components/AiAssistant.tsx",
+        "components/acompanhamento/AiSuggestionModal.tsx",
+        "services/ai/aiOrchestratorService.ts",
+        "services/ai/multimodalAiService.ts",
+        "services/geminiService.ts"
+      ]
+    },
+    {
+      "name": "Portal do Paciente",
+      "description": "Interface dedicada para pacientes acessarem seus dados e exercícios",
+      "files": [
+        "components/patient-portal/PatientSidebar.tsx",
+        "components/patient-portal/AppointmentCard.tsx",
+        "components/patient-portal/ExerciseEvaluationCard.tsx",
+        "components/patient-portal/PainTrendChart.tsx",
+        "layouts/PatientPortalLayout.tsx"
+      ]
+    },
+    {
+      "name": "Sistema de Compliance LGPD",
+      "description": "Funcionalidades de conformidade com a LGPD para proteção de dados",
+      "files": [
+        "services/compliance/lgpdService.ts"
+      ]
+    },
+    {
+      "name": "Sistema de Backup Multi-Cloud",
+      "description": "Sistema de backup automatizado para múltiplas nuvens",
+      "files": [
+        "services/backup/multiCloudBackupService.ts"
+      ]
+    },
+    {
+      "name": "Sistema de Assinatura Digital",
+      "description": "Funcionalidade de assinatura digital para documentos clínicos",
+      "files": [
+        "services/digital-signature/digitalSignatureService.ts"
+      ]
+    },
+    {
+      "name": "Integração WhatsApp",
+      "description": "Sistema de comunicação via WhatsApp para pacientes",
+      "files": [
+        "components/whatsapp/WhatsappChatInterface.tsx",
+        "services/whatsappService.ts",
+        "services/whatsappLogService.ts"
+      ]
     },
     {
       "name": "Sistema de Notificações",
-      "description": "Centro de notificações com diferentes tipos de alertas, lembretes e comunicação automática",
+      "description": "Sistema de notificações em tempo real",
       "files": [
-        "pages/NotificationCenterPage.tsx",
-        "components/events/NotificationCard.tsx",
-        "components/events/NotificationList.tsx",
         "services/notificationService.ts",
-        "hooks/useNotifications.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Notification System API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/notifications": {
-            "get": {
-              "summary": "Listar notificações",
-              "responses": {
-                "200": {
-                  "description": "Lista de notificações do usuário"
-                }
-              }
-            }
-          }
-        }
-      }
+        "services/supabase/realtimeService.ts"
+      ]
     },
     {
-      "name": "Sistema Kanban de Tarefas",
-      "description": "Quadro de tarefas estilo Kanban para gestão de projetos, atividades e fluxo de trabalho",
+      "name": "Sistema de Avaliações",
+      "description": "Sistema de avaliações clínicas e formulários especializados",
       "files": [
-        "pages/KanbanPage.tsx",
-        "components/TaskCard.tsx",
-        "components/TaskFormModal.tsx",
-        "services/taskService.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Task Management API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/tasks": {
-            "get": {
-              "summary": "Listar tarefas",
-              "responses": {
-                "200": {
-                  "description": "Lista de tarefas organizadas por status"
-                }
-              }
-            },
-            "post": {
-              "summary": "Criar nova tarefa",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "title": {"type": "string"},
-                        "description": {"type": "string"},
-                        "status": {"type": "string"},
-                        "priority": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+        "components/forms/SportsAssessmentForm.tsx",
+        "components/SpecialtyAssessmentGallery.tsx",
+        "services/evaluationService.ts"
+      ]
     },
     {
-      "name": "Gestão de Estoque",
-      "description": "Sistema completo de controle de estoque, suprimentos e alertas de níveis mínimos",
+      "name": "Sistema de Grupos",
+      "description": "Gestão de grupos de pacientes e exercícios em grupo",
       "files": [
-        "pages/InventoryDashboardPage.tsx",
-        "components/inventory/InventoryDashboard.tsx",
-        "components/inventory/InventoryItemCard.tsx",
-        "components/inventory/StockMovementModal.tsx",
-        "components/inventory/InventoryAlerts.tsx",
-        "services/inventoryService.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Inventory Management API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/inventory": {
-            "get": {
-              "summary": "Listar itens do estoque",
-              "responses": {
-                "200": {
-                  "description": "Lista de itens com quantidades"
-                }
-              }
-            }
-          }
-        }
-      }
+        "components/GroupCard.tsx",
+        "components/GroupFormModal.tsx",
+        "services/groupService.ts"
+      ]
     },
     {
-      "name": "Sistema de Relatórios",
-      "description": "Geração de relatórios médicos, financeiros e operacionais com exportação em PDF e CSV",
+      "name": "Sistema de Vouchers",
+      "description": "Sistema de vouchers e planos de tratamento",
       "files": [
-        "pages/ReportsPage.tsx",
-        "pages/MedicalReportPage.tsx",
-        "components/reports/MedicalReportForm.tsx",
-        "components/reports/FinancialReport.tsx",
-        "components/reports/ClinicalReport.tsx",
-        "services/reportService.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Reports API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/reports/generate": {
-            "post": {
-              "summary": "Gerar relatório",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "type": {"type": "string"},
-                        "format": {"type": "string"},
-                        "dateRange": {"type": "object"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Teleconsulta",
-      "description": "Sistema de consultas online com integração de vídeo, chat e gravação de sessões",
-      "files": [
-        "pages/TeleconsultaPage.tsx",
-        "components/teleconsulta/VideoCallInterface.tsx",
-        "components/teleconsulta/TeleconsultaControls.tsx",
-        "components/teleconsulta/PatientInfo.tsx",
-        "components/teleconsulta/NotesPanel.tsx",
-        "components/teleconsulta/RecordingControls.tsx",
-        "components/teleconsulta/SessionSummary.tsx",
-        "components/teleconsulta/TeleconsultaChat.tsx",
-        "components/VideoPlayerModal.tsx"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Teleconsultation API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/teleconsulta/start": {
-            "post": {
-              "summary": "Iniciar teleconsulta",
-              "requestBody": {
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "patientId": {"type": "string"},
-                        "therapistId": {"type": "string"},
-                        "scheduledTime": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "name": "Sistema de Auditoria e Logs",
-      "description": "Log de auditoria completo para rastreamento de ações, conformidade LGPD e segurança",
-      "files": [
-        "pages/AuditLogPage.tsx",
-        "hooks/useAuditLogs.ts"
-      ],
-      "api_doc": {
-        "openapi": "3.0.0",
-        "info": {
-          "title": "Audit Logs API",
-          "version": "1.0.0"
-        },
-        "paths": {
-          "/api/audit-logs": {
-            "get": {
-              "summary": "Listar logs de auditoria",
-              "parameters": [
-                {
-                  "name": "userId",
-                  "in": "query",
-                  "schema": {"type": "string"}
-                },
-                {
-                  "name": "action",
-                  "in": "query",
-                  "schema": {"type": "string"}
-                }
-              ]
-            }
-          }
-        }
-      }
+        "components/partners/SellVoucherCard.tsx",
+        "components/patient-portal/VoucherPlanCard.tsx",
+        "components/patient-portal/VoucherPurchaseModal.tsx",
+        "services/voucherService.ts"
+      ]
     }
   ]
 }

@@ -64,6 +64,62 @@ export const designTokens = {
       950: '#020617',
     },
 
+    // Therapist Colors - Professional and Accessible
+    therapist: {
+      1: {
+        50: '#eff6ff',
+        100: '#dbeafe',
+        200: '#bfdbfe',
+        300: '#93c5fd',
+        400: '#60a5fa',
+        500: '#3b82f6', // Main blue
+        600: '#2563eb',
+        700: '#1d4ed8',
+        800: '#1e40af',
+        900: '#1e3a8a',
+        950: '#172554',
+      },
+      2: {
+        50: '#f0fdf4',
+        100: '#dcfce7',
+        200: '#bbf7d0',
+        300: '#86efac',
+        400: '#4ade80',
+        500: '#22c55e', // Main green
+        600: '#16a34a',
+        700: '#15803d',
+        800: '#166534',
+        900: '#14532d',
+        950: '#052e16',
+      },
+      3: {
+        50: '#faf5ff',
+        100: '#f3e8ff',
+        200: '#e9d5ff',
+        300: '#d8b4fe',
+        400: '#c084fc',
+        500: '#a855f7', // Main purple
+        600: '#9333ea',
+        700: '#7c3aed',
+        800: '#6b21a8',
+        900: '#581c87',
+        950: '#3b0764',
+      },
+      4: {
+        50: '#fff7ed',
+        100: '#ffedd5',
+        200: '#fed7aa',
+        300: '#fdba74',
+        400: '#fb923c',
+        500: '#f97316', // Main orange
+        600: '#ea580c',
+        700: '#c2410c',
+        800: '#9a3412',
+        900: '#7c2d12',
+        950: '#431407',
+      },
+    },
+
     // Semantic Colors
     semantic: {
       success: {
@@ -300,6 +356,54 @@ export const componentTokens = {
     shadow: designTokens.boxShadow['2xl'],
     backdropBlur: '8px',
   },
+  agenda: {
+    appointmentCard: {
+      height: {
+        min: '60px',
+        default: '80px',
+        large: '100px',
+      },
+      borderRadius: designTokens.borderRadius.lg,
+      padding: designTokens.spacing[3],
+      fontSize: designTokens.typography.fontSize.sm,
+      shadow: designTokens.boxShadow.sm,
+    },
+    therapistColumn: {
+      width: '200px',
+      padding: designTokens.spacing[4],
+      borderRadius: designTokens.borderRadius.md,
+    },
+    timeSlot: {
+      height: '60px',
+      borderWidth: '1px',
+    },
+    header: {
+      height: '80px',
+      padding: `${designTokens.spacing[4]} ${designTokens.spacing[6]}`,
+    },
+  },
+};
+
+// Agenda-specific utility functions
+export const getTherapistColor = (therapistId: number) => {
+  const therapistColors = {
+    1: designTokens.colors.therapist[1],
+    2: designTokens.colors.therapist[2],
+    3: designTokens.colors.therapist[3],
+    4: designTokens.colors.therapist[4],
+  };
+  return therapistColors[therapistId as keyof typeof therapistColors] || designTokens.colors.therapist[1];
+};
+
+export const getAppointmentStatusColor = (status: string) => {
+  const statusColors = {
+    'scheduled': designTokens.colors.semantic.info,
+    'confirmed': designTokens.colors.semantic.success,
+    'completed': designTokens.colors.semantic.success,
+    'cancelled': designTokens.colors.semantic.error,
+    'no-show': designTokens.colors.semantic.warning,
+  };
+  return statusColors[status as keyof typeof statusColors] || designTokens.colors.neutral[400];
 };
 
 export type DesignTokens = typeof designTokens;

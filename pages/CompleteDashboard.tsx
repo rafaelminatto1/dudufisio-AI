@@ -10,9 +10,9 @@ const ReportsPage = lazy(() => import('./ReportsPage'));
 const SpecialtyAssessmentsPage = lazy(() => import('./SpecialtyAssessmentsPage'));
 const AcompanhamentoPage = lazy(() => import('./AcompanhamentoPage'));
 import {
-    Calendar, Users, Activity, BarChart3, Clock, TrendingUp, AlertCircle,
-    Plus, Search, Filter, Download, RefreshCw, Eye, Edit, Trash2,
-    CheckCircle, XCircle, User, MapPin, Phone, Mail, Star, Heart, ChevronRight, ChevronLeft
+    Calendar, Users, Activity, BarChart3,
+    Download, RefreshCw,
+    User, MapPin, Phone, Mail, Star, Heart, ChevronRight, ChevronLeft
 } from 'lucide-react';
 
 // Loading component for lazy pages

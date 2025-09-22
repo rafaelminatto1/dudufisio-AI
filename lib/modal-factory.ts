@@ -235,6 +235,8 @@ export interface ConfirmationModalHook {
       variant?: 'danger' | 'warning' | 'info';
     }) => Promise<boolean>;
   };
+  handleConfirm: () => Promise<void>;
+  handleCancel: () => void;
 }
 
 function useConfirmationModal(
@@ -304,6 +306,8 @@ function useConfirmationModal(
       ...modal.actions,
       confirm,
     },
+    handleConfirm,
+    handleCancel,
   };
 }
 
