@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "dudufisio-ai",
   "builds": [
     {
       "src": "package.json",
@@ -24,5 +25,9 @@
     "VITE_GEMINI_API_KEY": "@vite_gemini_api_key",
     "VITE_APP_ENV": "production",
     "VITE_APP_URL": "@vite_app_url"
+  },
+  "github": {
+    "enabled": true,
+    "autoAlias": true
   }
 }
