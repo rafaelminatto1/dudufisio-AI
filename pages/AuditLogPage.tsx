@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ShieldCheck, Search, Calendar as CalendarIcon, User as UserIcon, Type as TypeIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, User as UserIcon, Type as TypeIcon } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { AuditLogEntry } from '../types';
 import { useAuditLogs } from '../hooks/useAuditLogs';

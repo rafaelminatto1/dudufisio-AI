@@ -126,6 +126,10 @@ class AIService {
     }
 
     const bestResult = results[0];
+    if (!bestResult) {
+      return { confidence: 0 } as AIResponse;
+    }
+
     return {
       id: `resp_${Date.now()}`,
       queryId: query.id,

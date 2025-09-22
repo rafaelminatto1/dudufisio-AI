@@ -78,6 +78,38 @@ export type SafeArray<T> = T extends readonly (infer U)[] ? U[] : never;
 export type ConditionalProperty<T, K extends keyof T, V> =
   T[K] extends V ? T : never;
 
+// === ExactOptionalPropertyTypes compliance helpers ===
+
+// Safely assign optional properties (avoids undefined assignment to optional)
+export type SafeOptionalAssign<T> = {
+  [K in keyof T as T[K] extends undefined ? never : K]: T[K];
+} & {
+  [K in keyof T as T[K] extends undefined ? K : never]?: Exclude<T[K], undefined>;
+};
+
+// Helper for conditional object spread (replaces { prop: value | undefined })
+export function assignIfDefined<T>(obj: T): SafeOptionalAssign<T> {
+  const result = {} as SafeOptionalAssign<T>;
+
+  for (const [key, value] of Object.entries(obj as any)) {
+    if (value !== undefined) {
+      (result as any)[key] = value;
+    }
+  }
+
+  return result;
+}
+
+// Utility for conditional object properties
+export function conditionalProps<T>(condition: boolean, props: T): T | {} {
+  return condition ? props : {};
+}
+
+// Safe object merge that respects exactOptionalPropertyTypes
+export function safeMerge<T, U>(base: T, override: U): T & U {
+  return { ...base, ...assignIfDefined(override) } as T & U;
+}
+
 // === Component prop patterns ===
 
 // Standard component with className support
@@ -100,6 +132,70 @@ export interface DataComponentProps<TData = any>
   extends WithClassName, WithLoading, WithError {
   data?: TData;
   onRefresh?: () => void;
+}
+
+// === Standardized component interface patterns ===
+
+// Common modal component props pattern
+export interface StandardModalProps extends BaseModalProps {
+  title?: string;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  className?: string;
+}
+
+// Form component base props
+export interface StandardFormProps<TData = any> extends WithLoading, WithError {
+  initialData?: Partial<TData>;
+  onSubmit: (data: TData) => Promise<void> | void;
+  onCancel?: () => void;
+  submitText?: string;
+  cancelText?: string;
+  disabled?: boolean;
+}
+
+// List component base props
+export interface StandardListProps<TItem = any> extends WithLoading, WithError {
+  items: TItem[];
+  onItemClick?: (item: TItem) => void;
+  onItemEdit?: (item: TItem) => void;
+  onItemDelete?: (item: TItem) => void;
+  emptyMessage?: string;
+  renderItem?: (item: TItem) => React.ReactNode;
+}
+
+// Table component base props
+export interface StandardTableProps<TData = any> extends WithLoading, WithError {
+  data: TData[];
+  columns: TableColumn<TData>[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    onPageChange: (page: number) => void;
+  };
+  sorting?: {
+    field: keyof TData;
+    direction: 'asc' | 'desc';
+    onSort: (field: keyof TData) => void;
+  };
+}
+
+export interface TableColumn<TData = any> {
+  key: keyof TData;
+  label: string;
+  sortable?: boolean;
+  render?: (value: any, item: TData) => React.ReactNode;
+}
+
+// Calendar/Agenda component props pattern
+export interface StandardCalendarProps<TEvent = any> extends WithLoading, WithError {
+  events: TEvent[];
+  selectedDate?: Date;
+  onDateChange?: (date: Date) => void;
+  onEventClick?: (event: TEvent) => void;
+  onSlotClick?: (date: Date, time?: string) => void;
+  view?: 'day' | 'week' | 'month';
+  onViewChange?: (view: 'day' | 'week' | 'month') => void;
 }
 
 // === Event handler patterns ===

@@ -63,7 +63,7 @@ const QueryLogRow: React.FC<{ log: EconomicAiLog }> = ({ log }) => {
         'default': { icon: BrainCircuit, color: 'bg-slate-100 text-slate-800' },
     };
 
-    const info = sourceInfo[source] || sourceInfo['default'];
+    const info = sourceInfo[source] || sourceInfo['default'] || { icon: BrainCircuit, color: 'bg-slate-100 text-slate-800' };
     const Icon = info.icon;
 
     return (

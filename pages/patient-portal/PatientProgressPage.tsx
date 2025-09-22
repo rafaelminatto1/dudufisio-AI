@@ -76,14 +76,19 @@ const PatientProgressPage: React.FC = () => {
                 const initialNote = notesData[notesData.length - 1];
                 const latestNote = notesData[0];
 
+                if (!initialNote || !latestNote) {
+                    setSummary('Dados insuficientes para gerar sumário de progresso.');
+                    return;
+                }
+
                 const data: PatientProgressData = {
                     nome_paciente: user.name.split(' ')[0] || user.name,
                     dor_inicial: initialNote.painScale?.toString() || 'N/A',
                     dor_atual: latestNote.painScale?.toString() || 'N/A',
-                    limitacao_inicial: initialNote.subjective,
-                    status_atual: latestNote.assessment,
-                    conquista_recente: latestNote.subjective,
-                    nome_fisio: latestNote.therapist,
+                    limitacao_inicial: initialNote.subjective || 'N/A',
+                    status_atual: latestNote.assessment || 'N/A',
+                    conquista_recente: latestNote.subjective || 'N/A',
+                    nome_fisio: latestNote.therapist || 'N/A',
                 };
 
                 const generatedSummary = await generatePatientProgressSummary(data);
