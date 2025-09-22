@@ -3,9 +3,9 @@
 ## 1. Criação do Projeto no Supabase
 
 1. Acesse [https://supabase.com/dashboard](https://supabase.com/dashboard)
-2. Crie um novo projeto ou use o existente: `ahshxtmoxnkjzlblbunk`
+2. Crie um novo projeto ou use o existente: `urfxniitfbbvsaskicfo`
 3. Anote as seguintes informações:
-   - **Project URL**: `https://ahshxtmoxnkjzlblbunk.supabase.co`
+   - **Project URL**: `https://urfxniitfbbvsaskicfo.supabase.co`
    - **Anon Key**: (encontrada em Settings > API)
 
 ## 2. Configuração do Banco de Dados
@@ -70,8 +70,8 @@ Crie um arquivo `.env.local` na raiz do projeto:
 
 ```env
 # Supabase Configuration
-VITE_SUPABASE_URL=https://ahshxtmoxnkjzlblbunk.supabase.co
-VITE_SUPABASE_ANON_KEY=seu_anon_key_aqui
+VITE_SUPABASE_URL=https://urfxniitfbbvsaskicfo.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnhuaWl0ZmJidnNhc2tpY2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzMDU0NDcsImV4cCI6MjA3Mzg4MTQ0N30.1duUQHT_MjGOmMKP-b-R6A9VByGzHgj296A2UR-IXvA
 
 # Gemini API (para recursos de IA)
 VITE_GEMINI_API_KEY=sua_gemini_api_key_aqui
@@ -225,8 +225,8 @@ Para restaurar um backup:
 
 ```env
 # .env.production
-VITE_SUPABASE_URL=https://seu-projeto.supabase.co
-VITE_SUPABASE_ANON_KEY=sua_producao_anon_key
+VITE_SUPABASE_URL=https://urfxniitfbbvsaskicfo.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnhuaWl0ZmJidnNhc2tpY2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzMDU0NDcsImV4cCI6MjA3Mzg4MTQ0N30.1duUQHT_MjGOmMKP-b-R6A9VByGzHgj296A2UR-IXvA
 VITE_APP_ENV=production
 VITE_APP_URL=https://seu-dominio.com
 ```

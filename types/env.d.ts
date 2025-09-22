@@ -65,7 +65,21 @@ interface ImportMeta {
 
 // Global process.env for Node.js environments
 declare namespace NodeJS {
-  interface ProcessEnv extends ImportMetaEnv {}
+  interface ProcessEnv extends ImportMetaEnv {
+    NEXT_PUBLIC_SUPABASE_URL: string;
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
+    NEXT_PUBLIC_WEBSOCKET_URL: string;
+    AWS_ACCESS_KEY_ID: string;
+    AWS_SECRET_ACCESS_KEY: string;
+    AWS_REGION: string;
+    AWS_S3_BACKUP_BUCKET: string;
+    GCP_PROJECT_ID: string;
+    GCP_STORAGE_BUCKET: string;
+    TSA_URL: string;
+    BACKUP_ENCRYPTION_KEY: string;
+    TURN_USERNAME: string;
+    TURN_PASSWORD: string;
+  }
 }
 
 // Export for use in modules

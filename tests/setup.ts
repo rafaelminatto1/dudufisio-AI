@@ -22,7 +22,7 @@ jest.mock('@supabase/supabase-js', () => ({
 }));
 
 // Mock environment variables
-process.env.VITE_SUPABASE_URL = 'https://test.supabase.co';
+process.env.VITE_SUPABASE_URL = 'https://urfxniitfbbvsaskicfo.supabase.co';
 process.env.VITE_SUPABASE_ANON_KEY = 'test-anon-key';
 
 // Mock ResizeObserver for chart components

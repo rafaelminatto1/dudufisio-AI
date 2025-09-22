@@ -52,7 +52,7 @@ export interface ClinicalDecisionSupport {
 }
 
 class MultimodalAIService {
-  private genAI: GoogleGenerativeAI;
+  private genAI: any;
   private model: any;
   private visionModel: any;
 

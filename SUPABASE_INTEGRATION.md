@@ -59,7 +59,7 @@ cp .env.example .env.local
 
 # 3. Adicionar suas credenciais do Supabase
 # Edite .env.local com:
-# - VITE_SUPABASE_URL=https://ahshxtmoxnkjzlblbunk.supabase.co
+# - VITE_SUPABASE_URL=https://urfxniitfbbvsaskicfo.supabase.co
 # - VITE_SUPABASE_ANON_KEY=sua_chave_aqui
 ```
 
@@ -225,7 +225,7 @@ SELECT * FROM patients;
 
 - [Guia de Setup Completo](/docs/SUPABASE_SETUP.md)
 - [API Reference](https://supabase.com/docs/reference)
-- [Supabase Dashboard](https://supabase.com/dashboard/project/ahshxtmoxnkjzlblbunk)
+- [Supabase Dashboard](https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo)
 
 ## ✨ Próximos Passos
 
