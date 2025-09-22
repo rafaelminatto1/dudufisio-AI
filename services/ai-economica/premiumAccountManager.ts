@@ -1,5 +1,5 @@
 // services/ai-economica/premiumAccountManager.ts
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/genai";
 import { AIQuery, AIResponse, PremiumProvider, QueryType, ResponseSource, ProviderConfig, UsageStatus } from './types/ai-economica.types';
 import { logger } from './logger';
 import { settingsService } from './settingsService';
@@ -26,7 +26,7 @@ const PROVIDER_STRATEGY: Partial<Record<QueryType, PremiumProvider[]>> = {
 };
 
 class PremiumAccountManager {
-  private ai: GoogleGenAI;
+  private ai: any;
 
   constructor() {
     const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
@@ -34,7 +34,7 @@ class PremiumAccountManager {
       console.warn("VITE_GEMINI_API_KEY is not set for PremiumAccountManager. AI features will be disabled.");
       this.ai = null as any; // Will be handled in queryGemini method
     } else {
-      this.ai = new GoogleGenAI({ apiKey });
+      this.ai = new GoogleGenerativeAI(apiKey as string);
     }
   }
 

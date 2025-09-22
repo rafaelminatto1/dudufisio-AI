@@ -1,8 +1,8 @@
 // services/reportService.ts
 import { MedicalReport, Patient } from '../types';
 import { mockMedicalReports, mockUsers, mockPatients, mockSoapNotes, mockClinicInfo, mockTherapists } from '../data/mockData';
-import { GoogleGenAI } from "@google/genai";
-import html2pdf from 'html2pdf.js/';
+import { GoogleGenerativeAI as GoogleGenAI } from "@google/genai";
+import html2pdf from 'html2pdf.js';
 
 const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
 if (!apiKey) {
