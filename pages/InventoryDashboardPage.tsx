@@ -4,7 +4,7 @@ import PageHeader from '../components/PageHeader';
 import { InventoryItem, InventoryMetrics, Supplier, InventoryCategory, MovementType } from '../types';
 import * as inventoryService from '../services/inventoryService';
 import { useToast } from '../contexts/ToastContext';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import { DollarSign, Package, AlertTriangle, PackagePlus } from 'lucide-react';
 import ItemCard from '../components/inventory/ItemCard';
 import StockMovementModal from '../components/inventory/StockMovementModal';

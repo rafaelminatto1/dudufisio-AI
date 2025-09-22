@@ -5,7 +5,7 @@ import PageHeader from '../components/PageHeader';
 import { AuditLogEntry } from '../types';
 import { useAuditLogs } from '../hooks/useAuditLogs';
 import Pagination from '../components/ui/Pagination';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 
 const getActionBadge = (action: string) => {
     const lowerAction = action.toLowerCase();

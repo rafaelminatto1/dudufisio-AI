@@ -6,7 +6,7 @@ import PageHeader from '../components/PageHeader';
 import { Exercise } from '../types';
 import ExerciseCard from '../components/ExerciseCard';
 import ExerciseFormModal from '../components/ExerciseFormModal';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import GroupFormModal from '../components/GroupFormModal';
 import VideoPlayerModal from '../components/VideoPlayerModal';
 

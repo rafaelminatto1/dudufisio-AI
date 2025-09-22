@@ -9,7 +9,7 @@ import * as ReactRouterDOM from 'react-router-dom';
 import { RecentActivity as ActivityType } from '../../../types';
 import * as activityService from '../../../services/activityService';
 import { Activity, Dumbbell, NotebookText } from 'lucide-react';
-import Skeleton from '../../ui/Skeleton';
+import { Skeleton } from '../../ui/skeleton';
 
 const timeAgo = (date: Date): string => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);

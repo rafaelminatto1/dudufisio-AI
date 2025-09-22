@@ -4,7 +4,7 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 import useClinicalAnalytics from '../../hooks/useClinicalAnalytics';
 import MetricCard from './MetricCard';
 import { HeartPulse, TrendingUp, Smile } from 'lucide-react';
-import Skeleton from '../ui/Skeleton';
+import { Skeleton } from '../ui/skeleton';
 
 const ClinicalAnalyticsDashboard: React.FC = () => {
   const { kpis, painEvolution, successByPathology, isLoading } = useClinicalAnalytics();

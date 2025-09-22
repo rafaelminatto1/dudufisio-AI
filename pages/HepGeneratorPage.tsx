@@ -4,7 +4,7 @@ import { generateHep, HepFormData } from '../services/geminiService';
 import PageHeader from '../components/PageHeader';
 import { Loader, Sparkles, Clipboard, Check, MessageSquare } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import MarkdownRenderer from '../components/ui/MarkdownRenderer';
 import * as patientService from '../services/patientService';
 import * as whatsappService from '../services/whatsappService';

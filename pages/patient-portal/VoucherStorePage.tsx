@@ -11,7 +11,7 @@ import { VoucherPlan } from '../../types';
 import * as voucherService from '../../services/voucherService';
 import VoucherPlanCard from '../../components/patient-portal/VoucherPlanCard';
 import VoucherPurchaseModal from '../../components/patient-portal/VoucherPurchaseModal';
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import { useAuth } from "../../contexts/AppContext";
 import { useToast } from '../../contexts/ToastContext';
 

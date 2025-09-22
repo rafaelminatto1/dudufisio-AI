@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { usePatients } from '../hooks/usePatients';
 import PageHeader from '../components/PageHeader';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import SpecialtyAssessmentGallery from '../components/SpecialtyAssessmentGallery';
 import SportsAssessmentForm from '../components/forms/SportsAssessmentForm';
 import { Specialty } from '../types';

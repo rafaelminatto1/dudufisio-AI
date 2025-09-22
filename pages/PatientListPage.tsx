@@ -7,7 +7,7 @@ import { Patient, PatientSummary } from '../types';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
 import PatientFormModal from '../components/PatientFormModal';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import { useToast } from '../contexts/ToastContext';
 import { usePatients } from '../hooks/usePatients';
 import { useDebounce } from '../hooks/useDebounce';

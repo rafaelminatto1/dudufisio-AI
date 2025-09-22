@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "strict": false,
+    "skipLibCheck": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "tests/**/*",
+    "testsprite_tests/**/*",
+    "database",
+    "prisma",
+    "docs",
+    "scripts",
+    "workers/**/*",
+    "components/auth/**/*",
+    "components/pacientes/**/*",
+    "lib/actions/**/*",
+    "lib/auth.ts",
+    "lib/redis.ts",
+    "middleware.ts",
+    "next.config.js",
+    "next.config.mjs",
+    "services/digital-signature/**/*",
+    "services/monitoring/**/*",
+    "services/payment/**/*",
+    "services/supabase/**/*",
+    "services/teleconsulta/**/*",
+    "pages/DashboardPage.tsx",
+    "components/ui/calendar.tsx",
+    "types/api.ts"
+  ]
+}

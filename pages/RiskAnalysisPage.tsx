@@ -8,7 +8,7 @@ import { generateRiskAnalysis, RiskAnalysisFormData } from '../services/geminiSe
 import PageHeader from '../components/PageHeader';
 import { Loader, Sparkles, Clipboard, Check, CheckCircle, ListChecks, XCircle, RotateCcw, Activity, Search } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 import MarkdownRenderer from '../components/ui/MarkdownRenderer';
 
 const initialFormData: RiskAnalysisFormData = {

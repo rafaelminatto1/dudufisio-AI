@@ -4,7 +4,7 @@ import { generateInactivePatientEmail } from '../services/geminiService';
 import PageHeader from '../components/PageHeader';
 import { Loader, Sparkles, Clipboard, Check, Mail } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
-import Skeleton from '../components/ui/Skeleton';
+import { Skeleton } from '../components/ui/skeleton';
 
 const InactivePatientEmailPage: React.FC = () => {
     const [diasInatividade, setDiasInatividade] = useState('90');

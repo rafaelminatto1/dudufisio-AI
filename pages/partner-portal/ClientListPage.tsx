@@ -10,7 +10,7 @@ import PageHeader from '../../components/PageHeader';
 import { PartnershipClient } from '../../types';
 import * as partnershipService from '../../services/partnershipService';
 import { useAuth } from "@/contexts/AppContext";
-import Skeleton from '../../components/ui/Skeleton';
+import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../contexts/ToastContext';
 import { Search } from 'lucide-react';
 
