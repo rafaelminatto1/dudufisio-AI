@@ -196,21 +196,10 @@ class PatientService {
       if (paymentsResult.error) throw paymentsResult.error;
 
       // Calculate financial balance
-<<<<<<< Current (Your changes)
-      const balance = financialResult.data?.reduce((acc, transaction) => {
-        if ((transaction as any).transaction_type === 'payment') {
-          return acc + (transaction as any).amount;
-        } else if ((transaction as any).transaction_type === 'refund') {
-          return acc - (transaction as any).amount;
-        }
-        return acc;
-      }, 0) || 0;
-=======
       const balance = (paymentsResult.data?.reduce((acc: number, transaction: { amount: number; status: string }) => {
         // Consider only completed amounts as positive for now
         return acc + (typeof transaction.amount === 'number' ? transaction.amount : 0);
       }, 0)) || 0;
->>>>>>> Incoming (Background Agent changes)
 
       return {
         totalAppointments: appointmentsResult.count || 0,
