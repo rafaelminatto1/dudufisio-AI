@@ -48,6 +48,8 @@ const AgendaSettingsPage: React.FC = () => {
         setSettings(prevSettings => {
             const newLimits = [...prevSettings.limits[dayType]];
             const currentSlot = newLimits[index];
+            if (!currentSlot) return prevSettings;
+
             const updatedSlot: TimeSlotLimit = {
                 id: currentSlot.id,
                 startTime: currentSlot.startTime,
