@@ -23,20 +23,22 @@ Install Command: npm install
 ```
 
 ### 4️⃣ **Configurar Environment Variables**
-Adicione estas variáveis na seção "Environment Variables":
+**IMPORTANTE:** Configure uma por vez clicando em "Add Another"
 
-```bash
-# Supabase Configuration
-VITE_SUPABASE_URL=https://urfxniitfbbvsaskicfo.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnhuaWl0ZmJidnNhc2tpY2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzMDU0NDcsImV4cCI6MjA3Mzg4MTQ0N30.1duUQHT_MjGOmMKP-b-R6A9VByGzHgj296A2UR-IXvA
+| Variable Name | Value | Environment |
+|---------------|-------|-------------|
+| `VITE_SUPABASE_URL` | `https://urfxniitfbbvsaskicfo.supabase.co` | Production, Preview, Development |
+| `VITE_SUPABASE_ANON_KEY` | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnhuaWl0ZmJidnNhc2tpY2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzMDU0NDcsImV4cCI6MjA3Mzg4MTQ0N30.1duUQHT_MjGOmMKP-b-R6A9VByGzHgj296A2UR-IXvA` | Production, Preview, Development |
+| `VITE_GEMINI_API_KEY` | `your_gemini_api_key_here` | Production, Preview, Development |
+| `VITE_APP_ENV` | `production` | Production, Preview, Development |
+| `VITE_APP_URL` | `https://dudufisio-ai.vercel.app` | Production, Preview, Development |
 
-# Gemini AI Configuration
-VITE_GEMINI_API_KEY=your_gemini_api_key_here
-
-# Environment
-VITE_APP_ENV=production
-VITE_APP_URL=https://dudufisio-ai.vercel.app
-```
+**📝 Passos:**
+1. Digite o **Variable Name** (ex: `VITE_SUPABASE_URL`)
+2. Digite o **Value** (cole o valor correspondente)
+3. Selecione **ALL environments** (Production, Preview, Development)
+4. Clique **"Add Another"** para próxima variável
+5. Repita para todas as 5 variáveis
 
 ### 5️⃣ **Deploy!**
 - Clique em **"Deploy"**
