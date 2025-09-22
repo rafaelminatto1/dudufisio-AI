@@ -3,25 +3,42 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react({
+    jsxRuntime: 'automatic',
+    babel: {
+      plugins: [
+        ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }]
+      ]
+    }
+  })],
+  esbuild: {
+    drop: ['console', 'debugger']
+  },
+  define: {
+    'process.env': 'import.meta.env',
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+  },
   server: {
     port: 5173,
     host: 'localhost',
     hmr: {
       port: 5173,
       host: 'localhost',
-      clientPort: 5173
+      clientPort: 5173,
+      overlay: true
     },
     watch: {
       usePolling: false,
       interval: 100
-    }
+    },
+    cors: true,
+    strictPort: false
   },
   resolve: {
-    dedupe: ['react', 'react-dom'],
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     alias: {
-      'react': 'react',
-      'react-dom': 'react-dom',
+      'react': path.resolve(__dirname, 'node_modules/react'),
+      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       '@/components': path.resolve(__dirname, './components'),
       '@/pages': path.resolve(__dirname, './pages'),
       '@/services': path.resolve(__dirname, './services'),
@@ -32,7 +49,20 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    include: [
+      'react',
+      'react-dom',
+      'react/jsx-runtime',
+      'react/jsx-dev-runtime',
+      'lucide-react',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-select',
+      '@radix-ui/react-tabs',
+      '@radix-ui/react-toast',
+      '@radix-ui/react-tooltip'
+    ],
     force: true
   },
   build: {
