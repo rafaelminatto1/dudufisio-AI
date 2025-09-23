@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
-import { useData } from '../contexts/DataContext';
+import { useData } from "../contexts/AppContext";
 import { Appointment, Patient, Exercise, SoapNote, PainPoint } from '../types';
 import PageLoader from '../components/ui/PageLoader';
 import ControlBar from '../components/teleconsulta/ControlBar';

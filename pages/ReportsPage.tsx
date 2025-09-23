@@ -5,7 +5,7 @@ import PageLoader from '../components/ui/PageLoader';
 import FinancialReport from '../components/reports/FinancialReport';
 import PatientReport from '../components/reports/PatientReport';
 import PlaceholderReport from '../components/reports/PlaceholderReport';
-import { useData } from '../contexts/DataContext';
+import { useData } from "../contexts/AppContext";
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
 import { Appointment, Patient } from '../types';

@@ -8,7 +8,7 @@ import GroupFormModal from '../components/GroupFormModal';
 import { Skeleton } from '../components/ui/skeleton';
 import { useToast } from '../contexts/ToastContext';
 import { useAuth } from "../contexts/AppContext";
-import { useData } from '../contexts/DataContext';
+import { useData } from "../contexts/AppContext";
 
 const GroupsPage: React.FC = () => {
     const [groups, setGroups] = useState<Group[]>([]);

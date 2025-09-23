@@ -10,7 +10,7 @@ import TaskFormModal from '../components/TaskFormModal';
 import { Skeleton } from '../components/ui/skeleton';
 import { useAuth } from "../contexts/AppContext";
 import { useToast } from '../contexts/ToastContext';
-import { useData } from '../contexts/DataContext';
+import { useData } from "../contexts/AppContext";
 
 interface ColumnProps {
     title: TaskStatus;

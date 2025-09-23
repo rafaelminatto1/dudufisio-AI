@@ -54,8 +54,15 @@ const ClientDetailPage: React.FC = () => {
         fetchClientData();
     }, [id, user, showToast]);
 
-    if (isLoading) return <PageLoader />;
-    if (!clientData) return <div className="text-center p-10">Cliente não encontrado.</div>;
+    // Render loading state
+    if (isLoading) {
+        return <PageLoader />;
+    }
+
+    // Render not found state
+    if (!clientData) {
+        return <div className="text-center p-10">Cliente não encontrado.</div>;
+    }
 
     const { patient, voucher, soapNotes } = clientData;
 
