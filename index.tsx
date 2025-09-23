@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import './index.css';
+import { initSentry } from './lib/sentry';
+
+// Initialize Sentry
+initSentry();
 
 console.log('🚀 Starting React application...');
 

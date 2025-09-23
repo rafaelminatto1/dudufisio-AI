@@ -387,8 +387,8 @@ export default function AgendaPage() {
                         onClose={() => setSelectedAppointment(null)}
                         onEdit={() => handleEditClick(selectedAppointment)}
                         onDelete={handleDeleteAppointment}
-                        onStatusChange={(app, status) => { handleStatusChange(app, status); setSelectedAppointment(null); }}
-                        onPaymentStatusChange={(app, status) => { handlePaymentStatusChange(app, status); setSelectedAppointment(null); }}
+                        onStatusChange={handleStatusChange}
+                        onPaymentStatusChange={handlePaymentStatusChange}
                         onPackagePayment={() => showToast('Funcionalidade de pacote a ser implementada.', 'info')}
                         onUpdateValue={(id, val) => { handleUpdateValue(id, val); setSelectedAppointment(null); }}
                     />

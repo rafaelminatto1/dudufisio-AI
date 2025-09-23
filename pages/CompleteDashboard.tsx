@@ -4,11 +4,14 @@ import Layout from '../components/Layout';
 // Lazy load all pages for better performance
 const AgendaPage = lazy(() => import('./AgendaPage'));
 const PatientListPage = lazy(() => import('./PatientListPage'));
+const PatientDetailPage = lazy(() => import('./PatientDetailPage'));
+const SessionPage = lazy(() => import('./SessionPage'));
 const FinancialDashboardPage = lazy(() => import('./FinancialDashboardPage'));
 const ExerciseLibraryPage = lazy(() => import('./ExerciseLibraryPage'));
 const ReportsPage = lazy(() => import('./ReportsPage'));
 const SpecialtyAssessmentsPage = lazy(() => import('./SpecialtyAssessmentsPage'));
 const AcompanhamentoPage = lazy(() => import('./AcompanhamentoPage'));
+const IntegrationsTestPage = lazy(() => import('./IntegrationsTestPage'));
 import {
     Calendar, Users, Activity, BarChart3,
     Download, RefreshCw,
@@ -214,6 +217,14 @@ interface CompleteDashboardProps {
 const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout }) => {
     const [currentPage, setCurrentPage] = useState('dashboard');
 
+    // Expose the setCurrentPage function globally for navigation
+    React.useEffect(() => {
+        (window as any).__setCurrentPage = setCurrentPage;
+        return () => {
+            delete (window as any).__setCurrentPage;
+        };
+    }, []);
+
     const renderContent = () => {
         switch (currentPage) {
             case 'dashboard':
@@ -229,6 +240,27 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                     <Suspense fallback={<PageLoader />}>
                         <PatientListPage />
                     </Suspense>
+                );
+            case 'patient-detail':
+                return (
+                    <Suspense fallback={<PageLoader />}>
+                        <PatientDetailPage />
+                    </Suspense>
+                );
+            case 'session':
+                const appointmentId = (window as any).__selectedAppointmentId;
+                if (!appointmentId) {
+                    setCurrentPage('appointments');
+                    return null;
+                }
+                return (
+                    <SessionPage
+                        appointmentId={appointmentId}
+                        onClose={() => {
+                            delete (window as any).__selectedAppointmentId;
+                            setCurrentPage('appointments');
+                        }}
+                    />
                 );
             case 'exercises':
                 return (
@@ -258,6 +290,12 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 return (
                     <Suspense fallback={<PageLoader />}>
                         <SpecialtyAssessmentsPage />
+                    </Suspense>
+                );
+            case 'integrations':
+                return (
+                    <Suspense fallback={<PageLoader />}>
+                        <IntegrationsTestPage />
                     </Suspense>
                 );
             default:

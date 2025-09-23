@@ -3,14 +3,16 @@
   "type": "frontend",
   "scope": "codebase",
   "localEndpoint": "http://localhost:5173",
+  "loginUser": "admin@dudufisio.com",
+  "loginPassword": "demo123456",
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "Procure por erros de JavaScript, problemas de renderização, falhas de integração, erros de autenticação e problemas de performance. Foque especialmente em erros que possam afetar a experiência do usuário.",
+    "additionalInstruction": "Foque em testar os problemas de imports que foram corrigidos e a funcionalidade de deploy. Teste especialmente as páginas patient-portal e components que tinham problemas de imports.",
     "envs": {
       "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
     }
   },
-  "proxy": "http://5a24586b-386e-4161-a842-0034bf9ddd37:sLfzwwhDnqRDOVWYlTD9a95dI99CNDAi@tun.testsprite.com:8080"
+  "proxy": "http://10fcca80-4ba3-461e-b211-327166189d65:7FE99XTTSq0GuBYJMcner0BXESN162k9@tun.testsprite.com:8080"
 }

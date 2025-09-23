@@ -25,6 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage =
         { id: 'reports', icon: BarChart3, label: 'Relatórios', group: 'management' },
         { id: 'financial', icon: DollarSign, label: 'Financeiro', group: 'management' },
         { id: 'evaluations', icon: ClipboardList, label: 'Avaliações', group: 'clinical' },
+        { id: 'integrations', icon: Bell, label: 'Integrações', group: 'management' },
     ];
 
     const NavLink = ({ item }: { item: any }) => (
