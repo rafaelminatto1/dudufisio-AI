@@ -12,7 +12,8 @@ export default defineConfig({
     }
   })],
   esbuild: {
-    drop: ['console', 'debugger']
+    // Temporarily enable console logs for debugging
+    // drop: ['console', 'debugger']
   },
   define: {
     'process.env': 'import.meta.env',
@@ -72,9 +73,24 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          ui: ['lucide-react']
+          ui: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+          ai: ['@google/genai'],
+          supabase: ['@supabase/supabase-js'],
+          charts: ['recharts'],
+          animations: ['framer-motion'],
+          forms: ['react-hook-form', '@hookform/resolvers', 'zod']
         }
       }
-    }
+    },
+    // Optimize for Vercel deployment
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
+    // Chunk size warnings
+    chunkSizeWarningLimit: 1000
   }
 });

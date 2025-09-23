@@ -4,8 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Search, Filter, ChevronRight, Users, X, Loader2 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { Patient, PatientSummary } from '../types';
-// FIX: Use namespace import for react-router-dom to fix module resolution issues.
-import * as ReactRouterDOM from 'react-router-dom';
+import { useNavigate } from '../hooks/useNavigate';
 import PatientFormModal from '../components/PatientFormModal';
 import { Skeleton } from '../components/ui/skeleton';
 import { useToast } from '../contexts/ToastContext';
@@ -17,7 +16,7 @@ import { Role } from '../types';
 
 
 const PatientRow: React.FC<{ patient: PatientSummary }> = ({ patient }) => {
-  const navigate = ReactRouterDOM.useNavigate();
+  const navigate = useNavigate();
   const statusColorMap = {
     Active: 'bg-green-100 text-green-800 ring-green-200',
     Inactive: 'bg-yellow-100 text-yellow-800 ring-yellow-200',

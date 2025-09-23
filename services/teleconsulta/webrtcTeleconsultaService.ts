@@ -201,8 +201,8 @@ class WebRTCTeleconsultaService {
       // Custom TURN servers (would be configured in production)
       {
         urls: 'turn:turn.dudufisio.com:3478',
-        username: process.env.TURN_USERNAME || 'default',
-        credential: process.env.TURN_PASSWORD || 'default',
+        username: import.meta.env.TURN_USERNAME || 'default',
+        credential: import.meta.env.TURN_PASSWORD || 'default',
       },
     ],
     iceCandidatePoolSize: 10,
@@ -210,15 +210,15 @@ class WebRTCTeleconsultaService {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      import.meta.env.VITE_SUPABASE_URL!,
+      import.meta.env.VITE_SUPABASE_ANON_KEY!
     );
 
     this.setupWebSocketConnection();
   }
 
   private setupWebSocketConnection(): void {
-    const wsUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:8080';
+    const wsUrl = import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:8080';
     this.websocket = new WebSocket(wsUrl);
 
     this.websocket.onopen = () => {

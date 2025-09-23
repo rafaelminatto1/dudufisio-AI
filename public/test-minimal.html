@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal React Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; }
+        .loading { background: #fff3cd; border: 1px solid #ffeaa7; }
+    </style>
+</head>
+<body>
+    <h1>Minimal React Test</h1>
+    <div id="status" class="status loading">Initializing...</div>
+    <div id="root-test"></div>
+
+    <script type="module">
+        const status = document.getElementById('status');
+        const rootTest = document.getElementById('root-test');
+
+        function updateStatus(message, type = 'loading') {
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        async function testReactComponents() {
+            try {
+                updateStatus('Loading React...', 'loading');
+
+                // Test basic React import
+                const { createRoot } = await import('/node_modules/.vite/deps/react-dom_client.js');
+                const { jsx } = await import('/node_modules/.vite/deps/react_jsx-runtime.js');
+
+                updateStatus('React imported successfully. Testing basic rendering...', 'loading');
+
+                // Create a simple test component
+                function TestComponent() {
+                    return jsx('div', {
+                        style: { padding: '20px', background: '#e7f3ff', border: '1px solid #b3d9ff', borderRadius: '5px' },
+                        children: [
+                            jsx('h2', { children: 'React is working!' }),
+                            jsx('p', { children: 'This confirms that React can render components successfully.' }),
+                            jsx('p', { children: `Current time: ${new Date().toLocaleTimeString()}` })
+                        ]
+                    });
+                }
+
+                // Render the test component
+                const root = createRoot(rootTest);
+                root.render(jsx(TestComponent, {}));
+
+                updateStatus('✅ React rendering test successful!', 'success');
+
+                // Now test App import
+                setTimeout(async () => {
+                    try {
+                        updateStatus('Testing App component import...', 'loading');
+                        const AppModule = await import('/App.tsx');
+                        updateStatus('✅ App component imported successfully!', 'success');
+
+                        // Test AppRoutes import
+                        setTimeout(async () => {
+                            try {
+                                updateStatus('Testing AppRoutes component import...', 'loading');
+                                const AppRoutesModule = await import('/AppRoutes.tsx');
+                                updateStatus('✅ AppRoutes imported successfully!', 'success');
+
+                                // Test Auth Context import
+                                setTimeout(async () => {
+                                    try {
+                                        updateStatus('Testing Supabase Auth Context import...', 'loading');
+                                        const AuthModule = await import('/contexts/SupabaseAuthContext.tsx');
+                                        updateStatus('✅ Auth Context imported successfully!', 'success');
+
+                                        updateStatus('🎉 All core components import successfully! The issue might be during initialization.', 'success');
+                                    } catch (error) {
+                                        updateStatus(`❌ Auth Context import failed: ${error.message}`, 'error');
+                                        console.error('Auth Context Error:', error);
+                                    }
+                                }, 1000);
+                            } catch (error) {
+                                updateStatus(`❌ AppRoutes import failed: ${error.message}`, 'error');
+                                console.error('AppRoutes Error:', error);
+                            }
+                        }, 1000);
+                    } catch (error) {
+                        updateStatus(`❌ App import failed: ${error.message}`, 'error');
+                        console.error('App Error:', error);
+                    }
+                }, 1000);
+
+            } catch (error) {
+                updateStatus(`❌ React test failed: ${error.message}`, 'error');
+                console.error('React Error:', error);
+            }
+        }
+
+        // Start the test
+        testReactComponents();
+    </script>
+</body>
+</html>

@@ -112,8 +112,8 @@ class MultiCloudBackupService {
 
   constructor() {
     this.supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      import.meta.env.VITE_SUPABASE_URL!,
+      import.meta.env.VITE_SUPABASE_ANON_KEY!
     );
 
     this.config = {
@@ -163,13 +163,13 @@ class MultiCloudBackupService {
       name: 'Amazon S3',
       type: 'aws-s3',
       credentials: {
-        accessKey: process.env.AWS_ACCESS_KEY_ID || '',
-        secretKey: process.env.AWS_SECRET_ACCESS_KEY || '',
-        region: process.env.AWS_REGION || 'us-east-1',
-        bucket: process.env.AWS_S3_BACKUP_BUCKET || 'dudufisio-backups',
+        accessKey: import.meta.env.AWS_ACCESS_KEY_ID || '',
+        secretKey: import.meta.env.AWS_SECRET_ACCESS_KEY || '',
+        region: import.meta.env.AWS_REGION || 'us-east-1',
+        bucket: import.meta.env.AWS_S3_BACKUP_BUCKET || 'dudufisio-backups',
       },
       priority: 2,
-      enabled: !!process.env.AWS_ACCESS_KEY_ID,
+      enabled: !!import.meta.env.AWS_ACCESS_KEY_ID,
     });
 
     // Google Cloud Storage (Tertiary)
@@ -178,11 +178,11 @@ class MultiCloudBackupService {
       name: 'Google Cloud Storage',
       type: 'google-cloud',
       credentials: {
-        projectId: process.env.GCP_PROJECT_ID || '',
-        bucket: process.env.GCP_STORAGE_BUCKET || 'dudufisio-backups',
+        projectId: import.meta.env.GCP_PROJECT_ID || '',
+        bucket: import.meta.env.GCP_STORAGE_BUCKET || 'dudufisio-backups',
       },
       priority: 3,
-      enabled: !!process.env.GCP_PROJECT_ID,
+      enabled: !!import.meta.env.GCP_PROJECT_ID,
     });
   }
 
@@ -192,7 +192,7 @@ class MultiCloudBackupService {
     try {
       const keyMaterial = await crypto.subtle.importKey(
         'raw',
-        new TextEncoder().encode(process.env.BACKUP_ENCRYPTION_KEY || 'default-key-change-in-production'),
+        new TextEncoder().encode(import.meta.env.BACKUP_ENCRYPTION_KEY || 'default-key-change-in-production'),
         { name: 'PBKDF2' },
         false,
         ['deriveBits', 'deriveKey']

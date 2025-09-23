@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug DuduFisio-AI</title>
+    <style>
+        body { font-family: monospace; margin: 20px; background: #f5f5f5; }
+        .console { background: #000; color: #0f0; padding: 20px; border-radius: 5px; margin: 20px 0; height: 300px; overflow-y: auto; }
+        .error { color: #f00; }
+        .warning { color: #fa0; }
+        .info { color: #0af; }
+        h1 { color: #333; }
+        iframe { width: 100%; height: 600px; border: 1px solid #ccc; margin: 20px 0; }
+        button { padding: 10px 20px; margin: 10px; background: #007acc; color: white; border: none; border-radius: 3px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>DuduFisio-AI Debug Console</h1>
+
+    <button onclick="loadApp()">Load App</button>
+    <button onclick="clearConsole()">Clear Console</button>
+    <button onclick="checkServices()">Check Services</button>
+
+    <div id="console-output" class="console"></div>
+
+    <h2>Application Frame</h2>
+    <iframe id="app-frame" src="about:blank"></iframe>
+
+    <script>
+        const consoleDiv = document.getElementById('console-output');
+        const iframe = document.getElementById('app-frame');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = type;
+            div.innerHTML = `[${timestamp}] ${message}`;
+            consoleDiv.appendChild(div);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        function clearConsole() {
+            consoleDiv.innerHTML = '';
+        }
+
+        function loadApp() {
+            log('Loading main application...', 'info');
+            iframe.src = 'http://localhost:5174/';
+
+            iframe.onload = function() {
+                log('App iframe loaded successfully', 'info');
+
+                try {
+                    // Try to access iframe console
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    log('App document loaded: ' + iframeDoc.title, 'info');
+
+                    // Check if root element exists
+                    const rootEl = iframeDoc.getElementById('root');
+                    if (rootEl) {
+                        log('Root element found: ' + rootEl.innerHTML.substring(0, 100) + '...', 'info');
+                    } else {
+                        log('Root element not found!', 'error');
+                    }
+                } catch (e) {
+                    log('Cannot access iframe content (CORS): ' + e.message, 'warning');
+                }
+            };
+
+            iframe.onerror = function() {
+                log('Error loading app iframe', 'error');
+            };
+        }
+
+        function checkServices() {
+            log('Checking services...', 'info');
+
+            // Check if main app is responding
+            fetch('http://localhost:5174/')
+                .then(response => {
+                    log(`Main app responding: ${response.status} ${response.statusText}`, 'info');
+                    return response.text();
+                })
+                .then(html => {
+                    if (html.includes('DuduFisio-AI')) {
+                        log('App HTML contains title - good!', 'info');
+                    } else {
+                        log('App HTML missing title - potential issue', 'warning');
+                    }
+                })
+                .catch(error => {
+                    log('Error fetching main app: ' + error.message, 'error');
+                });
+
+            // Check if JS entry point is loading
+            fetch('http://localhost:5174/index.tsx')
+                .then(response => {
+                    log(`JS entry point responding: ${response.status} ${response.statusText}`, 'info');
+                })
+                .catch(error => {
+                    log('Error fetching JS entry: ' + error.message, 'error');
+                });
+        }
+
+        // Override console to capture logs
+        const originalConsole = window.console;
+        window.console = {
+            ...originalConsole,
+            log: function(...args) {
+                log(args.join(' '), 'info');
+                originalConsole.log(...args);
+            },
+            error: function(...args) {
+                log(args.join(' '), 'error');
+                originalConsole.error(...args);
+            },
+            warn: function(...args) {
+                log(args.join(' '), 'warning');
+                originalConsole.warn(...args);
+            }
+        };
+
+        log('Debug console initialized', 'info');
+        log('Click "Load App" to load the main application', 'info');
+    </script>
+</body>
+</html>

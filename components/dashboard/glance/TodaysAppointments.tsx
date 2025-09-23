@@ -3,8 +3,7 @@
 
 'use client';
 import React, { useMemo } from 'react';
-// FIX: Use namespace import for react-router-dom to fix module resolution issues.
-import * as ReactRouterDOM from 'react-router-dom';
+import { useNavigate } from '../../../hooks/useNavigate';
 import { EnrichedAppointment, Appointment, AppointmentStatus } from '../../../types';
 import { Calendar, Clock } from 'lucide-react';
 
@@ -13,7 +12,7 @@ interface TodaysAppointmentsProps {
 }
 
 const TodaysAppointments: React.FC<TodaysAppointmentsProps> = ({ appointments }) => {
-    const navigate = ReactRouterDOM.useNavigate();
+    const navigate = useNavigate();
 
     const todaysScheduledAppointments = useMemo(() => {
         return appointments

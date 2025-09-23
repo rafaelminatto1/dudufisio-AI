@@ -4,8 +4,7 @@
 // components/dashboard/glance/RecentActivity.tsx
 'use client';
 import React, { useState, useEffect } from 'react';
-// FIX: Use namespace import for react-router-dom to fix module resolution issues.
-import * as ReactRouterDOM from 'react-router-dom';
+import { useNavigate } from '../../../hooks/useNavigate';
 import { RecentActivity as ActivityType } from '../../../types';
 import * as activityService from '../../../services/activityService';
 import { Activity, Dumbbell, NotebookText } from 'lucide-react';
@@ -31,7 +30,7 @@ const activityIcons: Record<ActivityType['type'], React.ReactNode> = {
 const RecentActivity: React.FC = () => {
     const [activities, setActivities] = useState<ActivityType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const navigate = ReactRouterDOM.useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchActivities = async () => {

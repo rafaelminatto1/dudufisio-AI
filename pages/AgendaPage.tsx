@@ -8,7 +8,7 @@ import { EnrichedAppointment, Appointment, AppointmentStatus, Patient } from '..
 import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
-import { useData } from '@/contexts/AppContext';
+import { useData } from '../contexts/AppContext';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import { Role } from '../types';
 import AppointmentDetailModal from '../components/AppointmentDetailModal';
