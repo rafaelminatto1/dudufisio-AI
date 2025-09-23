@@ -69,17 +69,23 @@ export const useDebug = (): DebugContextType => {
 export const useRouterDebug = (): void => {
   const debug = useDebug();
 
-  // Só tenta usar hooks do router se estiverem disponíveis
-  try {
-    const location = ReactRouterDOM.useLocation();
+  // Always call hooks at the top level - use a flag to determine if we should use them
+  let location: any;
+  let hasRouterContext = true;
 
-    useEffect(() => {
-      debug.logRouterChange(location);
-    }, [location, debug]);
+  try {
+    location = ReactRouterDOM.useLocation();
   } catch (error) {
-    // Silently fail if router context is not available
-    if (debug.enabled) {
+    // Router context not available - still call the hook but with a dummy value
+    hasRouterContext = false;
+    location = { pathname: '', search: '' };
+  }
+
+  useEffect(() => {
+    if (hasRouterContext) {
+      debug.logRouterChange(location);
+    } else if (debug.enabled) {
       console.warn('RouterDebug: Router context not available, skipping debug');
     }
-  }
+  }, [location, debug, hasRouterContext]);
 };

@@ -7,7 +7,7 @@ import PatientFlowChart from '../components/dashboard/PatientFlowChart';
 import TeamProductivityChart from '../components/dashboard/TeamProductivityChart';
 import AppointmentHeatmap from '../components/dashboard/AppointmentHeatmap';
 import { Activity, Users } from 'lucide-react';
-import { useData } from '../contexts/DataContext';
+import { useData } from "../contexts/AppContext";
 import TodaysAppointments from '../components/dashboard/glance/TodaysAppointments';
 import PendingTasks from '../components/dashboard/glance/PendingTasks';
 import RecentActivity from '../components/dashboard/glance/RecentActivity';

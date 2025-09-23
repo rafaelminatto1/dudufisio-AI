@@ -309,7 +309,7 @@ export function isAuthenticationError(error: any): error is AuthenticationError 
     ERROR_CODES.AUTH_REQUIRED,
     ERROR_CODES.TOKEN_EXPIRED,
     ERROR_CODES.INVALID_CREDENTIALS
-  ].includes(error.code || '');
+  ].includes(error.code as any || '');
 }
 
 export function isAuthorizationError(error: any): error is AuthorizationError {

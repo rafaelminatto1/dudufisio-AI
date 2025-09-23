@@ -1,8 +1,10 @@
 // lib/actions/patient.actions.ts
 'use server';
 
-import { revalidatePath } from 'next/cache';
-import prisma from '@/lib/prisma';
+// import { revalidatePath } from 'next/cache'; // Not available in Vite
+// import { PrismaClient } from '@prisma/client';
+
+// const prisma = new PrismaClient();
 import { patientFormSchema, PatientFormData } from '../validations/patient';
 
 /**
