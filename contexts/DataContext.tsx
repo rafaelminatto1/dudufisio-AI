@@ -47,14 +47,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     fetchData();
   }, [fetchData]);
 
-  if (isLoading) {
-    return <PageLoader />;
-  }
-  
-  if (error) {
-    return <div className="flex items-center justify-center h-screen text-red-500">Falha ao carregar dados essenciais: {error.message}</div>;
-  }
-
   return (
     <DataContext.Provider value={{
       therapists,
@@ -64,7 +56,15 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       error,
       refetch: fetchData,
     }}>
-      {children}
+      {isLoading ? (
+        <PageLoader />
+      ) : error ? (
+        <div className="flex items-center justify-center h-screen text-red-500">
+          Falha ao carregar dados essenciais: {error.message}
+        </div>
+      ) : (
+        children
+      )}
     </DataContext.Provider>
   );
 };
