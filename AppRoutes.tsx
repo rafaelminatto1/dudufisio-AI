@@ -2,6 +2,7 @@ import React, { lazy, useState } from 'react';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
 import { ToastProvider } from './contexts/ToastContext';
+import { DebugProvider } from './contexts/DebugContext';
 import LoginPage from './pages/auth/LoginPage';
 import TwoFactorSetupPage from './pages/auth/TwoFactorSetupPage';
 import { Role } from './types';
@@ -80,13 +81,15 @@ const AppContent: React.FC = () => {
 
 const AppRoutes: React.FC = () => {
     return (
-        <SupabaseAuthProvider>
-            <AppProvider>
-                <ToastProvider>
-                    <AppContent />
-                </ToastProvider>
-            </AppProvider>
-        </SupabaseAuthProvider>
+        <DebugProvider>
+            <SupabaseAuthProvider>
+                <AppProvider>
+                    <ToastProvider>
+                        <AppContent />
+                    </ToastProvider>
+                </AppProvider>
+            </SupabaseAuthProvider>
+        </DebugProvider>
     );
 };
 

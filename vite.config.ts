@@ -69,8 +69,8 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
-    sourcemap: false, // Disable sourcemaps for production to avoid Vercel issues
-    reportCompressedSize: false, // Disable compressed size reporting to reduce warnings
+    sourcemap: false,
+    reportCompressedSize: false,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -81,18 +81,14 @@ export default defineConfig({
           charts: ['recharts'],
           animations: ['framer-motion'],
           forms: ['react-hook-form', '@hookform/resolvers', 'zod']
-        }
+        },
+        // Ensure consistent output naming to avoid sourcemap reference issues
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     },
-    // Optimize for Vercel deployment
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    },
-    // Chunk size warnings
+    minify: 'esbuild', // Use esbuild instead of terser for better compatibility
     chunkSizeWarningLimit: 1000
   }
 });

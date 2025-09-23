@@ -1,5 +1,4 @@
 // pages/patient-portal/VoucherStorePage.tsx
-'use client';
 import React, { useState, useEffect } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
