@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 import { Patient, AppointmentStatus, AlertPatient } from '../../types';
 import { Phone, MessageSquare, CalendarPlus, StickyNote, BrainCircuit, AlertTriangle } from 'lucide-react';
-import { useData } from "../contexts/AppContext";
+import { useData } from "../../contexts/AppContext";
 import { useToast } from '../../contexts/ToastContext';
 import { useAuth } from "../../contexts/AppContext";
 import * as patientService from '../../services/patientService';
