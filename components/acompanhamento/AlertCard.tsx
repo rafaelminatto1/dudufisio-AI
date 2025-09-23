@@ -1,5 +1,3 @@
-
-
 // components/acompanhamento/AlertCard.tsx
 'use client';
 import React, { useMemo } from 'react';
@@ -11,7 +9,6 @@ import { useData } from '../../contexts/DataContext';
 import { useToast } from '../../contexts/ToastContext';
 import { useAuth } from "../../contexts/AppContext";
 import * as patientService from '../../services/patientService';
-
 interface AlertCardProps {
     patient: AlertPatient;
     onOpenObservationModal: (patient: Patient) => void;
@@ -19,30 +16,24 @@ interface AlertCardProps {
     onOpenAiSuggestion: (patient: AlertPatient) => void;
     onUpdate: () => void;
 }
-
 const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, onOpenRescheduleModal, onOpenAiSuggestion, onUpdate }) => {
     const { appointments } = useData();
     const { showToast } = useToast();
     const { user } = useAuth();
     const navigate = ReactRouterDOM.useNavigate();
-
     const patientData = useMemo(() => {
         const patientAppointments = appointments
             .filter(a => a.patientId === patient.id)
             .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
-
         const pastAppointments = patientAppointments.filter(a => a.startTime < new Date());
         const futureAppointments = patientAppointments.filter(a => a.startTime >= new Date() && a.status === AppointmentStatus.Scheduled);
-
         const attendance = pastAppointments.slice(-5).map(app => app.status === AppointmentStatus.Completed);
-        
         return {
             lastVisit: new Date(patient.lastVisit).toLocaleDateString('pt-BR'),
             nextAppointment: futureAppointments[0] ? new Date(futureAppointments[0].startTime).toLocaleDateString('pt-BR') : 'Nenhuma',
             attendance,
         };
     }, [patient, appointments]);
-
     const handleLogContact = async (contactType: 'WhatsApp' | 'Ligação') => {
         if (!user) return;
         try {
@@ -58,15 +49,12 @@ const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, 
             showToast('Falha ao registrar contato.', 'error');
         }
     };
-    
     const typeInfo = {
         abandonment: { borderColor: 'border-red-500', bgColor: 'bg-red-50', textColor: 'text-red-700' },
         highRisk: { borderColor: 'border-amber-500', bgColor: 'bg-amber-50', textColor: 'text-amber-700' },
         attention: { borderColor: 'border-sky-500', bgColor: 'bg-sky-50', textColor: 'text-sky-700' },
     };
-    
     const currentTypeInfo = typeInfo[patient.alertType];
-
     return (
         <div className={`bg-white rounded-2xl shadow-sm border-t-4 ${currentTypeInfo.borderColor} overflow-hidden flex flex-col h-full`}>
             <div className="p-4 flex-grow">
@@ -79,12 +67,10 @@ const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, 
                         </div>
                     </div>
                 </div>
-                
                 <div className={`mt-3 p-2 text-xs font-semibold rounded-md flex items-center ${currentTypeInfo.bgColor} ${currentTypeInfo.textColor}`}>
                     <AlertTriangle size={14} className="mr-2 shrink-0" />
                     <p>{patient.alertReason}</p>
                 </div>
-
                 <div className="mt-4 space-y-2 text-sm">
                      <div className="flex justify-between">
                         <span className="text-slate-500">Última Visita:</span>
@@ -96,7 +82,6 @@ const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, 
                     </div>
                 </div>
             </div>
-
             <div className="bg-slate-50 p-2 flex justify-around items-center border-t mt-auto">
                 <button onClick={() => onOpenAiSuggestion(patient)} title="Sugestão de Contato com IA" className="flex flex-col items-center text-xs text-slate-600 hover:text-teal-600 p-1 rounded-md w-1/5">
                     <BrainCircuit size={20} />
@@ -122,5 +107,4 @@ const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, 
         </div>
     );
 };
-
 export default AlertCard;

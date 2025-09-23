@@ -70,6 +70,7 @@ export default defineConfig({
   build: {
     target: 'es2020',
     sourcemap: false, // Disable sourcemaps for production to avoid Vercel issues
+    reportCompressedSize: false, // Disable compressed size reporting to reduce warnings
     rollupOptions: {
       output: {
         manualChunks: {

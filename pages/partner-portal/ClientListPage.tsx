@@ -1,5 +1,3 @@
-
-
 // pages/partner-portal/ClientListPage.tsx
 'use client';
 import React, { useState, useEffect, useMemo } from 'react';
@@ -12,7 +10,6 @@ import { useAuth } from "@/contexts/AppContext";
 import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../contexts/ToastContext';
 import { Search } from 'lucide-react';
-
 const ClientRow: React.FC<{ client: PartnershipClient }> = ({ client }) => {
     const navigate = ReactRouterDOM.useNavigate();
     return (
@@ -44,15 +41,12 @@ const ClientRow: React.FC<{ client: PartnershipClient }> = ({ client }) => {
         </tr>
     );
 };
-
-
 const ClientListPage: React.FC = () => {
     const [clients, setClients] = useState<PartnershipClient[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const { user } = useAuth();
     const { showToast } = useToast();
-
     useEffect(() => {
         const fetchClients = async () => {
             if (!user) return;
@@ -68,14 +62,12 @@ const ClientListPage: React.FC = () => {
         };
         fetchClients();
     }, [user, showToast]);
-
     const filteredClients = useMemo(() => {
         return clients.filter(client =>
             client.patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             client.patient.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [searchTerm, clients]);
-
     return (
         <>
             <PageHeader
@@ -122,5 +114,4 @@ const ClientListPage: React.FC = () => {
         </>
     );
 };
-
 export default ClientListPage;
