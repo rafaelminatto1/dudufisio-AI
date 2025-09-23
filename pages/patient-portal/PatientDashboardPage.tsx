@@ -84,15 +84,16 @@ const PatientDashboardPage: React.FC = () => {
             .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
     }, [appointments, user]);
     const isLoading = isDataLoading || isLoadingExercises;
-    if (isLoading) {
-        return <Skeleton className="h-screen w-full" />
-    }
+
     return (
          <>
             <PageHeader
                 title={`Bem-vindo(a), ${user?.name.split(' ')[0] || user?.name}!`}
                 subtitle="Sua jornada de recuperação começa aqui. O que vamos fazer hoje?"
             />
+            {isLoading ? (
+                <Skeleton className="h-screen w-full" />
+            ) : (
             <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <QuickActionCard 
@@ -125,6 +126,7 @@ const PatientDashboardPage: React.FC = () => {
                     </div>
                 </div>
             </div>
+            )}
         </>
     );
 };

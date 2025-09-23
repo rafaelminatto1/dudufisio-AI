@@ -1,16 +1,16 @@
 {
   "status": "commited",
-  "type": "backend",
+  "type": "frontend",
   "scope": "codebase",
   "localEndpoint": "http://localhost:5173",
-  "backendAuthType": "public",
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "Foque em identificar possíveis problemas de deploy na Vercel, incluindo: 1) Configurações de build, 2) Variáveis de ambiente, 3) Problemas de roteamento, 4) Erros de bundle/compilação, 5) Problemas de performance, 6) Compatibilidade com Vercel Edge Runtime",
+    "additionalInstruction": "Procure por erros de JavaScript, problemas de renderização, falhas de integração, erros de autenticação e problemas de performance. Foque especialmente em erros que possam afetar a experiência do usuário.",
     "envs": {
       "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
     }
-  }
+  },
+  "proxy": "http://5a24586b-386e-4161-a842-0034bf9ddd37:sLfzwwhDnqRDOVWYlTD9a95dI99CNDAi@tun.testsprite.com:8080"
 }
