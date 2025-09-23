@@ -1,6 +1,7 @@
 import React, { lazy, useState } from 'react';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
+import { ToastProvider } from './contexts/ToastContext';
 import LoginPage from './pages/auth/LoginPage';
 import TwoFactorSetupPage from './pages/auth/TwoFactorSetupPage';
 import { Role } from './types';
@@ -81,7 +82,9 @@ const AppRoutes: React.FC = () => {
     return (
         <SupabaseAuthProvider>
             <AppProvider>
-                <AppContent />
+                <ToastProvider>
+                    <AppContent />
+                </ToastProvider>
             </AppProvider>
         </SupabaseAuthProvider>
     );

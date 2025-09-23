@@ -1,6 +1,5 @@
 import React, { useState, lazy, Suspense } from 'react';
 import Layout from '../components/Layout';
-import { ToastProvider } from '../contexts/ToastContext';
 
 // Lazy load all pages for better performance
 const AgendaPage = lazy(() => import('./AgendaPage'));
@@ -276,16 +275,14 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
     };
 
     return (
-        <ToastProvider>
-            <Layout
-                user={user}
-                onLogout={onLogout}
-                currentPage={currentPage}
-                onPageChange={setCurrentPage}
-            >
-                {renderContent()}
-            </Layout>
-        </ToastProvider>
+        <Layout
+            user={user}
+            onLogout={onLogout}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+        >
+            {renderContent()}
+        </Layout>
     );
 };
 
