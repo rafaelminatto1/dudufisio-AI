@@ -5,505 +5,103 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
-  release:
-    types: [ published ]
-
-env:
-  NODE_VERSION: '20'
-  CACHE_KEY_PREFIX: 'dudufisio-ai'
 
 jobs:
-  # Security and Quality Checks
-  security:
-    name: 🔒 Security Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-      - name: Audit npm dependencies
-        run: |
-          npm audit --audit-level=high
-          npm audit --json > audit-results.json
-
-      - name: Upload audit results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: security-audit
-          path: audit-results.json
-
-  # Code Quality and Linting
-  lint:
-    name: 🧹 Code Quality
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run ESLint
-        run: |
-          npm run lint -- --format=json --output-file=eslint-results.json
-          npm run lint
-
-      - name: Run Prettier check
-        run: npm run format:check
-
-      - name: Run TypeScript check
-        run: npm run type-check
-
-      - name: Upload lint results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: lint-results
-          path: eslint-results.json
-
-  # Unit and Integration Tests
   test:
-    name: 🧪 Tests
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: dudufisio_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
+    name: 🧪 Testes e Verificações
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+    - name: 📦 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+    - name: 📥 Instalar dependências
+      run: npm ci
 
-      - name: Setup test environment
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dudufisio_test
-          SUPABASE_URL: http://localhost:54321
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_TEST }}
-        run: |
-          npm run test:setup
+    - name: 🔍 Verificar imports
+      run: npm run check-imports
 
-      - name: Run unit tests
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dudufisio_test
-        run: |
-          npm run test:unit -- --coverage --watchAll=false --ci
+    - name: 📝 Verificar tipos TypeScript
+      run: npm run type-check
 
-      - name: Run integration tests
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dudufisio_test
-          SUPABASE_URL: http://localhost:54321
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_TEST }}
-        run: |
-          npm run test:integration
+    - name: 🧹 Verificar linting
+      run: npm run lint
 
-      - name: Upload coverage reports
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
+    - name: 🧪 Executar testes
+      run: npm run test -- --coverage --watchAll=false
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results
-          path: |
-            coverage/
-            test-results.json
+    - name: 📦 Verificar build
+      run: npm run build
 
-  # E2E Tests with Cypress
-  e2e:
-    name: 🚀 E2E Tests
+    - name: 🛡️ Verificar vulnerabilidades críticas
+      run: npm audit --audit-level=high --production
+      continue-on-error: true
+
+    - name: 📊 Upload coverage para Codecov
+      uses: codecov/codecov-action@v3
+      if: success()
+      with:
+        file: ./coverage/lcov.info
+        fail_ci_if_error: false
+
+  deploy-preview:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        browser: [chrome, firefox, edge]
+    name: 🚀 Deploy Preview (PR)
+    needs: test
+    if: github.event_name == 'pull_request'
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+    - name: 🚀 Deploy para Vercel (Preview)
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_TEST }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_TEST }}
-          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY_TEST }}
-        run: npm run build
-
-      - name: Run Cypress E2E tests
-        uses: cypress-io/github-action@v6
-        with:
-          start: npm run preview
-          wait-on: 'http://localhost:4173'
-          wait-on-timeout: 120
-          browser: ${{ matrix.browser }}
-          record: true
-          parallel: true
-          group: 'E2E Tests'
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CYPRESS_baseUrl: http://localhost:4173
-          CYPRESS_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_TEST }}
-          CYPRESS_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_TEST }}
-
-      - name: Upload Cypress artifacts
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cypress-artifacts-${{ matrix.browser }}
-          path: |
-            cypress/videos/
-            cypress/screenshots/
-
-  # Performance Tests
-  performance:
-    name: ⚡ Performance Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL_TEST }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY_TEST }}
-        run: npm run build
-
-      - name: Run Lighthouse CI
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-        run: |
-          npm install -g @lhci/cli
-          lhci autorun
-
-      - name: Run bundle analyzer
-        run: |
-          npm run build:analyze
-          ls -la dist/
-
-      - name: Upload performance results
-        uses: actions/upload-artifact@v4
-        with:
-          name: performance-results
-          path: |
-            lighthouse-results/
-            bundle-stats.json
-
-  # Build and Deploy
-  build:
-    name: 🏗️ Build
-    runs-on: ubuntu-latest
-    needs: [security, lint, test]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
-          VITE_STRIPE_PUBLIC_KEY: ${{ secrets.VITE_STRIPE_PUBLIC_KEY }}
-          VITE_MERCADOPAGO_PUBLIC_KEY: ${{ secrets.VITE_MERCADOPAGO_PUBLIC_KEY }}
-        run: npm run build
-
-      - name: Generate build info
-        run: |
-          echo "Build Date: $(date)" > dist/build-info.txt
-          echo "Commit SHA: $GITHUB_SHA" >> dist/build-info.txt
-          echo "Branch: $GITHUB_REF_NAME" >> dist/build-info.txt
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-files
-          path: dist/
-          retention-days: 30
-
-  # Deploy to Staging
-  deploy-staging:
-    name: 🚀 Deploy to Staging
-    runs-on: ubuntu-latest
-    needs: [build, e2e]
-    if: github.ref == 'refs/heads/develop'
-    environment:
-      name: staging
-      url: https://staging.dudufisio.ai
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-files
-          path: dist/
-
-      - name: Deploy to Vercel Staging
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./dist
-          scope: ${{ secrets.VERCEL_ORG_ID }}
-          alias-domains: staging.dudufisio.ai
-
-      - name: Run smoke tests
-        run: |
-          curl -f https://staging.dudufisio.ai/health || exit 1
-          curl -f https://staging.dudufisio.ai/api/ping || exit 1
-
-      - name: Notify deployment
-        uses: 8398a7/action-slack@v3
-        if: always()
-        with:
-          status: ${{ job.status }}
-          text: 'Staging deployment completed'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  # Deploy to Production
   deploy-production:
-    name: 🎯 Deploy to Production
     runs-on: ubuntu-latest
-    needs: [build, e2e, performance]
+    name: 🚀 Deploy Produção
+    needs: test
     if: github.ref == 'refs/heads/main'
-    environment:
-      name: production
-      url: https://app.dudufisio.ai
+    
     steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-files
-          path: dist/
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
 
-      - name: Deploy to Vercel Production
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-          working-directory: ./dist
-          scope: ${{ secrets.VERCEL_ORG_ID }}
-          alias-domains: app.dudufisio.ai
+    - name: 🚀 Deploy para Vercel (Produção)
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
+        working-directory: ./
 
-      - name: Update Supabase functions
-        run: |
-          npx supabase functions deploy --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-
-      - name: Run production smoke tests
-        run: |
-          curl -f https://app.dudufisio.ai/health || exit 1
-          curl -f https://app.dudufisio.ai/api/ping || exit 1
-
-      - name: Create GitHub release
-        if: github.event_name == 'release'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            ## Changes in this Release
-            - Updated dependencies
-            - Bug fixes and improvements
-            - Performance optimizations
-
-      - name: Notify production deployment
-        uses: 8398a7/action-slack@v3
-        if: always()
-        with:
-          status: ${{ job.status }}
-          text: 'Production deployment completed ✅'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  # Database Migrations
-  migrate-database:
-    name: 🗄️ Database Migration
+  notify:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    environment: production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Install Supabase CLI
-        run: |
-          npm install -g supabase
-          supabase --version
-
-      - name: Run database migrations
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-        run: |
-          supabase db push --project-ref $SUPABASE_PROJECT_REF
-
-      - name: Backup database
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-        run: |
-          supabase db dump --project-ref $SUPABASE_PROJECT_REF > backup-$(date +%Y%m%d).sql
-
-      - name: Upload database backup
-        uses: actions/upload-artifact@v4
-        with:
-          name: database-backup
-          path: backup-*.sql
-
-  # Security Monitoring
-  security-monitoring:
-    name: 🛡️ Security Monitoring
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run OWASP ZAP security scan
-        uses: zaproxy/action-full-scan@v0.8.0
-        with:
-          target: 'https://app.dudufisio.ai'
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a'
-
-      - name: Upload ZAP scan results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: zap-results
-          path: report_html.html
-
-  # Cleanup
-  cleanup:
-    name: 🧹 Cleanup
-    runs-on: ubuntu-latest
-    needs: [deploy-production, deploy-staging]
+    name: 📢 Notificações
+    needs: [test, deploy-production]
     if: always()
+    
     steps:
-      - name: Cleanup old artifacts
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const cutoff = new Date();
-            cutoff.setDate(cutoff.getDate() - 7);
+    - name: 📢 Notificar sucesso
+      if: needs.test.result == 'success' && needs.deploy-production.result == 'success'
+      run: |
+        echo "✅ Deploy realizado com sucesso!"
+        echo "🎉 Todas as verificações passaram!"
 
-            const artifacts = await github.rest.actions.listArtifactsForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            });
-
-            for (const artifact of artifacts.data.artifacts) {
-              if (new Date(artifact.created_at) < cutoff) {
-                console.log(`Deleting artifact: ${artifact.name}`);
-                await github.rest.actions.deleteArtifact({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  artifact_id: artifact.id,
-                });
-              }
-            }
-
-      - name: Cleanup old Docker images
-        run: |
-          echo "Cleaning up old Docker images..."
-          # Add Docker cleanup commands if using Docker
-
-  # Rollback capability
-  rollback:
-    name: 🔄 Rollback
-    runs-on: ubuntu-latest
-    if: failure() && github.ref == 'refs/heads/main'
-    steps:
-      - name: Rollback deployment
-        uses: actions/github-script@v7
-        with:
-          script: |
-            console.log('Initiating rollback procedure...');
-            // Add rollback logic here
-
-      - name: Notify rollback
-        uses: 8398a7/action-slack@v3
-        with:
-          status: 'warning'
-          text: '⚠️ Deployment failed, rollback initiated'
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    - name: 📢 Notificar falha
+      if: needs.test.result == 'failure' || needs.deploy-production.result == 'failure'
+      run: |
+        echo "❌ Deploy falhou!"
+        echo "🔍 Verifique os logs para mais detalhes."

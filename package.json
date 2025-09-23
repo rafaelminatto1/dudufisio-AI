@@ -19,7 +19,14 @@
     "clean-imports": "eslint . --ext ts,tsx --fix --rule 'no-console:error' --rule '@typescript-eslint/no-unused-vars:error' || true",
     "check-unused-exports": "ts-unused-exports tsconfig.json --showLineNumbers || true",
     "analyze-bundle": "vite build && vite build --mode analyze || true",
-    "optimize-bundle": "node -e \"console.log('Use lazy routes, code splitting, and analyze-bundle');\""
+    "optimize-bundle": "node -e \"console.log('Use lazy routes, code splitting, and analyze-bundle');\"",
+    "check-imports": "node scripts/check-imports.js",
+    "pre-commit": "npm run build && npm run check-imports",
+    "pre-commit-full": "npm run build && npm run check-imports && npm run lint && npm run type-check",
+    "pre-deploy": "npm run pre-commit && npm audit --audit-level=high",
+    "deploy": "npm run pre-deploy && vercel --prod",
+    "setup-hooks": "husky install && chmod +x .husky/pre-commit",
+    "postinstall": "husky install || true"
   },
   "dependencies": {
     "@google/genai": "^1.12.0",
@@ -84,6 +91,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.21",
     "globals": "^16.4.0",
+    "husky": "^9.1.7",
     "jest-environment-jsdom": "^30.1.2",
     "madge": "^8.0.0",
     "postcss": "^8.4.39",
