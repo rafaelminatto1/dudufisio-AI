@@ -11,7 +11,7 @@ import AchievementCard from '../../components/patient-portal/gamification/Achiev
 
 const GamificationPage: React.FC = () => {
     const { user } = useAuth();
-    const { progress, isLoading } = useGamification(user?.patientId);
+    const { progress, isLoading } = useGamification(user?.patientId || '');
 
     if (isLoading || !progress) {
         return (

@@ -1,12 +1,10 @@
 // components/pacientes/PatientForm.tsx
-'use client';
-
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { patientFormSchema, PatientFormData } from '@/lib/validations/patient';
-import { createPatient } from '@/lib/actions/patient.actions';
-import { usePatientForm } from '@/lib/hooks/use-patient-form';
+import { patientFormSchema, PatientFormData } from '../../lib/validations/patient';
+import { createPatient } from '../../lib/actions/patient.actions';
+import { usePatientForm } from '../../lib/hooks/use-patient-form';
 
 interface PatientFormProps {
   isOpen: boolean;

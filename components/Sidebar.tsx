@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { user, logout } = useAuth();
   const navigate = ReactRouterDOM.useNavigate();
-  const { unreadCount } = useNotifications(user?.id);
+  const { unreadCount } = useNotifications(user?.id || '');
 
   const handleLogout = () => {
     logout();

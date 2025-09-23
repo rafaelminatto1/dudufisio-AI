@@ -34,7 +34,7 @@ const NavLinkComponent = ({ to, icon: Icon, label, badgeCount }: { to: string, i
 const PatientSidebar: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = ReactRouterDOM.useNavigate();
-  const { unreadCount } = useNotifications(user?.id);
+  const { unreadCount } = useNotifications(user?.id || '');
 
   const handleLogout = () => {
     logout();
