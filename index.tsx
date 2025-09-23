@@ -6,6 +6,19 @@ import './index.css';
 
 console.log('🚀 Starting React application...');
 
+// Capture React errors more specifically
+window.addEventListener('error', (event) => {
+  console.error('🔥 Global error caught:', event.error);
+  if (event.error && event.error.message && event.error.message.includes('310')) {
+    console.error('🎯 React error #310 detected!', event.error);
+    console.error('Stack trace:', event.error.stack);
+  }
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('🔥 Unhandled promise rejection:', event.reason);
+});
+
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   console.error('❌ Root element not found!');
