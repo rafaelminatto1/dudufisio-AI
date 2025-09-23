@@ -5,7 +5,7 @@ import PageHeader from '../../components/PageHeader';
 import { useAuth } from "../../contexts/AppContext";
 import * as treatmentService from '../../services/treatmentService';
 import * as exerciseService from '../../services/exerciseService';
-import { useData } from '../../contexts/DataContext';
+import { useData } from '../../contexts/AppContext';
 import { Exercise, ExercisePrescription, Appointment, AppointmentStatus } from '../../types';
 import { NotebookText, Dumbbell, Calendar, ChevronRight } from 'lucide-react';
 import { Skeleton } from '../../components/ui/skeleton';
