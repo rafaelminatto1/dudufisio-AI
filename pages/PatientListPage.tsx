@@ -8,7 +8,7 @@ import { Skeleton } from '../components/ui/skeleton';
 import { useToast } from '../contexts/ToastContext';
 import { usePatients } from '../hooks/usePatients';
 import { useDebounce } from '../hooks/useDebounce';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../contexts/AppContext';
 import { RoleGuard } from '../components/RoleGuard';
 import { Role } from '../types';
 const PatientRow: React.FC<{ patient: PatientSummary }> = ({ patient }) => {

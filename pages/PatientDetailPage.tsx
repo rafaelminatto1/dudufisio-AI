@@ -23,7 +23,7 @@ import MarkdownRenderer from '../components/ui/MarkdownRenderer';
 import MetricEvolutionChart from '../components/MetricEvolutionChart';
 import ClinicalHistoryTimeline from '../components/ClinicalHistoryTimeline';
 import AppointmentTimeline from '../components/AppointmentTimeline';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../contexts/AppContext';
 import ProtocolSuggestionModal from '../components/ProtocolSuggestionModal';
 import PatientClinicalDashboard from '../components/patient/PatientClinicalDashboard';
 import PainPointModal from '../components/patient/PainPointModal';
