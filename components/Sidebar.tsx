@@ -97,6 +97,7 @@ const Sidebar: React.FC = () => {
     { to: '/knowledge-base', icon: Library, label: 'Base de Conhecimento' },
     { to: '/ia-economica', icon: AreaChart, label: 'IA Econômica' },
     { to: '/agenda-settings', icon: SlidersHorizontal, label: 'Config. Agenda' },
+    { to: '/integrations', icon: ShieldCheck, label: 'Integrações' },
     { to: '/ai-settings', icon: SlidersHorizontal, label: 'Config. IA' },
     { to: '/audit-log', icon: ShieldCheck, label: 'Auditoria' },
     { to: '/settings', icon: Cog, label: 'Configurações' },

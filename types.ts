@@ -885,3 +885,18 @@ export interface EventProvider {
   status: ProviderStatus;
   applicationDate: Date;
 }
+
+// --- Body Map Types ---
+
+export interface BodyPoint {
+  id: string;
+  patient_id: string;
+  x_position: number; // Percentage (0-100)
+  y_position: number; // Percentage (0-100)
+  body_side: 'front' | 'back';
+  pain_level: number; // 0-10 scale
+  pain_type: string;
+  description: string;
+  created_at: string; // ISO string
+  created_by: string; // User ID
+}

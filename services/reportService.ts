@@ -1,15 +1,7 @@
 // services/reportService.ts
 import { MedicalReport, Patient } from '../types';
 import { mockMedicalReports, mockUsers, mockPatients, mockSoapNotes, mockClinicInfo, mockTherapists } from '../data/mockData';
-import { GoogleGenerativeAI as GoogleGenAI } from "@google/genai";
 import html2pdf from 'html2pdf.js';
-
-const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
-if (!apiKey) {
-  console.warn("VITE_GEMINI_API_KEY is not set in environment variables. AI features will be disabled.");
-}
-
-const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
 
 
 let reports: MedicalReport[] = [...mockMedicalReports];
@@ -70,36 +62,37 @@ export const generateReport = async (patientId: string, recipientDoctor: string,
         5. Sintetize as evoluções em um parágrafo coeso na seção "Evolução Clínica".
     `;
     
-    if (!ai) {
-        throw new Error("AI service is not available. Please configure VITE_GEMINI_API_KEY.");
-    }
+    // Mock AI response for demo purposes
+    const mockAiContent = `**Identificação do Paciente**
+${patient.name} apresenta queixa principal de ${patient.conditions?.[0]?.name || 'dor'}.
 
-    try {
-         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-        });
+**Diagnóstico Fisioterapêutico**
+Baseado na avaliação inicial e evolução das sessões, o diagnóstico aponta para limitação funcional com comprometimento da mobilidade.
 
-        const newReport: MedicalReport = {
-            id: Date.now(),
-            patientId,
-            therapistId: mockUsers.find(u => u.role === 'Fisioterapeuta')?.id || 'user_1',
-            title: `Relatório Médico - ${patient.name}`,
-            aiGeneratedContent: response.text,
-            content: response.text.replace(/\*\*(.*?)\*\*/g, '<h3>$1</h3>').replace(/\n/g, '<br>'),
-            status: 'draft',
-            recipientDoctor,
-            recipientCrm,
-            generatedAt: new Date(),
-        };
+**Tratamento Realizado**
+Foram realizadas sessões de fisioterapia com técnicas específicas para o quadro apresentado, incluindo exercícios terapêuticos e modalidades físicas.
 
-        reports.unshift(newReport);
-        return newReport;
+**Evolução Clínica**
+${notes.length > 0 ? `O paciente demonstrou evolução positiva durante o período de tratamento, com melhora gradual dos sintomas relatados nas sessões.` : 'Paciente em início de tratamento.'}
 
-    } catch (error) {
-        console.error("Error generating report with Gemini:", error);
-        throw new Error("Falha ao se comunicar com a IA para gerar o relatório.");
-    }
+**Prognóstico e Recomendações**
+Prognóstico favorável com continuidade do tratamento conforme prescrição fisioterapêutica. Recomenda-se acompanhamento médico para evolução do quadro.`;
+
+    const newReport: MedicalReport = {
+        id: Date.now(),
+        patientId,
+        therapistId: mockUsers.find(u => u.role === 'Fisioterapeuta')?.id || 'user_1',
+        title: `Relatório Médico - ${patient.name}`,
+        aiGeneratedContent: mockAiContent,
+        content: mockAiContent.replace(/\*\*(.*?)\*\*/g, '<h3>$1</h3>').replace(/\n/g, '<br>'),
+        status: 'draft',
+        recipientDoctor,
+        recipientCrm,
+        generatedAt: new Date(),
+    };
+
+    reports.unshift(newReport);
+    return newReport;
 };
 
 export const sendReport = async (reportId: number): Promise<MedicalReport> => {

@@ -1,4 +1,5 @@
 import React, { lazy, useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
 import { ToastProvider } from './contexts/ToastContext';
@@ -11,6 +12,7 @@ import { Role } from './types';
 const CompleteDashboard = lazy(() => import('./pages/CompleteDashboard'));
 const PatientPortalDashboard = lazy(() => import('./pages/PatientPortalDashboard'));
 const PartnerPortalDashboard = lazy(() => import('./pages/PartnerPortalDashboard'));
+const IntegrationsTestPage = lazy(() => import('./pages/IntegrationsTestPage'));
 
 const AppContent: React.FC = () => {
     const { user, isAuthenticated, loading, logout } = useSupabaseAuth();
@@ -81,15 +83,17 @@ const AppContent: React.FC = () => {
 
 const AppRoutes: React.FC = () => {
     return (
-        <DebugProvider>
-            <SupabaseAuthProvider>
-                <AppProvider>
-                    <ToastProvider>
-                        <AppContent />
-                    </ToastProvider>
-                </AppProvider>
-            </SupabaseAuthProvider>
-        </DebugProvider>
+        <BrowserRouter>
+            <DebugProvider>
+                <SupabaseAuthProvider>
+                    <AppProvider>
+                        <ToastProvider>
+                            <AppContent />
+                        </ToastProvider>
+                    </AppProvider>
+                </SupabaseAuthProvider>
+            </DebugProvider>
+        </BrowserRouter>
     );
 };
 

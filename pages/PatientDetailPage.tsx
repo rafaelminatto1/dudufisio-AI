@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
-import { User, Cake, Phone, Mail, ChevronLeft, Edit, FileText, Plus, Target, ListChecks, ShieldCheck, Paperclip, Upload, BarChart, Heart, X, Download, Send, Layers, CalendarDays, BookOpen, Lightbulb, ClipboardList } from 'lucide-react';
+import { User, Cake, Phone, Mail, ChevronLeft, Edit, FileText, Plus, Target, ListChecks, ShieldCheck, Paperclip, Upload, BarChart, Heart, X, Download, Send, Layers, CalendarDays, BookOpen, Lightbulb, ClipboardList, Activity } from 'lucide-react';
 import * as patientService from '../services/patientService';
 import * as soapNoteService from '../services/soapNoteService';
 import * as treatmentService from '../services/treatmentService';
@@ -27,6 +27,7 @@ import { useData } from '../contexts/AppContext';
 import ProtocolSuggestionModal from '../components/ProtocolSuggestionModal';
 import PatientClinicalDashboard from '../components/patient/PatientClinicalDashboard';
 import PainPointModal from '../components/patient/PainPointModal';
+import BodyMapTab from '../components/patient/BodyMapTab';
 import { eventService } from '../services/eventService';
 import { RoleGuard } from '../components/RoleGuard';
 import { Role } from '../types';
@@ -110,7 +111,9 @@ const TabButton: React.FC<{ icon: React.ElementType, label: string; isActive: bo
 );
 
 const PatientDetailPage: React.FC = () => {
-    const { id } = ReactRouterDOM.useParams<{ id: string }>();
+    // Get patient ID from window object or URL params as fallback
+    const urlParams = ReactRouterDOM.useParams<{ id: string }>();
+    const id = (window as any).__selectedPatientId || urlParams.id;
     const { therapists } = useData();
     const { user } = useSupabaseAuth();
     
@@ -382,10 +385,14 @@ const PatientDetailPage: React.FC = () => {
                 title={patient.name}
                 subtitle={`Detalhes do prontuário, histórico e agendamentos.`}
             >
-                <ReactRouterDOM.Link to="/patients" className="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 mr-3">
+                <button onClick={() => {
+                    delete (window as any).__selectedPatientId;
+                    const setCurrentPage = (window as any).__setCurrentPage;
+                    if (setCurrentPage) setCurrentPage('patients');
+                }} className="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 mr-3">
                     <ChevronLeft className="-ml-1 mr-2 h-5 w-5" />
                     Voltar
-                </ReactRouterDOM.Link>
+                </button>
                  <button onClick={() => setIsPatientModalOpen(true)} className="inline-flex items-center rounded-lg border border-transparent bg-sky-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-600">
                     <Edit className="-ml-1 mr-2 h-5 w-5" />
                     Editar Cadastro
@@ -480,6 +487,7 @@ const PatientDetailPage: React.FC = () => {
                         <nav className="flex space-x-2" aria-label="Tabs">
                             <TabButton icon={BarChart} label="Dashboard Clínico" isActive={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
                             <TabButton icon={Layers} label="Visão Geral" isActive={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
+                            <TabButton icon={Activity} label="Mapa Corporal" isActive={activeTab === 'bodymap'} onClick={() => setActiveTab('bodymap')} />
                             <TabButton icon={BookOpen} label="Histórico Clínico" isActive={activeTab === 'history'} onClick={() => setActiveTab('history')} />
                             <TabButton icon={CalendarDays} label="Agendamentos" isActive={activeTab === 'appointments'} onClick={() => setActiveTab('appointments')} />
                             <TabButton icon={FileText} label="Laudos & Anexos" isActive={activeTab === 'docs'} onClick={() => setActiveTab('docs')} />
@@ -504,6 +512,10 @@ const PatientDetailPage: React.FC = () => {
                                 <MetricEvolutionChart key={metric.id} metric={metric} notes={patientNotes} />
                             ))}
                         </div>
+                    )}
+
+                    {activeTab === 'bodymap' && (
+                        <BodyMapTab patient={patient} />
                     )}
 
                     {activeTab === 'history' && (
