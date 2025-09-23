@@ -151,7 +151,7 @@ const RiskAnalysisPage: React.FC = () => {
         setAnalysisResult('');
         setRiskLevel(null);
         try {
-            const result = await generateRiskAnalysis(formData);
+            const result = await generateRiskAnalysis();
             
             let risk: RiskLevel | null = null;
             const riskRegex = /\*\*Nível de Risco:\s*\*\*([^\*]+)\*\*/i;

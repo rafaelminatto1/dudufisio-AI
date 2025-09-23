@@ -32,6 +32,11 @@ const StepIndicator = ({ step, setStep, currentStep }: { step: number, setStep: 
 
 
 export default function PatientForm({ isOpen, onClose }: PatientFormProps) {
+  // Early return before any hooks
+  if (!isOpen) {
+    return null;
+  }
+
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -45,7 +50,7 @@ export default function PatientForm({ isOpen, onClose }: PatientFormProps) {
       whatsappConsent: 'opt-out',
     },
   });
-  
+
   const { isCepLoading } = usePatientForm(form);
   
   const onSubmit: SubmitHandler<PatientFormData> = async (data) => {
@@ -66,8 +71,6 @@ export default function PatientForm({ isOpen, onClose }: PatientFormProps) {
 
   const nextStep = () => setStep(s => Math.min(s + 1, 3));
   const prevStep = () => setStep(s => Math.max(s - 1, 1));
-  
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">

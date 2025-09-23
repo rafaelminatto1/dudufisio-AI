@@ -26,7 +26,10 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
         setLocalValue(appointment?.value || 0);
         setIsEditingValue(false);
     }, [appointment]);
-    if (!appointment) return null;
+
+    if (!appointment) {
+        return null;
+    }
     const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         onStatusChange?.(appointment, e.target.value as AppointmentStatus);
     };

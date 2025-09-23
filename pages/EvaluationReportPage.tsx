@@ -128,7 +128,7 @@ const EvaluationReportPage: React.FC = () => {
         setError(null);
         setReport('');
         try {
-            const generatedReport = await generateEvaluationReport(formData);
+            const generatedReport = await generateEvaluationReport();
             setReport(generatedReport);
             showToast('Laudo gerado com sucesso!', 'success');
         } catch (e: any) {
