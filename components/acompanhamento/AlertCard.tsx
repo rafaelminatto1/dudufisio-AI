@@ -1,5 +1,4 @@
 // components/acompanhamento/AlertCard.tsx
-'use client';
 import React, { useMemo } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';

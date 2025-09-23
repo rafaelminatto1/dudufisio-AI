@@ -1,5 +1,4 @@
 // pages/partner-portal/ClientListPage.tsx
-'use client';
 import React, { useState, useEffect, useMemo } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
