@@ -12,8 +12,6 @@ import { useDebounce } from '../hooks/useDebounce';
 import { useData } from '../contexts/DataContext';
 import { RoleGuard } from '../components/RoleGuard';
 import { Role } from '../types';
-
-
 const PatientRow: React.FC<{ patient: PatientSummary }> = ({ patient }) => {
   const navigate = useNavigate();
   const statusColorMap = {
@@ -21,7 +19,6 @@ const PatientRow: React.FC<{ patient: PatientSummary }> = ({ patient }) => {
     Inactive: 'bg-yellow-100 text-yellow-800 ring-yellow-200',
     Discharged: 'bg-slate-100 text-slate-800 ring-slate-200',
   };
-
   return (
     <div 
         onClick={() => navigate(`/patients/${patient.id}`)}
@@ -41,32 +38,25 @@ const PatientRow: React.FC<{ patient: PatientSummary }> = ({ patient }) => {
     </div>
   );
 };
-
-
 const PatientListPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { patients, isLoading, error, fetchInitialPatients, fetchMorePatients, addPatient, hasMore, isLoadingMore } = usePatients();
   const { therapists } = useData();
-  
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [therapistFilter, setTherapistFilter] = useState('All');
-  
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const debouncedStartDate = useDebounce(startDate, 500);
   const debouncedEndDate = useDebounce(endDate, 500);
-
   useEffect(() => {
       fetchInitialPatients({ searchTerm: debouncedSearchTerm, statusFilter, startDate: debouncedStartDate, endDate: debouncedEndDate, therapistId: therapistFilter });
   }, [debouncedSearchTerm, statusFilter, debouncedStartDate, debouncedEndDate, therapistFilter, fetchInitialPatients]);
-
   const handleSavePatient = async (patientData: Omit<Patient, 'id' | 'lastVisit'>) => {
       await addPatient(patientData);
       setIsModalOpen(false);
   };
-  
   const handleClearFilters = () => {
       setSearchTerm('');
       setStatusFilter('All');
@@ -74,7 +64,6 @@ const PatientListPage: React.FC = () => {
       setEndDate('');
       setTherapistFilter('All');
   };
-  
   // FIX: Replaced IntersectionObserver with a "Load More" button to resolve an error and align with tests.
   // The error "Expected 1 arguments, but got 0" was likely caused by a bug in the infinite scroll implementation.
   // A button is a simpler and more robust approach.
@@ -84,11 +73,9 @@ const PatientListPage: React.FC = () => {
         <Skeleton key={i} className="h-20 w-full rounded-xl" />
       ));
     }
-
     if (error) {
         return <div className="text-center p-10 text-red-500 col-span-full">Falha ao carregar pacientes.</div>;
     }
-
     if (patients.length === 0 && !isLoading) {
         return (
             <div className="text-center p-10 text-slate-500 col-span-full">
@@ -98,12 +85,10 @@ const PatientListPage: React.FC = () => {
             </div>
         );
     }
-
     return patients.map((patient) => {
       return <PatientRow key={patient.id} patient={patient} />
     });
   };
-
   return (
     <RoleGuard allowedRoles={[Role.Admin, Role.Therapist, Role.EducadorFisico]}>
       <PageHeader
@@ -117,13 +102,11 @@ const PatientListPage: React.FC = () => {
           Novo Paciente
         </button>
       </PageHeader>
-      
       <PatientFormModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSavePatient}
       />
-
       <div className="bg-white p-4 rounded-2xl shadow-sm mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-end">
             <div className="xl:col-span-2">
@@ -139,7 +122,6 @@ const PatientListPage: React.FC = () => {
                 />
               </div>
             </div>
-
             <div>
               <label className="text-sm font-medium text-slate-600">Status</label>
               <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
@@ -149,17 +131,14 @@ const PatientListPage: React.FC = () => {
                 <option value="Discharged">Alta</option>
               </select>
             </div>
-            
             <div>
               <label className="text-sm font-medium text-slate-600">Data de Cadastro (De)</label>
               <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg" />
             </div>
-            
              <div>
               <label className="text-sm font-medium text-slate-600">Data de Cadastro (Até)</label>
               <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg" />
             </div>
-            
             <div className="xl:col-span-2">
               <label className="text-sm font-medium text-slate-600">Fisioterapeuta</label>
               <select value={therapistFilter} onChange={(e) => setTherapistFilter(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white">
@@ -167,7 +146,6 @@ const PatientListPage: React.FC = () => {
                 {therapists.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             </div>
-            
             <div className="xl:col-span-6">
                 <button onClick={handleClearFilters} className="text-sm font-semibold text-sky-600 hover:text-sky-800 flex items-center">
                     <X className="w-4 h-4 mr-1"/> Limpar Filtros
@@ -175,11 +153,9 @@ const PatientListPage: React.FC = () => {
             </div>
           </div>
       </div>
-      
       <div className="space-y-4">
         {renderContent()}
       </div>
-
       <div className="h-16 flex items-center justify-center">
         {isLoadingMore && (
           <div className="flex items-center text-slate-500">
@@ -202,5 +178,5 @@ const PatientListPage: React.FC = () => {
     </RoleGuard>
   );
 };
-
 export default PatientListPage;
+

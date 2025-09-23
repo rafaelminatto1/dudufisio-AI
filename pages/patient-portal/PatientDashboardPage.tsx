@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useState, useEffect, useMemo } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
@@ -11,11 +10,9 @@ import { useData } from '../../contexts/DataContext';
 import { Exercise, ExercisePrescription, Appointment, AppointmentStatus } from '../../types';
 import { NotebookText, Dumbbell, Calendar, ChevronRight } from 'lucide-react';
 import { Skeleton } from '../../components/ui/skeleton';
-
 interface EnrichedExercise extends Exercise {
     prescription: ExercisePrescription;
 }
-
 const QuickActionCard: React.FC<{ to: string; icon: React.ReactNode; title: string; subtitle: string; }> = ({ to, icon, title, subtitle }) => (
     <ReactRouterDOM.Link to={to} className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg hover:bg-slate-50 transition-all duration-300 flex items-center">
         <div className="bg-teal-100 text-teal-600 p-4 rounded-full mr-4">
@@ -28,7 +25,6 @@ const QuickActionCard: React.FC<{ to: string; icon: React.ReactNode; title: stri
         <ChevronRight className="w-6 h-6 text-slate-400 ml-auto" />
     </ReactRouterDOM.Link>
 );
-
 const NextAppointmentCard: React.FC<{ appointment: Appointment | undefined }> = ({ appointment }) => (
     <div className="bg-white p-6 rounded-2xl shadow-sm">
         <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
@@ -46,7 +42,6 @@ const NextAppointmentCard: React.FC<{ appointment: Appointment | undefined }> = 
         )}
     </div>
 );
-
 const TodaysExerciseCard: React.FC<{ exercise: EnrichedExercise }> = ({ exercise }) => (
      <div className="bg-slate-50 p-3 rounded-lg flex items-center gap-4">
         <img src={exercise.media.thumbnailUrl} alt={exercise.name} className="w-16 h-16 object-cover rounded-md" />
@@ -59,13 +54,11 @@ const TodaysExerciseCard: React.FC<{ exercise: EnrichedExercise }> = ({ exercise
         </ReactRouterDOM.Link>
     </div>
 );
-
 const PatientDashboardPage: React.FC = () => {
     const { user } = useAuth();
     const { appointments, isLoading: isDataLoading } = useData();
     const [exercises, setExercises] = useState<EnrichedExercise[]>([]);
     const [isLoadingExercises, setIsLoadingExercises] = useState(true);
-
     useEffect(() => {
         const fetchPlan = async () => {
             if (user?.patientId) {
@@ -85,20 +78,16 @@ const PatientDashboardPage: React.FC = () => {
         };
         fetchPlan();
     }, [user]);
-
     const nextAppointment = useMemo(() => {
          if (!user?.patientId) return undefined;
          return appointments
             .filter(a => a.patientId === user.patientId && a.status === AppointmentStatus.Scheduled && a.startTime > new Date())
             .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
     }, [appointments, user]);
-
     const isLoading = isDataLoading || isLoadingExercises;
-    
     if (isLoading) {
         return <Skeleton className="h-screen w-full" />
     }
-
     return (
          <>
             <PageHeader
@@ -140,5 +129,4 @@ const PatientDashboardPage: React.FC = () => {
         </>
     );
 };
-
 export default PatientDashboardPage;
