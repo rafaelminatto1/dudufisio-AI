@@ -119,7 +119,7 @@ const BroadcastForm: React.FC<{ onSent: () => void }> = ({ onSent }) => {
 const NotificationCenterPage: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'my' | 'broadcast'>('my');
     const { user } = useAuth();
-    const { notifications, isLoading, unreadCount, markAsRead, markAllAsRead, refetch } = useNotifications(user?.id);
+    const { notifications, isLoading, unreadCount, markAsRead, markAllAsRead, refetch } = useNotifications(user?.id || '');
 
     return (
         <>

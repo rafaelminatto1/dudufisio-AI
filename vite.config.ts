@@ -82,13 +82,12 @@ export default defineConfig({
           animations: ['framer-motion'],
           forms: ['react-hook-form', '@hookform/resolvers', 'zod']
         },
-        // Ensure consistent output naming to avoid sourcemap reference issues
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     },
-    minify: 'esbuild', // Use esbuild instead of terser for better compatibility
+    minify: false, // Disable minification to help debug React error #310
     chunkSizeWarningLimit: 1000
   }
 });
