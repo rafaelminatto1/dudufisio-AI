@@ -115,6 +115,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return appointments.find(a => a.id === id);
   }, [appointments]);
 
+  // HOOK CONSISTENCY FIX: Always define retry callback to prevent conditional hook changes
+  const handleRetry = useCallback(() => {
+    fetchData();
+  }, [fetchData]);
+
   // Fetch data when authenticated
   useEffect(() => {
     if (user && !authLoading) {
@@ -152,7 +157,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         <div className="flex items-center justify-center h-screen text-red-500">
           Falha ao carregar dados: {error}
           <button
-            onClick={fetchData}
+            onClick={handleRetry}
             className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
           >
             Tentar Novamente
