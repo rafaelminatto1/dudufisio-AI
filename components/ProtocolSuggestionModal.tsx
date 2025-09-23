@@ -64,7 +64,7 @@ const ProtocolSuggestionModal: React.FC<ProtocolSuggestionModalProps> = ({ isOpe
         if (!selectedProtocol || !protocolContent) return;
         setIsApplying(true);
         try {
-            const parsedData = await geminiService.parseProtocolForTreatmentPlan(protocolContent);
+            const parsedData = await geminiService.parseProtocolForTreatmentPlan();
 
             const updates: Partial<TreatmentPlan> = {
                 treatmentGoals: parsedData.treatmentGoals,
@@ -113,7 +113,9 @@ const ProtocolSuggestionModal: React.FC<ProtocolSuggestionModalProps> = ({ isOpe
         </div>
     );
 
-    if (!isOpen) return null;
+    if (!isOpen) {
+        return null;
+    }
 
     return (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={onClose}>

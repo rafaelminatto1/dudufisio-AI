@@ -210,7 +210,12 @@ const AtendimentoPage: React.FC = () => {
         }
     };
     
-    if (isLoading) return <PageLoader />;
+    // Handle loading state
+    if (isLoading) {
+        return <PageLoader />;
+    }
+
+    // Handle error or missing data
     if (error || !patient || !appointment) {
         return <div className="text-center p-10 text-red-500">{error?.message || "Não foi possível carregar os dados da sessão."}</div>;
     }

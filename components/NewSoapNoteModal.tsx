@@ -17,6 +17,11 @@ interface NewSoapNoteModalProps {
 }
 
 const NewSoapNoteModal: React.FC<NewSoapNoteModalProps> = ({ isOpen, onClose, onSave, noteToDuplicate }) => {
+  // Early return before any hooks
+  if (!isOpen) {
+    return null;
+  }
+
   const [subjective, setSubjective] = useState('');
   const [objective, setObjective] = useState('');
   const [assessment, setAssessment] = useState('');
@@ -53,9 +58,6 @@ const NewSoapNoteModal: React.FC<NewSoapNoteModalProps> = ({ isOpen, onClose, on
         }
     }
   }, [isOpen, noteToDuplicate, showToast]);
-
-
-  if (!isOpen) return null;
 
   // Focus trap for accessibility
   useEffect(() => {

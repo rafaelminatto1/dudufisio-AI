@@ -10,52 +10,56 @@ class SupabasePatientService {
   private mapRowToPatient(row: PatientRow): Patient {
     return {
       id: row.id,
-      name: row.name,
-      email: row.email || '',
+      user_id: null, // Campo não existe no schema atual
+      full_name: row.full_name,
+      email: row.email,
       phone: row.phone || '',
-      dateOfBirth: row.date_of_birth || '',
+      birth_date: row.birth_date || row.date_of_birth || '',
       cpf: row.cpf || '',
-      address: row.address as any || {},
-      medicalHistory: row.medical_history as any || {},
-      emergencyContact: row.emergency_contact as any || {},
-      status: row.status as PatientStatus,
-      therapistId: row.therapist_id || '',
-      userId: row.user_id || undefined,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
+      address: row.address,
+      profession: null, // Campo não existe no schema atual
+      marital_status: null, // Campo não existe no schema atual
+      emergency_contact_name: row.emergency_contact_name,
+      emergency_contact_phone: row.emergency_contact_phone,
+      photo_url: null, // Campo não existe no schema atual
+      general_notes: row.medical_history, // Usando medical_history como general_notes
+      active: row.status === 'active', // Convertendo status para boolean
+      created_at: row.created_at || '',
+      updated_at: row.updated_at || '',
+      created_by: row.therapist_id || '', // Usando therapist_id como created_by
     };
   }
 
-  private mapPatientToInsert(patient: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): PatientInsert {
+  private mapPatientToInsert(patient: Omit<Patient, 'id' | 'created_at' | 'updated_at'>): PatientInsert {
     return {
-      name: patient.name,
+      full_name: patient.full_name,
       email: patient.email || null,
       phone: patient.phone || null,
-      date_of_birth: patient.dateOfBirth || null,
+      birth_date: patient.birth_date || null,
       cpf: patient.cpf || null,
       address: patient.address || null,
-      medical_history: patient.medicalHistory || null,
-      emergency_contact: patient.emergencyContact || null,
-      status: patient.status,
-      therapist_id: patient.therapistId || null,
-      user_id: patient.userId || null,
+      emergency_contact_name: patient.emergency_contact_name || null,
+      emergency_contact_phone: patient.emergency_contact_phone || null,
+      medical_history: patient.general_notes || null, // Mapeando general_notes para medical_history
+      status: patient.active ? 'active' : 'inactive', // Convertendo boolean para string
+      therapist_id: patient.created_by || null, // Usando created_by como therapist_id
     };
   }
 
   private mapPatientToUpdate(patient: Partial<Patient>): PatientUpdate {
     const update: PatientUpdate = {};
 
-    if (patient.name) update.name = patient.name;
+    if (patient.full_name) update.full_name = patient.full_name;
     if (patient.email !== undefined) update.email = patient.email || null;
     if (patient.phone !== undefined) update.phone = patient.phone || null;
-    if (patient.dateOfBirth !== undefined) update.date_of_birth = patient.dateOfBirth || null;
+    if (patient.birth_date !== undefined) update.birth_date = patient.birth_date || null;
     if (patient.cpf !== undefined) update.cpf = patient.cpf || null;
     if (patient.address !== undefined) update.address = patient.address || null;
-    if (patient.medicalHistory !== undefined) update.medical_history = patient.medicalHistory || null;
-    if (patient.emergencyContact !== undefined) update.emergency_contact = patient.emergencyContact || null;
-    if (patient.status) update.status = patient.status;
-    if (patient.therapistId !== undefined) update.therapist_id = patient.therapistId || null;
-    if (patient.userId !== undefined) update.user_id = patient.userId || null;
+    if (patient.emergency_contact_name !== undefined) update.emergency_contact_name = patient.emergency_contact_name || null;
+    if (patient.emergency_contact_phone !== undefined) update.emergency_contact_phone = patient.emergency_contact_phone || null;
+    if (patient.general_notes !== undefined) update.medical_history = patient.general_notes || null;
+    if (patient.active !== undefined) update.status = patient.active ? 'active' : 'inactive';
+    if (patient.created_by !== undefined) update.therapist_id = patient.created_by || null;
 
     update.updated_at = new Date().toISOString();
 

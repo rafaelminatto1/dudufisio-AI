@@ -346,7 +346,12 @@ const PatientDetailPage: React.FC = () => {
     };
 
 
-    if (isLoading) return <PageLoader />;
+    // Handle loading state
+    if (isLoading) {
+        return <PageLoader />;
+    }
+
+    // Handle access denied
     if (!canViewPatient) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
@@ -362,8 +367,12 @@ const PatientDetailPage: React.FC = () => {
             </div>
         );
     }
-    if (pageError || !patient) return <div className="text-center p-10 text-red-500">{pageError || 'Paciente não encontrado.'}</div>;
-    
+
+    // Handle error or missing patient
+    if (pageError || !patient) {
+        return <div className="text-center p-10 text-red-500">{pageError || 'Paciente não encontrado.'}</div>;
+    }
+
     const birthDate = new Date(patient.birthDate);
     const formattedBirthDate = !isNaN(birthDate.getTime()) ? birthDate.toLocaleDateString('pt-BR', {timeZone: 'UTC'}) : 'N/A';
 
