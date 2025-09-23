@@ -2,6 +2,7 @@ import React, { useState, lazy, Suspense } from 'react';
 import {
     LayoutGrid, Users, Activity, DollarSign, LogOut, Stethoscope
 } from 'lucide-react';
+import { ToastProvider } from '../contexts/ToastContext';
 
 // Lazy load partner portal pages
 const EducatorDashboardPage = lazy(() => import('./partner-portal/EducatorDashboardPage'));
@@ -90,9 +91,10 @@ const PartnerPortalDashboard: React.FC<PartnerPortalDashboardProps> = ({ user, o
     );
 
     return (
-        <div className="flex h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
-            {/* Sidebar */}
-            <div className="w-64 bg-white border-r border-slate-200 shadow-sm">
+        <ToastProvider>
+            <div className="flex h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
+                {/* Sidebar */}
+                <div className="w-64 bg-white border-r border-slate-200 shadow-sm">
                 <div className="flex flex-col h-full">
                     {/* Header */}
                     <div className="p-4 border-b border-slate-200">
@@ -148,6 +150,7 @@ const PartnerPortalDashboard: React.FC<PartnerPortalDashboardProps> = ({ user, o
                 </main>
             </div>
         </div>
+        </ToastProvider>
     );
 };
 
