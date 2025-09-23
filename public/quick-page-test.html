@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Rápido das Outras Páginas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .pending { background: #fff3cd; border-color: #ffeaa7; }
+        .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin: 10px 0; }
+        .page-item { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        button { background: #007acc; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        h3 { color: #333; margin: 15px 0 10px 0; }
+        .summary { background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste Rápido das Outras Páginas</h1>
+
+        <div class="summary">
+            <h3>📊 Resumo dos Testes</h3>
+            <div id="summary">Clique em "Testar Todas" para começar...</div>
+        </div>
+
+        <button onclick="testAllOtherPages()">🚀 Testar Todas as Outras Páginas</button>
+        <button onclick="clearResults()">🧹 Limpar</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const otherPages = {
+            "Portal do Paciente": [
+                "PatientPortalDashboard.tsx",
+                "patient-portal/MyAppointmentsPage.tsx",
+                "patient-portal/MyExercisesPage.tsx",
+                "patient-portal/PatientDashboardPage.tsx",
+                "patient-portal/PatientProgressPage.tsx"
+            ],
+            "Portal do Parceiro": [
+                "PartnerPortalDashboard.tsx",
+                "partner-portal/ClientListPage.tsx",
+                "partner-portal/EducatorDashboardPage.tsx",
+                "partner-portal/PartnerExerciseLibraryPage.tsx"
+            ],
+            "Páginas Clínicas": [
+                "AcompanhamentoPage.tsx",
+                "AtendimentoPage.tsx",
+                "ExerciseLibraryPage.tsx",
+                "TeleconsultaPage.tsx",
+                "MedicalReportPage.tsx",
+                "SpecialtyAssessmentsPage.tsx"
+            ],
+            "Financeiro": [
+                "FinancialDashboardPage.tsx",
+                "FinancialPage.tsx",
+                "EconomicPage.tsx"
+            ],
+            "Analytics": [
+                "ReportsPage.tsx",
+                "RiskAnalysisPage.tsx",
+                "AiAnalyticsPage.tsx",
+                "ClinicalAnalyticsPage.tsx"
+            ],
+            "Configurações": [
+                "SettingsPage.tsx",
+                "AiSettingsPage.tsx",
+                "SubscriptionPage.tsx",
+                "NotificationCenterPage.tsx"
+            ],
+            "Autenticação": [
+                "auth/LoginPage.tsx",
+                "auth/TwoFactorSetupPage.tsx"
+            ],
+            "Outros": [
+                "WhatsAppPage.tsx",
+                "MentoriaPage.tsx",
+                "KnowledgeBasePage.tsx",
+                "InventoryDashboardPage.tsx"
+            ]
+        };
+
+        let testResults = {};
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('summary').innerHTML = 'Clique em "Testar Todas" para começar...';
+            testResults = {};
+        }
+
+        function updateSummary() {
+            const total = Object.keys(testResults).length;
+            const passed = Object.values(testResults).filter(r => r.success).length;
+            const failed = total - passed;
+            const rate = total > 0 ? Math.round((passed / total) * 100) : 0;
+
+            document.getElementById('summary').innerHTML = `
+                <strong>Total:</strong> ${total} páginas testadas |
+                <strong style="color: green;">Sucesso:</strong> ${passed} |
+                <strong style="color: red;">Falhas:</strong> ${failed} |
+                <strong>Taxa:</strong> ${rate}%
+            `;
+        }
+
+        async function testPageImport(pageName) {
+            try {
+                const module = await import(`/pages/${pageName}`);
+                testResults[pageName] = { success: true, message: 'Importação bem-sucedida' };
+                return true;
+            } catch (error) {
+                testResults[pageName] = { success: false, message: error.message };
+                return false;
+            }
+        }
+
+        async function testCategory(categoryName, pages) {
+            const section = document.createElement('div');
+            section.className = 'test-section pending';
+            section.innerHTML = `
+                <h3>🔄 Testando: ${categoryName}</h3>
+                <div class="test-grid" id="grid-${categoryName.replace(/\s+/g, '-')}"></div>
+            `;
+            document.getElementById('results').appendChild(section);
+
+            const grid = section.querySelector('.test-grid');
+            let categoryPassed = 0;
+
+            for (const page of pages) {
+                const item = document.createElement('div');
+                item.className = 'page-item';
+                item.textContent = `${page} - Testando...`;
+                grid.appendChild(item);
+
+                const success = await testPageImport(page);
+
+                item.textContent = `${page} - ${success ? '✅' : '❌'}`;
+                item.style.background = success ? '#d4edda' : '#f8d7da';
+
+                if (success) categoryPassed++;
+
+                // Small delay for visual feedback
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            section.className = categoryPassed === pages.length ? 'test-section success' : 'test-section error';
+            section.querySelector('h3').innerHTML = `${categoryPassed === pages.length ? '✅' : '⚠️'} ${categoryName} (${categoryPassed}/${pages.length})`;
+
+            updateSummary();
+        }
+
+        async function testAllOtherPages() {
+            clearResults();
+
+            for (const [categoryName, pages] of Object.entries(otherPages)) {
+                await testCategory(categoryName, pages);
+            }
+
+            const total = Object.keys(testResults).length;
+            const passed = Object.values(testResults).filter(r => r.success).length;
+
+            const finalSection = document.createElement('div');
+            finalSection.className = passed === total ? 'test-section success' : 'test-section error';
+            finalSection.innerHTML = `
+                <h3>${passed === total ? '🎉' : '⚠️'} Resultado Final</h3>
+                <p><strong>${passed}/${total}</strong> páginas funcionando corretamente (${Math.round((passed/total)*100)}%)</p>
+                ${passed === total ?
+                    '<p>🎯 <strong>Todas as outras páginas estão funcionando!</strong></p>' :
+                    `<p>⚠️ ${total - passed} páginas com problemas de importação.</p>`
+                }
+            `;
+            document.getElementById('results').appendChild(finalSection);
+        }
+
+        // Auto-message
+        console.log('🔧 Sistema de teste de páginas inicializado');
+    </script>
+</body>
+</html>

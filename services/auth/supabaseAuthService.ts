@@ -39,31 +39,70 @@ class SupabaseAuthService {
 
   private async initializeAuth() {
     try {
-      // Get initial session
-      const { data: { session } } = await supabase.auth.getSession();
+      console.log('🔐 Initializing Supabase authentication...');
 
-      if (session?.user) {
-        const user = await this.mapSupabaseUserToUser(session.user);
-        this.updateState({ user, session, loading: false });
-      } else {
+      // Set a timeout for initialization to prevent infinite loading
+      const initTimeout = setTimeout(() => {
+        console.warn('⚠️ Auth initialization timeout, falling back to unauthenticated state');
         this.updateState({ user: null, session: null, loading: false });
-      }
+      }, 5000);
 
-      // Listen for auth changes
-      supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          const user = await this.mapSupabaseUserToUser(session.user);
-          this.updateState({ user, session, loading: false });
-        } else if (event === 'SIGNED_OUT') {
-          this.updateState({ user: null, session: null, loading: false });
-        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-          const user = await this.mapSupabaseUserToUser(session.user);
-          this.updateState({ user, session, loading: false });
+      try {
+        // Get initial session
+        console.log('🔍 Getting initial session...');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          console.warn('⚠️ Session error:', sessionError.message);
+          throw sessionError;
         }
-      });
+
+        if (session?.user) {
+          console.log('✅ Found active session, mapping user...');
+          const user = await this.mapSupabaseUserToUser(session.user);
+          this.updateState({ user, session, loading: false });
+          console.log('🎉 User authenticated:', user.email);
+        } else {
+          console.log('ℹ️ No active session found');
+          this.updateState({ user: null, session: null, loading: false });
+        }
+
+        // Clear the timeout since we completed successfully
+        clearTimeout(initTimeout);
+
+        // Listen for auth changes
+        console.log('👂 Setting up auth state change listener...');
+        supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('🔄 Auth state changed:', event);
+          try {
+            if (event === 'SIGNED_IN' && session?.user) {
+              const user = await this.mapSupabaseUserToUser(session.user);
+              this.updateState({ user, session, loading: false });
+            } else if (event === 'SIGNED_OUT') {
+              this.updateState({ user: null, session: null, loading: false });
+            } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+              const user = await this.mapSupabaseUserToUser(session.user);
+              this.updateState({ user, session, loading: false });
+            }
+          } catch (error) {
+            console.error('Error handling auth state change:', error);
+            // Don't break the app, just log the error
+          }
+        });
+
+        console.log('✅ Auth initialization completed successfully');
+      } catch (error) {
+        clearTimeout(initTimeout);
+        throw error;
+      }
     } catch (error) {
-      console.error('Auth initialization error:', error);
+      console.error('❌ Auth initialization error:', error);
+      console.log('🔄 Falling back to unauthenticated state with mock auth support');
+
+      // Always complete initialization, even on error
       this.updateState({ user: null, session: null, loading: false });
+
+      // Don't throw the error - let the app continue in unauthenticated mode
     }
   }
 

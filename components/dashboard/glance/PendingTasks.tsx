@@ -3,8 +3,7 @@
 
 'use client';
 import React, { useState, useEffect } from 'react';
-// FIX: Use namespace import for react-router-dom to fix module resolution issues.
-import * as ReactRouterDOM from 'react-router-dom';
+import { useNavigate } from '../../../hooks/useNavigate';
 import { Task, TaskStatus, TaskPriority } from '../../../types';
 import * as taskService from '../../../services/taskService';
 import { ClipboardList, ChevronsUp, ChevronUp, ChevronsDown } from 'lucide-react';
@@ -13,7 +12,7 @@ import { Skeleton } from '../../ui/skeleton';
 const PendingTasks: React.FC = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const navigate = ReactRouterDOM.useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchTasks = async () => {

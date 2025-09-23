@@ -16,8 +16,9 @@
       "vite/client"
     ],
 
-    /* Linting - Relaxed for Vercel deployment */
+    /* Build configuration for Vercel deployment */
     "strict": true,
+    "noEmitOnError": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
@@ -35,16 +36,18 @@
     "noImplicitThis": true,
     "alwaysStrict": true,
 
-    /* Path mapping */
+    /* Path mapping - Fixed according to Context7 documentation */
     "baseUrl": ".",
     "paths": {
+      "@/*": ["./*"],
       "@/components/*": ["./components/*"],
       "@/pages/*": ["./pages/*"],
       "@/services/*": ["./services/*"],
       "@/hooks/*": ["./hooks/*"],
       "@/contexts/*": ["./contexts/*"],
       "@/types/*": ["./types/*"],
-      "@/lib/*": ["./lib/*"]
+      "@/lib/*": ["./lib/*"],
+      "@/design-system/*": ["./design-system/*"]
     }
   },
   "include": [

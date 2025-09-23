@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Completo - Todas as 57 Páginas</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 0; padding: 20px; background: #f8fafc; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .category { background: white; border-radius: 12px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
+        .category-header { background: #3b82f6; color: white; padding: 15px 20px; font-weight: bold; font-size: 18px; }
+        .category-content { padding: 20px; }
+        .page-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+        .page-item { border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; background: #fafafa; transition: all 0.3s; }
+        .page-item.testing { background: #fff3cd; border-color: #ffc107; }
+        .page-item.success { background: #d4edda; border-color: #28a745; }
+        .page-item.error { background: #f8d7da; border-color: #dc3545; }
+        .page-name { font-weight: bold; margin-bottom: 8px; }
+        .page-status { font-size: 14px; color: #6b7280; }
+        .controls { text-align: center; margin: 20px 0; }
+        button { background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; margin: 5px; font-size: 16px; }
+        button:hover { background: #2563eb; }
+        button.secondary { background: #6b7280; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat { background: white; text-align: center; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 32px; font-weight: bold; color: #3b82f6; }
+        .stat-label { color: #6b7280; margin-top: 5px; }
+        .progress-bar { background: #e5e7eb; height: 8px; border-radius: 4px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { background: #3b82f6; height: 100%; transition: width 0.3s; }
+        .console { background: #1a1a1a; color: #00ff00; font-family: 'Courier New', monospace; height: 300px; overflow-y: auto; padding: 15px; border-radius: 8px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Teste Completo - Todas as 57 Páginas do DuduFisio-AI</h1>
+            <p>Verificação abrangente de todos os componentes de página da aplicação</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="total-pages">57</div>
+                <div class="stat-label">Total de Páginas</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="tested-pages">0</div>
+                <div class="stat-label">Páginas Testadas</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="passed-pages">0</div>
+                <div class="stat-label">Páginas OK</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="success-rate">0%</div>
+                <div class="stat-label">Taxa de Sucesso</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+
+        <div class="controls">
+            <button onclick="testAllPages()">🚀 Testar Todas as Páginas</button>
+            <button onclick="testByCategory()" class="secondary">📊 Testar por Categoria</button>
+            <button onclick="clearResults()" class="secondary">🧹 Limpar Resultados</button>
+        </div>
+
+        <div class="console" id="console"></div>
+
+        <!-- Páginas Principais -->
+        <div class="category">
+            <div class="category-header">🏠 Páginas Principais (5)</div>
+            <div class="category-content">
+                <div class="page-grid" id="main-pages"></div>
+            </div>
+        </div>
+
+        <!-- Autenticação -->
+        <div class="category">
+            <div class="category-header">🔐 Autenticação (3)</div>
+            <div class="category-content">
+                <div class="page-grid" id="auth-pages"></div>
+            </div>
+        </div>
+
+        <!-- Portal do Paciente -->
+        <div class="category">
+            <div class="category-header">👤 Portal do Paciente (9)</div>
+            <div class="category-content">
+                <div class="page-grid" id="patient-pages"></div>
+            </div>
+        </div>
+
+        <!-- Portal do Parceiro -->
+        <div class="category">
+            <div class="category-header">🤝 Portal do Parceiro (5)</div>
+            <div class="category-content">
+                <div class="page-grid" id="partner-pages"></div>
+            </div>
+        </div>
+
+        <!-- Clínica e Atendimento -->
+        <div class="category">
+            <div class="category-header">🏥 Clínica e Atendimento (12)</div>
+            <div class="category-content">
+                <div class="page-grid" id="clinical-pages"></div>
+            </div>
+        </div>
+
+        <!-- Financeiro -->
+        <div class="category">
+            <div class="category-header">💰 Financeiro (3)</div>
+            <div class="category-content">
+                <div class="page-grid" id="financial-pages"></div>
+            </div>
+        </div>
+
+        <!-- Analytics e Relatórios -->
+        <div class="category">
+            <div class="category-header">📊 Analytics e Relatórios (6)</div>
+            <div class="category-content">
+                <div class="page-grid" id="analytics-pages"></div>
+            </div>
+        </div>
+
+        <!-- Configurações e Admin -->
+        <div class="category">
+            <div class="category-header">⚙️ Configurações e Admin (7)</div>
+            <div class="category-content">
+                <div class="page-grid" id="admin-pages"></div>
+            </div>
+        </div>
+
+        <!-- Outros -->
+        <div class="category">
+            <div class="category-header">🔧 Outros (7)</div>
+            <div class="category-content">
+                <div class="page-grid" id="other-pages"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pages = {
+            main: [
+                'AgendaPage.tsx',
+                'CompleteDashboard.tsx',
+                'DashboardPage.tsx',
+                'PatientListPage.tsx',
+                'SimpleDashboard.tsx'
+            ],
+            auth: [
+                'auth/LoginPage.tsx',
+                'auth/TwoFactorSetupPage.tsx',
+                'LoginPage.tsx'
+            ],
+            patient: [
+                'PatientPortalDashboard.tsx',
+                'patient-portal/DocumentsPage.tsx',
+                'patient-portal/GamificationPage.tsx',
+                'patient-portal/MyAppointmentsPage.tsx',
+                'patient-portal/MyExercisesPage.tsx',
+                'patient-portal/MyVouchersPage.tsx',
+                'patient-portal/PatientDashboardPage.tsx',
+                'patient-portal/PatientPainDiaryPage.tsx',
+                'patient-portal/PatientProgressPage.tsx',
+                'patient-portal/VoucherStorePage.tsx'
+            ],
+            partner: [
+                'PartnerPortalDashboard.tsx',
+                'partner-portal/ClientDetailPage.tsx',
+                'partner-portal/ClientListPage.tsx',
+                'partner-portal/EducatorDashboardPage.tsx',
+                'partner-portal/FinancialsPage.tsx',
+                'partner-portal/PartnerExerciseLibraryPage.tsx'
+            ],
+            clinical: [
+                'AcompanhamentoPage.tsx',
+                'AtendimentoPage.tsx',
+                'ClinicalLibraryPage.tsx',
+                'EventDetailPage.tsx',
+                'EventsListPage.tsx',
+                'ExerciseLibraryPage.tsx',
+                'GroupsPage.tsx',
+                'PatientDetailPage.tsx',
+                'SessionEvolutionPage.tsx',
+                'SpecialtyAssessmentsPage.tsx',
+                'TeleconsultaPage.tsx',
+                'MedicalReportPage.tsx'
+            ],
+            financial: [
+                'FinancialDashboardPage.tsx',
+                'FinancialPage.tsx',
+                'EconomicPage.tsx'
+            ],
+            analytics: [
+                'AiAnalyticsPage.tsx',
+                'ClinicalAnalyticsPage.tsx',
+                'EvaluationReportPage.tsx',
+                'ReportsPage.tsx',
+                'RiskAnalysisPage.tsx',
+                'KanbanPage.tsx'
+            ],
+            admin: [
+                'AiSettingsPage.tsx',
+                'AgendaSettingsPage.tsx',
+                'AuditLogPage.tsx',
+                'SettingsPage.tsx',
+                'SubscriptionPage.tsx',
+                'NotificationCenterPage.tsx',
+                'LegalPage.tsx'
+            ],
+            other: [
+                'HepGeneratorPage.tsx',
+                'InactivePatientEmailPage.tsx',
+                'InventoryDashboardPage.tsx',
+                'KnowledgeBasePage.tsx',
+                'MaterialDetailPage.tsx',
+                'MentoriaPage.tsx',
+                'PartnershipPage.tsx',
+                'WhatsAppPage.tsx'
+            ]
+        };
+
+        let testResults = {};
+        let currentTest = 0;
+        let totalTests = 0;
+
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: '#00ff00',
+                success: '#00ff88',
+                error: '#ff4444',
+                warning: '#ffaa00'
+            };
+
+            console.innerHTML += `<div style="color: ${colors[type]}">[${timestamp}] ${message}</div>`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function updateStats() {
+            const tested = Object.keys(testResults).length;
+            const passed = Object.values(testResults).filter(r => r.success).length;
+            const rate = tested > 0 ? Math.round((passed / tested) * 100) : 0;
+
+            document.getElementById('tested-pages').textContent = tested;
+            document.getElementById('passed-pages').textContent = passed;
+            document.getElementById('success-rate').textContent = rate + '%';
+
+            const progress = (tested / totalTests) * 100;
+            document.getElementById('progress-fill').style.width = progress + '%';
+        }
+
+        function createPageElement(pageName, category) {
+            const div = document.createElement('div');
+            div.className = 'page-item';
+            div.id = `page-${pageName.replace(/[/.]/g, '-')}`;
+            div.innerHTML = `
+                <div class="page-name">${pageName}</div>
+                <div class="page-status">Aguardando teste...</div>
+            `;
+            return div;
+        }
+
+        function initializePages() {
+            totalTests = Object.values(pages).flat().length;
+
+            Object.entries(pages).forEach(([category, pageList]) => {
+                const container = document.getElementById(`${category}-pages`);
+                if (container) {
+                    pageList.forEach(page => {
+                        container.appendChild(createPageElement(page, category));
+                    });
+                }
+            });
+        }
+
+        async function testPage(pageName) {
+            const elementId = `page-${pageName.replace(/[/.]/g, '-')}`;
+            const element = document.getElementById(elementId);
+
+            if (!element) return;
+
+            element.className = 'page-item testing';
+            element.querySelector('.page-status').textContent = 'Testando...';
+
+            try {
+                const url = `http://localhost:5174/pages/${pageName}`;
+                log(`Testando: ${pageName}`);
+
+                const response = await fetch(url, {
+                    method: 'HEAD',
+                    signal: AbortSignal.timeout(5000)
+                });
+
+                const success = response.ok;
+                testResults[pageName] = {
+                    success,
+                    status: response.status,
+                    message: response.ok ? 'OK' : `HTTP ${response.status}`
+                };
+
+                element.className = `page-item ${success ? 'success' : 'error'}`;
+                element.querySelector('.page-status').textContent = success ?
+                    `✅ HTTP ${response.status} - OK` :
+                    `❌ HTTP ${response.status} - Erro`;
+
+                log(`${pageName}: ${success ? 'PASS' : 'FAIL'} - HTTP ${response.status}`,
+                    success ? 'success' : 'error');
+
+            } catch (error) {
+                testResults[pageName] = {
+                    success: false,
+                    status: 'ERROR',
+                    message: error.message
+                };
+
+                element.className = 'page-item error';
+                element.querySelector('.page-status').textContent = `❌ Erro: ${error.message}`;
+                log(`${pageName}: ERROR - ${error.message}`, 'error');
+            }
+
+            currentTest++;
+            updateStats();
+        }
+
+        async function testAllPages() {
+            log('🚀 Iniciando teste de todas as 57 páginas...', 'info');
+            testResults = {};
+            currentTest = 0;
+
+            const allPages = Object.values(pages).flat();
+
+            for (const page of allPages) {
+                await testPage(page);
+                // Small delay to avoid overwhelming the server
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            log(`✅ Teste concluído! ${Object.values(testResults).filter(r => r.success).length}/${allPages.length} páginas funcionando`, 'success');
+        }
+
+        async function testByCategory() {
+            log('📊 Testando por categoria...', 'info');
+
+            for (const [categoryName, pageList] of Object.entries(pages)) {
+                log(`\n🔍 Testando categoria: ${categoryName} (${pageList.length} páginas)`, 'info');
+
+                for (const page of pageList) {
+                    await testPage(page);
+                    await new Promise(resolve => setTimeout(resolve, 50));
+                }
+            }
+        }
+
+        function clearResults() {
+            testResults = {};
+            currentTest = 0;
+            document.getElementById('console').innerHTML = '';
+
+            document.querySelectorAll('.page-item').forEach(item => {
+                item.className = 'page-item';
+                item.querySelector('.page-status').textContent = 'Aguardando teste...';
+            });
+
+            updateStats();
+            log('🧹 Resultados limpos. Pronto para novo teste.', 'info');
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            initializePages();
+            updateStats();
+            log('🔧 Sistema de teste inicializado', 'info');
+            log('📋 57 páginas carregadas e prontas para teste', 'info');
+        });
+    </script>
+</body>
+</html>

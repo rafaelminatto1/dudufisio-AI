@@ -6,7 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL: string;
   readonly VITE_SUPABASE_ANON_KEY: string;
 
-  // Next.js Legacy Support (some components still reference these)
+  // Legacy Next.js Support (for compatibility)
   readonly NEXT_PUBLIC_SUPABASE_URL: string;
   readonly NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
   readonly NEXT_PUBLIC_WEBSOCKET_URL: string;
@@ -32,6 +32,7 @@ interface ImportMetaEnv {
   // WebRTC/Communication
   readonly TURN_USERNAME: string;
   readonly TURN_PASSWORD: string;
+  readonly VITE_WEBSOCKET_URL: string;
 
   // External Services
   readonly REDIS_URL: string;
@@ -46,6 +47,10 @@ interface ImportMetaEnv {
   readonly VITE_ASAAS_API_KEY: string;
   readonly VITE_ASAAS_ENVIRONMENT: string;
   readonly VITE_PIX_KEY: string;
+
+  // Application Configuration
+  readonly VITE_APP_ENV: 'development' | 'production' | 'test';
+  readonly VITE_APP_URL: string;
 
   // Development/Runtime
   readonly NODE_ENV: 'development' | 'production' | 'test';
