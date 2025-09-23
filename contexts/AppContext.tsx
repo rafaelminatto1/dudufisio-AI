@@ -102,36 +102,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setDataLoading(false);
   }, []);
 
-  // Remove auth initialization as it's handled by SupabaseAuthContext
-
-  // Fetch data when authenticated
-  useEffect(() => {
-    if (user && !authLoading) {
-      fetchData();
-    }
-  }, [user, authLoading, fetchData]);
-
-  // Show loading while auth is loading
-  if (authLoading) {
-    return <PageLoader />;
-  }
-
-  // Show error if data loading fails
-  if (error && user) {
-    return (
-      <div className="flex items-center justify-center h-screen text-red-500">
-        Falha ao carregar dados: {error}
-        <button 
-          onClick={fetchData}
-          className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Tentar Novamente
-        </button>
-      </div>
-    );
-  }
-
-  // Safe data access methods
+  // Safe data access methods - MOVED TO TOP LEVEL
   const safeGetPatient = useCallback((id: string): Patient | undefined => {
     return patients.find(p => p.id === id);
   }, [patients]);
@@ -143,6 +114,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const safeGetAppointment = useCallback((id: string): Appointment | undefined => {
     return appointments.find(a => a.id === id);
   }, [appointments]);
+
+  // Fetch data when authenticated
+  useEffect(() => {
+    if (user && !authLoading) {
+      fetchData();
+    }
+  }, [user, authLoading, fetchData]);
 
   const value: AppContextType = {
     // Auth (from SupabaseAuthContext) with safety
@@ -168,7 +146,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   return (
     <AppContext.Provider value={value}>
-      {children}
+      {authLoading ? (
+        <PageLoader />
+      ) : error && user ? (
+        <div className="flex items-center justify-center h-screen text-red-500">
+          Falha ao carregar dados: {error}
+          <button
+            onClick={fetchData}
+            className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Tentar Novamente
+          </button>
+        </div>
+      ) : (
+        children
+      )}
     </AppContext.Provider>
   );
 };
