@@ -114,8 +114,15 @@ const MedicalReportPage: React.FC = () => {
     };
 
 
-    if (isLoading) return <PageLoader />;
-    if (!patient) return null;
+    // Handle loading state
+    if (isLoading) {
+        return <PageLoader />;
+    }
+
+    // Handle not found state
+    if (!patient) {
+        return null;
+    }
 
     const pageTitle = report ? report.title : `Novo Relatório para ${patient.name}`;
     const backLink = report ? `/patients/${report.patientId}` : `/patients/${patientId}`;

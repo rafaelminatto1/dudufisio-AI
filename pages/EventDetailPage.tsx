@@ -80,8 +80,15 @@ const EventDetailPage: React.FC = () => {
         }
     };
 
-    if (isLoading) return <PageLoader />;
-    if (!event) return <div className="text-center p-10">Evento não encontrado.</div>;
+    // Handle loading state
+    if (isLoading) {
+        return <PageLoader />;
+    }
+
+    // Handle not found state
+    if (!event) {
+        return <div className="text-center p-10">Evento não encontrado.</div>;
+    }
 
     return (
         <>

@@ -94,7 +94,10 @@ const ClinicalLibraryPage: React.FC = () => {
   }, [searchTerm, filteredCategories, categories]);
 
 
-  if (isLoading) return <PageLoader />;
+  // Handle loading state
+  if (isLoading) {
+    return <PageLoader />;
+  }
 
   return (
     <>
