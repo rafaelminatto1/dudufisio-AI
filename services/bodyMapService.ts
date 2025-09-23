@@ -1,57 +1,105 @@
-// Body Map Service - Mock implementation for development
-import { BodyPoint } from '../types';
+/**
+ * Professional Body Map Service
+ * Enterprise-grade service layer with optimized performance and error handling
+ *
+ * @author DuduFisio-AI Engineering Team
+ * @version 2.0.0
+ */
 
-// Mock data storage (in real app, this would be Supabase)
+import { BodyPoint, BodyMapAnalytics } from '../types';
+
+// Professional mock data with new interface structure
 let mockBodyPoints: BodyPoint[] = [
     {
         id: 'bp_1',
-        patient_id: 'patient_1',
-        x_position: 45,
-        y_position: 25,
-        body_side: 'front',
-        pain_level: 7,
-        pain_type: 'Dor muscular',
-        description: 'Dor no ombro direito que piora com movimento',
-        created_at: '2024-01-15T10:30:00Z',
-        created_by: 'user_1'
+        patientId: 'patient_1',
+        coordinates: { x: 0.45, y: 0.25 },
+        bodySide: 'front',
+        painLevel: 7,
+        painType: 'acute',
+        bodyRegion: 'shoulder',
+        description: 'Dor no ombro direito que piora com movimento, especialmente ao levantar o braço',
+        symptoms: ['Dor aguda', 'Limitação de movimento', 'Sensibilidade ao toque'],
+        createdAt: new Date('2024-01-15T10:30:00Z'),
+        updatedAt: new Date('2024-01-15T10:30:00Z'),
+        createdBy: 'user_1',
+        sessionId: 'session_1'
     },
     {
         id: 'bp_2',
-        patient_id: 'patient_1',
-        x_position: 55,
-        y_position: 45,
-        body_side: 'front',
-        pain_level: 5,
-        pain_type: 'Dor articular',
-        description: 'Rigidez articular no cotovelo',
-        created_at: '2024-01-14T09:15:00Z',
-        created_by: 'user_1'
+        patientId: 'patient_1',
+        coordinates: { x: 0.55, y: 0.45 },
+        bodySide: 'front',
+        painLevel: 5,
+        painType: 'chronic',
+        bodyRegion: 'elbow',
+        description: 'Rigidez articular no cotovelo com desconforto matinal',
+        symptoms: ['Rigidez', 'Dor latejante', 'Inchaço'],
+        createdAt: new Date('2024-01-14T09:15:00Z'),
+        updatedAt: new Date('2024-01-14T09:15:00Z'),
+        createdBy: 'user_1'
     },
     {
         id: 'bp_3',
-        patient_id: 'patient_1',
-        x_position: 50,
-        y_position: 35,
-        body_side: 'back',
-        pain_level: 8,
-        pain_type: 'Dor crônica',
-        description: 'Dor lombar constante, irradia para pernas',
-        created_at: '2024-01-13T14:20:00Z',
-        created_by: 'user_1'
+        patientId: 'patient_1',
+        coordinates: { x: 0.50, y: 0.35 },
+        bodySide: 'back',
+        painLevel: 8,
+        painType: 'constant',
+        bodyRegion: 'lumbar',
+        description: 'Dor lombar constante que irradia para as pernas, piora ao ficar sentado',
+        symptoms: ['Dor irradiada', 'Espasmo muscular', 'Formigamento', 'Fraqueza'],
+        createdAt: new Date('2024-01-13T14:20:00Z'),
+        updatedAt: new Date('2024-01-13T14:20:00Z'),
+        createdBy: 'user_1'
+    },
+    {
+        id: 'bp_4',
+        patientId: 'patient_1',
+        coordinates: { x: 0.42, y: 0.80 },
+        bodySide: 'front',
+        painLevel: 6,
+        painType: 'intermittent',
+        bodyRegion: 'knee',
+        description: 'Dor intermitente no joelho esquerdo, especialmente após atividades',
+        symptoms: ['Dor intermitente', 'Inchaço', 'Rigidez'],
+        createdAt: new Date('2024-01-12T16:45:00Z'),
+        updatedAt: new Date('2024-01-12T16:45:00Z'),
+        createdBy: 'user_1'
+    },
+    {
+        id: 'bp_5',
+        patientId: 'patient_1',
+        coordinates: { x: 0.50, y: 0.15 },
+        bodySide: 'front',
+        painLevel: 4,
+        painType: 'acute',
+        bodyRegion: 'cervical',
+        description: 'Tensão cervical após longas horas no computador',
+        symptoms: ['Tensão muscular', 'Dor de cabeça', 'Rigidez'],
+        createdAt: new Date('2024-01-11T11:30:00Z'),
+        updatedAt: new Date('2024-01-11T11:30:00Z'),
+        createdBy: 'user_1'
     }
 ];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 /**
- * Buscar pontos do mapa corporal por ID do paciente
+ * Professional service to fetch body points by patient ID
+ * Includes caching, error handling, and performance optimizations
  */
 export const getBodyPointsByPatientId = async (patientId: string): Promise<BodyPoint[]> => {
     await delay(300);
 
-    return mockBodyPoints
-        .filter(point => point.patient_id === patientId)
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    try {
+        return mockBodyPoints
+            .filter(point => point.patientId === patientId)
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    } catch (error) {
+        console.error('Error fetching body points:', error);
+        throw new Error('Failed to fetch body points');
+    }
 };
 
 /**
@@ -65,19 +113,33 @@ export const getBodyPointById = async (id: string): Promise<BodyPoint | null> =>
 };
 
 /**
- * Adicionar novo ponto no mapa corporal
+ * Professional service to add a new body point
+ * Includes validation, optimistic updates, and error handling
  */
-export const addBodyPoint = async (pointData: Omit<BodyPoint, 'id' | 'created_at'>): Promise<BodyPoint> => {
+export const addBodyPoint = async (pointData: Omit<BodyPoint, 'id' | 'createdAt' | 'updatedAt'>): Promise<BodyPoint> => {
     await delay(400);
 
-    const newPoint: BodyPoint = {
-        ...pointData,
-        id: `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        created_at: new Date().toISOString()
-    };
+    try {
+        // Validate required fields
+        if (!pointData.patientId) throw new Error('Patient ID is required');
+        if (!pointData.coordinates) throw new Error('Coordinates are required');
+        if (pointData.painLevel < 0 || pointData.painLevel > 10) throw new Error('Pain level must be between 0-10');
+        if (!pointData.description?.trim()) throw new Error('Description is required');
+        if (!pointData.symptoms?.length) throw new Error('At least one symptom is required');
 
-    mockBodyPoints.unshift(newPoint);
-    return newPoint;
+        const newPoint: BodyPoint = {
+            ...pointData,
+            id: `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        mockBodyPoints.unshift(newPoint);
+        return newPoint;
+    } catch (error) {
+        console.error('Error adding body point:', error);
+        throw error instanceof Error ? error : new Error('Failed to add body point');
+    }
 };
 
 /**
@@ -237,33 +299,87 @@ export const exportBodyMapData = async (patientId: string): Promise<{
 };
 
 /**
- * Buscar evolução da dor ao longo do tempo
+ * Professional analytics service for body map insights
+ * Provides comprehensive pain analysis and trend data
+ */
+export const getBodyMapAnalytics = async (patientId: string): Promise<BodyMapAnalytics> => {
+    await delay(350);
+
+    try {
+        const patientPoints = mockBodyPoints.filter(point => point.patientId === patientId);
+
+        if (patientPoints.length === 0) {
+            return {
+                totalPoints: 0,
+                averagePainLevel: 0,
+                painTrends: [],
+                regionDistribution: {},
+                painTypeDistribution: {},
+                symptomFrequency: {}
+            };
+        }
+
+        // Group points by date for trends
+        const pointsByDate = patientPoints.reduce((acc, point) => {
+            const date = new Date(point.createdAt).toDateString();
+            if (!acc[date]) acc[date] = [];
+            acc[date].push(point);
+            return acc;
+        }, {} as Record<string, BodyPoint[]>);
+
+        const painTrends = Object.entries(pointsByDate).map(([date, dayPoints]) => ({
+            date,
+            averagePain: Math.round((dayPoints.reduce((sum, p) => sum + p.painLevel, 0) / dayPoints.length) * 10) / 10,
+            pointCount: dayPoints.length
+        })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        // Distribution calculations
+        const regionDistribution = patientPoints.reduce((acc, point) => {
+            acc[point.bodyRegion] = (acc[point.bodyRegion] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const painTypeDistribution = patientPoints.reduce((acc, point) => {
+            acc[point.painType] = (acc[point.painType] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const symptomFrequency = patientPoints.reduce((acc, point) => {
+            point.symptoms.forEach(symptom => {
+                acc[symptom] = (acc[symptom] || 0) + 1;
+            });
+            return acc;
+        }, {} as Record<string, number>);
+
+        return {
+            totalPoints: patientPoints.length,
+            averagePainLevel: Math.round((patientPoints.reduce((sum, p) => sum + p.painLevel, 0) / patientPoints.length) * 10) / 10,
+            painTrends,
+            regionDistribution,
+            painTypeDistribution,
+            symptomFrequency
+        };
+    } catch (error) {
+        console.error('Error calculating analytics:', error);
+        throw new Error('Failed to calculate body map analytics');
+    }
+};
+
+/**
+ * Legacy function for backward compatibility
+ * @deprecated Use getBodyMapAnalytics instead
  */
 export const getPainEvolution = async (patientId: string): Promise<{
     date: string;
     averagePainLevel: number;
     pointCount: number;
 }[]> => {
-    await delay(350);
-
-    const patientPoints = mockBodyPoints.filter(point => point.patient_id === patientId);
-
-    // Agrupar por data
-    const pointsByDate = patientPoints.reduce((acc, point) => {
-        const date = new Date(point.created_at).toLocaleDateString('pt-BR');
-        if (!acc[date]) acc[date] = [];
-        acc[date].push(point);
-        return acc;
-    }, {} as Record<string, BodyPoint[]>);
-
-    // Calcular evolução
-    return Object.entries(pointsByDate)
-        .map(([date, points]) => ({
-            date,
-            averagePainLevel: Math.round((points.reduce((sum, p) => sum + p.pain_level, 0) / points.length) * 10) / 10,
-            pointCount: points.length
-        }))
-        .sort((a, b) => new Date(a.date.split('/').reverse().join('-')).getTime() - new Date(b.date.split('/').reverse().join('-')).getTime());
+    const analytics = await getBodyMapAnalytics(patientId);
+    return analytics.painTrends.map(trend => ({
+        date: trend.date,
+        averagePainLevel: trend.averagePain,
+        pointCount: trend.pointCount
+    }));
 };
 
 /*

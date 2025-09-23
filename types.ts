@@ -888,15 +888,46 @@ export interface EventProvider {
 
 // --- Body Map Types ---
 
+// Professional-grade BodyPoint interface following engineering specifications
 export interface BodyPoint {
   id: string;
-  patient_id: string;
-  x_position: number; // Percentage (0-100)
-  y_position: number; // Percentage (0-100)
-  body_side: 'front' | 'back';
-  pain_level: number; // 0-10 scale
-  pain_type: string;
+  patientId: string;
+  coordinates: {
+    x: number;        // Normalized position (0-1) for responsiveness
+    y: number;        // Normalized position (0-1) for responsiveness
+  };
+  bodySide: 'front' | 'back';
+  painLevel: number;  // 0-10 scale
+  painType: 'acute' | 'chronic' | 'intermittent' | 'constant';
+  bodyRegion: 'cervical' | 'thoracic' | 'lumbar' | 'sacral' | 'shoulder' | 'elbow' | 'wrist' | 'hip' | 'knee' | 'ankle' | 'head' | 'other';
   description: string;
-  created_at: string; // ISO string
-  created_by: string; // User ID
+  symptoms: string[]; // Array of symptoms
+  createdAt: Date;
+  updatedAt: Date;
+  createdBy: string;
+  sessionId?: string; // Optional link to specific session
+}
+
+// State management interface for body map
+export interface BodyMapState {
+  points: BodyPoint[];
+  selectedPoint: BodyPoint | null;
+  activeSide: 'front' | 'back';
+  timelineDate: Date;
+  isLoading: boolean;
+  error: string | null;
+}
+
+// Analytics interface for body map insights
+export interface BodyMapAnalytics {
+  totalPoints: number;
+  averagePainLevel: number;
+  painTrends: {
+    date: string;
+    averagePain: number;
+    pointCount: number;
+  }[];
+  regionDistribution: Record<string, number>;
+  painTypeDistribution: Record<string, number>;
+  symptomFrequency: Record<string, number>;
 }
