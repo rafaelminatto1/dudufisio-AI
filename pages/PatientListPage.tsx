@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Search, Filter, ChevronRight, Users, X, Loader2 } from 'lucide-react';

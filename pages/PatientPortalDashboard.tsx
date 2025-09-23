@@ -3,6 +3,7 @@ import {
     Home, Calendar, Dumbbell, FileText, TrendingUp, Gift,
     Target, Award, Settings, LogOut, Users
 } from 'lucide-react';
+import { ToastProvider } from '../contexts/ToastContext';
 
 // Lazy load patient portal pages
 const PatientDashboardPage = lazy(() => import('./patient-portal/PatientDashboardPage'));
@@ -133,9 +134,10 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
     const groupItems = (items: any[], group: string) => items.filter(item => item.group === group);
 
     return (
-        <div className="flex h-screen bg-gradient-to-br from-teal-50 to-blue-50">
-            {/* Sidebar */}
-            <div className="w-64 bg-white border-r border-slate-200 shadow-sm">
+        <ToastProvider>
+            <div className="flex h-screen bg-gradient-to-br from-teal-50 to-blue-50">
+                {/* Sidebar */}
+                <div className="w-64 bg-white border-r border-slate-200 shadow-sm">
                 <div className="flex flex-col h-full">
                     {/* Header */}
                     <div className="p-4 border-b border-slate-200">
@@ -219,6 +221,7 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
                 </main>
             </div>
         </div>
+        </ToastProvider>
     );
 };
 

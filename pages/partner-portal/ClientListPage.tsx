@@ -1,6 +1,5 @@
 
 
-
 // pages/partner-portal/ClientListPage.tsx
 'use client';
 import React, { useState, useEffect, useMemo } from 'react';
