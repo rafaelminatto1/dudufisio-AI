@@ -17,7 +17,8 @@ export default defineConfig({
   },
   define: {
     'process.env': 'import.meta.env',
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+    'process.env.NODE_ENV': JSON.stringify('development'), // Force development mode for debugging
+    '__DEV__': true
   },
   server: {
     port: 5173,
