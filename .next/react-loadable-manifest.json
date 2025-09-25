@@ -1,0 +1,356 @@
+{
+  "node_modules/@supabase/auth-js/dist/module/lib/helpers.js -> @supabase/node-fetch": {
+    "id": 90785,
+    "files": []
+  },
+  "node_modules/@supabase/functions-js/dist/module/helper.js -> @supabase/node-fetch": {
+    "id": 90785,
+    "files": []
+  },
+  "node_modules/@supabase/realtime-js/dist/module/RealtimeClient.js -> @supabase/node-fetch": {
+    "id": 90785,
+    "files": []
+  },
+  "node_modules/@supabase/storage-js/dist/module/lib/helpers.js -> @supabase/node-fetch": {
+    "id": 90785,
+    "files": []
+  },
+  "node_modules/jspdf/dist/jspdf.es.min.js -> canvg": {
+    "id": 76582,
+    "files": [
+      "static/chunks/4163ae0c.c44f20183b72e1fe.js",
+      "static/chunks/5414.289eed89411dfa4a.js"
+    ]
+  },
+  "node_modules/jspdf/dist/jspdf.es.min.js -> dompurify": {
+    "id": 12227,
+    "files": [
+      "static/chunks/2227.e5d420225e8d00e6.js"
+    ]
+  },
+  "node_modules/jspdf/dist/jspdf.es.min.js -> html2canvas": {
+    "id": 43028,
+    "files": []
+  },
+  "pages/CompleteDashboard.tsx -> ./AcompanhamentoPage": {
+    "id": 69819,
+    "files": [
+      "static/chunks/5330eab6-59ea2f129e80c20f.js",
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/8307-675e79db6dca84ce.js",
+      "static/chunks/8167-ca20f7ac6370484f.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/9509-c6929a59d9dcec5d.js",
+      "static/chunks/3059.05468db77f4aa364.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./AgendaPage": {
+    "id": 6133,
+    "files": [
+      "static/chunks/6133.696d08c73982cc03.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./AtendimentoPage": {
+    "id": 80085,
+    "files": [
+      "static/chunks/5330eab6-59ea2f129e80c20f.js",
+      "static/chunks/8307-675e79db6dca84ce.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/85-bb9cd773364b442e.js",
+      "static/chunks/1545.19c3602f355a7eda.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./ExerciseLibraryPage": {
+    "id": 90358,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/4627-76ac15fed04bfd24.js",
+      "static/chunks/358.694836a38f209c53.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./FinancialDashboardPage": {
+    "id": 29121,
+    "files": [
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/2104-41ca4dc8b3cce07f.js",
+      "static/chunks/131-b5bcd7f6015bfa0d.js",
+      "static/chunks/4164-398b9b5d442adb74.js",
+      "static/chunks/8016-25e9fdea2afb040d.js",
+      "static/chunks/1326-c82a2c2d577f6b40.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1502-a916539e83517989.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./IntegrationsTestPage": {
+    "id": 68142,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/4759-603e1bd2447bd564.js",
+      "static/chunks/8142.d9f5bc72b0879cbf.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./PatientDetailPage": {
+    "id": 81092,
+    "files": [
+      "static/chunks/5330eab6-59ea2f129e80c20f.js",
+      "static/chunks/1d2671aa-f600276eb687cd2d.js",
+      "static/chunks/643144ee-2c9f8f097af607d8.js",
+      "static/chunks/da2a79ec-2c1e06f7a98b3beb.js",
+      "static/chunks/0bd2f4cc-b999a3526d8d5c6f.js",
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/8307-675e79db6dca84ce.js",
+      "static/chunks/2104-41ca4dc8b3cce07f.js",
+      "static/chunks/131-b5bcd7f6015bfa0d.js",
+      "static/chunks/4952-e8911fdf0174d82c.js",
+      "static/chunks/4164-398b9b5d442adb74.js",
+      "static/chunks/8558-b6cf1f1d3211aa65.js",
+      "static/chunks/8016-25e9fdea2afb040d.js",
+      "static/chunks/8167-ca20f7ac6370484f.js",
+      "static/chunks/6208-db329bcdc6f2aaaa.js",
+      "static/chunks/6185-a0d60f29f4638f09.js",
+      "static/chunks/7734-2c492dfedce7b5ee.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/9509-c6929a59d9dcec5d.js",
+      "static/chunks/4626-8d51239729c9c085.js",
+      "static/chunks/8717-b2ee03144c595389.js",
+      "static/chunks/1092-ba724e14ddde954f.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./PatientListPage": {
+    "id": 63270,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/4626-8d51239729c9c085.js",
+      "static/chunks/7263.faabbdf123cc3611.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./ReportsPage": {
+    "id": 59761,
+    "files": [
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/2104-41ca4dc8b3cce07f.js",
+      "static/chunks/131-b5bcd7f6015bfa0d.js",
+      "static/chunks/4164-398b9b5d442adb74.js",
+      "static/chunks/8558-b6cf1f1d3211aa65.js",
+      "static/chunks/8016-25e9fdea2afb040d.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/4089.6568323a366859c6.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./SessionPage": {
+    "id": 20569,
+    "files": [
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/8717-b2ee03144c595389.js",
+      "static/chunks/569-3903f509667a039f.js",
+      "static/chunks/511.650ee8514c0649f7.js"
+    ]
+  },
+  "pages/CompleteDashboard.tsx -> ./SpecialtyAssessmentsPage": {
+    "id": 553,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/6208-db329bcdc6f2aaaa.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/4577-fd2a5751c8b01853.js"
+    ]
+  },
+  "pages/PartnerPortalDashboard.tsx -> ./partner-portal/ClientListPage": {
+    "id": 94084,
+    "files": [
+      "static/chunks/5330eab6-59ea2f129e80c20f.js",
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/8307-675e79db6dca84ce.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/2374.8a72f2de1e7efa15.js"
+    ]
+  },
+  "pages/PartnerPortalDashboard.tsx -> ./partner-portal/EducatorDashboardPage": {
+    "id": 33868,
+    "files": [
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/1258.872e429a7b722231.js"
+    ]
+  },
+  "pages/PartnerPortalDashboard.tsx -> ./partner-portal/FinancialsPage": {
+    "id": 97552,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/2104-41ca4dc8b3cce07f.js",
+      "static/chunks/4164-398b9b5d442adb74.js",
+      "static/chunks/8558-b6cf1f1d3211aa65.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/5542.5ac695cd30832eea.js"
+    ]
+  },
+  "pages/PartnerPortalDashboard.tsx -> ./partner-portal/PartnerExerciseLibraryPage": {
+    "id": 97584,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/4627-76ac15fed04bfd24.js",
+      "static/chunks/1278.6d311841579fa128.js"
+    ]
+  },
+  "pages/PatientPortalDashboard.tsx -> ./patient-portal/DocumentsPage": {
+    "id": 68834,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/8931.c3c9789abb6cc42e.js"
+    ]
+  },
+  "pages/PatientPortalDashboard.tsx -> ./patient-portal/GamificationPage": {
+    "id": 62766,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/7532.899fba0cc8ed9057.js"
+    ]
+  },
+  "pages/PatientPortalDashboard.tsx -> ./patient-portal/MyAppointmentsPage": {
+    "id": 84363,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/5776.179efb9741f905bf.js"
+    ]
+  },
+  "pages/PatientPortalDashboard.tsx -> ./patient-portal/MyExercisesPage": {
+    "id": 15929,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/9476.ae95829fa0d5207f.js"
+    ]
+  },
+  "pages/PatientPortalDashboard.tsx -> ./patient-portal/MyVouchersPage": {
+    "id": 26190,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/1201.ff0ca89ca71ef3af.js"
+    ]
+  },
+  "pages/PatientPortalDashboard.tsx -> ./patient-portal/PatientDashboardPage": {
+    "id": 26721,
+    "files": [
+      "static/chunks/5330eab6-59ea2f129e80c20f.js",
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/8307-675e79db6dca84ce.js",
+      "static/chunks/4952-e8911fdf0174d82c.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/7896.9dcb2f227b65503f.js"
+    ]
+  },
+  "pages/PatientPortalDashboard.tsx -> ./patient-portal/PatientPainDiaryPage": {
+    "id": 56044,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/2104-41ca4dc8b3cce07f.js",
+      "static/chunks/131-b5bcd7f6015bfa0d.js",
+      "static/chunks/5017-980a5e4255fa21e9.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/6044.28ae666a3cd69041.js"
+    ]
+  },
+  "pages/PatientPortalDashboard.tsx -> ./patient-portal/PatientProgressPage": {
+    "id": 62560,
+    "files": [
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/2104-41ca4dc8b3cce07f.js",
+      "static/chunks/131-b5bcd7f6015bfa0d.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/9605.8869d9429ba30cf2.js"
+    ]
+  },
+  "pages/PatientPortalDashboard.tsx -> ./patient-portal/VoucherStorePage": {
+    "id": 31235,
+    "files": [
+      "static/chunks/5330eab6-59ea2f129e80c20f.js",
+      "static/chunks/2749-1bd6fb11df4edb37.js",
+      "static/chunks/5898-9359fc54cb70454a.js",
+      "static/chunks/2170-92002b49cd2644ca.js",
+      "static/chunks/8307-675e79db6dca84ce.js",
+      "static/chunks/6766-cadc33517e62593a.js",
+      "static/chunks/5977-a94de6972eaa5d77.js",
+      "static/chunks/1547-0a0b7938d6d328db.js",
+      "static/chunks/3394.c0d43d42e2cf5227.js"
+    ]
+  }
+}

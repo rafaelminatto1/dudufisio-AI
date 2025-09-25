@@ -1,61 +1,23 @@
 
-import { createRoot } from 'react-dom/client';
-import App from './App';
-import ErrorBoundary from './components/ErrorBoundary';
-import './index.css';
-import { initSentry } from './lib/sentry';
-
-// Initialize Sentry
-initSentry();
-
-console.log('🚀 Starting React application...');
-
-// Capture React errors more specifically
-window.addEventListener('error', (event) => {
-  console.error('🔥 Global error caught:', event.error);
-  if (event.error && event.error.message && event.error.message.includes('310')) {
-    console.error('🎯 React error #310 detected!', event.error);
-    console.error('Stack trace:', event.error.stack);
-  }
-});
-
-window.addEventListener('unhandledrejection', (event) => {
-  console.error('🔥 Unhandled promise rejection:', event.reason);
-});
+// Completely minimal test - no imports at all
+console.log('🚀 Starting minimal test...');
 
 const rootElement = document.getElementById('root');
-if (!rootElement) {
-  console.error('❌ Root element not found!');
-} else {
-  console.log('✅ Root element found, creating React app...');
-
-  try {
-    const root = createRoot(rootElement);
-    root.render(
-      <ErrorBoundary onError={(error, errorInfo) => {
-        console.error('🚨 ErrorBoundary caught error:', error);
-        console.error('🚨 ErrorBoundary error info:', errorInfo);
-      }}>
-        <App />
-      </ErrorBoundary>
-    );
-    console.log('🎉 React application rendered successfully!');
-  } catch (error) {
-    console.error('💥 Error rendering React app:', error);
-
-    // Show a simple error message in the root element
-    rootElement.innerHTML = `
-      <div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">
-        <h1 style="color: red;">Erro ao carregar aplicação</h1>
-        <p>Ocorreu um erro ao inicializar a aplicação.</p>
-        <details style="margin-top: 20px; text-align: left; background: #f5f5f5; padding: 10px; border-radius: 5px;">
-          <summary style="cursor: pointer; font-weight: bold;">Detalhes do erro</summary>
-          <pre style="margin-top: 10px; white-space: pre-wrap;">${error}</pre>
-        </details>
-        <button onclick="window.location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #007acc; color: white; border: none; border-radius: 5px; cursor: pointer;">
-          Recarregar
+if (rootElement) {
+  rootElement.innerHTML = `
+    <div style="padding: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; font-family: 'Inter', Arial, sans-serif; color: white;">
+      <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem; font-weight: 800;">DuduFisio-AI</h1>
+        <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.9;">✅ Sistema carregado com sucesso!</p>
+        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-bottom: 2rem;">
+          <p style="margin: 0; font-size: 1rem;">Teste básico funcionando sem conflitos React</p>
+        </div>
+        <button onclick="window.location.reload()" style="background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white; padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+          🔄 Recarregar Página
         </button>
+        <p style="margin-top: 2rem; font-size: 0.875rem; opacity: 0.7;">Timestamp: ${new Date().toLocaleString()}</p>
       </div>
-    `;
-  }
+    </div>
+  `;
+  console.log('✅ Minimal content loaded successfully!');
 }

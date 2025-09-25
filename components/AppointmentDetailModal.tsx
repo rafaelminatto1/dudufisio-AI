@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// FIX: Use namespace import for react-router-dom to fix module resolution issues.
-import * as ReactRouterDOM from 'react-router-dom';
 import { X, Edit, Trash2, Play, ChevronDown, DollarSign, Save, Repeat, Video } from 'lucide-react';
 import { Appointment, Patient, Therapist, AppointmentStatus, AppointmentType, EnrichedAppointment } from '../types';
 import { useToast } from '../contexts/ToastContext';
@@ -18,7 +16,6 @@ interface AppointmentDetailModalProps {
   onUpdateValue?: (appointmentId: string, newValue: number) => void;
 }
 const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appointment, patient, therapist, isOpen: _isOpen, onClose, onEdit, onDelete, onStatusChange, onPaymentStatusChange, onPackagePayment, onUpdateValue }) => {
-    const navigate = ReactRouterDOM.useNavigate();
     const { showToast: _showToast } = useToast();
     const [isEditingValue, setIsEditingValue] = useState(false);
     const [localValue, setLocalValue] = useState(appointment?.value || 0);
@@ -41,10 +38,14 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
     };
     const handleStartSession = () => {
         onClose();
+        // Store the appointment ID globally for the session
+        (window as any).__selectedAppointmentId = appointment.id;
+
+        // Use the internal navigation system
         if (appointment.type === AppointmentType.Teleconsulta) {
-            navigate(`/teleconsulta/${appointment.id}`);
+            (window as any).__setCurrentPage?.('teleconsulta');
         } else {
-            navigate(`/atendimento/${appointment.id}`);
+            (window as any).__setCurrentPage?.('atendimento');
         }
     };
     const isTeleconsulta = appointment.type === AppointmentType.Teleconsulta;
@@ -63,7 +64,11 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
                 </header>
                 <div className="p-4 space-y-3">
                     <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Fisioterapeuta:</span><span className="font-semibold text-slate-800">{therapist?.name || appointment.therapistName || 'N/A'}</span></div>
-                    <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Paciente:</span><ReactRouterDOM.Link to={`/patients/${patient?.id || appointment.patientId}`} className="font-semibold text-blue-600 hover:underline truncate">{patient?.name || appointment.patientName}</ReactRouterDOM.Link></div>
+                    <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Paciente:</span><button onClick={() => {
+                        onClose();
+                        (window as any).__selectedPatientId = patient?.id || appointment.patientId;
+                        (window as any).__setCurrentPage?.('patient-detail');
+                    }} className="font-semibold text-blue-600 hover:underline truncate text-left">{patient?.name || appointment.patientName}</button></div>
                     <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Celular:</span><span className="font-semibold text-slate-800">{patient?.phone || appointment.patientPhone || 'Não informado'}</span></div>
                     {appointment.sessionNumber && appointment.totalSessions && (
                         <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Sessão:</span><span className="font-semibold text-slate-800">{appointment.sessionNumber} de {appointment.totalSessions}</span></div>

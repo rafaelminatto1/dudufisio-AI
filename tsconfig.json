@@ -1,23 +1,25 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "downlevelIteration": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "types": [
       "vite/client"
     ],
-
     /* Build configuration for Vercel deployment */
     "strict": true,
     "noEmitOnError": true,
@@ -28,7 +30,6 @@
     "exactOptionalPropertyTypes": false,
     "noImplicitReturns": false,
     "noPropertyAccessFromIndexSignature": false,
-
     /* Healthcare data privacy */
     "strictNullChecks": true,
     "strictFunctionTypes": true,
@@ -37,20 +38,39 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-
     /* Path mapping - Fixed according to Context7 documentation */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["./components/*"],
-      "@/pages/*": ["./pages/*"],
-      "@/services/*": ["./services/*"],
-      "@/hooks/*": ["./hooks/*"],
-      "@/contexts/*": ["./contexts/*"],
-      "@/types/*": ["./types/*"],
-      "@/lib/*": ["./lib/*"],
-      "@/design-system/*": ["./design-system/*"]
-    }
+      "@/*": [
+        "./*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ],
+      "@/pages/*": [
+        "./pages/*"
+      ],
+      "@/services/*": [
+        "./services/*"
+      ],
+      "@/hooks/*": [
+        "./hooks/*"
+      ],
+      "@/contexts/*": [
+        "./contexts/*"
+      ],
+      "@/types/*": [
+        "./types/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@/design-system/*": [
+        "./design-system/*"
+      ]
+    },
+    "allowJs": true,
+    "incremental": true
   },
   "include": [
     "components",

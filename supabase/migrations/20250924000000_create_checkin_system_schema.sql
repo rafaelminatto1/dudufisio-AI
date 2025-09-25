@@ -210,7 +210,7 @@ CREATE TABLE treatment_timeline (
   description TEXT,
 
   -- Related entities
-  session_id UUID REFERENCES treatment_sessions(id),
+  session_id UUID,
   appointment_id UUID REFERENCES appointments(id),
   exercise_id UUID,
 
@@ -283,7 +283,7 @@ CREATE TABLE exercise_completions (
 
   -- Completion data
   completed_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  completion_date DATE GENERATED ALWAYS AS (completed_at::DATE) STORED,
+  completion_date DATE,
 
   -- Performance metrics
   sets_completed INTEGER,
@@ -319,7 +319,7 @@ CREATE TABLE exercise_completions (
 CREATE TABLE body_map_assessments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
-  session_id UUID REFERENCES treatment_sessions(id),
+  session_id UUID,
 
   -- Assessment data
   assessment_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -773,17 +773,16 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE VIEW patient_dashboard_view AS
 SELECT
   p.id as patient_id,
-  p.first_name,
-  p.last_name,
+  p.name,
 
   -- Next appointment
   (
     SELECT to_jsonb(a.*)
     FROM appointments a
     WHERE a.patient_id = p.id
-      AND a.scheduled_time > NOW()
+      AND a.scheduled_at > NOW()
       AND a.status = 'scheduled'
-    ORDER BY a.scheduled_time
+    ORDER BY a.scheduled_at
     LIMIT 1
   ) as next_appointment,
 

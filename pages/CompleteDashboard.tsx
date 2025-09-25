@@ -6,6 +6,7 @@ const AgendaPage = lazy(() => import('./AgendaPage'));
 const PatientListPage = lazy(() => import('./PatientListPage'));
 const PatientDetailPage = lazy(() => import('./PatientDetailPage'));
 const SessionPage = lazy(() => import('./SessionPage'));
+const AtendimentoPage = lazy(() => import('./AtendimentoPage'));
 const FinancialDashboardPage = lazy(() => import('./FinancialDashboardPage'));
 const ExerciseLibraryPage = lazy(() => import('./ExerciseLibraryPage'));
 const ReportsPage = lazy(() => import('./ReportsPage'));
@@ -261,6 +262,17 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                             setCurrentPage('appointments');
                         }}
                     />
+                );
+            case 'atendimento':
+                const atendimentoId = (window as any).__selectedAppointmentId;
+                if (!atendimentoId) {
+                    setCurrentPage('appointments');
+                    return null;
+                }
+                return (
+                    <Suspense fallback={<PageLoader />}>
+                        <AtendimentoPage />
+                    </Suspense>
                 );
             case 'exercises':
                 return (

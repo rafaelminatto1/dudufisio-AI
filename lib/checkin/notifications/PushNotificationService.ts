@@ -3,6 +3,7 @@ import {
   PushNotification
 } from '../../../types/checkin';
 import { Appointment } from '../../../types';
+import { AppleAPNSAdapter, createAPNS } from '../adapters/AppleAPNSAdapter';
 
 interface DeviceToken {
   token: string;
@@ -56,12 +57,21 @@ interface APNSConfig {
 export class PushNotificationService {
   private fcmConfig: FCMConfig | null = null;
   private apnsConfig: APNSConfig | null = null;
+  private apnsAdapter: AppleAPNSAdapter | null = null;
   private scheduledNotifications = new Map<string, NotificationSchedule>();
   private deviceTokens = new Map<PatientId, DeviceToken[]>();
 
   constructor(fcmConfig?: FCMConfig, apnsConfig?: APNSConfig) {
     this.fcmConfig = fcmConfig || null;
     this.apnsConfig = apnsConfig || null;
+
+    // Initialize Apple APNS adapter
+    this.apnsAdapter = createAPNS();
+    if (this.apnsAdapter) {
+      console.log('✅ Apple APNS adapter initialized successfully');
+    } else {
+      console.log('⚠️ Apple APNS credentials not found, iOS notifications will use FCM fallback');
+    }
 
     // Start background scheduler
     this.startScheduler();
@@ -387,26 +397,50 @@ export class PushNotificationService {
   }
 
   private async sendViaAPNS(deviceToken: DeviceToken, notification: PushNotification): Promise<boolean> {
-    if (!this.apnsConfig) {
-      console.warn('APNS not configured, using mock notification');
-      this.mockNotificationSend(deviceToken, notification);
-      return true;
+    // Use real Apple APNS if adapter is available
+    if (this.apnsAdapter) {
+      try {
+        console.log(`🍎 Sending APNS notification to ${deviceToken.token.substring(0, 8)}...`);
+
+        const apnsNotification = {
+          title: notification.title,
+          body: notification.body,
+          badge: notification.badge || 0,
+          sound: notification.data?.sound || 'default',
+          category: notification.data?.category,
+          data: notification.data,
+          deviceToken: deviceToken.token
+        };
+
+        const result = await this.apnsAdapter.sendNotification(apnsNotification);
+
+        if (result.success) {
+          console.log(`✅ APNS notification sent successfully - ID: ${result.messageId}`);
+          return true;
+        } else {
+          console.error(`❌ APNS notification failed: ${result.error}`);
+
+          // Fallback to FCM for iOS if APNS fails
+          console.log('🔄 Falling back to FCM for iOS...');
+          return await this.sendViaFCM(deviceToken, notification);
+        }
+
+      } catch (error) {
+        console.error('❌ APNS adapter error:', error);
+        // Fallback to FCM for iOS
+        return await this.sendViaFCM(deviceToken, notification);
+      }
     }
 
-    const payload = {
-      aps: {
-        alert: {
-          title: notification.title,
-          body: notification.body
-        },
-        badge: notification.badge,
-        sound: 'default'
-      },
-      data: notification.data || {}
-    };
+    // Fallback: use FCM for iOS if APNS not configured
+    if (this.fcmConfig) {
+      console.log('📱 Using FCM for iOS notification (APNS not configured)');
+      return await this.sendViaFCM(deviceToken, notification);
+    }
 
-    // In a real implementation, this would use the APNS library
-    console.log(`APNS notification sent to ${deviceToken.token.substring(0, 20)}...`, payload);
+    // Final fallback: mock notification
+    console.warn('Neither APNS nor FCM configured for iOS, using mock notification');
+    this.mockNotificationSend(deviceToken, notification);
     return true;
   }
 
