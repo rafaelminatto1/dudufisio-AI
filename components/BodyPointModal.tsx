@@ -5,7 +5,7 @@ import { BodyPoint } from '../types';
 interface BodyPointModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (point: Omit<BodyPoint, 'id' | 'created_at'>) => Promise<void>;
+    onSave: (point: Omit<BodyPoint, 'id' | 'createdAt'>) => Promise<void>;
     onUpdate?: (id: string, point: Partial<BodyPoint>) => Promise<void>;
     onDelete?: (id: string) => Promise<void>;
     point?: Partial<BodyPoint> | null;
@@ -51,15 +51,17 @@ const BodyPointModal: React.FC<BodyPointModalProps> = ({
     point,
     isEditing = false
 }) => {
-    const [formData, setFormData] = useState<Omit<BodyPoint, 'id' | 'created_at'>>({
-        patient_id: '',
-        x_position: 0,
-        y_position: 0,
-        body_side: 'front',
-        pain_level: 5,
-        pain_type: 'Dor muscular',
+    const [formData, setFormData] = useState<Omit<BodyPoint, 'id' | 'createdAt'>>({
+        patientId: '',
+        coordinates: { x: 0, y: 0 },
+        bodySide: 'front',
+        painLevel: 5,
+        painType: 'acute',
+        bodyRegion: 'other',
         description: '',
-        created_by: 'current_user'
+        symptoms: [],
+        updatedAt: new Date(),
+        createdBy: 'current_user'
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -68,14 +70,19 @@ const BodyPointModal: React.FC<BodyPointModalProps> = ({
     useEffect(() => {
         if (point) {
             setFormData({
-                patient_id: point.patient_id || '',
-                x_position: point.x_position || 0,
-                y_position: point.y_position || 0,
-                body_side: point.body_side || 'front',
-                pain_level: point.pain_level || 5,
-                pain_type: point.pain_type || 'Dor muscular',
+                patientId: point.patientId || '',
+                coordinates: { 
+                    x: point.coordinates?.x || 0, 
+                    y: point.coordinates?.y || 0 
+                },
+                bodySide: point.bodySide || 'front',
+                painLevel: point.painLevel || 5,
+                painType: point.painType || 'acute',
+                bodyRegion: point.bodyRegion || 'other',
                 description: point.description || '',
-                created_by: point.created_by || 'current_user'
+                symptoms: point.symptoms || [],
+                updatedAt: point.updatedAt || new Date(),
+                createdBy: point.createdBy || 'current_user'
             });
         }
     }, [point]);
@@ -142,7 +149,7 @@ const BodyPointModal: React.FC<BodyPointModalProps> = ({
                             {isEditing ? 'Editar' : 'Adicionar'} Ponto de Dor
                         </h2>
                         <p className="text-sm text-slate-600 mt-1">
-                            {point?.body_side === 'front' ? 'Vista frontal' : 'Vista das costas'}
+                            {point?.bodySide === 'front' ? 'Vista frontal' : 'Vista das costas'}
                         </p>
                     </div>
                     <button
@@ -165,8 +172,8 @@ const BodyPointModal: React.FC<BodyPointModalProps> = ({
                                 type="range"
                                 min="0"
                                 max="10"
-                                value={formData.pain_level}
-                                onChange={(e) => setFormData({ ...formData, pain_level: parseInt(e.target.value) })}
+                                value={formData.painLevel}
+                                onChange={(e) => setFormData({ ...formData, painLevel: parseInt(e.target.value) })}
                                 className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
                                 style={{
                                     background: `linear-gradient(to right, #22c55e 0%, #eab308 30%, #f97316 70%, #ef4444 100%)`
@@ -180,8 +187,8 @@ const BodyPointModal: React.FC<BodyPointModalProps> = ({
                                 <span>8</span>
                                 <span>10</span>
                             </div>
-                            <div className={`text-center p-3 rounded-lg font-semibold ${getPainColor(formData.pain_level)}`}>
-                                Dor {formData.pain_level}/10 - {getPainIntensityLabel(formData.pain_level)}
+                            <div className={`text-center p-3 rounded-lg font-semibold ${getPainColor(formData.painLevel)}`}>
+                                Dor {formData.painLevel}/10 - {getPainIntensityLabel(formData.painLevel)}
                             </div>
                         </div>
                     </div>
@@ -192,8 +199,8 @@ const BodyPointModal: React.FC<BodyPointModalProps> = ({
                             Tipo de Dor
                         </label>
                         <select
-                            value={formData.pain_type}
-                            onChange={(e) => setFormData({ ...formData, pain_type: e.target.value })}
+                            value={formData.painType}
+                            onChange={(e) => setFormData({ ...formData, painType: e.target.value as 'acute' | 'chronic' | 'intermittent' | 'constant' })}
                             className="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                             required
                         >
@@ -254,23 +261,23 @@ const BodyPointModal: React.FC<BodyPointModalProps> = ({
                         </h4>
                         <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
                             <div>
-                                <span className="font-medium">Vista:</span> {formData.body_side === 'front' ? 'Frontal' : 'Costas'}
+                                <span className="font-medium">Vista:</span> {formData.bodySide === 'front' ? 'Frontal' : 'Costas'}
                             </div>
                             <div>
-                                <span className="font-medium">Posição:</span> X: {formData.x_position.toFixed(1)}%, Y: {formData.y_position.toFixed(1)}%
+                                <span className="font-medium">Posição:</span> X: {formData.coordinates.x.toFixed(1)}%, Y: {formData.coordinates.y.toFixed(1)}%
                             </div>
                         </div>
                     </div>
 
                     {/* Histórico (se editando) */}
-                    {isEditing && point?.created_at && (
+                    {isEditing && point?.createdAt && (
                         <div className="bg-blue-50 rounded-lg p-4">
                             <h4 className="font-medium text-slate-800 mb-2 flex items-center">
                                 <Calendar className="w-4 h-4 mr-2" />
                                 Informações do Registro
                             </h4>
                             <div className="text-sm text-slate-600">
-                                <p>Criado em: {new Date(point.created_at).toLocaleString('pt-BR')}</p>
+                                <p>Criado em: {new Date(point.createdAt).toLocaleString('pt-BR')}</p>
                             </div>
                         </div>
                     )}
@@ -321,7 +328,7 @@ const BodyPointModal: React.FC<BodyPointModalProps> = ({
                 </footer>
             </div>
 
-            <style jsx>{`
+                <style>{`
                 .slider::-webkit-slider-thumb {
                     appearance: none;
                     height: 20px;

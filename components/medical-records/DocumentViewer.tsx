@@ -44,12 +44,12 @@ import {
   Heart,
   Brain,
   Bone,
-  Lungs,
+  // Lungs, // Substituído por MdLungs
   Baby,
   Zap,
   Stethoscope,
   Download,
-  Print,
+  // Print, // Substituído por MdPrint
   Eye,
   Edit,
   Trash2,
@@ -59,16 +59,16 @@ import {
   TrendingDown,
   Minus,
   MapPin,
-  PainChart,
+  // PainChart, // Substituído por MdAssessment
   BarChart3,
   PieChart,
   LineChart,
   Lock,
   Unlock,
-  Signature,
-  Certificate,
+  // Signature, // Substituído por MdDraw
+  // Certificate, // Substituído por MdCertificate
   Verified,
-  Warning,
+  // Warning, // Substituído por MdWarning
   Info,
   ExternalLink,
   Copy,
@@ -83,6 +83,14 @@ import {
   Settings,
   MoreHorizontal
 } from 'lucide-react';
+import { 
+  MdHealthAndSafety, 
+  MdPrint, 
+  MdAssessment, 
+  MdDraw, 
+  MdVerified, 
+  MdWarning 
+} from 'react-icons/md';
 
 interface ClinicalDocument {
   id: string;
@@ -220,7 +228,7 @@ export function DocumentViewer({
       case 'physiotherapy': return Heart;
       case 'neurological_physiotherapy': return Brain;
       case 'orthopedic_physiotherapy': return Bone;
-      case 'respiratory_physiotherapy': return Lungs;
+      case 'respiratory_physiotherapy': return MdHealthAndSafety;
       case 'pediatric_physiotherapy': return Baby;
       case 'sports_physiotherapy': return Zap;
       default: return Stethoscope;
@@ -255,7 +263,7 @@ export function DocumentViewer({
     switch (severity) {
       case 'critical': return AlertCircle;
       case 'high': return AlertTriangle;
-      case 'medium': return Warning;
+      case 'medium': return MdWarning;
       case 'low': return Info;
       default: return Info;
     }
@@ -353,7 +361,7 @@ export function DocumentViewer({
               onClick={() => setShowSignatureDetails(true)}
               className="flex items-center space-x-2"
             >
-              <Signature className="h-4 w-4" />
+              <MdDraw className="h-4 w-4" />
               <span>Assinatura</span>
             </Button>
           )}
@@ -388,7 +396,7 @@ export function DocumentViewer({
               onClick={() => onSign?.(document.id)}
               className="flex items-center space-x-2"
             >
-              <Signature className="h-4 w-4" />
+              <MdDraw className="h-4 w-4" />
               <span>Assinar</span>
             </Button>
           )}
@@ -412,7 +420,7 @@ export function DocumentViewer({
               onClick={() => onPrint?.(document.id)}
               className="flex items-center space-x-2"
             >
-              <Print className="h-4 w-4" />
+              <MdPrint className="h-4 w-4" />
               <span>Imprimir</span>
             </Button>
           )}

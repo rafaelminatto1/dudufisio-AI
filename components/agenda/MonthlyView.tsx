@@ -1,6 +1,6 @@
 import React from 'react';
 import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, isToday, startOfWeek, endOfWeek } from 'date-fns';
-import { ptBR } from 'date-fns/locale/pt-BR';
+import { ptBR } from 'date-fns/locale';
 import { Card, CardContent } from '../ui/card';
 import { EnrichedAppointment, Therapist } from '../../types';
 import { cn } from '../../lib/utils';

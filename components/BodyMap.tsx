@@ -5,7 +5,7 @@ import { BodyPoint, Patient } from '../types';
 interface BodyMapProps {
     patient: Patient;
     bodyPoints: BodyPoint[];
-    onAddPoint: (point: Omit<BodyPoint, 'id' | 'created_at'>) => Promise<void>;
+    onAddPoint: (point: Omit<BodyPoint, 'id' | 'createdAt'>) => Promise<void>;
     onUpdatePoint: (id: string, point: Partial<BodyPoint>) => Promise<void>;
     onDeletePoint: (id: string) => Promise<void>;
     isEditable?: boolean;
@@ -41,15 +41,17 @@ const BodyMap: React.FC<BodyMapProps> = ({
         const x = ((event.clientX - rect.left) / rect.width) * 100;
         const y = ((event.clientY - rect.top) / rect.height) * 100;
 
-        const newPoint: Omit<BodyPoint, 'id' | 'created_at'> = {
-            patient_id: patient.id,
-            x_position: x,
-            y_position: y,
-            body_side: activeView,
-            pain_level: 5,
-            pain_type: 'Dor muscular',
+        const newPoint: Omit<BodyPoint, 'id' | 'createdAt'> = {
+            patientId: patient.id,
+            coordinates: { x, y },
+            bodySide: activeView,
+            painLevel: 5,
+            painType: 'acute',
+            bodyRegion: 'other',
             description: '',
-            created_by: 'current_user' // TODO: Get from auth context
+            symptoms: [],
+            updatedAt: new Date(),
+            createdBy: 'current_user' // TODO: Get from auth context
         };
 
         await onAddPoint(newPoint);
@@ -60,9 +62,9 @@ const BodyMap: React.FC<BodyMapProps> = ({
         setSelectedPoint(point);
     };
 
-    const filteredPoints = bodyPoints.filter(point => point.body_side === activeView);
+    const filteredPoints = bodyPoints.filter(point => point.bodySide === activeView);
     const pointsByDate = bodyPoints.reduce((acc, point) => {
-        const date = new Date(point.created_at).toLocaleDateString('pt-BR');
+        const date = new Date(point.createdAt).toLocaleDateString('pt-BR');
         if (!acc[date]) acc[date] = [];
         acc[date].push(point);
         return acc;
@@ -157,14 +159,14 @@ const BodyMap: React.FC<BodyMapProps> = ({
                                     >
                                         <div
                                             className="w-3 h-3 rounded-full"
-                                            style={{ backgroundColor: getPainColor(point.pain_level) }}
+                                            style={{ backgroundColor: getPainColor(point.painLevel) }}
                                         />
                                         <div className="flex-1 min-w-0">
                                             <p className="text-sm font-medium text-slate-800 truncate">
-                                                {point.pain_type}
+                                                {point.painType}
                                             </p>
                                             <p className="text-xs text-slate-500">
-                                                Dor {point.pain_level}/10
+                                                Dor {point.painLevel}/10
                                             </p>
                                         </div>
                                     </div>
@@ -251,20 +253,20 @@ const BodyMap: React.FC<BodyMapProps> = ({
                             {filteredPoints.map((point) => (
                                 <circle
                                     key={point.id}
-                                    cx={(point.x_position / 100) * 300}
-                                    cy={(point.y_position / 100) * 600}
+                                    cx={(point.coordinates.x / 100) * 300}
+                                    cy={(point.coordinates.y / 100) * 600}
                                     r="8"
-                                    fill={getPainColor(point.pain_level)}
+                                    fill={getPainColor(point.painLevel)}
                                     stroke="white"
                                     strokeWidth="2"
                                     className="cursor-pointer hover:r-10 transition-all"
                                     onClick={(e) => handlePointClick(point, e)}
                                     style={{
                                         filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
-                                        animation: point.pain_level >= 8 ? 'pulse 2s infinite' : 'none'
+                                        animation: point.painLevel >= 8 ? 'pulse 2s infinite' : 'none'
                                     }}
                                 >
-                                    <title>{`${point.pain_type} - Dor ${point.pain_level}/10`}</title>
+                                    <title>{`${point.painType} - Dor ${point.painLevel}/10`}</title>
                                 </circle>
                             ))}
                         </svg>
@@ -299,10 +301,10 @@ const BodyMap: React.FC<BodyMapProps> = ({
                                             >
                                                 <div
                                                     className="w-3 h-3 rounded-full"
-                                                    style={{ backgroundColor: getPainColor(point.pain_level) }}
+                                                    style={{ backgroundColor: getPainColor(point.painLevel) }}
                                                 />
                                                 <span className="text-slate-700">
-                                                    {point.pain_type} ({point.body_side === 'front' ? 'frente' : 'costas'}) - {point.pain_level}/10
+                                                    {point.painType} ({point.bodySide === 'front' ? 'frente' : 'costas'}) - {point.painLevel}/10
                                                 </span>
                                             </div>
                                         ))}
@@ -322,25 +324,25 @@ const BodyMap: React.FC<BodyMapProps> = ({
                 </div>
                 <div className="bg-green-50 rounded-lg p-3 text-center">
                     <div className="text-2xl font-bold text-green-600">
-                        {bodyPoints.filter(p => p.pain_level <= 3).length}
+                        {bodyPoints.filter(p => p.painLevel <= 3).length}
                     </div>
                     <div className="text-sm text-green-600">Dor Leve</div>
                 </div>
                 <div className="bg-yellow-50 rounded-lg p-3 text-center">
                     <div className="text-2xl font-bold text-yellow-600">
-                        {bodyPoints.filter(p => p.pain_level > 3 && p.pain_level <= 6).length}
+                        {bodyPoints.filter(p => p.painLevel > 3 && p.painLevel <= 6).length}
                     </div>
                     <div className="text-sm text-yellow-600">Dor Moderada</div>
                 </div>
                 <div className="bg-red-50 rounded-lg p-3 text-center">
                     <div className="text-2xl font-bold text-red-600">
-                        {bodyPoints.filter(p => p.pain_level > 6).length}
+                        {bodyPoints.filter(p => p.painLevel > 6).length}
                     </div>
                     <div className="text-sm text-red-600">Dor Intensa</div>
                 </div>
             </div>
 
-            <style jsx>{`
+                <style>{`
                 @keyframes pulse {
                     0%, 100% { opacity: 1; }
                     50% { opacity: 0.5; }

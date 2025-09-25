@@ -13,7 +13,7 @@ const PainEvolutionChart: React.FC<PainEvolutionChartProps> = ({ bodyPoints, cla
     const chartData = useMemo(() => {
         // Agrupar pontos por data
         const pointsByDate = bodyPoints.reduce((acc, point) => {
-            const date = new Date(point.created_at).toLocaleDateString('pt-BR');
+            const date = new Date(point.createdAt).toLocaleDateString('pt-BR');
             if (!acc[date]) {
                 acc[date] = [];
             }
@@ -24,9 +24,9 @@ const PainEvolutionChart: React.FC<PainEvolutionChartProps> = ({ bodyPoints, cla
         // Calcular métricas por data
         const chartPoints = Object.entries(pointsByDate)
             .map(([date, points]) => {
-                const avgPain = points.reduce((sum, p) => sum + p.pain_level, 0) / points.length;
-                const maxPain = Math.max(...points.map(p => p.pain_level));
-                const minPain = Math.min(...points.map(p => p.pain_level));
+                const avgPain = points.reduce((sum, p) => sum + p.painLevel, 0) / points.length;
+                const maxPain = Math.max(...points.map(p => p.painLevel));
+                const minPain = Math.min(...points.map(p => p.painLevel));
                 const pointCount = points.length;
 
                 return {

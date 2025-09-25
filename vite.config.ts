@@ -16,12 +16,12 @@ export default defineConfig({
     '__DEV__': true
   },
   server: {
-    port: 5173,
+    port: 5174,
     host: 'localhost',
     hmr: {
-      port: 5173,
+      port: 5174,
       host: 'localhost',
-      clientPort: 5173,
+      clientPort: 5174,
       overlay: true
     },
     watch: {
@@ -37,6 +37,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, '.'),
       'react': path.resolve(__dirname, 'node_modules/react'),
       'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
+      'react/jsx-runtime': path.resolve(__dirname, 'node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': path.resolve(__dirname, 'node_modules/react/jsx-dev-runtime'),
       '@/components': path.resolve(__dirname, './components'),
       '@/pages': path.resolve(__dirname, './pages'),
       '@/services': path.resolve(__dirname, './services'),
@@ -53,6 +55,7 @@ export default defineConfig({
       'react/jsx-runtime',
       'react/jsx-dev-runtime'
     ],
+    exclude: ['@playwright/test'],
     force: true
   },
   build: {
@@ -60,15 +63,31 @@ export default defineConfig({
     sourcemap: false,
     reportCompressedSize: false,
     rollupOptions: {
+      external: (id) => {
+        // Previne múltiplas instâncias do React
+        if (id.includes('react') && !id.startsWith('./') && !id.startsWith('../')) {
+          return false;
+        }
+        return false;
+      },
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          ui: ['lucide-react', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
-          ai: ['@google/generative-ai'],
-          supabase: ['@supabase/supabase-js'],
-          charts: ['recharts'],
-          animations: ['framer-motion'],
-          forms: ['react-hook-form', '@hookform/resolvers', 'zod']
+        manualChunks: (id) => {
+          // Força todos os módulos React no mesmo chunk
+          if (id.includes('react') || id.includes('react-dom')) {
+            return 'react-vendor';
+          }
+          if (id.includes('@radix-ui') || id.includes('lucide-react')) {
+            return 'ui-vendor';
+          }
+          if (id.includes('@google/generative-ai')) {
+            return 'ai-vendor';
+          }
+          if (id.includes('@supabase')) {
+            return 'supabase-vendor';
+          }
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
         },
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',

@@ -67,7 +67,7 @@ import {
   Heart,
   Brain,
   Bone,
-  Lungs,
+  // Lungs, // Substituído por MdLungs
   Baby,
   Zap,
   Shield,
@@ -81,8 +81,9 @@ import {
   TrendingDown,
   Minus,
   MapPin,
-  PainChart
+  // PainChart // Substituído por MdAssessment
 } from 'lucide-react';
+import { MdHealthAndSafety, MdAssessment } from 'react-icons/md';
 
 // Schema de validação
 const evolutionSchema = z.object({
@@ -359,7 +360,7 @@ export function EvolutionEditor({
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <PainChart className="h-5 w-5" />
+              <MdAssessment className="h-5 w-5" />
               <span>Evolução da Dor</span>
             </CardTitle>
           </CardHeader>

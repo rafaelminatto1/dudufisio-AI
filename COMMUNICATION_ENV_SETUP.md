@@ -24,19 +24,8 @@ WHATSAPP_MAX_RETRIES=3
 WHATSAPP_TIMEOUT=30000
 WHATSAPP_RATE_LIMIT=100
 
-# ===== TWILIO SMS (Pago por uso) =====
-TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TWILIO_PHONE_NUMBER=+5511999999999
-TWILIO_MESSAGING_SERVICE_SID=
-TWILIO_STATUS_CALLBACK_URL=https://seu-dominio.vercel.app/webhooks/twilio/sms/status
-SMS_ENABLED=true
-SMS_MAX_RETRIES=3
-SMS_TIMEOUT=30000
-SMS_RATE_LIMIT=100
-SMS_MAX_LENGTH=1600
-SMS_ENABLE_DELIVERY_RECEIPTS=true
-SMS_ENABLE_LONG_MESSAGES=true
+# ===== SMS DESABILITADO (Não disponível no Brasil via Twilio) =====
+SMS_ENABLED=false
 
 # ===== RESEND EMAIL (Gratuito até 100k/mês) =====
 RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -88,11 +77,9 @@ COMMUNICATION_ENABLE_METRICS=true
 WHATSAPP_USE_WEB_CLIENT=true  # ✅ Já correto
 ```
 
-### **🟡 Twilio SMS (Você precisa configurar)**
+### **🟡 SMS (Desabilitado - Não disponível no Brasil)**
 ```env
-TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx  # ⚠️ Substituir
-TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     # ⚠️ Substituir
-TWILIO_PHONE_NUMBER=+5511999999999                     # ⚠️ Substituir
+SMS_ENABLED=false  # ✅ Já configurado
 ```
 
 ### **🟢 Resend Email (Você precisa configurar)**
@@ -114,14 +101,9 @@ VITE_SUPABASE_ANON_KEY=your-anon-key                   # ⚠️ Substituir
 - Na primeira execução, aparecerá um QR Code no console
 - Escaneie com seu WhatsApp pessoal
 
-### **2. Twilio SMS**
-1. Acesse: https://console.twilio.com/
-2. Crie conta ou faça login
-3. No Dashboard, copie:
-   - `Account SID` → `TWILIO_ACCOUNT_SID`
-   - `Auth Token` → `TWILIO_AUTH_TOKEN`
-4. Compre um número SMS brasileiro
-5. Substitua `TWILIO_PHONE_NUMBER` pelo número comprado
+### **2. SMS (Desabilitado)**
+- ✅ **Já configurado** - SMS não disponível no Brasil via Twilio
+- ✅ **WhatsApp substitui** perfeitamente a funcionalidade de SMS
 
 ### **3. Resend Email**
 1. Acesse: https://resend.com/
@@ -143,7 +125,6 @@ npm run dev
 
 Procure no console por:
 - ✅ "WhatsApp Web Client initialized"
-- ✅ "Twilio SMS Channel ready"
 - ✅ "Resend Email Channel ready"
 
 ## 🚨 **IMPORTANTE**

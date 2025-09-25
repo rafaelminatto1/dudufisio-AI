@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { addDays, startOfWeek, startOfMonth, endOfMonth } from 'date-fns';
-import { ScrollArea } from '../../@/components/ui/scroll-area';
+import { ScrollArea } from '../ui/scroll-area';
 import { useAppointments } from '../../hooks/useAppointments';
 import { EnrichedAppointment, Patient } from '../../types';
 import { useToast } from '../../contexts/ToastContext';

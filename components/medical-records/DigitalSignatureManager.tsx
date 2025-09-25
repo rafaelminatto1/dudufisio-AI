@@ -20,11 +20,13 @@ import {
   Download,
   Upload,
   Key,
-  Certificate,
+  // Certificate, // Substituído por MdCertificate do react-icons
   AlertTriangle,
   Eye,
-  RefreshCw
+  RefreshCw,
+  X
 } from 'lucide-react';
+import { MdVerified } from 'react-icons/md';
 import { toast } from '@/components/ui/use-toast';
 
 interface DigitalCertificate {
@@ -291,7 +293,7 @@ export function DigitalSignatureManager() {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-lg flex items-center gap-2">
-                        <Certificate className="h-5 w-5" />
+                        <MdVerified className="h-5 w-5" />
                         Certificado Digital
                       </CardTitle>
                       <Badge className={isCertificateValid(certificate) ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>

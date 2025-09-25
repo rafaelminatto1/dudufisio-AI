@@ -1,6 +1,6 @@
 import React from 'react';
 import { format, isSameDay, isToday } from 'date-fns';
-import { ptBR } from 'date-fns/locale/pt-BR';
+import { ptBR } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { EnrichedAppointment, Therapist } from '../../types';
 import AppointmentCard from '../AppointmentCard';

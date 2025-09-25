@@ -66,13 +66,14 @@ import {
   Heart,
   Brain,
   Bone,
-  Lungs,
+  // Lungs, // Substituído por MdLungs do react-icons
   Baby,
   Zap,
   Shield,
   Clock,
   AlertTriangle
 } from 'lucide-react';
+import { MdHealthAndSafety } from 'react-icons/md';
 
 // Schema de validação
 const assessmentSchema = z.object({
@@ -383,7 +384,7 @@ export function AssessmentForm({
       case 'physiotherapy': return Heart;
       case 'neurological_physiotherapy': return Brain;
       case 'orthopedic_physiotherapy': return Bone;
-      case 'respiratory_physiotherapy': return Lungs;
+      case 'respiratory_physiotherapy': return MdHealthAndSafety;
       case 'pediatric_physiotherapy': return Baby;
       case 'sports_physiotherapy': return Zap;
       default: return Stethoscope;
