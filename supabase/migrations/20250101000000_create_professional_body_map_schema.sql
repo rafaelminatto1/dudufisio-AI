@@ -107,35 +107,48 @@ CREATE INDEX idx_body_points_coordinates
 
 -- Analytics materialized view for performance
 CREATE MATERIALIZED VIEW body_points_analytics AS
+WITH expanded AS (
+  SELECT
+    bp.patient_id,
+    bp.body_region,
+    bp.body_side,
+    bp.pain_type,
+    DATE_TRUNC('day', bp.created_at) AS date,
+    bp.created_at,
+    bp.pain_level,
+    bp.metadata,
+    s AS symptom
+  FROM body_points bp
+  LEFT JOIN LATERAL unnest(bp.symptoms) AS s ON true
+  WHERE bp.deleted_at IS NULL
+)
 SELECT
   patient_id,
   body_region,
   body_side,
   pain_type,
-  DATE_TRUNC('day', created_at) as date,
+  date,
 
   -- Pain statistics
-  COUNT(*) as point_count,
-  AVG(pain_level)::NUMERIC(3,1) as avg_pain_level,
-  MAX(pain_level) as max_pain_level,
-  MIN(pain_level) as min_pain_level,
-  STDDEV(pain_level)::NUMERIC(3,1) as pain_std_dev,
+  COUNT(*) AS point_count,
+  AVG(pain_level)::NUMERIC(3,1) AS avg_pain_level,
+  MAX(pain_level) AS max_pain_level,
+  MIN(pain_level) AS min_pain_level,
+  STDDEV(pain_level)::NUMERIC(3,1) AS pain_std_dev,
 
-  -- Symptom analysis
-  array_agg(DISTINCT unnest(symptoms)) as all_symptoms,
-  array_length(array_agg(DISTINCT unnest(symptoms)), 1) as unique_symptoms_count,
+  -- Symptom analysis (sem SRF dentro de agregação)
+  array_agg(DISTINCT symptom) AS all_symptoms,
+  COUNT(DISTINCT symptom) AS unique_symptoms_count,
 
   -- Temporal metrics
-  MIN(created_at) as first_occurrence,
-  MAX(created_at) as last_occurrence,
-  MAX(created_at) - MIN(created_at) as duration,
+  MIN(created_at) AS first_occurrence,
+  MAX(created_at) AS last_occurrence,
+  MAX(created_at) - MIN(created_at) AS duration,
 
   -- Metadata aggregation
-  jsonb_agg(metadata) as aggregated_metadata
-
-FROM body_points
-WHERE deleted_at IS NULL
-GROUP BY patient_id, body_region, body_side, pain_type, DATE_TRUNC('day', created_at);
+  jsonb_agg(metadata) AS aggregated_metadata
+FROM expanded
+GROUP BY patient_id, body_region, body_side, pain_type, date;
 
 -- Index for analytics view
 CREATE UNIQUE INDEX idx_body_points_analytics_unique
@@ -213,9 +226,10 @@ ALTER TABLE body_points ENABLE ROW LEVEL SECURITY;
 -- Policy for users to access only their patients' data
 CREATE POLICY body_points_patient_access ON body_points
   FOR ALL USING (
-    patient_id IN (
-      SELECT id FROM patients
-      WHERE created_by = auth.uid() OR assigned_therapist = auth.uid()
+    EXISTS (
+      SELECT 1 FROM patients p
+      WHERE p.id = body_points.patient_id
+        AND (p.created_by = auth.uid() OR p.user_id = auth.uid())
     )
   );
 
@@ -223,8 +237,8 @@ CREATE POLICY body_points_patient_access ON body_points
 CREATE POLICY body_points_admin_access ON body_points
   FOR ALL USING (
     EXISTS (
-      SELECT 1 FROM user_roles
-      WHERE user_id = auth.uid() AND role = 'admin'
+      SELECT 1 FROM public.users u
+      WHERE u.id = auth.uid() AND u.role = 'admin'
     )
   );
 
@@ -276,10 +290,11 @@ AS $$
   SELECT
     bp.body_region,
     bp.body_side,
-    COUNT(*) as point_count,
+    COUNT(DISTINCT bp.id) as point_count,
     AVG(bp.pain_level)::NUMERIC(3,1) as avg_pain_level,
-    array_agg(DISTINCT unnest(bp.symptoms) ORDER BY unnest(bp.symptoms)) as most_common_symptoms
+    array_agg(DISTINCT s ORDER BY s) as most_common_symptoms
   FROM body_points bp
+  LEFT JOIN LATERAL unnest(bp.symptoms) AS s ON true
   WHERE
     bp.patient_id = p_patient_id
     AND bp.created_at >= NOW() - (p_days_back || ' days')::INTERVAL
@@ -349,23 +364,6 @@ GRANT EXECUTE ON FUNCTION get_region_pain_distribution(UUID, INTEGER) TO authent
 GRANT EXECUTE ON FUNCTION soft_delete_body_point(UUID, UUID) TO authenticated;
 GRANT EXECUTE ON FUNCTION restore_body_point(UUID) TO authenticated;
 
--- Insert audit log entry
-INSERT INTO audit_logs (
-  table_name,
-  action,
-  description,
-  performed_by
-) VALUES (
-  'body_points',
-  'CREATE_TABLE',
-  'Created professional body mapping schema with analytics and performance optimizations',
-  'system'
-);
+-- Audit log intentionally omitted (audit_logs schema differs across environments)
 
--- Create index for future partitioning (monthly partitions)
-CREATE INDEX idx_body_points_created_month
-  ON body_points(DATE_TRUNC('month', created_at))
-  WHERE deleted_at IS NULL;
-
--- Comment for future maintenance
-COMMENT ON INDEX idx_body_points_created_month IS 'Prepared for monthly partitioning strategy for large datasets';
+-- Monthly partitioning index omitted to ensure compatibility across environments

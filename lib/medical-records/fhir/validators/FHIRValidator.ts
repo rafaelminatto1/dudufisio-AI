@@ -6,6 +6,8 @@
 import { z } from 'zod';
 import { FHIRPatientSchema } from '../resources/Patient';
 import { FHIREncounterSchema } from '../resources/Encounter';
+import { FHIRObservation } from '../resources/Observation';
+import { FHIRDiagnosticReport } from '../resources/DiagnosticReport';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -222,6 +224,12 @@ export class FHIRValidator {
         break;
       case 'Encounter':
         this.validateEncounterBusinessRules(resource, errors, warnings);
+        break;
+      case 'Observation':
+        this.validateObservationBusinessRules(resource, errors, warnings);
+        break;
+      case 'DiagnosticReport':
+        this.validateDiagnosticReportBusinessRules(resource, errors, warnings);
         break;
       // Adicionar outros recursos conforme necessário
     }
@@ -662,6 +670,124 @@ export class FHIRValidator {
     });
 
     return stats;
+  }
+
+  /**
+   * Valida regras de negócio para Observation
+   */
+  private validateObservationBusinessRules(observation: any, errors: ValidationError[], warnings: ValidationWarning[]): void {
+    // Validar que o código seja fornecido
+    if (!observation.code) {
+      errors.push({
+        path: 'code',
+        message: 'Observation code is required',
+        severity: 'error',
+        code: 'REQUIRED_FIELD'
+      });
+    }
+
+    // Validar que o status seja válido
+    const validStatuses = ['registered', 'preliminary', 'final', 'amended', 'corrected', 'cancelled', 'entered-in-error', 'unknown'];
+    if (observation.status && !validStatuses.includes(observation.status)) {
+      errors.push({
+        path: 'status',
+        message: `Status must be one of: ${validStatuses.join(', ')}`,
+        severity: 'error',
+        code: 'INVALID_STATUS'
+      });
+    }
+
+    // Validar que pelo menos um valor seja fornecido
+    const hasValue = observation.valueQuantity || observation.valueCodeableConcept || 
+                    observation.valueString || observation.valueBoolean || 
+                    observation.valueInteger || observation.valueRange || 
+                    observation.valueRatio || observation.valueSampledData || 
+                    observation.valueTime || observation.valueDateTime || 
+                    observation.valuePeriod;
+
+    if (!hasValue && !observation.dataAbsentReason) {
+      errors.push({
+        path: 'value',
+        message: 'Observation must have a value or dataAbsentReason',
+        severity: 'error',
+        code: 'REQUIRED_FIELD'
+      });
+    }
+
+    // Validar data efetiva
+    if (observation.effectiveDateTime && !this.isValidISO8601(observation.effectiveDateTime)) {
+      errors.push({
+        path: 'effectiveDateTime',
+        message: 'Effective date time must be a valid ISO 8601 date',
+        severity: 'error',
+        code: 'INVALID_DATE_FORMAT'
+      });
+    }
+  }
+
+  /**
+   * Valida regras de negócio para DiagnosticReport
+   */
+  private validateDiagnosticReportBusinessRules(report: any, errors: ValidationError[], warnings: ValidationWarning[]): void {
+    // Validar que o código seja fornecido
+    if (!report.code) {
+      errors.push({
+        path: 'code',
+        message: 'DiagnosticReport code is required',
+        severity: 'error',
+        code: 'REQUIRED_FIELD'
+      });
+    }
+
+    // Validar que o status seja válido
+    const validStatuses = ['registered', 'partial', 'preliminary', 'final', 'amended', 'corrected', 'cancelled', 'entered-in-error', 'unknown'];
+    if (report.status && !validStatuses.includes(report.status)) {
+      errors.push({
+        path: 'status',
+        message: `Status must be one of: ${validStatuses.join(', ')}`,
+        severity: 'error',
+        code: 'INVALID_STATUS'
+      });
+    }
+
+    // Validar que pelo menos um resultado seja fornecido para relatórios finais
+    if (report.status === 'final' && (!report.result || report.result.length === 0)) {
+      warnings.push({
+        path: 'result',
+        message: 'Final reports should have at least one result',
+        code: 'RECOMMENDED_FIELD'
+      });
+    }
+
+    // Validar data efetiva
+    if (report.effectiveDateTime && !this.isValidISO8601(report.effectiveDateTime)) {
+      errors.push({
+        path: 'effectiveDateTime',
+        message: 'Effective date time must be a valid ISO 8601 date',
+        severity: 'error',
+        code: 'INVALID_DATE_FORMAT'
+      });
+    }
+
+    // Validar data de emissão
+    if (report.issued && !this.isValidISO8601(report.issued)) {
+      errors.push({
+        path: 'issued',
+        message: 'Issued date must be a valid ISO 8601 date',
+        severity: 'error',
+        code: 'INVALID_DATE_FORMAT'
+      });
+    }
+
+    // Validar que pelo menos um performer seja fornecido
+    if (!report.performer || report.performer.length === 0) {
+      errors.push({
+        path: 'performer',
+        message: 'At least one performer must be provided',
+        severity: 'error',
+        code: 'REQUIRED_FIELD'
+      });
+    }
   }
 }
 

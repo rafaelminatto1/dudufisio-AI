@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 // --- User & Auth Types ---
 
@@ -930,4 +930,559 @@ export interface BodyMapAnalytics {
   regionDistribution: Record<string, number>;
   painTypeDistribution: Record<string, number>;
   symptomFrequency: Record<string, number>;
+}
+
+// --- Calendar Integration Types ---
+
+export enum CalendarFeature {
+  CREATE_EVENT = 'CREATE_EVENT',
+  UPDATE_EVENT = 'UPDATE_EVENT',
+  DELETE_EVENT = 'DELETE_EVENT',
+  REMINDERS = 'REMINDERS',
+  RECURRENCE = 'RECURRENCE',
+  ATTENDEES = 'ATTENDEES',
+  AVAILABILITY = 'AVAILABILITY'
+}
+
+export interface CalendarLocation {
+  name: string;
+  address?: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+}
+
+export interface CalendarAttendee {
+  email: string;
+  name: string;
+  required?: boolean;
+  responseStatus?: 'needsAction' | 'declined' | 'tentative' | 'accepted';
+}
+
+export interface CalendarReminder {
+  method: 'email' | 'popup' | 'sms';
+  minutesBefore: number;
+}
+
+export interface CalendarEvent {
+  id?: string;
+  title: string;
+  description: string;
+  startTime: Date;
+  endTime: Date;
+  location: CalendarLocation;
+  attendees: CalendarAttendee[];
+  reminders: CalendarReminder[];
+  recurrence?: RecurrenceRule;
+  metadata: Record<string, unknown>;
+  timeZone?: string;
+  privacy?: 'public' | 'private' | 'confidential';
+}
+
+export interface CalendarError {
+  code: string;
+  message: string;
+  details?: unknown;
+  retryable: boolean;
+}
+
+export interface CalendarResult {
+  success: boolean;
+  eventId?: string;
+  error?: CalendarError;
+  retryable: boolean;
+  providerResponse?: unknown;
+}
+
+export interface TimeRange {
+  start: Date;
+  end: Date;
+  timeZone?: string;
+}
+
+export interface AvailabilitySlot {
+  start: Date;
+  end: Date;
+  status: 'free' | 'busy' | 'tentative' | 'unknown';
+  eventId?: string;
+  eventTitle?: string;
+}
+
+export interface ProviderConfig {
+  apiKey?: string;
+  clientId?: string;
+  clientSecret?: string;
+  serviceAccount?: object;
+  refreshToken?: string;
+  redirectUri?: string;
+}
+
+export interface GoogleCalendarConfig extends ProviderConfig {
+  serviceAccount: object;
+  calendarId?: string;
+}
+
+export interface OutlookConfig extends ProviderConfig {
+  tenantId: string;
+}
+
+export interface CalendarJob {
+  id: string;
+  type: 'send-invite' | 'update-invite' | 'cancel-invite' | 'sync-availability';
+  appointmentId: string;
+  patientEmail?: string;
+  providerPreference?: string;
+  metadata?: Record<string, unknown>;
+  attempts: number;
+  priority: number;
+  scheduledFor?: Date;
+}
+
+export interface QueueConfig {
+  redis: {
+    host: string;
+    port: number;
+    password?: string;
+    db?: number;
+  };
+  maxConcurrency?: number;
+  defaultDelay?: number;
+}
+
+export interface RetryPolicy {
+  maxAttempts: number;
+  backoffStrategy: 'exponential' | 'linear' | 'fixed';
+  baseDelay: number;
+  maxDelay: number;
+}
+
+export interface CalendarIntegration {
+  id: string;
+  appointmentId: string;
+  patientId: string;
+  provider: string;
+  externalEventId?: string;
+  status: 'pending' | 'sent' | 'delivered' | 'failed' | 'cancelled';
+  attempts: number;
+  lastAttemptAt?: Date;
+  errorMessage?: string;
+  metadata: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CalendarPreferences {
+  id: string;
+  patientId: string;
+  preferredProvider: 'google' | 'outlook' | 'apple' | 'ics';
+  enableReminders: boolean;
+  reminderTimes: number[]; // minutes before appointment
+  autoAcceptInvites: boolean;
+  shareAvailability: boolean;
+  timeZone: string;
+  language: 'pt-BR' | 'en-US' | 'es-ES';
+}
+
+export interface CalendarMetrics {
+  totalInvitesSent: number;
+  successRate: number;
+  averageDeliveryTime: number; // in milliseconds
+  providerPerformance: Record<string, {
+    totalSent: number;
+    successCount: number;
+    averageDeliveryTime: number;
+    lastFailure?: Date;
+  }>;
+  queueStats: {
+    pending: number;
+    processing: number;
+    completed: number;
+    failed: number;
+  };
+}
+
+// --- Communication System Types ---
+
+// Core Communication Types
+export type MessageId = string;
+export type TemplateId = string;
+export type CampaignId = string;
+export type TriggerEventType = string;
+
+export enum ChannelCapability {
+  TEXT = 'TEXT',
+  MEDIA = 'MEDIA',
+  INTERACTIVE = 'INTERACTIVE',
+  TEMPLATES = 'TEMPLATES',
+  TWO_WAY = 'TWO_WAY',
+  DELIVERY_RECEIPTS = 'DELIVERY_RECEIPTS',
+  READ_RECEIPTS = 'READ_RECEIPTS'
+}
+
+export enum MessagePriority {
+  LOW = 1,
+  NORMAL = 5,
+  HIGH = 8,
+  URGENT = 10
+}
+
+export enum MessageStatus {
+  PENDING = 'pending',
+  QUEUED = 'queued',
+  SENT = 'sent',
+  DELIVERED = 'delivered',
+  READ = 'read',
+  FAILED = 'failed',
+  CANCELLED = 'cancelled'
+}
+
+export enum CommunicationChannel {
+  WHATSAPP = 'whatsapp',
+  SMS = 'sms',
+  EMAIL = 'email',
+  PUSH = 'push'
+}
+
+// Recipient and Preferences
+export interface Recipient {
+  id: string;
+  name: string;
+  phone?: string;
+  email?: string;
+  pushToken?: string;
+  preferences: CommunicationPreferences;
+  optOuts: OptOutStatus[];
+  timezone: string;
+  language: string;
+}
+
+export interface CommunicationPreferences {
+  preferredChannel: CommunicationChannel;
+  whatsappOptIn: boolean;
+  smsOptIn: boolean;
+  emailOptIn: boolean;
+  pushOptIn: boolean;
+  preferredTimeStart: string; // HH:mm format
+  preferredTimeEnd: string; // HH:mm format
+  timezone: string;
+}
+
+export interface OptOutStatus {
+  channel: CommunicationChannel;
+  optedOut: boolean;
+  optedOutAt?: Date;
+  reason?: string;
+}
+
+// Message Types
+export interface MessageContent {
+  subject?: string;
+  body: string;
+  attachments?: Attachment[];
+  variables: Record<string, unknown>;
+  mediaUrls?: string[];
+  interactiveElements?: InteractiveElement[];
+}
+
+export interface Attachment {
+  name: string;
+  url: string;
+  type: string;
+  size: number;
+}
+
+export interface InteractiveElement {
+  type: 'button' | 'list' | 'reply';
+  id: string;
+  title: string;
+  description?: string;
+  action?: string;
+}
+
+export interface MessageMetadata {
+  campaignId?: CampaignId;
+  triggerEvent?: TriggerEventType;
+  patientId?: string;
+  appointmentId?: string;
+  source: 'manual' | 'automated' | 'triggered';
+  tags: string[];
+  customData: Record<string, unknown>;
+}
+
+export interface Message {
+  id: MessageId;
+  templateId?: TemplateId;
+  recipient: Recipient;
+  content: MessageContent;
+  metadata: MessageMetadata;
+  priority: MessagePriority;
+  scheduledFor?: Date;
+  expiresAt?: Date;
+  retryCount: number;
+  maxRetries: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Delivery and Results
+export interface DeliveryResult {
+  success: boolean;
+  messageId?: string;
+  externalMessageId?: string;
+  channel: CommunicationChannel;
+  deliveredAt?: Date;
+  cost?: number;
+  error?: CommunicationError;
+  retryable: boolean;
+  metadata?: Record<string, unknown>;
+}
+
+export interface CommunicationError {
+  code: string;
+  message: string;
+  details?: unknown;
+  retryable: boolean;
+  retryAfter?: number; // seconds
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+// Templates
+export interface CommunicationTemplate {
+  id: TemplateId;
+  name: string;
+  type: TemplateType;
+  channel: CommunicationChannel;
+  subject?: string;
+  content: string;
+  variables: TemplateVariable[];
+  active: boolean;
+  approvedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export enum TemplateType {
+  APPOINTMENT_REMINDER = 'appointment_reminder',
+  BIRTHDAY_GREETING = 'birthday_greeting',
+  PAYMENT_REMINDER = 'payment_reminder',
+  SATISFACTION_SURVEY = 'satisfaction_survey',
+  INACTIVE_PATIENT = 'inactive_patient',
+  WELCOME_MESSAGE = 'welcome_message',
+  CUSTOM = 'custom'
+}
+
+export interface TemplateVariable {
+  name: string;
+  type: 'string' | 'number' | 'date' | 'boolean';
+  required: boolean;
+  defaultValue?: unknown;
+  description: string;
+}
+
+// Campaigns and Automation
+export interface Campaign {
+  id: CampaignId;
+  name: string;
+  description: string;
+  templateId: TemplateId;
+  audienceFilter: AudienceFilter;
+  scheduledFor?: Date;
+  triggerConditions?: TriggerCondition[];
+  status: CampaignStatus;
+  statistics: CampaignStatistics;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export enum CampaignStatus {
+  DRAFT = 'draft',
+  SCHEDULED = 'scheduled',
+  RUNNING = 'running',
+  PAUSED = 'paused',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled'
+}
+
+export interface AudienceFilter {
+  patientStatus?: string[];
+  ageRange?: { min: number; max: number };
+  lastVisit?: { after?: Date; before?: Date };
+  tags?: string[];
+  customFilters?: Record<string, unknown>;
+}
+
+export interface TriggerCondition {
+  event: TriggerEventType;
+  delay?: number; // minutes
+  conditions?: Record<string, unknown>;
+}
+
+export interface CampaignStatistics {
+  totalRecipients: number;
+  messagesSent: number;
+  messagesDelivered: number;
+  messagesRead: number;
+  messagesFailed: number;
+  totalCost: number;
+  engagementRate: number;
+}
+
+// Queue and Jobs
+export interface MessageJob {
+  id: string;
+  type: 'send-message' | 'retry-message' | 'status-update';
+  messageId: MessageId;
+  channelName: string;
+  attempts: number;
+  maxAttempts: number;
+  priority: number;
+  scheduledFor: Date;
+  metadata: Record<string, unknown>;
+}
+
+export interface FailedMessageJob extends MessageJob {
+  failureReason: string;
+  lastAttemptAt: Date;
+  canRetry: boolean;
+}
+
+// Configuration
+export interface MessageBusConfig {
+  redis: {
+    host: string;
+    port: number;
+    password?: string;
+    db: number;
+  };
+  maxConcurrency: number;
+  defaultJobOptions: {
+    attempts: number;
+    backoff: string;
+    removeOnComplete: number;
+    removeOnFail: number;
+  };
+}
+
+export interface WhatsAppConfig {
+  accessToken: string;
+  phoneNumberId: string;
+  webhookVerifyToken: string;
+  apiVersion?: string;
+}
+
+export interface TwilioConfig {
+  accountSid: string;
+  authToken: string;
+  fromNumber: string;
+}
+
+export interface EmailConfig {
+  provider: 'resend' | 'sendgrid' | 'ses';
+  apiKey: string;
+  fromEmail: string;
+  fromName: string;
+}
+
+export interface PushConfig {
+  vapidPublicKey: string;
+  vapidPrivateKey: string;
+  vapidSubject: string;
+}
+
+// Analytics
+export interface CommunicationMetrics {
+  totalMessagesSent: number;
+  deliveryRate: number;
+  readRate: number;
+  failureRate: number;
+  averageDeliveryTime: number;
+  totalCost: number;
+  channelPerformance: Record<CommunicationChannel, ChannelMetrics>;
+  campaignMetrics: CampaignMetrics[];
+}
+
+export interface ChannelMetrics {
+  messagesSent: number;
+  messagesDelivered: number;
+  messagesRead: number;
+  messagesFailed: number;
+  deliveryRate: number;
+  readRate: number;
+  averageDeliveryTime: number;
+  averageCost: number;
+  lastFailure?: Date;
+}
+
+export interface CampaignMetrics {
+  campaignId: CampaignId;
+  campaignName: string;
+  totalRecipients: number;
+  messagesSent: number;
+  deliveryRate: number;
+  engagementRate: number;
+  totalCost: number;
+  roi?: number;
+}
+
+// Domain Events
+export interface DomainEvent {
+  id: string;
+  type: string;
+  aggregateId: string;
+  aggregateType: string;
+  data: Record<string, unknown>;
+  occurredAt: Date;
+  version: number;
+}
+
+// Webhook Types
+export interface WebhookPayload {
+  event: string;
+  timestamp: Date;
+  data: Record<string, unknown>;
+}
+
+export interface WhatsAppWebhook extends WebhookPayload {
+  entry: Array<{
+    id: string;
+    changes: Array<{
+      value: {
+        messaging_product: string;
+        metadata: {
+          display_phone_number: string;
+          phone_number_id: string;
+        };
+        messages?: WhatsAppMessage[];
+        statuses?: WhatsAppStatus[];
+      };
+    }>;
+  }>;
+}
+
+export interface WhatsAppMessage {
+  id: string;
+  from: string;
+  timestamp: string;
+  type: string;
+  text?: { body: string };
+  image?: { id: string; mime_type: string; sha256: string };
+  document?: { id: string; filename: string; mime_type: string; sha256: string };
+}
+
+export interface WhatsAppStatus {
+  id: string;
+  recipient_id: string;
+  status: 'sent' | 'delivered' | 'read' | 'failed';
+  timestamp: string;
+  errors?: Array<{
+    code: number;
+    title: string;
+    message: string;
+  }>;
 }
