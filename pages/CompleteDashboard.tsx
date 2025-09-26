@@ -6,6 +6,7 @@ const AgendaPage = lazy(() => import('./AgendaPage'));
 const PatientListPage = lazy(() => import('./PatientListPage'));
 const PatientDetailPage = lazy(() => import('./PatientDetailPage'));
 const SessionPage = lazy(() => import('./SessionPage'));
+const SessionFormPage = lazy(() => import('./SessionFormPage'));
 const AtendimentoPage = lazy(() => import('./AtendimentoPage'));
 const FinancialDashboardPage = lazy(() => import('./FinancialDashboardPage'));
 const ExerciseLibraryPage = lazy(() => import('./ExerciseLibraryPage'));

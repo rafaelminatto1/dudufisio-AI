@@ -93,7 +93,8 @@ export default function AgendaPage() {
             try {
                 const patientData = await patientService.getAllPatients();
                 setPatients(patientData);
-        } catch {
+        } catch (error) {
+            console.error('Erro ao carregar pacientes:', error);
             showToast('Falha ao carregar a lista de pacientes.', 'error');
         } finally {
                 setIsLoadingData(false);
@@ -130,7 +131,8 @@ export default function AgendaPage() {
             setIsFormOpen(false);
             setAppointmentToEdit(null);
             return true;
-        } catch {
+        } catch (error) {
+            console.error('Erro ao salvar consulta:', error);
             showToast('Falha ao salvar a consulta.', 'error');
             return false;
         }
@@ -221,7 +223,8 @@ export default function AgendaPage() {
             await appointmentService.saveAppointment(updatedAppointment);
             showToast('Agendamento movido!', 'success');
             refetch();
-        } catch {
+        } catch (error) {
+            console.error('Erro ao mover agendamento:', error);
             showToast('Falha ao mover agendamento.', 'error');
         } finally {
             setDraggedAppointmentId(null);
