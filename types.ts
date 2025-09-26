@@ -291,10 +291,385 @@ export interface AuditLogEntry {
   ipAddress: string;
 }
 
+// --- Clinical Protocols Types ---
+
+export enum ProtocolCategory {
+  Orthopedic = 'Ortopedia',
+  Neurological = 'Neurologia',
+  Cardiorespiratory = 'Cardiorrespiratória',
+  Pediatric = 'Pediatria',
+  Sports = 'Esportiva',
+  Geriatric = 'Gerontologia',
+  Oncology = 'Oncologia',
+  Women = 'Saúde da Mulher',
+}
+
+export enum EvidenceLevel {
+  IA = '1A',
+  IB = '1B',
+  IIA = '2A',
+  IIB = '2B',
+  III = '3',
+  IV = '4',
+  V = '5',
+}
+
+export enum ProtocolPhase {
+  Acute = 'Aguda',
+  Subacute = 'Subaguda',
+  Chronic = 'Crônica',
+  Maintenance = 'Manutenção',
+}
+
 export interface Protocol {
   id: string;
   name: string;
   description: string;
+  category: ProtocolCategory;
+  subcategory?: string;
+  version: string;
+  lastUpdated: string;
+  createdBy: string;
+  reviewedBy?: string[];
+  evidenceLevel: EvidenceLevel;
+  references: ProtocolReference[];
+  
+  // Clinical Information
+  definition: string;
+  epidemiology?: string;
+  inclusionCriteria: string[];
+  exclusionCriteria: string[];
+  contraindications: string[];
+  precautions: string[];
+  
+  // Assessment
+  assessmentTools: AssessmentTool[];
+  outcomeMetrics: OutcomeMetric[];
+  
+  // Treatment Phases
+  phases: ProtocolPhase[];
+  treatmentPlan: TreatmentPhaseDetail[];
+  
+  // Progression Criteria
+  progressionCriteria: ProgressionCriteria[];
+  dischargeCriteria: string[];
+  
+  // Implementation
+  estimatedDuration: {
+    min: number;
+    max: number;
+    unit: 'days' | 'weeks' | 'months';
+  };
+  frequency: string;
+  sessionDuration: number; // minutes
+  
+  // Quality Metrics
+  successRate?: number;
+  patientSatisfaction?: number;
+  costEffectiveness?: string;
+  
+  // Usage Statistics
+  timesUsed: number;
+  averageOutcomes: {
+    [metric: string]: number;
+  };
+  
+  // Status and Approval
+  status: 'draft' | 'review' | 'approved' | 'deprecated';
+  approvedAt?: string;
+  isActive: boolean;
+  tags: string[];
+}
+
+export interface ProtocolReference {
+  id: string;
+  title: string;
+  authors: string[];
+  journal: string;
+  year: number;
+  doi?: string;
+  pmid?: string;
+  url?: string;
+  evidenceLevel: EvidenceLevel;
+  relevanceScore: number; // 1-10
+}
+
+export interface AssessmentTool {
+  id: string;
+  name: string;
+  type: 'scale' | 'test' | 'measurement' | 'questionnaire';
+  description: string;
+  instructions: string;
+  scoringCriteria: string;
+  normalValues?: string;
+  reliability?: number;
+  validity?: number;
+  minimumDetectableChange?: number;
+}
+
+export interface OutcomeMetric {
+  id: string;
+  name: string;
+  type: 'primary' | 'secondary';
+  unit: string;
+  expectedChange: {
+    direction: 'increase' | 'decrease' | 'maintain';
+    magnitude: number;
+    timeframe: string;
+  };
+  assessmentFrequency: string;
+  clinicalSignificance: number;
+}
+
+export interface TreatmentPhaseDetail {
+  id: string;
+  phase: ProtocolPhase;
+  name: string;
+  description: string;
+  duration: {
+    min: number;
+    max: number;
+    unit: 'days' | 'weeks' | 'sessions';
+  };
+  objectives: string[];
+  interventions: ProtocolIntervention[];
+  exerciseProgram: ExerciseProtocol[];
+  precautions: string[];
+  progressMarkers: string[];
+}
+
+export interface ProtocolIntervention {
+  id: string;
+  name: string;
+  type: 'manual' | 'exercise' | 'modality' | 'education' | 'other';
+  description: string;
+  dosage: {
+    frequency: string;
+    duration: string;
+    intensity: string;
+    progression: string;
+  };
+  evidenceLevel: EvidenceLevel;
+  contraindications?: string[];
+  modifications?: InterventionModification[];
+}
+
+export interface InterventionModification {
+  condition: string;
+  modification: string;
+  rationale: string;
+}
+
+export interface ExerciseProtocol {
+  id: string;
+  exerciseId: string;
+  exerciseName: string;
+  phase: ProtocolPhase;
+  sets: number;
+  repetitions: string;
+  hold?: string;
+  rest?: string;
+  intensity: string;
+  frequency: string;
+  progression: ExerciseProgression[];
+  modifications: ExerciseModification[];
+  precautions: string[];
+}
+
+export interface ExerciseProgression {
+  week: number;
+  sets: number;
+  repetitions: string;
+  intensity: string;
+  notes?: string;
+}
+
+export interface ExerciseModification {
+  condition: string;
+  modification: string;
+  parameters?: {
+    sets?: number;
+    repetitions?: string;
+    intensity?: string;
+  };
+}
+
+export interface ProgressionCriteria {
+  id: string;
+  fromPhase: ProtocolPhase;
+  toPhase: ProtocolPhase;
+  criteria: ProgressionRule[];
+  timeframe: string;
+  requiredAssessments: string[];
+}
+
+export interface ProgressionRule {
+  type: 'objective' | 'subjective' | 'functional' | 'time';
+  parameter: string;
+  operator: '>' | '<' | '>=' | '<=' | '=' | 'improved' | 'stable' | 'achieved';
+  value: number | string;
+  unit?: string;
+  weight: number; // importance 1-10
+}
+
+export interface ProtocolPrescription {
+  id: string;
+  protocolId: string;
+  patientId: string;
+  prescribedBy: string;
+  prescribedAt: string;
+  currentPhase: ProtocolPhase;
+  startDate: string;
+  estimatedEndDate: string;
+  
+  // Customizations
+  customizations: ProtocolCustomization[];
+  excludedInterventions: string[];
+  additionalNotes: string;
+  
+  // Progress Tracking
+  phaseHistory: PhaseProgress[];
+  assessmentResults: AssessmentResult[];
+  adherenceRate: number;
+  
+  // Outcomes
+  outcomes: ProtocolOutcome[];
+  complications?: string[];
+  modifications: ProtocolModification[];
+  
+  status: 'active' | 'completed' | 'discontinued' | 'on_hold';
+  completedAt?: string;
+  discontinuedReason?: string;
+}
+
+export interface ProtocolCustomization {
+  type: 'exercise' | 'intervention' | 'frequency' | 'duration' | 'intensity';
+  target: string; // ID or name of what's being customized
+  modification: string;
+  reason: string;
+}
+
+export interface PhaseProgress {
+  phase: ProtocolPhase;
+  startDate: string;
+  endDate?: string;
+  objectives: {
+    [objectiveId: string]: {
+      description: string;
+      completed: boolean;
+      completedAt?: string;
+      notes?: string;
+    };
+  };
+  assessments: string[]; // assessment IDs
+  duration: number; // actual days in phase
+}
+
+export interface AssessmentResult {
+  id: string;
+  toolId: string;
+  toolName: string;
+  assessedAt: string;
+  assessedBy: string;
+  results: {
+    [parameter: string]: {
+      value: number | string;
+      unit?: string;
+      percentile?: number;
+      interpretation: string;
+    };
+  };
+  overallScore?: number;
+  clinicalInterpretation: string;
+}
+
+export interface ProtocolOutcome {
+  metricId: string;
+  metricName: string;
+  baselineValue: number;
+  currentValue: number;
+  targetValue?: number;
+  unit: string;
+  percentChange: number;
+  clinicallySignificant: boolean;
+  assessedAt: string;
+}
+
+export interface ProtocolModification {
+  id: string;
+  modifiedAt: string;
+  modifiedBy: string;
+  type: 'exercise' | 'intervention' | 'progression' | 'frequency' | 'other';
+  description: string;
+  reason: string;
+  impact: 'minor' | 'moderate' | 'major';
+}
+
+export interface ProtocolAnalytics {
+  protocolId: string;
+  protocolName: string;
+  totalPrescriptions: number;
+  activePrescriptions: number;
+  completedPrescriptions: number;
+  averageDuration: number; // days
+  successRate: number; // percentage
+  adherenceRate: number; // percentage
+  
+  // Outcome Analytics
+  outcomeMetrics: {
+    [metricName: string]: {
+      averageImprovement: number;
+      successRate: number; // % achieving target
+      clinicalSignificanceRate: number;
+    };
+  };
+  
+  // Phase Analytics
+  phaseAnalytics: {
+    [phase: string]: {
+      averageDuration: number;
+      completionRate: number;
+      commonModifications: string[];
+    };
+  };
+  
+  // Patient Demographics
+  demographics: {
+    ageGroups: { [range: string]: number };
+    genderDistribution: { [gender: string]: number };
+    severityDistribution: { [level: string]: number };
+  };
+  
+  // Therapist Performance
+  therapistMetrics: {
+    [therapistId: string]: {
+      prescriptions: number;
+      successRate: number;
+      adherenceRate: number;
+      averageDuration: number;
+    };
+  };
+  
+  // Time-based Trends
+  monthlyTrends: {
+    month: string;
+    prescriptions: number;
+    completions: number;
+    successRate: number;
+  }[];
+  
+  lastUpdated: string;
+}
+
+export interface ProtocolLibraryStats {
+  totalProtocols: number;
+  protocolsByCategory: { [category: string]: number };
+  protocolsByEvidenceLevel: { [level: string]: number };
+  recentlyUpdated: Protocol[];
+  mostUsed: Protocol[];
+  highestRated: Protocol[];
+  pendingReview: number;
+  averageSuccessRate: number;
 }
 
 export interface ProtocolRecommendation {
@@ -705,26 +1080,322 @@ export interface WhatsappMessage {
 export enum InternStatus {
   Active = 'Ativo',
   Inactive = 'Inativo',
+  Graduated = 'Formado',
+  Suspended = 'Suspenso',
+}
+
+export enum CompetencyLevel {
+  Beginner = 'Iniciante',
+  Intermediate = 'Intermediário',
+  Advanced = 'Avançado',
+  Expert = 'Expert',
+}
+
+export enum CompetencyCategory {
+  Assessment = 'Avaliação',
+  Treatment = 'Tratamento',
+  Communication = 'Comunicação',
+  Documentation = 'Documentação',
+  Ethics = 'Ética',
+  Research = 'Pesquisa',
+}
+
+export interface Competency {
+  id: string;
+  name: string;
+  category: CompetencyCategory;
+  description: string;
+  evaluationCriteria: string[];
+  requiredLevel: CompetencyLevel;
+  weight: number; // 1-10
+}
+
+export interface InternCompetency {
+  id: string;
+  internId: string;
+  competencyId: string;
+  currentLevel: CompetencyLevel;
+  targetLevel: CompetencyLevel;
+  evaluations: CompetencyEvaluation[];
+  lastEvaluatedAt?: string;
+  progress: number; // 0-100
+}
+
+export interface CompetencyEvaluation {
+  id: string;
+  internCompetencyId: string;
+  evaluatorId: string;
+  evaluatorName: string;
+  level: CompetencyLevel;
+  score: number; // 0-10
+  feedback: string;
+  evaluatedAt: string;
+  type: 'self' | 'supervisor' | 'peer' | 'patient';
+}
+
+export interface InternshipPlan {
+  id: string;
+  internId: string;
+  supervisorId: string;
+  startDate: string;
+  endDate: string;
+  objectives: LearningObjective[];
+  schedule: InternshipSchedule;
+  competencies: string[]; // competency IDs
+  status: 'draft' | 'active' | 'completed' | 'suspended';
+  progressReports: ProgressReport[];
+}
+
+export interface LearningObjective {
+  id: string;
+  description: string;
+  type: 'knowledge' | 'skill' | 'attitude';
+  priority: 'high' | 'medium' | 'low';
+  deadline: string;
+  completed: boolean;
+  completedAt?: string;
+  evidence?: string;
+}
+
+export interface InternshipSchedule {
+  weeklyHours: number;
+  schedule: {
+    [day: string]: {
+      startTime: string;
+      endTime: string;
+      activities: string[];
+    };
+  };
+  rotations: ScheduleRotation[];
+}
+
+export interface ScheduleRotation {
+  id: string;
+  name: string;
+  specialty: string;
+  startDate: string;
+  endDate: string;
+  supervisor: string;
+  objectives: string[];
+}
+
+export interface ProgressReport {
+  id: string;
+  internId: string;
+  supervisorId: string;
+  period: string; // e.g., "2024-01"
+  competencyProgress: {
+    [competencyId: string]: {
+      previousLevel: CompetencyLevel;
+      currentLevel: CompetencyLevel;
+      progress: number;
+    };
+  };
+  achievements: string[];
+  challenges: string[];
+  nextSteps: string[];
+  overallRating: number; // 1-5
+  createdAt: string;
 }
 
 export interface Intern {
   id: string;
   name: string;
+  email: string;
+  phone: string;
   institution: string;
+  semester: number;
   startDate: string; // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
   status: InternStatus;
   avatarUrl: string;
+  supervisorId: string;
+  supervisorName: string;
   averageGrade?: number;
+  totalHours: number;
+  completedHours: number;
+  internshipPlan?: InternshipPlan;
+  competencies: InternCompetency[];
+  clinicalCases: string[]; // case IDs assigned
 }
 
 export interface EducationalCase {
   id: string;
   title: string;
   description: string;
-  area: 'Ortopedia' | 'Neurologia' | 'Esportiva' | 'Gerontologia';
+  specialty: 'Ortopedia' | 'Neurologia' | 'Cardiorrespiratória' | 'Pediatria' | 'Esportiva' | 'Gerontologia';
+  difficultyLevel: 1 | 2 | 3 | 4 | 5;
+  patientProfile: {
+    age: number;
+    gender: 'M' | 'F';
+    occupation: string;
+    medicalHistory: string[];
+    currentComplaints: string;
+  };
+  clinicalPresentation: {
+    symptoms: string[];
+    physicalExam: string;
+    functionalTests: string[];
+    imaging: string[];
+  };
+  diagnosis: {
+    primary: string;
+    secondary?: string[];
+    differentialDiagnosis: string[];
+  };
+  treatmentPlan: {
+    goals: string[];
+    interventions: string[];
+    duration: string;
+    frequency: string;
+    progressIndicators: string[];
+  };
+  outcomes: {
+    shortTerm: string[];
+    longTerm: string[];
+    complications?: string[];
+  };
+  learningObjectives: string[];
+  discussionPoints: string[];
+  references: string[];
   createdBy: string; // Therapist name
   createdAt: string; // YYYY-MM-DD
-  content: string; // Markdown content
+  lastUpdated: string;
+  tags: string[];
+  isPublished: boolean;
+  discussions: CaseDiscussion[];
+  evaluations: CaseEvaluation[];
+}
+
+export interface CaseDiscussion {
+  id: string;
+  caseId: string;
+  userId: string;
+  userName: string;
+  userRole: string;
+  content: string;
+  createdAt: string;
+  replies: CaseDiscussionReply[];
+  votes: number;
+}
+
+export interface CaseDiscussionReply {
+  id: string;
+  discussionId: string;
+  userId: string;
+  userName: string;
+  content: string;
+  createdAt: string;
+  votes: number;
+}
+
+export interface CaseEvaluation {
+  id: string;
+  caseId: string;
+  userId: string;
+  rating: number; // 1-5
+  difficulty: number; // 1-5
+  usefulness: number; // 1-5
+  feedback: string;
+  createdAt: string;
+}
+
+export interface EducationalResource {
+  id: string;
+  title: string;
+  type: 'article' | 'video' | 'webinar' | 'protocol' | 'guideline' | 'quiz';
+  category: string;
+  specialty: string[];
+  description: string;
+  content?: string;
+  url?: string;
+  duration?: number; // in minutes
+  difficulty: 1 | 2 | 3 | 4 | 5;
+  tags: string[];
+  author: string;
+  publishedAt: string;
+  lastUpdated: string;
+  views: number;
+  rating: number;
+  reviews: ResourceReview[];
+  isRecommended: boolean;
+  prerequisites?: string[];
+  learningOutcomes: string[];
+}
+
+export interface ResourceReview {
+  id: string;
+  resourceId: string;
+  userId: string;
+  userName: string;
+  rating: number; // 1-5
+  review: string;
+  createdAt: string;
+  helpful: number; // helpful votes
+}
+
+export interface LearningPath {
+  id: string;
+  name: string;
+  description: string;
+  specialty: string;
+  difficulty: CompetencyLevel;
+  estimatedDuration: number; // in hours
+  resources: string[]; // resource IDs
+  prerequisites: string[];
+  objectives: string[];
+  assessments: string[];
+  completionCriteria: string[];
+  createdBy: string;
+  createdAt: string;
+  enrollments: number;
+  completions: number;
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  description: string;
+  issuer: string;
+  type: 'completion' | 'competency' | 'continuing_education';
+  requirements: CertificationRequirement[];
+  validityPeriod?: number; // in months
+  credits?: number; // CE credits
+  badgeUrl: string;
+  issuedAt?: string;
+  expiresAt?: string;
+  verificationUrl?: string;
+}
+
+export interface CertificationRequirement {
+  type: 'course' | 'assessment' | 'hours' | 'project';
+  description: string;
+  target: string | number;
+  completed: boolean;
+  completedAt?: string;
+}
+
+export interface MentorshipMetrics {
+  totalInterns: number;
+  activeInterns: number;
+  graduatedInterns: number;
+  averageCompetencyProgress: number;
+  totalCases: number;
+  averageCaseRating: number;
+  totalResources: number;
+  totalLearningPaths: number;
+  monthlyProgress: {
+    month: string;
+    newInterns: number;
+    graduatedInterns: number;
+    completedCases: number;
+    resourcesAdded: number;
+  }[];
+  competencyDistribution: {
+    [category: string]: {
+      [level: string]: number;
+    };
+  };
 }
 
 // --- Inventory & Supplies Types ---

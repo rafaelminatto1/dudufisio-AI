@@ -15,6 +15,8 @@ const SpecialtyAssessmentsPage = lazy(() => import('./SpecialtyAssessmentsPage')
 const AcompanhamentoPage = lazy(() => import('./AcompanhamentoPage'));
 const IntegrationsTestPage = lazy(() => import('./IntegrationsTestPage'));
 const BIIntegrationTestPage = lazy(() => import('./BIIntegrationTestPage'));
+const MentoriaPage = lazy(() => import('./MentoriaPageNew'));
+const ProtocolsPage = lazy(() => import('./ProtocolsPage'));
 import {
     Calendar, Users, Activity, BarChart3,
     Download, RefreshCw,
@@ -331,6 +333,19 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 return (
                     <Suspense fallback={<PageLoader />}>
                         <BIIntegrationTestPage />
+                    </Suspense>
+                );
+            case 'mentoria':
+                return (
+                    <Suspense fallback={<PageLoader />}>
+                        <MentoriaPage />
+                    </Suspense>
+                );
+            case 'protocolos':
+            case 'protocols':
+                return (
+                    <Suspense fallback={<PageLoader />}>
+                        <ProtocolsPage />
                     </Suspense>
                 );
             default:
