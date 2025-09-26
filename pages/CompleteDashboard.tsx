@@ -13,6 +13,7 @@ const ExerciseLibraryPage = lazy(() => import('./ExerciseLibraryPage'));
 const ReportsPage = lazy(() => import('./ReportsPage'));
 const SpecialtyAssessmentsPage = lazy(() => import('./SpecialtyAssessmentsPage'));
 const AcompanhamentoPage = lazy(() => import('./AcompanhamentoPage'));
+const ProjectsActivePage = lazy(() => import('./ProjectsActivePage'));
 const IntegrationsTestPage = lazy(() => import('./IntegrationsTestPage'));
 const BIIntegrationTestPage = lazy(() => import('./BIIntegrationTestPage'));
 import {
@@ -331,6 +332,12 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 return (
                     <Suspense fallback={<PageLoader />}>
                         <BIIntegrationTestPage />
+                    </Suspense>
+                );
+            case 'projects':
+                return (
+                    <Suspense fallback={<PageLoader />}>
+                        <ProjectsActivePage />
                     </Suspense>
                 );
             default:
