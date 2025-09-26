@@ -395,7 +395,7 @@ class TissIntegrationService {
     }
 
     const operadora = this.operadoras.get(guia.numeroRegistroANS);
-    if (!operadora || !operadora.ativo) {
+    if (!operadora?.ativo) {
       throw new Error('Operadora não configurada ou inativa');
     }
 
@@ -454,7 +454,7 @@ class TissIntegrationService {
 
   async consultarRetorno(protocolo: string, registroANS: string): Promise<TissRetorno | null> {
     const operadora = this.operadoras.get(registroANS);
-    if (!operadora || !operadora.ativo) {
+    if (!operadora?.ativo) {
       throw new Error('Operadora não configurada');
     }
 

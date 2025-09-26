@@ -56,7 +56,7 @@ const PainEvolutionChart: React.FC<PainEvolutionChartProps> = ({ bodyPoints, cla
     }, [chartData]);
 
     const CustomTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
+        if (active && payload?.length) {
             return (
                 <div className="bg-white p-3 border border-slate-200 rounded-lg shadow-lg">
                     <p className="font-medium text-slate-800">{label}</p>

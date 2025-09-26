@@ -289,23 +289,6 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
 
             return (
               <div key={day.toISOString()} className="bg-white">
-                {/* Therapist header */}
-                <div className="h-12 border-b border-slate-200 bg-slate-50 px-1 py-1">
-                  <div className="grid grid-cols-3 gap-0.5 h-full">
-                    {therapists.slice(0, 3).map((therapist) => (
-                      <div
-                        key={therapist.id}
-                        className={cn(
-                          "text-xs font-medium text-center rounded px-1 py-0.5 truncate text-white",
-                          `bg-${therapist.color}-500`
-                        )}
-                        title={therapist.name}
-                      >
-                        {therapist.name.split(' ')[0] || therapist.name}
-                      </div>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Time slots with improved drop zones */}
                 <div className="relative" style={{ height: `${(END_HOUR - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }}>

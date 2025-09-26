@@ -76,6 +76,8 @@ class SupabaseAuthService {
           console.log('🔄 Auth state changed:', event);
           try {
             if (event === 'SIGNED_IN' && session?.user) {
+              // Check if this is a new OAuth user and create profile if needed
+              await this.ensureUserProfile(session.user);
               const user = await this.mapSupabaseUserToUser(session.user);
               this.updateState({ user, session, loading: false });
             } else if (event === 'SIGNED_OUT') {
@@ -358,6 +360,52 @@ class SupabaseAuthService {
     return userPermissions.includes('*') || userPermissions.includes(permission);
   }
 
+  // Ensure user profile exists (especially for OAuth users)
+  private async ensureUserProfile(supabaseUser: SupabaseUser): Promise<void> {
+    try {
+      // Check if profile already exists
+      const { data: existingProfile } = await supabase
+        .from('user_profiles')
+        .select('id')
+        .eq('id', supabaseUser.id)
+        .single();
+
+      if (!existingProfile) {
+        console.log('🆕 Creating profile for new OAuth user:', supabaseUser.email);
+        
+        // Create profile for OAuth user
+        const { error: profileError } = await supabase
+          .from('user_profiles')
+          .insert({
+            id: supabaseUser.id,
+            email: supabaseUser.email || '',
+            name: supabaseUser.user_metadata?.['name'] || 
+                  supabaseUser.user_metadata?.['full_name'] || 
+                  supabaseUser.user_metadata?.['user_name'] ||
+                  'Usuário',
+            role: supabaseUser.user_metadata?.['role'] || Role.Patient,
+            phone: supabaseUser.user_metadata?.['phone'] || '',
+            avatar_url: supabaseUser.user_metadata?.['avatar_url'] || 
+                       supabaseUser.user_metadata?.['picture'] ||
+                       supabaseUser.user_metadata?.['avatar_url'] ||
+                       '',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          } as any);
+
+        if (profileError) {
+          console.error('Error creating OAuth user profile:', profileError);
+          // Don't throw here as the user was authenticated successfully
+        } else {
+          console.log('✅ OAuth user profile created successfully');
+        }
+      }
+    } catch (error) {
+      console.error('Error ensuring user profile:', error);
+      // Don't throw here as the user was authenticated successfully
+    }
+  }
+
   private async mapSupabaseUserToUser(supabaseUser: SupabaseUser): Promise<User> {
     try {
       // Try to get additional user data from our profiles table
@@ -403,7 +451,11 @@ class SupabaseAuthService {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         }
       });
       if (error) throw error;
@@ -417,7 +469,8 @@ class SupabaseAuthService {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'github',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`
+          redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: 'user:email',
         }
       });
       if (error) throw error;

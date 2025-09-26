@@ -272,7 +272,7 @@ export class InitialAssessment {
     // Analisar sinais vitais
     if (this.physicalExam.vitalSigns) {
       const vs = this.physicalExam.vitalSigns;
-      if (vs.bloodPressure && vs.bloodPressure.includes('140/90')) {
+      if (vs.bloodPressure?.includes('140/90')) {
         riskFactors.push('Hipertensão arterial');
       }
       if (vs.heartRate && vs.heartRate > 100) {

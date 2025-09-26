@@ -3,6 +3,7 @@ import React, { useState, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
 import Layout from './components/Layout';
 import { AppProvider } from './contexts/AppContext';
 import { SupabaseAuthProvider } from './contexts/SupabaseAuthContext';
@@ -25,6 +26,7 @@ console.log('🚀 Starting React application...');
 const App: React.FC = () => {
   const [user, setUser] = useState(null);
   const [currentPage, setCurrentPage] = useState('dashboard');
+  const [authPage, setAuthPage] = useState<'login' | 'register'>('login');
 
   const handleLoginSuccess = () => {
     console.log('🎯 Login success - setting user');
@@ -53,8 +55,12 @@ const App: React.FC = () => {
   // Expose the setCurrentPage function globally for navigation
   React.useEffect(() => {
     (window as any).__setCurrentPage = setCurrentPage;
+    (window as any).__navigateToRegister = () => setAuthPage('register');
+    (window as any).__navigateToLogin = () => setAuthPage('login');
     return () => {
       delete (window as any).__setCurrentPage;
+      delete (window as any).__navigateToRegister;
+      delete (window as any).__navigateToLogin;
     };
   }, []);
 
@@ -88,7 +94,11 @@ const App: React.FC = () => {
   if (!user) {
     return (
       <SupabaseAuthProvider>
-        <LoginPage onSuccess={handleLoginSuccess} />
+        {authPage === 'login' ? (
+          <LoginPage onSuccess={handleLoginSuccess} />
+        ) : (
+          <RegisterPage onSuccess={handleLoginSuccess} onBack={() => setAuthPage('login')} />
+        )}
       </SupabaseAuthProvider>
     );
   }

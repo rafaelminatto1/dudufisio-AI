@@ -177,8 +177,8 @@ const AtendimentoPage: React.FC = () => {
           const content = response.content;
           const assessmentMatch = content.match(/AVALIAÇÃO:([\s\S]*?)PLANO:/i);
           const planMatch = content.match(/PLANO:([\s\S]*)/i);
-          if (assessmentMatch && assessmentMatch[1]) setAssessment(assessmentMatch[1].trim());
-          if (planMatch && planMatch[1]) setPlanState(planMatch[1].trim());
+          if (assessmentMatch?.[1]) setAssessment(assessmentMatch[1].trim());
+          if (planMatch?.[1]) setPlanState(planMatch[1].trim());
           showToast('Sugestão gerada pela IA.', 'info');
         } catch (error) { showToast('Erro ao gerar sugestão.', 'error'); } finally { setIsAiLoading(false); }
     };

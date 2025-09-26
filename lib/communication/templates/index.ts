@@ -294,7 +294,7 @@ export class TemplateMigration {
    * Migrate template from old version to new version
    */
   static migrateTemplate(oldTemplate: any, targetVersion: number): MessageTemplate {
-    let migrated = { ...oldTemplate };
+    const migrated = { ...oldTemplate };
 
     // Migration from version 0 to 1
     if (!migrated.version || migrated.version < 1) {

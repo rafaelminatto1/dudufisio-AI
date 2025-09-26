@@ -45,7 +45,8 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
         if (appointment.type === AppointmentType.Teleconsulta) {
             (window as any).__setCurrentPage?.('teleconsulta');
         } else {
-            (window as any).__setCurrentPage?.('atendimento');
+            // Navigate to new session form page instead of session
+            (window as any).__setCurrentPage?.('session-form');
         }
     };
     const isTeleconsulta = appointment.type === AppointmentType.Teleconsulta;

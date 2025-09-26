@@ -707,7 +707,7 @@ class MultiCloudBackupService {
 
   private async uploadToProvider(providerId: string, fileName: string, data: ArrayBuffer): Promise<void> {
     const provider = this.providers.get(providerId);
-    if (!provider || !provider.enabled) {
+    if (!provider?.enabled) {
       throw new Error(`Provider ${providerId} not available`);
     }
 

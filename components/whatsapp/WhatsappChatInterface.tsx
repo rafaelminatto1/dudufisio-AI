@@ -64,7 +64,7 @@ const WhatsappChatInterface: React.FC = () => {
         if (conversationState === 'initial') {
             if (text.trim() === '1') {
                 const plan = await treatmentService.getPlanByPatientId('1'); // Mock patient 1
-                if (plan && plan.exercises) {
+                if (plan?.exercises) {
                     const exerciseList = plan.exercises.map(ex => ` - ${ex.exerciseName} (${ex.sets}x${ex.repetitions})`).join('\n');
                     addBotResponse(`Claro! Seus exercícios para hoje são:\n${exerciseList}\n\nLembre-se de marcar como feito no seu portal! 😉`);
                 } else {

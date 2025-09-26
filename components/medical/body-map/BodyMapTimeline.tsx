@@ -178,7 +178,7 @@ const BodyMapTimeline: React.FC<BodyMapTimelineProps> = ({
    * Custom tooltip for evolution chart
    */
   const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
+    if (active && payload?.length) {
       return (
         <div className="bg-white p-4 border border-slate-200 rounded-lg shadow-lg">
           <p className="font-semibold text-slate-800 mb-2">{label}</p>

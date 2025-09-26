@@ -3,7 +3,7 @@ import { Task, Project } from '../types';
 import { mockTasks, mockProjects } from '../data/mockData';
 
 let tasks: Task[] = [...mockTasks];
-let projects: Project[] = [...mockProjects];
+const projects: Project[] = [...mockProjects];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 

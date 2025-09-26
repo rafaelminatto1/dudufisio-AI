@@ -345,7 +345,7 @@ export class SMSChannel extends BaseChannel {
     if (!body) return '';
 
     // Strip HTML tags if present
-    let cleanBody = body.replace(/<[^>]*>/g, '');
+    const cleanBody = body.replace(/<[^>]*>/g, '');
 
     // Handle long messages
     if (cleanBody.length > config.maxMessageLength) {

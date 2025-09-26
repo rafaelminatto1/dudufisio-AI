@@ -41,129 +41,285 @@
       </style>
     </head>
     <body>
-      <h1>Relatório de Testes - DuduFisio-AI</h1>
-<p><strong>Data:</strong> Janeiro 2025<br>
-<strong>Versão:</strong> 1.0<br>
-<strong>Ferramenta:</strong> TestSprite MCP<br>
-<strong>Status:</strong> Plano de Testes Gerado (Execução limitada por créditos)</p>
+      <h1>TestSprite AI Testing Report(MCP)</h1>
 <hr>
-<h2>Resumo Executivo</h2>
-<p>O TestSprite MCP foi utilizado com sucesso para analisar o projeto DuduFisio-AI e gerar um plano abrangente de testes frontend. O sistema identificou 20 casos de teste críticos cobrindo funcionalidades essenciais do sistema de gestão de clínica de fisioterapia.</p>
-<h3>Resultados da Análise</h3>
-<p>✅ <strong>Inicialização bem-sucedida</strong> do TestSprite MCP<br>
-✅ <strong>Resumo do código</strong> gerado com 25+ funcionalidades identificadas<br>
-✅ <strong>PRD padronizado</strong> criado automaticamente<br>
-✅ <strong>Plano de testes frontend</strong> com 20 casos de teste detalhados<br>
-❌ <strong>Execução limitada</strong> devido a créditos insuficientes na conta TestSprite</p>
-<hr>
-<h2>Análise do Projeto</h2>
-<h3>Stack Tecnológico Identificado</h3>
+<h2>1️⃣ Document Metadata</h2>
 <ul>
-<li><strong>Frontend:</strong> React 19.1.1 + TypeScript + Vite</li>
-<li><strong>UI:</strong> Tailwind CSS + Radix UI + Framer Motion</li>
-<li><strong>Roteamento:</strong> React Router DOM</li>
-<li><strong>Estado:</strong> React Context + Custom Hooks</li>
-<li><strong>Formulários:</strong> React Hook Form + Zod</li>
-<li><strong>IA:</strong> Google Gemini API</li>
-<li><strong>Banco:</strong> Supabase</li>
-<li><strong>Testes:</strong> Jest + Testing Library</li>
+<li><strong>Project Name:</strong> dudufisio-AI</li>
+<li><strong>Version:</strong> 1.0.0</li>
+<li><strong>Date:</strong> 2025-01-26</li>
+<li><strong>Prepared by:</strong> TestSprite AI Team</li>
 </ul>
-<h3>Funcionalidades Principais Analisadas</h3>
+<hr>
+<h2>2️⃣ Requirement Validation Summary</h2>
+<h3>Requirement: Patient Management API</h3>
+<ul>
+<li><strong>Description:</strong> Complete patient management system with CRUD operations, medical history tracking, and patient portal access.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC001</li>
+<li><strong>Test Name:</strong> get all patients endpoint should return list of patients</li>
+<li><strong>Test Code:</strong> <a href="./TC001_get_all_patients_endpoint_should_return_list_of_patients.py">TC001_get_all_patients_endpoint_should_return_list_of_patients.py</a></li>
+<li><strong>Test Error:</strong> JSONDecodeError: Expecting value: line 1 column 1 (char 0)</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/1f70d847-453c-4937-b86d-e766b7364dc9</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The GET /api/patients endpoint returned an invalid response that could not be parsed as JSON, indicating either the endpoint did not respond or returned empty or malformed content.</li>
+</ul>
+<hr>
+<h4>Test 2</h4>
+<ul>
+<li><strong>Test ID:</strong> TC002</li>
+<li><strong>Test Name:</strong> create new patient endpoint should create patient successfully</li>
+<li><strong>Test Code:</strong> <a href="./TC002_create_new_patient_endpoint_should_create_patient_successfully.py">TC002_create_new_patient_endpoint_should_create_patient_successfully.py</a></li>
+<li><strong>Test Error:</strong> AssertionError: Expected status code 201, got 404</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/c46ca9ab-bb5d-418e-a113-f4ff8bdc473d</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The POST /api/patients endpoint returned a 404 status code instead of 201, suggesting the endpoint or resource path may be missing or incorrectly configured.</li>
+</ul>
+<hr>
+<h4>Test 3</h4>
+<ul>
+<li><strong>Test ID:</strong> TC003</li>
+<li><strong>Test Name:</strong> get patient by id endpoint should return patient details</li>
+<li><strong>Test Code:</strong> <a href="./TC003_get_patient_by_id_endpoint_should_return_patient_details.py">TC003_get_patient_by_id_endpoint_should_return_patient_details.py</a></li>
+<li><strong>Test Error:</strong> AssertionError: Expected status code 201 on patient creation, got 404</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/b21f3a75-52bf-47a1-b8f3-486ef7d9c442</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> Test expected a patient creation before retrieving patient details with status 201 but encountered a 404, indicating the prerequisite patient creation failed or the resource is not found.</li>
+</ul>
+<hr>
+<h3>Requirement: Appointment Scheduling API</h3>
+<ul>
+<li><strong>Description:</strong> Advanced appointment scheduling system with multiple views, conflict detection, and series management.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC004</li>
+<li><strong>Test Name:</strong> get appointments endpoint should return filtered appointments</li>
+<li><strong>Test Code:</strong> <a href="./TC004_get_appointments_endpoint_should_return_filtered_appointments.py">TC004_get_appointments_endpoint_should_return_filtered_appointments.py</a></li>
+<li><strong>Test Error:</strong> AssertionError: Expected status code 200, got 404</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/56091a1a-29bb-478b-8c7d-90b89b710f47</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The GET /api/appointments endpoint returned a 404 Not Found instead of 200, indicating the endpoint might be missing, disabled, or incorrectly routed.</li>
+</ul>
+<hr>
+<h4>Test 2</h4>
+<ul>
+<li><strong>Test ID:</strong> TC005</li>
+<li><strong>Test Name:</strong> create new appointment endpoint should create appointment successfully</li>
+<li><strong>Test Code:</strong> <a href="./TC005_create_new_appointment_endpoint_should_create_appointment_successfully.py">TC005_create_new_appointment_endpoint_should_create_appointment_successfully.py</a></li>
+<li><strong>Test Error:</strong> AssertionError: Failed to create patient, status code: 404</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/4bea2450-a275-4473-b047-43d6a17fc676</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> Creating a new appointment failed due to a 404 when attempting to create or associate a patient, indicating missing patient creation or patient resource not existing.</li>
+</ul>
+<hr>
+<h3>Requirement: Medical Records System API</h3>
+<ul>
+<li><strong>Description:</strong> Complete electronic medical records system with FHIR compliance, digital signatures, and clinical templates.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC006</li>
+<li><strong>Test Name:</strong> get medical records endpoint should return list of records</li>
+<li><strong>Test Code:</strong> <a href="./TC006_get_medical_records_endpoint_should_return_list_of_records.py">TC006_get_medical_records_endpoint_should_return_list_of_records.py</a></li>
+<li><strong>Test Error:</strong> AssertionError: Expected status code 200 but got 404</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/08f05501-d50c-49f7-afac-28a3b91d1bdb</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The GET /api/medical-records endpoint returned a 404 status, meaning the endpoint is not found or inaccessible.</li>
+</ul>
+<hr>
+<h3>Requirement: AI Services API</h3>
+<ul>
+<li><strong>Description:</strong> Multiple AI service integrations including Google Gemini, Groq, and XAI for clinical assistance and report generation.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC007</li>
+<li><strong>Test Name:</strong> generate clinical report endpoint should return generated report</li>
+<li><strong>Test Code:</strong> <a href="./TC007_generate_clinical_report_endpoint_should_return_generated_report.py">TC007_generate_clinical_report_endpoint_should_return_generated_report.py</a></li>
+<li><strong>Test Error:</strong> AssertionError: Failed to create patient</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/ddce6c3b-f540-4593-823e-fa726e7218cc</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The clinical report generation failed due to inability to create the patient resource, causing the operation to fail silently or return error.</li>
+</ul>
+<hr>
+<h3>Requirement: Body Map System API</h3>
+<ul>
+<li><strong>Description:</strong> Interactive body mapping system for marking and visualizing pain points and treatment areas.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC008</li>
+<li><strong>Test Name:</strong> add pain point endpoint should add pain point successfully</li>
+<li><strong>Test Code:</strong> <a href="./TC008_add_pain_point_endpoint_should_add_pain_point_successfully.py">TC008_add_pain_point_endpoint_should_add_pain_point_successfully.py</a></li>
+<li><strong>Test Error:</strong> AssertionError: Failed to create patient, status: 404</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/efde0e7a-cbc8-40da-9552-ea74ed72f9cf</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> Adding a pain point failed because of a 404 error when attempting to create or access the patient resource needed for associating pain points.</li>
+</ul>
+<hr>
+<h3>Requirement: Exercise Library API</h3>
+<ul>
+<li><strong>Description:</strong> Comprehensive exercise library with categorization, media support, and prescription capabilities.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC009</li>
+<li><strong>Test Name:</strong> get exercises endpoint should return filtered exercises</li>
+<li><strong>Test Code:</strong> <a href="./TC009_get_exercises_endpoint_should_return_filtered_exercises.py">TC009_get_exercises_endpoint_should_return_filtered_exercises.py</a></li>
+<li><strong>Test Error:</strong> AssertionError: Expected status code 200 but got 404</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/430c0b7e-64e1-48d4-9ee7-5e59ec818149</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The GET /api/exercises endpoint returned a 404 instead of 200, indicating the endpoint may not be available or configured properly.</li>
+</ul>
+<hr>
+<h3>Requirement: Authentication &amp; Authorization API</h3>
+<ul>
+<li><strong>Description:</strong> Multi-role authentication system with Supabase integration, 2FA support, and role-based access control.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC010</li>
+<li><strong>Test Name:</strong> user login endpoint should authenticate user successfully</li>
+<li><strong>Test Code:</strong> <a href="./TC010_user_login_endpoint_should_authenticate_user_successfully.py">TC010_user_login_endpoint_should_authenticate_user_successfully.py</a></li>
+<li><strong>Test Error:</strong> AssertionError: Expected status code 200, got 404</li>
+<li><strong>Test Visualization and Result:</strong> https://www.testsprite.com/dashboard/mcp/tests/741337d8-6688-45d6-aba9-3e530574dbc2/afd58b66-da7b-4c9f-a708-db1010796e2c</li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The POST /api/auth/login endpoint returned 404 instead of 200, indicating the login route is missing, incorrectly configured, or service not available.</li>
+</ul>
+<hr>
+<h2>3️⃣ Coverage &amp; Matching Metrics</h2>
+<ul>
+<li><strong>100% of product requirements tested</strong></li>
+<li><strong>0% of tests passed</strong></li>
+<li><strong>Key gaps / risks:</strong></li>
+</ul>
+<blockquote>
+<p>100% of product requirements had at least one test generated.<br>
+0% of tests passed fully.<br>
+<strong>Critical Risk:</strong> All API endpoints are returning 404 errors, indicating that the backend API is not properly configured or deployed. This suggests a fundamental infrastructure issue that needs immediate attention.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Total Tests</th>
+<th>✅ Passed</th>
+<th>⚠️ Partial</th>
+<th>❌ Failed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Patient Management</td>
+<td>3</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Appointment Scheduling</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Medical Records</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>AI Services</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Body Map System</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Exercise Library</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>4️⃣ Critical Issues Summary</h2>
+<h3>🚨 <strong>URGENT: Backend API Infrastructure</strong></h3>
+<p>All API endpoints are returning 404 errors, indicating:</p>
 <ol>
-<li><strong>Sistema de Autenticação</strong> - Multi-role (Admin, Fisioterapeuta, Estagiário, Paciente, Educador Físico)</li>
-<li><strong>Gestão de Pacientes</strong> - Cadastro completo com histórico médico</li>
-<li><strong>Sistema de Agendamento</strong> - Calendário com recorrência e conflitos</li>
-<li><strong>Dashboard e Analytics</strong> - Métricas clínicas e financeiras</li>
-<li><strong>Acompanhamento Clínico</strong> - Notas SOAP e evolução</li>
-<li><strong>Inteligência Artificial</strong> - Integração com Gemini para sugestões clínicas</li>
-<li><strong>Portal do Paciente</strong> - Interface dedicada com gamificação</li>
-<li><strong>Portal de Parceiros</strong> - Para educadores físicos</li>
-<li><strong>Gestão Financeira</strong> - Controle de receitas e despesas</li>
-<li><strong>Sistema de Eventos</strong> - Gestão de workshops e campanhas</li>
+<li><strong>Missing API Routes</strong>: The backend API routes are not properly configured or deployed</li>
+<li><strong>Service Not Running</strong>: The API service may not be running or accessible</li>
+<li><strong>Routing Issues</strong>: Incorrect URL paths or server configuration problems</li>
+</ol>
+<h3>🔧 <strong>Immediate Actions Required</strong></h3>
+<ol>
+<li><strong>Verify Backend Deployment</strong>: Ensure the API server is running and accessible</li>
+<li><strong>Check Route Configuration</strong>: Verify all API routes are properly registered</li>
+<li><strong>Test API Connectivity</strong>: Confirm the API endpoints are reachable from the test environment</li>
+<li><strong>Review Server Configuration</strong>: Check for any misconfigurations in the server setup</li>
+</ol>
+<h3>📋 <strong>Next Steps</strong></h3>
+<ol>
+<li>Fix the backend API infrastructure issues</li>
+<li>Re-run the TestSprite tests after API fixes</li>
+<li>Implement proper error handling and logging</li>
+<li>Add API health checks and monitoring</li>
 </ol>
 <hr>
-<h2>Plano de Testes Gerado</h2>
-<h3>Casos de Teste por Categoria</h3>
-<h4>🔐 <strong>Segurança (5 casos)</strong></h4>
+<h2>5️⃣ Recommendations</h2>
+<h3><strong>High Priority</strong></h3>
 <ul>
-<li><strong>TC003:</strong> Autenticação com credenciais corretas</li>
-<li><strong>TC004:</strong> Bloqueio de login com credenciais inválidas</li>
-<li><strong>TC009:</strong> Acesso seguro ao Portal do Paciente</li>
-<li><strong>TC012:</strong> Expiração automática de sessão</li>
-<li><strong>TC017:</strong> Logs de auditoria conforme LGPD</li>
-<li><strong>TC018:</strong> Permissões baseadas em roles</li>
+<li><strong>Fix API Infrastructure</strong>: Resolve all 404 errors by ensuring proper API deployment and routing</li>
+<li><strong>Implement Health Checks</strong>: Add API health monitoring to detect issues early</li>
+<li><strong>Add Error Logging</strong>: Implement comprehensive logging for better debugging</li>
 </ul>
-<h4>⚙️ <strong>Funcional (9 casos)</strong></h4>
+<h3><strong>Medium Priority</strong></h3>
 <ul>
-<li><strong>TC001:</strong> Cadastro de paciente com CPF válido</li>
-<li><strong>TC002:</strong> Prevenção de cadastro duplicado</li>
-<li><strong>TC005:</strong> Prevenção de conflitos em agendamentos</li>
-<li><strong>TC006:</strong> Agendamentos recorrentes</li>
-<li><strong>TC007:</strong> Auto-save de notas SOAP</li>
-<li><strong>TC008:</strong> Geração de laudos por IA</li>
-<li><strong>TC010:</strong> Exportação de relatórios (PDF/CSV)</li>
-<li><strong>TC014:</strong> Gestão de estoque com alertas</li>
-<li><strong>TC015:</strong> Sistema Kanban de tarefas</li>
-<li><strong>TC016:</strong> Notificações automáticas</li>
-<li><strong>TC020:</strong> Comunicação via Portal do Paciente</li>
+<li><strong>API Documentation</strong>: Ensure all endpoints are properly documented</li>
+<li><strong>Input Validation</strong>: Add proper request validation for all endpoints</li>
+<li><strong>Response Formatting</strong>: Standardize API response formats</li>
 </ul>
-<h4>🔗 <strong>Integração (1 caso)</strong></h4>
+<h3><strong>Low Priority</strong></h3>
 <ul>
-<li><strong>TC013:</strong> Integração com Google Gemini AI</li>
-</ul>
-<h4>📊 <strong>Performance (1 caso)</strong></h4>
-<ul>
-<li><strong>TC011:</strong> Tempo de carregamento da interface</li>
-</ul>
-<h4>📱 <strong>UI/UX (1 caso)</strong></h4>
-<ul>
-<li><strong>TC019:</strong> Responsividade em diferentes dispositivos</li>
-</ul>
-<h3>Prioridades dos Testes</h3>
-<ul>
-<li><strong>Alta (12 casos):</strong> Funcionalidades críticas e segurança</li>
-<li><strong>Média (8 casos):</strong> Funcionalidades importantes mas não críticas</li>
+<li><strong>Performance Testing</strong>: Once basic functionality is working, add performance tests</li>
+<li><strong>Security Testing</strong>: Implement security tests for authentication and authorization</li>
+<li><strong>Integration Testing</strong>: Add tests for external service integrations</li>
 </ul>
 <hr>
-<h2>Recomendações</h2>
-<h3>1. <strong>Execução dos Testes</strong></h3>
-<p>Para executar completamente os testes gerados, será necessário:</p>
-<ul>
-<li>Adquirir créditos adicionais no TestSprite</li>
-<li>Ou implementar os casos de teste manualmente usando Jest/Testing Library</li>
-</ul>
-<h3>2. <strong>Cobertura de Testes</strong></h3>
-<p>O plano gerado cobre adequadamente:</p>
-<ul>
-<li>✅ Fluxos principais de usuário</li>
-<li>✅ Casos de erro e edge cases</li>
-<li>✅ Segurança e autenticação</li>
-<li>✅ Integrações externas</li>
-<li>✅ Performance básica</li>
-</ul>
-<h3>3. <strong>Próximos Passos Sugeridos</strong></h3>
-<ol>
-<li><strong>Implementar testes unitários</strong> para componentes críticos</li>
-<li><strong>Criar testes de integração</strong> para fluxos completos</li>
-<li><strong>Adicionar testes E2E</strong> para cenários de usuário</li>
-<li><strong>Configurar CI/CD</strong> com execução automática de testes</li>
-</ol>
-<h3>4. <strong>Foco em Qualidade</strong></h3>
-<p>Priorizar testes para:</p>
-<ul>
-<li>Sistema de autenticação e autorização</li>
-<li>Gestão de dados sensíveis (conformidade LGPD)</li>
-<li>Integração com IA (Gemini API)</li>
-<li>Portal do paciente e comunicação</li>
-<li>Sistema de agendamentos</li>
-</ul>
-<hr>
-<h2>Conclusão</h2>
-<p>O TestSprite MCP demonstrou ser uma ferramenta eficaz para análise automatizada de código e geração de planos de teste abrangentes. O plano gerado para o DuduFisio-AI cobre adequadamente as funcionalidades críticas do sistema, fornecendo uma base sólida para implementação de testes automatizados.</p>
-<p><strong>Status:</strong> ✅ IMPLEMENTAÇÃO COMPLETA - Todos os 20 casos de teste implementados<br>
-<strong>Próxima Ação:</strong> Executar testes e monitorar cobertura de código</p>
-<hr>
-<p><em>Relatório gerado automaticamente pelo TestSprite MCP - Janeiro 2025</em></p>
+<p><strong>Report Generated by TestSprite AI Team</strong><br>
+<strong>Date:</strong> 2025-01-26<br>
+<strong>Test Environment:</strong> MCP TestSprite Cloud Platform</p>
 
     </body>
     </html>

@@ -264,6 +264,21 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                         }}
                     />
                 );
+            case 'session-form':
+                const sessionFormAppointmentId = (window as any).__selectedAppointmentId;
+                if (!sessionFormAppointmentId) {
+                    setCurrentPage('appointments');
+                    return null;
+                }
+                return (
+                    <SessionFormPage
+                        appointmentId={sessionFormAppointmentId}
+                        onClose={() => {
+                            delete (window as any).__selectedAppointmentId;
+                            setCurrentPage('appointments');
+                        }}
+                    />
+                );
             case 'atendimento':
                 const atendimentoId = (window as any).__selectedAppointmentId;
                 if (!atendimentoId) {

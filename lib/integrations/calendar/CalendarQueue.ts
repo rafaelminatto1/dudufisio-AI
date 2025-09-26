@@ -208,7 +208,7 @@ export class CalendarQueue {
       }
 
       const patient = await this.getPatientById(appointment.patientId);
-      if (!patient || !patient.email) {
+      if (!patient?.email) {
         throw new Error(`Patient email not found for appointment ${job.appointmentId}`);
       }
 

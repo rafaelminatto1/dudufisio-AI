@@ -232,7 +232,7 @@ export class MessageValidator {
     }
 
     // Check content
-    if (!message.content || !message.content.body?.trim()) {
+    if (!message.content?.body?.trim()) {
       errors.push('Message body is required');
     }
 

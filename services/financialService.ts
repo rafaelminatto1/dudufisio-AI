@@ -154,10 +154,10 @@ export const getEducatorFinancials = async (educatorId: string): Promise<{ summa
 
         return {
             id: `txn_${voucher.id}`,
-            type: 'voucher_purchase' as 'voucher_purchase',
+            type: 'voucher_purchase' as const,
             patientName: patient?.name || 'Desconhecido',
             planName: voucher.plan.name,
-            status: 'completed' as 'completed',
+            status: 'completed' as const,
             createdAt: voucher.purchaseDate,
             breakdown: {
                 grossAmount,

@@ -281,7 +281,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
             </div>
             <div className="text-sm text-center text-gray-600">
               Não tem uma conta?{' '}
-              <button className="text-indigo-600 hover:text-indigo-700 font-medium">
+              <button 
+                className="text-indigo-600 hover:text-indigo-700 font-medium"
+                onClick={() => {
+                  // Navigate to register page - this will be handled by the parent component
+                  if ((window as any).__navigateToRegister) {
+                    (window as any).__navigateToRegister();
+                  }
+                }}
+              >
                 Criar conta
               </button>
             </div>

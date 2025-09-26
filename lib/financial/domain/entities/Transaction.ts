@@ -257,7 +257,7 @@ export class Transaction {
       throw new BusinessRuleError(`Cannot refund transaction. Current status: ${this.status}`);
     }
 
-    if (refundAmount && refundAmount.isGreaterThan(this.amount)) {
+    if (refundAmount?.isGreaterThan(this.amount)) {
       throw new BusinessRuleError('Refund amount cannot be greater than transaction amount');
     }
 

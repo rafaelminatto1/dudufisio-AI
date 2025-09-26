@@ -12,7 +12,13 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "type-check": "tsc --noEmit",
     "check": "npm run type-check && npm run lint",
-    "check:fix": "npm run lint:fix && npm run type-check"
+    "check:fix": "npm run lint:fix && npm run type-check",
+    "maintenance": "node scripts/maintenance.js --health",
+    "maintenance:update": "node scripts/maintenance.js --update",
+    "maintenance:full": "node scripts/maintenance.js --health --update",
+    "security": "npm audit --audit-level=moderate",
+    "deps:check": "npm outdated",
+    "deps:update": "npm update"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

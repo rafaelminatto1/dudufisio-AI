@@ -9,7 +9,7 @@
 import { BodyPoint, BodyMapAnalytics } from '../types';
 
 // Professional mock data with new interface structure
-let mockBodyPoints: BodyPoint[] = [
+const mockBodyPoints: BodyPoint[] = [
     {
         id: 'bp_1',
         patientId: 'patient_1',

@@ -2,8 +2,8 @@
 import { Intern, EducationalCase, InternStatus } from '../types';
 import { mockInterns, mockEducationalCases, mockTherapists } from '../data/mockData';
 
-let interns: Intern[] = [...mockInterns];
-let cases: EducationalCase[] = [...mockEducationalCases];
+const interns: Intern[] = [...mockInterns];
+const cases: EducationalCase[] = [...mockEducationalCases];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 

@@ -10,10 +10,10 @@
     "projectName": "dudufisio-AI",
     "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "Execute comprehensive tests for the DuduFisio-AI physiotherapy management system, focusing on all major features including patient management, appointment scheduling, medical records, AI services, body mapping, exercise library, authentication, payments, and compliance features.",
+    "additionalInstruction": "Execute comprehensive tests for the DuduFisio-AI physiotherapy management system. The server is running on port 5175. Test all major features including patient management, appointment scheduling, medical records, AI services, body mapping, exercise library, authentication, payments, and compliance features. Focus on testing the actual functionality that is working in the browser.",
     "envs": {
       "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
     }
   },
-  "proxy": "http://f5bee4f5-e090-497a-bd1c-e310f9393a0e:r286kD4dbQ9DqLn7MryltTjEaSg7mAZj@tun.testsprite.com:8080"
+  "proxy": "http://539718ec-859c-48fb-bb72-bd91f9a64e86:wiT20HL8lYgE1kzTB8LV6YxdX62vJY5d@tun.testsprite.com:8080"
 }

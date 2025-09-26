@@ -6,7 +6,7 @@ import { mockNotifications, mockAppointments, mockUsers, mockPatients } from '..
 import * as treatmentService from './treatmentService';
 import * as whatsappService from './whatsappService';
 
-let notifications: Notification[] = [...mockNotifications];
+const notifications: Notification[] = [...mockNotifications];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -76,7 +76,7 @@ export const generateRemindersIfNeeded = async (user: User | null): Promise<void
         if (sessionStorage.getItem(reminderKey)) return;
 
         const plan = await treatmentService.getPlanByPatientId(user.patientId);
-        if (plan && plan.exercises && plan.exercises.length > 0) {
+        if (plan?.exercises && plan.exercises.length > 0) {
             const newNotification: Notification = {
                 id: `notif_ex_${Date.now()}`,
                 userId: user.id,

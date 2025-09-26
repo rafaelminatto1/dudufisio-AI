@@ -3,10 +3,10 @@
 import { InventoryItem, Supplier, InventoryCategory, StockMovement, MovementType, ItemStatus, InventoryMetrics, InventoryAlertType, InventoryAlert } from '../types';
 import { mockInventoryItems, mockSuppliers, mockInventoryCategories, mockStockMovements, mockUsers } from '../data/mockData';
 
-let items: InventoryItem[] = [...mockInventoryItems];
-let suppliers: Supplier[] = [...mockSuppliers];
-let categories: InventoryCategory[] = [...mockInventoryCategories];
-let movements: StockMovement[] = [...mockStockMovements];
+const items: InventoryItem[] = [...mockInventoryItems];
+const suppliers: Supplier[] = [...mockSuppliers];
+const categories: InventoryCategory[] = [...mockInventoryCategories];
+const movements: StockMovement[] = [...mockStockMovements];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 

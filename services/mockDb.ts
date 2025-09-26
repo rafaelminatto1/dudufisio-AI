@@ -17,8 +17,8 @@ import {
 // Create mutable copies of the mock data to act as our "database"
 let patients = [...mockPatients];
 let appointments = [...mockAppointments];
-let soapNotes = [...mockSoapNotes];
-let treatmentPlans = [...mockTreatmentPlans];
+const soapNotes = [...mockSoapNotes];
+const treatmentPlans = [...mockTreatmentPlans];
 let exercisePrescriptions = [...mockExercisePrescriptions];
 
 // A central place to manage all mock data, ensuring consistency.

@@ -122,7 +122,7 @@ export class DigitalSignatureService {
         signature.publicKey
       );
 
-      if (!certificate || !certificate.isValid()) {
+      if (!certificate?.isValid()) {
         return SignatureVerificationResult.invalid('Certificate is not valid');
       }
 

@@ -851,7 +851,7 @@ class DigitalSignatureService {
     while (currentDate <= toDate) {
       const dateStr = currentDate.toISOString().split('T')[0];
       const count = signatures?.filter(s =>
-        s.requestedAt && s.requestedAt.startsWith(dateStr)
+        s.requestedAt?.startsWith(dateStr)
       ).length || 0;
 
       dailyStats.push({ date: dateStr || '', count });

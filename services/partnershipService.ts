@@ -2,7 +2,7 @@
 import { PartnershipClient, Patient, Voucher, SoapNote, Partner, VoucherPlan, PainPoint } from '../types';
 import { mockPurchasedVouchers, mockPatients, mockSoapNotes, mockPartners, sampleVoucherPlans } from '../data/mockData';
 
-let partners: Partner[] = [...mockPartners];
+const partners: Partner[] = [...mockPartners];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 

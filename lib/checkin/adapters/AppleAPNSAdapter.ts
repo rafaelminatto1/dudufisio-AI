@@ -334,11 +334,11 @@ export class AppleAPNSAdapter {
       errors.push('Team ID deve ter 10 caracteres');
     }
 
-    if (!config.bundleId || !config.bundleId.includes('.')) {
+    if (!config.bundleId?.includes('.')) {
       errors.push('Bundle ID deve ter formato reverse-DNS');
     }
 
-    if (!config.privateKey || !config.privateKey.includes('BEGIN PRIVATE KEY')) {
+    if (!config.privateKey?.includes('BEGIN PRIVATE KEY')) {
       errors.push('Private Key deve ser um PEM válido');
     }
 

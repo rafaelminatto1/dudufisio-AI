@@ -99,7 +99,7 @@ export class ICSService extends CalendarService {
     const now = this.formatDateForICS(new Date());
     const uid = this.generateEventId();
 
-    let icsContent = [
+    const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
       'PRODID:-//DuduFisio//Calendar Integration//PT',

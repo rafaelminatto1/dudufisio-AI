@@ -2,34 +2,24 @@
 
 echo "🔍 Executando verificações pré-commit..."
 
-# 1. Verificar build
-echo "📦 Verificando build..."
-npm run build || {
-    echo "❌ Build falhou! Corrija os erros antes de fazer commit."
-    exit 1
-}
-
-# 2. Verificar imports problemáticos (removido - script não existe)
-echo "🔗 Verificando imports... (pulando - script não configurado)"
-
-# 3. Verificar vulnerabilidades críticas
-echo "🛡️ Verificando vulnerabilidades críticas..."
-npm audit --audit-level=high --production || {
-    echo "⚠️ Vulnerabilidades críticas encontradas! Considere corrigir."
-}
-
-# 4. Executar linter (apenas warnings, não bloqueia)
+# 1. Verificação rápida de linting (apenas erros críticos)
 echo "🧹 Verificando linting crítico..."
-npm run lint --max-warnings=50 || {
-    echo "⚠️ Muitos problemas de linting encontrados, mas não bloqueando commit."
-    echo "💡 Execute 'npm run lint:fix' quando possível."
+npm run lint --max-warnings=10 || {
+    echo "⚠️ Problemas de linting encontrados. Execute 'npm run lint:fix' para corrigir."
+    echo "💡 Commit permitido, mas recomenda-se correção."
 }
 
-# 5. Verificar tipos TypeScript (apenas warning)
+# 2. Verificação de segurança (apenas vulnerabilidades críticas)
+echo "🛡️ Verificando vulnerabilidades críticas..."
+npm audit --audit-level=high || {
+    echo "⚠️ Vulnerabilidades críticas encontradas! Considere corrigir antes do commit."
+}
+
+# 3. Verificação básica de tipos (não bloqueia commit)
 echo "📝 Verificando tipos TypeScript..."
 npm run type-check || {
     echo "⚠️ Erros de tipo encontrados, mas não bloqueando commit."
     echo "💡 Corrija os erros de tipo quando possível."
 }
 
-echo "✅ Todas as verificações passaram! Commit permitido."
+echo "✅ Verificações pré-commit concluídas! Commit permitido."

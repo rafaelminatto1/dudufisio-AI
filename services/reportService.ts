@@ -4,7 +4,7 @@ import { mockMedicalReports, mockUsers, mockPatients, mockSoapNotes, mockClinicI
 import html2pdf from 'html2pdf.js';
 
 
-let reports: MedicalReport[] = [...mockMedicalReports];
+const reports: MedicalReport[] = [...mockMedicalReports];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 

@@ -742,7 +742,7 @@ export class AutomationRuleValidator {
           errors.push('Time of day must be between 0 and 23');
         }
 
-        if (daysOfWeek && daysOfWeek.some(day => day < 0 || day > 6)) {
+        if (daysOfWeek?.some(day => day < 0 || day > 6)) {
           errors.push('Days of week must be between 0 (Sunday) and 6 (Saturday)');
         }
       }

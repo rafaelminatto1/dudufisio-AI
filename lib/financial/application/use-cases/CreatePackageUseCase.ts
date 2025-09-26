@@ -178,7 +178,7 @@ export class CreatePackageUseCase {
       }
     }
 
-    if (command.customPrice && command.customPrice.isZero()) {
+    if (command.customPrice?.isZero()) {
       throw new DomainError('Custom price must be positive');
     }
 

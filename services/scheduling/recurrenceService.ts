@@ -22,7 +22,7 @@ export const generateRecurrences = (initialAppointment: Appointment): Appointmen
     const untilDate = new Date(recurrenceRule.until);
     untilDate.setHours(23, 59, 59, 999); // Ensure we include the whole 'until' day
     
-    let currentDate = new Date(initialAppointment.startTime);
+    const currentDate = new Date(initialAppointment.startTime);
     currentDate.setHours(0, 0, 0, 0); // Start iterating from the beginning of the day
 
     const duration = initialAppointment.endTime.getTime() - initialAppointment.startTime.getTime();

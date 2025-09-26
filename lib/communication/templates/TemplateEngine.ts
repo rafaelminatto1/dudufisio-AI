@@ -154,7 +154,7 @@ export class TemplateEngine {
 
       // Get compiled template from cache or compile
       let compiledTemplate: HandlebarsTemplateDelegate;
-      let cachedEntry = this.templateCache.get(cacheKey);
+      const cachedEntry = this.templateCache.get(cacheKey);
 
       if (cachedEntry && this.isCacheValid(cachedEntry)) {
         compiledTemplate = cachedEntry.compiled;

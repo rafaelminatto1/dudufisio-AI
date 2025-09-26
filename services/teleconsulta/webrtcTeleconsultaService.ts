@@ -560,7 +560,7 @@ class WebRTCTeleconsultaService {
         sender.track && sender.track.kind === 'video'
       );
 
-      if (videoSender && videoSender.track) {
+      if (videoSender?.track) {
         const params = videoSender.getParameters();
         if (params.encodings && params.encodings.length > 0) {
           const encoding = params.encodings[0];

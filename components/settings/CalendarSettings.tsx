@@ -355,12 +355,12 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({
                   {provider.lastTest && (
                     <p>Último teste: {provider.lastTest.toLocaleString('pt-BR')}</p>
                   )}
-                  {provider.testResult && provider.testResult.responseTime && (
+                  {provider.testResult?.responseTime && (
                     <p>Tempo de resposta: {provider.testResult.responseTime}ms</p>
                   )}
                 </div>
 
-                {provider.testResult && provider.testResult.error && (
+                {provider.testResult?.error && (
                   <Alert className="mt-3">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>

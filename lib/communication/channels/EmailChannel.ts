@@ -443,7 +443,7 @@ export class EmailChannel extends BaseChannel {
    * Convert plain text to basic HTML
    */
   private convertTextToHTML(text: string, message: Message, config: EmailConfig): string {
-    let html = text
+    const html = text
       .replace(/\n/g, '<br>')
       .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 

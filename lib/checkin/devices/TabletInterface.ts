@@ -920,7 +920,7 @@ class MockCameraService implements CameraService {
   }
 
   isAvailable(): boolean {
-    return navigator.mediaDevices && navigator.mediaDevices.getUserMedia !== undefined;
+    return navigator.mediaDevices?.getUserMedia !== undefined;
   }
 
   async getStream(): Promise<MediaStream> {
