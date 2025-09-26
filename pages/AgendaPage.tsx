@@ -351,51 +351,55 @@ export default function AgendaPage() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-gray-50/30">
-            {/* Sticky Header with improved design */}
-            <Card className="sticky top-0 z-30 border-0 rounded-none shadow-sm bg-white/95 backdrop-blur-sm">
-                <CardHeader className="pb-3">
+        <div className="flex flex-col h-full bg-slate-50/50">
+            {/* Compact Professional Header */}
+            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
+                <div className="px-4 py-3">
                     <div className="flex items-center justify-between">
-                        {/* Left side - Title and compact date */}
-                        <div className="flex items-center gap-4">
+                        {/* Left side - Compact title and date */}
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
                             <div className="flex items-center gap-2">
-                                <CalendarIcon className="w-5 h-5 text-blue-600" />
-                                <h1 className="text-lg font-semibold text-gray-900">Agenda</h1>
+                                <CalendarIcon className="w-4 h-4 text-blue-600" />
+                                <h1 className="text-base font-semibold text-slate-900">Agenda</h1>
                             </div>
-                            <Badge variant="outline" className="text-xs font-normal text-gray-600">
+                            <div className="text-sm text-slate-600 font-medium truncate hidden sm:block">
                                 {getViewTitle()}
-                            </Badge>
+                            </div>
                         </div>
 
-                        {/* Right side - Navigation and actions */}
+                        {/* Right side - Compact navigation */}
                         <div className="flex items-center gap-2">
-                            <div className="flex items-center border rounded-lg bg-gray-50/50">
+                            {/* Navigation controls */}
+                            <div className="flex items-center rounded-md border border-slate-200 bg-white">
                                 <Button
                                     variant="ghost"
                                     size="sm"
                                     onClick={handlePrevious}
-                                    className="h-8 w-8 p-0 hover:bg-gray-100"
+                                    className="h-7 w-7 p-0 hover:bg-slate-50"
                                 >
-                                    <ChevronLeft className="w-4 h-4" />
+                                    <ChevronLeft className="w-3.5 h-3.5" />
                                 </Button>
+                                <div className="h-4 w-px bg-slate-200" />
                                 <Button
                                     variant="ghost"
                                     size="sm"
                                     onClick={handleToday}
-                                    className="h-8 px-3 text-xs font-medium hover:bg-gray-100"
+                                    className="h-7 px-2 text-xs font-medium hover:bg-slate-50"
                                 >
                                     Hoje
                                 </Button>
+                                <div className="h-4 w-px bg-slate-200" />
                                 <Button
                                     variant="ghost"
                                     size="sm"
                                     onClick={handleNext}
-                                    className="h-8 w-8 p-0 hover:bg-gray-100"
+                                    className="h-7 w-7 p-0 hover:bg-slate-50"
                                 >
-                                    <ChevronRight className="w-4 h-4" />
+                                    <ChevronRight className="w-3.5 h-3.5" />
                                 </Button>
                             </div>
 
+                            {/* Add appointment button */}
                             {user?.role !== Role.Patient && (
                                 <Button
                                     onClick={() => {
@@ -403,32 +407,30 @@ export default function AgendaPage() {
                                         setIsFormOpen(true);
                                     }}
                                     size="sm"
-                                    className="ml-2 h-8 px-3 bg-blue-600 hover:bg-blue-700"
+                                    className="h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white"
                                 >
-                                    <Plus className="w-4 h-4 mr-1.5" />
+                                    <Plus className="w-3.5 h-3.5 mr-1" />
                                     Agendar
                                 </Button>
                             )}
                         </div>
                     </div>
+                </div>
 
-                    {/* View selector - better positioned */}
-                    <div className="pt-2 border-t border-gray-100">
-                        <AgendaViewSelector
-                            currentView={currentView}
-                            onViewChange={setCurrentView}
-                        />
-                    </div>
-                </CardHeader>
-            </Card>
+                {/* View selector - integrated and compact */}
+                <div className="px-4 pb-3">
+                    <AgendaViewSelector
+                        currentView={currentView}
+                        onViewChange={setCurrentView}
+                    />
+                </div>
+            </div>
 
-            {/* Main content area - improved */}
-            <div className="flex-1 overflow-hidden">
-                <Card className="h-full border-0 rounded-t-none shadow-none bg-white">
-                    <CardContent className="p-0 h-full">
-                        {renderView()}
-                    </CardContent>
-                </Card>
+            {/* Main content area - professional styling */}
+            <div className="flex-1 overflow-auto bg-white">
+                <div className="h-full">
+                    {renderView()}
+                </div>
             </div>
 
             <AnimatePresence>

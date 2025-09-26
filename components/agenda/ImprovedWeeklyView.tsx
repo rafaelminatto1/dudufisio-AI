@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
 import AppointmentContextMenu from './AppointmentContextMenu';
+import AppointmentTooltip from './AppointmentTooltip';
 
 interface ImprovedWeeklyViewProps {
   currentDate: Date;
@@ -144,59 +145,49 @@ const MultiTherapistAppointmentCard: React.FC<{
 
   const getAppointmentStyle = (color: string) => {
     switch (color) {
-      case 'purple': return 'bg-purple-500 border-purple-600 hover:bg-purple-600';
-      case 'emerald': return 'bg-emerald-500 border-emerald-600 hover:bg-emerald-600';
-      case 'blue': return 'bg-blue-500 border-blue-600 hover:bg-blue-600';
-      case 'amber': return 'bg-amber-500 border-amber-600 hover:bg-amber-600';
-      case 'red': return 'bg-red-500 border-red-600 hover:bg-red-600';
-      case 'indigo': return 'bg-indigo-500 border-indigo-600 hover:bg-indigo-600';
-      case 'teal': return 'bg-teal-500 border-teal-600 hover:bg-teal-600';
-      case 'sky': return 'bg-sky-500 border-sky-600 hover:bg-sky-600';
-      default: return 'bg-slate-500 border-slate-600 hover:bg-slate-600';
+      case 'purple': return 'bg-purple-600 border-purple-700 hover:bg-purple-700';
+      case 'emerald': return 'bg-emerald-600 border-emerald-700 hover:bg-emerald-700';
+      case 'blue': return 'bg-blue-600 border-blue-700 hover:bg-blue-700';
+      case 'amber': return 'bg-amber-600 border-amber-700 hover:bg-amber-700';
+      case 'red': return 'bg-red-600 border-red-700 hover:bg-red-700';
+      case 'indigo': return 'bg-indigo-600 border-indigo-700 hover:bg-indigo-700';
+      case 'teal': return 'bg-teal-600 border-teal-700 hover:bg-teal-700';
+      case 'sky': return 'bg-sky-600 border-sky-700 hover:bg-sky-700';
+      default: return 'bg-slate-600 border-slate-700 hover:bg-slate-700';
     }
   };
 
   return (
-    <div
-      onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
-      onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); onRightClick(appointment, e); }}
-      draggable="true"
-      onDragStart={(e) => onDragStart(e, appointment)}
-      onDragEnd={onDragEnd}
-      className={cn(
-        "absolute p-1.5 rounded-md text-white text-xs cursor-pointer transition-all overflow-hidden flex flex-col border-l-2 shadow-sm hover:shadow-md",
-        getAppointmentStyle(appointment.therapistColor),
-        isBeingDragged && 'opacity-50 ring-2 ring-sky-400 scale-105'
-      )}
-      style={{
-        top: `${top}px`,
-        height: `${height}px`,
-        width: `${width}%`,
-        left: `${leftOffset}%`,
-        zIndex: 20
-      }}
-    >
-      <div className="flex-grow min-h-0 flex flex-col">
-        <div className="font-semibold text-xs leading-tight">
-          {appointment.patientName.split(' ')[0] || appointment.patientName}
-          {appointment.patientName.split(' ')[1] && (
-            <div className="text-xs opacity-90 leading-tight">
-              {appointment.patientName.split(' ')[1] || ''}
-            </div>
-          )}
-        </div>
-        {height > 50 && (
-          <div className="text-xs opacity-80 truncate">
+    <AppointmentTooltip appointment={appointment}>
+      <div
+        onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
+        onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); onRightClick(appointment, e); }}
+        draggable="true"
+        onDragStart={(e) => onDragStart(e, appointment)}
+        onDragEnd={onDragEnd}
+        className={cn(
+          "absolute p-2 rounded-lg text-white text-xs cursor-pointer transition-all overflow-hidden flex flex-col border-l-3 shadow-sm hover:shadow-md hover:scale-[1.02]",
+          getAppointmentStyle(appointment.therapistColor),
+          isBeingDragged && 'opacity-50 ring-2 ring-blue-400 scale-105'
+        )}
+        style={{
+          top: `${top}px`,
+          height: `${height}px`,
+          width: `${width}%`,
+          left: `${leftOffset}%`,
+          zIndex: 20
+        }}
+      >
+        <div className="flex-grow min-h-0 flex flex-col justify-between">
+          <div className="font-semibold text-xs leading-tight truncate">
+            {appointment.patientName.split(' ')[0] || appointment.patientName}
+          </div>
+          <div className="text-xs opacity-80 leading-tight">
             {format(appointment.startTime, 'HH:mm')}
           </div>
-        )}
-        {height > 70 && (
-          <div className="text-xs opacity-70 truncate">
-            {appointment.type}
-          </div>
-        )}
+        </div>
       </div>
-    </div>
+    </AppointmentTooltip>
   );
 };
 
