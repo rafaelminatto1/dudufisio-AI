@@ -1,18 +1,19 @@
 {
   "status": "commited",
-  "type": "frontend",
+  "type": "backend",
   "scope": "codebase",
   "localEndpoint": "http://localhost:5174",
-  "loginUser": "admin@dudufisio.com",
-  "loginPassword": "demo123456",
+  "backendAuthType": "basic token",
+  "backendUsername": "admin@dudufisio.com",
+  "backendPassword": "demo123456",
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "Foque em testar a funcionalidade do frontend, especialmente os componentes de UI, navegação, formulários e interações do usuário. Verifique se todos os componentes estão renderizando corretamente e se as funcionalidades principais estão operacionais.",
+    "additionalInstruction": "Execute comprehensive tests for the DuduFisio-AI physiotherapy management system, focusing on all major features including patient management, appointment scheduling, medical records, AI services, body mapping, exercise library, authentication, payments, and compliance features.",
     "envs": {
       "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
     }
   },
-  "proxy": "http://f6241eda-31d4-4e01-9be2-10b8e7d5935e:tlC52O9DCYPqHijkolEujR78OkFURvY9@tun.testsprite.com:8080"
+  "proxy": "http://f5bee4f5-e090-497a-bd1c-e310f9393a0e:r286kD4dbQ9DqLn7MryltTjEaSg7mAZj@tun.testsprite.com:8080"
 }

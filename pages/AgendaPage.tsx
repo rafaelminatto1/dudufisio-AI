@@ -4,8 +4,6 @@ import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader } from '../components/ui/card';
-import { Badge } from '../components/ui/badge';
 import { useAppointments } from '../hooks/useAppointments';
 import { EnrichedAppointment, Appointment, AppointmentStatus, Patient } from '../types';
 import { useToast } from '../contexts/ToastContext';
@@ -32,16 +30,20 @@ export default function AgendaPage() {
     // Calculate date ranges based on current view
     const { startDate, endDate } = useMemo(() => {
         switch (currentView) {
-            case 'daily':
+            case 'daily': {
                 return { startDate: currentDate, endDate: currentDate };
-            case 'weekly':
+            }
+            case 'weekly': {
                 const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
                 return { startDate: weekStart, endDate: addDays(weekStart, 6) };
-            case 'monthly':
+            }
+            case 'monthly': {
                 return { startDate: startOfMonth(currentDate), endDate: endOfMonth(currentDate) };
-            case 'list':
+            }
+            case 'list': {
                 const listStart = startOfWeek(currentDate, { weekStartsOn: 1 });
                 return { startDate: listStart, endDate: addDays(listStart, 13) }; // 2 weeks
+            }
             default:
                 const defaultStart = startOfWeek(currentDate, { weekStartsOn: 1 });
                 return { startDate: defaultStart, endDate: addDays(defaultStart, 6) };
@@ -91,9 +93,9 @@ export default function AgendaPage() {
             try {
                 const patientData = await patientService.getAllPatients();
                 setPatients(patientData);
-            } catch (error) {
-                showToast('Falha ao carregar a lista de pacientes.', 'error');
-            } finally {
+        } catch {
+            showToast('Falha ao carregar a lista de pacientes.', 'error');
+        } finally {
                 setIsLoadingData(false);
             }
         };
@@ -128,7 +130,7 @@ export default function AgendaPage() {
             setIsFormOpen(false);
             setAppointmentToEdit(null);
             return true;
-        } catch (error) {
+        } catch {
             showToast('Falha ao salvar a consulta.', 'error');
             return false;
         }
@@ -138,6 +140,7 @@ export default function AgendaPage() {
         const appointmentToDelete = filteredAppointments.find(a => a.id === appointmentId);
         if (!appointmentToDelete) return false;
         
+        // eslint-disable-next-line no-alert
         const confirmed = window.confirm(seriesId ? 'Excluir esta e todas as futuras ocorrências?' : 'Tem certeza que deseja excluir este agendamento?');
         if (!confirmed) return false;
   
@@ -218,7 +221,7 @@ export default function AgendaPage() {
             await appointmentService.saveAppointment(updatedAppointment);
             showToast('Agendamento movido!', 'success');
             refetch();
-        } catch (error) {
+        } catch {
             showToast('Falha ao mover agendamento.', 'error');
         } finally {
             setDraggedAppointmentId(null);
@@ -231,35 +234,43 @@ export default function AgendaPage() {
     // Navigation handlers
     const handlePrevious = () => {
         switch (currentView) {
-            case 'daily':
+            case 'daily': {
                 setCurrentDate(addDays(currentDate, -1));
                 break;
-            case 'weekly':
+            }
+            case 'weekly': {
                 setCurrentDate(addDays(currentDate, -7));
                 break;
-            case 'monthly':
+            }
+            case 'monthly': {
                 setCurrentDate(subMonths(currentDate, 1));
                 break;
-            case 'list':
+            }
+            case 'list': {
                 setCurrentDate(addDays(currentDate, -14));
                 break;
+            }
         }
     };
 
     const handleNext = () => {
         switch (currentView) {
-            case 'daily':
+            case 'daily': {
                 setCurrentDate(addDays(currentDate, 1));
                 break;
-            case 'weekly':
+            }
+            case 'weekly': {
                 setCurrentDate(addDays(currentDate, 7));
                 break;
-            case 'monthly':
+            }
+            case 'monthly': {
                 setCurrentDate(addMonths(currentDate, 1));
                 break;
-            case 'list':
+            }
+            case 'list': {
                 setCurrentDate(addDays(currentDate, 14));
                 break;
+            }
         }
     };
 

@@ -27,7 +27,7 @@ const FilterCheckbox: React.FC<{ id: string; label: string; checked: boolean; on
 
 const ExerciseLibraryPage: React.FC = () => {
   const { exercises, categories, isLoading, addExercise, updateExercise, deleteExercise, addCategory, updateCategory, copyCategory, deleteCategory, uniqueBodyParts, uniqueEquipment } = useExercises();
-  
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
@@ -39,7 +39,7 @@ const ExerciseLibraryPage: React.FC = () => {
 
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
   const [groupModalState, setGroupModalState] = useState<{ mode: 'create' | 'edit' | 'copy', name?: string }>({ mode: 'create' });
-  
+
   const [openCategories, setOpenCategories] = useState<string[]>([]);
   const [playingVideo, setPlayingVideo] = useState<{ url: string; title: string } | null>(null);
 

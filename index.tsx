@@ -12,6 +12,13 @@ import { ToastProvider } from './contexts/ToastContext';
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const AgendaPage = lazy(() => import('./pages/AgendaPage'));
 const PatientListPage = lazy(() => import('./pages/PatientListPage'));
+const PatientDetailPage = lazy(() => import('./pages/PatientDetailPage'));
+const ExerciseLibraryPage = lazy(() => import('./pages/ExerciseLibraryPage'));
+const AcompanhamentoPage = lazy(() => import('./pages/AcompanhamentoPage'));
+const ReportsPage = lazy(() => import('./pages/ReportsPage'));
+const FinancialDashboardPage = lazy(() => import('./pages/FinancialDashboardPage'));
+const SpecialtyAssessmentsPage = lazy(() => import('./pages/SpecialtyAssessmentsPage'));
+const IntegrationsTestPage = lazy(() => import('./pages/IntegrationsTestPage'));
 
 console.log('🚀 Starting React application...');
 
@@ -43,6 +50,14 @@ const App: React.FC = () => {
     setCurrentPage(page);
   };
 
+  // Expose the setCurrentPage function globally for navigation
+  React.useEffect(() => {
+    (window as any).__setCurrentPage = setCurrentPage;
+    return () => {
+      delete (window as any).__setCurrentPage;
+    };
+  }, []);
+
   const renderPage = () => {
     switch(currentPage) {
       case 'dashboard':
@@ -51,18 +66,20 @@ const App: React.FC = () => {
         return <AgendaPage />;
       case 'patients':
         return <PatientListPage />;
+      case 'patient-detail':
+        return <PatientDetailPage />;
       case 'exercises':
-        return <div className="p-6"><h1 className="text-2xl font-bold">Exercícios</h1><p>Página em desenvolvimento...</p></div>;
+        return <ExerciseLibraryPage />;
       case 'treatments':
-        return <div className="p-6"><h1 className="text-2xl font-bold">Tratamentos</h1><p>Página em desenvolvimento...</p></div>;
+        return <AcompanhamentoPage />;
       case 'reports':
-        return <div className="p-6"><h1 className="text-2xl font-bold">Relatórios</h1><p>Página em desenvolvimento...</p></div>;
+        return <ReportsPage />;
       case 'financial':
-        return <div className="p-6"><h1 className="text-2xl font-bold">Financeiro</h1><p>Página em desenvolvimento...</p></div>;
+        return <FinancialDashboardPage />;
       case 'evaluations':
-        return <div className="p-6"><h1 className="text-2xl font-bold">Avaliações</h1><p>Página em desenvolvimento...</p></div>;
+        return <SpecialtyAssessmentsPage />;
       case 'integrations':
-        return <div className="p-6"><h1 className="text-2xl font-bold">Integrações</h1><p>Página em desenvolvimento...</p></div>;
+        return <IntegrationsTestPage />;
       default:
         return <DashboardPage />;
     }
