@@ -9,6 +9,7 @@ const SessionPage = lazy(() => import('./SessionPage'));
 const SessionFormPage = lazy(() => import('./SessionFormPage'));
 const AtendimentoPage = lazy(() => import('./AtendimentoPage'));
 const FinancialDashboardPage = lazy(() => import('./FinancialDashboardPage'));
+const AdminDashboardPage = lazy(() => import('./AdminDashboardPage'));
 const ExerciseLibraryPage = lazy(() => import('./ExerciseLibraryPage'));
 const ReportsPage = lazy(() => import('./ReportsPage'));
 const SpecialtyAssessmentsPage = lazy(() => import('./SpecialtyAssessmentsPage'));
@@ -232,6 +233,12 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
         switch (currentPage) {
             case 'dashboard':
                 return <DashboardContent />;
+            case 'admin-dashboard':
+                return (
+                    <Suspense fallback={<PageLoader />}>
+                        <AdminDashboardPage />
+                    </Suspense>
+                );
             case 'appointments':
                 return (
                     <Suspense fallback={<PageLoader />}>

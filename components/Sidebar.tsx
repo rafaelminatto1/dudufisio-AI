@@ -67,6 +67,7 @@ const Sidebar: React.FC = () => {
   
   const mainNav = [
     { to: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
+    { to: '/admin-dashboard', icon: BarChart3, label: 'Dashboard Administrativo' },
     { to: '/clinical-analytics', icon: PieChart, label: 'Dashboard Clínico' },
     { to: '/patients', icon: Users, label: 'Pacientes' },
     { to: '/agenda', icon: Calendar, label: 'Agenda' },
