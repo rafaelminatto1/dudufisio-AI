@@ -653,10 +653,8 @@ tomorrow.setDate(tomorrow.getDate() + 1);
 const nextWeek = new Date();
 nextWeek.setDate(nextWeek.getDate() + 7);
 
-export const mockProjects: Project[] = [
-    { id: 'proj_1', title: 'Reabilitação Complexa - Ana Costa', description: 'Plano de reabilitação multifásico para P.O. de joelho e ombro.', status: ProjectStatus.Active, patientId: '1', type: 'Clinical', startDate: '2024-07-01' },
-    { id: 'proj_2', title: 'Melhorias Internas Q3', description: 'Projeto para implementar novo software de agendamento e treinar a equipe.', status: ProjectStatus.Active, type: 'Operational', startDate: '2024-07-15' },
-];
+// Updated projects will be loaded from projectService
+export const mockProjects: Project[] = [];
 
 export const mockTasks: Task[] = [
   { id: 'task1', projectId: 'proj_1', title: 'Preparar laudo da Ana Costa', description: 'Revisar notas SOAP e exames de imagem para o laudo final.', status: TaskStatus.ToDo, priority: TaskPriority.High, dueDate: tomorrow.toISOString().split('T')[0] as string, assignedUserId: 'therapist_1', actorUserId: 'therapist_2' },

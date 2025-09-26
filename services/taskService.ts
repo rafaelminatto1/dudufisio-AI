@@ -1,15 +1,14 @@
 // services/taskService.ts
 import { Task, Project } from '../types';
-import { mockTasks, mockProjects } from '../data/mockData';
+import { mockTasks } from '../data/mockData';
+import projectService from './projectService';
 
 let tasks: Task[] = [...mockTasks];
-const projects: Project[] = [...mockProjects];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export const getProjects = async (): Promise<Project[]> => {
-    await delay(300);
-    return [...projects];
+    return await projectService.getProjects();
 };
 
 export const getTasks = async (projectId?: string): Promise<Task[]> => {

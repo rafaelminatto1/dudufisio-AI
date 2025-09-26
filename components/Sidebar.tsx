@@ -7,7 +7,7 @@ import {
     LayoutGrid, Users, Calendar, Stethoscope, ChevronLeft, ChevronRight, BarChart3, 
     ShieldCheck, Cog, Library, AreaChart, LogOut, FilePlus, FileClock, Dumbbell, 
     AlertTriangle, Mail, BrainCircuit, ClipboardList, PieChart, DollarSign, 
-    SlidersHorizontal, Bell, MessageSquare, Handshake, Package, Ticket, Activity, Users2, BookMarked
+    SlidersHorizontal, Bell, MessageSquare, Handshake, Package, Ticket, Activity, Users2, BookMarked, FolderOpen
 } from 'lucide-react';
 import { useAuth } from "../contexts/AppContext";
 import { useNotifications } from '../hooks/useNotifications';
@@ -83,6 +83,7 @@ const Sidebar: React.FC = () => {
   ];
 
   const managementNav = [
+    { to: '/projects', icon: FolderOpen, label: 'Projetos Ativos' },
     { to: '/groups', icon: Users2, label: 'Grupos' },
     { to: '/exercises', icon: Dumbbell, label: 'Exercícios' },
     { to: '/materials', icon: BookMarked, label: 'Materiais Clínicos' },

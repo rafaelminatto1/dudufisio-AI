@@ -421,6 +421,118 @@ export enum ProjectStatus {
   Active = 'Ativo',
   Concluded = 'Concluído',
   Paused = 'Pausado',
+  Planning = 'Planejamento',
+  InProgress = 'Em Andamento',
+  Review = 'Revisão',
+  Cancelled = 'Cancelado',
+}
+
+export enum ProjectType {
+  Clinical = 'Clinical',
+  Research = 'Research',
+  Operational = 'Operational',
+  ClinicalCase = 'ClinicalCase',
+  Innovation = 'Innovation',
+  Academic = 'Academic',
+  Quality = 'Quality',
+  Training = 'Training',
+  Expansion = 'Expansion',
+}
+
+export enum ProjectPriority {
+  Low = 'Baixa',
+  Medium = 'Média',
+  High = 'Alta',
+  Critical = 'Crítica',
+}
+
+export enum ResearchType {
+  Effectiveness = 'Efetividade',
+  Innovation = 'Inovação',
+  Academic = 'Acadêmica',
+}
+
+export enum ClinicalCaseType {
+  Complex = 'Complexo',
+  Rare = 'Raro',
+  Experimental = 'Experimental',
+  Longitudinal = 'Longitudinal',
+  Multidisciplinary = 'Multidisciplinar',
+}
+
+export enum ImprovementType {
+  Quality = 'Qualidade',
+  Training = 'Capacitação',
+  Expansion = 'Expansão',
+  Process = 'Processo',
+  Technology = 'Tecnologia',
+}
+
+export interface ProjectResource {
+  id: string;
+  name: string;
+  type: 'Human' | 'Equipment' | 'Budget' | 'Time';
+  allocated: number;
+  total: number;
+  unit: string;
+}
+
+export interface ProjectMilestone {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  completed: boolean;
+  completedAt?: string;
+  deliverables: string[];
+}
+
+export interface ProjectBudget {
+  planned: number;
+  actual: number;
+  currency: string;
+  breakdown: {
+    category: string;
+    planned: number;
+    actual: number;
+  }[];
+}
+
+export interface ProjectTeamMember {
+  userId: string;
+  role: string;
+  hoursAllocated: number;
+  hoursWorked: number;
+}
+
+export interface ProjectAttachment {
+  id: string;
+  name: string;
+  type: string;
+  url: string;
+  uploadedAt: string;
+  uploadedBy: string;
+  size: number;
+}
+
+export interface ProjectComment {
+  id: string;
+  content: string;
+  authorId: string;
+  authorName: string;
+  createdAt: string;
+  attachments?: ProjectAttachment[];
+}
+
+export interface ProjectMetrics {
+  tasksCompleted: number;
+  totalTasks: number;
+  hoursSpent: number;
+  budgetSpent: number;
+  milestonesCompleted: number;
+  totalMilestones: number;
+  roi?: number;
+  impactScore?: number;
 }
 
 export interface Project {
@@ -428,10 +540,207 @@ export interface Project {
   title: string;
   description: string;
   status: ProjectStatus;
-  patientId?: string; // Optional link to a patient for clinical projects
-  type: 'Clinical' | 'Research' | 'Operational';
-  startDate: string; // YYYY-MM-DD
-  endDate?: string; // YYYY-MM-DD
+  type: ProjectType;
+  priority: ProjectPriority;
+  startDate: string;
+  endDate?: string;
+  estimatedEndDate?: string;
+  patientId?: string;
+  createdBy: string;
+  assignedTo: string[];
+  tags: string[];
+  
+  // Resources and Budget
+  resources: ProjectResource[];
+  budget?: ProjectBudget;
+  team: ProjectTeamMember[];
+  
+  // Progress Tracking
+  milestones: ProjectMilestone[];
+  progress: number; // 0-100
+  metrics: ProjectMetrics;
+  
+  // Documentation
+  attachments: ProjectAttachment[];
+  comments: ProjectComment[];
+  
+  // Specific fields for different project types
+  researchData?: ResearchProject;
+  clinicalCaseData?: ClinicalCaseProject;
+  improvementData?: ImprovementProject;
+  
+  // Timestamps
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ResearchProject {
+  researchType: ResearchType;
+  hypothesis: string;
+  methodology: string;
+  inclusionCriteria: string[];
+  exclusionCriteria: string[];
+  sampleSize: number;
+  currentSampleSize: number;
+  dataCollectionPeriod: {
+    start: string;
+    end: string;
+  };
+  statisticalMethods: string[];
+  expectedOutcomes: string[];
+  publications: {
+    title: string;
+    journal?: string;
+    status: 'Planning' | 'Writing' | 'Submitted' | 'Under Review' | 'Accepted' | 'Published';
+    submissionDate?: string;
+  }[];
+  collaboratingInstitutions: string[];
+  ethicsApproval?: {
+    approved: boolean;
+    approvalNumber?: string;
+    approvalDate?: string;
+    institution: string;
+  };
+}
+
+export interface ClinicalCaseProject {
+  caseType: ClinicalCaseType;
+  patientAge: number;
+  patientGender: 'M' | 'F';
+  primaryDiagnosis: string;
+  secondaryDiagnoses: string[];
+  comorbidities: string[];
+  treatmentProtocol: string;
+  outcomesMeasured: string[];
+  followUpPeriod: number; // in months
+  
+  // Documentation
+  initialAssessment: {
+    date: string;
+    findings: string;
+    photos?: string[];
+    videos?: string[];
+  };
+  
+  progressNotes: {
+    date: string;
+    findings: string;
+    interventions: string[];
+    photos?: string[];
+    videos?: string[];
+    biomechanicalAnalysis?: string;
+  }[];
+  
+  finalAssessment?: {
+    date: string;
+    outcomes: string;
+    photos?: string[];
+    videos?: string[];
+    recommendations: string[];
+  };
+  
+  multidisciplinaryTeam: {
+    role: string;
+    name: string;
+    contributions: string[];
+  }[];
+  
+  literatureReview: {
+    references: string[];
+    keyFindings: string[];
+  };
+  
+  presentationHistory: {
+    event: string;
+    date: string;
+    type: 'Conference' | 'Workshop' | 'Case Discussion' | 'Publication';
+  }[];
+}
+
+export interface ImprovementProject {
+  improvementType: ImprovementType;
+  problemStatement: string;
+  currentState: string;
+  targetState: string;
+  rootCauseAnalysis: string[];
+  proposedSolutions: {
+    solution: string;
+    impact: 'Low' | 'Medium' | 'High';
+    effort: 'Low' | 'Medium' | 'High';
+    priority: number;
+  }[];
+  
+  kpis: {
+    metric: string;
+    baseline: number;
+    target: number;
+    current: number;
+    unit: string;
+  }[];
+  
+  implementationPlan: {
+    phase: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    responsible: string;
+    deliverables: string[];
+  }[];
+  
+  riskAssessment: {
+    risk: string;
+    probability: 'Low' | 'Medium' | 'High';
+    impact: 'Low' | 'Medium' | 'High';
+    mitigation: string;
+  }[];
+  
+  changeManagement: {
+    stakeholders: string[];
+    communicationPlan: string;
+    trainingRequired: boolean;
+    trainingPlan?: string;
+  };
+}
+
+export interface ProjectTemplate {
+  id: string;
+  name: string;
+  description: string;
+  type: ProjectType;
+  category: string;
+  
+  // Template structure
+  defaultTasks: {
+    title: string;
+    description: string;
+    estimatedHours: number;
+    dependencies: string[];
+    phase: string;
+  }[];
+  
+  defaultMilestones: {
+    title: string;
+    description: string;
+    daysFromStart: number;
+    deliverables: string[];
+  }[];
+  
+  requiredFields: string[];
+  optionalFields: string[];
+  
+  estimatedDuration: number; // in days
+  estimatedBudget?: number;
+  requiredResources: {
+    type: 'Human' | 'Equipment' | 'Budget';
+    description: string;
+    quantity: number;
+    unit: string;
+  }[];
+  
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
 }
 
 export enum TaskStatus {
