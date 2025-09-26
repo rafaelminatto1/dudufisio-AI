@@ -4,5 +4,15 @@
   "scope": "codebase",
   "localEndpoint": "http://localhost:5174",
   "loginUser": "admin@dudufisio.com",
-  "loginPassword": "demo123456"
+  "loginPassword": "demo123456",
+  "executionArgs": {
+    "projectName": "dudufisio-AI",
+    "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
+    "testIds": [],
+    "additionalInstruction": "Foque em testar a funcionalidade do frontend, especialmente os componentes de UI, navegação, formulários e interações do usuário. Verifique se todos os componentes estão renderizando corretamente e se as funcionalidades principais estão operacionais.",
+    "envs": {
+      "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
+    }
+  },
+  "proxy": "http://f6241eda-31d4-4e01-9be2-10b8e7d5935e:tlC52O9DCYPqHijkolEujR78OkFURvY9@tun.testsprite.com:8080"
 }

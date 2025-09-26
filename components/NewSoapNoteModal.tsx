@@ -131,9 +131,9 @@ Objetivo: "${objective}"
 ---`;
 
     try {
-      const response = await aiOrchestratorService.getResponse(prompt);
+      const response = await aiOrchestratorService.query(prompt);
   
-      const content = response.content;
+      const content = (response as any).response || (response as any).content || 'Resposta não disponível';
       
       const assessmentHeader = "AVALIAÇÃO:";
       const planHeader = "PLANO:";
@@ -157,7 +157,7 @@ Objetivo: "${objective}"
       } else if (planIndex !== -1) {
           suggestedPlan = content.substring(planIndex + planHeader.length).trim();
       } else {
-          const lines = content.split('\n').filter(line => line.trim() !== '');
+          const lines = content.split('\n').filter((line: string) => line.trim() !== '');
           if (lines.length > 1) {
               const splitPoint = Math.ceil(lines.length / 2);
               suggestedAssessment = lines.slice(0, splitPoint).join('\n');

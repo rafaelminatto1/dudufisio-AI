@@ -16,6 +16,10 @@ export type { SMSConfig } from './SMSChannel';
 export { EmailChannel, defaultEmailConfig } from './EmailChannel';
 export type { EmailConfig } from './EmailChannel';
 
+// Resend Email Channel
+export { ResendEmailChannel } from './ResendEmailChannel';
+export type { ResendEmailConfig } from './ResendEmailChannel';
+
 // Push Notification Channel
 export { PushChannel, defaultPushConfig } from './PushChannel';
 export type { PushConfig } from './PushChannel';
@@ -26,12 +30,13 @@ import { BaseChannelConfig } from './BaseChannel';
 import { WhatsAppChannel, WhatsAppConfig } from './WhatsAppChannel';
 import { SMSChannel, SMSConfig } from './SMSChannel';
 import { EmailChannel, EmailConfig } from './EmailChannel';
+import { ResendEmailChannel, ResendEmailConfig } from './ResendEmailChannel';
 import { PushChannel, PushConfig } from './PushChannel';
 
 /**
  * Channel configuration union type
  */
-export type ChannelConfig = WhatsAppConfig | SMSConfig | EmailConfig | PushConfig;
+export type ChannelConfig = WhatsAppConfig | SMSConfig | EmailConfig | ResendEmailConfig | PushConfig;
 
 /**
  * Channel factory for creating channel instances
@@ -95,6 +100,7 @@ export class ChannelFactory {
 ChannelFactory.register('whatsapp', WhatsAppChannel);
 ChannelFactory.register('sms', SMSChannel);
 ChannelFactory.register('email', EmailChannel);
+ChannelFactory.register('resend-email', ResendEmailChannel);
 ChannelFactory.register('push', PushChannel);
 
 /**
@@ -394,6 +400,21 @@ export function createChannelConfigFromEnv(channelName: string): ChannelConfig {
         unsubscribeUrl: process.env.EMAIL_UNSUBSCRIBE_URL,
         costPerMessage: 0.0001
       } as EmailConfig;
+
+    case 'resend-email':
+      return {
+        ...baseConfig,
+        apiKey: process.env.RESEND_API_KEY || '',
+        fromEmail: process.env.EMAIL_FROM || 'noreply@moocafisio.com.br',
+        fromName: process.env.EMAIL_FROM_NAME || 'DuduFisio',
+        replyTo: process.env.EMAIL_REPLY_TO,
+        maxAttachmentSize: parseInt(process.env.EMAIL_MAX_ATTACHMENT_SIZE || '10485760'), // 10MB
+        enableTracking: process.env.EMAIL_ENABLE_TRACKING !== 'false',
+        enableBounceHandling: process.env.EMAIL_ENABLE_BOUNCE_HANDLING !== 'false',
+        trackingPixelUrl: process.env.EMAIL_TRACKING_PIXEL_URL,
+        unsubscribeUrl: process.env.EMAIL_UNSUBSCRIBE_URL,
+        costPerMessage: 0.0001
+      } as ResendEmailConfig;
 
     case 'push':
       return {

@@ -1,608 +1,478 @@
 [
   {
     "id": "TC001",
-    "title": "Patient CPF Validation and Duplicate Prevention",
-    "description": "Verify that the system validates patient CPF format correctly and prevents duplicate patient registrations with the same CPF.",
+    "title": "User Registration with Email Validation and Role Assignment",
+    "description": "Verify that new user registration validates email format, enforces role constraints and creates user with correct permissions.",
     "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Navigate to the patient registration form."
+        "description": "Navigate to user registration page"
       },
       {
         "type": "action",
-        "description": "Input a valid but incorrectly formatted CPF."
+        "description": "Input valid user information with correctly formatted email and select a role (Administrator, Physiotherapist, Intern, Patient, Clinic Staff)"
       },
       {
         "type": "action",
-        "description": "Attempt to submit the registration form."
+        "description": "Submit the registration form"
       },
       {
         "type": "assertion",
-        "description": "Check that the system shows an error indicating invalid CPF format."
+        "description": "Confirm registration success and user is assigned the correct role and permissions"
       },
       {
         "type": "action",
-        "description": "Input a well-formatted CPF."
-      },
-      {
-        "type": "action",
-        "description": "Submit the registration form with CPF."
+        "description": "Attempt registration with invalid email formats (missing @, missing domain, etc.)"
       },
       {
         "type": "assertion",
-        "description": "Verify that the patient is registered successfully."
+        "description": "Validate error messages prevent registration and prompt for correct email format"
       },
       {
         "type": "action",
-        "description": "Attempt to register another patient with the same CPF."
+        "description": "Attempt registration with missing role selection"
       },
       {
         "type": "assertion",
-        "description": "Check that the system prevents duplicate CPF and shows appropriate error."
+        "description": "Validate error prevents registration without proper role assignment"
       }
     ]
   },
   {
     "id": "TC002",
-    "title": "Authentication with Login and Two-Factor Authentication (2FA)",
-    "description": "Validate that the authentication system accepts valid credentials and supports 2FA, rejects invalid credentials or missing 2FA codes.",
-    "category": "security",
+    "title": "Patient Creation with CPF Validation and Duplicate Prevention",
+    "description": "Ensure system validates CPF format, required fields, and prevents duplicate patient records.",
+    "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Navigate to the login page."
+        "description": "Navigate to patient creation form"
       },
       {
         "type": "action",
-        "description": "Enter valid username and password."
+        "description": "Input all mandatory patient data including a correctly formatted CPF"
       },
       {
         "type": "action",
-        "description": "Submit login and provide correct 2FA code."
+        "description": "Submit the patient creation form"
       },
       {
         "type": "assertion",
-        "description": "Confirm successful login and access to the system dashboard."
+        "description": "Patient is created successfully"
       },
       {
         "type": "action",
-        "description": "Logout and navigate to login page again."
-      },
-      {
-        "type": "action",
-        "description": "Enter valid username and password."
-      },
-      {
-        "type": "action",
-        "description": "Submit login without providing the 2FA code."
+        "description": "Attempt to create another patient with identical CPF"
       },
       {
         "type": "assertion",
-        "description": "Verify that login fails and prompts for 2FA code."
+        "description": "System blocks duplicate and displays duplicate patient error"
       },
       {
         "type": "action",
-        "description": "Enter invalid username or password and attempt login."
+        "description": "Input invalid CPF formats and submit form"
       },
       {
         "type": "assertion",
-        "description": "Check that login is rejected with appropriate error message."
+        "description": "System prevents submission and displays validation error for CPF"
       }
     ]
   },
   {
     "id": "TC003",
-    "title": "Appointment Scheduling with Conflict Prevention and Recurrence",
-    "description": "Ensure the appointment system supports daily, weekly, monthly views, prevents schedule conflicts and supports recurring appointments.",
+    "title": "Appointment Scheduling with Conflict and Recurrence Handling",
+    "description": "Validate appointment creation across daily, weekly, monthly views prevents overlapping conflicts and supports recurring appointments.",
     "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Navigate to the agenda page and open daily view."
+        "description": "Open appointment scheduling interface"
       },
       {
         "type": "action",
-        "description": "Create a new appointment for a physiotherapist and patient at a given time slot."
+        "description": "Create an appointment for a patient at a specific time slot"
       },
       {
         "type": "assertion",
-        "description": "Verify appointment is correctly displayed in daily view."
+        "description": "Appointment is saved and appears correctly in daily, weekly, monthly, and list views"
       },
       {
         "type": "action",
-        "description": "Attempt to create another appointment overlapping the previous one for the same physiotherapist."
+        "description": "Attempt to create another appointment overlapping the same time slot"
       },
       {
         "type": "assertion",
-        "description": "Verify the system prevents conflict and displays an error notification."
+        "description": "System prevents creation and shows conflict notification"
       },
       {
         "type": "action",
-        "description": "Create a recurring weekly appointment for a patient and physiotherapist."
+        "description": "Create a recurring appointment and verify series in schedule views"
       },
       {
         "type": "assertion",
-        "description": "Verify that the recurring appointments appear correctly in weekly and monthly views."
-      },
-      {
-        "type": "action",
-        "description": "Apply advanced filters to view appointments of a specific physiotherapist."
-      },
-      {
-        "type": "assertion",
-        "description": "Confirm that the filtered agenda shows only matching appointments."
+        "description": "Recurring appointments are displayed properly and conflict prevention applies to all instances"
       }
     ]
   },
   {
     "id": "TC004",
-    "title": "Clinical Notes Auto-Save and Version History",
-    "description": "Verify that clinical notes are automatically saved during editing and maintain a version history that can be reviewed.",
+    "title": "Clinical Documentation Editor Features",
+    "description": "Verify SOAP editor supports rich text input, auto-save, versioning, and digital signature functionality.",
     "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Open the clinical notes editor for a patient."
+        "description": "Open a patient medical record and access SOAP evaluation editor"
       },
       {
         "type": "action",
-        "description": "Enter clinical notes text and wait without manual saving."
+        "description": "Input rich text content including bold, italics, bullet lists and images"
       },
       {
         "type": "assertion",
-        "description": "Confirm the system auto-saves the notes periodically."
+        "description": "Rich text formatting is saved and displayed correctly"
       },
       {
         "type": "action",
-        "description": "Modify notes several times to create multiple versions."
-      },
-      {
-        "type": "action",
-        "description": "Open version history for the notes."
+        "description": "Wait for auto-save to trigger or trigger manual save"
       },
       {
         "type": "assertion",
-        "description": "Verify all previous versions are listed and their contents are retrievable."
+        "description": "Content is saved without data loss and version history is created"
       },
       {
         "type": "action",
-        "description": "Revert to an earlier version of notes."
+        "description": "Edit the content and access version history"
       },
       {
         "type": "assertion",
-        "description": "Validate that the notes editor displays the reverted version correctly."
+        "description": "Can view previous versions and restore if needed"
+      },
+      {
+        "type": "action",
+        "description": "Apply digital signature to document"
+      },
+      {
+        "type": "assertion",
+        "description": "Signature is saved and document is locked for further edits"
       }
     ]
   },
   {
     "id": "TC005",
-    "title": "AI-Generated Clinical Reports Accuracy and Compliance",
-    "description": "Validate that AI-generated clinical reports achieve at least 95% accuracy and comply with clinical rules.",
+    "title": "AI Assistant Protocol Suggestions and Report Generation Accuracy",
+    "description": "Validate AI assistant generates clinical reports, protocol suggestions, risk analysis and inquiries with at least 95% accuracy as reviewed by experts.",
     "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Use AI assistant to generate a clinical report for a sample patient case."
-      },
-      {
-        "type": "assertion",
-        "description": "Evaluate the generated report for clinical accuracy and completeness."
-      },
-      {
-        "type": "assertion",
-        "description": "Check that the report meets minimum 95% accuracy target based on predefined clinical criteria."
-      },
-      {
-        "type": "assertion",
-        "description": "Verify the report complies with clinical rules and guidelines configured in the system."
+        "description": "Access AI Assistant module within a patient session"
       },
       {
         "type": "action",
-        "description": "Modify patient data with edge case inputs (e.g. rare conditions)."
-      },
-      {
-        "type": "action",
-        "description": "Generate AI report again."
+        "description": "Input relevant clinical data and request automatic report generation"
       },
       {
         "type": "assertion",
-        "description": "Confirm report remains accurate and rule-compliant for edge case data."
+        "description": "Generated report contains accurate protocol suggestions, risk analysis and clinical inquiries"
+      },
+      {
+        "type": "action",
+        "description": "Compare AI outputs against expert validated benchmarks"
+      },
+      {
+        "type": "assertion",
+        "description": "Achieve a minimum accuracy of 95% for AI-generated content"
+      },
+      {
+        "type": "action",
+        "description": "Test error scenarios where AI receives incomplete or ambiguous data"
+      },
+      {
+        "type": "assertion",
+        "description": "AI returns meaningful fallback messages or requests additional data"
       }
     ]
   },
   {
     "id": "TC006",
-    "title": "Patient Portal Secure Access and Functionalities",
-    "description": "Test secure access to the patient portal and verify functionalities including viewing clinical history, making appointments, viewing exercises, and messaging.",
-    "category": "security",
-    "priority": "High",
+    "title": "Interactive Body Map Pain Point Visualization",
+    "description": "Verify that users can accurately mark pain points on front and back human body views and see pain evolution charts.",
+    "category": "functional",
+    "priority": "Medium",
     "steps": [
       {
         "type": "action",
-        "description": "Patient logs in to the portal using correct credentials."
-      },
-      {
-        "type": "assertion",
-        "description": "Verify successful login and 2FA if enabled."
+        "description": "Open the Interactive Body Map interface"
       },
       {
         "type": "action",
-        "description": "Navigate to clinical history section."
+        "description": "Mark and save multiple pain points on frontal view"
       },
       {
         "type": "assertion",
-        "description": "Validate accurate display of the patient's clinical records and history."
+        "description": "Pain points are plotted correctly and saved"
       },
       {
         "type": "action",
-        "description": "Access appointment scheduling in the portal and book a new appointment."
+        "description": "Switch to posterior view and mark additional pain points"
       },
       {
         "type": "assertion",
-        "description": "Confirm appointment is successfully created and visible in portal."
+        "description": "Pain points appear on posterior view without affecting frontal markings"
       },
       {
         "type": "action",
-        "description": "Navigate to prescribed exercises page."
+        "description": "Access Pain Evolution Chart for marked points"
       },
       {
         "type": "assertion",
-        "description": "Verify display of assigned exercises with media content."
-      },
-      {
-        "type": "action",
-        "description": "Use portal messaging system to send a message to the physiotherapist."
-      },
-      {
-        "type": "assertion",
-        "description": "Confirm message is sent and a notification is received by the physiotherapist."
+        "description": "Chart correctly displays historical pain data over time"
       }
     ]
   },
   {
     "id": "TC007",
-    "title": "System Performance Under 3G Connection",
-    "description": "Verify that key system pages load within 2 seconds when accessed over simulated 3G network conditions.",
-    "category": "performance",
+    "title": "Patient Portal Access and Data Privacy",
+    "description": "Validate patient login, secure access to personal records, prescribed exercises, appointments, and communication features with privacy controls.",
+    "category": "security",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Simulate 3G network connection."
-      },
-      {
-        "type": "action",
-        "description": "Access the login page and measure load time."
+        "description": "Patient attempts login with valid credentials"
       },
       {
         "type": "assertion",
-        "description": "Confirm page loads within 2 seconds."
+        "description": "Access is granted and dashboard loads within 2 seconds on simulated 3G connection"
       },
       {
         "type": "action",
-        "description": "Login to the system and navigate to the dashboard."
+        "description": "Patient views treatment history, prescribed exercises and appointment list"
       },
       {
         "type": "assertion",
-        "description": "Verify dashboard loads within 2 seconds."
+        "description": "All data corresponds to only the logged-in patient and is correctly rendered"
       },
       {
         "type": "action",
-        "description": "Open patient list and a patient detail page."
+        "description": "Patient tries to access another patient's records via URL hacking"
       },
       {
         "type": "assertion",
-        "description": "Ensure pages load within the required time."
+        "description": "Access denied and proper error shown, no data leaked"
+      },
+      {
+        "type": "action",
+        "description": "Test security controls including logout, session expiration and two-factor authentication"
+      },
+      {
+        "type": "assertion",
+        "description": "System enforces secure logout, session timeout and 2FA where applicable"
       }
     ]
   },
   {
     "id": "TC008",
-    "title": "Data Encryption and LGPD Compliance",
-    "description": "Test that sensitive data is encrypted in storage and transit, and the system complies with LGPD (Brazilian data protection law).",
-    "category": "security",
-    "priority": "High",
+    "title": "Operational Dashboard and Reporting Export Functionality",
+    "description": "Test financial, clinical and productivity reports display accurate data and export correctly to PDF, Excel and CSV with integrity checks.",
+    "category": "functional",
+    "priority": "Medium",
     "steps": [
       {
         "type": "action",
-        "description": "Create patient record with sensitive data."
-      },
-      {
-        "type": "assertion",
-        "description": "Verify data at rest is encrypted in the database."
+        "description": "Navigate to operational dashboards"
       },
       {
         "type": "action",
-        "description": "Intercept network traffic during data transmission."
+        "description": "View financial, clinical and productivity analytics with various filters"
       },
       {
         "type": "assertion",
-        "description": "Check data is transmitted over encrypted channels (HTTPS/TLS)."
+        "description": "Analytics data is accurate and updates dynamically with filters"
       },
       {
         "type": "action",
-        "description": "Review system privacy policies and user consent flows."
+        "description": "Export reports in PDF format"
       },
       {
         "type": "assertion",
-        "description": "Confirm system implements user data access, correction and deletion as per LGPD requirements."
+        "description": "PDF opens correctly, contains all data and formatting is preserved"
+      },
+      {
+        "type": "action",
+        "description": "Export reports in Excel and CSV formats"
+      },
+      {
+        "type": "assertion",
+        "description": "Excel and CSV files contain full data sets with correct delimiters and no data corruption"
       }
     ]
   },
   {
     "id": "TC009",
-    "title": "Backup and System Availability",
-    "description": "Validate that the system performs daily automatic backups and guarantees 99.5% system availability.",
+    "title": "Financial Management with Payment Integrations and Delinquency Control",
+    "description": "Validate multiple payment gateways integration, transaction recording, and delinquency alert functionality.",
     "category": "functional",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Trigger or simulate the daily backup process."
-      },
-      {
-        "type": "assertion",
-        "description": "Verify backup completes successfully and is stored securely."
+        "description": "Navigate to financial management section"
       },
       {
         "type": "action",
-        "description": "Simulate system recovery from latest backup."
+        "description": "Initiate payment via each supported payment integration"
       },
       {
         "type": "assertion",
-        "description": "Confirm data integrity and system functionality post-recovery."
+        "description": "Payments processed successfully and transaction recorded"
       },
       {
         "type": "action",
-        "description": "Monitor system uptime over a prolonged period."
+        "description": "Simulate delayed or failed payments"
       },
       {
         "type": "assertion",
-        "description": "Ensure observed availability meets or exceeds 99.5%."
+        "description": "Delinquency controls trigger alerts and restrict further scheduling as per policy"
       }
     ]
   },
   {
     "id": "TC010",
-    "title": "Interactive Body Map Functionality",
-    "description": "Test the interactive body map for selecting pain points and related data input, ensuring correct persistence and display.",
+    "title": "Inventory Management Stock Alerts and Movement History",
+    "description": "Confirm materials categorized properly, stock alerts trigger on low levels, and all inventory movements are logged.",
     "category": "functional",
     "priority": "Medium",
     "steps": [
       {
         "type": "action",
-        "description": "Open a patient record and access the interactive body map."
+        "description": "Access inventory management interface"
       },
       {
         "type": "action",
-        "description": "Select multiple pain points on the body map."
-      },
-      {
-        "type": "action",
-        "description": "Add notes or severity data to selected points."
+        "description": "Add various materials under different categories"
       },
       {
         "type": "assertion",
-        "description": "Verify the selected points and data are saved correctly."
+        "description": "Materials appear correctly categorized"
       },
       {
         "type": "action",
-        "description": "Reload the patient record and verify the body map reflects saved data."
-      },
-      {
-        "type": "action",
-        "description": "Attempt to deselect points and update information."
+        "description": "Reduce item stock to below alert threshold"
       },
       {
         "type": "assertion",
-        "description": "Confirm updates are saved and displayed correctly."
+        "description": "Stock alert notification triggers"
+      },
+      {
+        "type": "action",
+        "description": "Review inventory movement history for the modified items"
+      },
+      {
+        "type": "assertion",
+        "description": "All stock changes are accurately logged with time and user details"
       }
     ]
   },
   {
     "id": "TC011",
-    "title": "Financial System Payment Processing and Inadimplencia Handling",
-    "description": "Verify that payment processing, including PIX integration, transactions, and delinquency tracking, functions correctly.",
+    "title": "Task Management with Priority, Progress Tracking, and Notifications",
+    "description": "Verify creation of tasks with priorities, ability to update progress, and that notifications are sent correctly.",
     "category": "functional",
-    "priority": "High",
+    "priority": "Medium",
     "steps": [
       {
         "type": "action",
-        "description": "Create a financial transaction and process payment via PIX."
+        "description": "Create new task with assigned priority and deadline"
       },
       {
         "type": "assertion",
-        "description": "Confirm transaction is executed and payment status updated."
+        "description": "Task is saved and visible in task list with correct details"
       },
       {
         "type": "action",
-        "description": "Generate invoices and assign to patients."
-      },
-      {
-        "type": "action",
-        "description": "Simulate delayed payment to trigger inadimplencia status."
+        "description": "Update progress status of the task (e.g., in-progress, completed)"
       },
       {
         "type": "assertion",
-        "description": "Verify system marks invoice as delinquent and generates alerts."
+        "description": "Progress updates reflect accurately and trigger notifications to assigned users"
       },
       {
         "type": "action",
-        "description": "Review financial reports with payments and outstanding invoices."
+        "description": "Mark task as completed"
       },
       {
         "type": "assertion",
-        "description": "Ensure reports accurately reflect financial status."
+        "description": "Task status updates to completed and no further notifications are sent"
       }
     ]
   },
   {
     "id": "TC012",
-    "title": "Communication System Notifications and Messaging Automation",
-    "description": "Test that notifications (email/SMS/WhatsApp) and automatic messaging templates are sent correctly to patients and professionals.",
-    "category": "functional",
-    "priority": "Medium",
+    "title": "System Performance and Reliability under Concurrent Users",
+    "description": "Test system behavior when 100 concurrent users access with expected uptime reliability of 99.5%.",
+    "category": "performance",
+    "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Configure communication templates for appointment reminders."
-      },
-      {
-        "type": "action",
-        "description": "Schedule automated messages based on appointment events."
-      },
-      {
-        "type": "action",
-        "description": "Trigger appointment creation that should generate automated notification."
+        "description": "Simulate 100 concurrent users performing varied operations across modules"
       },
       {
         "type": "assertion",
-        "description": "Verify notification is sent and received by intended recipient."
-      },
-      {
-        "type": "action",
-        "description": "Send direct messages via WhatsApp integration manually."
+        "description": "System remains responsive with load times under 2 seconds (including 3G network simulation)"
       },
       {
         "type": "assertion",
-        "description": "Confirm message delivery and log entry in message history."
-      },
-      {
-        "type": "action",
-        "description": "Test failure cases such as invalid phone numbers or disconnected services."
-      },
-      {
-        "type": "assertion",
-        "description": "Check system handles errors gracefully and informs user."
+        "description": "No crashes or service outages occur meeting 99.5% uptime over the test duration"
       }
     ]
   },
   {
     "id": "TC013",
-    "title": "Library of Exercises Search and Prescription",
-    "description": "Verify searching, categorization, media display, and prescription of exercises to patients works as expected.",
-    "category": "functional",
-    "priority": "Medium",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Navigate to the exercise library."
-      },
-      {
-        "type": "action",
-        "description": "Search exercises by category and keywords."
-      },
-      {
-        "type": "assertion",
-        "description": "Confirm search results are relevant and displayed with media previews."
-      },
-      {
-        "type": "action",
-        "description": "Select an exercise and add it to a patient's prescription."
-      },
-      {
-        "type": "assertion",
-        "description": "Verify exercise is listed in patient's prescribed exercises with correct details."
-      },
-      {
-        "type": "action",
-        "description": "Access patient's portal and check exercise listing."
-      },
-      {
-        "type": "assertion",
-        "description": "Confirm patient can view and follow exercise media."
-      }
-    ]
-  },
-  {
-    "id": "TC014",
-    "title": "Dashboard KPIs and Reports Accuracy",
-    "description": "Ensure that dashboards and reports load correctly and display accurate operational, financial, and clinical metrics.",
-    "category": "functional",
-    "priority": "Medium",
-    "steps": [
-      {
-        "type": "action",
-        "description": "Log in as an administrator or manager."
-      },
-      {
-        "type": "action",
-        "description": "Navigate to the dashboard and analytics pages."
-      },
-      {
-        "type": "assertion",
-        "description": "Verify all KPIs, charts, and metrics load without errors."
-      },
-      {
-        "type": "action",
-        "description": "Generate clinical, financial, and operational reports."
-      },
-      {
-        "type": "assertion",
-        "description": "Confirm the generated reports contain correct aggregated data matching the input records."
-      },
-      {
-        "type": "action",
-        "description": "Check report export functions (PDF, CSV)."
-      },
-      {
-        "type": "assertion",
-        "description": "Verify exported files are correctly formatted and contain the expected data."
-      }
-    ]
-  },
-  {
-    "id": "TC015",
-    "title": "User Role and Permission Enforcement",
-    "description": "Verify that different user roles (Administrator, Physiotherapist, Intern, Patient) have proper access rights and restrictions as per specifications.",
+    "title": "Security Compliance: Encrypted Storage, Two-Factor Authentication and LGPD",
+    "description": "Verify encrypted data storage, mandatory 2FA for high privilege users, audit logs, and compliance with LGPD privacy regulations.",
     "category": "security",
     "priority": "High",
     "steps": [
       {
         "type": "action",
-        "description": "Log in as Administrator and access all management features."
+        "description": "Create and retrieve sensitive data in the system"
       },
       {
         "type": "assertion",
-        "description": "Confirm full access to users, finances, patients, settings, and integrations."
+        "description": "Data at rest is encrypted and securely stored in database"
       },
       {
         "type": "action",
-        "description": "Log in as Physiotherapist."
+        "description": "Attempt login with administrator account requiring two-factor authentication"
       },
       {
         "type": "assertion",
-        "description": "Check access to scheduling, patient records, clinical notes, and exercise prescription."
+        "description": "2FA is enforced before granting access"
       },
       {
         "type": "action",
-        "description": "Log in as Intern."
+        "description": "Review audit logs for user activities and data access"
       },
       {
         "type": "assertion",
-        "description": "Confirm read-only access to case files and schedule."
+        "description": "Logs correctly record user actions with timestamps and details"
       },
       {
         "type": "action",
-        "description": "Log in as Patient."
+        "description": "Review system privacy policies and data handling to ensure LGPD compliance"
       },
       {
         "type": "assertion",
-        "description": "Verify access only to personal clinical records, appointments, exercises, and messaging."
-      },
-      {
-        "type": "action",
-        "description": "Attempt unauthorized actions for each role (e.g. patient trying to edit clinical notes)."
-      },
-      {
-        "type": "assertion",
-        "description": "Check that such actions are blocked and appropriate error messages are shown."
+        "description": "System implements required user data access, consent, and deletion policies"
       }
     ]
   }

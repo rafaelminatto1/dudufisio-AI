@@ -1486,3 +1486,78 @@ export interface WhatsAppStatus {
     message: string;
   }>;
 }
+
+// --- Automation Types ---
+
+export enum TriggerType {
+  APPOINTMENT_CREATED = 'appointment_created',
+  APPOINTMENT_CANCELLED = 'appointment_cancelled',
+  APPOINTMENT_REMINDER = 'appointment_reminder',
+  PAYMENT_DUE = 'payment_due',
+  PAYMENT_RECEIVED = 'payment_received',
+  TREATMENT_COMPLETED = 'treatment_completed',
+  PATIENT_REGISTERED = 'patient_registered',
+  FOLLOW_UP_DUE = 'follow_up_due'
+}
+
+export enum CommunicationChannel {
+  EMAIL = 'email',
+  SMS = 'sms',
+  WHATSAPP = 'whatsapp',
+  PUSH_NOTIFICATION = 'push_notification'
+}
+
+export interface AutomationCondition {
+  id: string;
+  field: string;
+  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'is_empty' | 'is_not_empty';
+  value: string | number | boolean;
+}
+
+export interface AutomationAction {
+  id: string;
+  type: 'send_message' | 'send_email' | 'create_task' | 'update_status' | 'send_notification';
+  channel: CommunicationChannel;
+  templateId?: string;
+  message?: string;
+  delay?: number; // in minutes
+  conditions?: AutomationCondition[];
+}
+
+export interface AutomationRule {
+  id: string;
+  name: string;
+  description: string;
+  isActive: boolean;
+  triggerType: TriggerType;
+  conditions: AutomationCondition[];
+  actions: AutomationAction[];
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  lastExecuted?: string;
+  executionCount: number;
+}
+
+export enum TemplateType {
+  APPOINTMENT_REMINDER = 'appointment_reminder',
+  APPOINTMENT_CONFIRMATION = 'appointment_confirmation',
+  TREATMENT_UPDATE = 'treatment_update',
+  PAYMENT_REMINDER = 'payment_reminder',
+  WELCOME = 'welcome',
+  MARKETING = 'marketing'
+}
+
+export interface MessageTemplate {
+  id: string;
+  name: string;
+  type: TemplateType;
+  channel: CommunicationChannel;
+  subject?: string;
+  content: string;
+  variables: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+}

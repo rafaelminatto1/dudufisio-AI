@@ -25,10 +25,7 @@ const AiSuggestionModal: React.FC<AiSuggestionModalProps> = ({ isOpen, onClose, 
                 setIsLoading(true);
                 setSuggestion('');
                 try {
-                    const result = await generateRetentionSuggestion({
-                        nome_paciente: patient.name,
-                        motivo_alerta: patient.alertReason,
-                    });
+                    const result = await generateRetentionSuggestion();
                     setSuggestion(result);
                 } catch (error) {
                     setSuggestion('Não foi possível gerar uma sugestão. Verifique sua conexão ou tente novamente.');

@@ -67,8 +67,8 @@ const ProtocolSuggestionModal: React.FC<ProtocolSuggestionModalProps> = ({ isOpe
             const parsedData = await geminiService.parseProtocolForTreatmentPlan();
 
             const updates: Partial<TreatmentPlan> = {
-                treatmentGoals: parsedData.treatmentGoals,
-                exercises: parsedData.exercises as ExercisePrescription[], // Cast for service
+                treatmentGoals: Array.isArray(parsedData.treatmentGoals) ? parsedData.treatmentGoals.join(', ') : (parsedData.treatmentGoals || ''),
+                exercises: (parsedData.exercises || []) as ExercisePrescription[], // Cast for service
             };
 
             await treatmentService.updatePlan(patient.id, updates);

@@ -1,10 +1,11 @@
-// Temporarily disabled for build
-/*
 import React, { useState, useEffect, useMemo } from 'react';
 import { format, addDays, startOfWeek, addMonths, subMonths, startOfMonth, endOfMonth, setHours, setMinutes } from 'date-fns';
-import { ptBR } from 'date-fns/locale/pt-BR';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ptBR } from 'date-fns/locale';
+import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardHeader } from '../components/ui/card';
+import { Badge } from '../components/ui/badge';
 import { useAppointments } from '../hooks/useAppointments';
 import { EnrichedAppointment, Appointment, AppointmentStatus, Patient } from '../types';
 import { useToast } from '../contexts/ToastContext';
@@ -20,17 +21,10 @@ import DailyView from '../components/agenda/DailyView';
 import ImprovedWeeklyView from '../components/agenda/ImprovedWeeklyView';
 import MonthlyView from '../components/agenda/MonthlyView';
 import ListView from '../components/agenda/ListView';
-*/
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
 const START_HOUR = 6;
-
-export default function AgendaPage() {
-  return <div>Agenda Page - Temporarily disabled for build</div>;
-}
-
-/*
 export default function AgendaPage() {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [currentView, setCurrentView] = useState<AgendaViewType>('weekly');
@@ -357,33 +351,84 @@ export default function AgendaPage() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-slate-50">
-            <header className="p-4 bg-white rounded-t-2xl shadow-sm border-b z-20">
-                <div className="flex flex-col gap-4">
-                    <div className="flex flex-col sm:flex-row justify-between sm:items-center">
-                        <div>
-                            <h1 className="text-xl font-bold text-slate-800">Agenda da Clínica</h1>
-                            <p className="text-sm text-slate-500">{getViewTitle()}</p>
+        <div className="flex flex-col h-full bg-gray-50/30">
+            {/* Sticky Header with improved design */}
+            <Card className="sticky top-0 z-30 border-0 rounded-none shadow-sm bg-white/95 backdrop-blur-sm">
+                <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                        {/* Left side - Title and compact date */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <CalendarIcon className="w-5 h-5 text-blue-600" />
+                                <h1 className="text-lg font-semibold text-gray-900">Agenda</h1>
+                            </div>
+                            <Badge variant="outline" className="text-xs font-normal text-gray-600">
+                                {getViewTitle()}
+                            </Badge>
                         </div>
-                        <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                            <button onClick={handlePrevious} className="p-2 rounded-lg hover:bg-slate-100"><ChevronLeft size={20} /></button>
-                            <button onClick={handleToday} className="px-4 py-2 text-sm font-semibold bg-white border border-slate-300 rounded-lg hover:bg-slate-50">Hoje</button>
-                            <button onClick={handleNext} className="p-2 rounded-lg hover:bg-slate-100"><ChevronRight size={20} /></button>
+
+                        {/* Right side - Navigation and actions */}
+                        <div className="flex items-center gap-2">
+                            <div className="flex items-center border rounded-lg bg-gray-50/50">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handlePrevious}
+                                    className="h-8 w-8 p-0 hover:bg-gray-100"
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleToday}
+                                    className="h-8 px-3 text-xs font-medium hover:bg-gray-100"
+                                >
+                                    Hoje
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleNext}
+                                    className="h-8 w-8 p-0 hover:bg-gray-100"
+                                >
+                                    <ChevronRight className="w-4 h-4" />
+                                </Button>
+                            </div>
+
                             {user?.role !== Role.Patient && (
-                                <button onClick={() => { setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' }); setIsFormOpen(true); }} className="ml-4 px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 flex items-center shadow-sm"><Plus size={16} className="mr-2"/>Agendar</button>
+                                <Button
+                                    onClick={() => {
+                                        setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' });
+                                        setIsFormOpen(true);
+                                    }}
+                                    size="sm"
+                                    className="ml-2 h-8 px-3 bg-blue-600 hover:bg-blue-700"
+                                >
+                                    <Plus className="w-4 h-4 mr-1.5" />
+                                    Agendar
+                                </Button>
                             )}
                         </div>
                     </div>
 
-                    <AgendaViewSelector
-                        currentView={currentView}
-                        onViewChange={setCurrentView}
-                    />
-                </div>
-            </header>
+                    {/* View selector - better positioned */}
+                    <div className="pt-2 border-t border-gray-100">
+                        <AgendaViewSelector
+                            currentView={currentView}
+                            onViewChange={setCurrentView}
+                        />
+                    </div>
+                </CardHeader>
+            </Card>
 
-            <div className="flex-1 flex flex-col overflow-hidden bg-white rounded-b-2xl shadow-sm p-4">
-                {renderView()}
+            {/* Main content area - improved */}
+            <div className="flex-1 overflow-hidden">
+                <Card className="h-full border-0 rounded-t-none shadow-none bg-white">
+                    <CardContent className="p-0 h-full">
+                        {renderView()}
+                    </CardContent>
+                </Card>
             </div>
 
             <AnimatePresence>
@@ -418,4 +463,3 @@ export default function AgendaPage() {
         </div>
     );
 }
-*/

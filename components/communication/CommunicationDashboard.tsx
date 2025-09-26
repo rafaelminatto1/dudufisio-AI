@@ -31,7 +31,12 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTimeRange, setSelectedTimeRange] = useState<'24h' | '7d' | '30d' | '90d'>('7d');
-  const [selectedChannels, setSelectedChannels] = useState<string[]>(['whatsapp', 'sms', 'email', 'push']);
+  const [selectedChannels, setSelectedChannels] = useState<CommunicationChannel[]>([
+    CommunicationChannel.WHATSAPP, 
+    CommunicationChannel.SMS, 
+    CommunicationChannel.EMAIL, 
+    CommunicationChannel.PUSH_NOTIFICATION
+  ]);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
   const analyticsFilter = useMemo((): AnalyticsFilter => ({
@@ -202,19 +207,19 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
             <div
               key={index}
               className={`p-4 rounded-lg border-l-4 ${
-                alert.severity === 'high' ? 'bg-red-50 border-red-400' :
-                alert.severity === 'medium' ? 'bg-yellow-50 border-yellow-400' :
+                alert.severity >= 8 ? 'bg-red-50 border-red-400' :
+                alert.severity >= 5 ? 'bg-yellow-50 border-yellow-400' :
                 'bg-blue-50 border-blue-400'
               }`}
             >
               <div className="flex items-center space-x-2">
                 <AlertTriangle className={`h-5 w-5 ${
-                  alert.severity === 'high' ? 'text-red-600' :
-                  alert.severity === 'medium' ? 'text-yellow-600' :
+                  alert.severity >= 8 ? 'text-red-600' :
+                  alert.severity >= 5 ? 'text-yellow-600' :
                   'text-blue-600'
                 }`} />
-                <span className="font-medium">{alert.title}</span>
-                <span className="text-sm text-gray-600">{alert.description}</span>
+                <span className="font-medium">{alert.type}</span>
+                <span className="text-sm text-gray-600">{alert.message}</span>
               </div>
             </div>
           ))}
@@ -225,29 +230,29 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
           title="Mensagens Enviadas"
-          value={formatNumber(dashboardData.overview.totalMessages)}
-          change={dashboardData.overview.messageGrowth}
+          value={formatNumber(dashboardData.overview.totalSent)}
+          change={dashboardData.overview.sentGrowth}
           icon={MessageSquare}
           color="purple"
         />
         <MetricCard
           title="Taxa de Entrega"
           value={formatPercentage(dashboardData.overview.deliveryRate)}
-          change={dashboardData.overview.deliveryRateChange}
+          change={dashboardData.overview.deliveryRate}
           icon={CheckCircle}
           color="green"
         />
         <MetricCard
           title="Taxa de Engajamento"
           value={formatPercentage(dashboardData.overview.engagementRate)}
-          change={dashboardData.overview.engagementChange}
+          change={dashboardData.overview.engagementRate}
           icon={Users}
           color="blue"
         />
         <MetricCard
           title="Custo Total"
           value={`R$ ${dashboardData.overview.totalCost.toFixed(2)}`}
-          change={dashboardData.overview.costChange}
+          change={dashboardData.overview.totalCost}
           icon={TrendingUp}
           color="orange"
         />
@@ -259,7 +264,7 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-lg font-semibold mb-4">Mensagens ao Longo do Tempo</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={dashboardData.timeSeriesData}>
+            <AreaChart data={dashboardData.timeSeries}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="timestamp" />
               <YAxis />
@@ -279,7 +284,12 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-lg font-semibold mb-4">Performance por Canal</h3>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dashboardData.channelMetrics}>
+            <BarChart data={Object.entries(dashboardData.channelPerformance).map(([channel, metrics]) => ({
+              channel,
+              sent: metrics.totalSent,
+              delivered: metrics.delivered,
+              failed: metrics.failed
+            }))}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="channel" />
               <YAxis />
@@ -295,7 +305,12 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={dashboardData.messageTypeMetrics}
+                data={Object.entries(dashboardData.messageTypePerformance).map(([type, metrics]) => ({
+                  type,
+                  sent: metrics.totalSent,
+                  delivered: metrics.delivered,
+                  failed: metrics.failed
+                }))}
                 dataKey="count"
                 nameKey="type"
                 cx="50%"
@@ -303,7 +318,7 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
                 outerRadius={80}
                 label
               >
-                {dashboardData.messageTypeMetrics.map((entry, index) => (
+                {Object.entries(dashboardData.messageTypePerformance).map(([type, metrics], index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -317,7 +332,11 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
         <div className="bg-white p-6 rounded-lg shadow-sm border">
           <h3 className="text-lg font-semibold mb-4">Status de Entrega</h3>
           <div className="space-y-4">
-            {Object.entries(dashboardData.overview.deliveryStatusBreakdown).map(([status, count]) => (
+            {Object.entries({
+              sent: dashboardData.overview.totalSent,
+              delivered: dashboardData.overview.delivered,
+              failed: dashboardData.overview.failed
+            }).map(([status, count]) => (
               <div key={status} className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   {status === 'delivered' && <CheckCircle className="h-4 w-4 text-green-600" />}
@@ -349,8 +368,8 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {dashboardData.recentMessages.map((message, index) => {
-                const Icon = channelIcons[message.channel as keyof typeof channelIcons];
+              {dashboardData.recentActivity.map((activity, index) => {
+                const Icon = channelIcons[activity.channel as keyof typeof channelIcons];
                 return (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-6 py-4">

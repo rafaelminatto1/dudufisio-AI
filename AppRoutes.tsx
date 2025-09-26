@@ -13,6 +13,7 @@ const CompleteDashboard = lazy(() => import('./pages/CompleteDashboard'));
 const PatientPortalDashboard = lazy(() => import('./pages/PatientPortalDashboard'));
 const PartnerPortalDashboard = lazy(() => import('./pages/PartnerPortalDashboard'));
 const IntegrationsTestPage = lazy(() => import('./pages/IntegrationsTestPage'));
+const BIIntegrationTestPage = lazy(() => import('./pages/BIIntegrationTestPage'));
 
 const AppContent: React.FC = () => {
     const { user, isAuthenticated, loading, logout } = useSupabaseAuth();

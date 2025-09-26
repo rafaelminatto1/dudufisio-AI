@@ -29,13 +29,12 @@ const channelIcons = {
 };
 
 const templateTypes: { value: TemplateType; label: string; description: string }[] = [
-  { value: 'appointment_reminder', label: 'Lembrete de Consulta', description: 'Notifica pacientes sobre consultas agendadas' },
-  { value: 'appointment_confirmation', label: 'Confirmação de Consulta', description: 'Confirma agendamento de nova consulta' },
-  { value: 'treatment_update', label: 'Atualização de Tratamento', description: 'Informa progresso do tratamento' },
-  { value: 'payment_reminder', label: 'Lembrete de Pagamento', description: 'Notifica sobre pagamentos pendentes' },
-  { value: 'welcome', label: 'Boas-vindas', description: 'Mensagem de boas-vindas para novos pacientes' },
-  { value: 'marketing', label: 'Marketing', description: 'Campanhas promocionais e informativas' },
-  { value: 'custom', label: 'Personalizado', description: 'Template customizado para necessidades específicas' }
+  { value: TemplateType.APPOINTMENT_REMINDER, label: 'Lembrete de Consulta', description: 'Notifica pacientes sobre consultas agendadas' },
+  { value: TemplateType.APPOINTMENT_CONFIRMATION, label: 'Confirmação de Consulta', description: 'Confirma agendamento de nova consulta' },
+  { value: TemplateType.TREATMENT_UPDATE, label: 'Atualização de Tratamento', description: 'Informa progresso do tratamento' },
+  { value: TemplateType.PAYMENT_REMINDER, label: 'Lembrete de Pagamento', description: 'Notifica sobre pagamentos pendentes' },
+  { value: TemplateType.WELCOME, label: 'Boas-vindas', description: 'Mensagem de boas-vindas para novos pacientes' },
+  { value: TemplateType.MARKETING, label: 'Marketing', description: 'Campanhas promocionais e informativas' }
 ];
 
 const availableVariables = [

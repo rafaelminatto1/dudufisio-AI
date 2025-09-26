@@ -13,6 +13,7 @@ const ReportsPage = lazy(() => import('./ReportsPage'));
 const SpecialtyAssessmentsPage = lazy(() => import('./SpecialtyAssessmentsPage'));
 const AcompanhamentoPage = lazy(() => import('./AcompanhamentoPage'));
 const IntegrationsTestPage = lazy(() => import('./IntegrationsTestPage'));
+const BIIntegrationTestPage = lazy(() => import('./BIIntegrationTestPage'));
 import {
     Calendar, Users, Activity, BarChart3,
     Download, RefreshCw,
@@ -308,6 +309,12 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 return (
                     <Suspense fallback={<PageLoader />}>
                         <IntegrationsTestPage />
+                    </Suspense>
+                );
+            case 'bi-test':
+                return (
+                    <Suspense fallback={<PageLoader />}>
+                        <BIIntegrationTestPage />
                     </Suspense>
                 );
             default:
