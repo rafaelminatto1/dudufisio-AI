@@ -131,8 +131,11 @@ Objetivo: "${objective}"
 ---`;
 
     try {
-      const response = await aiOrchestratorService.query(prompt);
-  
+      const response = await aiOrchestratorService.getResponse(prompt, {
+        category: 'exercise_suggestion',
+        cacheTtlMs: 15 * 60 * 1000,
+      });
+
       const content = (response as any).response || (response as any).content || 'Resposta não disponível';
       
       const assessmentHeader = "AVALIAÇÃO:";
