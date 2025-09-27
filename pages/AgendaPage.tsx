@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { format, addDays, startOfWeek, addMonths, subMonths, startOfMonth, endOfMonth, setHours, setMinutes } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { Button } from '../components/ui/button';
 import { useAppointments } from '../hooks/useAppointments';
-import { EnrichedAppointment, Appointment, AppointmentStatus, Patient } from '../types';
+import { EnrichedAppointment, Appointment, AppointmentStatus, Patient, SchedulingAlert, WaitlistEntry } from '../types';
 import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
@@ -15,15 +15,21 @@ import { Role } from '../types';
 import AppointmentDetailModal from '../components/AppointmentDetailModal';
 import AppointmentFormModal from '../components/AppointmentFormModal';
 import AgendaViewSelector, { AgendaViewType } from '../components/agenda/AgendaViewSelector';
+import SchedulingInsightsBanner from '../components/agenda/SchedulingInsightsBanner';
+import { listActiveAlerts, listWaitlistEntries } from '../services/appointmentService';
 import DailyView from '../components/agenda/DailyView';
 import ImprovedWeeklyView from '../components/agenda/ImprovedWeeklyView';
 import MonthlyView from '../components/agenda/MonthlyView';
 import ListView from '../components/agenda/ListView';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
 const START_HOUR = 6;
 export default function AgendaPage() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const locationState = location.state as { patientId?: string } | null;
     const [currentDate, setCurrentDate] = useState(new Date());
     const [currentView, setCurrentView] = useState<AgendaViewType>('weekly');
 
@@ -55,52 +61,75 @@ export default function AgendaPage() {
     const { user } = useSupabaseAuth();
     const [patients, setPatients] = useState<Patient[]>([]);
     const [, setIsLoadingData] = useState(true);
+    const [alerts, setAlerts] = useState<SchedulingAlert[]>([]);
+    const [waitingEntries, setWaitingEntries] = useState<WaitlistEntry[]>([]);
     const { showToast } = useToast();
 
     // Modal states
     const [appointmentToEdit, setAppointmentToEdit] = useState<EnrichedAppointment | null>(null);
     const [selectedAppointment, setSelectedAppointment] = useState<EnrichedAppointment | null>(null);
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [initialFormData, setInitialFormData] = useState<{ date: Date, therapistId: string } | undefined>();
+    const [initialFormData, setInitialFormData] = useState<{ date: Date; therapistId: string } | undefined>();
+    const [highlightedPatientId, setHighlightedPatientId] = useState<string | null>(null);
     
     // Drag & Drop states
     const [draggedAppointmentId, setDraggedAppointmentId] = useState<string | null>(null);
 
     // Filter appointments based on user role
     const filteredAppointments = useMemo(() => {
-        if (!user) return appointments;
+        let scopedAppointments = appointments;
 
-        switch (user.role) {
-            case Role.Patient:
-                // Patients only see their own appointments
-                return appointments.filter(appointment => appointment.patientId === user.patientId);
-
-            case Role.EducadorFisico:
-                // Educators only see appointments with their clients
-                return appointments.filter(appointment => appointment.therapistId === user.id);
-
-            case Role.Therapist:
-            case Role.Admin:
-            default:
-                // Therapists and Admins see all appointments
-                return appointments;
+        if (user) {
+            switch (user.role) {
+                case Role.Patient:
+                    scopedAppointments = scopedAppointments.filter(appointment => appointment.patientId === user.patientId);
+                    break;
+                case Role.EducadorFisico:
+                    scopedAppointments = scopedAppointments.filter(appointment => appointment.therapistId === user.id);
+                    break;
+                case Role.Therapist:
+                case Role.Admin:
+                default:
+                    break;
+            }
         }
-    }, [appointments, user]);
+
+        if (highlightedPatientId) {
+            scopedAppointments = scopedAppointments.filter(appointment => appointment.patientId === highlightedPatientId);
+        }
+
+        return scopedAppointments;
+    }, [appointments, user, highlightedPatientId]);
+
+    const refreshSchedulingState = useCallback(async () => {
+        const [alertsData, waitlistData] = await Promise.all([
+            listActiveAlerts(),
+            listWaitlistEntries('waiting'),
+        ]);
+        setAlerts(alertsData);
+        setWaitingEntries(waitlistData);
+    }, []);
 
     useEffect(() => {
-        const fetchPatientsData = async () => {
+        const fetchInitialData = async () => {
             setIsLoadingData(true);
             try {
-                const patientData = await patientService.getAllPatients();
+                const [patientData, alertsData, waitlistData] = await Promise.all([
+                    patientService.getAllPatients(),
+                    listActiveAlerts(),
+                    listWaitlistEntries('waiting'),
+                ]);
                 setPatients(patientData);
-        } catch (error) {
-            console.error('Erro ao carregar pacientes:', error);
-            showToast('Falha ao carregar a lista de pacientes.', 'error');
-        } finally {
+                setAlerts(alertsData);
+                setWaitingEntries(waitlistData);
+            } catch (error) {
+                console.error('Erro ao carregar dados iniciais:', error);
+                showToast('Falha ao carregar dados de suporte da agenda.', 'error');
+            } finally {
                 setIsLoadingData(false);
             }
         };
-        fetchPatientsData();
+        fetchInitialData();
     }, [showToast]);
 
     const handleSlotClick = (day: Date, time: string, therapistId: string) => {
@@ -128,6 +157,7 @@ export default function AgendaPage() {
             await appointmentService.saveAppointment(appointmentData);
             showToast('Consulta salva com sucesso!', 'success');
             refetch();
+            refreshSchedulingState();
             setIsFormOpen(false);
             setAppointmentToEdit(null);
             return true;
@@ -154,6 +184,7 @@ export default function AgendaPage() {
             }
             showToast('Agendamento(s) removido(s) com sucesso!', 'success');
             refetch();
+            refreshSchedulingState();
             setIsFormOpen(false);
             setAppointmentToEdit(null);
             setSelectedAppointment(null);
@@ -233,6 +264,17 @@ export default function AgendaPage() {
 
     const fullSelectedPatient = useMemo(() => patients.find(p => p.id === selectedAppointment?.patientId), [patients, selectedAppointment]);
     const selectedTherapistData = useMemo(() => therapists.find(t => t.id === selectedAppointment?.therapistId), [therapists, selectedAppointment]);
+    const highlightedPatient = useMemo(
+        () => (highlightedPatientId ? patients.find(patient => patient.id === highlightedPatientId) : null),
+        [patients, highlightedPatientId]
+    );
+
+    useEffect(() => {
+        if (locationState?.patientId) {
+            setHighlightedPatientId(locationState.patientId);
+            navigate(location.pathname, { replace: true, state: {} });
+        }
+    }, [locationState, location.pathname, navigate]);
 
     // Navigation handlers
     const handlePrevious = () => {
@@ -370,15 +412,32 @@ export default function AgendaPage() {
             <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
                 <div className="px-4 py-3">
                     <div className="flex items-center justify-between">
-                        {/* Left side - Compact title and date */}
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                                <CalendarIcon className="w-4 h-4 text-blue-600" />
-                                <h1 className="text-base font-semibold text-slate-900">Agenda</h1>
+                        <div className="flex-1 flex flex-col gap-2 min-w-0">
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
+                                    <CalendarIcon className="w-4 h-4 text-blue-600" />
+                                    <h1 className="text-base font-semibold text-slate-900">Agenda</h1>
+                                </div>
+                                <div className="text-sm text-slate-600 font-medium truncate hidden sm:block">
+                                    {getViewTitle()}
+                                </div>
                             </div>
-                            <div className="text-sm text-slate-600 font-medium truncate hidden sm:block">
-                                {getViewTitle()}
-                            </div>
+                            {highlightedPatient && (
+                                <div className="flex items-center justify-between rounded-md border border-sky-100 bg-sky-50 px-3 py-2 text-sm text-sky-700">
+                                    <span>
+                                        Mostrando agendamentos de <strong>{highlightedPatient.name}</strong>.
+                                    </span>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-7 px-2 text-xs text-sky-700 hover:bg-sky-100"
+                                        onClick={() => setHighlightedPatientId(null)}
+                                    >
+                                        Ver todos
+                                    </Button>
+                                </div>
+                            )}
+                            <SchedulingInsightsBanner alerts={alerts} waitlistEntries={waitingEntries} />
                         </div>
 
                         {/* Right side - Compact navigation */}

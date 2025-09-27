@@ -5,6 +5,7 @@ import AiAssistant from '../components/AiAssistant';
 import ToastContainer from '../components/ui/Toast';
 import MedicalDisclaimerModal from '../components/MedicalDisclaimerModal';
 import Breadcrumbs from '../components/Breadcrumbs';
+import AuditNotification from '../components/audit/AuditNotification';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -36,6 +37,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         </div>
         <ToastContainer />
         <AiAssistant />
+        <AuditNotification showSecurityOnly={true} maxNotifications={5} />
         <MedicalDisclaimerModal isOpen={showDisclaimer} onAgree={handleDisclaimerAgree} />
       </main>
     </div>

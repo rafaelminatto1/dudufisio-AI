@@ -1,5 +1,6 @@
-import { Patient, Appointment, SoapNote, AppointmentStatus, TreatmentPlan, ExercisePrescription, AuditLogEntry, Therapist, AppointmentType, RecurrenceRule, KnowledgeBaseEntry, User, Role, Exercise, Group, VoucherPlan, Voucher, Document, Task, TaskStatus, TaskPriority, Notification, Achievement, MedicalReport, FinancialTransaction, TransactionType, ExpenseCategory, Intern, InternStatus, EducationalCase, Project, ProjectStatus, Partner, InventoryCategory, Supplier, InventoryItem, ItemStatus, StockMovement, MovementType, Event, EventType, EventStatus, EventRegistration, RegistrationStatus, EventProvider, ProviderStatus, PatientStatus } from '../types';
+import { Patient, Appointment, SoapNote, AppointmentStatus, TreatmentPlan, ExercisePrescription, AuditLogEntry, Therapist, AppointmentType, RecurrenceRule, KnowledgeBaseEntry, User, Role, Exercise, Group, VoucherPlan, Voucher, Document, Task, TaskStatus, TaskPriority, Notification, Achievement, MedicalReport, FinancialTransaction, TransactionType, ExpenseCategory, Intern, InternStatus, EducationalCase, Project, ProjectStatus, Partner, InventoryCategory, Supplier, InventoryItem, ItemStatus, StockMovement, MovementType, Event, EventType, EventStatus, EventRegistration, RegistrationStatus, EventProvider, ProviderStatus, PatientStatus, RecurrenceTemplate, WaitlistEntry, WaitlistStatus, ScheduleBlock, SchedulingAlert } from '../types';
 import { CalendarCheck, Flame, Medal, Shield, Star, Trophy } from 'lucide-react';
+import { generateRecurrences } from '../services/scheduling/recurrenceService';
 
 export const mockUsers: User[] = [
   { id: 'user_1', name: 'Dr. Roberto', email: 'roberto@fisioflow.com', role: Role.Therapist, avatarUrl: 'https://i.pravatar.cc/150?u=user_1', phone: '(11) 91234-5678' },
@@ -273,34 +274,149 @@ export const mockAppointments: Appointment[] = [
 
 ];
 
-// Add a recurring appointment series for Ana Beatriz
-const recurrenceRule: RecurrenceRule = {
+// Recurrence templates & waitlist mock data
+const baseRecurrenceRule: RecurrenceRule = {
     frequency: 'weekly',
-    days: [new Date().getDay()], // Every week on today's day
-    until: new Date(new Date().setMonth(new Date().getMonth() + 2)).toISOString().split('T')[0] as string,
+    days: [1, 3], // Monday, Wednesday
+    until: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0],
 };
 
-const recurringSeriesId = `series_${Date.now()}`;
-const recurrenceDate = getFutureDate(7, 15); // Start next week
-while(recurrenceDate.getTime() <= new Date(recurrenceRule.until).getTime()) {
-    mockAppointments.push({
-        id: `app_recurr_${recurrenceDate.getTime()}`,
+const templateId = `template_${Date.now()}`;
+export const mockRecurrenceTemplates: RecurrenceTemplate[] = [
+    {
+        id: templateId,
+        clinicId: undefined,
+        therapistId: 'therapist_3',
+        title: 'Pilates Clínico - Seg/Qua',
+        description: 'Sessões de Pilates clínico duas vezes por semana',
+        durationMinutes: 60,
+        recurrenceRule: baseRecurrenceRule,
+        timezone: 'America/Sao_Paulo',
+        isActive: true,
+        createdBy: 'user_1',
+        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+    },
+];
+
+const seriesId = `series_${Date.now()}`;
+const recurrenceStart = getFutureDate(1, 15);
+
+mockRecurrenceTemplates.forEach(template => {
+    const occurrences = generateRecurrences({
+        id: `app_template_preview_${Date.now()}`,
         patientId: '1',
         patientName: 'Ana Beatriz Costa',
         patientAvatarUrl: mockPatients[0]?.avatarUrl || '',
-        therapistId: 'therapist_3',
-        startTime: new Date(recurrenceDate),
-        endTime: new Date(recurrenceDate.getTime() + 60 * 60 * 1000), // 1 hour
-        title: 'Pilates Clínico',
+        therapistId: template.therapistId || 'therapist_3',
+        startTime: new Date(recurrenceStart),
+        endTime: new Date(recurrenceStart.getTime() + template.durationMinutes * 60 * 1000),
+        title: template.title,
         type: AppointmentType.Session,
         status: AppointmentStatus.Scheduled,
-        seriesId: recurringSeriesId,
-        recurrenceRule: recurrenceRule,
         value: 130,
-        paymentStatus: 'pending'
+        paymentStatus: 'pending',
+        seriesId,
+        recurrenceRule: template.recurrenceRule,
+        recurrenceTemplateId: template.id,
     });
-    recurrenceDate.setDate(recurrenceDate.getDate() + 7);
-}
+
+    occurrences.forEach(occurrence => {
+        if (!mockAppointments.find(app => app.id === occurrence.id)) {
+            mockAppointments.push(occurrence);
+        }
+    });
+});
+
+export const mockScheduleBlocks: ScheduleBlock[] = [
+    {
+        id: `block_${Date.now() - 3600000}`,
+        therapistId: 'therapist_1',
+        startTime: getFutureDate(0, 12),
+        endTime: getFutureDate(0, 14),
+        blockType: 'ausencia',
+        reason: 'Reunião administrativa',
+        metadata: { createdBy: 'user_1' },
+    },
+    {
+        id: `block_${Date.now() - 7200000}`,
+        therapistId: 'therapist_2',
+        startTime: getFutureDate(3, 9),
+        endTime: getFutureDate(3, 18),
+        blockType: 'ausencia',
+        reason: 'Congresso de Fisioterapia',
+        recurrenceRule: {
+            frequency: 'weekly',
+            days: [getFutureDate(3, 9).getDay()],
+            until: new Date(new Date().setMonth(new Date().getMonth() + 2)).toISOString().split('T')[0],
+        },
+        metadata: { isFullDay: true },
+    },
+];
+
+export const mockWaitlistEntries: WaitlistEntry[] = [
+    {
+        id: `wait_${Date.now() - 5400000}`,
+        patientId: '4',
+        therapistId: 'therapist_1',
+        preferredStartFrom: getFutureDate(0, 9),
+        preferredStartTo: getFutureDate(0, 17),
+        preferredDays: [1, 3, 5],
+        preferredTimeRanges: [{ start: '09:00', end: '12:00' }],
+        urgency: 4,
+        noShowRisk: 0.2,
+        status: 'waiting',
+        notes: 'Paciente pós-operatório, prefere manhãs',
+        createdAt: new Date(Date.now() - 5400000),
+        updatedAt: new Date(Date.now() - 5400000),
+    },
+    {
+        id: `wait_${Date.now() - 10800000}`,
+        patientId: '6',
+        therapistId: 'therapist_3',
+        preferredStartFrom: getFutureDate(1, 13),
+        preferredStartTo: getFutureDate(1, 17),
+        preferredDays: [2, 4],
+        urgency: 5,
+        noShowRisk: 0.1,
+        status: 'waiting',
+        notes: 'Paciente VIP, ajuste prioritário para horários da tarde',
+        createdAt: new Date(Date.now() - 10800000),
+        updatedAt: new Date(Date.now() - 10800000),
+    },
+];
+
+export const mockSchedulingAlerts: SchedulingAlert[] = [
+    {
+        id: `alert_${Date.now() - 7200000}`,
+        alertType: 'patient_no_show_warning',
+        patientId: '2',
+        appointmentId: 'app2',
+        payload: { noShowCount: 3, lastNoShow: getFutureDate(-1, 10).toISOString() },
+        resolved: false,
+        createdAt: new Date(Date.now() - 7200000),
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    },
+    {
+        id: `alert_${Date.now() - 3600000}`,
+        alertType: 'open_slot',
+        appointmentId: 'app10',
+        payload: { slotStart: getFutureDate(0, 11).toISOString(), therapistId: 'therapist_2' },
+        resolved: false,
+        createdAt: new Date(Date.now() - 3600000),
+        expiresAt: new Date(Date.now() + 4 * 60 * 60 * 1000),
+    },
+    {
+        id: `alert_${Date.now() - 86400000}`,
+        alertType: 'inactive_patient',
+        patientId: '5',
+        payload: { lastAppointment: getFutureDate(-8, 11).toISOString() },
+        resolved: true,
+        resolvedAt: new Date(Date.now() - 3600000),
+        createdAt: new Date(Date.now() - 86400000),
+        expiresAt: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
+    },
+];
 
 
 export const mockSoapNotes: SoapNote[] = [

@@ -1,67 +1,142 @@
 import { supabase, handleSupabaseError } from '../../lib/supabase';
 import { Patient, PatientStatus } from '../../types';
+import type { SupabaseRealtimePayload } from '../../types/realtime';
 import type { Database } from '../../types/database';
 
 type PatientRow = Database['public']['Tables']['patients']['Row'];
 type PatientInsert = Database['public']['Tables']['patients']['Insert'];
 type PatientUpdate = Database['public']['Tables']['patients']['Update'];
 
+const sanitizeNullableString = (value: string | null | undefined): string | null => {
+  if (typeof value !== 'string') {
+    return value ?? null;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
 class SupabasePatientService {
   private mapRowToPatient(row: PatientRow): Patient {
+    const status = (row.status || 'active').toLowerCase();
+
+    const mapStatus = (): PatientStatus => {
+      switch (status) {
+        case 'inactive':
+          return PatientStatus.Inactive;
+        case 'discharged':
+          return PatientStatus.Discharged;
+        default:
+          return PatientStatus.Active;
+      }
+    };
+
     return {
       id: row.id,
-      user_id: null, // Campo não existe no schema atual
-      full_name: row.full_name,
-      email: row.email,
-      phone: row.phone || '',
-      birth_date: row.birth_date || row.date_of_birth || '',
-      cpf: row.cpf || '',
-      address: row.address,
-      profession: null, // Campo não existe no schema atual
-      marital_status: null, // Campo não existe no schema atual
-      emergency_contact_name: row.emergency_contact_name,
-      emergency_contact_phone: row.emergency_contact_phone,
-      photo_url: null, // Campo não existe no schema atual
-      general_notes: row.medical_history, // Usando medical_history como general_notes
-      active: row.status === 'active', // Convertendo status para boolean
-      created_at: row.created_at || '',
-      updated_at: row.updated_at || '',
-      created_by: row.therapist_id || '', // Usando therapist_id como created_by
+      name: row.name ?? row.full_name ?? '',
+      cpf: row.cpf ?? '',
+      birthDate: row.birth_date ?? row.date_of_birth ?? '',
+      phone: row.phone ?? '',
+      email: row.email ?? '',
+      emergencyContact: {
+        name: row.emergency_contact_name ?? '',
+        phone: row.emergency_contact_phone ?? '',
+      },
+      address: {
+        street: row.address_street ?? row.address ?? '',
+        city: row.address_city ?? '',
+        state: row.address_state ?? '',
+        zip: row.address_zip ?? '',
+      },
+      status: mapStatus(),
+      lastVisit: row.updated_at ?? row.created_at ?? new Date().toISOString(),
+      registrationDate: row.created_at ?? new Date().toISOString(),
+      avatarUrl: '',
+      consentGiven: true,
+      whatsappConsent: 'opt-out',
+      allergies: undefined,
+      medicalAlerts: row.medical_history ?? undefined,
+      surgeries: undefined,
+      conditions: undefined,
+      attachments: undefined,
+      trackedMetrics: undefined,
+      communicationLogs: undefined,
+      painPoints: undefined,
     };
   }
 
-  private mapPatientToInsert(patient: Omit<Patient, 'id' | 'created_at' | 'updated_at'>): PatientInsert {
+  private mapPatientStatus(status: PatientStatus | undefined): string | null {
+    if (!status) return null;
+    switch (status) {
+      case PatientStatus.Inactive:
+        return 'inactive';
+      case PatientStatus.Discharged:
+        return 'discharged';
+      case PatientStatus.Active:
+      default:
+        return 'active';
+    }
+  }
+
+  private mapPatientToInsert(patient: Omit<Patient, 'id'>): PatientInsert {
+    const createdAt = patient.registrationDate ?? new Date().toISOString();
+    const updatedAt = patient.lastVisit ?? createdAt;
+
     return {
-      full_name: patient.full_name,
-      email: patient.email || null,
-      phone: patient.phone || null,
-      birth_date: patient.birth_date || null,
-      cpf: patient.cpf || null,
-      address: patient.address || null,
-      emergency_contact_name: patient.emergency_contact_name || null,
-      emergency_contact_phone: patient.emergency_contact_phone || null,
-      medical_history: patient.general_notes || null, // Mapeando general_notes para medical_history
-      status: patient.active ? 'active' : 'inactive', // Convertendo boolean para string
-      therapist_id: patient.created_by || null, // Usando created_by como therapist_id
+      full_name: patient.name,
+      name: patient.name,
+      email: sanitizeNullableString(patient.email),
+      phone: sanitizeNullableString(patient.phone),
+      birth_date: sanitizeNullableString(patient.birthDate),
+      date_of_birth: sanitizeNullableString(patient.birthDate),
+      cpf: sanitizeNullableString(patient.cpf),
+      address_street: sanitizeNullableString(patient.address?.street),
+      address_number: null,
+      address_city: sanitizeNullableString(patient.address?.city),
+      address_state: sanitizeNullableString(patient.address?.state),
+      address_zip: sanitizeNullableString(patient.address?.zip),
+      emergency_contact_name: sanitizeNullableString(patient.emergencyContact?.name),
+      emergency_contact_phone: sanitizeNullableString(patient.emergencyContact?.phone),
+      medical_history: sanitizeNullableString(patient.medicalAlerts),
+      status: this.mapPatientStatus(patient.status),
+      created_at: createdAt,
+      updated_at: updatedAt,
     };
   }
 
   private mapPatientToUpdate(patient: Partial<Patient>): PatientUpdate {
-    const update: PatientUpdate = {};
+    const update: PatientUpdate = {
+      updated_at: new Date().toISOString(),
+    };
 
-    if (patient.full_name) update.full_name = patient.full_name;
-    if (patient.email !== undefined) update.email = patient.email || null;
-    if (patient.phone !== undefined) update.phone = patient.phone || null;
-    if (patient.birth_date !== undefined) update.birth_date = patient.birth_date || null;
-    if (patient.cpf !== undefined) update.cpf = patient.cpf || null;
-    if (patient.address !== undefined) update.address = patient.address || null;
-    if (patient.emergency_contact_name !== undefined) update.emergency_contact_name = patient.emergency_contact_name || null;
-    if (patient.emergency_contact_phone !== undefined) update.emergency_contact_phone = patient.emergency_contact_phone || null;
-    if (patient.general_notes !== undefined) update.medical_history = patient.general_notes || null;
-    if (patient.active !== undefined) update.status = patient.active ? 'active' : 'inactive';
-    if (patient.created_by !== undefined) update.therapist_id = patient.created_by || null;
-
-    update.updated_at = new Date().toISOString();
+    if (patient.name !== undefined) {
+      update.full_name = patient.name;
+      update.name = patient.name;
+    }
+    if (patient.email !== undefined) update.email = sanitizeNullableString(patient.email);
+    if (patient.phone !== undefined) update.phone = sanitizeNullableString(patient.phone);
+    if (patient.birthDate !== undefined) {
+      const value = sanitizeNullableString(patient.birthDate);
+      update.birth_date = value;
+      update.date_of_birth = value;
+    }
+    if (patient.cpf !== undefined) update.cpf = sanitizeNullableString(patient.cpf);
+    if (patient.address !== undefined) {
+      update.address_street = sanitizeNullableString(patient.address?.street);
+      update.address_city = sanitizeNullableString(patient.address?.city);
+      update.address_state = sanitizeNullableString(patient.address?.state);
+      update.address_zip = sanitizeNullableString(patient.address?.zip);
+    }
+    if (patient.emergencyContact !== undefined) {
+      update.emergency_contact_name = sanitizeNullableString(patient.emergencyContact?.name);
+      update.emergency_contact_phone = sanitizeNullableString(patient.emergencyContact?.phone);
+    }
+    if (patient.medicalAlerts !== undefined) {
+      update.medical_history = sanitizeNullableString(patient.medicalAlerts);
+    }
+    if (patient.status !== undefined) {
+      update.status = this.mapPatientStatus(patient.status);
+    }
 
     return update;
   }
@@ -75,8 +150,8 @@ class SupabasePatientService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToPatient);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToPatient.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -95,7 +170,7 @@ class SupabasePatientService {
       }
 
       return data ? this.mapRowToPatient(data) : null;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -110,8 +185,8 @@ class SupabasePatientService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToPatient);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToPatient.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -126,15 +201,19 @@ class SupabasePatientService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToPatient);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToPatient.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
 
-  async createPatient(patientData: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): Promise<Patient> {
+  async createPatient(patientData: Omit<Patient, 'id' | 'lastVisit' | 'registrationDate'>): Promise<Patient> {
     try {
-      const insertData = this.mapPatientToInsert(patientData);
+      const insertData = this.mapPatientToInsert({
+        ...patientData,
+        lastVisit: patientData.lastVisit ?? new Date().toISOString(),
+        registrationDate: patientData.registrationDate ?? new Date().toISOString(),
+      });
 
       const { data, error } = await supabase
         .from('patients')
@@ -145,7 +224,7 @@ class SupabasePatientService {
       if (error) throw error;
 
       return this.mapRowToPatient(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -164,7 +243,7 @@ class SupabasePatientService {
       if (error) throw error;
 
       return this.mapRowToPatient(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -177,7 +256,7 @@ class SupabasePatientService {
         .eq('id', id);
 
       if (error) throw error;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -192,8 +271,8 @@ class SupabasePatientService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToPatient);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToPatient.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -217,18 +296,18 @@ class SupabasePatientService {
       ]);
 
       return {
-        total: totalResult.count || 0,
-        active: activeResult.count || 0,
-        inactive: inactiveResult.count || 0,
-        newThisMonth: newThisMonthResult.count || 0,
+        total: totalResult.count ?? 0,
+        active: activeResult.count ?? 0,
+        inactive: inactiveResult.count ?? 0,
+        newThisMonth: newThisMonthResult.count ?? 0,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
 
   // Real-time subscriptions
-  subscribeToPatients(callback: (payload: any) => void) {
+  subscribeToPatients(callback: (payload: SupabaseRealtimePayload<PatientRow> & { patient: Patient | null }) => void) {
     return supabase
       .channel('patients_changes')
       .on(
@@ -239,14 +318,12 @@ class SupabasePatientService {
           table: 'patients',
         },
         (payload) => {
-          let patient = null;
-          if (payload.new) {
-            patient = this.mapRowToPatient(payload.new as PatientRow);
-          }
-          callback({
-            ...payload,
-            patient,
-          });
+          const enrichedPayload: SupabaseRealtimePayload<PatientRow> & { patient: Patient | null } = {
+            ...(payload as SupabaseRealtimePayload<PatientRow>),
+            patient: payload.new ? this.mapRowToPatient(payload.new as PatientRow) : null,
+          };
+
+          callback(enrichedPayload);
         }
       )
       .subscribe();
@@ -260,7 +337,7 @@ class SupabasePatientService {
         .eq('id', patientId);
 
       if (error) throw error;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -273,7 +350,7 @@ class SupabasePatientService {
         .eq('id', patientId);
 
       if (error) throw error;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }

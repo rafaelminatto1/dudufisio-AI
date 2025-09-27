@@ -1,12 +1,12 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { AuditLogEntry } from '../types';
-import { mockAuditLogs } from '../data/mockData';
+import { auditService } from '../services/auditService';
 
-// Simulate a service call
+// Use the centralized audit service
 const fetchAuditLogs = async (): Promise<AuditLogEntry[]> => {
-    await new Promise(res => setTimeout(res, 500)); // Simulate network delay
-    return [...mockAuditLogs].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    await new Promise(res => setTimeout(res, 100)); // Minimal delay
+    return auditService.getLogs();
 };
 
 interface UseAuditLogsProps {

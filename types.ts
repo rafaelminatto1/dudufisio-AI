@@ -32,7 +32,6 @@ export interface Therapist {
 
 // --- Patient Related Types ---
 
-// FIX: Add PatientStatus enum to be used across the application and fix import error.
 export enum PatientStatus {
   Active = 'Active',
   Inactive = 'Inactive',
@@ -170,10 +169,30 @@ export const AppointmentTypeColors: Record<string, string> = {
 
 
 export interface RecurrenceRule {
-    frequency: 'weekly';
-    days: number[]; // 0=Sun, 1=Mon, ...
-    until: string; // YYYY-MM-DD
+    frequency: 'daily' | 'weekly' | 'monthly';
+    interval?: number;
+    days?: number[]; // 0=Domingo ... 6=Sábado (para weekly)
+    monthDays?: number[]; // dias específicos do mês
+    until?: string; // YYYY-MM-DD
+    count?: number;
 }
+
+export interface RecurrenceTemplate {
+  id: string;
+  clinicId?: string;
+  therapistId?: string;
+  title: string;
+  description?: string;
+  durationMinutes: number;
+  recurrenceRule: RecurrenceRule;
+  timezone: string;
+  isActive: boolean;
+  createdBy?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type ScheduleBlockType = 'ausencia' | 'reuniao' | 'personalizado';
 
 export interface Appointment {
   id: string;
@@ -193,6 +212,9 @@ export interface Appointment {
   recurrenceRule?: RecurrenceRule;
   sessionNumber?: number;
   totalSessions?: number;
+  recurrenceTemplateId?: string;
+  metadata?: Record<string, any>;
+  cancellationReason?: string;
 }
 
 export interface EnrichedAppointment extends Appointment {
@@ -210,6 +232,51 @@ export interface AvailabilityBlock {
   startTime: Date;
   endTime: Date;
   title: string; // e.g., 'Almoço', 'Férias'
+  blockType?: 'ausencia' | 'reuniao' | 'personalizado';
+  metadata?: Record<string, any>;
+}
+
+export interface ScheduleBlock {
+  id: string;
+  therapistId: string;
+  startTime: Date;
+  endTime: Date;
+  blockType: ScheduleBlockType;
+  reason?: string;
+  recurrenceRule?: RecurrenceRule;
+  metadata?: Record<string, any>;
+}
+
+export type WaitlistStatus = 'waiting' | 'notified' | 'scheduled' | 'cancelled';
+
+export interface WaitlistEntry {
+  id: string;
+  patientId: string;
+  clinicId?: string;
+  therapistId?: string;
+  preferredStartFrom?: Date;
+  preferredStartTo?: Date;
+  preferredDays?: number[];
+  preferredTimeRanges?: { start: string; end: string }[];
+  urgency: 1 | 2 | 3 | 4 | 5;
+  noShowRisk?: number;
+  status: WaitlistStatus;
+  notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  lastNotifiedAt?: Date;
+}
+
+export interface SchedulingAlert {
+  id: string;
+  alertType: 'patient_no_show_warning' | 'open_slot' | 'inactive_patient';
+  patientId?: string;
+  appointmentId?: string;
+  payload: Record<string, any>;
+  resolved: boolean;
+  resolvedAt?: Date;
+  createdAt: Date;
+  expiresAt?: Date;
 }
 
 export interface AppointmentHeatmapData {
@@ -291,10 +358,385 @@ export interface AuditLogEntry {
   ipAddress: string;
 }
 
+// --- Clinical Protocols Types ---
+
+export enum ProtocolCategory {
+  Orthopedic = 'Ortopedia',
+  Neurological = 'Neurologia',
+  Cardiorespiratory = 'Cardiorrespiratória',
+  Pediatric = 'Pediatria',
+  Sports = 'Esportiva',
+  Geriatric = 'Gerontologia',
+  Oncology = 'Oncologia',
+  Women = 'Saúde da Mulher',
+}
+
+export enum EvidenceLevel {
+  IA = '1A',
+  IB = '1B',
+  IIA = '2A',
+  IIB = '2B',
+  III = '3',
+  IV = '4',
+  V = '5',
+}
+
+export enum ProtocolPhase {
+  Acute = 'Aguda',
+  Subacute = 'Subaguda',
+  Chronic = 'Crônica',
+  Maintenance = 'Manutenção',
+}
+
 export interface Protocol {
   id: string;
   name: string;
   description: string;
+  category: ProtocolCategory;
+  subcategory?: string;
+  version: string;
+  lastUpdated: string;
+  createdBy: string;
+  reviewedBy?: string[];
+  evidenceLevel: EvidenceLevel;
+  references: ProtocolReference[];
+  
+  // Clinical Information
+  definition: string;
+  epidemiology?: string;
+  inclusionCriteria: string[];
+  exclusionCriteria: string[];
+  contraindications: string[];
+  precautions: string[];
+  
+  // Assessment
+  assessmentTools: AssessmentTool[];
+  outcomeMetrics: OutcomeMetric[];
+  
+  // Treatment Phases
+  phases: ProtocolPhase[];
+  treatmentPlan: TreatmentPhaseDetail[];
+  
+  // Progression Criteria
+  progressionCriteria: ProgressionCriteria[];
+  dischargeCriteria: string[];
+  
+  // Implementation
+  estimatedDuration: {
+    min: number;
+    max: number;
+    unit: 'days' | 'weeks' | 'months';
+  };
+  frequency: string;
+  sessionDuration: number; // minutes
+  
+  // Quality Metrics
+  successRate?: number;
+  patientSatisfaction?: number;
+  costEffectiveness?: string;
+  
+  // Usage Statistics
+  timesUsed: number;
+  averageOutcomes: {
+    [metric: string]: number;
+  };
+  
+  // Status and Approval
+  status: 'draft' | 'review' | 'approved' | 'deprecated';
+  approvedAt?: string;
+  isActive: boolean;
+  tags: string[];
+}
+
+export interface ProtocolReference {
+  id: string;
+  title: string;
+  authors: string[];
+  journal: string;
+  year: number;
+  doi?: string;
+  pmid?: string;
+  url?: string;
+  evidenceLevel: EvidenceLevel;
+  relevanceScore: number; // 1-10
+}
+
+export interface AssessmentTool {
+  id: string;
+  name: string;
+  type: 'scale' | 'test' | 'measurement' | 'questionnaire';
+  description: string;
+  instructions: string;
+  scoringCriteria: string;
+  normalValues?: string;
+  reliability?: number;
+  validity?: number;
+  minimumDetectableChange?: number;
+}
+
+export interface OutcomeMetric {
+  id: string;
+  name: string;
+  type: 'primary' | 'secondary';
+  unit: string;
+  expectedChange: {
+    direction: 'increase' | 'decrease' | 'maintain';
+    magnitude: number;
+    timeframe: string;
+  };
+  assessmentFrequency: string;
+  clinicalSignificance: number;
+}
+
+export interface TreatmentPhaseDetail {
+  id: string;
+  phase: ProtocolPhase;
+  name: string;
+  description: string;
+  duration: {
+    min: number;
+    max: number;
+    unit: 'days' | 'weeks' | 'sessions';
+  };
+  objectives: string[];
+  interventions: ProtocolIntervention[];
+  exerciseProgram: ExerciseProtocol[];
+  precautions: string[];
+  progressMarkers: string[];
+}
+
+export interface ProtocolIntervention {
+  id: string;
+  name: string;
+  type: 'manual' | 'exercise' | 'modality' | 'education' | 'other';
+  description: string;
+  dosage: {
+    frequency: string;
+    duration: string;
+    intensity: string;
+    progression: string;
+  };
+  evidenceLevel: EvidenceLevel;
+  contraindications?: string[];
+  modifications?: InterventionModification[];
+}
+
+export interface InterventionModification {
+  condition: string;
+  modification: string;
+  rationale: string;
+}
+
+export interface ExerciseProtocol {
+  id: string;
+  exerciseId: string;
+  exerciseName: string;
+  phase: ProtocolPhase;
+  sets: number;
+  repetitions: string;
+  hold?: string;
+  rest?: string;
+  intensity: string;
+  frequency: string;
+  progression: ExerciseProgression[];
+  modifications: ExerciseModification[];
+  precautions: string[];
+}
+
+export interface ExerciseProgression {
+  week: number;
+  sets: number;
+  repetitions: string;
+  intensity: string;
+  notes?: string;
+}
+
+export interface ExerciseModification {
+  condition: string;
+  modification: string;
+  parameters?: {
+    sets?: number;
+    repetitions?: string;
+    intensity?: string;
+  };
+}
+
+export interface ProgressionCriteria {
+  id: string;
+  fromPhase: ProtocolPhase;
+  toPhase: ProtocolPhase;
+  criteria: ProgressionRule[];
+  timeframe: string;
+  requiredAssessments: string[];
+}
+
+export interface ProgressionRule {
+  type: 'objective' | 'subjective' | 'functional' | 'time';
+  parameter: string;
+  operator: '>' | '<' | '>=' | '<=' | '=' | 'improved' | 'stable' | 'achieved';
+  value: number | string;
+  unit?: string;
+  weight: number; // importance 1-10
+}
+
+export interface ProtocolPrescription {
+  id: string;
+  protocolId: string;
+  patientId: string;
+  prescribedBy: string;
+  prescribedAt: string;
+  currentPhase: ProtocolPhase;
+  startDate: string;
+  estimatedEndDate: string;
+  
+  // Customizations
+  customizations: ProtocolCustomization[];
+  excludedInterventions: string[];
+  additionalNotes: string;
+  
+  // Progress Tracking
+  phaseHistory: PhaseProgress[];
+  assessmentResults: AssessmentResult[];
+  adherenceRate: number;
+  
+  // Outcomes
+  outcomes: ProtocolOutcome[];
+  complications?: string[];
+  modifications: ProtocolModification[];
+  
+  status: 'active' | 'completed' | 'discontinued' | 'on_hold';
+  completedAt?: string;
+  discontinuedReason?: string;
+}
+
+export interface ProtocolCustomization {
+  type: 'exercise' | 'intervention' | 'frequency' | 'duration' | 'intensity';
+  target: string; // ID or name of what's being customized
+  modification: string;
+  reason: string;
+}
+
+export interface PhaseProgress {
+  phase: ProtocolPhase;
+  startDate: string;
+  endDate?: string;
+  objectives: {
+    [objectiveId: string]: {
+      description: string;
+      completed: boolean;
+      completedAt?: string;
+      notes?: string;
+    };
+  };
+  assessments: string[]; // assessment IDs
+  duration: number; // actual days in phase
+}
+
+export interface AssessmentResult {
+  id: string;
+  toolId: string;
+  toolName: string;
+  assessedAt: string;
+  assessedBy: string;
+  results: {
+    [parameter: string]: {
+      value: number | string;
+      unit?: string;
+      percentile?: number;
+      interpretation: string;
+    };
+  };
+  overallScore?: number;
+  clinicalInterpretation: string;
+}
+
+export interface ProtocolOutcome {
+  metricId: string;
+  metricName: string;
+  baselineValue: number;
+  currentValue: number;
+  targetValue?: number;
+  unit: string;
+  percentChange: number;
+  clinicallySignificant: boolean;
+  assessedAt: string;
+}
+
+export interface ProtocolModification {
+  id: string;
+  modifiedAt: string;
+  modifiedBy: string;
+  type: 'exercise' | 'intervention' | 'progression' | 'frequency' | 'other';
+  description: string;
+  reason: string;
+  impact: 'minor' | 'moderate' | 'major';
+}
+
+export interface ProtocolAnalytics {
+  protocolId: string;
+  protocolName: string;
+  totalPrescriptions: number;
+  activePrescriptions: number;
+  completedPrescriptions: number;
+  averageDuration: number; // days
+  successRate: number; // percentage
+  adherenceRate: number; // percentage
+  
+  // Outcome Analytics
+  outcomeMetrics: {
+    [metricName: string]: {
+      averageImprovement: number;
+      successRate: number; // % achieving target
+      clinicalSignificanceRate: number;
+    };
+  };
+  
+  // Phase Analytics
+  phaseAnalytics: {
+    [phase: string]: {
+      averageDuration: number;
+      completionRate: number;
+      commonModifications: string[];
+    };
+  };
+  
+  // Patient Demographics
+  demographics: {
+    ageGroups: { [range: string]: number };
+    genderDistribution: { [gender: string]: number };
+    severityDistribution: { [level: string]: number };
+  };
+  
+  // Therapist Performance
+  therapistMetrics: {
+    [therapistId: string]: {
+      prescriptions: number;
+      successRate: number;
+      adherenceRate: number;
+      averageDuration: number;
+    };
+  };
+  
+  // Time-based Trends
+  monthlyTrends: {
+    month: string;
+    prescriptions: number;
+    completions: number;
+    successRate: number;
+  }[];
+  
+  lastUpdated: string;
+}
+
+export interface ProtocolLibraryStats {
+  totalProtocols: number;
+  protocolsByCategory: { [category: string]: number };
+  protocolsByEvidenceLevel: { [level: string]: number };
+  recentlyUpdated: Protocol[];
+  mostUsed: Protocol[];
+  highestRated: Protocol[];
+  pendingReview: number;
+  averageSuccessRate: number;
 }
 
 export interface ProtocolRecommendation {
@@ -564,13 +1006,12 @@ export enum TransactionType {
 }
 
 export enum ExpenseCategory {
-  Aluguel = 'Aluguel',
-  Salarios = 'Salários',
+  Salaries = 'Salaries',
+  Rent = 'Rent',
+  Equipment = 'Equipment',
+  Supplies = 'Supplies',
   Marketing = 'Marketing',
-  Suprimentos = 'Suprimentos',
-  Equipamentos = 'Equipamentos',
-  Impostos = 'Impostos',
-  Outros = 'Outros',
+  Other = 'Other',
 }
 
 export interface FinancialTransaction {
@@ -655,19 +1096,11 @@ export interface Transaction {
 
 // --- AI System Types ---
 
-export enum AIProvider {
-    CACHE = 'Cache',
-    INTERNAL_KB = 'Base de Conhecimento',
-    GEMINI = 'Google Gemini Pro',
-    CHATGPT = 'ChatGPT Plus',
-    CLAUDE = 'Claude Pro',
-    PERPLEXITY = 'Perplexity Pro',
-    MARS = 'Mars AI Pro',
-}
+// Removed unused AIProvider enum
 
 export interface AIResponse {
   content: string;
-  source: AIProvider;
+  source: string;
 }
 
 export interface AIQueryLog {
@@ -702,29 +1135,308 @@ export interface WhatsappMessage {
 
 // --- Mentorship & Teaching Module Types ---
 
-export enum InternStatus {
-  Active = 'Ativo',
-  Inactive = 'Inativo',
+// Removed unused InternStatus enum
+
+// Removed unused CompetencyLevel enum
+
+// Removed unused CompetencyCategory enum
+
+export interface Competency {
+  id: string;
+  name: string;
+  category: CompetencyCategory;
+  description: string;
+  evaluationCriteria: string[];
+  requiredLevel: CompetencyLevel;
+  weight: number; // 1-10
+}
+
+export interface InternCompetency {
+  id: string;
+  internId: string;
+  competencyId: string;
+  currentLevel: CompetencyLevel;
+  targetLevel: CompetencyLevel;
+  evaluations: CompetencyEvaluation[];
+  lastEvaluatedAt?: string;
+  progress: number; // 0-100
+}
+
+export interface CompetencyEvaluation {
+  id: string;
+  internCompetencyId: string;
+  evaluatorId: string;
+  evaluatorName: string;
+  level: CompetencyLevel;
+  score: number; // 0-10
+  feedback: string;
+  evaluatedAt: string;
+  type: 'self' | 'supervisor' | 'peer' | 'patient';
+}
+
+export interface InternshipPlan {
+  id: string;
+  internId: string;
+  supervisorId: string;
+  startDate: string;
+  endDate: string;
+  objectives: LearningObjective[];
+  schedule: InternshipSchedule;
+  competencies: string[]; // competency IDs
+  status: 'draft' | 'active' | 'completed' | 'suspended';
+  progressReports: ProgressReport[];
+}
+
+export interface LearningObjective {
+  id: string;
+  description: string;
+  type: 'knowledge' | 'skill' | 'attitude';
+  priority: 'high' | 'medium' | 'low';
+  deadline: string;
+  completed: boolean;
+  completedAt?: string;
+  evidence?: string;
+}
+
+export interface InternshipSchedule {
+  weeklyHours: number;
+  schedule: {
+    [day: string]: {
+      startTime: string;
+      endTime: string;
+      activities: string[];
+    };
+  };
+  rotations: ScheduleRotation[];
+}
+
+export interface ScheduleRotation {
+  id: string;
+  name: string;
+  specialty: string;
+  startDate: string;
+  endDate: string;
+  supervisor: string;
+  objectives: string[];
+}
+
+export interface ProgressReport {
+  id: string;
+  internId: string;
+  supervisorId: string;
+  period: string; // e.g., "2024-01"
+  competencyProgress: {
+    [competencyId: string]: {
+      previousLevel: CompetencyLevel;
+      currentLevel: CompetencyLevel;
+      progress: number;
+    };
+  };
+  achievements: string[];
+  challenges: string[];
+  nextSteps: string[];
+  overallRating: number; // 1-5
+  createdAt: string;
 }
 
 export interface Intern {
   id: string;
   name: string;
+  email: string;
+  phone: string;
   institution: string;
+  semester: number;
   startDate: string; // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
   status: InternStatus;
   avatarUrl: string;
+  supervisorId: string;
+  supervisorName: string;
   averageGrade?: number;
+  totalHours: number;
+  completedHours: number;
+  internshipPlan?: InternshipPlan;
+  competencies: InternCompetency[];
+  clinicalCases: string[]; // case IDs assigned
 }
 
 export interface EducationalCase {
   id: string;
   title: string;
   description: string;
-  area: 'Ortopedia' | 'Neurologia' | 'Esportiva' | 'Gerontologia';
+  specialty: 'Ortopedia' | 'Neurologia' | 'Cardiorrespiratória' | 'Pediatria' | 'Esportiva' | 'Gerontologia';
+  difficultyLevel: 1 | 2 | 3 | 4 | 5;
+  patientProfile: {
+    age: number;
+    gender: 'M' | 'F';
+    occupation: string;
+    medicalHistory: string[];
+    currentComplaints: string;
+  };
+  clinicalPresentation: {
+    symptoms: string[];
+    physicalExam: string;
+    functionalTests: string[];
+    imaging: string[];
+  };
+  diagnosis: {
+    primary: string;
+    secondary?: string[];
+    differentialDiagnosis: string[];
+  };
+  treatmentPlan: {
+    goals: string[];
+    interventions: string[];
+    duration: string;
+    frequency: string;
+    progressIndicators: string[];
+  };
+  outcomes: {
+    shortTerm: string[];
+    longTerm: string[];
+    complications?: string[];
+  };
+  learningObjectives: string[];
+  discussionPoints: string[];
+  references: string[];
   createdBy: string; // Therapist name
   createdAt: string; // YYYY-MM-DD
-  content: string; // Markdown content
+  lastUpdated: string;
+  tags: string[];
+  isPublished: boolean;
+  discussions: CaseDiscussion[];
+  evaluations: CaseEvaluation[];
+}
+
+export interface CaseDiscussion {
+  id: string;
+  caseId: string;
+  userId: string;
+  userName: string;
+  userRole: string;
+  content: string;
+  createdAt: string;
+  replies: CaseDiscussionReply[];
+  votes: number;
+}
+
+export interface CaseDiscussionReply {
+  id: string;
+  discussionId: string;
+  userId: string;
+  userName: string;
+  content: string;
+  createdAt: string;
+  votes: number;
+}
+
+export interface CaseEvaluation {
+  id: string;
+  caseId: string;
+  userId: string;
+  rating: number; // 1-5
+  difficulty: number; // 1-5
+  usefulness: number; // 1-5
+  feedback: string;
+  createdAt: string;
+}
+
+export interface EducationalResource {
+  id: string;
+  title: string;
+  type: 'article' | 'video' | 'webinar' | 'protocol' | 'guideline' | 'quiz';
+  category: string;
+  specialty: string[];
+  description: string;
+  content?: string;
+  url?: string;
+  duration?: number; // in minutes
+  difficulty: 1 | 2 | 3 | 4 | 5;
+  tags: string[];
+  author: string;
+  publishedAt: string;
+  lastUpdated: string;
+  views: number;
+  rating: number;
+  reviews: ResourceReview[];
+  isRecommended: boolean;
+  prerequisites?: string[];
+  learningOutcomes: string[];
+}
+
+export interface ResourceReview {
+  id: string;
+  resourceId: string;
+  userId: string;
+  userName: string;
+  rating: number; // 1-5
+  review: string;
+  createdAt: string;
+  helpful: number; // helpful votes
+}
+
+export interface LearningPath {
+  id: string;
+  name: string;
+  description: string;
+  specialty: string;
+  difficulty: CompetencyLevel;
+  estimatedDuration: number; // in hours
+  resources: string[]; // resource IDs
+  prerequisites: string[];
+  objectives: string[];
+  assessments: string[];
+  completionCriteria: string[];
+  createdBy: string;
+  createdAt: string;
+  enrollments: number;
+  completions: number;
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  description: string;
+  issuer: string;
+  type: 'completion' | 'competency' | 'continuing_education';
+  requirements: CertificationRequirement[];
+  validityPeriod?: number; // in months
+  credits?: number; // CE credits
+  badgeUrl: string;
+  issuedAt?: string;
+  expiresAt?: string;
+  verificationUrl?: string;
+}
+
+export interface CertificationRequirement {
+  type: 'course' | 'assessment' | 'hours' | 'project';
+  description: string;
+  target: string | number;
+  completed: boolean;
+  completedAt?: string;
+}
+
+export interface MentorshipMetrics {
+  totalInterns: number;
+  activeInterns: number;
+  graduatedInterns: number;
+  averageCompetencyProgress: number;
+  totalCases: number;
+  averageCaseRating: number;
+  totalResources: number;
+  totalLearningPaths: number;
+  monthlyProgress: {
+    month: string;
+    newInterns: number;
+    graduatedInterns: number;
+    completedCases: number;
+    resourcesAdded: number;
+  }[];
+  competencyDistribution: {
+    [category: string]: {
+      [level: string]: number;
+    };
+  };
 }
 
 // --- Inventory & Supplies Types ---
@@ -744,11 +1456,7 @@ export interface Supplier {
   email?: string;
 }
 
-export enum ItemStatus {
-  Active = 'Ativo',
-  OutOfStock = 'Sem Estoque',
-  Discontinued = 'Descontinuado',
-}
+// Removed unused ItemStatus enum
 
 export interface InventoryItem {
   id: string;
@@ -766,10 +1474,7 @@ export interface InventoryItem {
   expiryDate?: string; // YYYY-MM-DD
 }
 
-export enum MovementType {
-  In = 'Entrada',
-  Out = 'Saída',
-}
+// Removed unused MovementType enum
 
 export interface StockMovement {
   id: string;
@@ -782,12 +1487,7 @@ export interface StockMovement {
   createdAt: string; // ISO String
 }
 
-export enum InventoryAlertType {
-    LowStock = 'Estoque Baixo',
-    OutOfStock = 'Sem Estoque',
-    Expiring = 'Vencimento Próximo',
-    Expired = 'Vencido',
-}
+// Removed unused InventoryAlertType enum
 
 export interface InventoryAlert {
     id: string;
@@ -810,34 +1510,25 @@ export interface InventoryMetrics {
 // --- Event Management Types ---
 
 export enum EventType {
-  Corrida = 'Corrida de Rua',
   Workshop = 'Workshop',
-  Palestra = 'Palestra',
-  Campanha = 'Campanha de Saúde',
-  Atendimento = 'Atendimento Externo'
+  Seminar = 'Seminar',
+  Conference = 'Conference',
+  Training = 'Training',
+  Meeting = 'Meeting',
+  Other = 'Other'
 }
 
 export enum EventStatus {
-  Draft = 'Rascunho',
-  Published = 'Publicado',
-  Active = 'Ativo',
-  Completed = 'Concluído',
-  Cancelled = 'Cancelado'
+  Scheduled = 'Scheduled',
+  InProgress = 'InProgress',
+  Completed = 'Completed',
+  Cancelled = 'Cancelled',
+  Postponed = 'Postponed'
 }
 
-export enum RegistrationStatus {
-  Pending = 'Pendente',
-  Confirmed = 'Confirmado',
-  Attended = 'Compareceu',
-  Cancelled = 'Cancelado'
-}
+// Removed unused RegistrationStatus enum
 
-export enum ProviderStatus {
-  Applied = 'Inscrito',
-  Confirmed = 'Confirmado',
-  Paid = 'Pago',
-  Cancelled = 'Cancelado'
-}
+// Removed unused ProviderStatus enum
 
 export interface Event {
   id: string;
@@ -934,15 +1625,7 @@ export interface BodyMapAnalytics {
 
 // --- Calendar Integration Types ---
 
-export enum CalendarFeature {
-  CREATE_EVENT = 'CREATE_EVENT',
-  UPDATE_EVENT = 'UPDATE_EVENT',
-  DELETE_EVENT = 'DELETE_EVENT',
-  REMINDERS = 'REMINDERS',
-  RECURRENCE = 'RECURRENCE',
-  ATTENDEES = 'ATTENDEES',
-  AVAILABILITY = 'AVAILABILITY'
-}
+// Removed unused CalendarFeature enum
 
 export interface CalendarLocation {
   name: string;
@@ -1110,39 +1793,13 @@ export type TemplateId = string;
 export type CampaignId = string;
 export type TriggerEventType = string;
 
-export enum ChannelCapability {
-  TEXT = 'TEXT',
-  MEDIA = 'MEDIA',
-  INTERACTIVE = 'INTERACTIVE',
-  TEMPLATES = 'TEMPLATES',
-  TWO_WAY = 'TWO_WAY',
-  DELIVERY_RECEIPTS = 'DELIVERY_RECEIPTS',
-  READ_RECEIPTS = 'READ_RECEIPTS'
-}
+// Removed unused ChannelCapability enum
 
-export enum MessagePriority {
-  LOW = 1,
-  NORMAL = 5,
-  HIGH = 8,
-  URGENT = 10
-}
+// Removed unused MessagePriority enum
 
-export enum MessageStatus {
-  PENDING = 'pending',
-  QUEUED = 'queued',
-  SENT = 'sent',
-  DELIVERED = 'delivered',
-  READ = 'read',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled'
-}
+// Removed unused MessageStatus enum
 
-export enum CommunicationChannel {
-  WHATSAPP = 'whatsapp',
-  SMS = 'sms',
-  EMAIL = 'email',
-  PUSH = 'push'
-}
+// Removed unused CommunicationChannel enum
 
 // Recipient and Preferences
 export interface Recipient {
@@ -1267,15 +1924,7 @@ export interface CommunicationTemplate {
   updatedAt: Date;
 }
 
-export enum TemplateType {
-  APPOINTMENT_REMINDER = 'appointment_reminder',
-  BIRTHDAY_GREETING = 'birthday_greeting',
-  PAYMENT_REMINDER = 'payment_reminder',
-  SATISFACTION_SURVEY = 'satisfaction_survey',
-  INACTIVE_PATIENT = 'inactive_patient',
-  WELCOME_MESSAGE = 'welcome_message',
-  CUSTOM = 'custom'
-}
+// Removed unused TemplateType enum
 
 export interface TemplateVariable {
   name: string;
@@ -1300,14 +1949,7 @@ export interface Campaign {
   updatedAt: Date;
 }
 
-export enum CampaignStatus {
-  DRAFT = 'draft',
-  SCHEDULED = 'scheduled',
-  RUNNING = 'running',
-  PAUSED = 'paused',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled'
-}
+// Removed unused CampaignStatus enum
 
 export interface AudienceFilter {
   patientStatus?: string[];
@@ -1489,23 +2131,9 @@ export interface WhatsAppStatus {
 
 // --- Automation Types ---
 
-export enum TriggerType {
-  APPOINTMENT_CREATED = 'appointment_created',
-  APPOINTMENT_CANCELLED = 'appointment_cancelled',
-  APPOINTMENT_REMINDER = 'appointment_reminder',
-  PAYMENT_DUE = 'payment_due',
-  PAYMENT_RECEIVED = 'payment_received',
-  TREATMENT_COMPLETED = 'treatment_completed',
-  PATIENT_REGISTERED = 'patient_registered',
-  FOLLOW_UP_DUE = 'follow_up_due'
-}
+// Removed unused TriggerType enum
 
-export enum CommunicationChannel {
-  EMAIL = 'email',
-  SMS = 'sms',
-  WHATSAPP = 'whatsapp',
-  PUSH_NOTIFICATION = 'push_notification'
-}
+// Removed unused CommunicationChannel enum (duplicate)
 
 export interface AutomationCondition {
   id: string;
@@ -1539,14 +2167,7 @@ export interface AutomationRule {
   executionCount: number;
 }
 
-export enum TemplateType {
-  APPOINTMENT_REMINDER = 'appointment_reminder',
-  APPOINTMENT_CONFIRMATION = 'appointment_confirmation',
-  TREATMENT_UPDATE = 'treatment_update',
-  PAYMENT_REMINDER = 'payment_reminder',
-  WELCOME = 'welcome',
-  MARKETING = 'marketing'
-}
+// Removed unused TemplateType enum (duplicate)
 
 export interface MessageTemplate {
   id: string;

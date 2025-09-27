@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0ea5e9" />
     <title>DuduFisio-AI</title>
-    <!-- <link rel="manifest" href="/manifest.json" /> -->
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- Fase 1: Otimizações de Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,18 +26,21 @@
       </div>
     </div>
     <script type="module" src="/index.tsx"></script>
-    <!-- Service Worker temporarily disabled due to fetch errors
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js').then(registration => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            console.log('✅ ServiceWorker registration successful with scope: ', registration.scope);
+
+            // Request notification permission when service worker is ready
+            if (Notification.permission === 'default') {
+              console.log('📱 Notification permission not set, will request when user interacts');
+            }
           }, err => {
-            console.log('ServiceWorker registration failed: ', err);
+            console.log('❌ ServiceWorker registration failed: ', err);
           });
         });
       }
     </script>
-    -->
   </body>
 </html>

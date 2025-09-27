@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Edit, Trash2, Play, ChevronDown, DollarSign, Save, Repeat, Video } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Appointment, Patient, Therapist, AppointmentStatus, AppointmentType, EnrichedAppointment } from '../types';
 import { useToast } from '../contexts/ToastContext';
 interface AppointmentDetailModalProps {
@@ -19,6 +20,8 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
     const { showToast: _showToast } = useToast();
     const [isEditingValue, setIsEditingValue] = useState(false);
     const [localValue, setLocalValue] = useState(appointment?.value || 0);
+    const navigate = useNavigate();
+
     useEffect(() => {
         setLocalValue(appointment?.value || 0);
         setIsEditingValue(false);
@@ -38,15 +41,11 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
     };
     const handleStartSession = () => {
         onClose();
-        // Store the appointment ID globally for the session
-        (window as any).__selectedAppointmentId = appointment.id;
 
-        // Use the internal navigation system
         if (appointment.type === AppointmentType.Teleconsulta) {
-            (window as any).__setCurrentPage?.('teleconsulta');
+            navigate(`/teleconsulta/${appointment.id}`);
         } else {
-            // Navigate to new session form page instead of session
-            (window as any).__setCurrentPage?.('session-form');
+            navigate(`/sessions/${appointment.id}/form`);
         }
     };
     const isTeleconsulta = appointment.type === AppointmentType.Teleconsulta;
@@ -67,8 +66,8 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
                     <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Fisioterapeuta:</span><span className="font-semibold text-slate-800">{therapist?.name || appointment.therapistName || 'N/A'}</span></div>
                     <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Paciente:</span><button onClick={() => {
                         onClose();
-                        (window as any).__selectedPatientId = patient?.id || appointment.patientId;
-                        (window as any).__setCurrentPage?.('patient-detail');
+                        const targetId = patient?.id || appointment.patientId;
+                        navigate(`/patients/${targetId}`);
                     }} className="font-semibold text-blue-600 hover:underline truncate text-left">{patient?.name || appointment.patientName}</button></div>
                     <div className="flex text-sm"><span className="w-24 text-slate-500 shrink-0">Celular:</span><span className="font-semibold text-slate-800">{patient?.phone || appointment.patientPhone || 'Não informado'}</span></div>
                     {appointment.sessionNumber && appointment.totalSessions && (
@@ -184,4 +183,3 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
     );
 };
 export default AppointmentDetailModal;
-

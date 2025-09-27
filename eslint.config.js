@@ -90,11 +90,20 @@ export default [
 
   // Configuration files
   {
-    files: ['*.config.{js,ts}', 'vite.config.*', 'jest.config.*'],
+    files: ['*.config.{js,ts}', 'vite.config.*', 'jest.config.*', 'workers/*.ts'],
     languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        project: null
+      },
       globals: {
         ...globals.node
       }
+    },
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/prefer-optional-chain': 'off'
     }
   }
 ];

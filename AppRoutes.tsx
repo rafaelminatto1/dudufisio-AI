@@ -84,7 +84,12 @@ const AppContent: React.FC = () => {
 
 const AppRoutes: React.FC = () => {
     return (
-        <BrowserRouter>
+        <BrowserRouter
+            future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true,
+            }}
+        >
             <DebugProvider>
                 <SupabaseAuthProvider>
                     <AppProvider>

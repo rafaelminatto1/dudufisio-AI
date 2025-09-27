@@ -1,5 +1,7 @@
 import { supabase } from '../../lib/supabase';
 import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import { Database } from '../../types/supabase';
+import { SupabaseRealtimePayload } from '@supabase/supabase-js/dist/main/types';
 
 export type RealtimeEvent = 'INSERT' | 'UPDATE' | 'DELETE';
 
@@ -12,9 +14,9 @@ class RealtimeService {
   private channels: Map<string, RealtimeChannel> = new Map();
 
   // Subscribe to all changes in a table
-  subscribeToTable(
-    table: string,
-    callback: (payload: RealtimePostgresChangesPayload<any>) => void,
+  subscribeToTable<Schema extends keyof Database['public']['Tables'] & string>(
+    table: Schema,
+    callback: (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => void,
     events: RealtimeEvent[] = ['INSERT', 'UPDATE', 'DELETE']
   ): RealtimeSubscription {
     const channelName = `${table}_all_changes`;
@@ -29,13 +31,13 @@ class RealtimeService {
     const channel = supabase
       .channel(channelName)
       .on(
-        'postgres_changes' as any,
+        'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table,
         },
-        (payload: RealtimePostgresChangesPayload<any>) => {
+        (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => {
           if (events.includes(payload.eventType as RealtimeEvent)) {
             callback(payload);
           }
@@ -52,10 +54,10 @@ class RealtimeService {
   }
 
   // Subscribe to specific record changes
-  subscribeToRecord(
-    table: string,
+  subscribeToRecord<Schema extends keyof Database['public']['Tables'] & string>(
+    table: Schema,
     recordId: string,
-    callback: (payload: RealtimePostgresChangesPayload<any>) => void,
+    callback: (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => void,
     events: RealtimeEvent[] = ['UPDATE', 'DELETE']
   ): RealtimeSubscription {
     const channelName = `${table}_${recordId}_changes`;
@@ -70,14 +72,14 @@ class RealtimeService {
     const channel = supabase
       .channel(channelName)
       .on(
-        'postgres_changes' as any,
+        'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table,
           filter: `id=eq.${recordId}`,
         },
-        (payload: RealtimePostgresChangesPayload<any>) => {
+        (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => {
           if (events.includes(payload.eventType as RealtimeEvent)) {
             callback(payload);
           }
@@ -94,10 +96,10 @@ class RealtimeService {
   }
 
   // Subscribe to filtered changes
-  subscribeToFiltered(
-    table: string,
+  subscribeToFiltered<Schema extends keyof Database['public']['Tables'] & string>(
+    table: Schema,
     filter: { column: string; operator: string; value: string },
-    callback: (payload: RealtimePostgresChangesPayload<any>) => void,
+    callback: (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => void,
     events: RealtimeEvent[] = ['INSERT', 'UPDATE', 'DELETE']
   ): RealtimeSubscription {
     const channelName = `${table}_${filter.column}_${filter.value}_changes`;
@@ -112,14 +114,14 @@ class RealtimeService {
     const channel = supabase
       .channel(channelName)
       .on(
-        'postgres_changes' as any,
+        'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table,
           filter: `${filter.column}=${filter.operator}.${filter.value}`,
         },
-        (payload: RealtimePostgresChangesPayload<any>) => {
+        (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => {
           if (events.includes(payload.eventType as RealtimeEvent)) {
             callback(payload);
           }
@@ -136,9 +138,9 @@ class RealtimeService {
   }
 
   // Subscribe to multiple tables
-  subscribeToMultipleTables(
-    tables: string[],
-    callback: (table: string, payload: RealtimePostgresChangesPayload<any>) => void,
+  subscribeToMultipleTables<Schema extends keyof Database['public']['Tables'] & string>(
+    tables: Schema[],
+    callback: (table: Schema, payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => void,
     events: RealtimeEvent[] = ['INSERT', 'UPDATE', 'DELETE']
   ): RealtimeSubscription {
     const channelName = `multi_${tables.join('_')}_changes`;
@@ -154,13 +156,13 @@ class RealtimeService {
 
     tables.forEach(table => {
       channel = channel.on(
-        'postgres_changes' as any,
+        'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table,
         },
-        (payload: RealtimePostgresChangesPayload<any>) => {
+        (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => {
           if (events.includes(payload.eventType as RealtimeEvent)) {
             callback(table, payload);
           }
@@ -181,11 +183,11 @@ class RealtimeService {
   subscribeToPresence(
     channelName: string,
     userId: string,
-    userInfo: any,
+    userInfo: Record<string, unknown>,
     callbacks: {
-      onSync?: () => void;
-      onJoin?: (event: any) => void;
-      onLeave?: (event: any) => void;
+      onSync?: (state: Record<string, unknown>) => void;
+      onJoin?: (event: unknown) => void;
+      onLeave?: (event: unknown) => void;
     }
   ): RealtimeSubscription {
     const presenceChannelName = `presence_${channelName}`;
@@ -202,8 +204,7 @@ class RealtimeService {
     // Track user presence
     channel.on('presence', { event: 'sync' }, () => {
       const state = channel.presenceState();
-      console.log('Presence state:', state);
-      callbacks.onSync?.();
+      callbacks.onSync?.(state as Record<string, unknown>);
     });
 
     if (callbacks.onJoin) {
@@ -233,10 +234,10 @@ class RealtimeService {
   }
 
   // Subscribe to broadcast messages
-  subscribeToBroadcast(
+  subscribeToBroadcast<Payload = Record<string, unknown>>(
     channelName: string,
     event: string,
-    callback: (payload: any) => void
+    callback: (payload: Payload) => void
   ): RealtimeSubscription {
     const broadcastChannelName = `broadcast_${channelName}`;
     
@@ -249,7 +250,9 @@ class RealtimeService {
 
     const channel = supabase
       .channel(broadcastChannelName)
-      .on('broadcast', { event }, callback)
+      .on('broadcast', { event }, ({ payload }) => {
+        callback(payload as Payload);
+      })
       .subscribe();
 
     this.channels.set(broadcastChannelName, channel);
@@ -261,7 +264,7 @@ class RealtimeService {
   }
 
   // Send broadcast message
-  async sendBroadcast(channelName: string, event: string, payload: any) {
+  async sendBroadcast<Payload = Record<string, unknown>>(channelName: string, event: string, payload: Payload) {
     const broadcastChannelName = `broadcast_${channelName}`;
     let channel = this.channels.get(broadcastChannelName);
 

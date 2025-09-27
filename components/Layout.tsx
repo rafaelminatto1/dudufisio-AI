@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
     LayoutGrid, Users, Calendar, Stethoscope, ChevronLeft, ChevronRight, BarChart3,
     LogOut, Bell, User, Menu, X, Activity, DollarSign, ClipboardList
@@ -8,42 +9,60 @@ interface LayoutProps {
   user: any;
   onLogout: () => void;
   children: React.ReactNode;
-  currentPage?: string;
-  onPageChange?: (page: string) => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage = 'dashboard', onPageChange }) => {
+type MenuGroup = 'main' | 'clinical' | 'management';
+
+interface MenuItem {
+  id: string;
+  path: string;
+  icon: typeof LayoutGrid;
+  label: string;
+  group: MenuGroup;
+}
+
+const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const location = useLocation();
 
-    const menuItems = [
-        { id: 'dashboard', icon: LayoutGrid, label: 'Dashboard', group: 'main' },
-        { id: 'appointments', icon: Calendar, label: 'Agenda', group: 'main' },
-        { id: 'patients', icon: Users, label: 'Pacientes', group: 'main' },
-        { id: 'exercises', icon: Activity, label: 'Exercícios', group: 'clinical' },
-        { id: 'treatments', icon: Stethoscope, label: 'Tratamentos', group: 'clinical' },
-        { id: 'reports', icon: BarChart3, label: 'Relatórios', group: 'management' },
-        { id: 'financial', icon: DollarSign, label: 'Financeiro', group: 'management' },
-        { id: 'evaluations', icon: ClipboardList, label: 'Avaliações', group: 'clinical' },
-        { id: 'integrations', icon: Bell, label: 'Integrações', group: 'management' },
+    const menuItems: MenuItem[] = [
+        { id: 'dashboard', path: '/dashboard', icon: LayoutGrid, label: 'Dashboard', group: 'main' },
+        { id: 'appointments', path: '/agenda', icon: Calendar, label: 'Agenda', group: 'main' },
+        { id: 'patients', path: '/patients', icon: Users, label: 'Pacientes', group: 'main' },
+        { id: 'exercises', path: '/exercises', icon: Activity, label: 'Exercícios', group: 'clinical' },
+        { id: 'treatments', path: '/treatments', icon: Stethoscope, label: 'Tratamentos', group: 'clinical' },
+        { id: 'reports', path: '/reports', icon: BarChart3, label: 'Relatórios', group: 'management' },
+        { id: 'financial', path: '/financial', icon: DollarSign, label: 'Financeiro', group: 'management' },
+        { id: 'evaluations', path: '/evaluations', icon: ClipboardList, label: 'Avaliações', group: 'clinical' },
+        { id: 'integrations', path: '/integrations', icon: Bell, label: 'Integrações', group: 'management' },
     ];
 
-    const NavLink = ({ item }: { item: any }) => (
-        <button
-            onClick={() => {
-                onPageChange?.(item.id);
-                setIsMobileMenuOpen(false);
+    const isItemActive = (path: string) => {
+        if (path === '/') {
+            return location.pathname === path;
+        }
+        return location.pathname === path || location.pathname.startsWith(`${path}/`);
+    };
+
+    const NavItem = ({ item }: { item: MenuItem }) => (
+        <NavLink
+            to={item.path}
+            onClick={() => setIsMobileMenuOpen(false)}
+            end={item.path === '/dashboard'}
+            className={({ isActive }) => {
+                const active = isActive || isItemActive(item.path);
+                return `w-full flex items-center p-2.5 rounded-lg transition-colors duration-200 ${
+                    active
+                        ? 'bg-sky-50 text-sky-600 font-semibold'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                } ${isCollapsed ? 'justify-center' : ''}`;
             }}
-            className={`w-full flex items-center p-2.5 rounded-lg transition-colors duration-200 ${
-                currentPage === item.id
-                    ? 'bg-sky-50 text-sky-600 font-semibold'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-            } ${isCollapsed ? 'justify-center' : ''}`}
             title={isCollapsed ? item.label : undefined}
         >
             <item.icon className={`w-5 h-5 shrink-0 ${isCollapsed ? '' : 'mr-3'}`} />
             {!isCollapsed && <span className="truncate flex-1 text-sm text-left">{item.label}</span>}
-        </button>
+        </NavLink>
     );
 
     const groupItems = (items: any[], group: string) => items.filter(item => item.group === group);
@@ -84,7 +103,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage =
                                 </h3>
                             )}
                             {groupItems(menuItems, 'main').map((item) => (
-                                <NavLink key={item.id} item={item} />
+                                <NavItem key={item.id} item={item} />
                             ))}
                         </div>
 
@@ -96,7 +115,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage =
                                 </h3>
                             )}
                             {groupItems(menuItems, 'clinical').map((item) => (
-                                <NavLink key={item.id} item={item} />
+                                <NavItem key={item.id} item={item} />
                             ))}
                         </div>
 
@@ -108,7 +127,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage =
                                 </h3>
                             )}
                             {groupItems(menuItems, 'management').map((item) => (
-                                <NavLink key={item.id} item={item} />
+                                <NavItem key={item.id} item={item} />
                             ))}
                         </div>
                     </div>
@@ -159,7 +178,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children, currentPage =
                         </div>
                         <div className="py-4 px-3">
                             {menuItems.map((item) => (
-                                <NavLink key={item.id} item={item} />
+                                <NavItem key={item.id} item={item} />
                             ))}
                         </div>
                     </div>

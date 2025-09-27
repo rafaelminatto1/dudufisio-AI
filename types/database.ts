@@ -26,11 +26,16 @@ export type Database = {
           created_by: string | null
           end_time: string
           id: string
+          metadata: Json | null
+          payment_status: string | null
           insurance_authorization: string | null
           insurance_covered: boolean | null
           is_online: boolean | null
           notes: string | null
           online_link: string | null
+          recurrence_rule: Json | null
+          recurrence_template_id: string | null
+          series_id: string | null
           patient_id: string
           price: number | null
           reminder_sent: boolean | null
@@ -52,11 +57,16 @@ export type Database = {
           created_by?: string | null
           end_time: string
           id?: string
+          metadata?: Json | null
+          payment_status?: string | null
           insurance_authorization?: string | null
           insurance_covered?: boolean | null
           is_online?: boolean | null
           notes?: string | null
           online_link?: string | null
+          recurrence_rule?: Json | null
+          recurrence_template_id?: string | null
+          series_id?: string | null
           patient_id: string
           price?: number | null
           reminder_sent?: boolean | null
@@ -78,11 +88,16 @@ export type Database = {
           created_by?: string | null
           end_time?: string
           id?: string
+          metadata?: Json | null
+          payment_status?: string | null
           insurance_authorization?: string | null
           insurance_covered?: boolean | null
           is_online?: boolean | null
           notes?: string | null
           online_link?: string | null
+          recurrence_rule?: Json | null
+          recurrence_template_id?: string | null
+          series_id?: string | null
           patient_id?: string
           price?: number | null
           reminder_sent?: boolean | null
@@ -371,24 +386,24 @@ export type Database = {
           id: string
           patient_id: string
           analysis_type: string
-          result: any
-          metadata: any | null
+          result: unknown
+          metadata: unknown | null
           created_at: string | null
         }
         Insert: {
           id?: string
           patient_id: string
           analysis_type: string
-          result: any
-          metadata?: any | null
+          result: unknown
+          metadata?: unknown | null
           created_at?: string | null
         }
         Update: {
           id?: string
           patient_id?: string
           analysis_type?: string
-          result?: any
-          metadata?: any | null
+          result?: unknown
+          metadata?: unknown | null
           created_at?: string | null
         }
         Relationships: [
@@ -407,7 +422,7 @@ export type Database = {
           user_id: string | null
           session_id: string
           event: string
-          properties: any
+          properties: unknown
           timestamp: string
           page: string | null
           user_agent: string | null
@@ -417,7 +432,7 @@ export type Database = {
           user_id?: string | null
           session_id: string
           event: string
-          properties: any
+          properties: unknown
           timestamp: string
           page?: string | null
           user_agent?: string | null
@@ -427,7 +442,7 @@ export type Database = {
           user_id?: string | null
           session_id?: string
           event?: string
-          properties?: any
+          properties?: unknown
           timestamp?: string
           page?: string | null
           user_agent?: string | null
@@ -1282,6 +1297,7 @@ export type Database = {
       }
     }
     Views: {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       [_ in never]: never
     }
     Functions: {
@@ -1308,9 +1324,11 @@ export type Database = {
       }
     }
     Enums: {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       [_ in never]: never
     }
     CompositeTypes: {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       [_ in never]: never
     }
   }

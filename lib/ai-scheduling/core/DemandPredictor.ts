@@ -8,7 +8,7 @@
  * - Comportamento de pacientes
  */
 
-import { Appointment, Patient } from '../../types';
+import { Appointment, Patient, WaitlistEntry } from '../../types';
 import { BusinessIntelligenceSystem } from '../../analytics/BusinessIntelligenceSystem';
 
 export interface DemandPrediction {

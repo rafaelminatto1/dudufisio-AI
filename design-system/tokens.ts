@@ -18,6 +18,18 @@ export const designTokens = {
       950: '#082f49',
     },
 
+    // High Contrast Palette (CSS variables + fallbacks)
+    highContrast: {
+      primary: 'var(--primary-blue, #0066cc)',
+      success: 'var(--success-green, #00aa44)',
+      warning: 'var(--warning-amber, #ff8800)',
+      error: 'var(--error-red, #cc0000)',
+      neutral: 'var(--neutral-gray, #666666)',
+      background: '#ffffff',
+      surface: '#f5f8fb',
+      outline: '#1c1c1c',
+    },
+
     // Secondary Colors (Teal)
     secondary: {
       50: '#f0fdfa',

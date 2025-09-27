@@ -86,7 +86,7 @@ class AppointmentService {
       const { data, error } = await query.order('appointment_date', { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -107,7 +107,7 @@ class AppointmentService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -122,7 +122,7 @@ class AppointmentService {
         appointment.appointment_date,
         appointment.start_time,
         appointment.end_time,
-        appointment.room || undefined
+        appointment.room ?? undefined
       );
 
       if (conflicts.length > 0) {
@@ -136,7 +136,7 @@ class AppointmentService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -149,12 +149,16 @@ class AppointmentService {
       if (updates.appointment_date || updates.start_time || updates.end_time || updates.therapist_id) {
         const current = await this.getAppointmentById(id);
         
+        if (!current) {
+          throw new Error('Consulta não encontrada para atualização');
+        }
+
         const conflicts = await this.checkAppointmentConflict(
-          updates.therapist_id || current.therapist_id,
-          updates.appointment_date || current.appointment_date,
-          updates.start_time || current.start_time,
-          updates.end_time || current.end_time,
-          updates.room || current.room || undefined,
+          updates.therapist_id ?? current.therapist_id,
+          updates.appointment_date ?? current.appointment_date,
+          updates.start_time ?? current.start_time,
+          updates.end_time ?? current.end_time,
+          updates.room ?? current.room ?? undefined,
           id
         );
 
@@ -174,7 +178,7 @@ class AppointmentService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -197,7 +201,7 @@ class AppointmentService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -217,7 +221,7 @@ class AppointmentService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -237,7 +241,7 @@ class AppointmentService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -267,7 +271,7 @@ class AppointmentService {
       const { data, error } = await supabase.rpc('check_appointment_conflict', args);
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -386,7 +390,7 @@ class AppointmentService {
         .limit(limit);
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -434,7 +438,7 @@ class AppointmentService {
           apt.appointment_date,
           apt.start_time,
           apt.end_time,
-          apt.room || undefined
+          apt.room ?? undefined
         );
         
         if (conflictCheck.length > 0) {
@@ -456,14 +460,14 @@ class AppointmentService {
         .select();
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
   }
 
   // Subscribe to appointment changes
-  subscribeToAppointmentChanges(callback: (payload: any) => void) {
+  subscribeToAppointmentChanges(callback: (payload: SupabaseRealtimePayload<Database['public']['Tables']['appointments']['Row']>) => void) {
     return subscribeToTable('appointments', callback);
   }
 

@@ -1,5 +1,6 @@
 import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabase';
 import type { Database } from '../../types/database';
+import { SupabaseRealtimePayload } from '@supabase/supabase-js';
 
 type Session = Database['public']['Tables']['sessions']['Row'];
 type SessionInsert = Database['public']['Tables']['sessions']['Insert'];
@@ -54,7 +55,7 @@ class SessionService {
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -77,7 +78,7 @@ class SessionService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -93,7 +94,7 @@ class SessionService {
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -119,13 +120,13 @@ class SessionService {
       // Update appointment status to completed
       await supabase
         .from('appointments')
-        .update({ 
+        .update({
           status: 'completed',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', session.appointment_id);
 
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -155,7 +156,7 @@ class SessionService {
   async deleteSession(id: string) {
     try {
       const session = await this.getSessionById(id);
-      
+
       const { error } = await supabase
         .from('sessions')
         .delete()
@@ -167,9 +168,9 @@ class SessionService {
       if (session?.appointment_id) {
         await supabase
           .from('appointments')
-          .update({ 
+          .update({
             status: 'scheduled',
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', session.appointment_id);
       }
@@ -202,7 +203,7 @@ class SessionService {
       const { data, error } = await query;
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -229,7 +230,7 @@ class SessionService {
       const { data, error } = await query.order('appointment.start_time', { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -239,7 +240,7 @@ class SessionService {
   async getPatientSessionStatistics(patientId: string): Promise<SessionStatistics> {
     try {
       const sessions = await this.getPatientSessions(patientId);
-      
+
       if (sessions.length === 0) {
         return {
           totalSessions: 0,
@@ -253,8 +254,8 @@ class SessionService {
 
       // Calculate pain statistics
       const painData = sessions
-        .filter(s => s.pain_level_before !== null && s.pain_level_after !== null)
-        .map(s => ({
+        .filter((s) => s.pain_level_before !== null && s.pain_level_after !== null)
+        .map((s) => ({
           before: s.pain_level_before!,
           after: s.pain_level_after!,
           reduction: s.pain_level_before! - s.pain_level_after!,
@@ -272,11 +273,11 @@ class SessionService {
 
       // Extract procedures
       const procedures: { [key: string]: number } = {};
-      sessions.forEach(s => {
+      sessions.forEach((s) => {
         if (s.procedures_performed) {
-          const procs = s.procedures_performed.split(',').map(p => p.trim());
-          procs.forEach(proc => {
-            procedures[proc] = (procedures[proc] || 0) + 1;
+          const procs = s.procedures_performed.split(',').map((proc) => proc.trim());
+          procs.forEach((proc) => {
+            procedures[proc] = (procedures[proc] ?? 0) + 1;
           });
         }
       });
@@ -291,10 +292,10 @@ class SessionService {
       if (painData.length >= 3) {
         const recentSessions = painData.slice(0, 3);
         const olderSessions = painData.slice(-3);
-        
+
         const recentAvg = recentSessions.reduce((sum, d) => sum + d.after, 0) / recentSessions.length;
         const olderAvg = olderSessions.reduce((sum, d) => sum + d.after, 0) / olderSessions.length;
-        
+
         if (recentAvg < olderAvg - 1) {
           progressTrend = 'improving';
         } else if (recentAvg > olderAvg + 1) {
@@ -319,13 +320,13 @@ class SessionService {
   async getPatientEvolutionData(patientId: string) {
     try {
       const sessions = await this.getPatientSessions(patientId);
-      
+
       const evolutionData = sessions
-        .filter(s => s.pain_level_before !== null || s.pain_level_after !== null)
-        .map(s => ({
-          date: s.appointment?.appointment_date || s.created_at,
-          painBefore: s.pain_level_before || 0,
-          painAfter: s.pain_level_after || 0,
+        .filter((s) => s.pain_level_before !== null || s.pain_level_after !== null)
+        .map((s) => ({
+          date: s.appointment?.appointment_date ?? s.created_at,
+          painBefore: s.pain_level_before ?? 0,
+          painAfter: s.pain_level_after ?? 0,
           sessionNumber: sessions.length - sessions.indexOf(s),
         }))
         .reverse();
@@ -374,9 +375,9 @@ class SessionService {
   // Add measurements to session
   async addMeasurements(
     sessionId: string,
-    rangeOfMotion?: any,
-    strengthTests?: any,
-    functionalTests?: any
+    rangeOfMotion?: Record<string, unknown>,
+    strengthTests?: Record<string, unknown>,
+    functionalTests?: Record<string, unknown>
   ) {
     try {
       const updates: SessionUpdate = {
@@ -392,12 +393,12 @@ class SessionService {
   }
 
   // Subscribe to session changes
-  subscribeToSessionChanges(callback: (payload: any) => void) {
+  subscribeToSessionChanges(callback: (payload: SupabaseRealtimePayload<Session>) => void) {
     return subscribeToTable('sessions', callback);
   }
 
   // Subscribe to patient sessions
-  subscribeToPatientSessions(patientId: string, callback: (payload: any) => void) {
+  subscribeToPatientSessions(patientId: string, callback: (payload: SupabaseRealtimePayload<Session>) => void) {
     const channel = supabase
       .channel('patient_sessions')
       .on(
@@ -407,24 +408,53 @@ class SessionService {
           schema: 'public',
           table: 'sessions',
         },
-        async (payload: any) => {
-          // Check if this session belongs to the patient
+        async (payload) => {
           if (payload.new?.appointment_id) {
             const { data: appointment } = await supabase
               .from('appointments')
               .select('patient_id')
               .eq('id', payload.new.appointment_id)
               .single();
-            
+
             if (appointment?.patient_id === patientId) {
-              callback(payload);
+              callback(payload as SupabaseRealtimePayload<Session>);
             }
           }
         }
       )
       .subscribe();
 
-    return channel;
+    return () => channel.unsubscribe();
+  }
+
+  // Subscribe to therapist sessions
+  subscribeToTherapistSessions(therapistId: string, callback: (payload: SupabaseRealtimePayload<Session>) => void) {
+    const channel = supabase
+      .channel('therapist_sessions')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'sessions',
+        },
+        async (payload) => {
+          if (payload.new?.appointment_id) {
+            const { data: appointment } = await supabase
+              .from('appointments')
+              .select('therapist_id')
+              .eq('id', payload.new.appointment_id)
+              .single();
+
+            if (appointment?.therapist_id === therapistId) {
+              callback(payload as SupabaseRealtimePayload<Session>);
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => channel.unsubscribe();
   }
 
   // Bulk create sessions
@@ -441,7 +471,7 @@ class SessionService {
       const appointmentIds = sessions.map(s => s.appointment_id);
       await supabase
         .from('appointments')
-        .update({ 
+        .update({
           status: 'completed',
           updated_at: new Date().toISOString()
         })

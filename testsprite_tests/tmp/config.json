@@ -1,19 +1,18 @@
 {
   "status": "commited",
-  "type": "backend",
+  "type": "frontend",
   "scope": "codebase",
   "localEndpoint": "http://localhost:5174",
-  "backendAuthType": "basic token",
-  "backendUsername": "admin@dudufisio.com",
-  "backendPassword": "demo123456",
+  "loginUser": "admin@dudufisio.com",
+  "loginPassword": "demo123456",
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "Execute comprehensive tests for the DuduFisio-AI physiotherapy management system. The server is running on port 5175. Test all major features including patient management, appointment scheduling, medical records, AI services, body mapping, exercise library, authentication, payments, and compliance features. Focus on testing the actual functionality that is working in the browser.",
+    "additionalInstruction": "Execute todos os testes do plano para identificar erros e problemas no sistema",
     "envs": {
       "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
     }
   },
-  "proxy": "http://539718ec-859c-48fb-bb72-bd91f9a64e86:wiT20HL8lYgE1kzTB8LV6YxdX62vJY5d@tun.testsprite.com:8080"
+  "proxy": "http://10a29c10-27c8-433a-b5ac-0b644270e1b5:I5863vFWEcMrWmjrMlRCFwBa7oWCzcqn@tun.testsprite.com:8080"
 }

@@ -5,6 +5,10 @@ import {
   SoapNote,
   TreatmentPlan,
   ExercisePrescription,
+  RecurrenceTemplate,
+  WaitlistEntry,
+  ScheduleBlock,
+  SchedulingAlert,
 } from '../types';
 import {
   mockPatients,
@@ -12,6 +16,10 @@ import {
   mockSoapNotes,
   mockTreatmentPlans,
   mockExercisePrescriptions,
+  mockRecurrenceTemplates,
+  mockWaitlistEntries,
+  mockScheduleBlocks,
+  mockSchedulingAlerts,
 } from '../data/mockData';
 
 // Create mutable copies of the mock data to act as our "database"
@@ -20,6 +28,10 @@ let appointments = [...mockAppointments];
 const soapNotes = [...mockSoapNotes];
 const treatmentPlans = [...mockTreatmentPlans];
 let exercisePrescriptions = [...mockExercisePrescriptions];
+let recurrenceTemplates = [...(mockRecurrenceTemplates || [])];
+let waitlistEntries = [...(mockWaitlistEntries || [])];
+let scheduleBlocks = [...(mockScheduleBlocks || [])];
+let schedulingAlerts = [...(mockSchedulingAlerts || [])];
 
 // A central place to manage all mock data, ensuring consistency.
 export const db = {
@@ -46,6 +58,64 @@ export const db = {
   },
   deleteAppointmentSeries: (seriesId: string, fromDate: Date): void => {
     appointments = appointments.filter(a => !(a.seriesId === seriesId && a.startTime >= fromDate));
+  },
+
+  // Recurrence Templates
+  getRecurrenceTemplates: (): RecurrenceTemplate[] => [...recurrenceTemplates],
+  getRecurrenceTemplateById: (id: string): RecurrenceTemplate | undefined => recurrenceTemplates.find(t => t.id === id),
+  saveRecurrenceTemplate: (template: RecurrenceTemplate): void => {
+    const index = recurrenceTemplates.findIndex(t => t.id === template.id);
+    if (index > -1) {
+      recurrenceTemplates[index] = template;
+    } else {
+      recurrenceTemplates.push(template);
+    }
+  },
+
+  // Schedule Blocks
+  getScheduleBlocks: (): ScheduleBlock[] => [...scheduleBlocks],
+  saveScheduleBlock: (block: ScheduleBlock): void => {
+    const index = scheduleBlocks.findIndex(b => b.id === block.id);
+    if (index > -1) {
+      scheduleBlocks[index] = block;
+    } else {
+      scheduleBlocks.push(block);
+    }
+  },
+  deleteScheduleBlock: (id: string): void => {
+    scheduleBlocks = scheduleBlocks.filter(block => block.id !== id);
+  },
+
+  // Waitlist
+  getWaitlistEntries: (): WaitlistEntry[] => [...waitlistEntries],
+  getWaitlistEntryById: (id: string): WaitlistEntry | undefined => waitlistEntries.find(entry => entry.id === id),
+  saveWaitlistEntry: (entry: WaitlistEntry): void => {
+    const index = waitlistEntries.findIndex(e => e.id === entry.id);
+    if (index > -1) {
+      waitlistEntries[index] = entry;
+    } else {
+      waitlistEntries.push(entry);
+    }
+  },
+  deleteWaitlistEntry: (id: string): void => {
+    waitlistEntries = waitlistEntries.filter(entry => entry.id !== id);
+  },
+
+  // Scheduling Alerts
+  getSchedulingAlerts: (): SchedulingAlert[] => [...schedulingAlerts],
+  saveSchedulingAlert: (alert: SchedulingAlert): void => {
+    const index = schedulingAlerts.findIndex(a => a.id === alert.id);
+    if (index > -1) {
+      schedulingAlerts[index] = alert;
+    } else {
+      schedulingAlerts.push(alert);
+    }
+  },
+  resolveSchedulingAlert: (id: string): void => {
+    schedulingAlerts = schedulingAlerts.map(alert => alert.id === id ? { ...alert, resolved: true, resolvedAt: new Date() } : alert);
+  },
+  deleteSchedulingAlert: (id: string): void => {
+    schedulingAlerts = schedulingAlerts.filter(alert => alert.id !== id);
   },
 
   // SoapNotes

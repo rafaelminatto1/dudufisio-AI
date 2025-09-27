@@ -3,6 +3,10 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { X, Save, Calendar, Clock } from 'lucide-react';
 import { Appointment, Patient, AppointmentStatus, AppointmentType, Therapist, PatientSummary, RecurrenceRule } from '../types';
+import { recurrenceTemplateService } from '../services/scheduling/recurrenceTemplateService';
+import { waitlistService } from '../services/scheduling/waitlistService';
+import { blockService } from '../services/scheduling/blockService';
+import { RecurrenceTemplate, WaitlistEntry, ScheduleBlock } from '../types';
 import { useToast } from '../contexts/ToastContext';
 import { PatientSearchInput } from './agenda/PatientSearchInput';
 import { format } from 'date-fns';
@@ -33,6 +37,10 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   const [isSaving, setIsSaving] = useState(false);
   const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule | undefined>(undefined);
   const [isTeleconsultaEnabled, setIsTeleconsultaEnabled] = useState(false);
+  const [templates, setTemplates] = useState<RecurrenceTemplate[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | undefined>();
+  const [availableBlocks, setAvailableBlocks] = useState<ScheduleBlock[]>([]);
+  const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
   
   const { showToast } = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -65,6 +73,12 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
         }
     }
   }, [appointmentToEdit, initialData, isOpen, patients, therapists]);
+
+  useEffect(() => {
+    recurrenceTemplateService.listTemplates()?.then(setTemplates).catch(() => showToast('Falha ao carregar templates.', 'error'));
+    blockService.listBlocks()?.then(setAvailableBlocks).catch(() => showToast('Falha ao carregar bloqueios.', 'error'));
+    waitlistService.listEntries('waiting').then(setWaitlistEntries).catch(() => showToast('Falha ao carregar fila de espera.', 'error'));
+  }, [showToast]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -133,6 +147,47 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       onClose();
     }
     setIsSaving(false);
+  };
+
+  const applyTemplate = async () => {
+    if (!selectedTemplateId) {
+      showToast('Selecione um template para aplicar.', 'error');
+      return;
+    }
+    if (!selectedPatient) {
+      showToast('Selecione um paciente antes de aplicar o template.', 'error');
+      return;
+    }
+    try {
+      const baseAppointment = {
+        patientId: selectedPatient?.id,
+        patientName: selectedPatient?.name,
+        patientAvatarUrl: (selectedPatient as any)?.avatarUrl,
+        therapistId,
+        title: `${appointmentType}`,
+        type: appointmentType,
+        status: AppointmentStatus.Scheduled,
+        value: 120,
+        paymentStatus: 'pending',
+        metadata: {},
+      } as Partial<Appointment>;
+
+      const result = await recurrenceTemplateService.applyTemplate(
+        selectedTemplateId,
+        slotDate,
+        baseAppointment,
+        allAppointments
+      );
+
+      showToast('Template aplicado com sucesso!', 'success');
+      if (result.waitlistMatch) {
+        showToast(`Paciente da fila sugerido: ${result.waitlistMatch.patientId}`, 'info');
+      }
+      onClose?.();
+    } catch (error) {
+      console.error(error);
+      showToast('Falha ao aplicar template recorrente.', 'error');
+    }
   };
 
   if (!isOpen) return null;
@@ -206,6 +261,53 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           </div>
           
           {!appointmentToEdit?.seriesId && <RecurrenceSelector recurrenceRule={recurrenceRule} onChange={setRecurrenceRule} />}
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">Templates de horários</label>
+            <div className="flex gap-2">
+              <select
+                value={selectedTemplateId}
+                onChange={(e) => setSelectedTemplateId(e.target.value || undefined)}
+                className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:ring-sky-500 focus:border-sky-500 text-sm"
+              >
+                <option value="">Selecione um template</option>
+                {templates.map(template => (
+                  <option key={template.id} value={template.id}>{template.title}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={applyTemplate}
+                className="px-3 py-2 bg-emerald-500 text-white rounded-md text-sm hover:bg-emerald-600"
+              >
+                Aplicar
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">Use templates para criar séries de horários recorrentes e otimizar encaixes.</p>
+          </div>
+
+          {availableBlocks.length > 0 && (
+            <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-md p-3 text-xs">
+              <strong>Bloqueios próximos:</strong>
+              <ul className="list-disc list-inside mt-1 space-y-1">
+                {availableBlocks.slice(0, 2).map(block => (
+                  <li key={block.id}>{block.reason || 'Bloqueio'} em {format(block.startTime, "dd/MM HH:mm")}</li>
+                ))}
+                {availableBlocks.length > 2 && <li>+ {availableBlocks.length - 2} bloqueio(s)</li>}
+              </ul>
+            </div>
+          )}
+
+          {waitlistEntries.length > 0 && (
+            <div className="bg-slate-100 border border-slate-200 text-slate-700 rounded-md p-3 text-xs">
+              <strong>Fila de espera prioritária:</strong>
+              <ul className="list-disc list-inside mt-1 space-y-1">
+                {waitlistEntries.slice(0, 3).map(entry => (
+                  <li key={entry.id}>Paciente {entry.patientId} — urgência {entry.urgency}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">Observações</label>

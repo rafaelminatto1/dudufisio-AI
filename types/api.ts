@@ -1,5 +1,5 @@
 // Generic API response wrapper
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
   timestamp: string;
@@ -31,12 +31,12 @@ export interface ApiError {
 export interface ValidationError {
   field: string;
   message: string;
-  value?: any;
+  value?: unknown;
 }
 
 // Specific error types
 export interface ConflictError extends ApiError {
-  conflicts?: any[];
+  conflicts?: unknown[];
 }
 
 export interface AuthenticationError extends ApiError {
@@ -95,7 +95,7 @@ export interface SearchFilters {
   limit?: number;
   sort_by?: string;
   sort_order?: 'asc' | 'desc';
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface DateRangeFilter {
@@ -166,7 +166,7 @@ export interface RealtimeUpdate {
   entity_type: 'patient' | 'appointment' | 'session' | 'pain_point' | 'user';
   entity_id: string;
   operation: 'created' | 'updated' | 'deleted';
-  data: any;
+  data: unknown;
   user_id: string;
   timestamp: string;
 }
@@ -180,8 +180,8 @@ export interface AuditLogEntry {
   resource_type: string;
   resource_id: string;
   changes?: {
-    before?: any;
-    after?: any;
+    before?: unknown;
+    after?: unknown;
   };
   ip_address: string;
   user_agent: string;
@@ -296,30 +296,30 @@ export const ERROR_CODES = {
 export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES];
 
 // Helper functions for error handling
-export function isApiError(error: any): error is ApiError {
+export function isApiError(error: unknown): error is ApiError {
   return error && typeof error === 'object' && 'error' in error && 'message' in error;
 }
 
-export function isValidationError(error: any): error is ApiError {
+export function isValidationError(error: unknown): error is ApiError {
   return isApiError(error) && error.code === ERROR_CODES.VALIDATION_ERROR;
 }
 
-export function isAuthenticationError(error: any): error is AuthenticationError {
+export function isAuthenticationError(error: unknown): error is AuthenticationError {
   return isApiError(error) && [
     ERROR_CODES.AUTH_REQUIRED,
     ERROR_CODES.TOKEN_EXPIRED,
     ERROR_CODES.INVALID_CREDENTIALS
-  ].includes(error.code as any || '');
+  ].includes(error.code as string ?? '');
 }
 
-export function isAuthorizationError(error: any): error is AuthorizationError {
+export function isAuthorizationError(error: unknown): error is AuthorizationError {
   return isApiError(error) && error.code === ERROR_CODES.INSUFFICIENT_PERMISSIONS;
 }
 
 export function createApiResponse<T>(data: T, message?: string): ApiResponse<T> {
   return {
     data,
-    message: message || 'Success',
+    message: message ?? 'Success',
     timestamp: new Date().toISOString()
   };
 }
@@ -343,7 +343,7 @@ export function createPaginatedResponse<T>(
       pages,
       has_more
     },
-    message: message || 'Success',
+    message: message ?? 'Success',
     timestamp: new Date().toISOString()
   };
 }
@@ -357,8 +357,8 @@ export function createApiError(
   return {
     error,
     message,
-    code: code || 'UNKNOWN_ERROR',
-    details: details || [],
+    code: code ?? 'UNKNOWN_ERROR',
+    details: details ?? [],
     timestamp: new Date().toISOString()
   };
 }

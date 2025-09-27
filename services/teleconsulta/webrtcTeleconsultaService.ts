@@ -123,31 +123,6 @@ interface ScreenShareSession {
   hasAudio: boolean;
 }
 
-interface WhiteBoardData {
-  id: string;
-  sessionId: string;
-  elements: WhiteBoardElement[];
-  lastModified: Date;
-  version: number;
-}
-
-interface WhiteBoardElement {
-  id: string;
-  type: 'line' | 'rectangle' | 'circle' | 'text' | 'image' | 'arrow';
-  x: number;
-  y: number;
-  width?: number;
-  height?: number;
-  color: string;
-  strokeWidth: number;
-  text?: string;
-  fontSize?: number;
-  imageUrl?: string;
-  points?: { x: number; y: number }[]; // For lines and arrows
-  createdBy: string;
-  createdAt: Date;
-}
-
 interface NetworkQualityMetrics {
   bandwidth: {
     download: number; // kbps
@@ -189,7 +164,6 @@ class WebRTCTeleconsultaService {
   private recordingData: Blob[] = [];
   private websocket: WebSocket | null = null;
   private currentSession: TeleconsultaSession | null = null;
-  private whiteBoardCanvas: HTMLCanvasElement | null = null;
   private isScreenSharing: boolean = false;
 
   // WebRTC configuration
@@ -262,9 +236,6 @@ class WebRTCTeleconsultaService {
         break;
       case 'chat-message':
         this.handleChatMessage(data);
-        break;
-      case 'whiteboard-update':
-        this.handleWhiteBoardUpdate(data);
         break;
       case 'screen-share-started':
         this.handleScreenShareStarted(data);
@@ -1109,7 +1080,7 @@ class WebRTCTeleconsultaService {
   }
 
   // Event handlers for WebSocket messages
-  private async handleOffer(data: any): Promise<void> {
+  private async handleOffer(data: { offer: RTCSessionDescriptionInit; fromParticipant: string }): Promise<void> {
     const { offer, fromParticipant } = data;
     const peerConnection = this.peerConnections.get(fromParticipant) ||
                            await this.createPeerConnection(fromParticipant);
@@ -1124,7 +1095,7 @@ class WebRTCTeleconsultaService {
     });
   }
 
-  private async handleAnswer(data: any): Promise<void> {
+  private async handleAnswer(data: { answer: RTCSessionDescriptionInit; fromParticipant: string }): Promise<void> {
     const { answer, fromParticipant } = data;
     const peerConnection = this.peerConnections.get(fromParticipant);
 
@@ -1133,7 +1104,7 @@ class WebRTCTeleconsultaService {
     }
   }
 
-  private async handleIceCandidate(data: any): Promise<void> {
+  private async handleIceCandidate(data: { candidate: RTCIceCandidateInit; fromParticipant: string }): Promise<void> {
     const { candidate, fromParticipant } = data;
     const peerConnection = this.peerConnections.get(fromParticipant);
 
@@ -1142,12 +1113,12 @@ class WebRTCTeleconsultaService {
     }
   }
 
-  private handleParticipantJoined(data: any): void {
+  private handleParticipantJoined(data: { participant: TeleconsultaParticipant }): void {
     const { participant } = data;
     this.onParticipantJoined?.(participant);
   }
 
-  private handleParticipantLeft(data: any): void {
+  private handleParticipantLeft(data: { participantId: string }): void {
     const { participantId } = data;
 
     // Clean up peer connection
@@ -1167,15 +1138,11 @@ class WebRTCTeleconsultaService {
     this.onChatMessage?.(data);
   }
 
-  private handleWhiteBoardUpdate(data: any): void {
-    this.onWhiteBoardUpdate?.(data);
-  }
-
-  private handleScreenShareStarted(data: any): void {
+  private handleScreenShareStarted(data: Record<string, unknown>): void {
     this.onScreenShareStarted?.(data);
   }
 
-  private handleScreenShareEnded(data: any): void {
+  private handleScreenShareEnded(data: Record<string, unknown>): void {
     this.onScreenShareEnded?.(data);
   }
 
@@ -1184,9 +1151,8 @@ class WebRTCTeleconsultaService {
   onParticipantJoined?: (participant: TeleconsultaParticipant) => void;
   onParticipantLeft?: (participantId: string) => void;
   onChatMessage?: (message: ChatMessage) => void;
-  onWhiteBoardUpdate?: (data: any) => void;
-  onScreenShareStarted?: (data: any) => void;
-  onScreenShareEnded?: (data: any) => void;
+  onScreenShareStarted?: (data: Record<string, unknown>) => void;
+  onScreenShareEnded?: (data: Record<string, unknown>) => void;
 
   // Cleanup methods
   async leaveSession(): Promise<void> {
@@ -1229,7 +1195,7 @@ class WebRTCTeleconsultaService {
       throw new Error(`Failed to get sessions: ${error.message}`);
     }
 
-    return data || [];
+    return data ?? [];
   }
 
   async getSessionById(sessionId: string): Promise<TeleconsultaSession | null> {
@@ -1240,10 +1206,10 @@ class WebRTCTeleconsultaService {
       .single();
 
     if (error) {
-      return null;
+      throw new Error(`Failed to get session: ${error.message}`);
     }
 
-    return data;
+    return data ?? null;
   }
 
   async getRecordings(sessionId?: string): Promise<RecordingSession[]> {

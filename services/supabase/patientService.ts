@@ -1,7 +1,12 @@
 import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabase';
+import type { SupabaseRealtimePayload } from '../../types/realtime';
 import type { Database } from '../../types/database';
-type PatientInsert = Database['public']['Tables']['patients']['Insert'];
-type PatientUpdate = Database['public']['Tables']['patients']['Update'];
+type PatientTable = Database['public']['Tables']['patients'];
+type PatientRow = PatientTable['Row'];
+type PatientInsert = PatientTable['Insert'];
+type PatientUpdate = PatientTable['Update'];
+
+type PatientRealtimePayload = SupabaseRealtimePayload<PatientRow>;
 
 export interface PatientFilters {
   status?: 'active' | 'inactive' | 'archived';
@@ -38,7 +43,7 @@ class PatientService {
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -62,7 +67,7 @@ class PatientService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -102,7 +107,7 @@ class PatientService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -122,7 +127,7 @@ class PatientService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -142,7 +147,7 @@ class PatientService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -196,15 +201,14 @@ class PatientService {
       if (paymentsResult.error) throw paymentsResult.error;
 
       // Calculate financial balance
-      const balance = (paymentsResult.data?.reduce((acc: number, transaction: { amount: number; status: string }) => {
-        // Consider only completed amounts as positive for now
+      const balance = paymentsResult.data?.reduce((acc: number, transaction: { amount: number }) => {
         return acc + (typeof transaction.amount === 'number' ? transaction.amount : 0);
-      }, 0)) || 0;
+      }, 0) ?? 0;
 
       return {
-        totalAppointments: appointmentsResult.count || 0,
-        completedSessions: sessionsResult.count || 0,
-        activePainPoints: painPointsResult.count || 0,
+        totalAppointments: appointmentsResult.count ?? 0,
+        completedSessions: sessionsResult.count ?? 0,
+        activePainPoints: painPointsResult.count ?? 0,
         financialBalance: balance,
       };
     } catch (error) {
@@ -222,7 +226,7 @@ class PatientService {
         .limit(limit);
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -239,7 +243,7 @@ class PatientService {
 
       if (error) throw error;
 
-      const patientIds = [...new Set((data || []).map((a: { patient_id: string }) => a.patient_id))];
+      const patientIds = [...new Set((data ?? []).map((appointment: { patient_id: string }) => appointment.patient_id))];
 
       if (patientIds.length === 0) return [];
 
@@ -249,19 +253,19 @@ class PatientService {
         .in('id', patientIds);
 
       if (patientsError) throw patientsError;
-      return patients || [];
+      return patients ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
   }
 
   // Subscribe to patient changes
-  subscribeToPatientChanges(callback: (payload: any) => void) {
+  subscribeToPatientChanges(callback: (payload: PatientRealtimePayload) => void) {
     return subscribeToTable('patients', callback);
   }
 
   // Subscribe to specific patient changes
-  subscribeToPatientById(patientId: string, callback: (payload: any) => void) {
+  subscribeToPatientById(patientId: string, callback: (payload: PatientRealtimePayload) => void) {
     return subscribeToTable('patients', callback, {
       column: 'id',
       value: patientId,
@@ -277,7 +281,7 @@ class PatientService {
         .select();
 
       if (error) throw error;
-      return data || [];
+      return data ?? [];
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -303,38 +307,24 @@ class PatientService {
         'Status',
       ];
 
-      const rows = (patients as Array<{
-        full_name: string;
-        email: string | null;
-        phone: string | null;
-        cpf: string | null;
-        birth_date: string | null;
-        gender: string | null;
-        address_street: string | null;
-        address_number: string | null;
-        address_city: string | null;
-        address_state: string | null;
-        address_zip: string | null;
-        insurance_info: string | null;
-        status: string | null;
-      }>).map((patient) => [
+      const rows = patients.map((patient) => [
         patient.full_name,
         patient.email,
         patient.phone,
         patient.cpf,
         patient.birth_date,
-        patient.gender || '',
-        `${patient.address_street || ''} ${patient.address_number || ''}`,
-        patient.address_city || '',
-        patient.address_state || '',
-        patient.address_zip || '',
-        patient.insurance_info || '',
-        patient.status,
+        patient.gender ?? '',
+        `${patient.address_street ?? ''} ${patient.address_number ?? ''}`.trim(),
+        patient.address_city ?? '',
+        patient.address_state ?? '',
+        patient.address_zip ?? '',
+        patient.insurance_info ?? '',
+        patient.status ?? '',
       ]);
 
       const csvContent = [
         headers.join(','),
-        ...rows.map((row: (string | null)[]) => row.map((cell: string | null) => `"${cell ?? ''}"`).join(',')),
+        ...rows.map((row) => row.map((cell) => `"${cell ?? ''}"`).join(',')),
       ].join('\n');
 
       return csvContent;

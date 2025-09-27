@@ -1,4 +1,5 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
+import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 
 // Lazy load all pages for better performance
@@ -9,12 +10,17 @@ const SessionPage = lazy(() => import('./SessionPage'));
 const SessionFormPage = lazy(() => import('./SessionFormPage'));
 const AtendimentoPage = lazy(() => import('./AtendimentoPage'));
 const FinancialDashboardPage = lazy(() => import('./FinancialDashboardPage'));
+const AdminDashboardPage = lazy(() => import('./AdminDashboardPage'));
 const ExerciseLibraryPage = lazy(() => import('./ExerciseLibraryPage'));
 const ReportsPage = lazy(() => import('./ReportsPage'));
 const SpecialtyAssessmentsPage = lazy(() => import('./SpecialtyAssessmentsPage'));
 const AcompanhamentoPage = lazy(() => import('./AcompanhamentoPage'));
+const TreatmentPage = lazy(() => import('./TreatmentPage'));
 const IntegrationsTestPage = lazy(() => import('./IntegrationsTestPage'));
 const BIIntegrationTestPage = lazy(() => import('./BIIntegrationTestPage'));
+const MentoriaPage = lazy(() => import('./MentoriaPageNew'));
+const ProtocolsPage = lazy(() => import('./ProtocolsPage'));
+const TeleconsultaPage = lazy(() => import('./TeleconsultaPage'));
 import {
     Calendar, Users, Activity, BarChart3,
     Download, RefreshCw,
@@ -217,144 +223,66 @@ interface CompleteDashboardProps {
     onLogout: () => void;
 }
 
-const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout }) => {
-    const [currentPage, setCurrentPage] = useState('dashboard');
+const LazyElement = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
+    <Suspense fallback={<PageLoader />}>
+        <Component />
+    </Suspense>
+);
 
-    // Expose the setCurrentPage function globally for navigation
-    React.useEffect(() => {
-        (window as any).__setCurrentPage = setCurrentPage;
-        return () => {
-            delete (window as any).__setCurrentPage;
-        };
-    }, []);
+const SessionRoute: React.FC<{ mode?: 'view' | 'form' }> = ({ mode = 'view' }) => {
+    const { appointmentId } = useParams<{ appointmentId: string }>();
+    const navigate = useNavigate();
 
-    const renderContent = () => {
-        switch (currentPage) {
-            case 'dashboard':
-                return <DashboardContent />;
-            case 'appointments':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <AgendaPage />
-                    </Suspense>
-                );
-            case 'patients':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <PatientListPage />
-                    </Suspense>
-                );
-            case 'patient-detail':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <PatientDetailPage />
-                    </Suspense>
-                );
-            case 'session':
-                const appointmentId = (window as any).__selectedAppointmentId;
-                if (!appointmentId) {
-                    setCurrentPage('appointments');
-                    return null;
-                }
-                return (
-                    <SessionPage
-                        appointmentId={appointmentId}
-                        onClose={() => {
-                            delete (window as any).__selectedAppointmentId;
-                            setCurrentPage('appointments');
-                        }}
-                    />
-                );
-            case 'session-form':
-                const sessionFormAppointmentId = (window as any).__selectedAppointmentId;
-                if (!sessionFormAppointmentId) {
-                    setCurrentPage('appointments');
-                    return null;
-                }
-                return (
-                    <SessionFormPage
-                        appointmentId={sessionFormAppointmentId}
-                        onClose={() => {
-                            delete (window as any).__selectedAppointmentId;
-                            setCurrentPage('appointments');
-                        }}
-                    />
-                );
-            case 'atendimento':
-                const atendimentoId = (window as any).__selectedAppointmentId;
-                if (!atendimentoId) {
-                    setCurrentPage('appointments');
-                    return null;
-                }
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <AtendimentoPage />
-                    </Suspense>
-                );
-            case 'exercises':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <ExerciseLibraryPage />
-                    </Suspense>
-                );
-            case 'treatments':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <AcompanhamentoPage />
-                    </Suspense>
-                );
-            case 'reports':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <ReportsPage />
-                    </Suspense>
-                );
-            case 'financial':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <FinancialDashboardPage />
-                    </Suspense>
-                );
-            case 'evaluations':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <SpecialtyAssessmentsPage />
-                    </Suspense>
-                );
-            case 'integrations':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <IntegrationsTestPage />
-                    </Suspense>
-                );
-            case 'bi-test':
-                return (
-                    <Suspense fallback={<PageLoader />}>
-                        <BIIntegrationTestPage />
-                    </Suspense>
-                );
-            default:
-                return (
-                    <div className="p-6">
-                        <h1 className="text-2xl font-bold text-slate-900 mb-4">Em Desenvolvimento</h1>
-                        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8 text-center">
-                            <Activity className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-semibold text-slate-900 mb-2">Módulo em Desenvolvimento</h3>
-                            <p className="text-slate-600">Esta funcionalidade será implementada em breve</p>
-                        </div>
-                    </div>
-                );
-        }
-    };
+    if (!appointmentId) return <Navigate to="/agenda" replace />;
+
+    if (mode === 'form') {
+        return (
+            <Suspense fallback={<PageLoader />}>
+                <SessionFormPage
+                    appointmentId={appointmentId}
+                    onClose={() => navigate('/agenda')}
+                />
+            </Suspense>
+        );
+    }
 
     return (
-        <Layout
-            user={user}
-            onLogout={onLogout}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-        >
-            {renderContent()}
+        <Suspense fallback={<PageLoader />}>
+            <SessionPage
+                appointmentId={appointmentId}
+                onClose={() => navigate('/agenda')}
+            />
+        </Suspense>
+    );
+};
+
+const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout }) => {
+    return (
+        <Layout user={user} onLogout={onLogout}>
+            <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<DashboardContent />} />
+                <Route path="/admin" element={LazyElement(AdminDashboardPage)} />
+                <Route path="/agenda" element={LazyElement(AgendaPage)} />
+                <Route path="/patients" element={LazyElement(PatientListPage)} />
+                <Route path="/patients/:id" element={LazyElement(PatientDetailPage)} />
+                <Route path="/sessions/:appointmentId" element={<SessionRoute mode="view" />} />
+                <Route path="/sessions/:appointmentId/form" element={<SessionRoute mode="form" />} />
+                <Route path="/atendimento/:appointmentId" element={LazyElement(AtendimentoPage)} />
+                <Route path="/teleconsulta/:appointmentId" element={LazyElement(TeleconsultaPage)} />
+                <Route path="/exercises" element={LazyElement(ExerciseLibraryPage)} />
+                <Route path="/treatments" element={LazyElement(TreatmentPage)} />
+                <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
+                <Route path="/reports" element={LazyElement(ReportsPage)} />
+                <Route path="/financial" element={LazyElement(FinancialDashboardPage)} />
+                <Route path="/evaluations" element={LazyElement(SpecialtyAssessmentsPage)} />
+                <Route path="/integrations" element={LazyElement(IntegrationsTestPage)} />
+                <Route path="/integrations/bi-test" element={LazyElement(BIIntegrationTestPage)} />
+                <Route path="/mentoria" element={LazyElement(MentoriaPage)} />
+                <Route path="/protocolos" element={LazyElement(ProtocolsPage)} />
+                <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
         </Layout>
     );
 };

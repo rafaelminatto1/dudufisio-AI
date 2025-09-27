@@ -2,6 +2,7 @@ import { Appointment } from '../types';
 import { db } from './mockDb';
 import { eventService } from './eventService';
 import { mockPatients } from '../data/mockData';
+import { RecurrenceTemplate, ScheduleBlock, WaitlistStatus, WaitlistEntry, SchedulingAlert } from '../types';
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -52,3 +53,23 @@ export const deleteAppointmentSeries = async (seriesId: string, fromDate: Date):
     db.deleteAppointmentSeries(seriesId, fromDate);
     eventService.emit('appointments:changed');
 }
+
+export const listRecurrenceTemplates = async (): Promise<RecurrenceTemplate[]> => {
+  await delay(200);
+  return db.getRecurrenceTemplates();
+};
+
+export const listScheduleBlocks = async (): Promise<ScheduleBlock[]> => {
+  await delay(200);
+  return db.getScheduleBlocks();
+};
+
+export const listWaitlistEntries = async (status: WaitlistStatus = 'waiting'): Promise<WaitlistEntry[]> => {
+  await delay(200);
+  return db.getWaitlistEntries().filter(entry => entry.status === status);
+};
+
+export const listActiveAlerts = async (): Promise<SchedulingAlert[]> => {
+  await delay(100);
+  return db.getSchedulingAlerts().filter(alert => !alert.resolved);
+};

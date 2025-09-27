@@ -1,715 +1,245 @@
 {
   "meta": {
     "project": "DuduFisio-AI",
-    "date": "2025-09-13",
+    "date": "2025-09-26",
     "prepared_by": "Software Development Manager"
   },
-  "product_overview": "DuduFisio-AI is an integrated management system designed for physiotherapy clinics that combines comprehensive clinical management features with advanced AI assistance to optimize patient care, clinical documentation, and operational efficiency.",
+  "product_overview": "DuduFisio-AI is an integrated management system for physiotherapy clinics, combining traditional clinical management features with Artificial Intelligence assistance to optimize patient care, clinical documentation, and operational management.",
   "core_goals": [
     "Digitize and automate physiotherapy clinical processes",
     "Enhance the quality of clinical documentation using AI",
-    "Increase operational efficiency and patient satisfaction",
-    "Ensure data security and comply with Brazilian LGPD regulation",
-    "Provide a user-friendly and scalable platform for physiotherapy professionals and patients"
+    "Increase operational efficiency and patient satisfaction"
   ],
   "key_features": [
-    "Complete Patient Management including personal data, medical history, and interactive body map for pain points",
-    "Advanced Appointment Scheduling with conflict prevention, recurring appointments, notifications, and multi-therapist calendar views",
-    "FHIR-compliant Electronic Medical Records with rich-text SOAP notes, version control, and customizable templates",
-    "AI Assistant for automatic physiotherapy report generation, protocol suggestions, risk analysis, and clinical queries",
-    "Comprehensive Exercise Library with categorized exercises, media support, prescription capabilities, and contraindication alerts",
-    "Secure Patient Portal with personalized access to medical records, prescribed exercises, scheduling, and communication channels",
-    "Real-time Dashboard and customizable Reports for financial, clinical, and operational analytics with export options",
-    "Robust Financial Management supporting multiple payment methods, including PIX and integrations with Mercado Pago, Stripe, and Asaas",
-    "Inventory Management system with categorization, alerts, and audit trails",
-    "Task Management with prioritization, progress tracking, and notifications",
-    "Multi-role Authentication & Authorization system with 2FA and session management",
-    "Compliance with LGPD for data privacy and user data portability"
+    "Comprehensive patient management with electronic medical records and interactive body maps",
+    "Robust appointment scheduling system with conflict prevention, recurring appointments, and notifications",
+    "Rich clinical documentation using SOAP notes with templates, auto-save, and version control",
+    "AI Assistant for automatic report generation, treatment protocol suggestions, risk analysis, and financial insights",
+    "Extensive exercise library with multimedia support, personalized prescriptions, and contraindication alerts",
+    "Secure patient portal for access to personal records, exercises, scheduling and direct communication",
+    "Dashboards and reports for operational, clinical, and financial analytics with interactive graphs",
+    "Financial management including payments, invoicing, multiple payment methods, and PIX integration",
+    "Stock management for materials and equipment with alerts and history tracking",
+    "Task management with prioritization, status tracking, and notifications"
   ],
   "user_flow_summary": [
-    "Administrator registers and manages users with role-based access control and session timeout",
-    "Physiotherapists manage patient records, create clinical notes, schedule appointments, prescribe exercises, and interact with AI assistant",
-    "Patients access their portal to view medical history, prescribed exercises, request appointments, and communicate with the clinic",
-    "Scheduling system prevents overlapping appointments and sends notifications for reminders, changes, and cancellations",
-    "AI generates clinical reports and treatment protocol suggestions based on patient data and clinical notes",
-    "Users generate and view operational and financial reports through an interactive dashboard",
-    "Payments are processed securely via multiple providers and tracked in the system",
-    "Inventory and task management support operational activities with alerts and progress monitoring"
+    "Users authenticate and access role-based dashboards (Administrator, Physiotherapist, Intern, Patient)",
+    "Administrators manage users, financials, stock, and clinics data",
+    "Physiotherapists handle patient records, clinical documentation, AI-assisted reports, and appointments",
+    "Interns access limited patient and scheduling information for observation and learning",
+    "Patients login to view their records, exercises, schedule appointments, and communicate with the clinic",
+    "Appointments are scheduled, notified, and status-tracked via the calendar system",
+    "Clinical documentation is created and edited with rich text editors and AI-generated suggestions",
+    "Financial transactions are processed with multiple payment integrations and tracked",
+    "Notifications and alerts are sent through various communication channels"
   ],
   "validation_criteria": [
-    "System supports full CRUD operations for patients and ensures data validation including CPF uniqueness",
-    "Appointment scheduling prevents conflicts and supports recurring series with notification triggers",
-    "Clinical notes editor provides rich-text formatting, autosave, version history, and template usage",
-    "AI-generated reports and suggestions meet 95% accuracy for clinical relevance",
-    "Patient portal authenticates users securely with access restricted to own data",
-    "Reports can be generated and exported in PDF format with correct financial and clinical data",
-    "System maintains 99.5% uptime and responds to user interactions within 2 seconds",
-    "Security requirements including encrypted data transmission, 2FA, and LGPD compliance are fully implemented and audited",
-    "Payment processing integrates all listed providers and confirms transaction success",
-    "Backup and disaster recovery processes are in place with daily automated backups"
+    "The system validates user registration with email and role-based access control",
+    "Duplicate patient records are prevented with CPF validation and advanced search filters",
+    "Appointment conflicts are automatically prevented and recurring scheduling supported",
+    "Clinical notes support auto-save, version history, and template customization",
+    "AI-generated reports meet 95% accuracy as tested with clinical data",
+    "Patient portal provides secure access with personal data and communications",
+    "Financial operations support multiple payment methods and produce accurate reports",
+    "System complies with LGPD, encrypts sensitive data, and logs all access and changes",
+    "Load time requirements are met with PWA offline support and 99.5% uptime",
+    "Automated end-to-end tests cover critical flows like login, appointments, medical records, and payments"
   ],
   "code_summary": {
     "tech_stack": [
       "TypeScript",
-      "React",
+      "React 18",
       "Vite",
       "Supabase",
       "PostgreSQL",
-      "Tailwind CSS",
       "shadcn/ui",
+      "TailwindCSS",
       "React Router",
-      "Zod",
       "React Hook Form",
+      "Zod",
       "Framer Motion",
       "Playwright",
       "Jest"
     ],
     "features": [
       {
-        "name": "Patient Management API",
-        "description": "Complete patient management system with CRUD operations, medical history tracking, and patient portal access",
+        "name": "Authentication System",
+        "description": "Sistema de autenticação com Supabase, suporte a OAuth (Google, GitHub), 2FA e controle de roles",
         "files": [
-          "services/patientService.ts",
-          "services/supabase/patientService.ts",
-          "pages/PatientListPage.tsx",
-          "pages/PatientDetailPage.tsx",
-          "pages/patient-portal/PatientDashboardPage.tsx",
-          "components/patient/PatientForm.tsx",
-          "components/patient/PatientCard.tsx"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "Patient Management API",
-            "version": "1.0.0",
-            "description": "API for managing patients in the DuduFisio-AI system"
-          },
-          "paths": {
-            "/api/patients": {
-              "get": {
-                "summary": "Get all patients",
-                "responses": {
-                  "200": {
-                    "description": "List of patients",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Patient"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "post": {
-                "summary": "Create new patient",
-                "requestBody": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "$ref": "#/components/schemas/Patient"
-                      }
-                    }
-                  }
-                },
-                "responses": {
-                  "201": {
-                    "description": "Patient created successfully"
-                  }
-                }
-              }
-            },
-            "/api/patients/{id}": {
-              "get": {
-                "summary": "Get patient by ID",
-                "parameters": [
-                  {
-                    "name": "id",
-                    "in": "path",
-                    "required": true,
-                    "schema": {
-                      "type": "string"
-                    }
-                  }
-                ],
-                "responses": {
-                  "200": {
-                    "description": "Patient details",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "$ref": "#/components/schemas/Patient"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "components": {
-            "schemas": {
-              "Patient": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string"
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "birthDate": {
-                    "type": "string",
-                    "format": "date"
-                  },
-                  "medicalHistory": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+          "contexts/SupabaseAuthContext.tsx",
+          "services/auth/supabaseAuthService.ts",
+          "pages/auth/LoginPage.tsx",
+          "pages/auth/TwoFactorSetupPage.tsx",
+          "types/auth.ts"
+        ]
       },
       {
-        "name": "Appointment Scheduling API",
-        "description": "Advanced appointment scheduling system with multiple views, conflict detection, and series management",
+        "name": "Medical Records System",
+        "description": "Sistema completo de prontuário eletrônico médico com padrões HL7 FHIR, assinatura digital e compliance CFM/COFFITO/LGPD",
         "files": [
-          "services/appointmentService.ts",
-          "services/supabase/appointmentService.ts",
-          "pages/AgendaPage.tsx",
-          "components/agenda/AgendaViewSelector.tsx",
-          "components/agenda/ImprovedWeeklyView.tsx",
-          "components/agenda/AppointmentStatusIndicator.tsx",
-          "components/agenda/AppointmentTooltip.tsx"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "Appointment Scheduling API",
-            "version": "1.0.0",
-            "description": "API for managing appointments and scheduling"
-          },
-          "paths": {
-            "/api/appointments": {
-              "get": {
-                "summary": "Get appointments with filters",
-                "parameters": [
-                  {
-                    "name": "startDate",
-                    "in": "query",
-                    "schema": {
-                      "type": "string",
-                      "format": "date"
-                    }
-                  },
-                  {
-                    "name": "endDate",
-                    "in": "query",
-                    "schema": {
-                      "type": "string",
-                      "format": "date"
-                    }
-                  }
-                ],
-                "responses": {
-                  "200": {
-                    "description": "List of appointments",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Appointment"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "post": {
-                "summary": "Create new appointment",
-                "requestBody": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "$ref": "#/components/schemas/Appointment"
-                      }
-                    }
-                  }
-                },
-                "responses": {
-                  "201": {
-                    "description": "Appointment created successfully"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      {
-        "name": "Medical Records System API",
-        "description": "Complete electronic medical records system with FHIR compliance, digital signatures, and clinical templates",
-        "files": [
-          "lib/medical-records/clinical/ClinicalDocument.ts",
-          "lib/medical-records/fhir/FHIRValidator.ts",
-          "lib/medical-records/compliance/CFMValidator.ts",
           "components/medical-records/MedicalRecordsSystem.tsx",
           "components/medical-records/MedicalRecordsDashboard.tsx",
           "components/medical-records/AssessmentForm.tsx",
-          "components/medical-records/EvolutionEditor.tsx"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "Medical Records System API",
-            "version": "1.0.0",
-            "description": "FHIR-compliant medical records management system"
-          },
-          "paths": {
-            "/api/medical-records": {
-              "get": {
-                "summary": "Get medical records",
-                "responses": {
-                  "200": {
-                    "description": "List of medical records",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/ClinicalDocument"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+          "components/medical-records/EvolutionEditor.tsx",
+          "components/medical-records/ClinicalTimeline.tsx",
+          "components/medical-records/ClinicalTemplatesManager.tsx",
+          "components/medical-records/DigitalSignatureManager.tsx",
+          "components/medical-records/ClinicalReportsGenerator.tsx",
+          "lib/medical-records/fhir/resources/Patient.ts",
+          "lib/medical-records/fhir/resources/Encounter.ts",
+          "lib/medical-records/clinical/assessment/InitialAssessment.ts",
+          "lib/medical-records/clinical/evolution/SessionEvolution.ts",
+          "lib/medical-records/compliance/CFMValidator.ts",
+          "lib/medical-records/compliance/COFFITOValidator.ts",
+          "lib/medical-records/compliance/LGPDCompliance.ts"
+        ]
       },
       {
-        "name": "AI Services API",
-        "description": "Multiple AI service integrations including Google Gemini, Groq, and XAI for clinical assistance and report generation",
+        "name": "Dashboard System",
+        "description": "Sistema de dashboards multi-role com interfaces específicas para pacientes, terapeutas e administradores",
         "files": [
-          "services/geminiService.ts",
-          "services/groqService.ts",
-          "services/xaiService.ts",
-          "services/ai/aiAssistantService.ts",
-          "components/ai/AIAssistant.tsx",
-          "components/ai/ReportGenerator.tsx"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "AI Services API",
-            "version": "1.0.0",
-            "description": "AI-powered clinical assistance and report generation"
-          },
-          "paths": {
-            "/api/ai/generate-report": {
-              "post": {
-                "summary": "Generate clinical report using AI",
-                "requestBody": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "patientId": {
-                            "type": "string"
-                          },
-                          "reportType": {
-                            "type": "string"
-                          },
-                          "data": {
-                            "type": "object"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "responses": {
-                  "200": {
-                    "description": "Generated report",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "type": "object",
-                          "properties": {
-                            "report": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+          "pages/CompleteDashboard.tsx",
+          "pages/PatientPortalDashboard.tsx",
+          "pages/PartnerPortalDashboard.tsx",
+          "components/dashboard/AdminDashboard.tsx",
+          "components/dashboard/TherapistDashboard.tsx",
+          "components/dashboard/PatientDashboard.tsx"
+        ]
       },
       {
-        "name": "Body Map System API",
-        "description": "Interactive body mapping system for marking and visualizing pain points and treatment areas",
+        "name": "Appointment Management",
+        "description": "Sistema de agendamento com calendário, check-in/check-out, notificações e gestão de sessões",
         "files": [
-          "services/bodyMapService.ts",
-          "components/body-map/BodyMap.tsx",
-          "components/body-map/PainPointMarker.tsx",
-          "components/body-map/BodyMapViewer.tsx"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "Body Map System API",
-            "version": "1.0.0",
-            "description": "Interactive body mapping for pain point visualization"
-          },
-          "paths": {
-            "/api/body-map/pain-points": {
-              "post": {
-                "summary": "Add pain point to body map",
-                "requestBody": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "patientId": {
-                            "type": "string"
-                          },
-                          "x": {
-                            "type": "number"
-                          },
-                          "y": {
-                            "type": "number"
-                          },
-                          "intensity": {
-                            "type": "number"
-                          },
-                          "description": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "responses": {
-                  "201": {
-                    "description": "Pain point added successfully"
-                  }
-                }
-              }
-            }
-          }
-        }
+          "components/appointment/AppointmentCalendar.tsx",
+          "components/appointment/AppointmentForm.tsx",
+          "components/appointment/CheckInSystem.tsx",
+          "services/appointmentService.ts",
+          "hooks/useAppointments.ts",
+          "hooks/useCalendar.ts"
+        ]
       },
       {
-        "name": "Exercise Library API",
-        "description": "Comprehensive exercise library with categorization, media support, and prescription capabilities",
+        "name": "AI Integration",
+        "description": "Integração com Google Gemini AI para prescrições inteligentes, análise de dados e assistência clínica",
         "files": [
-          "pages/ExerciseLibraryPage.tsx",
-          "components/exercise/ExerciseLibrary.tsx",
-          "components/exercise/ExerciseCard.tsx",
-          "components/exercise/ExercisePrescription.tsx",
-          "data/mockExerciseLibrary.ts"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "Exercise Library API",
-            "version": "1.0.0",
-            "description": "Exercise library management and prescription system"
-          },
-          "paths": {
-            "/api/exercises": {
-              "get": {
-                "summary": "Get exercises with filters",
-                "parameters": [
-                  {
-                    "name": "category",
-                    "in": "query",
-                    "schema": {
-                      "type": "string"
-                    }
-                  },
-                  {
-                    "name": "specialty",
-                    "in": "query",
-                    "schema": {
-                      "type": "string"
-                    }
-                  }
-                ],
-                "responses": {
-                  "200": {
-                    "description": "List of exercises",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Exercise"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+          "services/ai/geminiService.ts",
+          "services/ai/prescriptionService.ts",
+          "components/ai/AIPrescriptionAssistant.tsx",
+          "components/ai/ClinicalAnalysisPanel.tsx",
+          "hooks/useAI.ts"
+        ]
       },
       {
-        "name": "Authentication & Authorization API",
-        "description": "Multi-role authentication system with Supabase integration, 2FA support, and role-based access control",
+        "name": "Communication System",
+        "description": "Sistema de comunicação com WhatsApp Business, email (Resend), SMS (Twilio) e notificações push",
         "files": [
-          "services/auth/supabaseAuthService.ts",
-          "contexts/SupabaseAuthContext.tsx",
-          "pages/auth/LoginPage.tsx",
-          "pages/auth/TwoFactorSetupPage.tsx",
-          "components/auth/LoginForm.tsx"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "Authentication API",
-            "version": "1.0.0",
-            "description": "User authentication and authorization system"
-          },
-          "paths": {
-            "/api/auth/login": {
-              "post": {
-                "summary": "User login",
-                "requestBody": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "email": {
-                            "type": "string"
-                          },
-                          "password": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "responses": {
-                  "200": {
-                    "description": "Login successful",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "type": "object",
-                          "properties": {
-                            "user": {
-                              "$ref": "#/components/schemas/User"
-                            },
-                            "token": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+          "services/communication/whatsappService.ts",
+          "services/communication/emailService.ts",
+          "services/communication/smsService.ts",
+          "services/communication/notificationService.ts",
+          "components/communication/WhatsAppIntegration.tsx",
+          "components/communication/NotificationCenter.tsx"
+        ]
       },
       {
-        "name": "Payment Processing API",
-        "description": "Multi-provider payment system supporting Mercado Pago, Stripe, Asaas, and PIX with Brazilian compliance",
+        "name": "Payment System",
+        "description": "Sistema de pagamentos integrado com Stripe, Mercado Pago e PIX para cobrança de consultas",
         "files": [
-          "services/payment/paymentService.ts",
-          "services/payment/mercadopagoService.ts",
           "services/payment/stripeService.ts",
-          "services/payment/asaasService.ts",
-          "components/payment/PaymentForm.tsx"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "Payment Processing API",
-            "version": "1.0.0",
-            "description": "Multi-provider payment processing system"
-          },
-          "paths": {
-            "/api/payments/process": {
-              "post": {
-                "summary": "Process payment",
-                "requestBody": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "amount": {
-                            "type": "number"
-                          },
-                          "provider": {
-                            "type": "string"
-                          },
-                          "paymentMethod": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "responses": {
-                  "200": {
-                    "description": "Payment processed successfully"
-                  }
-                }
-              }
-            }
-          }
-        }
+          "services/payment/mercadopagoService.ts",
+          "services/payment/pixService.ts",
+          "components/payment/PaymentForm.tsx",
+          "components/payment/InvoiceGenerator.tsx",
+          "hooks/usePayments.ts"
+        ]
       },
       {
-        "name": "Reports & Analytics API",
-        "description": "Comprehensive reporting system with financial, clinical, and operational analytics",
+        "name": "Analytics and BI",
+        "description": "Sistema de business intelligence com métricas clínicas, relatórios financeiros e analytics avançados",
         "files": [
-          "pages/ReportsPage.tsx",
-          "components/reports/FinancialReport.tsx",
-          "components/reports/PatientReport.tsx",
-          "components/reports/ClinicalReport.tsx",
-          "services/monitoring/apmService.ts"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "Reports & Analytics API",
-            "version": "1.0.0",
-            "description": "Comprehensive reporting and analytics system"
-          },
-          "paths": {
-            "/api/reports/financial": {
-              "get": {
-                "summary": "Get financial reports",
-                "parameters": [
-                  {
-                    "name": "startDate",
-                    "in": "query",
-                    "schema": {
-                      "type": "string",
-                      "format": "date"
-                    }
-                  },
-                  {
-                    "name": "endDate",
-                    "in": "query",
-                    "schema": {
-                      "type": "string",
-                      "format": "date"
-                    }
-                  }
-                ],
-                "responses": {
-                  "200": {
-                    "description": "Financial report data",
-                    "content": {
-                      "application/json": {
-                        "schema": {
-                          "type": "object",
-                          "properties": {
-                            "revenue": {
-                              "type": "number"
-                            },
-                            "expenses": {
-                              "type": "number"
-                            },
-                            "profit": {
-                              "type": "number"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+          "services/analytics/biService.ts",
+          "components/analytics/ClinicalMetrics.tsx",
+          "components/analytics/FinancialReports.tsx",
+          "components/analytics/PatientAnalytics.tsx",
+          "components/analytics/PerformanceDashboard.tsx",
+          "hooks/useAnalytics.ts"
+        ]
       },
       {
-        "name": "LGPD Compliance API",
-        "description": "LGPD compliance system with data portability, deletion requests, and audit trails",
+        "name": "Patient Management",
+        "description": "Gestão completa de pacientes com prontuários, histórico médico, documentos e comunicação",
         "files": [
-          "services/compliance/lgpdService.ts",
-          "components/compliance/LGPDDashboard.tsx",
-          "components/compliance/DataPortabilityRequest.tsx"
-        ],
-        "api_doc": {
-          "openapi": "3.0.0",
-          "info": {
-            "title": "LGPD Compliance API",
-            "version": "1.0.0",
-            "description": "LGPD compliance and data protection system"
-          },
-          "paths": {
-            "/api/lgpd/data-portability": {
-              "post": {
-                "summary": "Request data portability",
-                "requestBody": {
-                  "content": {
-                    "application/json": {
-                      "schema": {
-                        "type": "object",
-                        "properties": {
-                          "userId": {
-                            "type": "string"
-                          },
-                          "requestType": {
-                            "type": "string"
-                          },
-                          "format": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                "responses": {
-                  "200": {
-                    "description": "Data portability request created"
-                  }
-                }
-              }
-            }
-          }
-        }
+          "components/patient/PatientForm.tsx",
+          "components/patient/PatientProfile.tsx",
+          "components/patient/PatientHistory.tsx",
+          "components/patient/PatientDocuments.tsx",
+          "services/patientService.ts",
+          "hooks/usePatients.ts"
+        ]
+      },
+      {
+        "name": "Template System",
+        "description": "Sistema de templates dinâmicos para formulários clínicos, relatórios e documentos",
+        "files": [
+          "components/templates/TemplateEditor.tsx",
+          "components/templates/TemplateManager.tsx",
+          "services/templateService.ts",
+          "lib/templates/clinicalTemplates.ts",
+          "lib/templates/reportTemplates.ts"
+        ]
+      },
+      {
+        "name": "Integration Tests",
+        "description": "Sistema de testes automatizados com Playwright para validação end-to-end",
+        "files": [
+          "tests/e2e/login.spec.ts",
+          "tests/e2e/appointment.spec.ts",
+          "tests/e2e/medical-records.spec.ts",
+          "tests/e2e/payment.spec.ts",
+          "playwright.config.ts"
+        ]
+      },
+      {
+        "name": "Security and Compliance",
+        "description": "Sistema de segurança com RLS, auditoria, criptografia e compliance LGPD",
+        "files": [
+          "lib/security/encryptionService.ts",
+          "lib/security/auditService.ts",
+          "lib/security/rlsPolicies.ts",
+          "services/security/complianceService.ts",
+          "hooks/useSecurity.ts"
+        ]
+      },
+      {
+        "name": "Notification System",
+        "description": "Sistema de notificações com Service Workers, push notifications e email alerts",
+        "files": [
+          "services/notification/pushNotificationService.ts",
+          "components/notification/NotificationToast.tsx",
+          "components/notification/NotificationCenter.tsx",
+          "hooks/useNotifications.ts",
+          "sw.js"
+        ]
+      },
+      {
+        "name": "File Management",
+        "description": "Sistema de gestão de arquivos com upload, storage seguro e versionamento",
+        "files": [
+          "services/storage/fileUploadService.ts",
+          "components/files/FileUploader.tsx",
+          "components/files/FileManager.tsx",
+          "hooks/useFileUpload.ts"
+        ]
+      },
+      {
+        "name": "Configuration Management",
+        "description": "Sistema de configurações centralizadas para ambiente, features flags e settings",
+        "files": [
+          "lib/config/appConfig.ts",
+          "lib/config/featureFlags.ts",
+          "contexts/AppContext.tsx",
+          "services/configService.ts"
+        ]
       }
     ]
   }

@@ -1,22 +1,30 @@
 import { createClient } from '@supabase/supabase-js';
+import { observability } from './observabilityLogger';
+import type { SupabaseRealtimePayload } from '../types/realtime';
 import type { Database } from '../types/database';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Check if we have valid Supabase credentials
-const hasValidCredentials = supabaseUrl &&
+const hasValidCredentials = Boolean(
+  supabaseUrl &&
   supabaseAnonKey &&
   supabaseAnonKey !== 'your_anon_key_here' &&
-  supabaseUrl.includes('supabase.co');
+  supabaseUrl.includes('supabase.co')
+);
 
 if (!hasValidCredentials) {
-  console.warn('⚠️ Supabase credentials not configured. Using development mode.');
+  observability.security.warn('supabase.credentials.missing', {
+    message: 'Supabase credentials not configuradas. Usando modo de desenvolvimento.',
+  });
 }
 
 // Use dummy values for development if real credentials are not available
 const finalSupabaseUrl = hasValidCredentials ? supabaseUrl : 'https://dummy.supabase.co';
-const finalSupabaseAnonKey = hasValidCredentials ? supabaseAnonKey : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1bW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUxOTI4MDAsImV4cCI6MTk2MDc2ODgwMH0.dummy';
+const finalSupabaseAnonKey = hasValidCredentials
+  ? supabaseAnonKey
+  : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1bW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUxOTI4MDAsImV4cCI6MTk2MDc2ODgwMH0.dummy';
 
 export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAnonKey, {
   auth: {
@@ -39,40 +47,50 @@ export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAn
   },
 });
 
-// Helper functions for common operations
-export const handleSupabaseError = (error: any) => {
-  console.error('Supabase error:', error);
-  
-  if (error?.message?.includes('JWT')) {
+type SupabaseError = {
+  message?: string;
+  code?: string;
+};
+
+export const handleSupabaseError = (error: unknown) => {
+  const supabaseError = (error ?? {}) as SupabaseError;
+  observability.database.error('supabase.error', {
+    error: supabaseError,
+  });
+
+  const message = supabaseError.message ?? '';
+  const code = supabaseError.code;
+
+  if (message.includes('JWT')) {
     return 'Sessão expirada. Por favor, faça login novamente.';
   }
-  
-  if (error?.message?.includes('duplicate')) {
+
+  if (message.includes('duplicate')) {
     return 'Este registro já existe.';
   }
-  
-  if (error?.message?.includes('foreign key')) {
+
+  if (message.includes('foreign key')) {
     return 'Este registro está sendo usado em outro lugar e não pode ser removido.';
   }
-  
-  if (error?.code === '23505') {
+
+  if (code === '23505') {
     return 'Registro duplicado encontrado.';
   }
-  
-  if (error?.code === 'PGRST116') {
+
+  if (code === 'PGRST116') {
     return 'Você não tem permissão para realizar esta ação.';
   }
-  
-  return error?.message || 'Ocorreu um erro ao processar sua solicitação.';
+
+  return message || 'Ocorreu um erro ao processar sua solicitação.';
 };
 
 // Real-time subscription helper
-export const subscribeToTable = (
-  table: string,
-  callback: (payload: any) => void,
+export const subscribeToTable = <TableName extends keyof Database['public']['Tables'] & string>(
+  table: TableName,
+  callback: (payload: SupabaseRealtimePayload<Database['public']['Tables'][TableName]['Row']>) => void,
   filter?: { column: string; value: string }
 ) => {
-  const channel = supabase
+  return supabase
     .channel(`${table}_changes`)
     .on(
       'postgres_changes',
@@ -82,30 +100,30 @@ export const subscribeToTable = (
         table,
         ...(filter && { filter: `${filter.column}=eq.${filter.value}` }),
       },
-      callback
+      (payload) => {
+        callback(payload as SupabaseRealtimePayload<Database['public']['Tables'][TableName]['Row']>);
+      }
     )
     .subscribe();
-
-  return channel;
 };
 
 // Batch operations helper
-export const batchInsert = async <T extends Record<string, any>>(
+export const batchInsert = async <T extends Record<string, unknown>>(
   table: string,
   data: T[],
   chunkSize = 100
 ) => {
-  const results = [];
+  const results: unknown[] = [];
 
   for (let i = 0; i < data.length; i += chunkSize) {
     const chunk = data.slice(i, i + chunkSize);
     const { data: insertedData, error } = await supabase
-      .from(table as any)
-      .insert(chunk as any)
+      .from(table as never)
+      .insert(chunk as never)
       .select();
 
     if (error) throw error;
-    results.push(...(insertedData || []));
+    results.push(...(insertedData ?? []));
   }
 
   return results;
@@ -117,7 +135,7 @@ export const uploadFile = async (
   path: string,
   file: File
 ) => {
-  const { data: _data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from(bucket)
     .upload(path, file, {
       cacheControl: '3600',
@@ -125,31 +143,33 @@ export const uploadFile = async (
     });
 
   if (error) throw error;
-  
-  const { data: { publicUrl } } = supabase.storage
+
+  const { data } = supabase.storage
     .from(bucket)
     .getPublicUrl(path);
-  
-  return publicUrl;
+
+  return data.publicUrl;
 };
 
 export const deleteFile = async (bucket: string, path: string) => {
   const { error } = await supabase.storage
     .from(bucket)
     .remove([path]);
-  
+
   if (error) throw error;
 };
 
 // Auth helpers
 export const getCurrentUser = async () => {
-  const { data: { user }, error } = await supabase.auth.getUser();
-  
+  const { data, error } = await supabase.auth.getUser();
+
   if (error) throw error;
-  return user;
+  return data.user;
 };
 
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 };
+
+

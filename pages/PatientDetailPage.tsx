@@ -111,9 +111,9 @@ const TabButton: React.FC<{ icon: React.ElementType, label: string; isActive: bo
 );
 
 const PatientDetailPage: React.FC = () => {
-    // Get patient ID from window object or URL params as fallback
-    const urlParams = ReactRouterDOM.useParams<{ id: string }>();
-    const id = (window as any).__selectedPatientId || urlParams.id;
+// Get patient ID from URL params
+    const { id } = ReactRouterDOM.useParams<{ id: string }>();
+    const navigate = ReactRouterDOM.useNavigate();
     const { therapists } = useData();
     const { user } = useSupabaseAuth();
     
@@ -385,11 +385,10 @@ const PatientDetailPage: React.FC = () => {
                 title={patient.name}
                 subtitle={`Detalhes do prontuário, histórico e agendamentos.`}
             >
-                <button onClick={() => {
-                    delete (window as any).__selectedPatientId;
-                    const setCurrentPage = (window as any).__setCurrentPage;
-                    if (setCurrentPage) setCurrentPage('patients');
-                }} className="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 mr-3">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 mr-3"
+                >
                     <ChevronLeft className="-ml-1 mr-2 h-5 w-5" />
                     Voltar
                 </button>

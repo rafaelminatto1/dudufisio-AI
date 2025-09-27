@@ -7,10 +7,11 @@ import {
     LayoutGrid, Users, Calendar, Stethoscope, ChevronLeft, ChevronRight, BarChart3, 
     ShieldCheck, Cog, Library, AreaChart, LogOut, FilePlus, FileClock, Dumbbell, 
     AlertTriangle, Mail, BrainCircuit, ClipboardList, PieChart, DollarSign, 
-    SlidersHorizontal, Bell, MessageSquare, Handshake, Package, Ticket, Activity, Users2, BookMarked
+    SlidersHorizontal, Bell, MessageSquare, Handshake, Package, Ticket, Activity, Users2, BookMarked, FileText
 } from 'lucide-react';
 import { useAuth } from "../contexts/AppContext";
 import { useNotifications } from '../hooks/useNotifications';
+import { Role } from '../types';
 
 const NavLinkComponent = ({ to, icon: Icon, label, isCollapsed, badgeCount }: { to: string, icon: React.ElementType, label: string, isCollapsed: boolean, badgeCount?: number }) => (
     <ReactRouterDOM.NavLink
@@ -64,6 +65,124 @@ const Sidebar: React.FC = () => {
     logout();
     navigate('/login');
   };
+<<<<<<< Current (Your changes)
+
+  // 🔐 Professional Role-Based Navigation Filter
+  const getFilteredNavigation = (userRole: Role) => {
+    const baseNavigation = {
+      mainNav: [] as any[],
+      aiToolsNav: [] as any[],
+      managementNav: [] as any[]
+    };
+
+    switch (userRole) {
+      case Role.Admin:
+        // Admin has access to everything
+        return {
+          mainNav: [
+            { to: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
+            { to: '/admin-dashboard', icon: BarChart3, label: 'Dashboard Administrativo' },
+            { to: '/clinical-analytics', icon: PieChart, label: 'Dashboard Clínico' },
+            { to: '/patients', icon: Users, label: 'Pacientes' },
+            { to: '/agenda', icon: Calendar, label: 'Agenda' },
+            { to: '/acompanhamento', icon: Activity, label: 'Acompanhamento' },
+            { to: '/notifications', icon: Bell, label: 'Notificações', badgeCount: unreadCount },
+            { to: '/tasks', icon: ClipboardList, label: 'Quadro de Tarefas' },
+          ],
+          aiToolsNav: [
+            { to: '/gerar-laudo', icon: FilePlus, label: 'Gerar Laudo' },
+            { to: '/gerar-evolucao', icon: FileClock, label: 'Gerar Evolução' },
+            { to: '/gerar-hep', icon: Dumbbell, label: 'Gerar Plano (HEP)' },
+            { to: '/analise-risco', icon: AlertTriangle, label: 'Análise de Risco' },
+          ],
+          managementNav: [
+            { to: '/groups', icon: Users2, label: 'Grupos' },
+            { to: '/exercises', icon: Dumbbell, label: 'Exercícios' },
+            { to: '/materials', icon: BookMarked, label: 'Materiais Clínicos' },
+            { to: '/financials', icon: DollarSign, label: 'Financeiro' },
+            { to: '/inventory', icon: Package, label: 'Insumos' },
+            { to: '/partnerships', icon: Handshake, label: 'Parcerias' },
+            { to: '/events', icon: Ticket, label: 'Eventos' },
+            { to: '/whatsapp', icon: MessageSquare, label: 'WhatsApp' },
+            { to: '/email-inativos', icon: Mail, label: 'Email para Inativos' },
+            { to: '/mentoria', icon: BrainCircuit, label: 'Mentoria' },
+            { to: '/reports', icon: BarChart3, label: 'Relatórios' },
+            { to: '/knowledge-base', icon: Library, label: 'Base de Conhecimento' },
+            { to: '/ia-economica', icon: AreaChart, label: 'IA Econômica' },
+            { to: '/agenda-settings', icon: SlidersHorizontal, label: 'Config. Agenda' },
+            { to: '/integrations', icon: ShieldCheck, label: 'Integrações' },
+            { to: '/ai-settings', icon: SlidersHorizontal, label: 'Config. IA' },
+            { to: '/audit-log', icon: ShieldCheck, label: 'Auditoria' },
+            { to: '/settings', icon: Cog, label: 'Configurações' },
+          ]
+        };
+
+      case Role.Therapist:
+        // Therapists focused on patient care and clinical tools
+        return {
+          mainNav: [
+            { to: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
+            { to: '/clinical-analytics', icon: PieChart, label: 'Dashboard Clínico' },
+            { to: '/patients', icon: Users, label: 'Pacientes' },
+            { to: '/agenda', icon: Calendar, label: 'Agenda' },
+            { to: '/acompanhamento', icon: Activity, label: 'Acompanhamento' },
+            { to: '/notifications', icon: Bell, label: 'Notificações', badgeCount: unreadCount },
+            { to: '/tasks', icon: ClipboardList, label: 'Tarefas' },
+          ],
+          aiToolsNav: [
+            { to: '/gerar-laudo', icon: FilePlus, label: 'Gerar Laudo' },
+            { to: '/gerar-evolucao', icon: FileClock, label: 'Gerar Evolução' },
+            { to: '/gerar-hep', icon: Dumbbell, label: 'Gerar Plano (HEP)' },
+            { to: '/analise-risco', icon: AlertTriangle, label: 'Análise de Risco' },
+          ],
+          managementNav: [
+            { to: '/exercises', icon: Dumbbell, label: 'Exercícios' },
+            { to: '/materials', icon: BookMarked, label: 'Materiais Clínicos' },
+            { to: '/reports', icon: BarChart3, label: 'Relatórios' },
+            { to: '/settings', icon: Cog, label: 'Configurações' },
+          ]
+        };
+
+      case Role.Patient:
+        // Patient portal with limited access
+        return {
+          mainNav: [
+            { to: '/dashboard', icon: LayoutGrid, label: 'Meu Portal' },
+            { to: '/my-appointments', icon: Calendar, label: 'Meus Agendamentos' },
+            { to: '/my-treatments', icon: Activity, label: 'Meus Tratamentos' },
+            { to: '/notifications', icon: Bell, label: 'Notificações', badgeCount: unreadCount },
+          ],
+          aiToolsNav: [],
+          managementNav: [
+            { to: '/my-exercises', icon: Dumbbell, label: 'Meus Exercícios' },
+            { to: '/settings', icon: Cog, label: 'Configurações' },
+          ]
+        };
+
+      case Role.EducadorFisico:
+        // Educator focused on exercises and materials
+        return {
+          mainNav: [
+            { to: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
+            { to: '/notifications', icon: Bell, label: 'Notificações', badgeCount: unreadCount },
+          ],
+          aiToolsNav: [],
+          managementNav: [
+            { to: '/exercises', icon: Dumbbell, label: 'Exercícios' },
+            { to: '/materials', icon: BookMarked, label: 'Materiais Clínicos' },
+            { to: '/partnerships', icon: Handshake, label: 'Parcerias' },
+            { to: '/settings', icon: Cog, label: 'Configurações' },
+          ]
+        };
+
+      default:
+        return baseNavigation;
+    }
+  };
+
+  // Get filtered navigation based on user role
+  const navigation = user ? getFilteredNavigation(user.role) : { mainNav: [], aiToolsNav: [], managementNav: [] };
+=======
   
   const mainNav = [
     { to: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
@@ -86,6 +205,7 @@ const Sidebar: React.FC = () => {
     { to: '/groups', icon: Users2, label: 'Grupos' },
     { to: '/exercises', icon: Dumbbell, label: 'Exercícios' },
     { to: '/materials', icon: BookMarked, label: 'Materiais Clínicos' },
+    { to: '/protocolos', icon: FileText, label: 'Protocolos Clínicos' },
     { to: '/financials', icon: DollarSign, label: 'Financeiro' },
     { to: '/inventory', icon: Package, label: 'Insumos' },
     { to: '/partnerships', icon: Handshake, label: 'Parcerias' },
@@ -102,6 +222,7 @@ const Sidebar: React.FC = () => {
     { to: '/audit-log', icon: ShieldCheck, label: 'Auditoria' },
     { to: '/settings', icon: Cog, label: 'Configurações' },
   ];
+>>>>>>> Incoming (Background Agent changes)
 
   return (
     <div className={`transition-all duration-300 ease-in-out bg-white border-r border-slate-200 flex flex-col ${isCollapsed ? 'w-16' : 'w-52'}`}>
@@ -114,15 +235,21 @@ const Sidebar: React.FC = () => {
       </div>
       
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <NavGroup title="Principal" isCollapsed={isCollapsed}>
-            {mainNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
-        </NavGroup>
-        <NavGroup title="Ferramentas IA" isCollapsed={isCollapsed}>
-            {aiToolsNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
-        </NavGroup>
-        <NavGroup title="Gestão" isCollapsed={isCollapsed}>
-            {managementNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
-        </NavGroup>
+        {navigation.mainNav.length > 0 && (
+          <NavGroup title="Principal" isCollapsed={isCollapsed}>
+            {navigation.mainNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
+          </NavGroup>
+        )}
+        {navigation.aiToolsNav.length > 0 && (
+          <NavGroup title="Ferramentas IA" isCollapsed={isCollapsed}>
+            {navigation.aiToolsNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
+          </NavGroup>
+        )}
+        {navigation.managementNav.length > 0 && (
+          <NavGroup title="Gestão" isCollapsed={isCollapsed}>
+            {navigation.managementNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
+          </NavGroup>
+        )}
       </nav>
 
       {user && (

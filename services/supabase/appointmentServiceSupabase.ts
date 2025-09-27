@@ -75,8 +75,8 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToAppointment);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -95,7 +95,7 @@ class SupabaseAppointmentService {
       }
 
       return data ? this.mapRowToAppointment(data) : null;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -111,8 +111,8 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToAppointment);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -136,8 +136,8 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToAppointment);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -161,8 +161,8 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToAppointment);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -177,8 +177,8 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToAppointment);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -207,7 +207,7 @@ class SupabaseAppointmentService {
       if (error) throw error;
 
       return this.mapRowToAppointment(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -219,9 +219,9 @@ class SupabaseAppointmentService {
         const current = await this.getAppointmentById(id);
         if (!current) throw new Error('Agendamento não encontrado');
 
-        const therapistId = updates.therapistId || current.therapistId;
-        const startTime = updates.startTime || current.startTime;
-        const endTime = updates.endTime || current.endTime;
+        const therapistId = updates.therapistId ?? current.therapistId;
+        const startTime = updates.startTime ?? current.startTime;
+        const endTime = updates.endTime ?? current.endTime;
 
         const conflicts = await this.checkConflicts(therapistId, startTime, endTime, id);
         if (conflicts.length > 0) {
@@ -241,7 +241,7 @@ class SupabaseAppointmentService {
       if (error) throw error;
 
       return this.mapRowToAppointment(data);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -254,7 +254,7 @@ class SupabaseAppointmentService {
         .eq('id', id);
 
       if (error) throw error;
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -276,8 +276,8 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToAppointment);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -296,8 +296,8 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data || []).map(this.mapRowToAppointment);
-    } catch (error: any) {
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -309,7 +309,7 @@ class SupabaseAppointmentService {
       const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
 
       return this.getAppointmentsByDateRange(startOfDay, endOfDay);
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -371,7 +371,7 @@ class SupabaseAppointmentService {
           [AppointmentStatus.NoShow]: noShowResult.count || 0,
         }
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }

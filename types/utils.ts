@@ -35,13 +35,13 @@ export interface BaseModalProps {
 }
 
 // Form modal with data handling
-export interface FormModalProps<TData = any> extends BaseModalProps {
+export interface FormModalProps<TData = unknown> extends BaseModalProps {
   initialData?: Partial<TData>;
   onSave: (data: TData) => Promise<void> | void;
 }
 
 // Selection modal interface
-export interface SelectionModalProps<TItem = any> extends BaseModalProps {
+export interface SelectionModalProps<TItem = unknown> extends BaseModalProps {
   items: TItem[];
   selectedItem?: TItem;
   onSelect: (item: TItem) => void;
@@ -50,14 +50,14 @@ export interface SelectionModalProps<TItem = any> extends BaseModalProps {
 // === API response patterns ===
 
 // Standard API response wrapper
-export interface ApiResponse<TData = any> {
+export interface ApiResponse<TData = unknown> {
   data?: TData;
   error?: string;
   success: boolean;
 }
 
 // Paginated response pattern
-export interface PaginatedResponse<TData = any> extends ApiResponse<TData[]> {
+export interface PaginatedResponse<TData = unknown> extends ApiResponse<TData[]> {
   pagination: {
     page: number;
     limit: number;
@@ -91,9 +91,9 @@ export type SafeOptionalAssign<T> = {
 export function assignIfDefined<T>(obj: T): SafeOptionalAssign<T> {
   const result = {} as SafeOptionalAssign<T>;
 
-  for (const [key, value] of Object.entries(obj as any)) {
+  for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
     if (value !== undefined) {
-      (result as any)[key] = value;
+      (result as Record<string, unknown>)[key] = value;
     }
   }
 
@@ -101,7 +101,7 @@ export function assignIfDefined<T>(obj: T): SafeOptionalAssign<T> {
 }
 
 // Utility for conditional object properties
-export function conditionalProps<T>(condition: boolean, props: T): T | {} {
+export function conditionalProps<T>(condition: boolean, props: T): T | Record<string, never> {
   return condition ? props : {};
 }
 
@@ -144,7 +144,7 @@ export interface StandardModalProps extends BaseModalProps {
 }
 
 // Form component base props
-export interface StandardFormProps<TData = any> extends WithLoading, WithError {
+export interface StandardFormProps<TData = unknown> extends WithLoading, WithError {
   initialData?: Partial<TData>;
   onSubmit: (data: TData) => Promise<void> | void;
   onCancel?: () => void;
@@ -154,7 +154,7 @@ export interface StandardFormProps<TData = any> extends WithLoading, WithError {
 }
 
 // List component base props
-export interface StandardListProps<TItem = any> extends WithLoading, WithError {
+export interface StandardListProps<TItem = unknown> extends WithLoading, WithError {
   items: TItem[];
   onItemClick?: (item: TItem) => void;
   onItemEdit?: (item: TItem) => void;
@@ -164,7 +164,7 @@ export interface StandardListProps<TItem = any> extends WithLoading, WithError {
 }
 
 // Table component base props
-export interface StandardTableProps<TData = any> extends WithLoading, WithError {
+export interface StandardTableProps<TData = unknown> extends WithLoading, WithError {
   data: TData[];
   columns: TableColumn<TData>[];
   pagination?: {
@@ -180,15 +180,15 @@ export interface StandardTableProps<TData = any> extends WithLoading, WithError 
   };
 }
 
-export interface TableColumn<TData = any> {
+export interface TableColumn<TData = unknown> {
   key: keyof TData;
   label: string;
   sortable?: boolean;
-  render?: (value: any, item: TData) => React.ReactNode;
+  render?: (value: TData[keyof TData], item: TData) => React.ReactNode;
 }
 
 // Calendar/Agenda component props pattern
-export interface StandardCalendarProps<TEvent = any> extends WithLoading, WithError {
+export interface StandardCalendarProps<TEvent = unknown> extends WithLoading, WithError {
   events: TEvent[];
   selectedDate?: Date;
   onDateChange?: (date: Date) => void;
@@ -212,7 +212,7 @@ export type ClickEventHandler = EventHandler<React.MouseEvent>;
 // === Service layer patterns ===
 
 // Standard service method pattern
-export type ServiceMethod<TParams = any, TReturn = any> =
+export type ServiceMethod<TParams = unknown, TReturn = unknown> =
   (params: TParams) => Promise<TReturn>;
 
 // CRUD service interface pattern
@@ -227,13 +227,13 @@ export interface CrudService<TEntity, TCreateData = Partial<TEntity>, TUpdateDat
 // === Context patterns ===
 
 // Standard context value pattern
-export interface ContextValue<TState = any, TActions = any> {
+export interface ContextValue<TState = unknown, TActions = unknown> {
   state: TState;
   actions: TActions;
 }
 
 // Context with loading and error state
-export interface AsyncContextValue<TData = any> extends WithLoading, WithError {
+export interface AsyncContextValue<TData = unknown> extends WithLoading, WithError {
   data?: TData;
   refetch: () => Promise<void>;
 }

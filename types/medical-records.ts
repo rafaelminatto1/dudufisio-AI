@@ -20,61 +20,24 @@ export type CertificateId = string;
 // ENUMS PRINCIPAIS
 // ============================================================================
 
-export enum DocumentType {
-  INITIAL_ASSESSMENT = 'initial_assessment',
-  SESSION_EVOLUTION = 'session_evolution',
-  TREATMENT_PLAN = 'treatment_plan',
-  DISCHARGE_SUMMARY = 'discharge_summary',
-  REFERRAL_LETTER = 'referral_letter',
-  PROGRESS_REPORT = 'progress_report'
-}
+// Removed unused DocumentType enum
 
-export enum Specialty {
-  PHYSIOTHERAPY = 'physiotherapy',
-  OCCUPATIONAL_THERAPY = 'occupational_therapy',
-  SPEECH_THERAPY = 'speech_therapy',
-  SPORTS_PHYSIOTHERAPY = 'sports_physiotherapy',
-  NEUROLOGICAL_PHYSIOTHERAPY = 'neurological_physiotherapy',
-  ORTHOPEDIC_PHYSIOTHERAPY = 'orthopedic_physiotherapy',
-  RESPIRATORY_PHYSIOTHERAPY = 'respiratory_physiotherapy',
-  PEDIATRIC_PHYSIOTHERAPY = 'pediatric_physiotherapy'
-}
+// Removed unused Specialty enum
 
-export enum SessionType {
-  EVALUATION = 'evaluation',
-  TREATMENT = 'treatment',
-  RE_EVALUATION = 're_evaluation',
-  DISCHARGE = 'discharge',
-  FOLLOW_UP = 'follow_up'
-}
+// Removed unused SessionType enum
 
-export enum PainLevel {
-  NONE = 0,
-  MILD = 1,
-  MODERATE = 2,
-  SEVERE = 3,
-  VERY_SEVERE = 4,
-  EXTREME = 5
-}
+// Removed unused PainLevel enum
 
-export enum DocumentStatus {
-  DRAFT = 'draft',
-  SIGNED = 'signed',
-  ARCHIVED = 'archived',
-  DELETED = 'deleted'
-}
+// Removed unused DocumentStatus enum
 
-export enum SignatureAlgorithm {
-  RSA_SHA256 = 'RSA-SHA256',
-  ECDSA_SHA256 = 'ECDSA-SHA256'
-}
+// Removed unused SignatureAlgorithm enum
 
 // ============================================================================
 // INTERFACES DE CONTEÚDO
 // ============================================================================
 
 export interface DocumentContent {
-  readonly data: Record<string, any>;
+  readonly data: Record<string, unknown>;
   readonly metadata: DocumentMetadata;
   readonly version: number;
   readonly checksum: string;
@@ -250,7 +213,7 @@ export interface TreatmentGoal {
 export interface Intervention {
   readonly type: string;
   readonly description: string;
-  readonly parameters: Record<string, any>;
+  readonly parameters: Record<string, unknown>;
   readonly duration: string;
   readonly frequency: string;
 }
@@ -267,7 +230,7 @@ export interface SessionEvolution {
   readonly painLevelBefore: number;
   readonly painLevelAfter: number;
   readonly objectiveFindings: string;
-  readonly measurements: Record<string, any>;
+  readonly measurements: Record<string, unknown>;
   readonly techniquesApplied: Technique[];
   readonly exercisesPerformed: Exercise[];
   readonly equipmentUsed: string[];
@@ -284,7 +247,7 @@ export interface SessionEvolution {
 export interface Technique {
   readonly name: string;
   readonly duration: string;
-  readonly parameters: Record<string, any>;
+  readonly parameters: Record<string, unknown>;
   readonly response: string;
 }
 
@@ -346,7 +309,7 @@ export interface ClinicalTemplate {
   readonly type: DocumentType;
   readonly specialty: Specialty;
   readonly schema: TemplateSchema;
-  readonly defaultValues: Record<string, any>;
+  readonly defaultValues: Record<string, unknown>;
   readonly validationRules: ValidationRule[];
   readonly active: boolean;
   readonly version: number;
@@ -383,7 +346,7 @@ export interface TemplateLayout {
 
 export interface ValidationRule {
   readonly type: 'required' | 'min' | 'max' | 'pattern' | 'custom';
-  readonly value?: any;
+  readonly value?: unknown;
   readonly message: string;
 }
 
@@ -452,8 +415,8 @@ export interface PainDataPoint {
 }
 
 export interface FunctionalProgressAnalysis {
-  readonly initialMeasures: Record<string, any>;
-  readonly finalMeasures: Record<string, any>;
+  readonly initialMeasures: Record<string, unknown>;
+  readonly finalMeasures: Record<string, unknown>;
   readonly improvements: Record<string, number>;
   readonly goalsAchieved: number;
   readonly totalGoals: number;
@@ -500,20 +463,12 @@ export interface AuditTrail {
   readonly action: AuditAction;
   readonly performedBy: TherapistId;
   readonly performedAt: Date;
-  readonly details: Record<string, any>;
+  readonly details: Record<string, unknown>;
   readonly ipAddress?: string;
   readonly userAgent?: string;
 }
 
-export enum AuditAction {
-  CREATE = 'create',
-  READ = 'read',
-  UPDATE = 'update',
-  DELETE = 'delete',
-  SIGN = 'sign',
-  EXPORT = 'export',
-  PRINT = 'print'
-}
+// Removed unused AuditAction enum
 
 // ============================================================================
 // INTERFACES DE ARQUIVAMENTO
@@ -593,6 +548,6 @@ export interface PaginationParams {
 
 export interface SearchParams {
   readonly query?: string;
-  readonly filters?: Record<string, any>;
+  readonly filters?: Record<string, unknown>;
   readonly pagination?: PaginationParams;
 }

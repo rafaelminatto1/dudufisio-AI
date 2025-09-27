@@ -12,6 +12,7 @@ import TransactionList from '../components/financial/TransactionList';
 import * as financialService from '../services/financialService';
 import { RoleGuard } from '../components/RoleGuard';
 import { Role } from '../types';
+import { auditHelpers } from '../services/auditService';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF4560', '#775DD0'];
 
@@ -20,6 +21,19 @@ const FinancialDashboardPage: React.FC = () => {
   const { data, transactions, isLoading, refetch } = useFinancialData(period);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState<FinancialTransaction | undefined>(undefined);
+
+  // Log inicial para visualização do relatório financeiro
+  React.useEffect(() => {
+    if (data && !isLoading) {
+      auditHelpers.logFinancialOperation(
+        'Current User',
+        'VIEW_FINANCIAL_REPORT',
+        'dashboard',
+        data.kpis.grossRevenue,
+        `Visualizou dashboard financeiro - Período: ${period}`
+      );
+    }
+  }, [data, isLoading, period]);
 
   const formatCurrency = (value: number) => `R$ ${value.toFixed(2).replace('.', ',')}`;
   
@@ -34,19 +48,55 @@ const FinancialDashboardPage: React.FC = () => {
   };
 
   const handleSaveExpense = async (expense: Omit<FinancialTransaction, 'id' | 'type'> & { id?: string }) => {
-      if (expense.id) {
+      try {
+        if (expense.id) {
           await financialService.updateExpense(expense as FinancialTransaction);
-      } else {
-          await financialService.addExpense(expense);
+          // Log de auditoria para atualização
+          await auditHelpers.logFinancialOperation(
+            'Current User',
+            'UPDATE_TRANSACTION',
+            expense.id,
+            expense.amount || 0,
+            `Transação atualizada: ${expense.description}`
+          );
+        } else {
+          const savedExpense = await financialService.addExpense(expense);
+          const expenseId = typeof savedExpense === 'object' && savedExpense?.id ? savedExpense.id : 'unknown';
+          // Log de auditoria para criação
+          await auditHelpers.logFinancialOperation(
+            'Current User',
+            'CREATE_TRANSACTION',
+            expenseId,
+            expense.amount || 0,
+            `Nova transação: ${expense.description}`
+          );
+        }
+        refetch();
+        handleCloseModal();
+      } catch (error) {
+        console.error('Error saving expense:', error);
       }
-      refetch();
-      handleCloseModal();
   };
   
   const handleDeleteExpense = async (id: string) => {
-      await financialService.deleteExpense(id);
-      refetch();
-      handleCloseModal();
+      try {
+        const expense = transactions?.find(t => t.id === id);
+        await financialService.deleteExpense(id);
+
+        // Log de auditoria para exclusão
+        await auditHelpers.logFinancialOperation(
+          'Current User',
+          'DELETE_TRANSACTION',
+          id,
+          expense?.amount || 0,
+          `Transação excluída: ${expense?.description || 'Descrição não disponível'}`
+        );
+
+        refetch();
+        handleCloseModal();
+      } catch (error) {
+        console.error('Error deleting expense:', error);
+      }
   };
 
   if (isLoading || !data) {

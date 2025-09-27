@@ -136,6 +136,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                     onChange={handleInputChange}
                     placeholder="seu@email.com"
                     className="pl-10"
+                    autoComplete="email"
                     required
                   />
                 </div>
@@ -155,6 +156,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                     onChange={handleInputChange}
                     placeholder="••••••••"
                     className="pl-10 pr-10"
+                    autoComplete="current-password"
                     required
                   />
                   <button
