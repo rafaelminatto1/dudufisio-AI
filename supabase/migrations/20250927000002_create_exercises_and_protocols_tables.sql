@@ -3,29 +3,24 @@
 
 BEGIN;
 
--- Tabela de exercícios
-CREATE TABLE IF NOT EXISTS exercises (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  description TEXT NOT NULL,
-  category TEXT NOT NULL,
-  muscle_groups TEXT[] NOT NULL DEFAULT '{}',
-  equipment TEXT[] NOT NULL DEFAULT '{}',
-  difficulty_level TEXT NOT NULL CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced')),
-  duration_minutes INTEGER,
-  repetitions INTEGER,
-  sets INTEGER,
-  instructions TEXT[] NOT NULL DEFAULT '{}',
-  precautions TEXT[] NOT NULL DEFAULT '{}',
-  benefits TEXT[] NOT NULL DEFAULT '{}',
-  video_url TEXT,
-  image_urls TEXT[] NOT NULL DEFAULT '{}',
-  tags TEXT[] NOT NULL DEFAULT '{}',
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
-  created_by UUID REFERENCES users(id) ON DELETE SET NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Tabela de exercícios - Adicionar colunas que não existem
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS muscle_groups TEXT[] DEFAULT '{}';
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS equipment TEXT[] DEFAULT '{}';
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS difficulty_level TEXT CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced'));
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS duration_minutes INTEGER;
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS repetitions INTEGER;
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS sets INTEGER;
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS instructions TEXT[] DEFAULT '{}';
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS precautions TEXT[] DEFAULT '{}';
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS benefits TEXT[] DEFAULT '{}';
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS contraindications TEXT[] DEFAULT '{}';
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS video_url TEXT;
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS image_urls TEXT[] DEFAULT '{}';
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS created_by UUID REFERENCES users(id) ON DELETE SET NULL;
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
 -- Índices para exercícios
 CREATE INDEX IF NOT EXISTS idx_exercises_category
@@ -164,36 +159,6 @@ CREATE INDEX IF NOT EXISTS idx_exercise_executions_patient
 CREATE INDEX IF NOT EXISTS idx_exercise_executions_date
   ON patient_exercise_executions(execution_date);
 
--- Inserir dados de exemplo para exercícios
-INSERT INTO exercises (name, description, category, muscle_groups, equipment, difficulty_level, duration_minutes, repetitions, sets, instructions, precautions, benefits, tags) VALUES
-('Flexão de Braço', 'Exercício para fortalecimento dos músculos do peitoral, tríceps e deltoides.', 'Fortalecimento', ARRAY['Peitoral', 'Tríceps', 'Deltoides'], ARRAY['Corpo'], 'intermediate', 5, 15, 3,
- ARRAY['Deite-se de bruços no chão', 'Coloque as mãos no chão na largura dos ombros', 'Mantenha o corpo reto', 'Empurre o corpo para cima'],
- ARRAY['Não arquear as costas', 'Manter o core contraído'],
- ARRAY['Fortalece peitoral', 'Melhora estabilidade do core'],
- ARRAY['fortalecimento', 'casa', 'básico']),
-
-('Agachamento', 'Exercício fundamental para fortalecimento dos membros inferiores.', 'Fortalecimento', ARRAY['Quadríceps', 'Glúteos', 'Isquiotibiais'], ARRAY['Corpo'], 'beginner', 5, 20, 3,
- ARRAY['Fique em pé com os pés na largura dos quadris', 'Flexione os joelhos como se fosse sentar', 'Mantenha as costas retas', 'Retorne à posição inicial'],
- ARRAY['Não deixar os joelhos ultrapassarem os pés', 'Manter o peso nos calcanhares'],
- ARRAY['Fortalece pernas', 'Melhora equilíbrio', 'Funcional'],
- ARRAY['fortalecimento', 'pernas', 'funcional']),
-
-('Prancha', 'Exercício isométrico para fortalecimento do core.', 'Fortalecimento', ARRAY['Core', 'Ombros'], ARRAY['Corpo'], 'intermediate', 3, 1, 3,
- ARRAY['Deite-se de bruços', 'Apoie-se nos antebraços e pontas dos pés', 'Mantenha o corpo em linha reta', 'Segure a posição'],
- ARRAY['Não deixar o quadril cair', 'Manter respiração controlada'],
- ARRAY['Fortalece core', 'Melhora postura', 'Estabilidade'],
- ARRAY['core', 'isométrico', 'estabilidade']),
-
-('Alongamento de Isquiotibiais', 'Alongamento para flexibilidade dos músculos posteriores da coxa.', 'Alongamento', ARRAY['Isquiotibiais'], ARRAY['Corpo'], 'beginner', 2, 1, 3,
- ARRAY['Sente-se no chão com pernas estendidas', 'Incline o tronco para frente', 'Tente tocar os pés', 'Mantenha a posição'],
- ARRAY['Não forçar excessivamente', 'Manter respiração calma'],
- ARRAY['Melhora flexibilidade', 'Reduz tensão muscular', 'Previne lesões'],
- ARRAY['alongamento', 'flexibilidade', 'posterior']),
-
-('Exercício de Respiração Diafragmática', 'Exercício para reeducação respiratória e relaxamento.', 'Respiratório', ARRAY['Diafragma'], ARRAY['Corpo'], 'beginner', 10, 10, 1,
- ARRAY['Deite-se confortavelmente', 'Coloque uma mão no peito e outra no abdômen', 'Respire lentamente pelo nariz', 'Observe o movimento do abdômen'],
- ARRAY['Não forçar a respiração', 'Manter ambiente calmo'],
- ARRAY['Melhora função respiratória', 'Reduz ansiedade', 'Relaxamento'],
- ARRAY['respiração', 'relaxamento', 'diafragma']);
+-- Dados de exemplo removidos para evitar conflitos com estrutura existente
 
 COMMIT;

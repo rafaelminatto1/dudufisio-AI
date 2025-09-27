@@ -10,7 +10,7 @@ export interface Payment {
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'refunded';
   payment_method: string;
   payment_method_details: {
-    type: 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer' | 'cash' | 'insurance';
+    type: 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer' | 'cash';
     provider?: string;
     last_four?: string;
     brand?: string;
@@ -32,7 +32,7 @@ export interface PaymentMethod {
   id: string;
   clinic_id?: string;
   name: string;
-  type: 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer' | 'cash' | 'insurance';
+  type: 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer' | 'cash';
   provider?: string;
   is_active: boolean;
   processing_fee_percentage: number;

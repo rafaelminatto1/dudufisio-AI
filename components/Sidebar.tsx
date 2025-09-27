@@ -109,7 +109,6 @@ const Sidebar: React.FC = () => {
             { to: '/materials', icon: BookMarked, label: 'Materiais Clínicos' },
             { to: '/protocolos', icon: FileText, label: 'Protocolos Clínicos' },
             { to: '/inventory', icon: Package, label: 'Estoque/Insumos' },
-            { to: '/partnerships', icon: Handshake, label: 'Convênios/Parcerias' },
             { to: '/events', icon: Ticket, label: 'Eventos' },
             { to: '/whatsapp', icon: MessageSquare, label: 'WhatsApp Business' },
             { to: '/email-inativos', icon: Mail, label: 'Email para Inativos' },
@@ -217,7 +216,6 @@ const Sidebar: React.FC = () => {
           managementNav: [
             { to: '/financials', icon: DollarSign, label: 'Gestão Financeira' },
             { to: '/inventory', icon: Package, label: 'Estoque' },
-            { to: '/partnerships', icon: Handshake, label: 'Convênios' },
             { to: '/users', icon: Users2, label: 'Equipe' },
             { to: '/audit-log', icon: ShieldCheck, label: 'Auditoria' },
             { to: '/settings', icon: Cog, label: 'Configurações' },

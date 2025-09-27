@@ -5,12 +5,14 @@ import { Award } from 'lucide-react';
 
 interface LevelProgressProps {
     level: number;
-    currentXp: number;
+    pointsTowardsLevel: number;
     xpForNextLevel: number;
+    totalPoints: number;
 }
 
-const LevelProgress: React.FC<LevelProgressProps> = ({ level, currentXp, xpForNextLevel }) => {
-    const progressPercentage = Math.min(100, (currentXp / xpForNextLevel) * 100);
+const LevelProgress: React.FC<LevelProgressProps> = ({ level, pointsTowardsLevel, xpForNextLevel, totalPoints }) => {
+    const progressPercentage = Math.min(100, (pointsTowardsLevel / xpForNextLevel) * 100);
+    const remaining = Math.max(0, xpForNextLevel - pointsTowardsLevel);
 
     return (
         <div className="bg-white p-6 rounded-2xl shadow-sm flex items-center">
@@ -20,7 +22,7 @@ const LevelProgress: React.FC<LevelProgressProps> = ({ level, currentXp, xpForNe
             <div className="flex-1">
                 <div className="flex justify-between items-baseline mb-1">
                     <h3 className="text-lg font-bold text-slate-800">Nível {level}</h3>
-                    <p className="text-sm font-medium text-slate-500">{currentXp} / {xpForNextLevel} XP</p>
+                    <p className="text-sm font-medium text-slate-500">{pointsTowardsLevel} / {xpForNextLevel} XP</p>
                 </div>
                 <div className="w-full bg-slate-200 rounded-full h-4">
                     <div
@@ -28,9 +30,10 @@ const LevelProgress: React.FC<LevelProgressProps> = ({ level, currentXp, xpForNe
                         style={{ width: `${progressPercentage}%` }}
                     ></div>
                 </div>
-                 <p className="text-xs text-slate-500 text-right mt-1">
-                    Faltam {xpForNextLevel - currentXp} XP para o próximo nível.
-                </p>
+                <div className="flex justify-between mt-2 text-xs text-slate-500">
+                    <span>Total acumulado: {totalPoints} pts</span>
+                    <span>Faltam {remaining} XP para o próximo nível</span>
+                </div>
             </div>
         </div>
     );

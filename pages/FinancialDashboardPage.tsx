@@ -35,7 +35,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF4560'
 
 interface PaymentMethod {
   id: string;
-  type: 'credit_card' | 'debit_card' | 'pix' | 'cash' | 'bank_transfer' | 'insurance';
+  type: 'credit_card' | 'debit_card' | 'pix' | 'cash' | 'bank_transfer';
   name: string;
   icon: React.ReactNode;
   percentage: number;
@@ -153,15 +153,6 @@ const FinancialDashboardPage: React.FC = () => {
         transactions: 156
       },
       {
-        id: '3',
-        type: 'insurance',
-        name: 'Convênios',
-        icon: <Receipt className="w-5 h-5" />,
-        percentage: 20,
-        amount: 30000,
-        transactions: 89
-      },
-      {
         id: '4',
         type: 'cash',
         name: 'Dinheiro',
@@ -190,11 +181,11 @@ const FinancialDashboardPage: React.FC = () => {
         id: '2',
         type: 'info',
         title: 'Pagamentos Pendentes',
-        message: '12 pagamentos de convênios aguardando processamento',
+        message: '12 pagamentos pendentes aguardando processamento',
         severity: 'low',
         timestamp: new Date().toISOString(),
         actionable: true,
-        action: 'Acompanhar status dos convênios'
+        action: 'Acompanhar status dos pagamentos'
       },
       {
         id: '3',
@@ -236,7 +227,7 @@ const FinancialDashboardPage: React.FC = () => {
         frequency: 'monthly',
         nextPayment: '2024-01-20',
         status: 'active',
-        paymentMethod: 'Convênio'
+        paymentMethod: 'PIX'
       }
     ];
     setRecurrentPayments(payments);

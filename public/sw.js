@@ -79,17 +79,47 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Skip requests to external domains that might cause issues
+  if (url.hostname.includes('dummy.supabase.co') || 
+      url.hostname.includes('mock.supabase.local') ||
+      (url.hostname !== 'localhost' && url.hostname !== '127.0.0.1')) {
+    
+    // For mock Supabase URLs, return a mock response to prevent CORS errors
+    if (url.hostname.includes('mock.supabase.local') || url.hostname.includes('dummy.supabase.co')) {
+      event.respondWith(new Response(JSON.stringify({
+        error: 'Mock mode - no real connection',
+        message: 'Using mock data for development',
+        data: []
+      }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+        }
+      }));
+    }
+    
+    return; // Let the browser handle other external requests normally
+  }
+
   // Estratégias diferentes baseadas no tipo de resource
   if (request.method === 'GET') {
-    if (url.pathname.includes('/api/')) {
-      // API requests - Network First com fallback para cache
-      event.respondWith(networkFirstStrategy(request));
-    } else if (ESSENTIAL_RESOURCES.includes(url.pathname)) {
-      // Recursos essenciais - Cache First
-      event.respondWith(cacheFirstStrategy(request));
-    } else {
-      // Outros recursos - Stale While Revalidate
-      event.respondWith(staleWhileRevalidateStrategy(request));
+    try {
+      if (url.pathname.includes('/api/')) {
+        // API requests - Network First com fallback para cache
+        event.respondWith(networkFirstStrategy(request));
+      } else if (ESSENTIAL_RESOURCES.includes(url.pathname)) {
+        // Recursos essenciais - Cache First
+        event.respondWith(cacheFirstStrategy(request));
+      } else {
+        // Outros recursos - Stale While Revalidate
+        event.respondWith(staleWhileRevalidateStrategy(request));
+      }
+    } catch (error) {
+      console.error('❌ Service Worker fetch error:', error);
+      // Don't respond with anything, let the browser handle it
     }
   }
 });

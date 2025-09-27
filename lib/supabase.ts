@@ -20,17 +20,18 @@ if (!hasValidCredentials) {
   });
 }
 
-// Use dummy values for development if real credentials are not available
-const finalSupabaseUrl = hasValidCredentials ? supabaseUrl : 'https://dummy.supabase.co';
+// Use mock values for development if real credentials are not available
+const finalSupabaseUrl = hasValidCredentials ? supabaseUrl : 'https://mock.supabase.local';
 const finalSupabaseAnonKey = hasValidCredentials
   ? supabaseAnonKey
-  : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1bW15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NDUxOTI4MDAsImV4cCI6MTk2MDc2ODgwMH0.dummy';
+  : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vY2siLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY0NTE5MjgwMCwiZXhwIjoxOTYwNzY4ODAwfQ.mock';
 
+// Create Supabase client with mock mode handling
 export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAnonKey, {
   auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
+    autoRefreshToken: hasValidCredentials,
+    persistSession: hasValidCredentials,
+    detectSessionInUrl: hasValidCredentials,
   },
   global: {
     headers: {
@@ -40,12 +41,42 @@ export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAn
   db: {
     schema: 'public',
   },
-  realtime: {
+  realtime: hasValidCredentials ? {
     params: {
       eventsPerSecond: 10,
     },
-  },
+  } : undefined,
 });
+
+// Mock mode interceptor to prevent real network requests
+if (!hasValidCredentials) {
+  // Override fetch to prevent requests to mock URL
+  const originalFetch = window.fetch;
+  window.fetch = async (input, init) => {
+    const url = typeof input === 'string' ? input : input.url;
+    
+    // Block requests to mock Supabase URL
+    if (url.includes('mock.supabase.local') || url.includes('dummy.supabase.co')) {
+      console.log('🚫 Blocking mock Supabase request:', url);
+      
+      // Return a mock response to prevent CORS errors
+      return new Response(JSON.stringify({
+        error: 'Mock mode - no real connection',
+        message: 'Using mock data for development'
+      }), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+        }
+      });
+    }
+    
+    return originalFetch(input, init);
+  };
+}
 
 type SupabaseError = {
   message?: string;
@@ -54,12 +85,21 @@ type SupabaseError = {
 
 export const handleSupabaseError = (error: unknown) => {
   const supabaseError = (error ?? {}) as SupabaseError;
-  observability.database.error('supabase.error', {
-    error: supabaseError,
-  });
+  
+  // Only log errors in development mode and when not in mock mode
+  if (hasValidCredentials || import.meta.env.DEV) {
+    observability.database.error('supabase.error', {
+      error: supabaseError,
+    });
+  }
 
   const message = supabaseError.message ?? '';
   const code = supabaseError.code;
+
+  // Handle mock mode errors silently
+  if (message.includes('Mock mode') || message.includes('mock.supabase.local')) {
+    return null; // Don't show error messages for mock mode
+  }
 
   if (message.includes('JWT')) {
     return 'Sessão expirada. Por favor, faça login novamente.';

@@ -858,25 +858,112 @@ export const mockPurchasedVouchers: Voucher[] = [
     }
 ];
 
-export const mockGamificationProgress = {
-    patientId: '1',
-    exerciseLogs: [
-        new Date('2024-07-28T10:00:00Z'),
-        new Date('2024-07-27T10:00:00Z'),
-        new Date('2024-07-26T10:00:00Z'),
-        new Date('2024-07-24T10:00:00Z'), // Streak broken here
-    ],
-    treatmentProgress: 0.6, // 60% of sessions completed
-};
-
-export const mockAchievements: Omit<Achievement, 'unlocked'>[] = [
-    { id: 'streak_7', name: 'Em Chamas!', description: 'Mantenha uma sequência de 7 dias de atividades.', icon: Flame },
-    { id: 'sessions_10', name: 'Veterano de Sessões', description: 'Complete 10 sessões de fisioterapia.', icon: Medal },
-    { id: 'pain_log_1', name: 'Primeiro Passo', description: 'Faça seu primeiro registro no Diário de Dor.', icon: Star },
-    { id: 'first_week', name: 'Semana de Ouro', description: 'Complete todos os exercícios da primeira semana.', icon: CalendarCheck },
-    { id: 'level_5', name: 'Guerreiro da Fisio', description: 'Alcance o nível 5 de engajamento.', icon: Shield },
-    { id: 'perfect_month', name: 'Mês Perfeito', description: 'Mantenha uma sequência de 30 dias de atividades.', icon: Trophy },
+export const mockAchievements: Achievement[] = [
+    { id: 'streak_7', name: 'Em Chamas!', description: 'Mantenha uma sequência de 7 dias de atividades.', icon: Flame, unlocked: true, rewardPoints: 120 },
+    { id: 'sessions_10', name: 'Veterano de Sessões', description: 'Complete 10 sessões de fisioterapia.', icon: Medal, unlocked: true, rewardPoints: 200 },
+    { id: 'pain_log_1', name: 'Primeiro Passo', description: 'Faça seu primeiro registro no Diário de Dor.', icon: Star, unlocked: true, rewardPoints: 50 },
+    { id: 'first_week', name: 'Semana de Ouro', description: 'Complete todos os exercícios da primeira semana.', icon: CalendarCheck, unlocked: true, rewardPoints: 80 },
+    { id: 'level_5', name: 'Guerreiro da Fisio', description: 'Alcance o nível 5 de engajamento.', icon: Shield, unlocked: true, rewardPoints: 300 },
+    { id: 'perfect_month', name: 'Mês Perfeito', description: 'Mantenha uma sequência de 30 dias de atividades.', icon: Trophy, unlocked: false, rewardPoints: 500, progress: 0.4 },
 ];
+
+export const mockGamificationOverview = {
+    patientId: '1',
+    points: 1320,
+    pointsTowardsLevel: 120,
+    xpForNextLevel: 200,
+    level: 6,
+    streak: 5,
+    pointsBreakdown: [
+        { id: 'sessions', label: 'Sessões concluídas', points: 450 },
+        { id: 'pain_logs', label: 'Registros de dor', points: 90 },
+        { id: 'exercises', label: 'Exercícios completos', points: 320 },
+        { id: 'challenges', label: 'Desafios bônus', points: 460 },
+    ],
+    activeChallenges: [
+        {
+            id: 'challenge-streak-10',
+            title: 'Sequência de 10 dias',
+            description: 'Realize uma atividade por 10 dias consecutivos.',
+            metric: 'streak' as const,
+            currentValue: 5,
+            targetValue: 10,
+            progressPercentage: 50,
+            rewardPoints: 250,
+            status: 'active' as const,
+            expiresAt: new Date(new Date().setDate(new Date().getDate() + 5)),
+        },
+        {
+            id: 'challenge-pain-journal',
+            title: 'Diário da Dor Semanal',
+            description: 'Registre como está sua dor por 5 dias nesta semana.',
+            metric: 'pain_logs' as const,
+            currentValue: 3,
+            targetValue: 5,
+            progressPercentage: 60,
+            rewardPoints: 150,
+            status: 'active' as const,
+            expiresAt: new Date(new Date().setDate(new Date().getDate() + 2)),
+        },
+    ],
+    completedChallenges: [
+        {
+            id: 'challenge-sessions-5',
+            title: 'Boas-vindas Intensas',
+            description: 'Complete 5 sessões para dar o pontapé inicial.',
+            metric: 'sessions_completed' as const,
+            currentValue: 5,
+            targetValue: 5,
+            progressPercentage: 100,
+            rewardPoints: 200,
+            status: 'completed' as const,
+        },
+    ],
+    availableRewards: [
+        {
+            id: 'reward-stretch-band',
+            title: 'Aula de Alongamento Online',
+            description: 'Troque pontos por uma aula ao vivo com nosso especialista.',
+            pointsRequired: 400,
+            unlocked: true,
+            claimed: false,
+        },
+        {
+            id: 'reward-hep-upgrade',
+            title: 'Plano HEP Premium',
+            description: 'Receba um plano de exercícios personalizado para a próxima semana.',
+            pointsRequired: 650,
+            unlocked: false,
+            claimed: false,
+        },
+    ],
+    unlockedRewards: [
+        {
+            id: 'reward-water-bottle',
+            title: 'Squeeze Oficial',
+            description: 'Garrafa personalizada para te acompanhar nas sessões.',
+            pointsRequired: 250,
+            unlocked: true,
+            claimed: true,
+        },
+    ],
+    leaderboard: [
+        { position: 1, patientId: '1', patientName: 'Ana Beatriz', avatarUrl: 'https://picsum.photos/id/1027/200/200', points: 1320, level: 6, streak: 5 },
+        { position: 2, patientId: '5', patientName: 'Fernando Oliveira', avatarUrl: 'https://picsum.photos/id/1015/200/200', points: 1180, level: 5, streak: 3 },
+        { position: 3, patientId: '6', patientName: 'Lúcia Martins', avatarUrl: 'https://picsum.photos/id/1016/200/200', points: 980, level: 4, streak: 4 },
+        { position: 4, patientId: '8', patientName: 'Júlia Pereira', avatarUrl: 'https://picsum.photos/id/1025/200/200', points: 820, level: 4, streak: 1 },
+    ],
+    nextMilestone: {
+        description: 'Ganhe acesso ao plano avançado de exercícios',
+        targetPoints: 1500,
+        pointsRemaining: 180,
+    },
+    recentActivities: [
+        { label: 'Sessão concluída', timestamp: new Date(new Date().setDate(new Date().getDate() - 1)), points: 50 },
+        { label: 'Registro de dor adicionado', timestamp: new Date(new Date().setHours(new Date().getHours() - 8)), points: 10 },
+        { label: 'Desafio “Sequência de 5 dias” concluído', timestamp: new Date(new Date().setDate(new Date().getDate() - 2)), points: 200 },
+    ],
+};
 
 export const mockMedicalReports: MedicalReport[] = [
     {

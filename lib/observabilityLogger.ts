@@ -7,16 +7,29 @@ type ObservabilityLogger = Record<LogLevel, (event: string, payload?: unknown) =
 
 const createLogger = (category: ObservabilityCategory): ObservabilityLogger => ({
   info: (event, payload) => {
-    console.info(`[${category}] ${event}`, payload);
+    // Only log info in development mode
+    if (import.meta.env.DEV) {
+      console.info(`[${category}] ${event}`, payload);
+    }
   },
   warn: (event, payload) => {
-    console.warn(`[${category}] ${event}`, payload);
+    // Only log warnings in development mode
+    if (import.meta.env.DEV) {
+      console.warn(`[${category}] ${event}`, payload);
+    }
   },
   error: (event, payload) => {
-    console.error(`[${category}] ${event}`, payload);
+    // Always log errors, but reduce noise for known issues
+    const shouldLog = !event.includes('supabase.credentials.missing') || import.meta.env.DEV;
+    if (shouldLog) {
+      console.error(`[${category}] ${event}`, payload);
+    }
   },
   debug: (event, payload) => {
-    console.debug(`[${category}] ${event}`, payload);
+    // Only log debug in development mode
+    if (import.meta.env.DEV) {
+      console.debug(`[${category}] ${event}`, payload);
+    }
   },
 });
 

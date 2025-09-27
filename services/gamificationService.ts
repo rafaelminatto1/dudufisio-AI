@@ -1,133 +1,269 @@
 // services/gamificationService.ts
-import { Achievement, AppointmentStatus, GamificationProgress } from '../types';
-import { mockAchievements, mockGamificationProgress } from '../data/mockData';
+import {
+  Achievement,
+  GamificationChallenge,
+  GamificationProgress,
+  GamificationReward,
+  GamificationLeaderboardEntry,
+  GamificationPointsBreakdown,
+  GamificationMilestone,
+  AppointmentStatus,
+} from '../types';
+import {
+  mockAchievements,
+  mockGamificationOverview,
+} from '../data/mockData';
 import * as appointmentService from './appointmentService';
 import * as patientService from './patientService';
 
 const POINTS_CONFIG = {
-    SESSION_COMPLETED: 50,
-    PAIN_LOG_ENTRY: 10,
-    EXERCISE_EVALUATION: 20, // Assuming this data would be available
+  SESSION_COMPLETED: 50,
+  PAIN_LOG_ENTRY: 10,
 };
 
-// Leveling is based on total points
-const getLevelFromPoints = (points: number): { level: number; xpForNextLevel: number } => {
-    let level = 1;
-    let xpForNextLevel = 100;
-    let requiredPoints = 100;
+const clone = <T>(value: T): T => structuredClone(value);
 
-    while (points >= requiredPoints) {
-        level++;
-        points -= requiredPoints;
-        requiredPoints = Math.floor(requiredPoints * 1.5); // Increase requirement for next level
-        xpForNextLevel = requiredPoints;
-    }
-    return { level, xpForNextLevel };
+const calculateLevel = (points: number) => {
+  let level = 1;
+  let xpThreshold = 100;
+  let pointsTowardsLevel = points;
+
+  while (pointsTowardsLevel >= xpThreshold) {
+    pointsTowardsLevel -= xpThreshold;
+    level += 1;
+    xpThreshold = Math.floor(xpThreshold * 1.35);
+  }
+
+  return {
+    level,
+    xpForNextLevel: xpThreshold,
+    pointsTowardsLevel,
+  };
 };
 
 const calculateStreak = (dates: Date[]): number => {
-    if (dates.length === 0) return 0;
+  if (!dates.length) return 0;
 
-    const sortedDates = dates
-        .map(d => new Date(d.toDateString())) // Normalize to midnight
-        .sort((a, b) => b.getTime() - a.getTime());
+  const normalized = [...new Set(dates.map((d) => new Date(d.toDateString()).getTime()))]
+    .map((timestamp) => new Date(timestamp))
+    .sort((a, b) => b.getTime() - a.getTime());
 
-    const uniqueDates = [...new Set(sortedDates.map(d => d.getTime()))].map(t => new Date(t));
+  const today = new Date(new Date().toDateString());
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
 
-    const today = new Date(new Date().toDateString());
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
+  const first = normalized[0];
+  if (!first || (first.getTime() !== today.getTime() && first.getTime() !== yesterday.getTime())) {
+    return 0;
+  }
 
-    // Check if there is an activity today or yesterday to start the streak from
-    let currentStreak = 0;
-    let lastDate: Date | undefined = undefined;
-    
-    const firstDate = uniqueDates[0];
-    if (firstDate.getTime() === today.getTime() || firstDate.getTime() === yesterday.getTime()) {
-        currentStreak = 1;
-        lastDate = firstDate;
+  let streak = 1;
+  let last = first;
+
+  for (let i = 1; i < normalized.length; i++) {
+    const expectedPrevious = new Date(last);
+    expectedPrevious.setDate(last.getDate() - 1);
+
+    if (normalized[i].getTime() === expectedPrevious.getTime()) {
+      streak += 1;
+      last = normalized[i];
     } else {
-        return 0; // No activity today or yesterday, so streak is broken
+      break;
     }
-    
-    for (let i = 1; i < uniqueDates.length; i++) {
-        const currentDate = uniqueDates[i];
-        if (!currentDate) break;
+  }
 
-        if (!lastDate) break;
-        const expectedPreviousDate = new Date(lastDate);
-        expectedPreviousDate.setDate(lastDate.getDate() - 1);
-
-        if (currentDate.getTime() === expectedPreviousDate.getTime()) {
-            currentStreak++;
-            lastDate = currentDate;
-        } else {
-            break; // Streak is broken
-        }
-    }
-
-    return currentStreak;
+  return streak;
 };
 
+const evaluateAchievement = (
+  achievement: Achievement,
+  data: {
+    streak: number;
+    completedSessions: number;
+    level: number;
+    painLogs: number;
+  }
+): Achievement => {
+  const result = { ...achievement };
+
+  switch (achievement.id) {
+    case 'streak_7':
+      result.unlocked = data.streak >= 7;
+      result.progress = Math.min(1, data.streak / 7);
+      break;
+    case 'sessions_10':
+      result.unlocked = data.completedSessions >= 10;
+      result.progress = Math.min(1, data.completedSessions / 10);
+      break;
+    case 'pain_log_1':
+      result.unlocked = data.painLogs > 0;
+      result.progress = result.unlocked ? 1 : 0;
+      break;
+    case 'first_week':
+      result.unlocked = data.completedSessions >= 5;
+      result.progress = Math.min(1, data.completedSessions / 5);
+      break;
+    case 'level_5':
+      result.unlocked = data.level >= 5;
+      result.progress = Math.min(1, data.level / 5);
+      break;
+    case 'perfect_month':
+      result.unlocked = data.streak >= 30;
+      result.progress = Math.min(1, data.streak / 30);
+      break;
+    default:
+      break;
+  }
+
+  return result;
+};
+
+const updateChallenges = (
+  challenges: GamificationChallenge[],
+  stats: { streak: number; painLogs: number }
+): GamificationChallenge[] =>
+  challenges.map((challenge) => {
+    if (challenge.metric === 'streak') {
+      const progress = Math.min(1, stats.streak / challenge.targetValue);
+      return {
+        ...challenge,
+        currentValue: stats.streak,
+        progressPercentage: Math.round(progress * 100),
+        status: progress >= 1 ? 'completed' : challenge.status,
+      };
+    }
+
+    if (challenge.metric === 'pain_logs') {
+      const progress = Math.min(1, stats.painLogs / challenge.targetValue);
+      return {
+        ...challenge,
+        currentValue: stats.painLogs,
+        progressPercentage: Math.round(progress * 100),
+        status: progress >= 1 ? 'completed' : challenge.status,
+      };
+    }
+
+    return challenge;
+  });
+
+const refreshRewards = (
+  rewards: GamificationReward[],
+  totalPoints: number
+): GamificationReward[] =>
+  rewards.map((reward) => ({
+    ...reward,
+    unlocked: reward.unlocked || totalPoints >= reward.pointsRequired,
+  }));
+
+const updateLeaderboard = (
+  leaderboard: GamificationLeaderboardEntry[],
+  patientId: string,
+  totalPoints: number,
+  level: number,
+  streak: number,
+): GamificationLeaderboardEntry[] => {
+  const updated = leaderboard.map((entry) =>
+    entry.patientId === patientId
+      ? { ...entry, points: totalPoints, level, streak }
+      : entry
+  );
+
+  return updated
+    .sort((a, b) => b.points - a.points)
+    .map((entry, index) => ({ ...entry, position: index + 1 }));
+};
 
 export const getGamificationProgress = async (patientId: string): Promise<GamificationProgress> => {
-    // Fetch all necessary data
-    const [appointments, patient] = await Promise.all([
-        appointmentService.getAppointmentsByPatientId(patientId),
-        patientService.getPatientById(patientId),
-        // evaluationService.getEvaluationsByPatientId(patientId) // would be added here
-    ]);
+  const [appointments, patient] = await Promise.all([
+    appointmentService.getAppointmentsByPatientId(patientId),
+    patientService.getPatientById(patientId),
+  ]);
 
-    const painPoints = patient?.painPoints || [];
+  const base = clone(mockGamificationOverview);
 
-    // Calculate Points
-    const completedSessions = appointments.filter(a => a.status === AppointmentStatus.Completed).length;
-    let totalPoints = 0;
-    totalPoints += completedSessions * POINTS_CONFIG.SESSION_COMPLETED;
-    totalPoints += painPoints.length * POINTS_CONFIG.PAIN_LOG_ENTRY;
-    // totalPoints += evaluations.length * POINTS_CONFIG.EXERCISE_EVALUATION;
-    
-    // Calculate Level
-    const { level, xpForNextLevel } = getLevelFromPoints(totalPoints);
-    
-    // Calculate Streak
-    const activityDates = [
-        ...painPoints.map(log => new Date(log.date)),
-        ...appointments.filter(a => a.status === AppointmentStatus.Completed).map(a => a.startTime),
-    ];
-    const streak = calculateStreak(activityDates);
+  const painPoints = patient?.painPoints ?? [];
+  const completedSessions = appointments.filter((a) => a.status === AppointmentStatus.Completed);
 
-    // Check Achievements
-    const unlockedAchievements: Achievement[] = mockAchievements.map(ach => {
-        let unlocked = false;
-        switch (ach.id) {
-            case 'streak_7':
-                unlocked = streak >= 7;
-                break;
-            case 'sessions_10':
-                unlocked = completedSessions >= 10;
-                break;
-            case 'pain_log_1':
-                unlocked = painPoints.length > 0;
-                break;
-            case 'first_week':
-                 unlocked = mockGamificationProgress.treatmentProgress > 0.25; // Mocking this logic
-                 break;
-            case 'level_5':
-                 unlocked = level >= 5;
-                 break;
-            case 'perfect_month':
-                 unlocked = streak >= 30;
-                 break;
-        }
-        return { ...ach, unlocked };
-    });
+  const sessionPoints = completedSessions.length * POINTS_CONFIG.SESSION_COMPLETED;
+  const painLogPoints = painPoints.length * POINTS_CONFIG.PAIN_LOG_ENTRY;
+  const exercisesPoints = base.pointsBreakdown.find((b) => b.id === 'exercises')?.points ?? 0;
+  const challengeBonus = base.pointsBreakdown.find((b) => b.id === 'challenges')?.points ?? 0;
 
-    return {
-        points: totalPoints,
-        level,
-        xpForNextLevel,
-        streak,
-        achievements: unlockedAchievements,
-    };
+  const pointsBreakdown: GamificationPointsBreakdown[] = [
+    { id: 'sessions', label: 'Sessões concluídas', points: sessionPoints },
+    { id: 'pain_logs', label: 'Registros de dor', points: painLogPoints },
+    { id: 'exercises', label: 'Exercícios completos', points: exercisesPoints },
+    { id: 'challenges', label: 'Bônus de desafios', points: challengeBonus },
+  ];
+
+  const totalPoints = pointsBreakdown.reduce((sum, item) => sum + item.points, 0);
+  const { level, xpForNextLevel, pointsTowardsLevel } = calculateLevel(totalPoints);
+
+  const streak = calculateStreak([
+    ...painPoints.map((log) => new Date(log.date)),
+    ...completedSessions.map((appt) => new Date(appt.startTime)),
+  ]);
+
+  const achievements: Achievement[] = mockAchievements.map((achievement) =>
+    evaluateAchievement(achievement, {
+      streak,
+      completedSessions: completedSessions.length,
+      level,
+      painLogs: painPoints.length,
+    })
+  );
+
+  const activeChallenges = updateChallenges(base.activeChallenges, {
+    streak,
+    painLogs: painPoints.length,
+  });
+
+  const availableRewards = refreshRewards(base.availableRewards, totalPoints);
+  const unlockedRewards = refreshRewards(base.unlockedRewards, totalPoints);
+
+  const leaderboard = updateLeaderboard(
+    base.leaderboard,
+    patientId,
+    totalPoints,
+    level,
+    streak
+  );
+
+  const nextMilestone: GamificationMilestone = {
+    ...base.nextMilestone,
+    pointsRemaining: Math.max(0, base.nextMilestone.targetPoints - totalPoints),
+  };
+
+  const recentActivities = [
+    ...completedSessions.slice(0, 2).map((appt) => ({
+      label: 'Sessão concluída',
+      timestamp: new Date(appt.startTime),
+      points: POINTS_CONFIG.SESSION_COMPLETED,
+    })),
+    ...painPoints.slice(0, 3).map((log) => ({
+      label: 'Registro de dor adicionado',
+      timestamp: new Date(log.date),
+      points: POINTS_CONFIG.PAIN_LOG_ENTRY,
+    })),
+    ...base.recentActivities,
+  ]
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .slice(0, 5);
+
+  return {
+    points: totalPoints,
+    level,
+    xpForNextLevel,
+    pointsTowardsLevel,
+    streak,
+    achievements,
+    pointsBreakdown,
+    activeChallenges,
+    completedChallenges: base.completedChallenges,
+    availableRewards,
+    unlockedRewards,
+    leaderboard,
+    nextMilestone,
+    recentActivities,
+  };
 };
