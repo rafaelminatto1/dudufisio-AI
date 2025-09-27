@@ -173,7 +173,13 @@ const AtendimentoPage: React.FC = () => {
         setIsAiLoading(true);
         const prompt = `Com base no relato Subjetivo e nos achados Objetivos a seguir, sugira uma Avaliação e um Plano de tratamento concisos. Nível de dor: ${painScale || 'N/A'}. Formate a resposta com "AVALIAÇÃO:" e "PLANO:".\nS: "${subjective}"\nO: "${objective}"`;
         try {
-          const response = await aiOrchestratorService.getResponse(prompt);
+          const response = await aiOrchestratorService.getResponse(prompt, {
+            category: 'exercise_suggestion',
+            patientId: patient?.id,
+            therapistId: appointment?.therapistId,
+            cacheTtlMs: 15 * 60 * 1000,
+            metadata: appointment ? { appointmentId: appointment.id } : undefined,
+          });
           const content = response.content;
           const assessmentMatch = content.match(/AVALIAÇÃO:([\s\S]*?)PLANO:/i);
           const planMatch = content.match(/PLANO:([\s\S]*)/i);

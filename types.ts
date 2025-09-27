@@ -28,6 +28,9 @@ export enum AIProvider {
   OpenAI = 'openai',
   Anthropic = 'anthropic',
   Groq = 'groq',
+  Perplexity = 'perplexity',
+  KnowledgeBase = 'knowledge_base',
+  Cache = 'cache',
   Mock = 'mock'
 }
 
@@ -1170,6 +1173,17 @@ export interface Transaction {
 export interface AIResponse {
   content: string;
   source: string;
+  metadata?: {
+    provider?: AIProvider;
+    cached?: boolean;
+    knowledgeBaseEntryId?: string;
+    accountId?: string;
+    category?: string;
+    strategy?: 'knowledge_base' | 'cache' | 'premium_account';
+    tokensEstimated?: number;
+    latencyMs?: number;
+    warnings?: string[];
+  };
 }
 
 export interface AIQueryLog {
@@ -1178,6 +1192,12 @@ export interface AIQueryLog {
     content: string;
     source: AIProvider;
     timestamp: Date;
+    category?: string;
+    accountId?: string;
+    latencyMs?: number;
+    cached?: boolean;
+    knowledgeBaseEntryId?: string;
+    warnings?: string[];
 }
 
 
