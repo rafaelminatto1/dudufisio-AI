@@ -1,130 +1,220 @@
-
 // hooks/useExercises.ts
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Exercise } from '../types';
-import * as exerciseService from '../services/exerciseService';
-import { useToast } from '../contexts/ToastContext';
+import { useState, useEffect } from 'react';
+import { exerciseService, Exercise, CreateExerciseRequest, UpdateExerciseRequest } from '../services/exerciseService';
 
-export const useExercises = () => {
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const { showToast } = useToast();
+interface UseExercisesState {
+  exercises: Exercise[];
+  loading: boolean;
+  error: string | null;
+}
 
-  const fetchData = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const { exercises: exData, categories: catData } = await exerciseService.getExerciseData();
-      setExercises(exData);
-      setCategories(catData);
-      setError(null);
-    } catch (err) {
-      setError(err as Error);
-      showToast('Falha ao carregar exercícios.', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [showToast]);
+export function useExercises() {
+  const [state, setState] = useState<UseExercisesState>({
+    exercises: [],
+    loading: true,
+    error: null,
+  });
+
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    loadExercises();
+  }, []);
 
-  const uniqueBodyParts = useMemo(() => {
-    const allParts = exercises.flatMap(ex => ex.bodyParts);
-    return [...new Set(allParts)].sort((a: string, b: string) => a.localeCompare(b));
-  }, [exercises]);
-
-  const uniqueEquipment = useMemo(() => {
-    const allEquipment = exercises.flatMap(ex => ex.equipment);
-    return [...new Set(allEquipment)].sort((a: string, b: string) => a.localeCompare(b));
-  }, [exercises]);
-
-  const addExercise = async (exerciseData: Omit<Exercise, 'id'>) => {
+  const loadExercises = async () => {
     try {
-      await exerciseService.addExercise(exerciseData);
-      showToast('Exercício adicionado com sucesso!', 'success');
-      await fetchData();
-    } catch {
-      showToast('Falha ao adicionar exercício.', 'error');
+      setState(prev => ({ ...prev, loading: true, error: null }));
+
+      // For now, use mock data until Supabase tables are ready
+      const exercises = exerciseService.getMockExercises();
+      setState(prev => ({ ...prev, exercises, loading: false }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Erro ao carregar exercícios',
+      }));
     }
   };
 
-  const updateExercise = async (exerciseData: Exercise) => {
+  const createExercise = async (exerciseData: CreateExerciseRequest): Promise<Exercise> => {
     try {
-      await exerciseService.updateExercise(exerciseData);
-      showToast('Exercício atualizado com sucesso!', 'success');
-       await fetchData();
-    } catch {
-      showToast('Falha ao atualizar exercício.', 'error');
+      setState(prev => ({ ...prev, error: null }));
+
+      // Mock creation for now
+      const newExercise: Exercise = {
+        id: Math.random().toString(36).substr(2, 9),
+        ...exerciseData,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      setState(prev => ({
+        ...prev,
+        exercises: [newExercise, ...prev.exercises],
+      }));
+
+      return newExercise;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar exercício';
+      setState(prev => ({ ...prev, error: errorMessage }));
+      throw error;
     }
   };
 
-  const deleteExercise = async (id: string) => {
+  const updateExercise = async (id: string, exerciseData: UpdateExerciseRequest): Promise<Exercise> => {
     try {
-      await exerciseService.deleteExercise(id);
-      showToast('Exercício excluído com sucesso!', 'success');
-       await fetchData();
-    } catch {
-      showToast('Falha ao excluir exercício.', 'error');
-    }
-  };
+      setState(prev => ({ ...prev, error: null }));
 
-  const addCategory = async (name: string) => {
-    try {
-        await exerciseService.addCategory(name);
-        showToast(`Grupo "${name}" criado com sucesso!`, 'success');
-        await fetchData();
-    } catch {
-        showToast('Falha ao criar grupo.', 'error');
-    }
-  };
-  
-  const updateCategory = async (oldName: string, newName: string) => {
-      try {
-          await exerciseService.updateCategory(oldName, newName);
-          showToast('Grupo renomeado com sucesso!', 'success');
-          await fetchData();
-      } catch {
-          showToast('Falha ao renomear grupo.', 'error');
+      const updatedExercise = state.exercises.find(ex => ex.id === id);
+      if (!updatedExercise) {
+        throw new Error('Exercício não encontrado');
       }
-  };
 
-  const copyCategory = async (originalName: string, newName: string) => {
-      try {
-          await exerciseService.copyCategory(originalName, newName);
-          showToast(`Grupo "${originalName}" copiado para "${newName}"!`, 'success');
-          await fetchData();
-      } catch {
-          showToast('Falha ao copiar grupo.', 'error');
+      const updated = {
+        ...updatedExercise,
+        ...exerciseData,
+        updated_at: new Date().toISOString(),
+      };
+
+      setState(prev => ({
+        ...prev,
+        exercises: prev.exercises.map(exercise =>
+          exercise.id === id ? updated : exercise
+        ),
+      }));
+
+      if (selectedExercise?.id === id) {
+        setSelectedExercise(updated);
       }
+
+      return updated;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar exercício';
+      setState(prev => ({ ...prev, error: errorMessage }));
+      throw error;
+    }
   };
 
-  const deleteCategory = async (name: string) => {
-      try {
-          await exerciseService.deleteCategory(name);
-          showToast(`Grupo "${name}" e seus exercícios foram excluídos.`, 'success');
-          await fetchData();
-      } catch {
-          showToast('Falha ao excluir grupo.', 'error');
-      }
+  const deleteExercise = async (id: string): Promise<void> => {
+    try {
+      setState(prev => ({ ...prev, error: null }));
+
+      setState(prev => ({
+        ...prev,
+        exercises: prev.exercises.filter(exercise => exercise.id !== id),
+      }));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao deletar exercício';
+      setState(prev => ({ ...prev, error: errorMessage }));
+      throw error;
+    }
   };
 
-  return { 
-    exercises, 
-    categories,
-    isLoading, 
-    error, 
-    refetch: fetchData, 
-    addExercise, 
-    updateExercise, 
+  const getExerciseById = async (id: string): Promise<Exercise | null> => {
+    try {
+      const exercise = state.exercises.find(ex => ex.id === id) || null;
+      setSelectedExercise(exercise);
+      return exercise;
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Erro ao buscar exercício',
+      }));
+      return null;
+    }
+  };
+
+  const searchExercises = (query: string, filters?: {
+    category?: string;
+    muscle_groups?: string[];
+    difficulty_level?: string;
+    equipment?: string[];
+  }): Exercise[] => {
+    let filtered = state.exercises;
+
+    // Text search
+    if (query) {
+      const searchQuery = query.toLowerCase();
+      filtered = filtered.filter(exercise =>
+        exercise.name.toLowerCase().includes(searchQuery) ||
+        exercise.description.toLowerCase().includes(searchQuery) ||
+        exercise.tags.some(tag => tag.toLowerCase().includes(searchQuery))
+      );
+    }
+
+    // Apply filters
+    if (filters?.category) {
+      filtered = filtered.filter(exercise => exercise.category === filters.category);
+    }
+
+    if (filters?.difficulty_level) {
+      filtered = filtered.filter(exercise => exercise.difficulty_level === filters.difficulty_level);
+    }
+
+    if (filters?.muscle_groups && filters.muscle_groups.length > 0) {
+      filtered = filtered.filter(exercise =>
+        filters.muscle_groups!.some(group => exercise.muscle_groups.includes(group))
+      );
+    }
+
+    if (filters?.equipment && filters.equipment.length > 0) {
+      filtered = filtered.filter(exercise =>
+        filters.equipment!.some(equip => exercise.equipment.includes(equip))
+      );
+    }
+
+    return filtered;
+  };
+
+  const getExercisesByCategory = (category: string): Exercise[] => {
+    return state.exercises.filter(exercise => exercise.category === category);
+  };
+
+  const getCategories = (): string[] => {
+    const categories = [...new Set(state.exercises.map(ex => ex.category))];
+    return categories.sort();
+  };
+
+  const getMuscleGroups = (): string[] => {
+    const allGroups = state.exercises.flatMap(ex => ex.muscle_groups);
+    const uniqueGroups = [...new Set(allGroups)];
+    return uniqueGroups.sort();
+  };
+
+  const getEquipment = (): string[] => {
+    const allEquipment = state.exercises.flatMap(ex => ex.equipment);
+    const uniqueEquipment = [...new Set(allEquipment)];
+    return uniqueEquipment.sort();
+  };
+
+  const refreshExercises = () => {
+    loadExercises();
+  };
+
+  const clearError = () => {
+    setState(prev => ({ ...prev, error: null }));
+  };
+
+  return {
+    exercises: state.exercises,
+    loading: state.loading,
+    error: state.error,
+    selectedExercise,
+    setSelectedExercise,
+    createExercise,
+    updateExercise,
     deleteExercise,
-    addCategory,
-    updateCategory,
-    copyCategory,
-    deleteCategory,
-    uniqueBodyParts,
-    uniqueEquipment,
+    getExerciseById,
+    searchExercises,
+    getExercisesByCategory,
+    getCategories,
+    getMuscleGroups,
+    getEquipment,
+    refreshExercises,
+    clearError,
   };
-};
+}
+
+export default useExercises;

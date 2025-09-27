@@ -5,8 +5,10 @@ import { Mic, MicOff, Video, VideoOff, PhoneOff, ScreenShare } from 'lucide-reac
 interface ControlBarProps {
     isMicOn: boolean;
     isCameraOn: boolean;
+    isScreenSharing?: boolean;
     onToggleMic: () => void;
     onToggleCamera: () => void;
+    onToggleScreenShare?: () => void;
     onEndCall: () => void;
 }
 
@@ -16,7 +18,15 @@ const ControlButton: React.FC<{ onClick?: () => void; children: React.ReactNode;
     </button>
 );
 
-const ControlBar: React.FC<ControlBarProps> = ({ isMicOn, isCameraOn, onToggleMic, onToggleCamera, onEndCall }) => {
+const ControlBar: React.FC<ControlBarProps> = ({
+    isMicOn,
+    isCameraOn,
+    isScreenSharing = false,
+    onToggleMic,
+    onToggleCamera,
+    onToggleScreenShare,
+    onEndCall
+}) => {
     return (
         <div className="flex justify-center items-center gap-4 bg-slate-800/50 p-2 rounded-xl max-w-md mx-auto">
             <ControlButton 
@@ -33,10 +43,11 @@ const ControlBar: React.FC<ControlBarProps> = ({ isMicOn, isCameraOn, onToggleMi
             >
                 {isCameraOn ? <Video className="w-6 h-6" /> : <VideoOff className="w-6 h-6" />}
             </ControlButton>
-            <ControlButton 
-                className="bg-slate-700 hover:bg-slate-600 disabled:opacity-50"
-                title="Compartilhar tela (em breve)"
-                disabled
+            <ControlButton
+                onClick={onToggleScreenShare}
+                className={isScreenSharing ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-700 hover:bg-slate-600'}
+                title={isScreenSharing ? 'Parar compartilhamento' : 'Compartilhar tela'}
+                disabled={!onToggleScreenShare}
             >
                 <ScreenShare className="w-6 h-6" />
             </ControlButton>

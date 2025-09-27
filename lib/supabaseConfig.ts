@@ -267,7 +267,7 @@ export class SupabaseConfigManager {
         .select('id')
         .limit(1);
 
-      if (error) {
+      if (error && error.message !== 'relation "users" does not exist') {
         throw error;
       }
 

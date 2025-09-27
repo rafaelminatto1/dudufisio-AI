@@ -4,6 +4,7 @@ Sistema avançado de prontuário eletrônico médico para fisioterapia, desenvol
 
 ## 🚀 Características Principais
 
+- **🚫 POLÍTICA ANTI-CONVÊNIOS**: O projeto trabalha EXCLUSIVAMENTE com pacientes particulares e NUNCA processará integrações com planos de saúde. Esta é uma regra fundamental do negócio que NÃO pode ser alterada.
 - **Padrão HL7 FHIR**: Interoperabilidade completa com sistemas de saúde
 - **Assinatura Digital**: Documentos clinicamente seguros e legalmente válidos
 - **Compliance Total**: Atendimento às regulamentações CFM, COFFITO e LGPD
@@ -147,6 +148,25 @@ dudufisio-ai/
 ├── supabase/             # Migrações e configurações
 └── public/               # Arquivos estáticos
 ```
+
+## 🚫 POLÍTICA ANTI-CONVÊNIOS
+
+**REGRA FUNDAMENTAL DO NEGÓCIO**: Este sistema foi desenvolvido com a política clara de NUNCA atender convênios ou planos de saúde. 
+
+### ❌ O que NÃO é permitido:
+- Integração com planos de saúde
+- Processamento de autorizações de convênios
+- Cobrança via convênios
+- Reembolsos de planos de saúde
+- Qualquer funcionalidade relacionada a convênios
+
+### ✅ O que é permitido:
+- Atendimento exclusivamente particular
+- Pagamentos via PIX, cartão, dinheiro
+- Sistema de agendamento para pacientes particulares
+- Prontuários eletrônicos para atendimento particular
+
+**Esta regra é IMUTÁVEL e deve ser respeitada em todas as implementações.**
 
 ## 🔒 Segurança
 

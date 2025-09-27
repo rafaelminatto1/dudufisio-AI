@@ -128,7 +128,7 @@ export interface WithError {
 }
 
 // Standard data component pattern
-export interface DataComponentProps<TData = any>
+export interface DataComponentProps<TData = unknown>
   extends WithClassName, WithLoading, WithError {
   data?: TData;
   onRefresh?: () => void;

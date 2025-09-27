@@ -207,7 +207,9 @@ async function networkFirstStrategy(request) {
 
     if (networkResponse.ok) {
       const cache = await caches.open(API_CACHE);
-      cache.put(request, networkResponse.clone());
+      // Clone the response before caching to avoid "body already used" error
+      const responseClone = networkResponse.clone();
+      cache.put(request, responseClone);
     }
 
     return networkResponse;
@@ -246,7 +248,9 @@ async function cacheFirstStrategy(request) {
 
     if (networkResponse.ok) {
       const cache = await caches.open(CACHE_NAME);
-      cache.put(request, networkResponse.clone());
+      // Clone the response before caching to avoid "body already used" error
+      const responseClone = networkResponse.clone();
+      cache.put(request, responseClone);
     }
 
     return networkResponse;
@@ -267,7 +271,11 @@ async function staleWhileRevalidateStrategy(request) {
   const fetchPromise = fetch(request).then((networkResponse) => {
     if (networkResponse.ok) {
       const cache = caches.open(CACHE_NAME);
-      cache.then(c => c.put(request, networkResponse.clone()));
+      cache.then(c => {
+        // Clone the response before caching to avoid "body already used" error
+        const responseClone = networkResponse.clone();
+        return c.put(request, responseClone);
+      });
     }
     return networkResponse;
   }).catch(() => {

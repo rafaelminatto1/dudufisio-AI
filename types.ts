@@ -23,6 +23,14 @@ export interface User {
   mfaEnabled?: boolean;
 }
 
+export enum AIProvider {
+  Gemini = 'gemini',
+  OpenAI = 'openai',
+  Anthropic = 'anthropic',
+  Groq = 'groq',
+  Mock = 'mock'
+}
+
 export interface Therapist {
   id:string;
   name: string;
@@ -928,14 +936,75 @@ export type Achievement = {
   description: string;
   unlocked: boolean;
   icon: React.ElementType;
+  progress?: number; // 0-1 when partially unlocked
+  rewardPoints?: number;
 };
+
+export type GamificationMetric = 'sessions_completed' | 'pain_logs' | 'streak' | 'exercises_logged' | 'level' | 'custom';
+export type GamificationChallengeStatus = 'active' | 'completed' | 'expired';
+
+export interface GamificationChallenge {
+  id: string;
+  title: string;
+  description: string;
+  metric: GamificationMetric;
+  currentValue: number;
+  targetValue: number;
+  progressPercentage: number;
+  rewardPoints: number;
+  status: GamificationChallengeStatus;
+  expiresAt?: Date;
+}
+
+export interface GamificationReward {
+  id: string;
+  title: string;
+  description: string;
+  pointsRequired: number;
+  unlocked: boolean;
+  claimed: boolean;
+  icon?: React.ElementType;
+}
+
+export interface GamificationLeaderboardEntry {
+  position: number;
+  patientId: string;
+  patientName: string;
+  avatarUrl: string;
+  points: number;
+  level: number;
+  streak: number;
+}
+
+export interface GamificationPointsBreakdown {
+  id: string;
+  label: string;
+  points: number;
+  icon?: React.ElementType;
+  description?: string;
+}
+
+export interface GamificationMilestone {
+  description: string;
+  targetPoints: number;
+  pointsRemaining: number;
+}
 
 export interface GamificationProgress {
     points: number;
     level: number;
     xpForNextLevel: number;
+    pointsTowardsLevel: number;
     streak: number;
     achievements: Achievement[];
+    pointsBreakdown: GamificationPointsBreakdown[];
+    activeChallenges: GamificationChallenge[];
+    completedChallenges: GamificationChallenge[];
+    availableRewards: GamificationReward[];
+    unlockedRewards: GamificationReward[];
+    leaderboard: GamificationLeaderboardEntry[];
+    nextMilestone: GamificationMilestone;
+    recentActivities: { label: string; timestamp: Date; points: number }[];
 }
 
 // --- UI & General Types ---
@@ -1135,11 +1204,28 @@ export interface WhatsappMessage {
 
 // --- Mentorship & Teaching Module Types ---
 
-// Removed unused InternStatus enum
+export enum InternStatus {
+  Active = 'Active',
+  Inactive = 'Inactive',
+  Graduated = 'Graduated',
+  Suspended = 'Suspended'
+}
 
-// Removed unused CompetencyLevel enum
+export enum CompetencyLevel {
+  Beginner = 'Beginner',
+  Intermediate = 'Intermediate',
+  Advanced = 'Advanced',
+  Expert = 'Expert'
+}
 
-// Removed unused CompetencyCategory enum
+export enum CompetencyCategory {
+  Assessment = 'Assessment',
+  Treatment = 'Treatment',
+  Communication = 'Communication',
+  Documentation = 'Documentation',
+  Research = 'Research',
+  Management = 'Management'
+}
 
 export interface Competency {
   id: string;
@@ -1456,7 +1542,12 @@ export interface Supplier {
   email?: string;
 }
 
-// Removed unused ItemStatus enum
+export enum ItemStatus {
+  Active = 'Active',
+  Maintenance = 'Maintenance',
+  Retired = 'Retired',
+  Inactive = 'Inactive'
+}
 
 export interface InventoryItem {
   id: string;
@@ -1474,7 +1565,11 @@ export interface InventoryItem {
   expiryDate?: string; // YYYY-MM-DD
 }
 
-// Removed unused MovementType enum
+export enum MovementType {
+  In = 'In',
+  Out = 'Out',
+  Transfer = 'Transfer'
+}
 
 export interface StockMovement {
   id: string;
@@ -1487,7 +1582,12 @@ export interface StockMovement {
   createdAt: string; // ISO String
 }
 
-// Removed unused InventoryAlertType enum
+export enum InventoryAlertType {
+    LowStock = 'LowStock',
+    OutOfStock = 'OutOfStock',
+    Expiring = 'Expiring',
+    Expired = 'Expired'
+}
 
 export interface InventoryAlert {
     id: string;
@@ -1511,24 +1611,37 @@ export interface InventoryMetrics {
 
 export enum EventType {
   Workshop = 'Workshop',
-  Seminar = 'Seminar',
-  Conference = 'Conference',
-  Training = 'Training',
-  Meeting = 'Meeting',
-  Other = 'Other'
+  Seminar = 'Seminário',
+  Conference = 'Conferência',
+  Training = 'Treinamento',
+  Meeting = 'Reunião',
+  Campaign = 'Campanha',
+  Race = 'Corrida',
+  Other = 'Outro'
 }
 
 export enum EventStatus {
-  Scheduled = 'Scheduled',
+  Draft = 'Draft',
+  Published = 'Published',
+  Active = 'Active',
   InProgress = 'InProgress',
   Completed = 'Completed',
-  Cancelled = 'Cancelled',
-  Postponed = 'Postponed'
+  Cancelled = 'Cancelled'
 }
 
-// Removed unused RegistrationStatus enum
+export enum RegistrationStatus {
+  Pending = 'Pending',
+  Confirmed = 'Confirmed',
+  Attended = 'Attended',
+  Cancelled = 'Cancelled'
+}
 
-// Removed unused ProviderStatus enum
+export enum ProviderStatus {
+  Applied = 'Applied',
+  Confirmed = 'Confirmed',
+  Paid = 'Paid',
+  Rejected = 'Rejected'
+}
 
 export interface Event {
   id: string;
@@ -1625,7 +1738,15 @@ export interface BodyMapAnalytics {
 
 // --- Calendar Integration Types ---
 
-// Removed unused CalendarFeature enum
+export enum CalendarFeature {
+  CREATE_EVENT = 'CREATE_EVENT',
+  UPDATE_EVENT = 'UPDATE_EVENT',
+  DELETE_EVENT = 'DELETE_EVENT',
+  REMINDERS = 'REMINDERS',
+  RECURRENCE = 'RECURRENCE',
+  ATTENDEES = 'ATTENDEES',
+  AVAILABILITY = 'AVAILABILITY'
+}
 
 export interface CalendarLocation {
   name: string;
@@ -1793,13 +1914,40 @@ export type TemplateId = string;
 export type CampaignId = string;
 export type TriggerEventType = string;
 
-// Removed unused ChannelCapability enum
+export enum CommunicationChannel {
+  Email = 'email',
+  SMS = 'sms',
+  WhatsApp = 'whatsapp',
+  Push = 'push',
+  Voice = 'voice'
+}
 
-// Removed unused MessagePriority enum
+export enum ChannelCapability {
+  Email = 'email',
+  SMS = 'sms',
+  WhatsApp = 'whatsapp',
+  Push = 'push',
+  Voice = 'voice',
+  Automation = 'automation'
+}
 
-// Removed unused MessageStatus enum
+export enum MessagePriority {
+  Low = 'low',
+  Normal = 'normal',
+  High = 'high',
+  Critical = 'critical'
+}
 
-// Removed unused CommunicationChannel enum
+export enum MessageStatus {
+  Pending = 'pending',
+  Queued = 'queued',
+  Sending = 'sending',
+  Sent = 'sent',
+  Delivered = 'delivered',
+  Read = 'read',
+  Failed = 'failed',
+  Cancelled = 'cancelled'
+}
 
 // Recipient and Preferences
 export interface Recipient {
@@ -1924,7 +2072,13 @@ export interface CommunicationTemplate {
   updatedAt: Date;
 }
 
-// Removed unused TemplateType enum
+export enum TemplateType {
+  Transactional = 'transactional',
+  Reminder = 'reminder',
+  Marketing = 'marketing',
+  FollowUp = 'follow_up',
+  Alert = 'alert'
+}
 
 export interface TemplateVariable {
   name: string;
@@ -1949,7 +2103,14 @@ export interface Campaign {
   updatedAt: Date;
 }
 
-// Removed unused CampaignStatus enum
+export enum CampaignStatus {
+  Draft = 'draft',
+  Scheduled = 'scheduled',
+  Running = 'running',
+  Paused = 'paused',
+  Completed = 'completed',
+  Cancelled = 'cancelled'
+}
 
 export interface AudienceFilter {
   patientStatus?: string[];
@@ -2131,9 +2292,14 @@ export interface WhatsAppStatus {
 
 // --- Automation Types ---
 
-// Removed unused TriggerType enum
-
-// Removed unused CommunicationChannel enum (duplicate)
+export enum TriggerType {
+  APPOINTMENT_CREATED = 'APPOINTMENT_CREATED',
+  APPOINTMENT_REMINDER = 'APPOINTMENT_REMINDER',
+  PAYMENT_DUE = 'PAYMENT_DUE',
+  TREATMENT_COMPLETED = 'TREATMENT_COMPLETED',
+  PATIENT_REGISTERED = 'PATIENT_REGISTERED',
+  FOLLOW_UP_DUE = 'FOLLOW_UP_DUE'
+}
 
 export interface AutomationCondition {
   id: string;
@@ -2166,8 +2332,6 @@ export interface AutomationRule {
   lastExecuted?: string;
   executionCount: number;
 }
-
-// Removed unused TemplateType enum (duplicate)
 
 export interface MessageTemplate {
   id: string;

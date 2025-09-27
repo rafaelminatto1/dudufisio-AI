@@ -15,13 +15,15 @@ interface SharedContentDisplayProps {
     therapistStream: MediaStream | null;
     isTherapistCameraOn: boolean;
     sharedContent: SharedContent;
+    isScreenSharing?: boolean;
 }
 
 const SharedContentDisplay: React.FC<SharedContentDisplayProps> = ({
     patientStream,
     therapistStream,
     isTherapistCameraOn,
-    sharedContent
+    sharedContent,
+    isScreenSharing = false
 }) => {
     
     const renderSharedContent = () => {
@@ -62,9 +64,22 @@ const SharedContentDisplay: React.FC<SharedContentDisplayProps> = ({
     return (
         <div className="flex-1 bg-black rounded-lg overflow-hidden relative">
             {sharedContent ? renderSharedContent() : (
-                <VideoFeed stream={patientStream} isMuted={false} isCameraOn={true} username="Paciente (Simulado)" />
+                <VideoFeed
+                    stream={patientStream}
+                    isMuted={false}
+                    isCameraOn={true}
+                    username={isScreenSharing ? "Compartilhamento de Tela" : "Paciente (Simulado)"}
+                />
             )}
-            
+
+            {/* Screen sharing indicator */}
+            {isScreenSharing && !sharedContent && (
+                <div className="absolute top-4 left-4 bg-blue-600/90 text-white px-3 py-2 rounded-lg flex items-center gap-2">
+                    <MonitorPlay className="w-4 h-4" />
+                    <span className="text-sm font-medium">Compartilhando Tela</span>
+                </div>
+            )}
+
             {/* Therapist PiP Video */}
             <div className="absolute bottom-4 right-4 w-64 h-40 bg-black rounded-lg overflow-hidden border-2 border-slate-700 shadow-lg">
                 <VideoFeed stream={therapistStream} isMuted={true} isCameraOn={isTherapistCameraOn} username="Fisioterapeuta" />

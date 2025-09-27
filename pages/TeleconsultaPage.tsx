@@ -8,6 +8,7 @@ import { useData } from "../contexts/AppContext";
 import { Appointment, Patient, Exercise, SoapNote, PainPoint } from '../types';
 import PageLoader from '../components/ui/PageLoader';
 import ControlBar from '../components/teleconsulta/ControlBar';
+import ConnectionStatus from '../components/teleconsulta/ConnectionStatus';
 import { useToast } from '../contexts/ToastContext';
 import { Maximize, Minimize } from 'lucide-react';
 import SharedContentDisplay from '../components/teleconsulta/SharedContentDisplay';
@@ -31,14 +32,19 @@ const TeleconsultaPage: React.FC = () => {
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [patient, setPatient] = useState<Patient | null>(null);
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [sessionTime, setSessionTime] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [sharedContent, setSharedContent] = useState<SharedContent>(null);
   const [sessionNote, setSessionNote] = useState<Partial<SoapNote>>({ subjective: '', objective: '', assessment: '', plan: '' });
   const [isSaving, setIsSaving] = useState(false);
-  
+  const [connectionQuality, setConnectionQuality] = useState<'poor' | 'fair' | 'good' | 'excellent'>('good');
+  const [bitrate, setBitrate] = useState(0);
+  const [latency, setLatency] = useState(0);
+
   const timerRef = useRef<number | null>(null);
   const debouncedNote = useDebounce(sessionNote, 2000);
 
@@ -84,10 +90,14 @@ const TeleconsultaPage: React.FC = () => {
       localStream.getTracks().forEach(track => track.stop());
       setLocalStream(null);
     }
+    if (screenStream) {
+      screenStream.getTracks().forEach(track => track.stop());
+      setScreenStream(null);
+    }
     if (timerRef.current) {
         clearInterval(timerRef.current);
     }
-  }, [localStream]);
+  }, [localStream, screenStream]);
 
   useEffect(() => {
     const startMedia = async () => {
@@ -108,9 +118,52 @@ const TeleconsultaPage: React.FC = () => {
         showToast('O módulo de Teleconsulta está desativado.', 'error');
         navigate('/agenda', { replace: true });
     }
-    
+
     return cleanupStream;
   }, [navigate, showToast, cleanupStream]);
+
+  // Connection monitoring simulation
+  useEffect(() => {
+    const monitorConnection = () => {
+      // Simulate realistic connection metrics
+      const qualities: Array<'poor' | 'fair' | 'good' | 'excellent'> = ['poor', 'fair', 'good', 'excellent'];
+      const randomQuality = qualities[Math.floor(Math.random() * qualities.length)];
+
+      let simulatedBitrate = 0;
+      let simulatedLatency = 0;
+
+      switch (randomQuality) {
+        case 'excellent':
+          simulatedBitrate = 800 + Math.random() * 200; // 800-1000 kbps
+          simulatedLatency = 10 + Math.random() * 20; // 10-30ms
+          break;
+        case 'good':
+          simulatedBitrate = 500 + Math.random() * 300; // 500-800 kbps
+          simulatedLatency = 30 + Math.random() * 40; // 30-70ms
+          break;
+        case 'fair':
+          simulatedBitrate = 200 + Math.random() * 300; // 200-500 kbps
+          simulatedLatency = 70 + Math.random() * 80; // 70-150ms
+          break;
+        case 'poor':
+          simulatedBitrate = 50 + Math.random() * 150; // 50-200 kbps
+          simulatedLatency = 150 + Math.random() * 200; // 150-350ms
+          break;
+      }
+
+      setConnectionQuality(randomQuality);
+      setBitrate(simulatedBitrate);
+      setLatency(simulatedLatency);
+    };
+
+    // Initial call
+    monitorConnection();
+
+    // Update every 5 seconds
+    const connectionInterval = setInterval(monitorConnection, 5000);
+
+    return () => clearInterval(connectionInterval);
+  }, []);
 
   const toggleMic = () => {
     localStream?.getAudioTracks().forEach(track => track.enabled = !isMicOn);
@@ -120,6 +173,42 @@ const TeleconsultaPage: React.FC = () => {
   const toggleCamera = () => {
     localStream?.getVideoTracks().forEach(track => track.enabled = !isCameraOn);
     setIsCameraOn(!isCameraOn);
+  };
+
+  const toggleScreenShare = async () => {
+    try {
+      if (isScreenSharing) {
+        // Parar compartilhamento
+        if (screenStream) {
+          screenStream.getTracks().forEach(track => track.stop());
+          setScreenStream(null);
+        }
+        setIsScreenSharing(false);
+        showToast('Compartilhamento de tela parado', 'info');
+      } else {
+        // Iniciar compartilhamento
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            cursor: 'motion' as any
+          },
+          audio: true
+        });
+
+        setScreenStream(stream);
+        setIsScreenSharing(true);
+        showToast('Compartilhamento de tela iniciado', 'success');
+
+        // Parar automaticamente quando usuário para o compartilhamento
+        stream.getVideoTracks()[0].onended = () => {
+          setScreenStream(null);
+          setIsScreenSharing(false);
+          showToast('Compartilhamento de tela parado', 'info');
+        };
+      }
+    } catch (error) {
+      console.error('Erro ao compartilhar tela:', error);
+      showToast('Erro ao iniciar compartilhamento de tela', 'error');
+    }
   };
 
   const handleEndCall = () => {
@@ -154,7 +243,15 @@ const TeleconsultaPage: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col p-4 overflow-hidden">
         <header className="flex justify-between items-center mb-4">
-            <h1 className="text-xl font-bold truncate">Teleconsulta: {patient.name}</h1>
+            <div className="flex items-center gap-4">
+                <h1 className="text-xl font-bold truncate">Teleconsulta: {patient.name}</h1>
+                <ConnectionStatus
+                    isConnected={!!localStream}
+                    quality={connectionQuality}
+                    bitrate={bitrate}
+                    latency={latency}
+                />
+            </div>
             <div className="flex items-center gap-4">
                 <div className="bg-red-500/80 text-white px-3 py-1 rounded-md text-sm font-semibold flex items-center">
                     <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
@@ -168,18 +265,21 @@ const TeleconsultaPage: React.FC = () => {
         </header>
         
         <SharedContentDisplay
-            patientStream={localStream}
+            patientStream={isScreenSharing ? screenStream : localStream}
             therapistStream={localStream}
             isTherapistCameraOn={isCameraOn}
             sharedContent={sharedContent}
+            isScreenSharing={isScreenSharing}
         />
 
         <footer className="mt-4">
-            <ControlBar 
+            <ControlBar
                 isMicOn={isMicOn}
                 isCameraOn={isCameraOn}
+                isScreenSharing={isScreenSharing}
                 onToggleMic={toggleMic}
                 onToggleCamera={toggleCamera}
+                onToggleScreenShare={toggleScreenShare}
                 onEndCall={handleEndCall}
             />
         </footer>

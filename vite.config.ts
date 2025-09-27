@@ -16,12 +16,12 @@ export default defineConfig({
     '__DEV__': true
   },
   server: {
-    port: 5174,
+    port: 5175,
     host: 'localhost',
     hmr: {
-      port: 5174,
+      port: 5175,
       host: 'localhost',
-      clientPort: 5174,
+      clientPort: 5175,
       overlay: true
     },
     watch: {

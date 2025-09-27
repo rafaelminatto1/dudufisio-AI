@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 
@@ -21,6 +21,8 @@ const BIIntegrationTestPage = lazy(() => import('./BIIntegrationTestPage'));
 const MentoriaPage = lazy(() => import('./MentoriaPageNew'));
 const ProtocolsPage = lazy(() => import('./ProtocolsPage'));
 const TeleconsultaPage = lazy(() => import('./TeleconsultaPage'));
+const AdvancedReportsPage = lazy(() => import('./AdvancedReportsPage'));
+const InventoryPage = lazy(() => import('./InventoryPage'));
 import {
     Calendar, Users, Activity, BarChart3,
     Download, RefreshCw,
@@ -274,6 +276,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/treatments" element={LazyElement(TreatmentPage)} />
                 <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
                 <Route path="/reports" element={LazyElement(ReportsPage)} />
+                <Route path="/advanced-reports" element={LazyElement(AdvancedReportsPage)} />
                 <Route path="/financial" element={LazyElement(FinancialDashboardPage)} />
                 <Route path="/evaluations" element={LazyElement(SpecialtyAssessmentsPage)} />
                 <Route path="/integrations" element={LazyElement(IntegrationsTestPage)} />
@@ -281,6 +284,8 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/mentoria" element={LazyElement(MentoriaPage)} />
                 <Route path="/protocolos" element={LazyElement(ProtocolsPage)} />
                 <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
+                <Route path="/inventory" element={LazyElement(InventoryPage)} />
+                <Route path="/estoque" element={LazyElement(InventoryPage)} />
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
         </Layout>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Teleconsulta - DuduFisio-AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .teleconsulta-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .status-connected {
+            color: #4ade80;
+        }
+
+        .status-quality {
+            color: #3b82f6;
+        }
+
+        .status-metrics {
+            color: #64748b;
+        }
+
+        .recording-indicator {
+            background: rgba(239, 68, 68, 0.8);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recording-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .video-area {
+            flex: 1;
+            background: black;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-placeholder {
+            text-align: center;
+            color: #64748b;
+        }
+
+        .pip-video {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            width: 256px;
+            height: 160px;
+            background: #1e293b;
+            border: 2px solid #374151;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+        }
+
+        .screen-sharing-indicator {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .control-bar {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            background: rgba(30, 41, 59, 0.5);
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .control-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .control-button:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-mic { background: #374151; }
+        .btn-mic.off { background: #ef4444; }
+        .btn-camera { background: #374151; }
+        .btn-camera.off { background: #ef4444; }
+        .btn-screen { background: #374151; }
+        .btn-screen.active { background: #2563eb; }
+        .btn-end { background: #dc2626; }
+
+        .sidebar {
+            width: 384px;
+            background: #1e293b;
+            border-left: 1px solid #374151;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: #f1f5f9;
+        }
+
+        .demo-info {
+            background: #0f172a;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-info h4 {
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 0.25rem 0;
+            color: #cbd5e1;
+        }
+
+        .feature-list li:before {
+            content: '✓ ';
+            color: #4ade80;
+        }
+    </style>
+</head>
+<body>
+    <div class="teleconsulta-container">
+        <main class="main-content">
+            <header class="header">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <h1 style="font-size: 1.25rem; font-weight: bold;">Teleconsulta: Maria Silva (Demo)</h1>
+                    <div class="connection-status">
+                        <span class="status-connected">● Conectado</span>
+                        <span style="height: 16px; width: 1px; background: #64748b;"></span>
+                        <span class="status-quality">📶 Boa</span>
+                        <span style="height: 16px; width: 1px; background: #64748b;"></span>
+                        <span class="status-metrics" id="bitrate">650 kbps</span>
+                        <span style="height: 16px; width: 1px; background: #64748b;"></span>
+                        <span class="status-metrics" id="latency">45ms</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="recording-indicator">
+                        <div class="recording-dot"></div>
+                        <span>REC</span>
+                        <span id="timer">05:32</span>
+                    </div>
+                    <button class="control-button" style="background: #374151;" onclick="toggleFullscreen()">
+                        <span style="font-size: 1.25rem;">⛶</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="video-area">
+                <div class="video-placeholder">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">📹</div>
+                    <h3>Simulação de Teleconsulta</h3>
+                    <p>Interface de vídeo com paciente</p>
+                </div>
+
+                <div class="screen-sharing-indicator" id="screenIndicator">
+                    📺 Compartilhando Tela
+                </div>
+
+                <div class="pip-video">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">👨‍⚕️</div>
+                        <span>Fisioterapeuta</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-bar">
+                <button class="control-button btn-mic" id="micBtn" onclick="toggleMic()">
+                    <span id="micIcon">🎤</span>
+                </button>
+                <button class="control-button btn-camera" id="cameraBtn" onclick="toggleCamera()">
+                    <span id="cameraIcon">📹</span>
+                </button>
+                <button class="control-button btn-screen" id="screenBtn" onclick="toggleScreen()">
+                    <span>📺</span>
+                </button>
+                <button class="control-button btn-end" onclick="endCall()">
+                    <span>📞</span>
+                </button>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <h3>Ferramentas da Teleconsulta</h3>
+
+            <div class="demo-info">
+                <h4>Funcionalidades Implementadas</h4>
+                <ul class="feature-list">
+                    <li>Status de conexão em tempo real</li>
+                    <li>Métricas de qualidade (bitrate, latência)</li>
+                    <li>Controles de áudio/vídeo</li>
+                    <li>Compartilhamento de tela</li>
+                    <li>Interface Picture-in-Picture</li>
+                    <li>Gravação de sessão</li>
+                    <li>Indicadores visuais de estado</li>
+                </ul>
+            </div>
+
+            <div class="demo-info">
+                <h4>ConnectionStatus Component</h4>
+                <p style="color: #cbd5e1; margin-bottom: 0.5rem;">
+                    O componente ConnectionStatus mostra:
+                </p>
+                <ul class="feature-list">
+                    <li>Estado da conexão</li>
+                    <li>Qualidade do sinal</li>
+                    <li>Taxa de bits atual</li>
+                    <li>Latência da rede</li>
+                </ul>
+            </div>
+
+            <div class="demo-info">
+                <h4>Screen Sharing</h4>
+                <p style="color: #cbd5e1; margin-bottom: 0.5rem;">
+                    Funcionalidade de compartilhamento implementada com:
+                </p>
+                <ul class="feature-list">
+                    <li>getDisplayMedia API</li>
+                    <li>Indicador visual ativo</li>
+                    <li>Auto-stop em desconexão</li>
+                    <li>Fallback de vídeo</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        let micOn = true;
+        let cameraOn = true;
+        let screenSharing = false;
+        let sessionTime = 332; // 5:32
+
+        // Update timer
+        setInterval(() => {
+            sessionTime++;
+            const mins = Math.floor(sessionTime / 60).toString().padStart(2, '0');
+            const secs = (sessionTime % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = mins + ':' + secs;
+        }, 1000);
+
+        // Simulate connection metrics updates
+        setInterval(() => {
+            const bitrate = 400 + Math.random() * 400; // 400-800 kbps
+            const latency = 30 + Math.random() * 40; // 30-70ms
+            document.getElementById('bitrate').textContent = Math.round(bitrate) + ' kbps';
+            document.getElementById('latency').textContent = Math.round(latency) + 'ms';
+        }, 3000);
+
+        function toggleMic() {
+            micOn = !micOn;
+            const btn = document.getElementById('micBtn');
+            const icon = document.getElementById('micIcon');
+
+            if (micOn) {
+                btn.classList.remove('off');
+                icon.textContent = '🎤';
+            } else {
+                btn.classList.add('off');
+                icon.textContent = '🎤';
+            }
+        }
+
+        function toggleCamera() {
+            cameraOn = !cameraOn;
+            const btn = document.getElementById('cameraBtn');
+            const icon = document.getElementById('cameraIcon');
+
+            if (cameraOn) {
+                btn.classList.remove('off');
+                icon.textContent = '📹';
+            } else {
+                btn.classList.add('off');
+                icon.textContent = '📹';
+            }
+        }
+
+        function toggleScreen() {
+            screenSharing = !screenSharing;
+            const btn = document.getElementById('screenBtn');
+            const indicator = document.getElementById('screenIndicator');
+
+            if (screenSharing) {
+                btn.classList.add('active');
+                indicator.style.display = 'block';
+            } else {
+                btn.classList.remove('active');
+                indicator.style.display = 'none';
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function endCall() {
+            if (confirm('Deseja encerrar a teleconsulta?')) {
+                alert('Teleconsulta encerrada! Redirecionando para agenda...');
+                // window.location.href = '/agenda';
+            }
+        }
+    </script>
+</body>
+</html>

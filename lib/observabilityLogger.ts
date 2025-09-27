@@ -24,5 +24,16 @@ export const observability = {
   security: createLogger('security'),
   database: createLogger('database'),
   application: createLogger('application'),
+  config: {
+    load: (event: string, payload?: unknown) => console.info(`[config] ${event}`, payload),
+    error: (event: string, payload?: unknown) => console.error(`[config] ${event}`, payload),
+    validate: (event: string, payload?: unknown) => console.info(`[config] ${event}`, payload),
+  },
+  setup: {
+    start: (event: string, payload?: unknown) => console.info(`[setup] ${event}`, payload),
+    warn: (event: string, payload?: unknown) => console.warn(`[setup] ${event}`, payload),
+    success: (event: string, payload?: unknown) => console.info(`[setup] ${event}`, payload),
+    error: (event: string, payload?: unknown) => console.error(`[setup] ${event}`, payload),
+  },
 } as const;
 
