@@ -1,6 +1,7 @@
 // services/whatsappService.ts
 import { Patient, Appointment, WhatsappMessage } from '../types';
 import * as whatsappLogService from './whatsappLogService';
+import { observability } from '../lib/observabilityLogger';
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -19,7 +20,11 @@ export const sendMessage = async (
 ): Promise<SendMessageResult> => {
     
     if (patient.whatsappConsent !== 'opt-in') {
-        console.warn(`[WhatsApp SIM] Message blocked for ${patient.name} due to opt-out status.`);
+        observability.communication.warn('whatsapp.message.blocked', {
+          patientId: patient.id,
+          patientName: patient.name,
+          reason: 'opt-out status'
+        });
         return { success: false, fallbackInitiated: false };
     }
 
@@ -43,7 +48,12 @@ export const sendMessage = async (
 
     if (didFail) {
         await whatsappLogService.updateLog(message.id, { status: 'failed' });
-        console.log(`[SMS Fallback SIM] WhatsApp failed for ${patient.name}. Initiating SMS fallback.`);
+        observability.communication.warn('whatsapp.message.failed', {
+          patientId: patient.id,
+          patientName: patient.name,
+          messageId: message.id,
+          fallbackInitiated: true
+        });
         // In a real app, you would trigger the SMS service here.
         return { success: false, fallbackInitiated: true };
     }
@@ -52,7 +62,12 @@ export const sendMessage = async (
     await delay(500);
     await whatsappLogService.updateLog(message.id, { status: 'delivered' });
     
-    console.log(`[WhatsApp SIM] Message sent to ${patient.name}: "${content}"`);
+    observability.communication.info('whatsapp.message.sent', {
+      patientId: patient.id,
+      patientName: patient.name,
+      messageId: message.id,
+      messageType: type
+    });
     
     // Simulate 'read' status after a while
     setTimeout(() => {

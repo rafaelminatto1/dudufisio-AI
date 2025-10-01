@@ -1,5 +1,6 @@
 import { AuditLogEntry } from '../types';
 import { mockAuditLogs } from '../data/mockData';
+import { observability } from '../lib/observabilityLogger';
 
 /**
  * 🔍 SISTEMA DE AUDITORIA PROFISSIONAL
@@ -79,10 +80,13 @@ class AuditService {
     // Notify listeners
     this.notifyListeners(logEntry);
 
-    // Log to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔍 Audit Log:', logEntry);
-    }
+    // Log to observability system
+    observability.audit.info('audit.log.created', {
+      action: logEntry.action,
+      user: logEntry.user,
+      resourceType: logEntry.resourceType,
+      timestamp: logEntry.timestamp
+    });
 
     return logEntry;
   }

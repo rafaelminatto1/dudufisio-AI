@@ -451,9 +451,6 @@ class EnhancedNotificationService {
     return true;
   }
 
-  sendInAppNotification(userId: string, config: PushNotificationConfig): void {
-    this.sendInAppNotification(userId, config);
-  }
 }
 
 // Singleton instance da versão melhorada
@@ -609,6 +606,9 @@ export const notifySchedulingAlert = async (alert: SchedulingAlert) => {
     //   templateId: 'open_slot_notification',
     //   data: alert.payload
     // });
-    console.log('WhatsApp message would be sent:', alert.payload);
+    observability.communication.info('whatsapp.alert.sent', {
+      alertType: alert.alertType,
+      payload: alert.payload
+    });
   }
 };
