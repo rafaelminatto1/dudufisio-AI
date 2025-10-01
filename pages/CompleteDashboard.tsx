@@ -8,6 +8,7 @@ const PatientListPage = lazy(() => import('./PatientListPage'));
 const PatientDetailPage = lazy(() => import('./PatientDetailPage'));
 const SessionPage = lazy(() => import('./SessionPage'));
 const SessionFormPage = lazy(() => import('./SessionFormPage'));
+const SessionViewPage = lazy(() => import('./SessionViewPage'));
 const AtendimentoPage = lazy(() => import('./AtendimentoPage'));
 const FinancialDashboardPage = lazy(() => import('./FinancialDashboardPage'));
 const AdminDashboardPage = lazy(() => import('./AdminDashboardPage'));
@@ -23,6 +24,44 @@ const ProtocolsPage = lazy(() => import('./ProtocolsPage'));
 const TeleconsultaPage = lazy(() => import('./TeleconsultaPage'));
 const AdvancedReportsPage = lazy(() => import('./AdvancedReportsPage'));
 const InventoryPage = lazy(() => import('./InventoryPage'));
+
+// Additional pages that were missing from sidebar
+const DashboardPage = lazy(() => import('./DashboardPage'));
+const SimpleDashboard = lazy(() => import('./SimpleDashboard'));
+const TherapistDashboard = lazy(() => import('./TherapistDashboard'));
+const PartnerDashboard = lazy(() => import('./PartnerDashboard'));
+const SessionEvolutionPage = lazy(() => import('./SessionEvolutionPage'));
+const EventDetailPage = lazy(() => import('./EventDetailPage'));
+const EventsListPage = lazy(() => import('./EventsListPage'));
+const MaterialDetailPage = lazy(() => import('./MaterialDetailPage'));
+const MedicalReportPage = lazy(() => import('./MedicalReportPage'));
+const EvaluationReportPage = lazy(() => import('./EvaluationReportPage'));
+const ClinicalLibraryPage = lazy(() => import('./ClinicalLibraryPage'));
+const InventoryDashboardPage = lazy(() => import('./InventoryDashboardPage'));
+const NotificationCenterPage = lazy(() => import('./NotificationCenterPage'));
+const SubscriptionPage = lazy(() => import('./SubscriptionPage'));
+const LegalPage = lazy(() => import('./LegalPage'));
+const KnowledgeBasePage = lazy(() => import('./KnowledgeBasePage'));
+const WhatsAppPage = lazy(() => import('./WhatsAppPage'));
+const InactivePatientEmailPage = lazy(() => import('./InactivePatientEmailPage'));
+const HepGeneratorPage = lazy(() => import('./HepGeneratorPage'));
+const AgendaSettingsPage = lazy(() => import('./AgendaSettingsPage'));
+const AuditLogPage = lazy(() => import('./AuditLogPage'));
+const BackupManagementPage = lazy(() => import('./BackupManagementPage'));
+const MentoriaPageOld = lazy(() => import('./MentoriaPage'));
+const UserManagementPage = lazy(() => import('./UserManagementPage'));
+const GroupsPage = lazy(() => import('./GroupsPage'));
+const KanbanPage = lazy(() => import('./KanbanPage'));
+const RiskAnalysisPage = lazy(() => import('./RiskAnalysisPage'));
+const AiAnalyticsPage = lazy(() => import('./AiAnalyticsPage'));
+const ClinicalAnalyticsPage = lazy(() => import('./ClinicalAnalyticsPage'));
+const SettingsPage = lazy(() => import('./SettingsPage'));
+const PartnershipPage = lazy(() => import('./PartnershipPage'));
+
+// Consolidated components
+const ConsolidatedReportsDashboard = lazy(() => import('../components/reports/ConsolidatedReportsDashboard'));
+const ConsolidatedAITools = lazy(() => import('../components/ai-tools/ConsolidatedAITools'));
+const PerformanceDashboard = lazy(() => import('../components/admin/PerformanceDashboard'));
 import {
     Calendar, Users, Activity, BarChart3,
     Download, RefreshCw,
@@ -264,28 +303,105 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
             <Routes>
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<DashboardContent />} />
-                <Route path="/admin" element={LazyElement(AdminDashboardPage)} />
+                
+                {/* Dashboard Routes */}
+                <Route path="/admin-dashboard" element={LazyElement(AdminDashboardPage)} />
+                <Route path="/therapist-dashboard" element={LazyElement(TherapistDashboard)} />
+                <Route path="/partner-dashboard" element={LazyElement(PartnerDashboard)} />
+                <Route path="/admin/performance" element={LazyElement(PerformanceDashboard)} />
+                <Route path="/simple-dashboard" element={LazyElement(SimpleDashboard)} />
+                <Route path="/dashboard-page" element={LazyElement(DashboardPage)} />
+                
+                {/* Main Navigation */}
                 <Route path="/agenda" element={LazyElement(AgendaPage)} />
                 <Route path="/patients" element={LazyElement(PatientListPage)} />
                 <Route path="/patients/:id" element={LazyElement(PatientDetailPage)} />
+                <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
+                <Route path="/notifications" element={LazyElement(NotificationCenterPage)} />
+                <Route path="/tasks" element={LazyElement(KanbanPage)} />
+                <Route path="/session-evolution" element={LazyElement(SessionEvolutionPage)} />
+                
+                {/* Sessions and Treatment */}
                 <Route path="/sessions/:appointmentId" element={<SessionRoute mode="view" />} />
                 <Route path="/sessions/:appointmentId/form" element={<SessionRoute mode="form" />} />
+                <Route path="/session-view/:sessionId" element={LazyElement(SessionViewPage)} />
                 <Route path="/atendimento/:appointmentId" element={LazyElement(AtendimentoPage)} />
                 <Route path="/teleconsulta/:appointmentId" element={LazyElement(TeleconsultaPage)} />
-                <Route path="/exercises" element={LazyElement(ExerciseLibraryPage)} />
                 <Route path="/treatments" element={LazyElement(TreatmentPage)} />
-                <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
+                
+                {/* Analytics & Reports */}
+                <Route path="/clinical-analytics" element={LazyElement(ClinicalAnalyticsPage)} />
+                <Route path="/ai-analytics" element={LazyElement(AiAnalyticsPage)} />
+                <Route path="/financials" element={LazyElement(FinancialDashboardPage)} />
+                <Route path="/financial-dashboard" element={LazyElement(FinancialDashboardPage)} />
                 <Route path="/reports" element={LazyElement(ReportsPage)} />
+                <Route path="/reports/consolidated" element={LazyElement(ConsolidatedReportsDashboard)} />
                 <Route path="/advanced-reports" element={LazyElement(AdvancedReportsPage)} />
-                <Route path="/financial" element={LazyElement(FinancialDashboardPage)} />
-                <Route path="/evaluations" element={LazyElement(SpecialtyAssessmentsPage)} />
-                <Route path="/integrations" element={LazyElement(IntegrationsTestPage)} />
-                <Route path="/integrations/bi-test" element={LazyElement(BIIntegrationTestPage)} />
-                <Route path="/mentoria" element={LazyElement(MentoriaPage)} />
+                <Route path="/medical-reports" element={LazyElement(MedicalReportPage)} />
+                <Route path="/evaluation-reports" element={LazyElement(EvaluationReportPage)} />
+                
+                {/* AI Tools */}
+                <Route path="/ai-tools/consolidated" element={LazyElement(ConsolidatedAITools)} />
+                <Route path="/gerar-laudo" element={LazyElement(MedicalReportPage)} />
+                <Route path="/gerar-evolucao" element={LazyElement(SessionEvolutionPage)} />
+                <Route path="/gerar-hep" element={LazyElement(HepGeneratorPage)} />
+                <Route path="/hep-generator" element={LazyElement(HepGeneratorPage)} />
+                <Route path="/analise-risco" element={LazyElement(RiskAnalysisPage)} />
+                <Route path="/risk-analysis" element={LazyElement(RiskAnalysisPage)} />
+                
+                {/* Management */}
+                <Route path="/users" element={LazyElement(UserManagementPage)} />
+                <Route path="/user-management" element={LazyElement(UserManagementPage)} />
+                <Route path="/groups" element={LazyElement(GroupsPage)} />
+                <Route path="/exercises" element={LazyElement(ExerciseLibraryPage)} />
+                <Route path="/exercise-library" element={LazyElement(ExerciseLibraryPage)} />
+                <Route path="/materials" element={LazyElement(MaterialDetailPage)} />
+                <Route path="/clinical-library" element={LazyElement(ClinicalLibraryPage)} />
+                <Route path="/material-detail" element={LazyElement(MaterialDetailPage)} />
                 <Route path="/protocolos" element={LazyElement(ProtocolsPage)} />
                 <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
+                <Route path="/specialty-assessments" element={LazyElement(SpecialtyAssessmentsPage)} />
+                <Route path="/evaluations" element={LazyElement(SpecialtyAssessmentsPage)} />
+                
+                {/* Inventory */}
                 <Route path="/inventory" element={LazyElement(InventoryPage)} />
                 <Route path="/estoque" element={LazyElement(InventoryPage)} />
+                <Route path="/inventory-dashboard" element={LazyElement(InventoryDashboardPage)} />
+                
+                {/* Events */}
+                <Route path="/events" element={LazyElement(EventsListPage)} />
+                <Route path="/events-list" element={LazyElement(EventsListPage)} />
+                <Route path="/event-detail" element={LazyElement(EventDetailPage)} />
+                
+                {/* Communication */}
+                <Route path="/whatsapp" element={LazyElement(WhatsAppPage)} />
+                <Route path="/email-inativos" element={LazyElement(InactivePatientEmailPage)} />
+                <Route path="/inactive-patient-email" element={LazyElement(InactivePatientEmailPage)} />
+                
+                {/* Mentorship & Knowledge */}
+                <Route path="/mentoria" element={LazyElement(MentoriaPage)} />
+                <Route path="/knowledge-base" element={LazyElement(KnowledgeBasePage)} />
+                
+                {/* Settings & Configuration */}
+                <Route path="/backup" element={LazyElement(BackupManagementPage)} />
+                <Route path="/backup-management" element={LazyElement(BackupManagementPage)} />
+                <Route path="/agenda-settings" element={LazyElement(AgendaSettingsPage)} />
+                <Route path="/integrations" element={LazyElement(IntegrationsTestPage)} />
+                <Route path="/integrations-test" element={LazyElement(IntegrationsTestPage)} />
+                <Route path="/bi-integration-test" element={LazyElement(BIIntegrationTestPage)} />
+                <Route path="/audit-log" element={LazyElement(AuditLogPage)} />
+                <Route path="/audit-log-page" element={LazyElement(AuditLogPage)} />
+                <Route path="/partnerships" element={LazyElement(PartnershipPage)} />
+                <Route path="/partnership-page" element={LazyElement(PartnershipPage)} />
+                <Route path="/subscriptions" element={LazyElement(SubscriptionPage)} />
+                <Route path="/legal" element={LazyElement(LegalPage)} />
+                <Route path="/settings" element={LazyElement(SettingsPage)} />
+                <Route path="/settings-page" element={LazyElement(SettingsPage)} />
+                
+                {/* Legacy Routes */}
+                <Route path="/admin" element={LazyElement(AdminDashboardPage)} />
+                <Route path="/financial" element={LazyElement(FinancialDashboardPage)} />
+                
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
         </Layout>

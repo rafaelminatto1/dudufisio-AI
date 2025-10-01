@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback, memo } from 'react';
 import { Therapist, Patient, Appointment } from '../types';
 import * as therapistService from '../services/therapistService';
 import * as patientService from '../services/patientService';

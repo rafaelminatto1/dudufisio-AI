@@ -12,6 +12,7 @@ Sistema avançado de prontuário eletrônico médico para fisioterapia, desenvol
 - **Versionamento**: Controle completo de versões de documentos
 - **Auditoria**: Trilha de auditoria para todos os acessos e modificações
 - **Interface Moderna**: UI/UX otimizada com shadcn/ui
+- **Laboratório de Inovação**: Provas de conceito de AR, IoT, blockchain e assistente de voz para pacientes particulares.
 
 ## 🏗️ Arquitetura
 

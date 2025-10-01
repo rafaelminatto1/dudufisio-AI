@@ -4,20 +4,31 @@
 -- Esta migração remove completamente todas as referências a convênios/insurance
 -- conforme a política anti-convênios do sistema
 
--- Desabilitar RLS temporariamente para limpeza
-ALTER TABLE IF EXISTS public.insurance_claims DISABLE ROW LEVEL SECURITY;
-ALTER TABLE IF EXISTS public.insurance_providers DISABLE ROW LEVEL SECURITY;
+-- Verificar e remover políticas RLS apenas se as tabelas existirem
+DO $$
+BEGIN
+    -- Verificar se a tabela insurance_providers existe antes de desabilitar RLS
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'insurance_providers' AND table_schema = 'public') THEN
+        ALTER TABLE public.insurance_providers DISABLE ROW LEVEL SECURITY;
+        
+        -- Remover políticas RLS da tabela insurance_providers
+        DROP POLICY IF EXISTS insurance_providers_select_policy ON public.insurance_providers;
+        DROP POLICY IF EXISTS insurance_providers_insert_policy ON public.insurance_providers;
+        DROP POLICY IF EXISTS insurance_providers_update_policy ON public.insurance_providers;
+        DROP POLICY IF EXISTS insurance_providers_delete_policy ON public.insurance_providers;
+    END IF;
 
--- Remover políticas RLS das tabelas de convênios
-DROP POLICY IF EXISTS insurance_providers_select_policy ON public.insurance_providers;
-DROP POLICY IF EXISTS insurance_providers_insert_policy ON public.insurance_providers;
-DROP POLICY IF EXISTS insurance_providers_update_policy ON public.insurance_providers;
-DROP POLICY IF EXISTS insurance_providers_delete_policy ON public.insurance_providers;
-
-DROP POLICY IF EXISTS insurance_claims_select_policy ON public.insurance_claims;
-DROP POLICY IF EXISTS insurance_claims_insert_policy ON public.insurance_claims;
-DROP POLICY IF EXISTS insurance_claims_update_policy ON public.insurance_claims;
-DROP POLICY IF EXISTS insurance_claims_delete_policy ON public.insurance_claims;
+    -- Verificar se a tabela insurance_claims existe antes de desabilitar RLS
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'insurance_claims' AND table_schema = 'public') THEN
+        ALTER TABLE public.insurance_claims DISABLE ROW LEVEL SECURITY;
+        
+        -- Remover políticas RLS da tabela insurance_claims
+        DROP POLICY IF EXISTS insurance_claims_select_policy ON public.insurance_claims;
+        DROP POLICY IF EXISTS insurance_claims_insert_policy ON public.insurance_claims;
+        DROP POLICY IF EXISTS insurance_claims_update_policy ON public.insurance_claims;
+        DROP POLICY IF EXISTS insurance_claims_delete_policy ON public.insurance_claims;
+    END IF;
+END $$;
 
 -- Remover índices das tabelas de convênios
 DROP INDEX IF EXISTS idx_insurance_providers_code;
@@ -72,9 +83,20 @@ ADD CONSTRAINT financial_transactions_transaction_type_check
 CHECK (transaction_type IN ('payment', 'refund', 'adjustment'));
 
 -- Comentário explicativo sobre a política anti-convênios
-COMMENT ON TABLE public.patients IS 'Tabela de pacientes - Sistema trabalha EXCLUSIVAMENTE com atendimento particular. NUNCA aceita convênios.';
-COMMENT ON TABLE public.appointments IS 'Tabela de agendamentos - Sistema trabalha EXCLUSIVAMENTE com atendimento particular. NUNCA aceita convênios.';
-COMMENT ON TABLE public.financial_transactions IS 'Tabela de transações financeiras - Sistema trabalha EXCLUSIVAMENTE com atendimento particular. NUNCA aceita convênios.';
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'patients' AND table_schema = 'public') THEN
+        COMMENT ON TABLE public.patients IS 'Tabela de pacientes - Sistema trabalha EXCLUSIVAMENTE com atendimento particular. NUNCA aceita convênios.';
+    END IF;
+    
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'appointments' AND table_schema = 'public') THEN
+        COMMENT ON TABLE public.appointments IS 'Tabela de agendamentos - Sistema trabalha EXCLUSIVAMENTE com atendimento particular. NUNCA aceita convênios.';
+    END IF;
+    
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'financial_transactions' AND table_schema = 'public') THEN
+        COMMENT ON TABLE public.financial_transactions IS 'Tabela de transações financeiras - Sistema trabalha EXCLUSIVAMENTE com atendimento particular. NUNCA aceita convênios.';
+    END IF;
+END $$;
 
 -- Criar função para validar política anti-convênios
 CREATE OR REPLACE FUNCTION validate_no_insurance_policy()
@@ -106,22 +128,30 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Criar triggers para aplicar a validação
-DROP TRIGGER IF EXISTS trigger_validate_no_insurance_patients ON public.patients;
-DROP TRIGGER IF EXISTS trigger_validate_no_insurance_appointments ON public.appointments;
-DROP TRIGGER IF EXISTS trigger_validate_no_insurance_financial_transactions ON public.financial_transactions;
+-- Criar triggers para aplicar a validação apenas se as tabelas existirem
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'patients' AND table_schema = 'public') THEN
+        DROP TRIGGER IF EXISTS trigger_validate_no_insurance_patients ON public.patients;
+        CREATE TRIGGER trigger_validate_no_insurance_patients
+          BEFORE INSERT OR UPDATE ON public.patients
+          FOR EACH ROW EXECUTE FUNCTION validate_no_insurance_policy();
+    END IF;
 
-CREATE TRIGGER trigger_validate_no_insurance_patients
-  BEFORE INSERT OR UPDATE ON public.patients
-  FOR EACH ROW EXECUTE FUNCTION validate_no_insurance_policy();
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'appointments' AND table_schema = 'public') THEN
+        DROP TRIGGER IF EXISTS trigger_validate_no_insurance_appointments ON public.appointments;
+        CREATE TRIGGER trigger_validate_no_insurance_appointments
+          BEFORE INSERT OR UPDATE ON public.appointments
+          FOR EACH ROW EXECUTE FUNCTION validate_no_insurance_policy();
+    END IF;
 
-CREATE TRIGGER trigger_validate_no_insurance_appointments
-  BEFORE INSERT OR UPDATE ON public.appointments
-  FOR EACH ROW EXECUTE FUNCTION validate_no_insurance_policy();
-
-CREATE TRIGGER trigger_validate_no_insurance_financial_transactions
-  BEFORE INSERT OR UPDATE ON public.financial_transactions
-  FOR EACH ROW EXECUTE FUNCTION validate_no_insurance_policy();
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'financial_transactions' AND table_schema = 'public') THEN
+        DROP TRIGGER IF EXISTS trigger_validate_no_insurance_financial_transactions ON public.financial_transactions;
+        CREATE TRIGGER trigger_validate_no_insurance_financial_transactions
+          BEFORE INSERT OR UPDATE ON public.financial_transactions
+          FOR EACH ROW EXECUTE FUNCTION validate_no_insurance_policy();
+    END IF;
+END $$;
 
 -- Atualizar comentários das tabelas principais
 COMMENT ON FUNCTION validate_no_insurance_policy() IS 'Função que valida a política anti-convênios do sistema. NUNCA permite dados relacionados a convênios ou planos de saúde.';

@@ -3,24 +3,30 @@
 
 BEGIN;
 
--- Tabela de exercícios - Adicionar colunas que não existem
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS muscle_groups TEXT[] DEFAULT '{}';
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS equipment TEXT[] DEFAULT '{}';
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS difficulty_level TEXT CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced'));
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS duration_minutes INTEGER;
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS repetitions INTEGER;
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS sets INTEGER;
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS instructions TEXT[] DEFAULT '{}';
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS precautions TEXT[] DEFAULT '{}';
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS benefits TEXT[] DEFAULT '{}';
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS contraindications TEXT[] DEFAULT '{}';
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS video_url TEXT;
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS image_urls TEXT[] DEFAULT '{}';
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS tags TEXT[] DEFAULT '{}';
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS created_by UUID REFERENCES users(id) ON DELETE SET NULL;
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
-ALTER TABLE IF EXISTS exercises ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+-- Tabela de exercícios - Criar se não existir
+CREATE TABLE IF NOT EXISTS exercises (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  description TEXT,
+  category TEXT NOT NULL,
+  muscle_groups TEXT[] DEFAULT '{}',
+  equipment TEXT[] DEFAULT '{}',
+  difficulty_level TEXT CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced')),
+  duration_minutes INTEGER,
+  repetitions INTEGER,
+  sets INTEGER,
+  instructions TEXT[] DEFAULT '{}',
+  precautions TEXT[] DEFAULT '{}',
+  benefits TEXT[] DEFAULT '{}',
+  contraindications TEXT[] DEFAULT '{}',
+  video_url TEXT,
+  image_urls TEXT[] DEFAULT '{}',
+  tags TEXT[] DEFAULT '{}',
+  is_active BOOLEAN DEFAULT TRUE,
+  created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 
 -- Índices para exercícios
 CREATE INDEX IF NOT EXISTS idx_exercises_category

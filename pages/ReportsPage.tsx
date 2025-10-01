@@ -1,114 +1,183 @@
-import React, { useState, useEffect } from 'react';
-import { DollarSign, Users, Activity, UserCheck, ShieldCheck } from 'lucide-react';
-import PageHeader from '../components/PageHeader';
-import PageLoader from '../components/ui/PageLoader';
-import FinancialReport from '../components/reports/FinancialReport';
-import PatientReport from '../components/reports/PatientReport';
-import PlaceholderReport from '../components/reports/PlaceholderReport';
-import { useData } from "../contexts/AppContext";
-import * as appointmentService from '../services/appointmentService';
-import * as patientService from '../services/patientService';
-import { Appointment, Patient } from '../types';
-
-type Tab = 'financeiro' | 'pacientes' | 'clinico' | 'equipe' | 'lgpd';
+// pages/ReportsPage.tsx
+import React, { useState } from 'react';
+import ReportsDashboard from '../components/reports/ReportsDashboard';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { Button } from '../components/ui/button';
+import { 
+  BarChart3, 
+  FileText, 
+  Calendar,
+  Settings,
+  Download,
+  Filter
+} from 'lucide-react';
 
 const ReportsPage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<Tab>('financeiro');
-    const { therapists, isLoading: isContextLoading, error: contextError } = useData();
-    const [patients, setPatients] = useState<Patient[]>([]);
-    const [reportAppointments, setReportAppointments] = useState<Appointment[]>([]);
-    const [isLoadingData, setIsLoadingData] = useState(true);
-    const [dataError, setDataError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState('dashboard');
 
-    useEffect(() => {
-        const fetchReportData = async () => {
-            setIsLoadingData(true);
-            try {
-                // For reports, we need ALL data, not just the recent slice from context
-                const [allAppointments, allPatients] = await Promise.all([
-                    appointmentService.getAppointments(),
-                    patientService.getAllPatients(),
-                ]);
-                setReportAppointments(allAppointments);
-                setPatients(allPatients);
-                setDataError(null);
-            } catch (err) {
-                console.error("Failed to fetch report data:", err);
-                setDataError("Falha ao carregar dados para os relatórios.");
-            } finally {
-                setIsLoadingData(false);
-            }
-        };
-
-        fetchReportData();
-    }, []);
-
-    const tabs: { id: Tab; name: string; icon: React.ElementType }[] = [
-        { id: 'financeiro', name: 'Financeiro', icon: DollarSign },
-        { id: 'pacientes', name: 'Pacientes', icon: Users },
-        { id: 'clinico', name: 'Clínico', icon: Activity },
-        { id: 'equipe', name: 'Equipe', icon: UserCheck },
-        { id: 'lgpd', name: 'LGPD', icon: ShieldCheck },
-    ];
-    
-    const renderContent = () => {
-        const isLoading = isContextLoading || isLoadingData;
-        const error = contextError?.message || dataError;
-
-        if (isLoading) return <PageLoader />;
-        if (error) return <div className="text-center p-10 text-red-500">{error}</div>;
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Relatórios e Analytics</h1>
+          <p className="text-gray-600">Análise completa de performance e métricas do sistema</p>
+        </div>
         
-        switch (activeTab) {
-            case 'financeiro':
-                return <FinancialReport appointments={reportAppointments} therapists={therapists} />;
-            case 'pacientes':
-                return <PatientReport patients={patients} />;
-            case 'clinico':
-                return <PlaceholderReport title="Relatórios Clínicos" />;
-            case 'equipe':
-                return <PlaceholderReport title="Relatórios de Equipe" />;
-            case 'lgpd':
-                 return <PlaceholderReport title="Relatórios de Conformidade LGPD" />;
-            default:
-                return null;
-        }
-    };
+        <div className="flex items-center space-x-3">
+          <Button variant="outline">
+            <Filter className="h-4 w-4 mr-2" />
+            Filtros
+          </Button>
+          
+          <Button variant="outline">
+            <Calendar className="h-4 w-4 mr-2" />
+            Agendar
+          </Button>
+          
+          <Button>
+            <Download className="h-4 w-4 mr-2" />
+            Exportar
+          </Button>
+        </div>
+      </div>
 
-    return (
-        <>
-            <PageHeader
-                title="Central de Relatórios"
-                subtitle="Transforme dados em decisões. Insights para otimizar sua clínica."
-            />
+      {/* Tabs Navigation */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="dashboard" className="flex items-center space-x-2">
+            <BarChart3 className="h-4 w-4" />
+            <span>Dashboard</span>
+          </TabsTrigger>
+          
+          <TabsTrigger value="consumption" className="flex items-center space-x-2">
+            <FileText className="h-4 w-4" />
+            <span>Consumo</span>
+          </TabsTrigger>
+          
+          <TabsTrigger value="costs" className="flex items-center space-x-2">
+            <BarChart3 className="h-4 w-4" />
+            <span>Custos</span>
+          </TabsTrigger>
+          
+          <TabsTrigger value="settings" className="flex items-center space-x-2">
+            <Settings className="h-4 w-4" />
+            <span>Configurações</span>
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Dashboard Tab */}
+        <TabsContent value="dashboard" className="mt-6">
+          <ReportsDashboard />
+        </TabsContent>
+
+        {/* Consumption Tab */}
+        <TabsContent value="consumption" className="mt-6">
+          <div className="bg-white rounded-lg border p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Relatórios de Consumo de Insumos
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Análise detalhada do consumo de insumos por período, categoria e fornecedor.
+            </p>
             
-            <div className="mb-6">
-                <div className="border-b border-slate-200">
-                    <nav className="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
-                        {tabs.map(tab => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`
-                                    whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center
-                                    ${activeTab === tab.id
-                                        ? 'border-sky-500 text-sky-600'
-                                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                                    }
-                                `}
-                            >
-                                <tab.icon className="mr-2 h-5 w-5" />
-                                {tab.name}
-                            </button>
-                        ))}
-                    </nav>
-                </div>
+            {/* Placeholder para relatórios de consumo */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium text-gray-900 mb-2">Consumo por Período</h3>
+                <p className="text-sm text-gray-600">Relatório de consumo diário, semanal e mensal</p>
+                <Button size="sm" className="mt-3 w-full">Gerar Relatório</Button>
+              </div>
+              
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium text-gray-900 mb-2">Consumo por Categoria</h3>
+                <p className="text-sm text-gray-600">Análise de consumo por categoria de insumo</p>
+                <Button size="sm" className="mt-3 w-full">Gerar Relatório</Button>
+              </div>
+              
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium text-gray-900 mb-2">Consumo por Fornecedor</h3>
+                <p className="text-sm text-gray-600">Performance de consumo por fornecedor</p>
+                <Button size="sm" className="mt-3 w-full">Gerar Relatório</Button>
+              </div>
             </div>
+          </div>
+        </TabsContent>
 
-            <div>
-                {renderContent()}
+        {/* Costs Tab */}
+        <TabsContent value="costs" className="mt-6">
+          <div className="bg-white rounded-lg border p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Relatórios de Custos
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Análise de custos por procedimento, paciente e terapeuta.
+            </p>
+            
+            {/* Placeholder para relatórios de custos */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium text-gray-900 mb-2">Custos por Procedimento</h3>
+                <p className="text-sm text-gray-600">Análise de custos por tipo de procedimento</p>
+                <Button size="sm" className="mt-3 w-full">Gerar Relatório</Button>
+              </div>
+              
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium text-gray-900 mb-2">Custos por Paciente</h3>
+                <p className="text-sm text-gray-600">Custos totais por paciente</p>
+                <Button size="sm" className="mt-3 w-full">Gerar Relatório</Button>
+              </div>
+              
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium text-gray-900 mb-2">Custos por Terapeuta</h3>
+                <p className="text-sm text-gray-600">Performance de custos por terapeuta</p>
+                <Button size="sm" className="mt-3 w-full">Gerar Relatório</Button>
+              </div>
             </div>
-        </>
-    );
+          </div>
+        </TabsContent>
+
+        {/* Settings Tab */}
+        <TabsContent value="settings" className="mt-6">
+          <div className="bg-white rounded-lg border p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Configurações de Relatórios
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Configure relatórios agendados e preferências de exportação.
+            </p>
+            
+            {/* Placeholder para configurações */}
+            <div className="space-y-6">
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium text-gray-900 mb-2">Relatórios Agendados</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Configure relatórios que são gerados automaticamente
+                </p>
+                <Button size="sm">Gerenciar Agendamentos</Button>
+              </div>
+              
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium text-gray-900 mb-2">Preferências de Exportação</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Configure formatos e opções de exportação
+                </p>
+                <Button size="sm">Configurar Exportação</Button>
+              </div>
+              
+              <div className="border border-gray-200 rounded-lg p-4">
+                <h3 className="font-medium text-gray-900 mb-2">Histórico de Relatórios</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Visualize e gerencie relatórios gerados anteriormente
+                </p>
+                <Button size="sm">Ver Histórico</Button>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 };
 
 export default ReportsPage;

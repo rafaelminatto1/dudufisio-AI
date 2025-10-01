@@ -24,6 +24,11 @@ export const addNote = async (patientId: string, noteData: Omit<SoapNote, 'id' |
     return newNote;
 };
 
+export const getSoapNoteById = async (id: string): Promise<SoapNote | undefined> => {
+    await delay(300);
+    return db.getSoapNotes().find(note => note.id === id);
+};
+
 export const saveNote = async (noteData: Partial<SoapNote> & { patientId: string }): Promise<SoapNote> => {
     await delay(300);
     let noteToSave: SoapNote;

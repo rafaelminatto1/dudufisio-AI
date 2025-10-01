@@ -10,18 +10,15 @@ export { CalendarMonitor, calendarMonitor } from './CalendarMonitor';
 // Provider implementations
 export { ICSService } from './ICSService';
 export { GoogleCalendarService } from './GoogleCalendarService';
-export { OutlookService } from './OutlookService';
 
 // Register providers with factory
 import { CalendarFactory } from './CalendarFactory';
 import { ICSService } from './ICSService';
 import { GoogleCalendarService } from './GoogleCalendarService';
-import { OutlookService } from './OutlookService';
 
 // Register all available providers
 CalendarFactory.register('ics', ICSService);
 CalendarFactory.register('google', GoogleCalendarService);
-CalendarFactory.register('outlook', OutlookService);
 
 // Example usage and helper functions
 import {
@@ -254,11 +251,6 @@ export const defaultCalendarConfig = {
         ? JSON.parse(process.env.GOOGLE_CALENDAR_SERVICE_ACCOUNT)
         : null,
       calendarId: process.env.GOOGLE_CALENDAR_ID || 'primary'
-    },
-    outlook: {
-      clientId: process.env.MICROSOFT_GRAPH_CLIENT_ID,
-      clientSecret: process.env.MICROSOFT_GRAPH_CLIENT_SECRET,
-      tenantId: process.env.MICROSOFT_GRAPH_TENANT_ID
     },
     ics: {
       fromEmail: process.env.CALENDAR_FROM_EMAIL || 'noreply@dudufisio.com',

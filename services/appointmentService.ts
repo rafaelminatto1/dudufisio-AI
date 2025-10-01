@@ -23,6 +23,11 @@ export const getAppointments = async (startDate?: Date, endDate?: Date): Promise
     return [...appointments];
 };
 
+export const getAppointmentById = async (id: string): Promise<Appointment | undefined> => {
+    await delay(300);
+    return db.getAppointmentById(id);
+};
+
 export const getAppointmentsByPatientId = async (patientId: string): Promise<Appointment[]> => {
     await delay(300);
     return db.getAppointments().filter(a => a.patientId === patientId)

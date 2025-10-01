@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo, useMemo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
     LayoutGrid, Users, Calendar, Stethoscope, ChevronLeft, ChevronRight, BarChart3,
     LogOut, Bell, User, Menu, X, Activity, DollarSign, ClipboardList
 } from 'lucide-react';
+import Sidebar from './Sidebar';
+import Breadcrumbs from './Breadcrumbs';
 
 interface LayoutProps {
   user: any;
@@ -26,7 +28,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
 
-    const menuItems: MenuItem[] = [
+    const menuItems: MenuItem[] = useMemo(() => [
         { id: 'dashboard', path: '/dashboard', icon: LayoutGrid, label: 'Dashboard', group: 'main' },
         { id: 'appointments', path: '/agenda', icon: Calendar, label: 'Agenda', group: 'main' },
         { id: 'patients', path: '/patients', icon: Users, label: 'Pacientes', group: 'main' },
@@ -36,16 +38,16 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
         { id: 'financial', path: '/financial', icon: DollarSign, label: 'Financeiro', group: 'management' },
         { id: 'evaluations', path: '/evaluations', icon: ClipboardList, label: 'Avaliações', group: 'clinical' },
         { id: 'integrations', path: '/integrations', icon: Bell, label: 'Integrações', group: 'management' },
-    ];
+    ], []);
 
-    const isItemActive = (path: string) => {
+    const isItemActive = useCallback((path: string) => {
         if (path === '/') {
             return location.pathname === path;
         }
         return location.pathname === path || location.pathname.startsWith(`${path}/`);
-    };
+    }, [location.pathname]);
 
-    const NavItem = ({ item }: { item: MenuItem }) => (
+    const NavItem = memo(({ item }: { item: MenuItem }) => (
         <NavLink
             to={item.path}
             onClick={() => setIsMobileMenuOpen(false)}
@@ -63,102 +65,14 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
             <item.icon className={`w-5 h-5 shrink-0 ${isCollapsed ? '' : 'mr-3'}`} />
             {!isCollapsed && <span className="truncate flex-1 text-sm text-left">{item.label}</span>}
         </NavLink>
-    );
+    ));
 
-    const groupItems = (items: any[], group: string) => items.filter(item => item.group === group);
+    const groupItems = useCallback((items: any[], group: string) => items.filter(item => item.group === group), []);
 
     return (
         <div className="flex h-screen bg-slate-50">
             {/* Sidebar */}
-            <div className={`bg-white border-r border-slate-200 transition-all duration-300 ${
-                isCollapsed ? 'w-16' : 'w-64'
-            } hidden lg:block`}>
-                <div className="flex flex-col h-full">
-                    {/* Header */}
-                    <div className="flex items-center justify-between p-4 border-b border-slate-200">
-                        {!isCollapsed && (
-                            <h1 className="text-xl font-bold text-slate-900">
-                                Fisio<span className="text-sky-500">Flow</span>
-                            </h1>
-                        )}
-                        <button
-                            onClick={() => setIsCollapsed(!isCollapsed)}
-                            className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-                        >
-                            {isCollapsed ? (
-                                <ChevronRight className="w-4 h-4 text-slate-600" />
-                            ) : (
-                                <ChevronLeft className="w-4 h-4 text-slate-600" />
-                            )}
-                        </button>
-                    </div>
-
-                    {/* Navigation */}
-                    <div className="flex-1 overflow-y-auto py-4 px-3">
-                        {/* Main */}
-                        <div className="space-y-1">
-                            {!isCollapsed && (
-                                <h3 className="px-3 py-2 text-xs font-semibold uppercase text-slate-400 tracking-wider">
-                                    Principal
-                                </h3>
-                            )}
-                            {groupItems(menuItems, 'main').map((item) => (
-                                <NavItem key={item.id} item={item} />
-                            ))}
-                        </div>
-
-                        {/* Clinical */}
-                        <div className="mt-6 space-y-1">
-                            {!isCollapsed && (
-                                <h3 className="px-3 py-2 text-xs font-semibold uppercase text-slate-400 tracking-wider">
-                                    Clínico
-                                </h3>
-                            )}
-                            {groupItems(menuItems, 'clinical').map((item) => (
-                                <NavItem key={item.id} item={item} />
-                            ))}
-                        </div>
-
-                        {/* Management */}
-                        <div className="mt-6 space-y-1">
-                            {!isCollapsed && (
-                                <h3 className="px-3 py-2 text-xs font-semibold uppercase text-slate-400 tracking-wider">
-                                    Gestão
-                                </h3>
-                            )}
-                            {groupItems(menuItems, 'management').map((item) => (
-                                <NavItem key={item.id} item={item} />
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* User Section */}
-                    <div className="border-t border-slate-200 p-3">
-                        <div className={`flex items-center ${isCollapsed ? 'justify-center' : ''}`}>
-                            <div className="flex items-center space-x-3 flex-1 min-w-0">
-                                <div className="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center">
-                                    <User className="w-4 h-4 text-sky-600" />
-                                </div>
-                                {!isCollapsed && (
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-slate-900 truncate">{user.name}</p>
-                                        <p className="text-xs text-slate-500 truncate">{user.role}</p>
-                                    </div>
-                                )}
-                            </div>
-                            {!isCollapsed && (
-                                <button
-                                    onClick={onLogout}
-                                    className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-                                    title="Sair"
-                                >
-                                    <LogOut className="w-4 h-4 text-slate-500" />
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Sidebar />
 
             {/* Mobile menu */}
             {isMobileMenuOpen && (
@@ -215,11 +129,14 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
 
                 {/* Content */}
                 <main className="flex-1 overflow-y-auto bg-slate-50">
+                    <div className="p-6">
+                        <Breadcrumbs />
                     {children}
+                    </div>
                 </main>
             </div>
         </div>
     );
 };
 
-export default Layout;
+export default memo(Layout);

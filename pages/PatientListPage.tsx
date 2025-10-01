@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
 import { Plus, Search, Filter, ChevronRight, Users, X, Loader2, Edit, Trash2, Eye, MoreVertical, AlertTriangle } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { Patient, PatientSummary } from '../types';
@@ -7,10 +7,13 @@ import PatientFormModal from '../components/PatientFormModal';
 import { Skeleton } from '../components/ui/skeleton';
 import { useToast } from '../contexts/ToastContext';
 import { usePatients } from '../hooks/usePatients';
-import { useDebounce } from '../hooks/useDebounce';
+import { useDebouncedSearch } from '../hooks/useDebounceOptimized';
 import { useData } from '../contexts/AppContext';
+import { useOptimizedPatients } from '../hooks/useOptimizedData';
+import { useComponentPerformance } from '../hooks/usePerformanceMetrics';
 import PermissionGuard, { IfPermission } from '../components/auth/PermissionGuard';
 import { auditHelpers } from '../services/auditService';
+import OptimizedLoader from '../components/ui/OptimizedLoader';
 // 🎯 Professional Patient Actions Dropdown Component
 const PatientActions: React.FC<{
   patient: PatientSummary;
@@ -125,23 +128,29 @@ const PatientRow: React.FC<{
   );
 };
 const PatientListPage: React.FC = () => {
+  // 🚀 Monitoramento de performance
+  useComponentPerformance('PatientListPage');
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPatient, setEditingPatient] = useState<PatientSummary | null>(null);
   const [deletingPatient, setDeletingPatient] = useState<PatientSummary | null>(null);
+  
+  // 📊 Hooks otimizados
   const { patients, isLoading, error, fetchInitialPatients, fetchMorePatients, addPatient, hasMore, isLoadingMore } = usePatients();
   const { therapists } = useData();
   const { showToast } = useToast();
-  const [searchTerm, setSearchTerm] = useState('');
+  
+  // 🔍 Busca otimizada com debounce
+  const { query: searchTerm, debouncedQuery: debouncedSearchTerm, isSearching, setQuery: setSearchTerm } = useDebouncedSearch('', 300);
+  
   const [statusFilter, setStatusFilter] = useState('All');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [therapistFilter, setTherapistFilter] = useState('All');
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
-  const debouncedStartDate = useDebounce(startDate, 500);
-  const debouncedEndDate = useDebounce(endDate, 500);
+  
   useEffect(() => {
-      fetchInitialPatients({ searchTerm: debouncedSearchTerm, statusFilter, startDate: debouncedStartDate, endDate: debouncedEndDate, therapistId: therapistFilter });
-  }, [debouncedSearchTerm, statusFilter, debouncedStartDate, debouncedEndDate, therapistFilter, fetchInitialPatients]);
+      fetchInitialPatients({ searchTerm: debouncedSearchTerm, statusFilter, startDate, endDate, therapistId: therapistFilter });
+  }, [debouncedSearchTerm, statusFilter, startDate, endDate, therapistFilter, fetchInitialPatients]);
   const handleSavePatient = async (patientData: Omit<Patient, 'id' | 'lastVisit'>) => {
       try {
         const patient = await addPatient(patientData);
@@ -365,5 +374,5 @@ const PatientListPage: React.FC = () => {
     </PermissionGuard>
   );
 };
-export default PatientListPage;
+export default memo(PatientListPage);
 

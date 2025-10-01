@@ -1,0 +1,547 @@
+-- ============================================================================
+-- MIGRAÇÃO: SISTEMA DE RELATÓRIOS E ANALYTICS DE INSUMOS
+-- Data: 2025-01-27
+-- Descrição: Views e tabelas para relatórios avançados e analytics
+-- ============================================================================
+
+BEGIN;
+
+-- ============================================================================
+-- VIEWS PARA ANALYTICS DE CONSUMO
+-- ============================================================================
+
+-- View para analytics de consumo de insumos
+CREATE OR REPLACE VIEW supply_consumption_analytics AS
+SELECT 
+  s.id as supply_id,
+  s.name as supply_name,
+  s.category,
+  s.subcategory,
+  s.brand,
+  s.unit_of_measure,
+  s.current_stock,
+  s.minimum_stock,
+  s.maximum_stock,
+  s.unit_cost,
+  
+  -- Métricas de movimentação (últimos 30 dias)
+  COUNT(sm.id) as movement_count_30d,
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'saida' AND sm.created_at >= CURRENT_DATE - INTERVAL '30 days' THEN sm.quantity ELSE 0 END), 0) as total_consumed_30d,
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'entrada' AND sm.created_at >= CURRENT_DATE - INTERVAL '30 days' THEN sm.quantity ELSE 0 END), 0) as total_received_30d,
+  
+  -- Métricas de movimentação (últimos 90 dias)
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'saida' AND sm.created_at >= CURRENT_DATE - INTERVAL '90 days' THEN sm.quantity ELSE 0 END), 0) as total_consumed_90d,
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'entrada' AND sm.created_at >= CURRENT_DATE - INTERVAL '90 days' THEN sm.quantity ELSE 0 END), 0) as total_received_90d,
+  
+  -- Métricas de movimentação (últimos 365 dias)
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'saida' AND sm.created_at >= CURRENT_DATE - INTERVAL '365 days' THEN sm.quantity ELSE 0 END), 0) as total_consumed_365d,
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'entrada' AND sm.created_at >= CURRENT_DATE - INTERVAL '365 days' THEN sm.quantity ELSE 0 END), 0) as total_received_365d,
+  
+  -- Custos
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'saida' THEN sm.total_cost ELSE 0 END), 0) as total_cost_consumed,
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'entrada' THEN sm.total_cost ELSE 0 END), 0) as total_cost_received,
+  
+  -- Métricas calculadas
+  CASE 
+    WHEN s.current_stock > 0 THEN 
+      COALESCE(SUM(CASE WHEN sm.movement_type = 'saida' AND sm.created_at >= CURRENT_DATE - INTERVAL '30 days' THEN sm.quantity ELSE 0 END), 0) / s.current_stock
+    ELSE 0
+  END as stock_turnover_30d,
+  
+  -- Consumo médio diário (últimos 30 dias)
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'saida' AND sm.created_at >= CURRENT_DATE - INTERVAL '30 days' THEN sm.quantity ELSE 0 END), 0) / 30.0 as avg_daily_consumption_30d,
+  
+  -- Consumo médio mensal (últimos 90 dias)
+  COALESCE(SUM(CASE WHEN sm.movement_type = 'saida' AND sm.created_at >= CURRENT_DATE - INTERVAL '90 days' THEN sm.quantity ELSE 0 END), 0) / 3.0 as avg_monthly_consumption_90d,
+  
+  -- Previsão de estoque (dias restantes)
+  CASE 
+    WHEN COALESCE(SUM(CASE WHEN sm.movement_type = 'saida' AND sm.created_at >= CURRENT_DATE - INTERVAL '30 days' THEN sm.quantity ELSE 0 END), 0) > 0 THEN
+      s.current_stock / (COALESCE(SUM(CASE WHEN sm.movement_type = 'saida' AND sm.created_at >= CURRENT_DATE - INTERVAL '30 days' THEN sm.quantity ELSE 0 END), 0) / 30.0)
+    ELSE NULL
+  END as days_of_stock_remaining,
+  
+  -- Última movimentação
+  MAX(sm.created_at) as last_movement_date,
+  
+  -- Fornecedor
+  sp.name as supplier_name,
+  
+  s.created_at,
+  s.updated_at
+
+FROM supplies s
+LEFT JOIN stock_movements sm ON s.id = sm.supply_id
+LEFT JOIN suppliers sp ON s.supplier_id = sp.id
+WHERE s.is_active = true
+GROUP BY s.id, s.name, s.category, s.subcategory, s.brand, s.unit_of_measure, 
+         s.current_stock, s.minimum_stock, s.maximum_stock, s.unit_cost, 
+         sp.name, s.created_at, s.updated_at;
+
+-- ============================================================================
+-- VIEW PARA CUSTOS POR TAREFA
+-- ============================================================================
+
+CREATE OR REPLACE VIEW task_cost_analytics AS
+SELECT 
+  t.id as task_id,
+  t.title as task_title,
+  t.type as task_type,
+  t.status as task_status,
+  t.created_at as task_date,
+  t.estimated_duration,
+  t.actual_duration,
+  
+  -- Dados do paciente
+  p.id as patient_id,
+  p.name as patient_name,
+  
+  -- Dados do terapeuta
+  u.id as therapist_id,
+  u.full_name as therapist_name,
+  
+  -- Custos de insumos
+  COALESCE(SUM(tsu.total_cost), 0) as total_supply_cost,
+  COUNT(tsu.id) as supplies_used_count,
+  COALESCE(SUM(tsu.quantity_used), 0) as total_quantity_used,
+  
+  -- Custo médio por insumo
+  CASE 
+    WHEN COUNT(tsu.id) > 0 THEN 
+      COALESCE(SUM(tsu.total_cost), 0) / COUNT(tsu.id)
+    ELSE 0
+  END as avg_cost_per_supply,
+  
+  -- Custos totais (se disponíveis)
+  tc.labor_cost,
+  tc.overhead_cost,
+  tc.total_cost as calculated_total_cost
+
+FROM tasks t
+LEFT JOIN patients p ON t.patient_id = p.id
+LEFT JOIN users u ON t.assigned_user_id = u.id
+LEFT JOIN task_supplies_used tsu ON t.id = tsu.task_id
+LEFT JOIN task_costs tc ON t.id = tc.task_id
+WHERE t.is_active = true
+GROUP BY t.id, t.title, t.type, t.status, t.created_at, t.estimated_duration, 
+         t.actual_duration, p.id, p.name, u.id, u.full_name, tc.labor_cost, 
+         tc.overhead_cost, tc.total_cost;
+
+-- ============================================================================
+-- VIEW PARA PERFORMANCE DE FORNECEDORES
+-- ============================================================================
+
+CREATE OR REPLACE VIEW supplier_performance_analytics AS
+SELECT 
+  sp.id as supplier_id,
+  sp.name as supplier_name,
+  sp.contact_person,
+  sp.email,
+  sp.phone,
+  sp.delivery_time_days,
+  
+  -- Contagem de produtos
+  COUNT(DISTINCT s.id) as total_products,
+  COUNT(DISTINCT CASE WHEN s.is_active THEN s.id END) as active_products,
+  
+  -- Pedidos
+  COUNT(DISTINCT po.id) as total_orders,
+  COUNT(DISTINCT CASE WHEN po.status = 'received' THEN po.id END) as completed_orders,
+  COUNT(DISTINCT CASE WHEN po.status = 'cancelled' THEN po.id END) as cancelled_orders,
+  COUNT(DISTINCT CASE WHEN po.expected_delivery < CURRENT_DATE AND po.status IN ('ordered', 'partial') THEN po.id END) as overdue_orders,
+  
+  -- Valores
+  COALESCE(SUM(po.total_amount), 0) as total_order_value,
+  COALESCE(SUM(CASE WHEN po.status = 'received' THEN po.total_amount ELSE 0 END), 0) as completed_order_value,
+  
+  -- Performance de entrega
+  AVG(CASE 
+    WHEN po.status = 'received' AND po.received_date IS NOT NULL AND po.order_date IS NOT NULL THEN
+      EXTRACT(EPOCH FROM (po.received_date - po.order_date)) / 86400 -- dias
+    ELSE NULL
+  END) as avg_delivery_days,
+  
+  -- Taxa de entrega no prazo
+  CASE 
+    WHEN COUNT(DISTINCT po.id) > 0 THEN
+      COUNT(DISTINCT CASE 
+        WHEN po.status = 'received' AND po.received_date <= po.expected_delivery THEN po.id 
+      END)::DECIMAL / COUNT(DISTINCT CASE WHEN po.status = 'received' THEN po.id END)
+    ELSE 0
+  END as on_time_delivery_rate,
+  
+  -- Avaliação de performance
+  CASE 
+    WHEN COUNT(DISTINCT po.id) = 0 THEN 'N/A'
+    WHEN COUNT(DISTINCT CASE WHEN po.expected_delivery < CURRENT_DATE AND po.status IN ('ordered', 'partial') THEN po.id END) > 0 THEN 'Ruim'
+    WHEN AVG(CASE 
+      WHEN po.status = 'received' AND po.received_date IS NOT NULL AND po.order_date IS NOT NULL THEN
+        EXTRACT(EPOCH FROM (po.received_date - po.order_date)) / 86400
+      ELSE NULL
+    END) > sp.delivery_time_days * 1.5 THEN 'Regular'
+    ELSE 'Bom'
+  END as performance_rating,
+  
+  sp.created_at
+
+FROM suppliers sp
+LEFT JOIN supplies s ON sp.id = s.supplier_id
+LEFT JOIN purchase_orders po ON sp.id = po.supplier_id
+WHERE sp.is_active = true
+GROUP BY sp.id, sp.name, sp.contact_person, sp.email, sp.phone, 
+         sp.delivery_time_days, sp.created_at;
+
+-- ============================================================================
+-- TABELA PARA RELATÓRIOS AGENDADOS
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS scheduled_reports (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  report_name VARCHAR(255) NOT NULL,
+  report_type VARCHAR(50) NOT NULL CHECK (report_type IN (
+    'consumption', 'cost_analysis', 'supplier_performance', 'stock_valuation',
+    'expiration_forecast', 'custom'
+  )),
+  parameters JSONB NOT NULL, -- filtros e parâmetros do relatório
+  schedule_type VARCHAR(20) NOT NULL CHECK (schedule_type IN (
+    'daily', 'weekly', 'monthly', 'quarterly', 'yearly'
+  )),
+  schedule_time TIME DEFAULT '09:00:00',
+  schedule_day INTEGER, -- dia da semana (1-7) ou dia do mês (1-31)
+  recipients TEXT[] NOT NULL, -- emails dos destinatários
+  format VARCHAR(20) DEFAULT 'pdf' CHECK (format IN ('pdf', 'excel', 'csv')),
+  is_active BOOLEAN DEFAULT true,
+  last_run TIMESTAMP WITH TIME ZONE,
+  next_run TIMESTAMP WITH TIME ZONE,
+  created_by UUID REFERENCES users(id),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ============================================================================
+-- TABELA PARA HISTÓRICO DE RELATÓRIOS
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS report_history (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  scheduled_report_id UUID REFERENCES scheduled_reports(id) ON DELETE SET NULL,
+  report_name VARCHAR(255) NOT NULL,
+  report_type VARCHAR(50) NOT NULL,
+  parameters JSONB NOT NULL,
+  file_path TEXT,
+  file_size INTEGER,
+  recipients TEXT[],
+  status VARCHAR(20) DEFAULT 'generating' CHECK (status IN (
+    'generating', 'completed', 'failed', 'sent'
+  )),
+  error_message TEXT,
+  generated_by UUID REFERENCES users(id),
+  generated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  sent_at TIMESTAMP WITH TIME ZONE
+);
+
+-- ============================================================================
+-- TABELA PARA MÉTRICAS DE PERFORMANCE
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS performance_metrics (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  metric_name VARCHAR(100) NOT NULL,
+  metric_category VARCHAR(50) NOT NULL CHECK (metric_category IN (
+    'inventory', 'cost', 'supplier', 'consumption', 'efficiency'
+  )),
+  metric_value DECIMAL(15,4) NOT NULL,
+  metric_unit VARCHAR(20),
+  target_value DECIMAL(15,4),
+  period_start DATE NOT NULL,
+  period_end DATE NOT NULL,
+  metadata JSONB DEFAULT '{}',
+  calculated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- ============================================================================
+-- ÍNDICES PARA PERFORMANCE
+-- ============================================================================
+
+-- Índices para scheduled_reports
+CREATE INDEX IF NOT EXISTS idx_scheduled_reports_next_run 
+  ON scheduled_reports(next_run) WHERE is_active = true;
+
+CREATE INDEX IF NOT EXISTS idx_scheduled_reports_type 
+  ON scheduled_reports(report_type);
+
+-- Índices para report_history
+CREATE INDEX IF NOT EXISTS idx_report_history_generated_at 
+  ON report_history(generated_at);
+
+CREATE INDEX IF NOT EXISTS idx_report_history_status 
+  ON report_history(status);
+
+-- Índices para performance_metrics
+CREATE INDEX IF NOT EXISTS idx_performance_metrics_name_category 
+  ON performance_metrics(metric_name, metric_category);
+
+CREATE INDEX IF NOT EXISTS idx_performance_metrics_period 
+  ON performance_metrics(period_start, period_end);
+
+-- ============================================================================
+-- FUNÇÕES PARA GERAÇÃO DE RELATÓRIOS
+-- ============================================================================
+
+-- Função para calcular métricas de performance
+CREATE OR REPLACE FUNCTION calculate_performance_metrics(
+  period_start DATE DEFAULT CURRENT_DATE - INTERVAL '30 days',
+  period_end DATE DEFAULT CURRENT_DATE
+)
+RETURNS INTEGER AS $$
+DECLARE
+  metric_count INTEGER := 0;
+BEGIN
+  -- Limpar métricas do período
+  DELETE FROM performance_metrics 
+  WHERE period_start = $1 AND period_end = $2;
+  
+  -- 1. Taxa de giro do estoque
+  INSERT INTO performance_metrics (metric_name, metric_category, metric_value, metric_unit, period_start, period_end)
+  SELECT 
+    'stock_turnover_rate',
+    'inventory',
+    AVG(stock_turnover_30d),
+    'times_per_month',
+    period_start,
+    period_end
+  FROM supply_consumption_analytics
+  WHERE current_stock > 0;
+  
+  -- 2. Custo médio por procedimento
+  INSERT INTO performance_metrics (metric_name, metric_category, metric_value, metric_unit, period_start, period_end)
+  SELECT 
+    'avg_cost_per_procedure',
+    'cost',
+    AVG(total_supply_cost),
+    'BRL',
+    period_start,
+    period_end
+  FROM task_cost_analytics
+  WHERE task_date >= period_start AND task_date <= period_end;
+  
+  -- 3. Taxa de entrega no prazo dos fornecedores
+  INSERT INTO performance_metrics (metric_name, metric_category, metric_value, metric_unit, period_start, period_end)
+  SELECT 
+    'on_time_delivery_rate',
+    'supplier',
+    AVG(on_time_delivery_rate) * 100,
+    'percentage',
+    period_start,
+    period_end
+  FROM supplier_performance_analytics;
+  
+  -- 4. Consumo médio diário de insumos
+  INSERT INTO performance_metrics (metric_name, metric_category, metric_value, metric_unit, period_start, period_end)
+  SELECT 
+    'avg_daily_consumption',
+    'consumption',
+    SUM(avg_daily_consumption_30d),
+    'units',
+    period_start,
+    period_end
+  FROM supply_consumption_analytics;
+  
+  -- 5. Valor total do estoque
+  INSERT INTO performance_metrics (metric_name, metric_category, metric_value, metric_unit, period_start, period_end)
+  SELECT 
+    'total_inventory_value',
+    'inventory',
+    SUM(current_stock * COALESCE(unit_cost, 0)),
+    'BRL',
+    period_start,
+    period_end
+  FROM supply_consumption_analytics;
+  
+  -- 6. Eficiência de uso de insumos (insumos utilizados vs disponíveis)
+  INSERT INTO performance_metrics (metric_name, metric_category, metric_value, metric_unit, period_start, period_end)
+  SELECT 
+    'supply_utilization_efficiency',
+    'efficiency',
+    CASE 
+      WHEN SUM(current_stock) > 0 THEN 
+        SUM(total_consumed_30d) / SUM(current_stock) * 100
+      ELSE 0
+    END,
+    'percentage',
+    period_start,
+    period_end
+  FROM supply_consumption_analytics;
+  
+  GET DIAGNOSTICS metric_count = ROW_COUNT;
+  
+  RETURN metric_count;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Função para gerar relatório de consumo
+CREATE OR REPLACE FUNCTION generate_consumption_report(
+  start_date DATE,
+  end_date DATE,
+  supply_category TEXT DEFAULT NULL,
+  supplier_id UUID DEFAULT NULL
+)
+RETURNS TABLE (
+  supply_id UUID,
+  supply_name TEXT,
+  category TEXT,
+  total_consumed BIGINT,
+  total_cost NUMERIC,
+  avg_daily_consumption NUMERIC,
+  days_of_stock_remaining NUMERIC
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    sca.supply_id,
+    sca.supply_name,
+    sca.category,
+    sca.total_consumed_30d as total_consumed,
+    sca.total_cost_consumed as total_cost,
+    sca.avg_daily_consumption_30d as avg_daily_consumption,
+    sca.days_of_stock_remaining
+  FROM supply_consumption_analytics sca
+  WHERE 
+    (supply_category IS NULL OR sca.category = supply_category)
+    AND (supplier_id IS NULL OR EXISTS (
+      SELECT 1 FROM supplies s WHERE s.id = sca.supply_id AND s.supplier_id = supplier_id
+    ))
+    AND sca.total_consumed_30d > 0
+  ORDER BY sca.total_consumed_30d DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Função para calcular próxima execução de relatório
+CREATE OR REPLACE FUNCTION calculate_next_report_run(
+  schedule_type VARCHAR(20),
+  schedule_time TIME,
+  schedule_day INTEGER DEFAULT NULL,
+  last_run TIMESTAMP WITH TIME ZONE DEFAULT NULL
+)
+RETURNS TIMESTAMP WITH TIME ZONE AS $$
+DECLARE
+  next_run TIMESTAMP WITH TIME ZONE;
+  base_date DATE;
+BEGIN
+  -- Se não há última execução, usar hoje
+  IF last_run IS NULL THEN
+    base_date := CURRENT_DATE;
+  ELSE
+    base_date := last_run::DATE;
+  END IF;
+  
+  -- Calcular próxima execução baseado no tipo
+  CASE schedule_type
+    WHEN 'daily' THEN
+      next_run := (base_date + INTERVAL '1 day')::DATE + schedule_time;
+      
+    WHEN 'weekly' THEN
+      -- schedule_day: 1 = domingo, 7 = sábado
+      next_run := (base_date + INTERVAL '1 week')::DATE + schedule_time;
+      
+    WHEN 'monthly' THEN
+      -- schedule_day: dia do mês (1-31)
+      IF schedule_day IS NOT NULL THEN
+        next_run := (DATE_TRUNC('month', base_date) + INTERVAL '1 month' + INTERVAL (schedule_day - 1) || ' days')::DATE + schedule_time;
+      ELSE
+        next_run := (DATE_TRUNC('month', base_date) + INTERVAL '1 month')::DATE + schedule_time;
+      END IF;
+      
+    WHEN 'quarterly' THEN
+      next_run := (DATE_TRUNC('quarter', base_date) + INTERVAL '3 months')::DATE + schedule_time;
+      
+    WHEN 'yearly' THEN
+      next_run := (DATE_TRUNC('year', base_date) + INTERVAL '1 year')::DATE + schedule_time;
+      
+    ELSE
+      next_run := (base_date + INTERVAL '1 day')::DATE + schedule_time;
+  END CASE;
+  
+  -- Se a próxima execução é no passado, calcular a próxima válida
+  IF next_run <= NOW() THEN
+    RETURN calculate_next_report_run(schedule_type, schedule_time, schedule_day, next_run);
+  END IF;
+  
+  RETURN next_run;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ============================================================================
+-- TRIGGERS PARA ATUALIZAÇÃO AUTOMÁTICA
+-- ============================================================================
+
+-- Trigger para atualizar métricas quando há mudanças significativas
+CREATE OR REPLACE FUNCTION trigger_update_performance_metrics()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Recalcular métricas para o período atual
+  PERFORM calculate_performance_metrics();
+  
+  RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Aplicar trigger em movimentações de estoque
+CREATE TRIGGER trigger_update_metrics_on_stock_movement
+  AFTER INSERT OR UPDATE OR DELETE ON stock_movements
+  FOR EACH STATEMENT EXECUTE FUNCTION trigger_update_performance_metrics();
+
+-- Aplicar trigger em tarefas
+CREATE TRIGGER trigger_update_metrics_on_task_supply
+  AFTER INSERT OR UPDATE OR DELETE ON task_supplies_used
+  FOR EACH STATEMENT EXECUTE FUNCTION trigger_update_performance_metrics();
+
+-- ============================================================================
+-- HABILITAR RLS
+-- ============================================================================
+
+ALTER TABLE scheduled_reports ENABLE ROW LEVEL SECURITY;
+ALTER TABLE report_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE performance_metrics ENABLE ROW LEVEL SECURITY;
+
+-- ============================================================================
+-- POLÍTICAS RLS
+-- ============================================================================
+
+-- Políticas para scheduled_reports
+CREATE POLICY "Users can view all scheduled reports" ON scheduled_reports
+  FOR SELECT USING (true);
+
+CREATE POLICY "Users can manage scheduled reports" ON scheduled_reports
+  FOR ALL USING (auth.uid() IS NOT NULL);
+
+-- Políticas para report_history
+CREATE POLICY "Users can view all report history" ON report_history
+  FOR SELECT USING (true);
+
+CREATE POLICY "System can insert report history" ON report_history
+  FOR INSERT WITH CHECK (true);
+
+-- Políticas para performance_metrics
+CREATE POLICY "Users can view all performance metrics" ON performance_metrics
+  FOR SELECT USING (true);
+
+CREATE POLICY "System can manage performance metrics" ON performance_metrics
+  FOR ALL WITH CHECK (true);
+
+-- ============================================================================
+-- DADOS INICIAIS - RELATÓRIOS PADRÃO
+-- ============================================================================
+
+-- Inserir relatórios agendados padrão
+INSERT INTO scheduled_reports (report_name, report_type, parameters, schedule_type, schedule_time, recipients, created_by) VALUES
+('Relatório Semanal de Consumo', 'consumption', '{"period_days": 7}', 'weekly', '09:00:00', ARRAY['admin@clinica.com'], NULL),
+('Relatório Mensal de Custos', 'cost_analysis', '{"period_days": 30}', 'monthly', '09:00:00', ARRAY['admin@clinica.com', 'financeiro@clinica.com'], NULL),
+('Performance de Fornecedores - Trimestral', 'supplier_performance', '{"period_days": 90}', 'quarterly', '09:00:00', ARRAY['admin@clinica.com'], NULL),
+('Valorização do Estoque - Mensal', 'stock_valuation', '{"include_categories": true}', 'monthly', '09:00:00', ARRAY['admin@clinica.com'], NULL)
+ON CONFLICT DO NOTHING;
+
+-- Calcular métricas iniciais
+SELECT calculate_performance_metrics();
+
+COMMIT;

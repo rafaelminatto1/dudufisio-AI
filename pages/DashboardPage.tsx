@@ -1,5 +1,5 @@
 
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect, memo } from 'react';
 import PageHeader from '../components/PageHeader';
 import KPICards from '../components/dashboard/KPICards';
 import RevenueChart from '../components/dashboard/RevenueChart';
@@ -12,10 +12,11 @@ import TodaysAppointments from '../components/dashboard/glance/TodaysAppointment
 import PendingTasks from '../components/dashboard/glance/PendingTasks';
 import RecentActivity from '../components/dashboard/glance/RecentActivity';
 import useDashboardStats from '../hooks/useDashboardStats';
-import { Patient, Appointment, AppointmentTypeColors } from '../types';
-import * as patientService from '../services/patientService';
-import * as appointmentService from '../services/appointmentService';
+import { AppointmentTypeColors, EnrichedAppointment } from '../types';
+import { useOptimizedPatients, useOptimizedAppointments } from '../hooks/useOptimizedData';
 import { eventService } from '../services/eventService';
+import { useComponentPerformance } from '../hooks/usePerformanceMetrics';
+import OptimizedLoader from '../components/ui/OptimizedLoader';
 
 const isToday = (someDate: Date) => {
     const today = new Date();
@@ -25,36 +26,30 @@ const isToday = (someDate: Date) => {
 };
 
 const DashboardPage: React.FC = () => {
+    // 🚀 Monitoramento de performance
+    useComponentPerformance('DashboardPage');
+
+    // 📊 Hooks otimizados para dados
     const { therapists, isLoading: isTherapistsLoading } = useData();
-    const [patients, setPatients] = useState<Patient[]>([]);
-    const [appointments, setAppointments] = useState<Appointment[]>([]);
-    const [isLoadingPageData, setIsLoadingPageData] = useState(true);
+    const { 
+        data: patients, 
+        isLoading: isPatientsLoading, 
+        refetch: refetchPatients 
+    } = useOptimizedPatients({ ttl: 2 * 60 * 1000 });
+    
+    const { 
+        data: appointments, 
+        isLoading: isAppointmentsLoading,
+        refetch: refetchAppointments 
+    } = useOptimizedAppointments({ ttl: 1 * 60 * 1000 });
 
-    const fetchPageData = useCallback(async () => {
-        setIsLoadingPageData(true);
-        try {
-            // Fetch all data required for this page specifically
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-            
-            const [patientsData, appointmentsData] = await Promise.all([
-                patientService.getAllPatients(),
-                appointmentService.getAppointments(thirtyDaysAgo, new Date())
-            ]);
-
-            setPatients(patientsData);
-            setAppointments(appointmentsData);
-        } catch (error) {
-            console.error("Failed to fetch dashboard data", error);
-        } finally {
-            setIsLoadingPageData(false);
-        }
-    }, []);
-
+    // 🔄 Event listeners para invalidação de cache
     useEffect(() => {
-        fetchPageData();
-        
-        const handleDataChange = () => fetchPageData();
+        const handleDataChange = () => {
+            refetchPatients();
+            refetchAppointments();
+        };
+
         eventService.on('patients:changed', handleDataChange);
         eventService.on('appointments:changed', handleDataChange);
         
@@ -62,11 +57,14 @@ const DashboardPage: React.FC = () => {
             eventService.off('patients:changed', handleDataChange);
             eventService.off('appointments:changed', handleDataChange);
         };
-    }, [fetchPageData]);
+    }, [refetchPatients, refetchAppointments]);
 
-    const isLoading = isTherapistsLoading || isLoadingPageData;
+    const isLoading = isTherapistsLoading || isPatientsLoading || isAppointmentsLoading;
     
+    // 📊 Dados enriquecidos com memoização
     const enrichedTodaysAppointments = useMemo(() => {
+        if (!appointments || !patients) return [];
+        
         const todays = appointments.filter(app => isToday(new Date(app.startTime)));
 
         const therapistMap = new Map(therapists.map(t => [t.id, t]));
@@ -86,7 +84,19 @@ const DashboardPage: React.FC = () => {
         });
     }, [appointments, patients, therapists]);
 
-    const { stats } = useDashboardStats({ patients, appointments });
+    const { stats } = useDashboardStats({ 
+        patients: patients || [], 
+        appointments: appointments || [] 
+    });
+
+    // 🎨 Loading state otimizado
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <OptimizedLoader size="lg" text="Carregando dashboard..." />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">
@@ -131,4 +141,4 @@ const DashboardPage: React.FC = () => {
     );
 };
 
-export default DashboardPage;
+export default memo(DashboardPage);

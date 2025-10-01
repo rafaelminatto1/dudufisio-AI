@@ -534,7 +534,7 @@ class SupabaseAuthService {
         id: 'user_1',
         name: 'Dr. Roberto',
         email: 'therapist@dudufisio.com',
-        role: 'Therapist' as const,
+        role: 'Fisioterapeuta' as const,
         avatarUrl: 'https://i.pravatar.cc/150?u=user_1',
         phone: '(11) 91234-5678'
       },
@@ -542,7 +542,7 @@ class SupabaseAuthService {
         id: 'user_patient_1',
         name: 'Ana Beatriz Costa',
         email: 'patient@dudufisio.com',
-        role: 'Patient' as const,
+        role: 'Paciente' as const,
         avatarUrl: 'https://picsum.photos/id/1027/200/200',
         patientId: '1',
         phone: '(11) 98765-4321'

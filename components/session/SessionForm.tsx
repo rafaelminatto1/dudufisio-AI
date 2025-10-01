@@ -205,7 +205,7 @@ const SessionForm: React.FC<SessionFormProps> = ({
               value={formData.subjective}
               onChange={(value) => handleInputChange('subjective', value)}
               placeholder="Descreva as queixas e relatos do paciente..."
-              className="min-h-32"
+              rows={6}
             />
           </div>
 
@@ -222,7 +222,7 @@ const SessionForm: React.FC<SessionFormProps> = ({
               value={formData.objective}
               onChange={(value) => handleInputChange('objective', value)}
               placeholder="Descreva os achados objetivos da avaliação..."
-              className="min-h-32"
+              rows={6}
             />
           </div>
 
@@ -239,7 +239,7 @@ const SessionForm: React.FC<SessionFormProps> = ({
               value={formData.assessment}
               onChange={(value) => handleInputChange('assessment', value)}
               placeholder="Descreva sua avaliação clínica..."
-              className="min-h-32"
+              rows={6}
             />
           </div>
 
@@ -256,7 +256,7 @@ const SessionForm: React.FC<SessionFormProps> = ({
               value={formData.plan}
               onChange={(value) => handleInputChange('plan', value)}
               placeholder="Descreva o plano de tratamento..."
-              className="min-h-32"
+              rows={6}
             />
           </div>
         </div>

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { History, Calendar, User, Eye, Copy, ChevronDown, ChevronUp, FileText } from 'lucide-react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { History, Calendar, Eye, Copy, FileText } from 'lucide-react';
 import { SoapNote } from '../../types';
-import MarkdownRenderer from '../ui/MarkdownRenderer';
 
 interface SessionHistoryProps {
   patientNotes: SoapNote[];
@@ -9,23 +9,12 @@ interface SessionHistoryProps {
   className?: string;
 }
 
-interface ExpandedNote {
-  [key: string]: boolean;
-}
-
 const SessionHistory: React.FC<SessionHistoryProps> = ({
   patientNotes,
   onRepeatConduct,
   className = ''
 }) => {
-  const [expandedNotes, setExpandedNotes] = useState<ExpandedNote>({});
-
-  const toggleExpanded = (noteId: string) => {
-    setExpandedNotes(prev => ({
-      ...prev,
-      [noteId]: !prev[noteId]
-    }));
-  };
+  const navigate = useNavigate();
 
   const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
@@ -45,7 +34,6 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({
   };
 
   const SessionCard: React.FC<{ note: SoapNote; index: number }> = ({ note, index }) => {
-    const isExpanded = expandedNotes[note.id];
     const isLatest = index === 0;
 
     return (
@@ -82,84 +70,16 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({
                 </button>
               )}
               <button
-                onClick={() => toggleExpanded(note.id)}
-                className="flex items-center px-3 py-1 text-xs bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+                onClick={() => navigate(`/session-view/${note.id}`)}
+                className="flex items-center px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
               >
                 <Eye className="w-3 h-3 mr-1" />
-                {isExpanded ? 'Ocultar' : 'Ver'}
+                Ver
               </button>
             </div>
           </div>
         </div>
 
-        {/* Content */}
-        {isExpanded && (
-          <div className="p-4 border-t">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Subjetivo */}
-              <div className="space-y-2">
-                <h5 className="font-medium text-slate-900 flex items-center">
-                  <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold mr-2">
-                    S
-                  </span>
-                  Subjetivo
-                </h5>
-                <div className="bg-slate-50 rounded-lg p-3 text-sm">
-                  <MarkdownRenderer content={note.subjective} />
-                </div>
-              </div>
-
-              {/* Objetivo */}
-              <div className="space-y-2">
-                <h5 className="font-medium text-slate-900 flex items-center">
-                  <span className="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs font-bold mr-2">
-                    O
-                  </span>
-                  Objetivo
-                </h5>
-                <div className="bg-slate-50 rounded-lg p-3 text-sm">
-                  <MarkdownRenderer content={note.objective} />
-                </div>
-              </div>
-
-              {/* Avaliação */}
-              <div className="space-y-2">
-                <h5 className="font-medium text-slate-900 flex items-center">
-                  <span className="w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-xs font-bold mr-2">
-                    A
-                  </span>
-                  Avaliação
-                </h5>
-                <div className="bg-slate-50 rounded-lg p-3 text-sm">
-                  <MarkdownRenderer content={note.assessment} />
-                </div>
-              </div>
-
-              {/* Plano */}
-              <div className="space-y-2">
-                <h5 className="font-medium text-slate-900 flex items-center">
-                  <span className="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xs font-bold mr-2">
-                    P
-                  </span>
-                  Plano
-                </h5>
-                <div className="bg-slate-50 rounded-lg p-3 text-sm">
-                  <MarkdownRenderer content={note.plan} />
-                </div>
-              </div>
-            </div>
-
-            {/* Métricas Adicionais */}
-            {note.painScale !== undefined && (
-              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm font-medium text-red-800">Escala de Dor:</span>
-                  <span className="text-lg font-bold text-red-600">{note.painScale}/10</span>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     );
   };

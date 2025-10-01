@@ -15,8 +15,9 @@ interface AppointmentDetailModalProps {
   onPaymentStatusChange?: (appointment: Appointment, newStatus: 'paid' | 'pending') => void;
   onPackagePayment?: (appointment: Appointment) => void;
   onUpdateValue?: (appointmentId: string, newValue: number) => void;
+  onStartSession?: (appointment: EnrichedAppointment) => void;
 }
-const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appointment, patient, therapist, isOpen: _isOpen, onClose, onEdit, onDelete, onStatusChange, onPaymentStatusChange, onPackagePayment, onUpdateValue }) => {
+const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appointment, patient, therapist, isOpen: _isOpen, onClose, onEdit, onDelete, onStatusChange, onPaymentStatusChange, onPackagePayment, onUpdateValue, onStartSession }) => {
     const { showToast: _showToast } = useToast();
     const [isEditingValue, setIsEditingValue] = useState(false);
     const [localValue, setLocalValue] = useState(appointment?.value || 0);
@@ -40,12 +41,15 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({ appoint
         setIsEditingValue(false);
     };
     const handleStartSession = () => {
-        onClose();
-
-        if (appointment.type === AppointmentType.Teleconsulta) {
-            navigate(`/teleconsulta/${appointment.id}`);
+        if (onStartSession) {
+            onStartSession(appointment);
         } else {
-            navigate(`/sessions/${appointment.id}/form`);
+            onClose();
+            if (appointment.type === AppointmentType.Teleconsulta) {
+                navigate(`/teleconsulta/${appointment.id}`);
+            } else {
+                navigate(`/sessions/${appointment.id}/form`);
+            }
         }
     };
     const isTeleconsulta = appointment.type === AppointmentType.Teleconsulta;

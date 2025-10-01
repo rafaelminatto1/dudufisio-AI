@@ -170,43 +170,41 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
           </header>
 
           {/* Content */}
-          <div className="flex-1 overflow-hidden">
-            <div className="h-full flex flex-col lg:flex-row">
-              {/* Lado Esquerdo - Formulário de Sessão */}
-              <div className="lg:w-2/3 p-6 overflow-y-auto border-r border-slate-200">
-                <SessionForm
-                  patient={patient}
-                  onSave={handleSaveNote}
-                  onCancel={onClose}
-                  isLoading={isSaving}
-                  previousNote={patientNotes[0] || null}
-                  onRepeatConduct={() => patientNotes[0] && handleRepeatConduct(patientNotes[0])}
-                />
-              </div>
-
-              {/* Lado Direito - Visão Geral do Paciente */}
-              <div className="lg:w-1/3 p-6 overflow-y-auto bg-slate-50">
-                <div className="space-y-6">
-                  {/* Visão Geral do Paciente */}
-                  <PatientOverview patient={patient} />
-
-                  {/* Métricas */}
-                  <PatientMetrics 
-                    patient={patient} 
-                    appointments={allAppointments} 
-                  />
-                </div>
-              </div>
+          <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
+            {/* Lado Esquerdo - Formulário de Sessão */}
+            <div className="lg:w-2/3 p-6 overflow-y-auto border-r border-slate-200">
+              <SessionForm
+                patient={patient}
+                onSave={handleSaveNote}
+                onCancel={onClose}
+                isLoading={isSaving}
+                previousNote={patientNotes[0] || null}
+                onRepeatConduct={() => patientNotes[0] && handleRepeatConduct(patientNotes[0])}
+              />
             </div>
 
-            {/* Seção Inferior - Histórico de Sessões */}
-            <div className="border-t border-slate-200 bg-white">
-              <div className="p-6">
-                <SessionHistory
-                  patientNotes={patientNotes}
-                  onRepeatConduct={handleRepeatConduct}
+            {/* Lado Direito - Visão Geral do Paciente */}
+            <div className="lg:w-1/3 p-6 overflow-y-auto bg-slate-50">
+              <div className="space-y-6">
+                {/* Visão Geral do Paciente */}
+                <PatientOverview patient={patient} />
+
+                {/* Métricas */}
+                <PatientMetrics 
+                  patient={patient} 
+                  appointments={allAppointments} 
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Seção Inferior - Histórico de Sessões */}
+          <div className="border-t border-slate-200 bg-white">
+            <div className="p-6">
+              <SessionHistory
+                patientNotes={patientNotes}
+                onRepeatConduct={handleRepeatConduct}
+              />
             </div>
           </div>
         </div>

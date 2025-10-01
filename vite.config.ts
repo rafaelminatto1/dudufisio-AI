@@ -35,10 +35,6 @@ export default defineConfig({
     dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     alias: {
       '@': path.resolve(__dirname, '.'),
-      'react': path.resolve(__dirname, 'node_modules/react'),
-      'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
-      'react/jsx-runtime': path.resolve(__dirname, 'node_modules/react/jsx-runtime'),
-      'react/jsx-dev-runtime': path.resolve(__dirname, 'node_modules/react/jsx-dev-runtime'),
       '@/components': path.resolve(__dirname, './components'),
       '@/pages': path.resolve(__dirname, './pages'),
       '@/services': path.resolve(__dirname, './services'),
@@ -61,7 +57,7 @@ export default defineConfig({
   build: {
     target: 'es2020',
     sourcemap: false,
-    reportCompressedSize: false,
+    reportCompressedSize: true,
     rollupOptions: {
       external: (id) => {
         // Previne múltiplas instâncias do React
@@ -72,18 +68,21 @@ export default defineConfig({
       },
       output: {
         manualChunks: (id) => {
-          // Força todos os módulos React no mesmo chunk
-          if (id.includes('react') || id.includes('react-dom')) {
+          // Otimização de chunks para melhor cache
+          if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
             return 'react-vendor';
           }
-          if (id.includes('@radix-ui') || id.includes('lucide-react')) {
+          if (id.includes('@radix-ui') || id.includes('lucide-react') || id.includes('framer-motion')) {
             return 'ui-vendor';
           }
-          if (id.includes('@google/generative-ai')) {
+          if (id.includes('@google/generative-ai') || id.includes('groq-sdk')) {
             return 'ai-vendor';
           }
-          if (id.includes('@supabase')) {
-            return 'supabase-vendor';
+          if (id.includes('@supabase') || id.includes('axios')) {
+            return 'api-vendor';
+          }
+          if (id.includes('recharts') || id.includes('date-fns')) {
+            return 'charts-vendor';
           }
           if (id.includes('node_modules')) {
             return 'vendor';
@@ -94,7 +93,13 @@ export default defineConfig({
         assetFileNames: 'assets/[name]-[hash].[ext]'
       }
     },
-    minify: false, // Disable minification to help debug React error #310
-    chunkSizeWarningLimit: 1000
+    minify: 'terser', // Re-enable minification for production
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    chunkSizeWarningLimit: 500
   }
 });

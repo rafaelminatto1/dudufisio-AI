@@ -3,15 +3,16 @@ import { observability } from './observabilityLogger';
 import type { SupabaseRealtimePayload } from '../types/realtime';
 import type { Database } from '../types/database';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Use Supabase local credentials for development
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'http://127.0.0.1:54321';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
 
-// Check if we have valid Supabase credentials
+// Check if we have valid Supabase credentials (local or production)
 const hasValidCredentials = Boolean(
   supabaseUrl &&
   supabaseAnonKey &&
   supabaseAnonKey !== 'your_anon_key_here' &&
-  supabaseUrl.includes('supabase.co')
+  (supabaseUrl.includes('supabase.co') || supabaseUrl.includes('127.0.0.1') || supabaseUrl.includes('localhost'))
 );
 
 if (!hasValidCredentials) {
@@ -48,34 +49,13 @@ export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAn
   } : undefined,
 });
 
-// Mock mode interceptor to prevent real network requests
-if (!hasValidCredentials) {
-  // Override fetch to prevent requests to mock URL
-  const originalFetch = window.fetch;
-  window.fetch = async (input, init) => {
-    const url = typeof input === 'string' ? input : input.url;
-    
-    // Block requests to mock Supabase URL
-    if (url.includes('mock.supabase.local') || url.includes('dummy.supabase.co')) {
-      console.log('🚫 Blocking mock Supabase request:', url);
-      
-      // Return a mock response to prevent CORS errors
-      return new Response(JSON.stringify({
-        error: 'Mock mode - no real connection',
-        message: 'Using mock data for development'
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-        }
-      });
-    }
-    
-    return originalFetch(input, init);
-  };
+// Log successful Supabase configuration
+if (hasValidCredentials) {
+  observability.config.load('supabase.config.loaded', {
+    environment: supabaseUrl.includes('127.0.0.1') || supabaseUrl.includes('localhost') ? 'local' : 'production',
+    hasValidCredentials: true,
+    url: supabaseUrl
+  });
 }
 
 type SupabaseError = {

@@ -214,8 +214,13 @@ export const getPatients = async ({ limit = 15, cursor, searchTerm, statusFilter
 
 export const getPatientById = async (id: string): Promise<Patient | undefined> => {
     if (isSupabaseEnabled) {
-        const patient = await supabasePatientService.getPatientById(id);
-        return patient ?? undefined;
+        try {
+            const patient = await supabasePatientService.getPatientById(id);
+            return patient ?? undefined;
+        } catch (error) {
+            console.warn('[patientService] Falha ao buscar paciente no Supabase, tentando dados mock.', error);
+            // Fallback to mock data if Supabase fails (e.g., invalid UUID format)
+        }
     }
 
     await delay(300);

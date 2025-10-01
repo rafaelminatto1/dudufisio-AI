@@ -1,6 +1,6 @@
 # Sistema de Integração com Calendários Externos
 
-Este documento descreve o sistema completo de integração com calendários externos (Google Calendar, Outlook, Apple Calendar) implementado no DuduFisio-AI.
+Este documento descreve o sistema completo de integração com calendários externos (Google Calendar,  Apple Calendar) implementado no DuduFisio-AI.
 
 ## 🏗️ Arquitetura
 
@@ -10,7 +10,6 @@ Este documento descreve o sistema completo de integração com calendários exte
 lib/integrations/calendar/
 ├── CalendarService.ts           # Interface abstrata base
 ├── GoogleCalendarService.ts     # Implementação Google Calendar
-├── OutlookService.ts           # Implementação Microsoft Outlook
 ├── ICSService.ts               # Fallback universal (.ics)
 ├── CalendarFactory.ts          # Factory pattern para providers
 ├── CalendarQueue.ts            # Queue para processamento assíncrono
@@ -24,7 +23,7 @@ lib/integrations/calendar/
 2. **CalendarFactory** - Factory pattern para criar instâncias de providers
 3. **CalendarQueue** - Sistema de filas para processamento assíncrono
 4. **CalendarMonitor** - Monitoramento e alertas em tempo real
-5. **Providers** - Implementações específicas (Google, Outlook, ICS)
+5. **Providers** - Implementações específicas (Google, ICS)
 
 ## 🚀 Implementação Progressiva
 
@@ -40,11 +39,7 @@ lib/integrations/calendar/
 - ✅ Lembretes e recorrências
 - ✅ Verificação de disponibilidade
 
-### Fase 3: Microsoft Graph API (✅ Implementado)
-- ✅ Integração com Outlook Calendar
-- ✅ Suporte completo a eventos
-- ✅ Autenticação OAuth 2.0
-- ✅ Sincronização bidirecional
+
 
 ### Fase 4: Apple Calendar (🔄 Futuro)
 - 📋 Integração via CalDAV
@@ -60,10 +55,7 @@ lib/integrations/calendar/
 GOOGLE_CALENDAR_SERVICE_ACCOUNT={"type":"service_account",...}
 GOOGLE_CALENDAR_ID=primary
 
-# Microsoft Graph (Outlook)
-MICROSOFT_GRAPH_CLIENT_ID=your_client_id
-MICROSOFT_GRAPH_CLIENT_SECRET=your_client_secret
-MICROSOFT_GRAPH_TENANT_ID=your_tenant_id
+
 
 # Email (ICS fallback)
 CALENDAR_FROM_EMAIL=noreply@dudufisio.com
@@ -164,22 +156,6 @@ const result = await googleService.createEvent({
    };
    ```
 
-### Microsoft Outlook
-
-1. **Registrar Aplicação**:
-   - Acesse Azure Portal
-   - Registre nova aplicação
-   - Configure permissões Calendar.ReadWrite
-   - Gere client secret
-
-2. **Configuração**:
-   ```typescript
-   const outlookConfig = {
-     clientId: 'your-client-id',
-     clientSecret: 'your-client-secret',
-     tenantId: 'your-tenant-id'
-   };
-   ```
 
 ### ICS Universal
 
@@ -214,7 +190,6 @@ console.log(metrics);
 //   averageDeliveryTime: 1850,
 //   providerPerformance: {
 //     google: { successRate: 98.1, avgResponseTime: 850 },
-//     outlook: { successRate: 92.3, avgResponseTime: 1200 },
 //     ics: { successRate: 100, avgResponseTime: 450 }
 //   }
 // }
@@ -230,7 +205,6 @@ console.log(health);
 //   overall: 'healthy',
 //   services: [
 //     { service: 'google', status: 'healthy', responseTime: 850 },
-//     { service: 'outlook', status: 'degraded', responseTime: 5200 },
 //     { service: 'ics', status: 'healthy', responseTime: 450 }
 //   ],
 //   criticalAlerts: 0
@@ -247,16 +221,16 @@ O sistema monitora automaticamente:
 
 ## 🎯 Funcionalidades por Provider
 
-| Funcionalidade | Google | Outlook | ICS | Apple* |
+| Funcionalidade | Google |  | ICS | Apple* |
 |---------------|--------|---------|-----|--------|
-| Criar Evento | ✅ | ✅ | ✅ | 📋 |
-| Atualizar Evento | ✅ | ✅ | ❌ | 📋 |
-| Excluir Evento | ✅ | ✅ | ❌ | 📋 |
-| Lembretes | ✅ | ✅ | ✅ | 📋 |
-| Recorrência | ✅ | ✅ | ✅ | 📋 |
-| Participantes | ✅ | ✅ | ✅ | 📋 |
-| Disponibilidade | ✅ | ✅ | ❌ | 📋 |
-| Anexos | ✅ | ✅ | ❌ | 📋 |
+| Criar Evento | ✅ | ✅  | 📋 |
+| Atualizar Evento | ✅ | ❌ | 📋 |
+| Excluir Evento | ✅ | ❌ | 📋 |
+| Lembretes | ✅ | ✅ | 📋 |
+| Recorrência | ✅ | ✅ | 📋 |
+| Participantes | ✅ | ✅ | 📋 |
+| Disponibilidade | ✅ | ✅ | 📋 |
+| Anexos | ✅ | ✅ | 📋 |
 
 *Planejado para implementação futura
 
@@ -309,10 +283,6 @@ console.log(result.success); // true/false
    - Confirmar permissões do Service Account
    - Validar JSON das credenciais
 
-2. **Outlook - Authentication Failed**
-   - Verificar Client ID/Secret
-   - Confirmar permissões da aplicação
-   - Validar Tenant ID
 
 3. **ICS - Email não enviado**
    - Verificar configurações SMTP
@@ -348,7 +318,6 @@ console.log('Calendar operation:', {
 ### Métricas de Performance
 
 - **Google Calendar**: ~850ms média de resposta
-- **Outlook**: ~1200ms média de resposta
 - **ICS**: ~450ms média de resposta
 - **Success Rate**: 94.2% geral
 
@@ -387,7 +356,7 @@ Para dúvidas ou problemas com a integração de calendários:
 
 ### v1.0.0 (Janeiro 2024)
 - ✅ Implementação inicial do sistema
-- ✅ Support para Google Calendar, Outlook e ICS
+- ✅ Support para Google Calendar,  e ICS
 - ✅ Sistema de filas e monitoramento
 - ✅ Interface de configuração
 - ✅ Documentação completa

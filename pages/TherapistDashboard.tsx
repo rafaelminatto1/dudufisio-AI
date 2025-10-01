@@ -179,13 +179,20 @@ const TherapistDashboard: React.FC = () => {
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - today.getDay());
 
-    const todayAppointments = appointments.filter(apt =>
-      apt.startTime.split('T')[0] === todayStr
-    ).length;
+    const todayAppointments = appointments.filter(apt => {
+      // Garantir que apt.startTime seja uma string ou Date
+      const startTime = apt.startTime instanceof Date 
+        ? apt.startTime.toISOString() 
+        : String(apt.startTime || '');
+      return startTime.split('T')[0] === todayStr;
+    }).length;
 
-    const weekAppointments = appointments.filter(apt =>
-      new Date(apt.startTime) >= weekStart
-    ).length;
+    const weekAppointments = appointments.filter(apt => {
+      const startTime = apt.startTime instanceof Date 
+        ? apt.startTime 
+        : new Date(apt.startTime);
+      return startTime >= weekStart;
+    }).length;
 
     const activePatients = patients.filter(p => p.status === 'Active').length;
 

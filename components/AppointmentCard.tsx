@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo, useCallback } from 'react';
 import { EnrichedAppointment, AppointmentStatus } from '../types';
 import { cn } from '../lib/utils';
 import { Repeat } from 'lucide-react';
@@ -28,21 +28,45 @@ const getAppointmentStyle = (color: string) => {
 };
 
 const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, startHour, pixelsPerMinute, isBeingDragged, onClick, onDragStart, onDragEnd }) => {
-  const top = ((appointment.startTime.getHours() - startHour) * 60 + appointment.startTime.getMinutes()) * pixelsPerMinute;
-  const durationInMinutes = (appointment.endTime.getTime() - appointment.startTime.getTime()) / (60 * 1000);
-  const height = durationInMinutes * pixelsPerMinute;
+  const top = useMemo(() => 
+    ((appointment.startTime.getHours() - startHour) * 60 + appointment.startTime.getMinutes()) * pixelsPerMinute,
+    [appointment.startTime, startHour, pixelsPerMinute]
+  );
   
-  const isCompleted = appointment.status === AppointmentStatus.Completed;
-  const isCancelled = appointment.status === AppointmentStatus.Canceled || appointment.status === AppointmentStatus.NoShow;
+  const durationInMinutes = useMemo(() => 
+    (appointment.endTime.getTime() - appointment.startTime.getTime()) / (60 * 1000),
+    [appointment.startTime, appointment.endTime]
+  );
+  
+  const height = useMemo(() => durationInMinutes * pixelsPerMinute, [durationInMinutes, pixelsPerMinute]);
+  
+  const isCompleted = useMemo(() => appointment.status === AppointmentStatus.Completed, [appointment.status]);
+  const isCancelled = useMemo(() => 
+    appointment.status === AppointmentStatus.Canceled || appointment.status === AppointmentStatus.NoShow,
+    [appointment.status]
+  );
 
-  const style = getAppointmentStyle(appointment.therapistColor);
+  const style = useMemo(() => getAppointmentStyle(appointment.therapistColor), [appointment.therapistColor]);
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    onClick();
+  }, [onClick]);
+
+  const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    onDragStart(e);
+  }, [onDragStart]);
+
+  const handleDragEnd = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    onDragEnd(e);
+  }, [onDragEnd]);
 
   return (
     <div
-      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      onClick={handleClick}
       draggable="true"
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
       className={cn(
           "absolute left-1 right-1 p-2 rounded-lg text-white text-xs z-10 cursor-pointer transition-all overflow-hidden flex flex-col group border-l-4",
           style,
@@ -64,4 +88,4 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, startHou
   );
 };
 
-export default AppointmentCard;
+export default memo(AppointmentCard);

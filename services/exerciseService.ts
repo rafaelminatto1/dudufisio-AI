@@ -133,6 +133,25 @@ class ExerciseService {
     }
   }
 
+  async getExerciseByName(name: string): Promise<Exercise | null> {
+    try {
+      const { data, error } = await supabase
+        .from('exercises')
+        .select('*')
+        .eq('name', name)
+        .eq('is_active', true)
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Erro ao buscar exercício por nome:', error);
+      // Fallback para dados mock
+      const mockExercises = this.getMockExercises();
+      return mockExercises.find(ex => ex.name === name) || null;
+    }
+  }
+
   async createExercise(exerciseData: CreateExerciseRequest): Promise<Exercise> {
     try {
       const { data, error } = await supabase

@@ -65,7 +65,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, rows =
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col">
       <div className={`flex items-center gap-2 border border-b-0 border-slate-300 p-2 rounded-t-lg ${disabled ? 'bg-slate-200' : 'bg-slate-50'}`}>
         <button type="button" onClick={() => applyFormatting('bold')} className="p-1.5 rounded hover:bg-slate-200 disabled:opacity-50" title="Negrito (Ctrl+B)" disabled={disabled}><Bold className="w-4 h-4" /></button>
         <button type="button" onClick={() => applyFormatting('italic')} className="p-1.5 rounded hover:bg-slate-200 disabled:opacity-50" title="Itálico (Ctrl+I)" disabled={disabled}><Italic className="w-4 h-4" /></button>
@@ -77,7 +77,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ value, onChange, rows =
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
         placeholder={placeholder}
-        className={`w-full p-2 border border-slate-300 rounded-b-lg focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm flex-1 ${disabled ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+        className={`w-full p-2 border border-slate-300 rounded-b-lg focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm resize-y ${disabled ? 'bg-slate-100 cursor-not-allowed' : ''}`}
         aria-label="Editor de Texto do Relatório"
         disabled={disabled}
       />

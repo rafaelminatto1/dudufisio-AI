@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { format, addDays, startOfWeek, addMonths, subMonths, startOfMonth, endOfMonth, setHours, setMinutes } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, ArrowLeft } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { Button } from '../components/ui/button';
 import { useAppointments } from '../hooks/useAppointments';
@@ -15,13 +15,17 @@ import { Role } from '../types';
 import AppointmentDetailModal from '../components/AppointmentDetailModal';
 import AppointmentFormModal from '../components/AppointmentFormModal';
 import AgendaViewSelector, { AgendaViewType } from '../components/agenda/AgendaViewSelector';
-import SchedulingInsightsBanner from '../components/agenda/SchedulingInsightsBanner';
-import { listActiveAlerts, listWaitlistEntries } from '../services/appointmentService';
+import WaitlistCompactBanner from '../components/agenda/WaitlistCompactBanner';
+import WaitlistModal from '../components/agenda/WaitlistModal';
+import SimpleWaitlistModal from '../components/agenda/SimpleWaitlistModal';
+import { waitlistService } from '../services/waitlistService';
+// Removido: listActiveAlerts - não usamos mais alertas
 import DailyView from '../components/agenda/DailyView';
 import ImprovedWeeklyView from '../components/agenda/ImprovedWeeklyView';
 import MonthlyView from '../components/agenda/MonthlyView';
 import ListView from '../components/agenda/ListView';
 import { useLocation, useNavigate } from 'react-router-dom';
+import SessionFormPage from './SessionFormPage';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
@@ -32,6 +36,8 @@ export default function AgendaPage() {
     const locationState = location.state as { patientId?: string } | null;
     const [currentDate, setCurrentDate] = useState(new Date());
     const [currentView, setCurrentView] = useState<AgendaViewType>('weekly');
+    const [showSessionForm, setShowSessionForm] = useState(false);
+    const [selectedAppointmentForSession, setSelectedAppointmentForSession] = useState<EnrichedAppointment | null>(null);
 
     // Calculate date ranges based on current view
     const { startDate, endDate } = useMemo(() => {
@@ -61,8 +67,8 @@ export default function AgendaPage() {
     const { user } = useSupabaseAuth();
     const [patients, setPatients] = useState<Patient[]>([]);
     const [, setIsLoadingData] = useState(true);
-    const [alerts, setAlerts] = useState<SchedulingAlert[]>([]);
-    const [waitingEntries, setWaitingEntries] = useState<WaitlistEntry[]>([]);
+    const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
+    const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
     const { showToast } = useToast();
 
     // Modal states
@@ -101,27 +107,25 @@ export default function AgendaPage() {
         return scopedAppointments;
     }, [appointments, user, highlightedPatientId]);
 
-    const refreshSchedulingState = useCallback(async () => {
-        const [alertsData, waitlistData] = await Promise.all([
-            listActiveAlerts(),
-            listWaitlistEntries('waiting'),
-        ]);
-        setAlerts(alertsData);
-        setWaitingEntries(waitlistData);
+    const refreshWaitlist = useCallback(async () => {
+        try {
+            const waitlistData = await waitlistService.listEntries('waiting');
+            setWaitlistEntries(waitlistData);
+        } catch (error) {
+            console.error('Erro ao atualizar lista de espera:', error);
+        }
     }, []);
 
     useEffect(() => {
         const fetchInitialData = async () => {
             setIsLoadingData(true);
             try {
-                const [patientData, alertsData, waitlistData] = await Promise.all([
+                const [patientData, waitlistData] = await Promise.all([
                     patientService.getAllPatients(),
-                    listActiveAlerts(),
-                    listWaitlistEntries('waiting'),
+                    waitlistService.listEntries('waiting'),
                 ]);
                 setPatients(patientData);
-                setAlerts(alertsData);
-                setWaitingEntries(waitlistData);
+                setWaitlistEntries(waitlistData);
             } catch (error) {
                 console.error('Erro ao carregar dados iniciais:', error);
                 showToast('Falha ao carregar dados de suporte da agenda.', 'error');
@@ -157,7 +161,7 @@ export default function AgendaPage() {
             await appointmentService.saveAppointment(appointmentData);
             showToast('Consulta salva com sucesso!', 'success');
             refetch();
-            refreshSchedulingState();
+            refreshWaitlist();
             setIsFormOpen(false);
             setAppointmentToEdit(null);
             return true;
@@ -184,7 +188,7 @@ export default function AgendaPage() {
             }
             showToast('Agendamento(s) removido(s) com sucesso!', 'success');
             refetch();
-            refreshSchedulingState();
+            refreshWaitlist();
             setIsFormOpen(false);
             setAppointmentToEdit(null);
             setSelectedAppointment(null);
@@ -221,6 +225,17 @@ export default function AgendaPage() {
             } catch { showToast('Falha ao atualizar o valor.', 'error'); }
         }
     };
+
+    const handleStartSession = useCallback((appointment: EnrichedAppointment) => {
+        setSelectedAppointmentForSession(appointment);
+        setShowSessionForm(true);
+        setSelectedAppointment(null); // Fecha o modal
+    }, []);
+
+    const handleBackToAgenda = useCallback(() => {
+        setShowSessionForm(false);
+        setSelectedAppointmentForSession(null);
+    }, []);
     
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, appointment: EnrichedAppointment) => {
         e.dataTransfer.effectAllowed = 'move';
@@ -260,6 +275,17 @@ export default function AgendaPage() {
         } finally {
             setDraggedAppointmentId(null);
         }
+    };
+
+    // Funções para lista de espera
+    const handleAddToWaitlist = async (entryData: Omit<WaitlistEntry, 'id' | 'createdAt' | 'updatedAt'>) => {
+        await waitlistService.addEntry(entryData);
+        await refreshWaitlist();
+    };
+
+    const handleViewWaitlist = () => {
+        // TODO: Implementar visualização completa da lista de espera
+        showToast('Visualização completa da lista de espera em desenvolvimento', 'info');
     };
 
     const fullSelectedPatient = useMemo(() => patients.find(p => p.id === selectedAppointment?.patientId), [patients, selectedAppointment]);
@@ -407,7 +433,7 @@ export default function AgendaPage() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-slate-50/50">
+        <div className="flex flex-col h-full bg-slate-50/50" data-testid="agenda-page">
             {/* Compact Professional Header */}
             <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
                 <div className="px-4 py-3">
@@ -437,7 +463,12 @@ export default function AgendaPage() {
                                     </Button>
                                 </div>
                             )}
-                            <SchedulingInsightsBanner alerts={alerts} waitlistEntries={waitingEntries} />
+                            <WaitlistCompactBanner 
+                                waitlistEntries={waitlistEntries}
+                                patients={patients}
+                                onAddToWaitlist={() => setIsWaitlistModalOpen(true)}
+                                onViewWaitlist={handleViewWaitlist}
+                            />
                         </div>
 
                         {/* Right side - Compact navigation */}
@@ -501,9 +532,32 @@ export default function AgendaPage() {
 
             {/* Main content area - professional styling */}
             <div className="flex-1 overflow-auto bg-white">
-                <div className="h-full">
-                    {renderView()}
-                </div>
+                {showSessionForm && selectedAppointmentForSession ? (
+                    <div className="h-full">
+                        <div className="flex items-center justify-between p-4 border-b bg-slate-50">
+                            <Button
+                                onClick={handleBackToAgenda}
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-2"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                Voltar para Agenda
+                            </Button>
+                            <h2 className="text-lg font-semibold text-slate-800">
+                                Formulário de Sessão - {selectedAppointmentForSession.patient?.name}
+                            </h2>
+                        </div>
+                        <SessionFormPage
+                            appointmentId={selectedAppointmentForSession.id}
+                            onClose={handleBackToAgenda}
+                        />
+                    </div>
+                ) : (
+                    <div className="h-full px-2 pr-6">
+                        {renderView()}
+                    </div>
+                )}
             </div>
 
             <AnimatePresence>
@@ -519,6 +573,7 @@ export default function AgendaPage() {
                         onPaymentStatusChange={handlePaymentStatusChange}
                         onPackagePayment={() => showToast('Funcionalidade de pacote a ser implementada.', 'info')}
                         onUpdateValue={(id, val) => { handleUpdateValue(id, val); setSelectedAppointment(null); }}
+                        onStartSession={handleStartSession}
                     />
                 )}
                 {isFormOpen && (
@@ -535,6 +590,15 @@ export default function AgendaPage() {
                     />
                 )}
             </AnimatePresence>
+
+            {/* Modal da Lista de Espera - Usando versão simples como fallback */}
+            <SimpleWaitlistModal
+                isOpen={isWaitlistModalOpen}
+                onClose={() => setIsWaitlistModalOpen(false)}
+                onSave={handleAddToWaitlist}
+                patients={patients}
+                therapists={therapists}
+            />
         </div>
     );
 }

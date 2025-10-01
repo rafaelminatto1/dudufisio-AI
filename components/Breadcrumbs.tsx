@@ -1,122 +1,132 @@
-
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import * as ReactRouterDOM from 'react-router-dom';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
-import * as patientService from '../services/patientService';
+import { Link } from 'react-router-dom';
 
-interface Breadcrumb {
-  href: string;
+interface BreadcrumbItem {
   label: string;
+  href?: string;
 }
 
-const breadcrumbNameMap: Record<string, string> = {
-  'dashboard': 'Início',
-  'patients': 'Pacientes',
-  'agenda': 'Agenda',
-  'clinical-analytics': 'Dashboard Clínico',
-  'financials': 'Financeiro',
-  'reports': 'Relatórios',
-  'settings': 'Configurações',
-  'audit-log': 'Auditoria',
-  'gerar-laudo': 'Gerar Laudo',
-  'gerar-evolucao': 'Gerar Evolução',
-  'gerar-hep': 'Gerar Plano (HEP)',
-  'analise-risco': 'Análise de Risco',
-  'acompanhamento': 'Acompanhamento',
-  'notifications': 'Notificações',
-  'tasks': 'Quadro de Tarefas',
-  'groups': 'Grupos',
-  'exercises': 'Exercícios',
-  'materials': 'Materiais Clínicos',
-  'inventory': 'Insumos',
-  'partnerships': 'Parcerias',
-  'events': 'Eventos',
-  'whatsapp': 'WhatsApp',
-  'email-inativos': 'Email para Inativos',
-  'mentoria': 'Mentoria',
-  'knowledge-base': 'Base de Conhecimento',
-  'ia-economica': 'IA Econômica',
-  'agenda-settings': 'Config. Agenda',
-  'ai-settings': 'Config. IA',
-  'medical-report': 'Laudo Médico',
-};
-
 const Breadcrumbs: React.FC = () => {
-    const location = ReactRouterDOM.useLocation();
-    const params = ReactRouterDOM.useParams();
-    const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
+  const location = useLocation();
+  
+  // Mapeamento de rotas para labels amigáveis
+  const routeLabels: Record<string, string> = {
+    '/dashboard': 'Dashboard',
+    '/admin-dashboard': 'Dashboard Administrativo',
+    '/therapist-dashboard': 'Dashboard Terapeuta',
+    '/partner-dashboard': 'Dashboard Parceiro',
+    '/patients': 'Pacientes',
+    '/agenda': 'Agenda',
+    '/acompanhamento': 'Acompanhamento',
+    '/session-evolution': 'Evolução de Sessões',
+    '/teleconsulta': 'Teleconsulta',
+    '/exercises': 'Exercícios',
+    '/exercise-library': 'Biblioteca de Exercícios',
+    '/protocolos': 'Protocolos Clínicos',
+    '/specialty-assessments': 'Avaliações Especializadas',
+    '/clinical-library': 'Biblioteca Clínica',
+    '/materials': 'Materiais Clínicos',
+    '/clinical-analytics': 'Analytics Clínicos',
+    '/ai-analytics': 'Analytics de IA',
+    '/financials': 'Gestão Financeira',
+    '/financial-dashboard': 'Dashboard Financeiro',
+    '/reports': 'Relatórios',
+    '/advanced-reports': 'Relatórios Avançados',
+    '/medical-reports': 'Relatórios Médicos',
+    '/evaluation-reports': 'Relatórios de Avaliação',
+    '/gerar-laudo': 'Gerar Laudo',
+    '/gerar-evolucao': 'Gerar Evolução',
+    '/gerar-hep': 'Gerar Plano (HEP)',
+    '/hep-generator': 'Gerador HEP',
+    '/analise-risco': 'Análise de Risco',
+    '/risk-analysis': 'Análise de Risco (Detalhada)',
+    '/users': 'Usuários/Terapeutas',
+    '/user-management': 'Gestão de Usuários',
+    '/groups': 'Grupos',
+    '/inventory': 'Estoque/Insumos',
+    '/inventory-dashboard': 'Dashboard de Estoque',
+    '/events': 'Eventos',
+    '/events-list': 'Lista de Eventos',
+    '/partnerships': 'Parcerias',
+    '/subscriptions': 'Assinaturas',
+    '/whatsapp': 'WhatsApp Business',
+    '/email-inativos': 'Email para Inativos',
+    '/mentoria': 'Sistema de Mentoria',
+    '/knowledge-base': 'Base de Conhecimento',
+    '/backup-management': 'Gerenciamento de Backup',
+    '/agenda-settings': 'Configurações da Agenda',
+    '/integrations': 'Integrações',
+    '/integrations-test': 'Teste de Integrações',
+    '/bi-integration-test': 'Teste BI',
+    '/audit-log': 'Auditoria & Compliance',
+    '/audit-log-page': 'Log de Auditoria',
+    '/legal': 'Legal',
+    '/settings': 'Configurações',
+    '/notifications': 'Notificações',
+    '/tasks': 'Quadro de Tarefas',
+  };
 
-    useEffect(() => {
-        const generateBreadcrumbs = async () => {
-            const pathnames = location.pathname.split('/').filter(x => x);
-            
-            const newCrumbs: Breadcrumb[] = [{ href: '/dashboard', label: 'Início' }];
-            
-            let currentPath = '';
+  const generateBreadcrumbs = (): BreadcrumbItem[] => {
+    const pathSegments = location.pathname.split('/').filter(segment => segment !== '');
+    const breadcrumbs: BreadcrumbItem[] = [];
 
-            for (const segment of pathnames) {
-                currentPath += `/${segment}`;
-                let label = breadcrumbNameMap[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
+    // Sempre incluir Home
+    breadcrumbs.push({ label: 'Início', href: '/dashboard' });
 
-                // Handle dynamic segments
-                if (params['id'] && segment === params['id']) {
-                    if (location.pathname.startsWith('/patients/')) {
-                        try {
-                            const patient = await patientService.getPatientById(params['id']);
-                            label = patient?.name || 'Paciente';
-                        } catch (e) {
-                            label = 'Paciente';
-                        }
-                    }
-                } else if (params['reportId'] && segment === params['reportId']) {
-                     label = 'Editar Laudo';
-                } else if (params['patientId'] && segment === params['patientId']) {
-                     label = 'Novo Laudo';
-                }
-                
-                newCrumbs.push({ href: currentPath, label });
-            }
-
-            setBreadcrumbs(newCrumbs);
-        };
-        
-        generateBreadcrumbs();
-    }, [location.pathname, params]);
-
-    if (breadcrumbs.length <= 1 || location.pathname === '/dashboard') {
-        return null;
+    // Construir breadcrumbs baseado nos segmentos da URL
+    let currentPath = '';
+    for (let i = 0; i < pathSegments.length; i++) {
+      currentPath += `/${pathSegments[i]}`;
+      const label = routeLabels[currentPath] || pathSegments[i];
+      
+      // Se for o último item, não adicionar href
+      const isLast = i === pathSegments.length - 1;
+      breadcrumbs.push({
+        label,
+        href: isLast ? undefined : currentPath
+      });
     }
 
-    return (
-        <nav className="mb-6 -mt-2" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-2 text-sm">
-                {breadcrumbs.map((crumb, index) => {
-                    const isLast = index === breadcrumbs.length - 1;
-                    return (
-                        <React.Fragment key={crumb.href}>
-                            <li>
-                                {isLast ? (
-                                    <span className="font-semibold text-slate-700 truncate max-w-xs">{crumb.label}</span>
-                                ) : (
-                                    <ReactRouterDOM.Link to={crumb.href} className="text-slate-500 hover:text-sky-600 transition-colors flex items-center gap-1.5">
-                                        {crumb.label === 'Início' ? <Home className="w-4 h-4" /> : null}
-                                        <span>{crumb.label}</span>
-                                    </ReactRouterDOM.Link>
-                                )}
-                            </li>
-                            {!isLast && (
-                                <li>
-                                    <ChevronRight className="w-4 h-4 text-slate-400" />
-                                </li>
-                            )}
-                        </React.Fragment>
-                    );
-                })}
-            </ol>
-        </nav>
-    );
+    return breadcrumbs;
+  };
+
+  const breadcrumbs = generateBreadcrumbs();
+
+  // Não mostrar breadcrumbs na página inicial
+  if (location.pathname === '/dashboard' || location.pathname === '/') {
+    return null;
+  }
+
+  return (
+    <nav className="flex items-center space-x-1 text-sm text-slate-500 mb-4">
+      <Link 
+        to="/dashboard" 
+        className="flex items-center hover:text-slate-700 transition-colors"
+      >
+        <Home className="w-4 h-4" />
+      </Link>
+      
+      {breadcrumbs.map((item, index) => (
+        <React.Fragment key={index}>
+          <ChevronRight className="w-4 h-4 text-slate-400" />
+          {item.href ? (
+            <Link 
+              to={item.href} 
+              className="hover:text-slate-700 transition-colors"
+            >
+              {item.label}
+            </Link>
+          ) : (
+            <span className="text-slate-900 font-medium">
+              {item.label}
+            </span>
+          )}
+        </React.Fragment>
+      ))}
+    </nav>
+  );
 };
 
 export default Breadcrumbs;

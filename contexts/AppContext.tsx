@@ -55,15 +55,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   // Data functions with comprehensive safety
   const fetchData = useCallback(async () => {
+    // ✅ SÓ BUSCA DADOS SE USUÁRIO ESTIVER AUTENTICADO
+    if (!isAuthenticated || !user) {
+      safeLog('Skipping data fetch - user not authenticated', { isAuthenticated, hasUser: !!user });
+      setDataLoading(false);
+      return;
+    }
+
+    safeLog('Starting data fetch for authenticated user', { userId: user.id, role: user.role });
+    
     setDataLoading(true);
     setError(null);
 
-    // Safe parallel data fetching with individual error handling
-    const [therapistsResult, patientsResult, appointmentsResult] = await Promise.all([
-      safeAsync(therapistService.getTherapists()),
-      safeAsync(patientService.getAllPatients()),
-      safeAsync(appointmentService.getAppointments()),
-    ]);
+    try {
+      // Safe parallel data fetching with individual error handling
+      const [therapistsResult, patientsResult, appointmentsResult] = await Promise.all([
+        safeAsync(therapistService.getTherapists()),
+        safeAsync(patientService.getAllPatients()),
+        safeAsync(appointmentService.getAppointments()),
+      ]);
 
     const errors: string[] = [];
 
@@ -100,7 +110,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     setDataLoading(false);
-  }, []);
+    } catch (error: any) {
+      console.error('❌ Error in fetchData:', error);
+      setError(error.message || 'Erro ao carregar dados');
+      setDataLoading(false);
+    }
+  }, [isAuthenticated, user]);
 
   // Safe data access methods - MOVED TO TOP LEVEL
   const safeGetPatient = useCallback((id: string): Patient | undefined => {

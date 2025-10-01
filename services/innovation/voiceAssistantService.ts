@@ -1,5 +1,3 @@
-import { debounce } from '../utils/debounce';
-
 interface VoiceCommandContext {
   patientId?: string;
   sessionId?: string;
@@ -20,10 +18,8 @@ const SAMPLE_COMMANDS: Array<{ pattern: RegExp; intent: VoiceCommandResult['inte
 ];
 
 export class VoiceAssistantService {
-  private readonly process = debounce((text: string) => text.trim(), 150);
-
   async interpretCommand(transcript: string, context: VoiceCommandContext = {}): Promise<VoiceCommandResult> {
-    const normalized = this.process(transcript).toLowerCase();
+    const normalized = transcript.trim().toLowerCase();
 
     const match = SAMPLE_COMMANDS.find((cmd) => cmd.pattern.test(normalized));
     if (!match) {

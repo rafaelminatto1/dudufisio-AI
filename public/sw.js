@@ -299,20 +299,33 @@ async function staleWhileRevalidateStrategy(request) {
   const cachedResponse = await caches.match(request);
 
   const fetchPromise = fetch(request).then((networkResponse) => {
-    if (networkResponse.ok) {
-      const cache = caches.open(CACHE_NAME);
-      cache.then(c => {
-        // Clone the response before caching to avoid "body already used" error
-        const responseClone = networkResponse.clone();
-        return c.put(request, responseClone);
+    if (networkResponse && networkResponse.ok) {
+      // Clone BEFORE any other operation to avoid "body already used" error
+      const responseToCache = networkResponse.clone();
+      
+      caches.open(CACHE_NAME).then(cache => {
+        cache.put(request, responseToCache).catch(err => {
+          console.warn('Cache put error:', err);
+        });
+      }).catch(err => {
+        console.warn('Cache open error:', err);
       });
     }
     return networkResponse;
-  }).catch(() => {
-    // Silencioso - cache é prioridade
+  }).catch((err) => {
+    console.warn('Fetch error:', err);
+    return null;
   });
 
-  return cachedResponse || fetchPromise;
+  // Se tem cache, retorna imediatamente
+  if (cachedResponse) {
+    // Atualiza em background
+    fetchPromise.catch(() => {});
+    return cachedResponse;
+  }
+
+  // Se não tem cache, aguarda a rede
+  return fetchPromise || new Response('Network error', { status: 503 });
 }
 
 // 🎯 HANDLERS DE NOTIFICAÇÃO

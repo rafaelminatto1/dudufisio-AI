@@ -1,8 +1,8 @@
 /**
  * > AI ANALYTICS PAGE - DUDUFISIO-AI
  *
- * Dashboard completo de analytics com IA para análises preditivas,
- * insights clínicos e métricas inteligentes da clínica.
+ * Dashboard completo de analytics com IA para anï¿½lises preditivas,
+ * insights clï¿½nicos e mï¿½tricas inteligentes da clï¿½nica.
  */
 
 import React, { useState, useEffect } from 'react';
@@ -91,7 +91,7 @@ const AiAnalyticsPage: React.FC = () => {
     try {
       setIsLoading(true);
 
-      // Simular análises de IA (em produção, usar APIs reais)
+      // Simular anï¿½lises de IA (em produï¿½ï¿½o, usar APIs reais)
       await Promise.all([
         generatePredictions(),
         generatePatientInsights(),
@@ -113,15 +113,15 @@ const AiAnalyticsPage: React.FC = () => {
         id: '1',
         type: 'demand',
         title: 'Pico de Demanda Previsto',
-        description: 'Aumento de 35% na demanda por consultas nos próximos 15 dias',
-        prediction: 'Baseado no histórico sazonal e tendências locais, prevemos um aumento significativo de agendamentos',
+        description: 'Aumento de 35% na demanda por consultas nos prï¿½ximos 15 dias',
+        prediction: 'Baseado no histï¿½rico sazonal e tendï¿½ncias locais, prevemos um aumento significativo de agendamentos',
         confidence: 89,
-        timeframe: 'Próximos 15 dias',
+        timeframe: 'Prï¿½ximos 15 dias',
         impact: 'high',
         actionable: true,
         recommendations: [
           'Ajustar agenda para comportar 35% mais consultas',
-          'Considerar horas extras ou terapeutas temporários',
+          'Considerar horas extras ou terapeutas temporï¿½rios',
           'Preparar materiais adicionais para atendimento'
         ],
         dataPoints: 1250,
@@ -132,17 +132,17 @@ const AiAnalyticsPage: React.FC = () => {
       {
         id: '2',
         type: 'outcome',
-        title: 'Melhoria em Resultados Clínicos',
-        description: 'Protocolos de lombalgia mostram 25% mais eficácia com ajustes de IA',
-        prediction: 'Otimizações baseadas em ML melhoraram significativamente os outcomes',
+        title: 'Melhoria em Resultados Clï¿½nicos',
+        description: 'Protocolos de lombalgia mostram 25% mais eficï¿½cia com ajustes de IA',
+        prediction: 'Otimizaï¿½ï¿½es baseadas em ML melhoraram significativamente os outcomes',
         confidence: 92,
-        timeframe: 'Últimos 30 dias',
+        timeframe: 'ï¿½ltimos 30 dias',
         impact: 'high',
         actionable: true,
         recommendations: [
-          'Expandir protocolos otimizados para outras condições',
+          'Expandir protocolos otimizados para outras condiï¿½ï¿½es',
           'Treinar equipe nos novos protocolos',
-          'Documentar melhores práticas identificadas'
+          'Documentar melhores prï¿½ticas identificadas'
         ],
         dataPoints: 890,
         trend: 'up',
@@ -153,16 +153,16 @@ const AiAnalyticsPage: React.FC = () => {
         id: '3',
         type: 'risk',
         title: 'Risco de Abandono Identificado',
-        description: '12 pacientes com alta probabilidade de abandono nas próximas 2 semanas',
-        prediction: 'Análise comportamental identificou padrões de abandono precoce',
+        description: '12 pacientes com alta probabilidade de abandono nas prï¿½ximas 2 semanas',
+        prediction: 'Anï¿½lise comportamental identificou padrï¿½es de abandono precoce',
         confidence: 84,
-        timeframe: 'Próximas 2 semanas',
+        timeframe: 'Prï¿½ximas 2 semanas',
         impact: 'medium',
         actionable: true,
         recommendations: [
           'Contato proativo com pacientes em risco',
           'Ajustar planos de tratamento para maior engajamento',
-          'Implementar estratégias de retenção personalizadas'
+          'Implementar estratï¿½gias de retenï¿½ï¿½o personalizadas'
         ],
         dataPoints: 2100,
         trend: 'down',
@@ -172,16 +172,16 @@ const AiAnalyticsPage: React.FC = () => {
       {
         id: '4',
         type: 'efficiency',
-        title: 'Otimização de Agenda',
-        description: 'IA sugere redistribuição que aumenta eficiência em 18%',
-        prediction: 'Algoritmo identifica padrões ótimos de agendamento baseado em histórico',
+        title: 'Otimizaï¿½ï¿½o de Agenda',
+        description: 'IA sugere redistribuiï¿½ï¿½o que aumenta eficiï¿½ncia em 18%',
+        prediction: 'Algoritmo identifica padrï¿½es ï¿½timos de agendamento baseado em histï¿½rico',
         confidence: 91,
-        timeframe: 'Implementação imediata',
+        timeframe: 'Implementaï¿½ï¿½o imediata',
         impact: 'medium',
         actionable: true,
         recommendations: [
-          'Implementar sugestões automáticas de horários',
-          'Redistribuir tipos de consulta por período',
+          'Implementar sugestï¿½es automï¿½ticas de horï¿½rios',
+          'Redistribuir tipos de consulta por perï¿½odo',
           'Otimizar intervalos entre consultas'
         ],
         dataPoints: 3200,
@@ -192,17 +192,17 @@ const AiAnalyticsPage: React.FC = () => {
       {
         id: '5',
         type: 'revenue',
-        title: 'Projeção de Receita',
-        description: 'Receita projetada 22% acima do mês anterior',
-        prediction: 'Combinação de demanda alta e otimizações resulta em crescimento expressivo',
+        title: 'Projeï¿½ï¿½o de Receita',
+        description: 'Receita projetada 22% acima do mï¿½s anterior',
+        prediction: 'Combinaï¿½ï¿½o de demanda alta e otimizaï¿½ï¿½es resulta em crescimento expressivo',
         confidence: 87,
-        timeframe: 'Final do mês',
+        timeframe: 'Final do mï¿½s',
         impact: 'high',
         actionable: false,
         recommendations: [
-          'Monitorar métricas financeiras de perto',
+          'Monitorar mï¿½tricas financeiras de perto',
           'Preparar infraestrutura para crescimento',
-          'Avaliar investimentos em expansão'
+          'Avaliar investimentos em expansï¿½o'
         ],
         dataPoints: 1800,
         trend: 'up',
@@ -227,9 +227,9 @@ const AiAnalyticsPage: React.FC = () => {
           recoveryTime: 85
         },
         recommendations: [
-          'Reduzir frequência inicial das sessões',
-          'Implementar gamificação no tratamento',
-          'Acompanhamento mais próximo via WhatsApp'
+          'Reduzir frequï¿½ncia inicial das sessï¿½es',
+          'Implementar gamificaï¿½ï¿½o no tratamento',
+          'Acompanhamento mais prï¿½ximo via WhatsApp'
         ],
         lastUpdate: new Date().toISOString()
       },
@@ -245,7 +245,7 @@ const AiAnalyticsPage: React.FC = () => {
         },
         recommendations: [
           'Manter protocolo atual',
-          'Consideração para alta precoce',
+          'Consideraï¿½ï¿½o para alta precoce',
           'Paciente modelo para estudos de caso'
         ],
         lastUpdate: new Date().toISOString()
@@ -261,8 +261,8 @@ const AiAnalyticsPage: React.FC = () => {
           recoveryTime: 90
         },
         recommendations: [
-          'Ajustar horários para melhor conveniência',
-          'Incluir exercícios domiciliares',
+          'Ajustar horï¿½rios para melhor conveniï¿½ncia',
+          'Incluir exercï¿½cios domiciliares',
           'Feedback mais frequente sobre progresso'
         ],
         lastUpdate: new Date().toISOString()
@@ -284,14 +284,14 @@ const AiAnalyticsPage: React.FC = () => {
         patientsCompleted: 156,
         trend: 'improving',
         recommendations: [
-          'Expandir uso para outras condições similares',
+          'Expandir uso para outras condiï¿½ï¿½es similares',
           'Documentar fatores de sucesso',
           'Treinar toda equipe no protocolo'
         ]
       },
       {
         protocolId: '2',
-        protocolName: 'Reabilitação Pós-Cirúrgica Joelho',
+        protocolName: 'Reabilitaï¿½ï¿½o Pï¿½s-Cirï¿½rgica Joelho',
         successRate: 78,
         averageRecoveryTime: 45,
         patientSatisfaction: 86,
@@ -300,13 +300,13 @@ const AiAnalyticsPage: React.FC = () => {
         trend: 'stable',
         recommendations: [
           'Revisar fase inicial do protocolo',
-          'Incluir mais exercícios funcionais',
-          'Melhorar educação do paciente'
+          'Incluir mais exercï¿½cios funcionais',
+          'Melhorar educaï¿½ï¿½o do paciente'
         ]
       },
       {
         protocolId: '3',
-        protocolName: 'Fisioterapia Respiratória COVID',
+        protocolName: 'Fisioterapia Respiratï¿½ria COVID',
         successRate: 95,
         averageRecoveryTime: 18,
         patientSatisfaction: 97,
@@ -315,8 +315,8 @@ const AiAnalyticsPage: React.FC = () => {
         trend: 'improving',
         recommendations: [
           'Protocolo exemplar - manter exatamente',
-          'Usar como base para outros protocolos respiratórios',
-          'Publicar resultados em revista científica'
+          'Usar como base para outros protocolos respiratï¿½rios',
+          'Publicar resultados em revista cientï¿½fica'
         ]
       }
     ];
@@ -327,30 +327,30 @@ const AiAnalyticsPage: React.FC = () => {
   const generateOperationalInsights = async (): Promise<void> => {
     const mockOperational: OperationalInsight[] = [
       {
-        metric: 'Taxa de Ocupação',
+        metric: 'Taxa de Ocupaï¿½ï¿½o',
         currentValue: 78,
         predictedValue: 89,
         variance: 11,
         trend: 'positive',
-        aiRecommendation: 'Aumentar disponibilidade de horários nos próximos 15 dias',
+        aiRecommendation: 'Aumentar disponibilidade de horï¿½rios nos prï¿½ximos 15 dias',
         urgency: 'medium'
       },
       {
-        metric: 'Tempo Médio de Atendimento',
+        metric: 'Tempo Mï¿½dio de Atendimento',
         currentValue: 45,
         predictedValue: 42,
         variance: -3,
         trend: 'positive',
-        aiRecommendation: 'Otimizações de protocolo resultando em maior eficiência',
+        aiRecommendation: 'Otimizaï¿½ï¿½es de protocolo resultando em maior eficiï¿½ncia',
         urgency: 'low'
       },
       {
-        metric: 'Satisfação do Paciente',
+        metric: 'Satisfaï¿½ï¿½o do Paciente',
         currentValue: 87,
         predictedValue: 91,
         variance: 4,
         trend: 'positive',
-        aiRecommendation: 'Melhorias em comunicação estão impactando positivamente',
+        aiRecommendation: 'Melhorias em comunicaï¿½ï¿½o estï¿½o impactando positivamente',
         urgency: 'low'
       },
       {
@@ -359,16 +359,16 @@ const AiAnalyticsPage: React.FC = () => {
         predictedValue: 8,
         variance: -4,
         trend: 'positive',
-        aiRecommendation: 'Sistema de lembretes automatizados mostrando eficácia',
+        aiRecommendation: 'Sistema de lembretes automatizados mostrando eficï¿½cia',
         urgency: 'low'
       },
       {
-        metric: 'Custo por Sessão',
+        metric: 'Custo por Sessï¿½o',
         currentValue: 85,
         predictedValue: 78,
         variance: -7,
         trend: 'positive',
-        aiRecommendation: 'Otimizações operacionais reduzindo custos sem impacto na qualidade',
+        aiRecommendation: 'Otimizaï¿½ï¿½es operacionais reduzindo custos sem impacto na qualidade',
         urgency: 'low'
       }
     ];
@@ -426,7 +426,7 @@ const AiAnalyticsPage: React.FC = () => {
           <Bot className="w-8 h-8 animate-pulse text-sky-600" />
           <div>
             <div className="text-lg font-semibold text-gray-900">Analisando dados com IA...</div>
-            <div className="text-sm text-gray-600">Processando insights e previsões</div>
+            <div className="text-sm text-gray-600">Processando insights e previsï¿½es</div>
           </div>
         </div>
       </div>
@@ -439,12 +439,12 @@ const AiAnalyticsPage: React.FC = () => {
         <div className="flex items-center justify-between">
           <PageHeader
             title="IA & Analytics"
-            subtitle="Insights inteligentes e análises preditivas para sua clínica"
+            subtitle="Insights inteligentes e anï¿½lises preditivas para sua clï¿½nica"
           />
 
           <div className="flex items-center gap-3">
             <div className="text-sm text-gray-600">
-              Última atualização: {lastUpdate}
+              ï¿½ltima atualizaï¿½ï¿½o: {lastUpdate}
             </div>
             <button
               onClick={refreshAIAnalytics}
@@ -481,7 +481,7 @@ const AiAnalyticsPage: React.FC = () => {
                 <Target className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-green-700">Confiança Média</p>
+                <p className="text-sm font-medium text-green-700">Confianï¿½a Mï¿½dia</p>
                 <p className="text-2xl font-bold text-green-900">
                   {Math.round(predictions.reduce((acc, p) => acc + p.confidence, 0) / predictions.length)}%
                 </p>
@@ -521,8 +521,8 @@ const AiAnalyticsPage: React.FC = () => {
         {/* Main Analytics Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="predictions">Previsões</TabsTrigger>
+            <TabsTrigger value="overview">Visï¿½o Geral</TabsTrigger>
+            <TabsTrigger value="predictions">Previsï¿½es</TabsTrigger>
             <TabsTrigger value="patients">Pacientes</TabsTrigger>
             <TabsTrigger value="treatments">Tratamentos</TabsTrigger>
             <TabsTrigger value="operations">Operacional</TabsTrigger>
@@ -551,7 +551,7 @@ const AiAnalyticsPage: React.FC = () => {
                           <p className="text-gray-600 text-sm mb-3">{prediction.description}</p>
                           <div className="flex items-center gap-4 text-xs">
                             <span className={`px-2 py-1 rounded-full ${getConfidenceColor(prediction.confidence)}`}>
-                              {prediction.confidence}% confiança
+                              {prediction.confidence}% confianï¿½a
                             </span>
                             <span className="text-gray-500">{prediction.timeframe}</span>
                             <span className={`px-2 py-1 rounded-full ${
@@ -582,7 +582,7 @@ const AiAnalyticsPage: React.FC = () => {
                 <div className="p-6 border-b border-gray-200">
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                     <BarChart3 className="w-5 h-5 text-blue-500" />
-                    Métricas Operacionais
+                    Mï¿½tricas Operacionais
                   </h3>
                 </div>
                 <div className="p-6">
@@ -597,13 +597,13 @@ const AiAnalyticsPage: React.FC = () => {
                           <div className="flex items-center gap-2">
                             <span className="text-lg font-bold text-gray-900">
                               {insight.currentValue}
-                              {insight.metric.includes('Taxa') || insight.metric.includes('Satisfação') ? '%' : ''}
+                              {insight.metric.includes('Taxa') || insight.metric.includes('Satisfaï¿½ï¿½o') ? '%' : ''}
                             </span>
                             {getTrendIcon(insight.trend)}
                           </div>
                           <p className="text-xs text-gray-500">
                             Prev: {insight.predictedValue}
-                            {insight.metric.includes('Taxa') || insight.metric.includes('Satisfação') ? '%' : ''}
+                            {insight.metric.includes('Taxa') || insight.metric.includes('Satisfaï¿½ï¿½o') ? '%' : ''}
                           </p>
                         </div>
                       </div>
@@ -662,13 +662,13 @@ const AiAnalyticsPage: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Previsões e Insights de IA</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">Previsï¿½es e Insights de IA</h3>
                   <div className="flex items-center gap-2">
                     <Filter className="w-4 h-4 text-gray-400" />
                     <select className="border border-gray-300 rounded px-3 py-1 text-sm">
-                      <option>Todas as previsões</option>
-                      <option>Alta confiança (>90%)</option>
-                      <option>Ação necessária</option>
+                      <option>Todas as previsï¿½es</option>
+                      <option>Alta confianï¿½a (&gt;90%)</option>
+                      <option>Aï¿½ï¿½o necessï¿½ria</option>
                       <option>Alto impacto</option>
                     </select>
                   </div>
@@ -693,7 +693,7 @@ const AiAnalyticsPage: React.FC = () => {
                             <div className="flex items-center gap-2">
                               {getTrendIcon(prediction.trend)}
                               <span className={`px-3 py-1 rounded-full text-sm font-medium ${getConfidenceColor(prediction.confidence)}`}>
-                                {prediction.confidence}% confiança
+                                {prediction.confidence}% confianï¿½a
                               </span>
                             </div>
                           </div>
@@ -701,7 +701,7 @@ const AiAnalyticsPage: React.FC = () => {
                           <p className="text-gray-600 mb-4">{prediction.description}</p>
 
                           <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                            <h5 className="font-medium text-gray-900 mb-2">Análise Detalhada:</h5>
+                            <h5 className="font-medium text-gray-900 mb-2">Anï¿½lise Detalhada:</h5>
                             <p className="text-gray-700 text-sm">{prediction.prediction}</p>
                           </div>
 
@@ -734,7 +734,7 @@ const AiAnalyticsPage: React.FC = () => {
                             <div className="border-t border-gray-200 pt-4">
                               <h5 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
                                 <Lightbulb className="w-4 h-4 text-yellow-500" />
-                                Recomendações de Ação:
+                                Recomendaï¿½ï¿½es de Aï¿½ï¿½o:
                               </h5>
                               <ul className="space-y-1">
                                 {prediction.recommendations.map((rec, index) => (
@@ -794,7 +794,7 @@ const AiAnalyticsPage: React.FC = () => {
                               <span className="text-sm font-bold text-gray-900">{insight.predictions.adherence}%</span>
                             </div>
                           </div>
-                          <p className="text-xs text-gray-600">Aderência</p>
+                          <p className="text-xs text-gray-600">Aderï¿½ncia</p>
                         </div>
 
                         <div className="text-center">
@@ -845,7 +845,7 @@ const AiAnalyticsPage: React.FC = () => {
                               <span className="text-sm font-bold text-gray-900">{insight.predictions.recoveryTime}%</span>
                             </div>
                           </div>
-                          <p className="text-xs text-gray-600">Recuperação</p>
+                          <p className="text-xs text-gray-600">Recuperaï¿½ï¿½o</p>
                         </div>
                       </div>
 
@@ -853,7 +853,7 @@ const AiAnalyticsPage: React.FC = () => {
                       <div className="border-t border-gray-200 pt-4">
                         <h5 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
                           <Heart className="w-4 h-4 text-red-500" />
-                          Recomendações Personalizadas:
+                          Recomendaï¿½ï¿½es Personalizadas:
                         </h5>
                         <div className="space-y-2">
                           {insight.recommendations.map((rec, index) => (
@@ -877,7 +877,7 @@ const AiAnalyticsPage: React.FC = () => {
               <div className="p-6 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <Activity className="w-5 h-5 text-green-500" />
-                  Eficácia de Tratamentos
+                  Eficï¿½cia de Tratamentos
                 </h3>
               </div>
               <div className="p-6">
@@ -887,7 +887,7 @@ const AiAnalyticsPage: React.FC = () => {
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <h4 className="text-lg font-semibold text-gray-900">{treatment.protocolName}</h4>
-                          <p className="text-sm text-gray-600">{treatment.patientsCompleted} pacientes concluídos</p>
+                          <p className="text-sm text-gray-600">{treatment.patientsCompleted} pacientes concluï¿½dos</p>
                         </div>
                         <div className="flex items-center gap-2">
                           {getTrendIcon(treatment.trend)}
@@ -909,11 +909,11 @@ const AiAnalyticsPage: React.FC = () => {
                         </div>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-purple-600">{treatment.averageRecoveryTime}</div>
-                          <div className="text-sm text-gray-600">Dias (média)</div>
+                          <div className="text-sm text-gray-600">Dias (mï¿½dia)</div>
                         </div>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-green-600">{treatment.patientSatisfaction}%</div>
-                          <div className="text-sm text-gray-600">Satisfação</div>
+                          <div className="text-sm text-gray-600">Satisfaï¿½ï¿½o</div>
                         </div>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-orange-600">{treatment.costEffectiveness}%</div>
@@ -937,7 +937,7 @@ const AiAnalyticsPage: React.FC = () => {
                         </div>
                         <div>
                           <div className="flex justify-between text-sm text-gray-600 mb-1">
-                            <span>Satisfação do Paciente</span>
+                            <span>Satisfaï¿½ï¿½o do Paciente</span>
                             <span>{treatment.patientSatisfaction}%</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -965,7 +965,7 @@ const AiAnalyticsPage: React.FC = () => {
                       <div className="border-t border-gray-200 pt-4">
                         <h5 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
                           <Lightbulb className="w-4 h-4 text-yellow-500" />
-                          Recomendações de Melhoria:
+                          Recomendaï¿½ï¿½es de Melhoria:
                         </h5>
                         <div className="space-y-2">
                           {treatment.recommendations.map((rec, index) => (
@@ -1015,32 +1015,32 @@ const AiAnalyticsPage: React.FC = () => {
                         <div className="text-center">
                           <div className="text-3xl font-bold text-gray-900">
                             {insight.currentValue}
-                            {insight.metric.includes('Taxa') || insight.metric.includes('Satisfação') ? '%' : ''}
+                            {insight.metric.includes('Taxa') || insight.metric.includes('Satisfaï¿½ï¿½o') ? '%' : ''}
                           </div>
                           <div className="text-sm text-gray-600">Valor Atual</div>
                         </div>
                         <div className="text-center">
                           <div className="text-3xl font-bold text-sky-600">
                             {insight.predictedValue}
-                            {insight.metric.includes('Taxa') || insight.metric.includes('Satisfação') ? '%' : ''}
+                            {insight.metric.includes('Taxa') || insight.metric.includes('Satisfaï¿½ï¿½o') ? '%' : ''}
                           </div>
-                          <div className="text-sm text-gray-600">Previsão IA</div>
+                          <div className="text-sm text-gray-600">Previsï¿½o IA</div>
                         </div>
                         <div className="text-center">
                           <div className={`text-3xl font-bold ${
                             insight.variance > 0 ? 'text-green-600' : 'text-red-600'
                           }`}>
                             {insight.variance > 0 ? '+' : ''}{insight.variance}
-                            {insight.metric.includes('Taxa') || insight.metric.includes('Satisfação') ? '%' : ''}
+                            {insight.metric.includes('Taxa') || insight.metric.includes('Satisfaï¿½ï¿½o') ? '%' : ''}
                           </div>
-                          <div className="text-sm text-gray-600">Variação</div>
+                          <div className="text-sm text-gray-600">Variaï¿½ï¿½o</div>
                         </div>
                       </div>
 
                       <div className="bg-blue-50 rounded-lg p-4">
                         <h5 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
                           <Bot className="w-4 h-4" />
-                          Recomendação de IA:
+                          Recomendaï¿½ï¿½o de IA:
                         </h5>
                         <p className="text-blue-800 text-sm">{insight.aiRecommendation}</p>
                       </div>
@@ -1057,7 +1057,7 @@ const AiAnalyticsPage: React.FC = () => {
           <div className="flex justify-end">
             <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
               <Download className="w-4 h-4" />
-              Exportar Relatório de IA
+              Exportar Relatï¿½rio de IA
             </button>
           </div>
         </IfPermission>
