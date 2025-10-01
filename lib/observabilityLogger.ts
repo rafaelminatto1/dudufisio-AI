@@ -37,7 +37,13 @@ export const observability = {
   security: createLogger('security'),
   database: createLogger('database'),
   application: createLogger('application'),
-  service: createLogger('application'), // Adicionar service como alias para application
+  service: {
+    ...createLogger('application'),
+    call: (event: string, payload?: unknown) => {
+      // Alias para info para compatibilidade
+      createLogger('application').info(event, payload);
+    }
+  },
   config: {
     load: (event: string, payload?: unknown) => console.info(`[config] ${event}`, payload),
     error: (event: string, payload?: unknown) => console.error(`[config] ${event}`, payload),

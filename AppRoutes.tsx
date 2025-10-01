@@ -1,4 +1,11 @@
 import React, { lazy, useState, useEffect, Component, ErrorInfo, ReactNode } from 'react';
+import { 
+  CompleteDashboard, 
+  PatientPortalDashboard, 
+  PartnerPortalDashboard,
+  preloadCriticalComponents,
+  preloadUserRoleComponents
+} from './lib/lazyLoading';
 import { BrowserRouter } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
@@ -95,10 +102,7 @@ class AppErrorBoundary extends Component<
   }
 }
 
-// Lazy load different portal dashboards
-const CompleteDashboard = lazy(() => import('./pages/CompleteDashboard'));
-const PatientPortalDashboard = lazy(() => import('./pages/PatientPortalDashboard'));
-const PartnerPortalDashboard = lazy(() => import('./pages/PartnerPortalDashboard'));
+// Lazy load remaining components
 const IntegrationsTestPage = lazy(() => import('./pages/IntegrationsTestPage'));
 const BIIntegrationTestPage = lazy(() => import('./pages/BIIntegrationTestPage'));
 
@@ -120,6 +124,15 @@ const AppContent: React.FC = () => {
             console.log('ℹ️  Service Worker desabilitado em desenvolvimento');
         }
     }, []);
+
+    // 🚀 Preloading inteligente de componentes
+    useEffect(() => {
+        preloadCriticalComponents();
+        
+        if (user?.role) {
+            preloadUserRoleComponents(user.role);
+        }
+    }, [user?.role]);
 
     // 📊 Log estado de autenticação para debug
     useEffect(() => {

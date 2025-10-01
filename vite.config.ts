@@ -55,7 +55,12 @@ export default defineConfig({
       'react',
       'react-dom',
       'react/jsx-runtime',
-      'react/jsx-dev-runtime'
+      'react/jsx-dev-runtime',
+      'react-router-dom',
+      'lucide-react',
+      '@radix-ui/react-slot',
+      'clsx',
+      'tailwind-merge'
     ],
     exclude: ['@playwright/test'],
     force: true
@@ -74,7 +79,7 @@ export default defineConfig({
       },
       output: {
         manualChunks: (id) => {
-          // Otimização de chunks para melhor cache
+          // Otimização de chunks para melhor cache e performance
           if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
             return 'react-vendor';
           }
@@ -84,14 +89,33 @@ export default defineConfig({
           if (id.includes('@google/generative-ai') || id.includes('groq-sdk')) {
             return 'ai-vendor';
           }
-          if (id.includes('@supabase') || id.includes('axios')) {
+          if (id.includes('@supabase') || id.includes('axios') || id.includes('resend')) {
             return 'api-vendor';
           }
-          if (id.includes('recharts') || id.includes('date-fns')) {
+          if (id.includes('recharts') || id.includes('date-fns') || id.includes('html2canvas')) {
             return 'charts-vendor';
+          }
+          if (id.includes('jspdf') || id.includes('html2pdf') || id.includes('ics')) {
+            return 'pdf-vendor';
+          }
+          if (id.includes('bull') || id.includes('redis')) {
+            return 'queue-vendor';
           }
           if (id.includes('node_modules')) {
             return 'vendor';
+          }
+          // Chunks por funcionalidade
+          if (id.includes('/pages/patient-portal/')) {
+            return 'patient-portal';
+          }
+          if (id.includes('/pages/partner-portal/')) {
+            return 'partner-portal';
+          }
+          if (id.includes('/components/acompanhamento/')) {
+            return 'acompanhamento';
+          }
+          if (id.includes('/services/')) {
+            return 'services';
           }
         },
         entryFileNames: 'assets/[name]-[hash].js',

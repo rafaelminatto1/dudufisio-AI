@@ -197,10 +197,22 @@ function useApp(): AppContextType {
 
 export { useApp };
 
-// Backward compatibility hooks
+// Backward compatibility hooks - DEPRECATED: Use useApp instead
 export const useAuth = () => {
-  const { user, isAuthenticated, isLoading, login, logout } = useApp();
-  return { user, isAuthenticated, isLoading, login, logout };
+  try {
+    const { user, isAuthenticated, isLoading, login, logout } = useApp();
+    return { user, isAuthenticated, isLoading, login, logout };
+  } catch (error) {
+    console.error('useAuth hook error:', error);
+    // Return safe defaults
+    return {
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      login: async () => ({ success: false, error: new Error('Context not available') } as any),
+      logout: async () => ({ success: false, error: new Error('Context not available') } as any)
+    };
+  }
 };
 
 export const useData = () => {
