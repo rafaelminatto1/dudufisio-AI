@@ -1,7 +1,7 @@
 import React from 'react';
 import AppRoutes from './AppRoutes';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { SkipLinks } from './lib/accessibility';
+import { SkipLinks } from './components/SkipLinks';
 
 /**
  * Mantido como entry point alternativo para cenários de testes/Storybook.
