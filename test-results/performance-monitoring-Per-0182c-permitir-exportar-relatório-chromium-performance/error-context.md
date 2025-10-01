@@ -1,0 +1,50 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - img [ref=e8]
+    - heading "DuduFisio" [level=1] [ref=e12]:
+      - text: Dudu
+      - generic [ref=e13]: Fisio
+    - paragraph [ref=e14]: Sistema de Gestão em Fisioterapia
+  - generic [ref=e15]:
+    - generic [ref=e16]:
+      - heading "Bem-vindo de volta" [level=3] [ref=e17]
+      - paragraph [ref=e18]: Faça login para acessar sua conta
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e22]: Email
+          - generic [ref=e23]:
+            - img [ref=e24]
+            - textbox "Email" [ref=e27]: admin@test.com
+        - generic [ref=e28]:
+          - generic [ref=e29]: Senha
+          - generic [ref=e30]:
+            - img [ref=e31]
+            - textbox "Senha" [active] [ref=e34]: password
+            - button [ref=e35] [cursor=pointer]:
+              - img [ref=e36] [cursor=pointer]
+        - button "Entrar" [ref=e39] [cursor=pointer]
+      - generic [ref=e44]: Ou continue com
+      - generic [ref=e45]:
+        - button "Google" [ref=e46] [cursor=pointer]:
+          - img [ref=e47] [cursor=pointer]
+          - text: Google
+        - button "GitHub" [ref=e52] [cursor=pointer]:
+          - img [ref=e53] [cursor=pointer]
+          - text: GitHub
+      - button "Ver contas de demonstração" [ref=e56] [cursor=pointer]
+    - generic [ref=e57]:
+      - generic [ref=e58]:
+        - text: Esqueceu sua senha?
+        - button "Recuperar senha" [ref=e59] [cursor=pointer]
+      - generic [ref=e60]:
+        - text: Não tem uma conta?
+        - button "Criar conta" [ref=e61] [cursor=pointer]
+  - generic [ref=e62]:
+    - paragraph [ref=e63]: 🔒 Login seguro com 2FA
+    - paragraph [ref=e64]: 🚀 Sistema completo de gestão
+    - paragraph [ref=e65]: 🤖 Powered by AI
+```
