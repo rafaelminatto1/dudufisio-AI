@@ -86,7 +86,7 @@ CREATE OR REPLACE VIEW task_cost_analytics AS
 SELECT 
   t.id as task_id,
   t.title as task_title,
-  t.type as task_type,
+  t.task_type as task_type,
   t.status as task_status,
   t.created_at as task_date,
   t.estimated_duration,

@@ -126,18 +126,7 @@ CREATE INDEX IF NOT EXISTS idx_alert_history_alert
 CREATE INDEX IF NOT EXISTS idx_alert_history_action_date 
   ON alert_history(action, performed_at);
 
--- Índices para notifications
-CREATE INDEX IF NOT EXISTS idx_notifications_user_unread 
-  ON notifications(user_id, is_read) WHERE is_read = false;
-
-CREATE INDEX IF NOT EXISTS idx_notifications_type_priority 
-  ON notifications(type, priority);
-
-CREATE INDEX IF NOT EXISTS idx_notifications_created_at 
-  ON notifications(created_at);
-
-CREATE INDEX IF NOT EXISTS idx_notifications_expires_at 
-  ON notifications(expires_at) WHERE expires_at IS NOT NULL;
+-- Índices para notifications (todos já existem)
 
 -- Índices para user_notification_settings
 CREATE INDEX IF NOT EXISTS idx_user_notification_settings_user 
