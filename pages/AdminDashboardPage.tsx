@@ -1,278 +1,457 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import PageHeader from '../components/PageHeader';
-import FinancialMetricsCards from '../components/admin-dashboard/FinancialMetricsCards';
-import OperationalMetricsCards from '../components/admin-dashboard/OperationalMetricsCards';
-import AdminAlerts, { AdminAlert } from '../components/admin-dashboard/AdminAlerts';
-import RevenueEvolutionChart from '../components/admin-dashboard/RevenueEvolutionChart';
-import ProfessionalProductivityChart from '../components/admin-dashboard/ProfessionalProductivityChart';
-import PatientDistributionChart from '../components/admin-dashboard/PatientDistributionChart';
-import DashboardFilters, { FilterOptions } from '../components/admin-dashboard/DashboardFilters';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
 import {
   DollarSign,
   Activity,
   BarChart3,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  Users,
+  Calendar,
+  Settings,
+  Download,
+  RefreshCw
 } from 'lucide-react';
 
-// Tipos de dados
-interface FinancialMetrics {
-  monthlyRevenue: number;
-  averageTicket: number;
-  occupancyRate: number;
-  partnerCommissions: number;
-  revenueGrowth: number;
-  ticketGrowth: number;
-}
-
-interface OperationalMetrics {
-  activePatients: number;
-  inactivePatients: number;
-  abandonmentRate: number;
-  averageSessionsUntilDischarge: number;
-  professionalProductivity: Array<{
-    name: string;
-    sessions: number;
-    revenue: number;
-  }>;
-}
-
-// Removido - agora usando AdminAlert do componente
-
-const AdminDashboardPage: React.FC = () => {
-  const [filters, setFilters] = useState<FilterOptions>({
-    period: '30',
-    professional: 'all',
-    paymentType: 'particular',
-    status: 'all'
-  });
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Dados mockados para demonstração
-  const [financialData, setFinancialData] = useState<FinancialMetrics>({
-    monthlyRevenue: 45680.50,
-    averageTicket: 185.30,
-    occupancyRate: 78.5,
-    partnerCommissions: 6850.75,
+// Dados mock para demonstração
+const mockFinancialData = {
+  monthlyRevenue: 125000,
+  averageTicket: 150,
+  occupancyRate: 85,
+  partnerCommissions: 25000,
     revenueGrowth: 12.5,
-    ticketGrowth: 8.2
-  });
+  ticketGrowth: 8.3
+};
 
-  const [operationalData, setOperationalData] = useState<OperationalMetrics>({
-    activePatients: 156,
-    inactivePatients: 23,
-    abandonmentRate: 12.8,
-    averageSessionsUntilDischarge: 8.5,
-    professionalProductivity: [
-      { name: 'Dr. Ana Silva', sessions: 45, revenue: 8325.00 },
-      { name: 'Dr. Carlos Mendes', sessions: 38, revenue: 7030.00 },
-      { name: 'Dra. Maria Santos', sessions: 42, revenue: 7770.00 },
-      { name: 'Dr. João Oliveira', sessions: 35, revenue: 6475.00 }
-    ]
-  });
+const mockOperationalData = {
+  activePatients: 450,
+  inactivePatients: 50,
+  abandonmentRate: 5.2,
+  averageSessionsUntilDischarge: 12
+};
 
-  const [alerts, setAlerts] = useState<AdminAlert[]>([
+const mockAlerts = [
     {
       id: '1',
-      type: 'payment',
-      title: 'Pagamentos Pendentes',
-      description: '8 pacientes com pagamentos em atraso',
-      severity: 'high',
-      count: 8
+    type: 'warning' as const,
+    title: 'Taxa de Abandono Alta',
+    message: 'A taxa de abandono está 2% acima da meta',
+    timestamp: '2024-01-15T10:30:00Z'
     },
     {
       id: '2',
-      type: 'material',
-      title: 'Materiais Próximos ao Vencimento',
-      description: '5 itens vencem nos próximos 7 dias',
-      severity: 'medium',
-      count: 5
+    type: 'info' as const,
+    title: 'Novo Relatório Disponível',
+    message: 'Relatório mensal de performance está pronto',
+    timestamp: '2024-01-15T09:15:00Z'
     },
     {
       id: '3',
-      type: 'document',
-      title: 'Documentos Vencidos',
-      description: '3 documentos precisam ser renovados',
-      severity: 'medium',
-      count: 3
-    },
-    {
-      id: '4',
-      type: 'goal',
-      title: 'Metas Não Atingidas',
-      description: 'Meta de faturamento mensal em 85%',
-      severity: 'low'
-    }
-  ]);
+    type: 'success' as const,
+    title: 'Meta de Receita Atingida',
+    message: 'Meta mensal de receita foi superada em 15%',
+    timestamp: '2024-01-14T16:45:00Z'
+  }
+];
 
-  // Dados para gráficos
-  const revenueChartData = [
-    { month: 'Jan', revenue: 38500, goal: 45000 },
-    { month: 'Fev', revenue: 42300, goal: 45000 },
-    { month: 'Mar', revenue: 39800, goal: 45000 },
-    { month: 'Abr', revenue: 45680, goal: 45000 },
-    { month: 'Mai', revenue: 48200, goal: 45000 },
-    { month: 'Jun', revenue: 51300, goal: 45000 }
-  ];
-
-  const patientDistributionData = [
-    { name: 'Ativos', value: 156, color: '#10b981' },
-    { name: 'Inativos', value: 23, color: '#ef4444' },
-    { name: 'Em Avaliação', value: 12, color: '#f59e0b' }
-  ];
-
-  useEffect(() => {
-    // Simular carregamento de dados
-    setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, [filters]);
-
-  const handleFiltersChange = (newFilters: FilterOptions) => {
-    setFilters(newFilters);
-  };
-
-  const handleExport = () => {
-    // Implementar exportação de dados
-    console.log('Exportando dados...', filters);
-  };
+const AdminDashboardPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRefresh = () => {
     setIsLoading(true);
-    // Simular refresh dos dados
     setTimeout(() => setIsLoading(false), 1000);
   };
 
-  const handleViewAlertDetails = (alertId: string) => {
-    console.log('Visualizar detalhes do alerta:', alertId);
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
   };
 
-  const handleMarkAlertResolved = (alertId: string) => {
-    setAlerts(alerts.filter(alert => alert.id !== alertId));
+  const formatPercentage = (value: number) => {
+    return `${value.toFixed(1)}%`;
   };
-
-  // Funções removidas - agora estão nos componentes específicos
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title="Dashboard Administrativo"
-        subtitle="Métricas financeiras, operacionais e alertas da clínica"
-      />
+    <div className="min-h-screen bg-slate-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-slate-900 mb-2">
+              Dashboard Administrativo
+            </h1>
+            <p className="text-xl text-slate-600">
+              Visão geral da performance e operações da clínica
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              disabled={isLoading}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
+            <Button variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Exportar
+            </Button>
+          </div>
+        </div>
 
-      {/* Filtros */}
-      <DashboardFilters
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-        onExport={handleExport}
-        onRefresh={handleRefresh}
-        isLoading={isLoading}
-      />
+        {/* Alertas */}
+        <div className="mb-6 space-y-3">
+          {mockAlerts.map(alert => (
+            <Card key={alert.id} className={`border-l-4 ${
+              alert.type === 'warning' ? 'border-yellow-500 bg-yellow-50' :
+              alert.type === 'error' ? 'border-red-500 bg-red-50' :
+              alert.type === 'success' ? 'border-green-500 bg-green-50' :
+              'border-blue-500 bg-blue-50'
+            }`}>
+              <CardContent className="p-4">
+                <div className="flex items-start">
+                  <AlertTriangle className={`h-5 w-5 mt-0.5 mr-3 ${
+                    alert.type === 'warning' ? 'text-yellow-600' :
+                    alert.type === 'error' ? 'text-red-600' :
+                    alert.type === 'success' ? 'text-green-600' :
+                    'text-blue-600'
+                  }`} />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-slate-900">{alert.title}</h4>
+                    <p className="text-sm text-slate-600 mt-1">{alert.message}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-      {/* Alertas Administrativos */}
-      <AdminAlerts
-        alerts={alerts}
-        onViewDetails={handleViewAlertDetails}
-        onMarkResolved={handleMarkAlertResolved}
-        isLoading={isLoading}
-      />
-
-      {/* Tabs para organizar métricas */}
-      <Tabs defaultValue="financial" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="financial" className="flex items-center gap-2">
-            <DollarSign className="w-4 h-4" />
-            Financeiro
+        {/* Tabs principais */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview" className="flex items-center space-x-2">
+              <BarChart3 className="h-4 w-4" />
+              <span>Visão Geral</span>
+            </TabsTrigger>
+            <TabsTrigger value="financial" className="flex items-center space-x-2">
+              <DollarSign className="h-4 w-4" />
+              <span>Financeiro</span>
           </TabsTrigger>
-          <TabsTrigger value="operational" className="flex items-center gap-2">
-            <Activity className="w-4 h-4" />
-            Operacional
+            <TabsTrigger value="operational" className="flex items-center space-x-2">
+              <Activity className="h-4 w-4" />
+              <span>Operacional</span>
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4" />
-            Análises
+            <TabsTrigger value="analytics" className="flex items-center space-x-2">
+              <TrendingUp className="h-4 w-4" />
+              <span>Analytics</span>
           </TabsTrigger>
         </TabsList>
 
+          {/* Tab Visão Geral */}
+          <TabsContent value="overview" className="space-y-6">
         {/* Métricas Financeiras */}
-        <TabsContent value="financial" className="space-y-6">
-          <FinancialMetricsCards data={financialData} isLoading={isLoading} />
-          
-          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
-            <RevenueEvolutionChart data={revenueChartData} isLoading={isLoading} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Receita Mensal</CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatCurrency(mockFinancialData.monthlyRevenue)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    +{formatPercentage(mockFinancialData.revenueGrowth)} vs mês anterior
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Ticket Médio</CardTitle>
+                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatCurrency(mockFinancialData.averageTicket)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    +{formatPercentage(mockFinancialData.ticketGrowth)} vs mês anterior
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Taxa de Ocupação</CardTitle>
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatPercentage(mockFinancialData.occupancyRate)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Meta: 80%
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Comissões Parceiros</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatCurrency(mockFinancialData.partnerCommissions)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Este mês
+                  </p>
+                </CardContent>
+              </Card>
           </div>
-        </TabsContent>
 
         {/* Métricas Operacionais */}
-        <TabsContent value="operational" className="space-y-6">
-          <OperationalMetricsCards data={operationalData} isLoading={isLoading} />
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <PatientDistributionChart data={patientDistributionData} isLoading={isLoading} />
-            <ProfessionalProductivityChart data={operationalData.professionalProductivity} isLoading={isLoading} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Pacientes Ativos</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{mockOperationalData.activePatients}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {Math.round((mockOperationalData.activePatients / (mockOperationalData.activePatients + mockOperationalData.inactivePatients)) * 100)}% do total
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Taxa de Abandono</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatPercentage(mockOperationalData.abandonmentRate)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Meta: &lt; 5%
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Sessões até Alta</CardTitle>
+                  <Activity className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{mockOperationalData.averageSessionsUntilDischarge}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Sessões em média
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Pacientes Inativos</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{mockOperationalData.inactivePatients}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Últimos 30 dias
+                  </p>
+                </CardContent>
+              </Card>
           </div>
         </TabsContent>
 
-        {/* Análises Avançadas */}
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Análise de Tendências</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-green-800">Crescimento Sustentável</p>
-                    <p className="text-sm text-green-600">Faturamento crescendo consistentemente</p>
+          {/* Tab Financeiro */}
+          <TabsContent value="financial" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Receita Mensal</CardTitle>
+                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatCurrency(mockFinancialData.monthlyRevenue)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    +{formatPercentage(mockFinancialData.revenueGrowth)} vs mês anterior
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Ticket Médio</CardTitle>
+                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatCurrency(mockFinancialData.averageTicket)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    +{formatPercentage(mockFinancialData.ticketGrowth)} vs mês anterior
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Taxa de Ocupação</CardTitle>
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatPercentage(mockFinancialData.occupancyRate)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Meta: 80%
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Comissões Parceiros</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatCurrency(mockFinancialData.partnerCommissions)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Este mês
+                  </p>
+                </CardContent>
+              </Card>
                   </div>
-                  <TrendingUp className="w-6 h-6 text-green-600" />
-                </div>
-                <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-yellow-800">Atenção: Taxa de Abandono</p>
-                    <p className="text-sm text-yellow-600">12.8% acima da meta de 10%</p>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Evolução da Receita</CardTitle>
+                <CardDescription>Receita mensal dos últimos 12 meses</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 flex items-center justify-center text-slate-500">
+                  <div className="text-center">
+                    <BarChart3 className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+                    <p>Gráfico de evolução da receita</p>
+                    <p className="text-sm">Dados serão carregados em breve</p>
                   </div>
-                  <AlertTriangle className="w-6 h-6 text-yellow-600" />
                 </div>
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-blue-800">Produtividade Alta</p>
-                    <p className="text-sm text-blue-600">Equipe performando acima da média</p>
-                  </div>
-                  <Activity className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab Operacional */}
+          <TabsContent value="operational" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Pacientes Ativos</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{mockOperationalData.activePatients}</div>
+                  <p className="text-xs text-muted-foreground">
+                    {Math.round((mockOperationalData.activePatients / (mockOperationalData.activePatients + mockOperationalData.inactivePatients)) * 100)}% do total
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Taxa de Abandono</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatPercentage(mockOperationalData.abandonmentRate)}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Meta: &lt; 5%
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Sessões até Alta</CardTitle>
+                  <Activity className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{mockOperationalData.averageSessionsUntilDischarge}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Sessões em média
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">Pacientes Inativos</CardTitle>
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{mockOperationalData.inactivePatients}</div>
+                  <p className="text-xs text-muted-foreground">
+                    Últimos 30 dias
+                  </p>
+                </CardContent>
+              </Card>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm border">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Próximas Ações Recomendadas</h3>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="font-medium text-sm">Cobrar Pagamentos Pendentes</p>
-                    <p className="text-xs text-gray-600">8 pacientes com atraso superior a 15 dias</p>
+            <Card>
+              <CardHeader>
+                <CardTitle>Produtividade dos Profissionais</CardTitle>
+                <CardDescription>Número de sessões por profissional</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64 flex items-center justify-center text-slate-500">
+                  <div className="text-center">
+                    <Activity className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+                    <p>Gráfico de produtividade</p>
+                    <p className="text-sm">Dados serão carregados em breve</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="font-medium text-sm">Revisar Estoque</p>
-                    <p className="text-xs text-gray-600">5 itens próximos ao vencimento</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Tab Analytics */}
+          <TabsContent value="analytics" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Distribuição de Pacientes</CardTitle>
+                  <CardDescription>Por faixa etária e gênero</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 flex items-center justify-center text-slate-500">
+                    <div className="text-center">
+                      <BarChart3 className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+                      <p>Gráfico de distribuição</p>
+                      <p className="text-sm">Dados serão carregados em breve</p>
+                    </div>
                   </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Performance dos Profissionais</CardTitle>
+                  <CardDescription>Receita gerada por profissional</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 flex items-center justify-center text-slate-500">
+                    <div className="text-center">
+                      <TrendingUp className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+                      <p>Gráfico de performance</p>
+                      <p className="text-sm">Dados serão carregados em breve</p>
                 </div>
-                <div className="flex items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="font-medium text-sm">Campanha de Retenção</p>
-                    <p className="text-xs text-gray-600">Focar nos pacientes inativos recentes</p>
                   </div>
-                </div>
-              </div>
-            </div>
+                </CardContent>
+              </Card>
           </div>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 };
