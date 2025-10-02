@@ -3,7 +3,7 @@ import AlertsOverview from '../components/acompanhamento/AlertsOverview';
 import AttendanceChart from '../components/acompanhamento/AttendanceChart';
 import TimelineBoard from '../components/acompanhamento/TimelineBoard';
 import QuickActionsPanel from '../components/acompanhamento/QuickActionsPanel';
-import { useData, useAuth } from '../contexts/AppContext';
+import { useData, useApp } from '../contexts/AppContext';
 import { useToast } from '../contexts/ToastContext';
 import PageHeader from '../components/PageHeader';
 import { Skeleton } from '../components/ui/skeleton';
@@ -12,7 +12,7 @@ import * as patientService from '../services/patientService';
 import { useNavigate } from 'react-router-dom';
 
 const AcompanhamentoPage: React.FC = () => {
-    const { user } = useAuth();
+    const { user } = useApp();
     const { patients, appointments, isLoading, refetch } = useData();
     const { showToast } = useToast();
     const navigate = useNavigate();

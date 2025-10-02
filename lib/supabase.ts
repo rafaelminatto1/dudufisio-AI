@@ -63,7 +63,7 @@ type SupabaseError = {
   code?: string;
 };
 
-export const handleSupabaseError = (error: unknown) => {
+export const handleSupabaseError = (error: unknown): string => {
   const supabaseError = (error ?? {}) as SupabaseError;
   
   // Only log errors in development mode and when not in mock mode
@@ -78,7 +78,7 @@ export const handleSupabaseError = (error: unknown) => {
 
   // Handle mock mode errors silently
   if (message.includes('Mock mode') || message.includes('mock.supabase.local')) {
-    return null; // Don't show error messages for mock mode
+    return ''; // Don't show error messages for mock mode
   }
 
   if (message.includes('JWT')) {

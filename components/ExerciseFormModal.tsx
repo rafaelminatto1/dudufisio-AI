@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Save, PlusCircle, Trash2 } from 'lucide-react';
 import { Exercise } from '../types';
 import { useToast } from '../contexts/ToastContext';
-import { useAuth } from "../contexts/AppContext";
+import { useApp } from "../contexts/AppContext";
 
 interface ExerciseFormModalProps {
     isOpen: boolean;
@@ -32,7 +32,7 @@ const ExerciseFormModal: React.FC<ExerciseFormModalProps> = ({ isOpen, onClose, 
     const [formData, setFormData] = useState<Omit<Exercise, 'id'>>(initialFormData);
     const [isSaving, setIsSaving] = useState(false);
     const { showToast } = useToast();
-    const { user } = useAuth();
+    const { user } = useApp();
     const modalRef = useRef<HTMLDivElement>(null);
 
     const joinArray = (arr: string[] | undefined) => arr ? arr.join(', ') : '';

@@ -6,7 +6,7 @@ import { Patient, AppointmentStatus, AlertPatient } from '../../types';
 import { Phone, MessageSquare, CalendarPlus, StickyNote, BrainCircuit, AlertTriangle } from 'lucide-react';
 import { useData } from "../../contexts/AppContext";
 import { useToast } from '../../contexts/ToastContext';
-import { useAuth } from "../../contexts/AppContext";
+import { useApp } from "../../contexts/AppContext";
 import * as patientService from '../../services/patientService';
 interface AlertCardProps {
     patient: AlertPatient;
@@ -18,7 +18,7 @@ interface AlertCardProps {
 const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, onOpenRescheduleModal, onOpenAiSuggestion, onUpdate }) => {
     const { appointments } = useData();
     const { showToast } = useToast();
-    const { user } = useAuth();
+    const { user } = useApp();
     const navigate = ReactRouterDOM.useNavigate();
     const patientData = useMemo(() => {
         const patientAppointments = appointments

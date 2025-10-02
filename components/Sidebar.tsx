@@ -1,6 +1,7 @@
 
 'use client';
 import React, { useState, useMemo, useCallback, memo } from 'react';
+import { withMemoization, propsComparators } from '../lib/memoization';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import {
     LayoutGrid, Users, Calendar, Stethoscope, ChevronLeft, ChevronRight, BarChart3,
@@ -11,13 +12,13 @@ import {
     HardDrive, Wrench, CreditCard, Eye, FileCheck, Search, Target, 
     FileSpreadsheet, Zap, Globe, UserCheck, Archive, FileSearch
 } from 'lucide-react';
-import { useAuth } from "../contexts/AppContext";
+import { useApp } from "../contexts/AppContext";
 import { useNotifications } from '../hooks/useNotifications';
 import { Role } from '../types';
 import SidebarSearch from './SidebarSearch';
 import NotificationBell from './NotificationBell';
 
-const NavLinkComponent = memo(({ to, icon: Icon, label, isCollapsed, badgeCount }: { to: string, icon: React.ElementType, label: string, isCollapsed: boolean, badgeCount?: number }) => (
+const NavLinkComponent = withMemoization(({ to, icon: Icon, label, isCollapsed, badgeCount }: { to: string, icon: React.ElementType, label: string, isCollapsed: boolean, badgeCount?: number }) => (
     <NavLink
       to={to}
       className={({ isActive }) =>
@@ -48,9 +49,16 @@ const NavLinkComponent = memo(({ to, icon: Icon, label, isCollapsed, badgeCount 
             ) : null}
         </div>
     </NavLink>
-));
+), {
+  areEqual: (prev, next) => 
+    prev.to === next.to && 
+    prev.label === next.label && 
+    prev.isCollapsed === next.isCollapsed && 
+    prev.badgeCount === next.badgeCount,
+  displayName: 'NavLinkComponent'
+});
 
-const NavGroup = memo<{ title: string; isCollapsed: boolean; children: React.ReactNode }>(({ title, isCollapsed, children }) => (
+const NavGroup = withMemoization<{ title: string; isCollapsed: boolean; children: React.ReactNode }>(({ title, isCollapsed, children }) => (
     <div>
         {!isCollapsed && (
             <h3 className="px-2 pt-3 pb-1 text-xs font-semibold uppercase text-slate-400 tracking-wider">
@@ -61,7 +69,12 @@ const NavGroup = memo<{ title: string; isCollapsed: boolean; children: React.Rea
             {children}
         </div>
     </div>
-));
+), {
+  areEqual: (prev, next) => 
+    prev.title === next.title && 
+    prev.isCollapsed === next.isCollapsed,
+  displayName: 'NavGroup'
+});
 
 // 🔐 Enhanced Professional Role-Based Navigation System
 // MOVIDO PARA FORA DO COMPONENTE para evitar erro de hoisting
@@ -252,7 +265,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
 const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { user, logout } = useAuth();
+  const { user, logout } = useApp();
   const navigate = useNavigate();
   const { unreadCount } = useNotifications(user?.id || '');
 
@@ -317,14 +330,21 @@ const Sidebar: React.FC = () => {
   }, [navigate]);
 
   return (
-    <div 
+    <aside 
       className={`transition-all duration-300 ease-in-out bg-white border-r border-slate-200 flex flex-col ${isCollapsed ? 'w-14' : 'w-56'}`}
       data-testid="sidebar"
+      role="navigation"
+      aria-label="Menu principal"
     >
       <div className="flex items-center p-3 border-b border-slate-200 h-14 shrink-0">
         {!isCollapsed && <Stethoscope className="w-6 h-6 text-sky-500" />}
         {!isCollapsed && <span className="text-sm font-bold text-slate-800 ml-2">Fisio<span className="text-sky-500">Flow</span></span>}
-        <button onClick={() => setIsCollapsed(!isCollapsed)} className={`p-1.5 rounded-full text-slate-500 hover:bg-slate-100 ${isCollapsed ? 'mx-auto' : 'ml-auto'}`}>
+        <button 
+          onClick={() => setIsCollapsed(!isCollapsed)} 
+          className={`p-1.5 rounded-full text-slate-500 hover:bg-slate-100 transition-colors ${isCollapsed ? 'mx-auto' : 'ml-auto'}`}
+          aria-label={isCollapsed ? "Expandir menu" : "Recolher menu"}
+          title={isCollapsed ? "Expandir menu" : "Recolher menu"}
+        >
           {isCollapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
         </button>
       </div>
@@ -381,7 +401,7 @@ const Sidebar: React.FC = () => {
                         <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
                           user.role === Role.Admin ? 'bg-red-500' :
                           user.role === Role.Therapist ? 'bg-blue-500' :
-                          user.role === 'Manager' ? 'bg-purple-500' :
+                          user.role === Role.EducadorFisico ? 'bg-orange-500' :
                           user.role === Role.Patient ? 'bg-green-500' :
                           user.role === Role.EducadorFisico ? 'bg-orange-500' :
                           'bg-gray-500'
@@ -394,14 +414,14 @@ const Sidebar: React.FC = () => {
                                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                                   user.role === Role.Admin ? 'bg-red-100 text-red-700' :
                                   user.role === Role.Therapist ? 'bg-blue-100 text-blue-700' :
-                                  user.role === 'Manager' ? 'bg-purple-100 text-purple-700' :
+                                  user.role === Role.EducadorFisico ? 'bg-orange-100 text-orange-700' :
                                   user.role === Role.Patient ? 'bg-green-100 text-green-700' :
                                   user.role === Role.EducadorFisico ? 'bg-orange-100 text-orange-700' :
                                   'bg-gray-100 text-gray-700'
                                 }`}>
                                   {user.role === Role.Admin ? '👑 Admin' :
                                    user.role === Role.Therapist ? '🩺 Terapeuta' :
-                                   user.role === 'Manager' ? '📊 Gerente' :
+                                   user.role === Role.EducadorFisico ? '🏃 Ed. Físico' :
                                    user.role === Role.Patient ? '👤 Paciente' :
                                    user.role === Role.EducadorFisico ? '🏃 Ed. Físico' :
                                    user.role}
@@ -431,7 +451,7 @@ const Sidebar: React.FC = () => {
             </div>
         </div>
       )}
-    </div>
+    </aside>
   );
 };
 

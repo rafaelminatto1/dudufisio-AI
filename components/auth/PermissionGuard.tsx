@@ -1,6 +1,6 @@
 import React from 'react';
 import { Role } from '../../types';
-import { useAuth } from '../../contexts/AppContext';
+import { useApp } from '../../contexts/AppContext';
 import { AlertTriangle, Lock, ChevronLeft } from 'lucide-react';
 
 /**
@@ -192,7 +192,7 @@ const PermissionGuard: React.FC<PermissionGuardProps> = ({
   showFallback = true,
   redirectTo
 }) => {
-  const { user } = useAuth();
+  const { user } = useApp();
 
   // If no user is authenticated, deny access
   if (!user) {
@@ -265,7 +265,7 @@ export const withPermission = <P extends object>(
 
 // 🪝 Hook for permission checking in components
 export const usePermissions = () => {
-  const { user } = useAuth();
+  const { user } = useApp();
 
   return {
     hasPermission: (permission: Permission) =>

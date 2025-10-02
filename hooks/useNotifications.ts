@@ -8,7 +8,7 @@ import type {
   PushNotificationConfig,
   NotificationStatus
 } from '../services/notificationService';
-import { useAuth } from '../contexts/AppContext';
+import { useApp } from '../contexts/AppContext';
 
 export const useNotifications = (userId?: string) => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -22,7 +22,7 @@ export const useNotifications = (userId?: string) => {
         endpoint: null
     });
     const [error, setError] = useState<string | null>(null);
-    const { user } = useAuth();
+    const { user } = useApp();
 
     const fetchNotifications = useCallback(async () => {
         if (!userId) {

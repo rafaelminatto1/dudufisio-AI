@@ -7,7 +7,7 @@ import GroupCard from '../components/GroupCard';
 import GroupFormModal from '../components/GroupFormModal';
 import { Skeleton } from '../components/ui/skeleton';
 import { useToast } from '../contexts/ToastContext';
-import { useAuth } from "../contexts/AppContext";
+import { useApp } from "../contexts/AppContext";
 import { useData } from "../contexts/AppContext";
 
 const GroupsPage: React.FC = () => {
@@ -20,7 +20,7 @@ const GroupsPage: React.FC = () => {
     
     const { therapists, isLoading: isTherapistsLoading } = useData();
     const { showToast } = useToast();
-    const { user } = useAuth();
+    const { user } = useApp();
 
     const fetchData = async () => {
         setIsLoading(true);

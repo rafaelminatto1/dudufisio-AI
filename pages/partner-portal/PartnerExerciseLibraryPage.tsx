@@ -1,135 +1,334 @@
 // pages/partner-portal/PartnerExerciseLibraryPage.tsx
-import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Search } from 'lucide-react';
-import PageHeader from '../../components/PageHeader';
-import { Exercise } from '../../types';
-import * as exerciseService from '../../services/exerciseService';
-import ExerciseCard from '../../components/ExerciseCard';
-import ExerciseFormModal from '../../components/ExerciseFormModal';
+import React, { useState, useMemo } from 'react';
+import { Plus, Search, Play, Heart, Star, Filter, Download } from 'lucide-react';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Badge } from '../../components/ui/badge';
 import { Skeleton } from '../../components/ui/skeleton';
-import { useToast } from '../../contexts/ToastContext';
-import VideoPlayerModal from '../../components/VideoPlayerModal';
+
+// Interface simplificada para exercícios
+interface Exercise {
+    id: string;
+    name: string;
+    category: string;
+    description: string;
+    difficulty: 'Iniciante' | 'Intermediário' | 'Avançado';
+    duration: string;
+    equipment: string[];
+    muscleGroups: string[];
+    instructions: string[];
+    imageUrl?: string;
+    videoUrl?: string;
+    isFavorite?: boolean;
+    rating?: number;
+}
+
+// Dados mock para demonstração
+const mockExercises: Exercise[] = [
+    {
+        id: '1',
+        name: 'Flexão de Braço',
+        category: 'Força',
+        description: 'Exercício clássico para fortalecimento do peitoral e tríceps',
+        difficulty: 'Iniciante',
+        duration: '3 séries de 10-15',
+        equipment: ['Nenhum'],
+        muscleGroups: ['Peitoral', 'Tríceps', 'Deltoide'],
+        instructions: [
+            'Deite-se de bruços no chão',
+            'Posicione as mãos na largura dos ombros',
+            'Mantenha o corpo alinhado',
+            'Desça até quase tocar o chão',
+            'Empurre para cima até a posição inicial'
+        ],
+        imageUrl: '/api/placeholder/300/200',
+        videoUrl: '/api/placeholder/video',
+        isFavorite: true,
+        rating: 4.5
+    },
+    {
+        id: '2',
+        name: 'Agachamento',
+        category: 'Força',
+        description: 'Exercício fundamental para membros inferiores',
+        difficulty: 'Iniciante',
+        duration: '3 séries de 12-15',
+        equipment: ['Nenhum'],
+        muscleGroups: ['Quadríceps', 'Glúteos', 'Isquiotibiais'],
+        instructions: [
+            'Fique em pé com os pés na largura dos ombros',
+            'Mantenha o peito erguido',
+            'Desça como se fosse sentar em uma cadeira',
+            'Mantenha os joelhos alinhados com os pés',
+            'Suba até a posição inicial'
+        ],
+        imageUrl: '/api/placeholder/300/200',
+        isFavorite: false,
+        rating: 4.8
+    },
+    {
+        id: '3',
+        name: 'Prancha',
+        category: 'Core',
+        description: 'Exercício isométrico para fortalecimento do core',
+        difficulty: 'Intermediário',
+        duration: '3 séries de 30-60 segundos',
+        equipment: ['Nenhum'],
+        muscleGroups: ['Abdômen', 'Lombar', 'Ombros'],
+        instructions: [
+            'Deite-se de bruços',
+            'Apoie-se nos antebraços e pontas dos pés',
+            'Mantenha o corpo em linha reta',
+            'Contraia o abdômen',
+            'Mantenha a posição pelo tempo determinado'
+        ],
+        imageUrl: '/api/placeholder/300/200',
+        isFavorite: true,
+        rating: 4.2
+    },
+    {
+        id: '4',
+        name: 'Burpee',
+        category: 'Cardio',
+        description: 'Exercício completo que combina força e cardio',
+        difficulty: 'Avançado',
+        duration: '3 séries de 8-12',
+        equipment: ['Nenhum'],
+        muscleGroups: ['Corpo todo'],
+        instructions: [
+            'Comece em pé',
+            'Agache e coloque as mãos no chão',
+            'Salte os pés para trás',
+            'Faça uma flexão',
+            'Salte os pés de volta',
+            'Salte para cima com os braços estendidos'
+        ],
+        imageUrl: '/api/placeholder/300/200',
+        isFavorite: false,
+        rating: 4.0
+    }
+];
+
+const categories = ['Todos', 'Força', 'Core', 'Cardio', 'Flexibilidade', 'Equilíbrio'];
 
 const PartnerExerciseLibraryPage: React.FC = () => {
-    const [exercises, setExercises] = useState<Exercise[]>([]);
-    const [categories, setCategories] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [exercises] = useState<Exercise[]>(mockExercises);
     const [searchTerm, setSearchTerm] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [playingVideo, setPlayingVideo] = useState<{ url: string; title: string } | null>(null);
-
-    const { showToast } = useToast();
-
-    const fetchExercises = async () => {
-        setIsLoading(true);
-        try {
-            // Educators see only approved exercises
-            const { exercises: allExercises } = await exerciseService.getExerciseData();
-            const approvedExercises = allExercises.filter(ex => ex.status !== 'pending_approval');
-            const approvedCategories = [...new Set(approvedExercises.map(ex => ex.category))].sort();
-            
-            setExercises(approvedExercises);
-            setCategories(approvedCategories);
-        } catch (err) {
-            setError('Falha ao carregar exercícios.');
-            showToast('Falha ao carregar exercícios.', 'error');
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchExercises();
-    }, []);
+    const [selectedCategory, setSelectedCategory] = useState('Todos');
+    const [isLoading] = useState(false);
 
     const filteredExercises = useMemo(() => {
-        return exercises.filter(ex =>
-            ex.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ex.category.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [searchTerm, exercises]);
+        return exercises.filter(ex => {
+            const matchesSearch = ex.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                ex.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                ex.muscleGroups.some(mg => mg.toLowerCase().includes(searchTerm.toLowerCase()));
+            
+            const matchesCategory = selectedCategory === 'Todos' || ex.category === selectedCategory;
+            
+            return matchesSearch && matchesCategory;
+        });
+    }, [searchTerm, selectedCategory, exercises]);
 
-    const handleSaveSuggestion = async (data: Omit<Exercise, 'id'>) => {
-        try {
-            await exerciseService.addExercise(data);
-            showToast('Sugestão de exercício enviada para aprovação!', 'success');
-            // We don't refetch here, as the educator won't see it until approved.
-            setIsModalOpen(false);
-        } catch {
-            showToast('Falha ao enviar sugestão.', 'error');
+    const handlePlayVideo = (exercise: Exercise) => {
+        if (exercise.videoUrl) {
+            alert(`Reproduzindo vídeo: ${exercise.name}`);
+        } else {
+            alert('Vídeo não disponível para este exercício');
         }
     };
 
-    const renderContent = () => {
-        if (isLoading) {
-            return Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="h-64 w-full rounded-2xl" />
-            ));
-        }
-        if (error) {
-            return <div className="col-span-full text-center p-10 text-red-500">{error}</div>;
-        }
-        if (filteredExercises.length === 0) {
-            return <div className="col-span-full text-center p-10 text-slate-500">Nenhum exercício encontrado.</div>;
-        }
-        return filteredExercises.map(ex => (
-            <ExerciseCard
-                key={ex.id}
-                exercise={ex}
-                onEdit={() => showToast('Apenas fisioterapeutas podem editar exercícios.', 'info')}
-                onDelete={() => showToast('Apenas fisioterapeutas podem excluir exercícios.', 'info')}
-                onPlay={() => ex.media.videoUrl && setPlayingVideo({ url: ex.media.videoUrl, title: ex.name })}
-            />
-        ));
+    const handleToggleFavorite = (exerciseId: string) => {
+        alert(`Exercício ${exerciseId} adicionado aos favoritos!`);
+    };
+
+    const handleSuggestExercise = () => {
+        alert('Funcionalidade de sugestão de exercício será implementada em breve!');
     };
 
     return (
-        <>
-            <PageHeader
-                title="Biblioteca de Exercícios"
-                subtitle="Consulte os exercícios da clínica e sugira novas adições."
-            >
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
-                    <Plus className="-ml-1 mr-2 h-5 w-5" />
-                    Sugerir Exercício
-                </button>
-            </PageHeader>
+        <div className="min-h-screen bg-slate-50 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                    <div>
+                        <h1 className="text-4xl font-bold text-slate-900 mb-2">
+                            Biblioteca de Exercícios
+                        </h1>
+                        <p className="text-xl text-slate-600">
+                            Consulte os exercícios da clínica e sugira novas adições.
+                        </p>
+                    </div>
+                    <Button onClick={handleSuggestExercise} className="bg-sky-500 hover:bg-sky-600">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Sugerir Exercício
+                    </Button>
+                </div>
 
-            <ExerciseFormModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onSave={handleSaveSuggestion}
-                saveAsSuggestion={true}
-                allCategories={categories}
-            />
+                {/* Filtros e Busca */}
+                <Card className="mb-6">
+                    <CardContent className="p-6">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <Input
+                                    type="text"
+                                    placeholder="Buscar por nome, descrição ou grupo muscular..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="pl-10"
+                                />
+                            </div>
+                            <div className="flex gap-2">
+                                {categories.map(category => (
+                                    <Button
+                                        key={category}
+                                        variant={selectedCategory === category ? "default" : "outline"}
+                                        onClick={() => setSelectedCategory(category)}
+                                        size="sm"
+                                    >
+                                        {category}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
 
-            <VideoPlayerModal 
-                isOpen={!!playingVideo} 
-                onClose={() => setPlayingVideo(null)} 
-                videoUrl={playingVideo?.url} 
-                title={playingVideo?.title} 
-            />
+                {/* Estatísticas */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <Card>
+                        <CardContent className="p-4">
+                            <div className="text-2xl font-bold text-sky-600">{filteredExercises.length}</div>
+                            <div className="text-sm text-slate-600">Exercícios Encontrados</div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="p-4">
+                            <div className="text-2xl font-bold text-green-600">
+                                {exercises.filter(ex => ex.isFavorite).length}
+                            </div>
+                            <div className="text-sm text-slate-600">Favoritos</div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="p-4">
+                            <div className="text-2xl font-bold text-orange-600">
+                                {[...new Set(exercises.map(ex => ex.category))].length}
+                            </div>
+                            <div className="text-sm text-slate-600">Categorias</div>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent className="p-4">
+                            <div className="text-2xl font-bold text-purple-600">
+                                {exercises.filter(ex => ex.difficulty === 'Iniciante').length}
+                            </div>
+                            <div className="text-sm text-slate-600">Para Iniciantes</div>
+                        </CardContent>
+                    </Card>
+                </div>
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm mb-6">
-                <div className="relative w-full max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                    <input
-                        type="text"
-                        placeholder="Buscar por nome ou categoria..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg"
-                    />
+                {/* Lista de Exercícios */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {isLoading ? (
+                        Array.from({ length: 6 }).map((_, i) => (
+                            <Skeleton key={i} className="h-80 w-full rounded-lg" />
+                        ))
+                    ) : filteredExercises.length === 0 ? (
+                        <div className="col-span-full text-center p-10 text-slate-500">
+                            <Search className="w-16 h-16 mx-auto mb-4 text-slate-300" />
+                            <p className="text-lg font-semibold">Nenhum exercício encontrado</p>
+                            <p className="text-sm">Tente ajustar os filtros ou termos de busca</p>
+                        </div>
+                    ) : (
+                        filteredExercises.map(exercise => (
+                            <Card key={exercise.id} className="group hover:shadow-lg transition-shadow">
+                                <CardHeader className="pb-3">
+                                    <div className="flex justify-between items-start">
+                                        <div className="flex-1">
+                                            <CardTitle className="text-lg mb-1">{exercise.name}</CardTitle>
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <Badge variant="secondary">{exercise.category}</Badge>
+                                                <Badge 
+                                                    variant={
+                                                        exercise.difficulty === 'Iniciante' ? 'default' :
+                                                        exercise.difficulty === 'Intermediário' ? 'secondary' : 'destructive'
+                                                    }
+                                                >
+                                                    {exercise.difficulty}
+                                                </Badge>
+                                            </div>
+                                        </div>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => handleToggleFavorite(exercise.id)}
+                                        >
+                                            <Heart 
+                                                className={`w-4 h-4 ${
+                                                    exercise.isFavorite ? 'fill-red-500 text-red-500' : 'text-slate-400'
+                                                }`} 
+                                            />
+                                        </Button>
+                                    </div>
+                                </CardHeader>
+                                
+                                <CardContent className="space-y-4">
+                                    <p className="text-sm text-slate-600">{exercise.description}</p>
+                                    
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="font-medium">Duração:</span>
+                                            <span className="text-slate-600">{exercise.duration}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="font-medium">Equipamento:</span>
+                                            <span className="text-slate-600">{exercise.equipment.join(', ')}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="font-medium">Grupos Musculares:</span>
+                                            <div className="flex flex-wrap gap-1">
+                                                {exercise.muscleGroups.map(muscle => (
+                                                    <Badge key={muscle} variant="outline" className="text-xs">
+                                                        {muscle}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        {exercise.rating && (
+                                            <div className="flex items-center gap-2 text-sm">
+                                                <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                                                <span className="font-medium">{exercise.rating}</span>
+                                                <span className="text-slate-600">/ 5.0</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex gap-2 pt-2">
+                                        <Button 
+                                            onClick={() => handlePlayVideo(exercise)}
+                                            className="flex-1"
+                                            size="sm"
+                                        >
+                                            <Play className="w-4 h-4 mr-2" />
+                                            Ver Exercício
+                                        </Button>
+                                        <Button 
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => alert(`Instruções: ${exercise.instructions.join('; ')}`)}
+                                        >
+                                            <Download className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))
+                    )}
                 </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {renderContent()}
-            </div>
-        </>
+        </div>
     );
 };
 

@@ -100,10 +100,14 @@ const Breadcrumbs: React.FC = () => {
   }
 
   return (
-    <nav className="flex items-center space-x-1 text-sm text-slate-500 mb-4">
+    <nav 
+      className="flex items-center space-x-1 text-sm text-slate-500 mb-4"
+      aria-label="Breadcrumb"
+    >
       <Link 
         to="/dashboard" 
         className="flex items-center hover:text-slate-700 transition-colors"
+        aria-label="Ir para página inicial"
       >
         <Home className="w-4 h-4" />
       </Link>

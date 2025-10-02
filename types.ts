@@ -128,11 +128,11 @@ export interface Patient {
   painPoints?: PainPoint[];
 }
 
-export type AlertType = 'abandonment' | 'highRisk' | 'attention';
+export type PatientAlertType = 'abandonment' | 'highRisk' | 'attention';
 
 export interface AlertPatient extends Patient {
     alertReason: string;
-    alertType: AlertType;
+    alertType: PatientAlertType;
 }
 
 export interface PatientSummary {

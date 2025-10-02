@@ -1,439 +1,325 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
-// Hook for virtual scrolling
-export const useVirtualList = <T>(
-  items: T[],
-  itemHeight: number,
-  containerHeight: number
+// 🚀 Hook para Otimização de Performance
+// Implementa técnicas avançadas de otimização
+
+interface PerformanceOptimizationOptions {
+  enableIntersectionObserver?: boolean;
+  enableResizeObserver?: boolean;
+  enableIdleCallback?: boolean;
+  throttleScroll?: number;
+  throttleResize?: number;
+}
+
+// 🎯 Hook para Intersection Observer
+export const useIntersectionObserver = (
+  callback: (entries: IntersectionObserverEntry[]) => void,
+  options: IntersectionObserverInit = {}
 ) => {
-  const [scrollTop, setScrollTop] = useState(0);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const elementRef = useRef<HTMLElement | null>(null);
 
-  const visibleItems = useMemo(() => {
-    const startIndex = Math.floor(scrollTop / itemHeight);
-    const endIndex = Math.min(
-      startIndex + Math.ceil(containerHeight / itemHeight) + 1,
-      items.length
-    );
-
-    return {
-      startIndex,
-      endIndex,
-      items: items.slice(startIndex, endIndex),
-      totalHeight: items.length * itemHeight,
-      offsetY: startIndex * itemHeight,
-    };
-  }, [items, itemHeight, containerHeight, scrollTop]);
-
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop(e.currentTarget.scrollTop);
-  }, []);
-
-  return {
-    ...visibleItems,
-    handleScroll,
-  };
-};
-
-// Hook for image lazy loading
-export const useLazyImage = (src: string, options: IntersectionObserverInit = {}) => {
-  const [imageSrc, setImageSrc] = useState<string | undefined>();
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  useEffect(() => {
-    if (!src || !imgRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry?.isIntersecting) {
-          setImageSrc(src);
-          observer.disconnect();
-        }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '50px',
-        ...options,
-      }
-    );
-
-    observer.observe(imgRef.current);
-
-    return () => observer.disconnect();
-  }, [src, options]);
-
-  const handleLoad = useCallback(() => {
-    setIsLoaded(true);
-    setIsError(false);
-  }, []);
-
-  const handleError = useCallback(() => {
-    setIsError(true);
-    setIsLoaded(false);
-  }, []);
-
-  return {
-    imgRef,
-    src: imageSrc,
-    isLoaded,
-    isError,
-    onLoad: handleLoad,
-    onError: handleError,
-  };
-};
-
-// Hook for debouncing values
-export const useDebounce = <T>(value: T, delay: number): T => {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-};
-
-// Hook for throttling callbacks
-export const useThrottle = <T extends (...args: any[]) => any>(
-  callback: T,
-  delay: number
-): T => {
-  const lastRun = useRef(Date.now());
-
-  return useCallback(
-    ((...args: Parameters<T>) => {
-      if (Date.now() - lastRun.current >= delay) {
-        callback(...args);
-        lastRun.current = Date.now();
-      }
-    }) as T,
-    [callback, delay]
-  );
-};
-
-// Hook for infinite scrolling
-export const useInfiniteScroll = (
-  callback: () => void,
-  hasMore: boolean,
-  threshold: number = 100
-) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || !hasMore) return;
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-
-      if (scrollHeight - scrollTop - clientHeight < threshold && !isLoading) {
-        setIsLoading(true);
-        callback();
-        setTimeout(() => setIsLoading(false), 1000);
-      }
-    };
-
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [callback, hasMore, threshold, isLoading]);
-
-  return { containerRef, isLoading };
-};
-
-// Hook for optimistic updates
-export const useOptimisticUpdate = <T>(
-  initialData: T,
-  updateFn: (data: T, update: Partial<T>) => Promise<T>
-) => {
-  const [data, setData] = useState<T>(initialData);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const update = useCallback(
-    async (optimisticUpdate: Partial<T>) => {
-      const previousData = data;
-
-      // Apply optimistic update immediately
-      setData(prev => ({ ...prev, ...optimisticUpdate }));
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const result = await updateFn(data, optimisticUpdate);
-        setData(result);
-      } catch (err) {
-        // Revert on error
-        setData(previousData);
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [data, updateFn]
-  );
-
-  return {
-    data,
-    update,
-    isLoading,
-    error,
-  };
-};
-
-// Hook for efficient data fetching with caching
-export const useDataCache = <T>(
-  key: string,
-  fetchFn: () => Promise<T>,
-  options: {
-    ttl?: number; // Time to live in milliseconds
-    refetchOnWindowFocus?: boolean;
-    refetchInterval?: number;
-  } = {}
-) => {
-  const {
-    ttl = 5 * 60 * 1000, // 5 minutes default
-    refetchOnWindowFocus = true,
-    refetchInterval,
-  } = options;
-
-  const [data, setData] = useState<T | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const cacheRef = useRef<Map<string, { data: T; timestamp: number }>>(new Map());
-
-  const fetchData = useCallback(async (force = false) => {
-    const cached = cacheRef.current.get(key);
-    const now = Date.now();
-
-    // Return cached data if valid and not forced
-    if (!force && cached && (now - cached.timestamp) < ttl) {
-      setData(cached.data);
-      return cached.data;
+  const observe = useCallback((element: HTMLElement) => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
     }
 
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const result = await fetchFn();
-      cacheRef.current.set(key, { data: result, timestamp: now });
-      setData(result);
-      return result;
-    } catch (err) {
-      setError(err as Error);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [key, fetchFn, ttl]);
-
-  // Initial fetch
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  // Refetch on window focus
-  useEffect(() => {
-    if (!refetchOnWindowFocus) return;
-
-    const handleFocus = () => fetchData();
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
-  }, [fetchData, refetchOnWindowFocus]);
-
-  // Periodic refetch
-  useEffect(() => {
-    if (!refetchInterval) return;
-
-    const interval = setInterval(() => fetchData(), refetchInterval);
-    return () => clearInterval(interval);
-  }, [fetchData, refetchInterval]);
-
-  const invalidate = useCallback(() => {
-    cacheRef.current.delete(key);
-    fetchData(true);
-  }, [key, fetchData]);
-
-  return {
-    data,
-    isLoading,
-    error,
-    refetch: () => fetchData(true),
-    invalidate,
-  };
-};
-
-// Hook for performance monitoring
-export const usePerformanceMonitor = (componentName: string) => {
-  const renderStart = useRef(performance.now());
-  const renderCount = useRef(0);
-
-  useEffect(() => {
-    renderCount.current++;
-    const renderTime = performance.now() - renderStart.current;
-
-    // Log performance metrics in development
-    if (process.env['NODE_ENV'] === 'development') {
-      console.log(`${componentName} render #${renderCount.current}: ${renderTime.toFixed(2)}ms`);
-    }
-
-    // Track in analytics
-    if (renderTime > 16.67) { // Slower than 60fps
-      console.warn(`${componentName} slow render: ${renderTime.toFixed(2)}ms`);
-    }
-
-    renderStart.current = performance.now();
-  });
-
-  return {
-    renderCount: renderCount.current,
-  };
-};
-
-// Hook for memory usage optimization
-export const useMemoryOptimization = () => {
-  const [memoryUsage, setMemoryUsage] = useState<{
-    used: number;
-    total: number;
-    percentage: number;
-  } | null>(null);
-
-  useEffect(() => {
-    if ('memory' in performance) {
-      const updateMemoryUsage = () => {
-        const memory = (performance as any).memory;
-        setMemoryUsage({
-          used: memory.usedJSHeapSize,
-          total: memory.totalJSHeapSize,
-          percentage: (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100,
-        });
-      };
-
-      updateMemoryUsage();
-      const interval = setInterval(updateMemoryUsage, 5000);
-      return () => clearInterval(interval);
-    }
-    return undefined;
-  }, []);
-
-  const forceGarbageCollection = useCallback(() => {
-    if ('gc' in window) {
-      (window as any).gc();
-    }
-  }, []);
-
-  return {
-    memoryUsage,
-    forceGarbageCollection,
-  };
-};
-
-// Hook for connection quality monitoring
-export const useConnectionQuality = () => {
-  const [connectionQuality, setConnectionQuality] = useState<{
-    effectiveType: string;
-    downlink: number;
-    rtt: number;
-    saveData: boolean;
-  } | null>(null);
-
-  useEffect(() => {
-    if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
-
-      const updateConnection = () => {
-        setConnectionQuality({
-          effectiveType: connection.effectiveType,
-          downlink: connection.downlink,
-          rtt: connection.rtt,
-          saveData: connection.saveData,
-        });
-      };
-
-      updateConnection();
-      connection.addEventListener('change', updateConnection);
-      return () => connection.removeEventListener('change', updateConnection);
-    }
-    return undefined;
-  }, []);
-
-  return connectionQuality;
-};
-
-// Hook for adaptive loading based on device capabilities
-export const useAdaptiveLoading = () => {
-  const [deviceCapabilities, setDeviceCapabilities] = useState({
-    isLowEnd: false,
-    cores: navigator.hardwareConcurrency || 1,
-    memory: (navigator as any).deviceMemory || 1,
-    connectionSpeed: 'unknown',
-  });
-
-  useEffect(() => {
-    const capabilities = {
-      isLowEnd: navigator.hardwareConcurrency <= 2 || (navigator as any).deviceMemory <= 1,
-      cores: navigator.hardwareConcurrency || 1,
-      memory: (navigator as any).deviceMemory || 1,
-      connectionSpeed: 'connection' in navigator ? (navigator as any).connection.effectiveType : 'unknown',
-    };
-
-    setDeviceCapabilities(capabilities);
-  }, []);
-
-  const getOptimalSettings = useCallback(() => {
-    return {
-      maxConcurrentRequests: deviceCapabilities.isLowEnd ? 2 : 6,
-      imageQuality: deviceCapabilities.isLowEnd ? 'low' : 'high',
-      animationsEnabled: !deviceCapabilities.isLowEnd,
-      preloadDistance: deviceCapabilities.isLowEnd ? 1 : 3,
-      chunkSize: deviceCapabilities.isLowEnd ? 10 : 50,
-    };
-  }, [deviceCapabilities]);
-
-  return {
-    deviceCapabilities,
-    getOptimalSettings,
-  };
-};
-
-// Hook for bundle size optimization tracking
-export const useBundleOptimization = () => {
-  const [bundleMetrics, setBundleMetrics] = useState<{
-    totalSize: number;
-    loadedChunks: string[];
-    pendingChunks: string[];
-  }>({
-    totalSize: 0,
-    loadedChunks: [],
-    pendingChunks: [],
-  });
-
-  useEffect(() => {
-    // Track loaded chunks and their sizes
-    const observer = new PerformanceObserver((list) => {
-      for (const entry of list.getEntries()) {
-        if (entry.entryType === 'resource' && entry.name.includes('.js')) {
-          setBundleMetrics(prev => ({
-            ...prev,
-            totalSize: prev.totalSize + (entry as any).transferSize,
-            loadedChunks: [...prev.loadedChunks, entry.name],
-          }));
-        }
-      }
+    observerRef.current = new IntersectionObserver(callback, {
+      threshold: 0.1,
+      rootMargin: '50px',
+      ...options
     });
 
-    observer.observe({ entryTypes: ['resource'] });
-    return () => observer.disconnect();
+    observerRef.current.observe(element);
+    elementRef.current = element;
+  }, [callback, options]);
+
+  const unobserve = useCallback(() => {
+    if (observerRef.current && elementRef.current) {
+      observerRef.current.unobserve(elementRef.current);
+    }
   }, []);
 
-  return bundleMetrics;
+  const disconnect = useCallback(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      disconnect();
+    };
+  }, [disconnect]);
+
+  return { observe, unobserve, disconnect };
+};
+
+// 🎯 Hook para Resize Observer
+export const useResizeObserver = (
+  callback: (entries: ResizeObserverEntry[]) => void,
+  options: ResizeObserverOptions = {}
+) => {
+  const observerRef = useRef<ResizeObserver | null>(null);
+  const elementRef = useRef<HTMLElement | null>(null);
+
+  const observe = useCallback((element: HTMLElement) => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new ResizeObserver(callback);
+    observerRef.current.observe(element, options);
+    elementRef.current = element;
+  }, [callback, options]);
+
+  const unobserve = useCallback(() => {
+    if (observerRef.current && elementRef.current) {
+      observerRef.current.unobserve(elementRef.current);
+    }
+  }, []);
+
+  const disconnect = useCallback(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      disconnect();
+    };
+  }, [disconnect]);
+
+  return { observe, unobserve, disconnect };
+};
+
+// 🎯 Hook para Idle Callback
+export const useIdleCallback = () => {
+  const [isIdle, setIsIdle] = useState(true);
+  const idleRef = useRef<number | null>(null);
+
+  const scheduleIdleCallback = useCallback((callback: () => void) => {
+    if ('requestIdleCallback' in window) {
+      idleRef.current = window.requestIdleCallback(callback, { timeout: 5000 });
+    } else {
+      // Fallback para browsers que não suportam requestIdleCallback
+      setTimeout(callback, 0);
+    }
+  }, []);
+
+  const cancelIdleCallback = useCallback(() => {
+    if (idleRef.current && 'cancelIdleCallback' in window) {
+      window.cancelIdleCallback(idleRef.current);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsIdle(document.visibilityState === 'hidden');
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      cancelIdleCallback();
+    };
+  }, [cancelIdleCallback]);
+
+  return {
+    isIdle,
+    scheduleIdleCallback,
+    cancelIdleCallback
+  };
+};
+
+// 🎯 Hook para Throttled Scroll
+export const useThrottledScroll = (callback: (scrollTop: number) => void, delay = 100) => {
+  const lastCallRef = useRef<number>(0);
+
+  const handleScroll = useCallback((event: Event) => {
+    const now = Date.now();
+    if (now - lastCallRef.current >= delay) {
+      lastCallRef.current = now;
+      const target = event.target as HTMLElement;
+      callback(target.scrollTop);
+    }
+  }, [callback, delay]);
+
+  return handleScroll;
+};
+
+// 🎯 Hook para Throttled Resize
+export const useThrottledResize = (callback: (width: number, height: number) => void, delay = 100) => {
+  const lastCallRef = useRef<number>(0);
+
+  const handleResize = useCallback(() => {
+    const now = Date.now();
+    if (now - lastCallRef.current >= delay) {
+      lastCallRef.current = now;
+      callback(window.innerWidth, window.innerHeight);
+    }
+  }, [callback, delay]);
+
+  return handleResize;
+};
+
+// 🎯 Hook Principal de Otimização
+export const usePerformanceOptimization = (
+  options: PerformanceOptimizationOptions = {}
+) => {
+  const {
+    enableIntersectionObserver = true,
+    enableResizeObserver = true,
+    enableIdleCallback = true,
+    throttleScroll = 100,
+    throttleResize = 100
+  } = options;
+
+  const intersectionObserver = useIntersectionObserver(
+    useCallback((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Elemento visível - pode carregar conteúdo pesado
+          entry.target.classList.add('visible');
+        } else {
+          // Elemento não visível - pode pausar animações
+          entry.target.classList.remove('visible');
+        }
+      });
+    }, []),
+    { threshold: 0.1, rootMargin: '50px' }
+  );
+
+  const resizeObserver = useResizeObserver(
+    useCallback((entries) => {
+      entries.forEach(entry => {
+        const { width, height } = entry.contentRect;
+        // Otimizar layout baseado no tamanho
+        if (width < 768) {
+          entry.target.classList.add('mobile-layout');
+        } else {
+          entry.target.classList.remove('mobile-layout');
+        }
+      });
+    }, []),
+    { box: 'content-box' }
+  );
+
+  const idleCallback = useIdleCallback();
+
+  const throttledScroll = useThrottledScroll(
+    useCallback((scrollTop) => {
+      // Otimizar baseado na posição do scroll
+      if (scrollTop > 100) {
+        document.body.classList.add('scrolled');
+      } else {
+        document.body.classList.remove('scrolled');
+      }
+    }, []),
+    throttleScroll
+  );
+
+  const throttledResize = useThrottledResize(
+    useCallback((width, height) => {
+      // Otimizar baseado no tamanho da tela
+      if (width < 768) {
+        document.body.classList.add('mobile');
+      } else {
+        document.body.classList.remove('mobile');
+      }
+    }, []),
+    throttleResize
+  );
+
+  // 🎯 Hook para Lazy Loading de Imagens
+  const useLazyImage = (src: string, placeholder?: string) => {
+    const [imageSrc, setImageSrc] = useState(placeholder || '');
+    const [isLoaded, setIsLoaded] = useState(false);
+    const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+      if (!enableIntersectionObserver) {
+        setImageSrc(src);
+        return;
+      }
+
+      const img = imgRef.current;
+      if (!img) return;
+
+      const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setImageSrc(src);
+            setIsLoaded(true);
+          }
+        });
+      };
+
+      const observer = new IntersectionObserver(handleIntersection, {
+        threshold: 0.1
+      });
+
+      observer.observe(img);
+
+      return () => {
+        observer.disconnect();
+      };
+    }, [src, enableIntersectionObserver]);
+
+    return { imgRef, imageSrc, isLoaded };
+  };
+
+  // 🎯 Hook para Preload de Recursos
+  const useResourcePreloader = () => {
+    const preloadedResources = useRef<Set<string>>(new Set());
+
+    const preloadResource = useCallback((url: string, type: 'image' | 'script' | 'style' = 'image') => {
+      if (preloadedResources.current.has(url)) return;
+
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.href = url;
+
+      switch (type) {
+        case 'image':
+          link.as = 'image';
+          break;
+        case 'script':
+          link.as = 'script';
+          break;
+        case 'style':
+          link.as = 'style';
+          break;
+      }
+
+      document.head.appendChild(link);
+      preloadedResources.current.add(url);
+  }, []);
+
+    const preloadCriticalResources = useCallback(() => {
+      // Preload recursos críticos
+      const criticalImages = [
+        '/icons/logo.svg',
+        '/icons/stethoscope.svg'
+      ];
+
+      criticalImages.forEach(url => preloadResource(url, 'image'));
+    }, [preloadResource]);
+
+    return {
+      preloadResource,
+      preloadCriticalResources
+    };
+  };
+
+  return {
+    intersectionObserver,
+    resizeObserver,
+    idleCallback,
+    throttledScroll,
+    throttledResize,
+    useLazyImage,
+    useResourcePreloader
+  };
 };
