@@ -19,7 +19,7 @@ import {
   CreateAssessmentData,
   DomainError,
   ValidationError
-} from '../../../types/medical-records';
+} from '../../../../types/medical-records';
 
 export class InitialAssessment {
   private constructor(
@@ -156,7 +156,7 @@ export class InitialAssessment {
    * Atualiza o diagnóstico fisioterapêutico
    */
   updateDiagnosis(diagnosis: PhysiotherapyDiagnosis): InitialAssessment {
-    this.validateDiagnosis(diagnosis);
+    InitialAssessment.validateDiagnosis(diagnosis);
 
     return new InitialAssessment(
       this.id,
@@ -283,7 +283,7 @@ export class InitialAssessment {
     // Analisar força muscular
     const weakMuscles = this.physicalExam.muscleStrength.upperExtremities
       .concat(this.physicalExam.muscleStrength.lowerExtremities)
-      .filter(muscle => muscle.strength < 3);
+      .filter((muscle: { strength: number }) => muscle.strength < 3);
 
     if (weakMuscles.length > 0) {
       riskFactors.push('Fraqueza muscular significativa');
@@ -302,7 +302,7 @@ export class InitialAssessment {
     const restrictedROM = this.physicalExam.rangeOfMotion.cervical
       .concat(this.physicalExam.rangeOfMotion.upperExtremities)
       .concat(this.physicalExam.rangeOfMotion.lowerExtremities)
-      .filter(joint => 
+      .filter((joint: { flexion?: number; extension?: number }) =>
         (joint.flexion && joint.flexion < 50) ||
         (joint.extension && joint.extension < 50)
       );

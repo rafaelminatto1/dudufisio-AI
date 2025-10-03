@@ -5,7 +5,8 @@ import {
   DeliveryResult,
   ValidationResult,
   Recipient,
-  ChannelCapability
+  ChannelCapability,
+  CommunicationChannel
 } from '../../../types';
 import { BaseChannel, BaseChannelConfig } from './BaseChannel';
 import {
@@ -91,9 +92,10 @@ export class ResendEmailChannel extends BaseChannel {
         enabled: config.enabled
       });
     } catch (error) {
-      this.logger.error('Failed to initialize Resend service', {
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.logger.error(
+        'Failed to initialize Resend service',
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -143,35 +145,49 @@ export class ResendEmailChannel extends BaseChannel {
           cost
         });
       } else {
-        this.logger.error('Failed to send email via Resend', {
-          messageId: message.id,
-          to: recipient.email,
-          error: result.error,
-          duration
-        });
+        this.logger.error(
+          'Failed to send email via Resend',
+          result.error as unknown as Error | undefined,
+          {
+            messageId: message.id,
+            to: recipient.email,
+            duration
+          }
+        );
       }
 
       return result;
 
     } catch (error) {
       const duration = Date.now() - startTime;
-      
+
       this.recordDeliveryMetrics(false, duration, 0);
-      
-      this.logger.error('Email sending failed', {
-        messageId: message.id,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        duration
-      });
+
+      this.logger.error(
+        'Email sending failed',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          messageId: message.id,
+          duration
+        }
+      );
+
+      const commError = error instanceof CommunicationError
+        ? error
+        : new CommunicationError(
+            'EMAIL_SEND_FAILED',
+            error instanceof Error ? error.message : 'Unknown error',
+            true
+          );
 
       return {
         success: false,
         messageId: message.id,
-        channel: 'email',
-        deliveredAt: null,
+        channel: CommunicationChannel.Email,
+        deliveredAt: undefined,
         cost: 0,
-        duration,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: commError,
+        retryable: true
       };
     }
   }
@@ -198,7 +214,8 @@ export class ResendEmailChannel extends BaseChannel {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
+      warnings: []
     };
   }
 
@@ -210,16 +227,6 @@ export class ResendEmailChannel extends BaseChannel {
     return emailRegex.test(email);
   }
 
-  /**
-   * Prepare message content for email
-   */
-  private prepareMessageContent(message: Message) {
-    return {
-      subject: message.content.subject || 'Mensagem do DuduFisio',
-      body: message.content.body || message.content.text || '',
-      text: message.content.text || this.stripHtml(message.content.body || ''),
-    };
-  }
 
   /**
    * Strip HTML tags from content
@@ -229,12 +236,13 @@ export class ResendEmailChannel extends BaseChannel {
   }
 
   /**
-   * Calculate cost for email
+   * Calculate additional cost for email (override from BaseChannel)
    */
-  private async calculateCost(message: Message): Promise<number> {
+  protected async calculateAdditionalCost(message: Message): Promise<number> {
     // Resend free tier: 100k emails/month
     // Cost per email: ~$0.0001
-    return 0.0001;
+    // Base cost is handled by BaseChannel.calculateCost
+    return 0;
   }
 
   /**
@@ -244,9 +252,10 @@ export class ResendEmailChannel extends BaseChannel {
     try {
       return await this.resendService.testConnection();
     } catch (error) {
-      this.logger.error('Email service test failed', {
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
+      this.logger.error(
+        'Email service test failed',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return false;
     }
   }
@@ -259,23 +268,33 @@ export class ResendEmailChannel extends BaseChannel {
       return {
         success: false,
         messageId: 'welcome-failed',
-        channel: 'email',
-        deliveredAt: null,
+        channel: CommunicationChannel.Email,
+        deliveredAt: undefined,
         cost: 0,
-        error: 'No email address provided'
+        error: new CommunicationError('NO_EMAIL_ADDRESS', 'No email address provided', false),
+        retryable: false
       };
     }
 
     try {
       return await this.resendService.sendWelcomeEmail(recipient.email, name);
     } catch (error) {
+      const commError = error instanceof CommunicationError
+        ? error
+        : new CommunicationError(
+            'WELCOME_EMAIL_FAILED',
+            error instanceof Error ? error.message : 'Unknown error',
+            true
+          );
+
       return {
         success: false,
         messageId: 'welcome-failed',
-        channel: 'email',
-        deliveredAt: null,
+        channel: CommunicationChannel.Email,
+        deliveredAt: undefined,
         cost: 0,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: commError,
+        retryable: true
       };
     }
   }
@@ -293,10 +312,11 @@ export class ResendEmailChannel extends BaseChannel {
       return {
         success: false,
         messageId: 'reminder-failed',
-        channel: 'email',
-        deliveredAt: null,
+        channel: CommunicationChannel.Email,
+        deliveredAt: undefined,
         cost: 0,
-        error: 'No email address provided'
+        error: new CommunicationError('NO_EMAIL_ADDRESS', 'No email address provided', false),
+        retryable: false
       };
     }
 
@@ -308,13 +328,22 @@ export class ResendEmailChannel extends BaseChannel {
         therapistName
       );
     } catch (error) {
+      const commError = error instanceof CommunicationError
+        ? error
+        : new CommunicationError(
+            'REMINDER_EMAIL_FAILED',
+            error instanceof Error ? error.message : 'Unknown error',
+            true
+          );
+
       return {
         success: false,
         messageId: 'reminder-failed',
-        channel: 'email',
-        deliveredAt: null,
+        channel: CommunicationChannel.Email,
+        deliveredAt: undefined,
         cost: 0,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: commError,
+        retryable: true
       };
     }
   }
@@ -327,24 +356,87 @@ export class ResendEmailChannel extends BaseChannel {
       return {
         success: false,
         messageId: 'reset-failed',
-        channel: 'email',
-        deliveredAt: null,
+        channel: CommunicationChannel.Email,
+        deliveredAt: undefined,
         cost: 0,
-        error: 'No email address provided'
+        error: new CommunicationError('NO_EMAIL_ADDRESS', 'No email address provided', false),
+        retryable: false
       };
     }
 
     try {
       return await this.resendService.sendPasswordResetEmail(recipient.email, resetToken);
     } catch (error) {
+      const commError = error instanceof CommunicationError
+        ? error
+        : new CommunicationError(
+            'PASSWORD_RESET_FAILED',
+            error instanceof Error ? error.message : 'Unknown error',
+            true
+          );
+
       return {
         success: false,
         messageId: 'reset-failed',
-        channel: 'email',
-        deliveredAt: null,
+        channel: CommunicationChannel.Email,
+        deliveredAt: undefined,
         cost: 0,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: commError,
+        retryable: true
       };
     }
+  }
+
+  /**
+   * Implement abstract methods from BaseChannel
+   */
+
+  async getDeliveryStatus(messageId: string): Promise<DeliveryResult> {
+    // Implementation for getting delivery status
+    // This would typically query the Resend API for message status
+    return {
+      success: true,
+      messageId,
+      channel: CommunicationChannel.Email,
+      deliveredAt: new Date(),
+      cost: 0,
+      retryable: false
+    };
+  }
+
+  protected validateRecipientForChannel(recipient: Recipient): Promise<ValidationResult> {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    if (!recipient.email) {
+      errors.push('Email address is required for email channel');
+    } else if (!this.isValidEmail(recipient.email)) {
+      errors.push('Invalid email address format');
+    }
+
+    return Promise.resolve({
+      valid: errors.length === 0,
+      errors,
+      warnings
+    });
+  }
+
+  protected validateMessageForChannel(message: Message): ValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    if (!message.content.subject) {
+      warnings.push('Email subject is recommended');
+    }
+
+    if (message.content.body && message.content.body.length > 100000) {
+      warnings.push('Email body is very large and may be rejected by some providers');
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings
+    };
   }
 }

@@ -70,7 +70,11 @@ export class ComplianceIntegration {
       const alerts: ComplianceAlert[] = [];
       
       // Verificar consentimentos LGPD
-      let consentStatus = {
+      let consentStatus: {
+        hasValidConsent: boolean;
+        consentTypes: string[];
+        missingConsents: string[];
+      } = {
         hasValidConsent: true,
         consentTypes: [],
         missingConsents: []
@@ -89,13 +93,18 @@ export class ComplianceIntegration {
             title: 'Consentimento LGPD Necessário',
             description: `Paciente ${request.patient.name} não possui consentimento válido para processamento de dados`,
             affectedEntities: [request.patient.id],
-            requiredActions: ['Obter consentimento para processamento de dados']
+            requiredActions: ['Obter consentimento para processamento de dados'],
+            isResolved: false
           }));
         }
       }
       
       // Verificar conformidade COFFITO
-      let coffitoStatus = {
+      let coffitoStatus: {
+        isCompliant: boolean;
+        violations: string[];
+        recommendations: string[];
+      } = {
         isCompliant: true,
         violations: [],
         recommendations: []
@@ -114,7 +123,8 @@ export class ComplianceIntegration {
             title: 'Violações COFFITO Detectadas',
             description: 'Agendamento não está em conformidade com diretrizes COFFITO',
             affectedEntities: [request.patient.id],
-            requiredActions: coffitoStatus.recommendations
+            requiredActions: coffitoStatus.recommendations,
+            isResolved: false
           }));
         }
       }
@@ -173,7 +183,8 @@ export class ComplianceIntegration {
             title: 'Consentimento Necessário para IA',
             description: 'Processamento de dados pessoais por IA requer consentimento específico',
             affectedEntities: [request.context.patient?.id || 'unknown'],
-            requiredActions: ['Obter consentimento para processamento por IA']
+            requiredActions: ['Obter consentimento para processamento por IA'],
+            isResolved: false
           }));
         }
       }

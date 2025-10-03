@@ -68,6 +68,14 @@ interface ProgressReport {
     rate: number;
   };
   recommendations: string;
+  treatmentSummary?: string;
+  outcomeMeasures?: {
+    initialPain: number | string;
+    finalPain: number | string;
+    painImprovement: number | string;
+  };
+  finalRecommendations?: string;
+  followUpPlan?: string;
   generatedAt: Date;
 }
 
@@ -81,6 +89,21 @@ interface DischargeReport {
   };
   finalRecommendations: string;
   followUpPlan: string;
+  initialAssessment?: ClinicalDocument | null;
+  sessionEvolutions?: ClinicalDocument[];
+  painEvolution?: {
+    summary: string;
+    details: any[];
+  };
+  functionalProgress?: {
+    summary: string;
+    totalSessions: number;
+  };
+  treatmentCompliance?: {
+    summary: string;
+    rate: number;
+  };
+  recommendations?: string;
   generatedAt: Date;
 }
 
@@ -477,7 +500,7 @@ export function ClinicalReportsGenerator() {
                           </div>
                         </div>
 
-                        {selectedReportType === 'progress' && (
+                        {selectedReportType === 'progress' && generatedReport.painEvolution && (
                           <>
                             {/* Evolução da Dor */}
                             <div>
@@ -499,40 +522,44 @@ export function ClinicalReportsGenerator() {
                             </div>
 
                             {/* Progresso Funcional */}
-                            <div>
-                              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                                <Target className="h-5 w-5" />
-                                Progresso Funcional
-                              </h3>
-                              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                <p className="mb-2">{generatedReport.functionalProgress.summary}</p>
-                                <p className="text-sm">Total de sessões: {generatedReport.functionalProgress.totalSessions}</p>
-                              </div>
-                            </div>
-
-                            {/* Adesão ao Tratamento */}
-                            <div>
-                              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                                <CheckCircle className="h-5 w-5" />
-                                Adesão ao Tratamento
-                              </h3>
-                              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                <p className="mb-2">{generatedReport.treatmentCompliance.summary}</p>
-                                <div className="flex items-center gap-2">
-                                  <div className="flex-1 bg-gray-200 rounded-full h-2">
-                                    <div 
-                                      className="bg-green-600 h-2 rounded-full" 
-                                      style={{ width: `${generatedReport.treatmentCompliance.rate}%` }}
-                                    ></div>
-                                  </div>
-                                  <span className="text-sm font-medium">{generatedReport.treatmentCompliance.rate}%</span>
+                            {generatedReport.functionalProgress && (
+                              <div>
+                                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                  <Target className="h-5 w-5" />
+                                  Progresso Funcional
+                                </h3>
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                  <p className="mb-2">{generatedReport.functionalProgress.summary}</p>
+                                  <p className="text-sm">Total de sessões: {generatedReport.functionalProgress.totalSessions}</p>
                                 </div>
                               </div>
-                            </div>
+                            )}
+
+                            {/* Adesão ao Tratamento */}
+                            {generatedReport.treatmentCompliance && (
+                              <div>
+                                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                  <CheckCircle className="h-5 w-5" />
+                                  Adesão ao Tratamento
+                                </h3>
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                  <p className="mb-2">{generatedReport.treatmentCompliance.summary}</p>
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex-1 bg-gray-200 rounded-full h-2">
+                                      <div
+                                        className="bg-green-600 h-2 rounded-full"
+                                        style={{ width: `${generatedReport.treatmentCompliance.rate}%` }}
+                                      ></div>
+                                    </div>
+                                    <span className="text-sm font-medium">{generatedReport.treatmentCompliance.rate}%</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </>
                         )}
 
-                        {selectedReportType === 'discharge' && (
+                        {selectedReportType === 'discharge' && generatedReport.treatmentSummary && (
                           <>
                             {/* Resumo do Tratamento */}
                             <div>
@@ -546,28 +573,30 @@ export function ClinicalReportsGenerator() {
                             </div>
 
                             {/* Medidas de Resultado */}
-                            <div>
-                              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                                <BarChart3 className="h-5 w-5" />
-                                Medidas de Resultado
-                              </h3>
-                              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                <div className="grid grid-cols-3 gap-4 text-center">
-                                  <div>
-                                    <p className="text-sm text-gray-600">Dor Inicial</p>
-                                    <p className="text-2xl font-bold text-red-600">{generatedReport.outcomeMeasures.initialPain}/10</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-gray-600">Dor Final</p>
-                                    <p className="text-2xl font-bold text-green-600">{generatedReport.outcomeMeasures.finalPain}/10</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm text-gray-600">Melhora</p>
-                                    <p className="text-2xl font-bold text-blue-600">{generatedReport.outcomeMeasures.painImprovement}/10</p>
+                            {generatedReport.outcomeMeasures && (
+                              <div>
+                                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                                  <BarChart3 className="h-5 w-5" />
+                                  Medidas de Resultado
+                                </h3>
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                  <div className="grid grid-cols-3 gap-4 text-center">
+                                    <div>
+                                      <p className="text-sm text-gray-600">Dor Inicial</p>
+                                      <p className="text-2xl font-bold text-red-600">{generatedReport.outcomeMeasures.initialPain}/10</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-sm text-gray-600">Dor Final</p>
+                                      <p className="text-2xl font-bold text-green-600">{generatedReport.outcomeMeasures.finalPain}/10</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-sm text-gray-600">Melhora</p>
+                                      <p className="text-2xl font-bold text-blue-600">{generatedReport.outcomeMeasures.painImprovement}/10</p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
+                            )}
                           </>
                         )}
 

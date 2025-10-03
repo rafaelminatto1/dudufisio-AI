@@ -12,13 +12,17 @@
  * 8. Comunicação com Pacientes
  */
 
-import { Patient, Appointment, User } from '../../types';
+import { Patient, Appointment, User } from '../../../types';
 
 export interface PromptRequest {
   type: PromptType;
   context: PromptContext;
   data: any;
   preferences?: PromptPreferences;
+  // Optional direct references for convenience
+  patient?: Patient;
+  appointment?: Appointment;
+  therapist?: User;
 }
 
 export interface PromptResponse {
@@ -192,11 +196,11 @@ export class AIPromptManager {
    */
   private async applyChainOfThought(prompt: string, request: PromptRequest): Promise<string> {
     const chainOfThoughtStrategy = this.strategies.get('chain_of_thought');
-    if (!chainOfThoughtStrategy) return prompt;
-    
+    if (!chainOfThoughtStrategy?.generateReasoningSteps) return prompt;
+
     const reasoningSteps = chainOfThoughtStrategy.generateReasoningSteps(request);
-    
-    return `${prompt}\n\n## Raciocínio Clínico Sistemático:\n${reasoningSteps.map((step, index) => 
+
+    return `${prompt}\n\n## Raciocínio Clínico Sistemático:\n${reasoningSteps.map((step, index) =>
       `${index + 1}. ${step}`
     ).join('\n')}\n\nBaseado neste raciocínio sistemático, forneça sua análise:`;
   }
@@ -206,10 +210,10 @@ export class AIPromptManager {
    */
   private async applyFewShotLearning(prompt: string, request: PromptRequest): Promise<string> {
     const fewShotStrategy = this.strategies.get('few_shot_learning');
-    if (!fewShotStrategy) return prompt;
-    
+    if (!fewShotStrategy?.generateExamples) return prompt;
+
     const examples = fewShotStrategy.generateExamples(request);
-    
+
     return `${prompt}\n\n## Exemplos Contextualizados:\n${examples}\n\nCom base nestes exemplos, analise o caso atual:`;
   }
 
@@ -218,10 +222,10 @@ export class AIPromptManager {
    */
   private async applyRolePlaying(prompt: string, request: PromptRequest): Promise<string> {
     const rolePlayingStrategy = this.strategies.get('role_playing');
-    if (!rolePlayingStrategy) return prompt;
-    
+    if (!rolePlayingStrategy?.generatePersona) return prompt;
+
     const persona = rolePlayingStrategy.generatePersona(request);
-    
+
     return `Você é ${persona.name}, ${persona.description}.\n\n${prompt}\n\nResponda como ${persona.name}:`;
   }
 
@@ -230,10 +234,10 @@ export class AIPromptManager {
    */
   private async applyStructuredOutput(prompt: string, request: PromptRequest): Promise<string> {
     const structuredOutputStrategy = this.strategies.get('structured_output');
-    if (!structuredOutputStrategy) return prompt;
-    
+    if (!structuredOutputStrategy?.generateOutputFormat) return prompt;
+
     const outputFormat = structuredOutputStrategy.generateOutputFormat(request);
-    
+
     return `${prompt}\n\n## Formato de Resposta:\nResponda no seguinte formato JSON:\n\`\`\`json\n${outputFormat}\n\`\`\``;
   }
 
@@ -242,10 +246,10 @@ export class AIPromptManager {
    */
   private async applyContextOptimization(prompt: string, request: PromptRequest): Promise<string> {
     const contextOptimizationStrategy = this.strategies.get('context_optimization');
-    if (!contextOptimizationStrategy) return prompt;
-    
+    if (!contextOptimizationStrategy?.optimizeContext) return prompt;
+
     const optimizedContext = contextOptimizationStrategy.optimizeContext(request);
-    
+
     return `${optimizedContext}\n\n${prompt}`;
   }
 

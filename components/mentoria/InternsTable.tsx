@@ -1,6 +1,6 @@
 // components/mentoria/InternsTable.tsx
 import React from 'react';
-import { Intern, InternStatus } from '../../types';
+import { Intern, InternStatus, InternStatusColorMap } from '../../types';
 import { Plus } from 'lucide-react';
 
 interface InternsTableProps {
@@ -10,10 +10,7 @@ interface InternsTableProps {
 }
 
 const InternsTable: React.FC<InternsTableProps> = ({ interns, onAdd, onEdit }) => {
-    const statusColorMap = {
-        [InternStatus.Active]: 'bg-green-100 text-green-800',
-        [InternStatus.Inactive]: 'bg-slate-100 text-slate-800',
-    };
+    const statusColorMap = InternStatusColorMap;
 
     return (
         <div className="bg-white p-6 rounded-2xl shadow-sm">

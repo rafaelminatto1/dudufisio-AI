@@ -80,20 +80,20 @@ export function hardReload(): void {
 /**
  * Verifica saúde dos contextos React
  */
-export function checkContextHealth(): void {
+export function checkContextHealth(): { react: boolean; reactDOM: boolean; hasErrors: boolean; serviceWorker: boolean; localStorage: boolean; supabase: boolean } {
   console.log('🏥 Verificando saúde dos contextos...');
-  
+
   const checks = {
-    react: typeof React !== 'undefined',
+    react: typeof globalThis.React !== 'undefined',
     reactDOM: document.querySelector('[data-reactroot]') !== null,
     hasErrors: !!(window as any).__APP_ERROR__,
     serviceWorker: 'serviceWorker' in navigator,
     localStorage: typeof localStorage !== 'undefined',
     supabase: !!(window as any).supabase
   };
-  
+
   console.table(checks);
-  
+
   return checks;
 }
 

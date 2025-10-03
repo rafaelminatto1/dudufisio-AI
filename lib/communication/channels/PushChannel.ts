@@ -1,6 +1,7 @@
 // Push Notification Channel using Web Push API
 
-import webpush from 'web-push';
+// Import web-push types if installed, otherwise use local types
+// import webpush from 'web-push';
 import {
   Message,
   DeliveryResult,
@@ -92,7 +93,6 @@ export class PushChannel extends BaseChannel {
     ChannelCapability.TEXT,
     ChannelCapability.IMAGES,
     ChannelCapability.RICH_CONTENT,
-    ChannelCapability.INTERACTIVE,
     ChannelCapability.DELIVERY_STATUS
   ];
   readonly priority = 90; // Very high priority for instant notifications
@@ -287,7 +287,7 @@ export class PushChannel extends BaseChannel {
   /**
    * Validate recipient for push channel
    */
-  protected async validateRecipientForChannel(recipient: Recipient): ValidationResult {
+  protected async validateRecipientForChannel(recipient: Recipient): Promise<ValidationResult> {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -419,10 +419,10 @@ export class PushChannel extends BaseChannel {
       timestamp: Date.now(),
       data: {
         messageId: message.id,
-        url: message.metadata?.url || '/',
+        url: (message.metadata?.url as string) || '/',
         ...message.metadata
       },
-      requireInteraction: message.priority ? message.priority > 5 : false,
+      requireInteraction: message.priority === 'critical' || message.priority === 'high',
       dir: 'auto',
       lang: 'pt-BR'
     };
@@ -448,7 +448,7 @@ export class PushChannel extends BaseChannel {
     }
 
     // Add vibration pattern for urgent messages
-    if (message.priority && message.priority > 7) {
+    if (message.priority === 'critical') {
       payload.vibrate = [200, 100, 200]; // Urgent vibration pattern
     }
 

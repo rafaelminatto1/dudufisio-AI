@@ -63,6 +63,21 @@ export interface NotificationTemplate {
   variables: string[];
 }
 
+export interface NotificationPreferences {
+  push: boolean;
+  email: boolean;
+  sms: boolean;
+  inApp: boolean;
+}
+
+export interface NotificationStatus {
+  isServiceWorkerRegistered: boolean;
+  isPushSupported: boolean;
+  hasPermission: boolean;
+  isSubscribed: boolean;
+  endpoint: string | null;
+}
+
 class EnhancedNotificationService {
   private static instance: EnhancedNotificationService;
   private pushManager: PushManager | null = null;
@@ -231,7 +246,7 @@ class EnhancedNotificationService {
     }
   }
 
-  private sendInAppNotification(userId: string, config: PushNotificationConfig): void {
+  public sendInAppNotification(userId: string, config: PushNotificationConfig): void {
     const notification: Notification = {
       id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       userId,

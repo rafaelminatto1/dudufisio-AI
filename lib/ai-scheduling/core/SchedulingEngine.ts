@@ -9,7 +9,7 @@
  * - Prompts especializados
  */
 
-import { Appointment, Patient, User } from '../../types';
+import { Appointment, Patient, User, AppointmentStatus } from '../../../types';
 import { BusinessIntelligenceSystem } from '../../analytics/BusinessIntelligenceSystem';
 import { DemandPredictor, DemandPrediction } from './DemandPredictor';
 import { NoShowPredictor, NoShowPrediction } from './NoShowPredictor';
@@ -352,15 +352,13 @@ export class SchedulingEngine {
       title: `Consulta de ${request.appointmentType}`,
       startTime,
       endTime,
-      status: 'scheduled',
+      status: AppointmentStatus.Scheduled,
       type: request.appointmentType as any,
       value: 120, // Será calculado
       paymentStatus: 'pending',
       observations: '',
       recurrenceRule: { frequency: 'weekly', days: [], until: '' },
       seriesId: '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
       created_by: ''
     };
   }

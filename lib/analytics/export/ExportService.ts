@@ -101,7 +101,14 @@ startxref
     console.log('📊 Gerando relatório em Excel...');
 
     // In a real implementation, this would use a library like ExcelJS or SheetJS
-    const workbookData = {
+    const workbookData: {
+      metadata: {
+        title: string;
+        generatedAt: string;
+        period: string;
+      };
+      sheets: Array<{ name: string; data: any[][] }>;
+    } = {
       metadata: {
         title: report.title,
         generatedAt: report.generatedAt.toISOString(),

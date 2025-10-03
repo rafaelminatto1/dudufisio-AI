@@ -8,7 +8,7 @@
  * - Follow-up automatizado
  */
 
-import { Appointment, Patient } from '../../types';
+import { Appointment, Patient, AppointmentStatus } from '../../../types';
 import { BusinessIntelligenceSystem } from '../../analytics/BusinessIntelligenceSystem';
 
 export interface NoShowPrediction {
@@ -213,8 +213,8 @@ export class NoShowPredictor {
     const appointmentHistory = await this.getAppointmentHistory(patientId);
     
     // Calcular métricas comportamentais
-    const noShowCount = appointmentHistory.filter(app => app.status === 'no_show').length;
-    const cancellationCount = appointmentHistory.filter(app => app.status === 'cancelled').length;
+    const noShowCount = appointmentHistory.filter(app => app.status === AppointmentStatus.NoShow).length;
+    const cancellationCount = appointmentHistory.filter(app => app.status === AppointmentStatus.Canceled).length;
     const lastNoShow = this.getLastNoShow(appointmentHistory);
     const lastCancellation = this.getLastCancellation(appointmentHistory);
     const averageAdvanceBooking = this.calculateAverageAdvanceBooking(appointmentHistory);
@@ -235,7 +235,7 @@ export class NoShowPredictor {
     return {
       // Demographics
       age: patient.age || 30,
-      gender: patient.gender || 'other',
+      gender: patient.gender === "M" ? "male" : patient.gender === "F" ? "female" : "other",
       location: patient.address?.city || 'unknown',
       insuranceType: patient.insuranceType || 'private',
       
@@ -666,13 +666,13 @@ export class NoShowPredictor {
   }
 
   private getLastNoShow(appointments: Appointment[]): Date | null {
-    const noShows = appointments.filter(app => app.status === 'no_show');
+    const noShows = appointments.filter(app => app.status === AppointmentStatus.NoShow);
     if (noShows.length === 0) return null;
     return new Date(Math.max(...noShows.map(app => new Date(app.startTime).getTime())));
   }
 
   private getLastCancellation(appointments: Appointment[]): Date | null {
-    const cancellations = appointments.filter(app => app.status === 'cancelled');
+    const cancellations = appointments.filter(app => app.status === AppointmentStatus.Canceled);
     if (cancellations.length === 0) return null;
     return new Date(Math.max(...cancellations.map(app => new Date(app.startTime).getTime())));
   }
@@ -687,13 +687,14 @@ export class NoShowPredictor {
   }
 
   private calculateRescheduleFrequency(appointments: Appointment[]): number {
-    const reschedules = appointments.filter(app => app.status === 'rescheduled');
+    // Since 'rescheduled' is not in enum, consider canceled appointments as reschedules
+    const reschedules = appointments.filter(app => app.status === AppointmentStatus.Canceled);
     return reschedules.length / Math.max(appointments.length, 1);
   }
 
   private calculateSessionNumber(appointments: Appointment[]): number {
-    return appointments.filter(app => 
-      app.status === 'completed' || app.status === 'scheduled'
+    return appointments.filter(app =>
+      app.status === AppointmentStatus.Completed || app.status === AppointmentStatus.Scheduled
     ).length + 1;
   }
 

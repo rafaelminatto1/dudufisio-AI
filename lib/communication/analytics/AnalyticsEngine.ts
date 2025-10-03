@@ -322,13 +322,13 @@ export class AnalyticsEngine {
 
       // Calculate volume metrics
       const totalSent = messages.length;
-      const totalDelivered = messages.filter(m => m.status === 'delivered').length;
-      const totalRead = messages.filter(m => m.status === 'read').length;
-      const totalFailed = messages.filter(m => m.status === 'failed').length;
+      const totalDelivered = messages.filter((m: Message) => m.status === MessageStatus.Delivered).length;
+      const totalRead = messages.filter((m: Message) => m.status === MessageStatus.Read).length;
+      const totalFailed = messages.filter((m: Message) => m.status === MessageStatus.Failed).length;
 
       // Calculate bounced messages (specific failure types)
-      const totalBounced = messages.filter(m =>
-        m.status === 'failed' &&
+      const totalBounced = messages.filter((m: Message) =>
+        m.status === MessageStatus.Failed &&
         (m.errorCode?.includes('BOUNCE') || m.errorCode?.includes('INVALID'))
       ).length;
 
@@ -345,43 +345,48 @@ export class AnalyticsEngine {
       const engagementRate = totalSent > 0 ? ((totalRead + totalOptOuts) / totalSent) * 100 : 0;
 
       // Calculate performance metrics
-      const deliveredMessages = messages.filter(m => m.deliveredAt && m.createdAt);
+      const deliveredMessages = messages.filter((m: Message) => m.deliveredAt && m.createdAt);
       const averageDeliveryTime = deliveredMessages.length > 0
-        ? deliveredMessages.reduce((sum, m) =>
+        ? deliveredMessages.reduce((sum: number, m: Message) =>
             sum + (m.deliveredAt!.getTime() - m.createdAt.getTime()), 0
           ) / deliveredMessages.length
         : 0;
 
       // Calculate peak hour delivery
       const hourlyDeliveries = new Map<number, number>();
-      deliveredMessages.forEach(m => {
+      deliveredMessages.forEach((m: Message) => {
         const hour = m.deliveredAt!.getHours();
         hourlyDeliveries.set(hour, (hourlyDeliveries.get(hour) || 0) + 1);
       });
       const peakHourDelivery = Math.max(...Array.from(hourlyDeliveries.values()), 0);
 
       // Calculate cost metrics
-      const totalCost = messages.reduce((sum, m) => sum + (m.cost || 0), 0);
+      const totalCost = messages.reduce((sum: number, m: Message) => sum + (m.cost || 0), 0);
       const costPerMessage = totalSent > 0 ? totalCost / totalSent : 0;
       const costPerDelivery = totalDelivered > 0 ? totalCost / totalDelivered : 0;
       const costPerEngagement = (totalRead + totalOptOuts) > 0 ? totalCost / (totalRead + totalOptOuts) : 0;
 
       // Calculate channel distribution
       const channelDistribution: Record<CommunicationChannel, number> = {
-        email: 0,
-        sms: 0,
-        whatsapp: 0,
-        push: 0
+        [CommunicationChannel.Email]: 0,
+        [CommunicationChannel.SMS]: 0,
+        [CommunicationChannel.WhatsApp]: 0,
+        [CommunicationChannel.Push]: 0,
+        [CommunicationChannel.Voice]: 0
       };
 
-      messages.forEach(m => {
-        channelDistribution[m.channel]++;
+      messages.forEach((m: Message) => {
+        if (m.channel && m.channel in channelDistribution) {
+          channelDistribution[m.channel]++;
+        }
       });
 
       // Calculate message type distribution
-      const messageTypeDistribution: Record<MessageType, number> = {} as any;
-      messages.forEach(m => {
-        messageTypeDistribution[m.type] = (messageTypeDistribution[m.type] || 0) + 1;
+      const messageTypeDistribution: Record<MessageType, number> = {} as Record<MessageType, number>;
+      messages.forEach((m: Message) => {
+        if (m.type) {
+          messageTypeDistribution[m.type] = (messageTypeDistribution[m.type] || 0) + 1;
+        }
       });
 
       const duration = Date.now() - startTime;
@@ -427,7 +432,7 @@ export class AnalyticsEngine {
     try {
       const data = await this.repository.getTimeSeriesData(metric, filter, granularity);
 
-      return data.map(point => ({
+      return data.map((point: { timestamp: Date; value: number; metadata?: Record<string, any> }) => ({
         timestamp: point.timestamp,
         value: point.value,
         metadata: point.metadata
@@ -442,8 +447,14 @@ export class AnalyticsEngine {
    * Get channel performance comparison
    */
   async getChannelPerformance(filter: AnalyticsFilter): Promise<Record<CommunicationChannel, CommunicationMetrics>> {
-    const channels: CommunicationChannel[] = ['email', 'sms', 'whatsapp', 'push'];
-    const performance: Record<CommunicationChannel, CommunicationMetrics> = {} as any;
+    const channels: CommunicationChannel[] = [
+      CommunicationChannel.Email,
+      CommunicationChannel.SMS,
+      CommunicationChannel.WhatsApp,
+      CommunicationChannel.Push,
+      CommunicationChannel.Voice
+    ];
+    const performance: Record<CommunicationChannel, CommunicationMetrics> = {} as Record<CommunicationChannel, CommunicationMetrics>;
 
     for (const channel of channels) {
       const channelFilter = { ...filter, channels: [channel] };
@@ -459,17 +470,17 @@ export class AnalyticsEngine {
   async getMessageTypePerformance(filter: AnalyticsFilter): Promise<Record<MessageType, CommunicationMetrics>> {
     try {
       const messageTypes = await this.repository.getUniqueMessageTypes(filter);
-      const performance: Record<MessageType, CommunicationMetrics> = {} as any;
+      const performance: Record<MessageType, CommunicationMetrics> = {} as Record<MessageType, CommunicationMetrics>;
 
       for (const messageType of messageTypes) {
         const typeFilter = { ...filter, messageTypes: [messageType] };
-        performance[messageType] = await this.getCommunicationMetrics(typeFilter);
+        performance[messageType as MessageType] = await this.getCommunicationMetrics(typeFilter);
       }
 
       return performance;
     } catch (error) {
       this.logger.error('Failed to get message type performance', error instanceof Error ? error : new Error(String(error)));
-      return {} as any;
+      return {} as Record<MessageType, CommunicationMetrics>;
     }
   }
 
@@ -549,7 +560,15 @@ export class AnalyticsEngine {
       const cohortData = await this.repository.getCohortData(cohortType, startDate, endDate);
 
       // Process and calculate retention rates
-      const processedCohorts = cohortData.map(cohort => {
+      const processedCohorts = cohortData.map((cohort: {
+        id: string;
+        name: string;
+        date: Date;
+        totalUsers: number;
+        usersByPeriod: number[];
+        engagementByPeriod?: number[];
+        conversionByPeriod?: number[];
+      }) => {
         const retentionByPeriod: Record<string, number> = {};
         const engagementByPeriod: Record<string, number> = {};
         const conversionByPeriod: Record<string, number> = {};
@@ -806,8 +825,12 @@ export class AnalyticsEngine {
    */
   private async dispatchAlert(type: 'warning' | 'error' | 'info', message: string, severity: number): Promise<void> {
     await this.eventDispatcher.dispatch({
+      id: `alert-${Date.now()}`,
       type: 'analytics.alert',
-      timestamp: new Date(),
+      aggregateId: 'analytics-engine',
+      aggregateType: 'analytics',
+      occurredAt: new Date(),
+      version: 1,
       data: {
         alertType: type,
         message,

@@ -17,9 +17,14 @@ export { CommunicationSettings } from './CommunicationSettings';
 export { default as CommunicationSettingsDefault } from './CommunicationSettings';
 
 // Re-export all components as default exports for lazy loading compatibility
+import { CommunicationDashboard as Dashboard } from './CommunicationDashboard';
+import { TemplateManager as Manager } from './TemplateManager';
+import { AutomationRulesManager as RulesManager } from './AutomationRulesManager';
+import { CommunicationSettings as Settings } from './CommunicationSettings';
+
 export default {
-  CommunicationDashboard: CommunicationDashboard,
-  TemplateManager: TemplateManager,
-  AutomationRulesManager: AutomationRulesManager,
-  CommunicationSettings: CommunicationSettings
+  CommunicationDashboard: Dashboard,
+  TemplateManager: Manager,
+  AutomationRulesManager: RulesManager,
+  CommunicationSettings: Settings
 };

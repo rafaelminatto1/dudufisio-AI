@@ -7,12 +7,11 @@
 
 import {
   createAISchedulingService,
-  createComplianceManager,
   SmartSchedulingRequest,
-  PromptRequest,
-  APPOINTMENT_TYPES,
-  PROMPT_TYPES
+  PromptRequest
 } from '../index';
+import { createComplianceManager } from '../../compliance';
+import { AppointmentType } from '../../../types';
 
 // Exemplo de configuração com compliance habilitado
 const biSystem = {
@@ -64,13 +63,13 @@ export async function exemploAgendamentoComCompliance() {
         street: 'Rua das Flores, 123',
         city: 'São Paulo',
         state: 'SP',
-        zipCode: '01234-567'
+        zip: '01234-567'
       },
-      gender: 'male',
+      gender: 'M',
       insuranceType: 'private',
       avatarUrl: 'https://i.pravatar.cc/150?u=patient_123'
     },
-    appointmentType: APPOINTMENT_TYPES.EVALUATION,
+    appointmentType: AppointmentType.Evaluation,
     preferredDate: new Date('2024-01-15'),
     preferredTime: new Date('2024-01-15T14:00:00'),
     duration: 60,
@@ -156,7 +155,7 @@ export async function exemploPromptComCompliance() {
   console.log('🧠 Exemplo 2: Prompt com Compliance');
   
   const request: PromptRequest = {
-    type: PROMPT_TYPES.CLINICAL_ANALYSIS,
+    type: 'clinical_analysis',
     context: {
       patient: {
         id: 'patient_123',
@@ -380,7 +379,7 @@ export async function exemploGestaoAlertas() {
     
     if (dashboard) {
       console.log('🚨 Alertas ativos:', dashboard.alerts.length);
-      dashboard.alerts.forEach(alert => {
+      dashboard.alerts.forEach((alert: { title: string; severity: string; type: string }) => {
         console.log(`- ${alert.title}: ${alert.severity} (${alert.type})`);
       });
     }

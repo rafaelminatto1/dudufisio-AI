@@ -150,8 +150,9 @@ export abstract class BaseChannel implements CommunicationChannelInterface {
 
       // Default to not opted out if we can't check
       return {
+        channel: this.name as CommunicationChannel,
         optedOut: false,
-        timestamp: new Date(),
+        optedOutAt: undefined,
         reason: undefined
       };
     }

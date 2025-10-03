@@ -1,6 +1,6 @@
 import React from 'react';
 import { Activity, DollarSign, Calendar, TrendingUp } from 'lucide-react';
-import { Patient, Appointment } from '../types';
+import { Patient, Appointment, AppointmentStatus } from '../../types';
 
 interface PatientMetricsProps {
   patient: Patient;
@@ -20,7 +20,7 @@ interface SessionStats {
 const PatientMetrics: React.FC<PatientMetricsProps> = ({ patient, appointments, className = '' }) => {
   const calculateSessionStats = (): SessionStats => {
     const patientAppointments = appointments.filter(apt => apt.patientId === patient.id);
-    const completedAppointments = patientAppointments.filter(apt => apt.status === 'completed');
+    const completedAppointments = patientAppointments.filter(apt => apt.status === AppointmentStatus.Completed);
     
     const totalSessions = completedAppointments.length;
     const paidSessions = completedAppointments.filter(apt => apt.paymentStatus === 'paid').length;

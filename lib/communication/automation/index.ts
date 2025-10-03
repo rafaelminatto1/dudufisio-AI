@@ -68,8 +68,8 @@ export const BUILT_IN_AUTOMATION_RULES: Record<string, AutomationRule> = {
     ],
     isActive: true,
     priority: 5,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   },
 
   // Appointment Reminder Rule (24h before)
@@ -94,7 +94,7 @@ export const BUILT_IN_AUTOMATION_RULES: Record<string, AutomationRule> = {
       {
         field: 'appointment.date',
         operator: 'date_after',
-        value: new Date(),
+        value: new Date().toISOString(),
         type: 'date'
       }
     ],
@@ -111,8 +111,8 @@ export const BUILT_IN_AUTOMATION_RULES: Record<string, AutomationRule> = {
     ],
     isActive: true,
     priority: 8,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   },
 
   // No-show Follow-up Rule
@@ -159,8 +159,8 @@ export const BUILT_IN_AUTOMATION_RULES: Record<string, AutomationRule> = {
     ],
     isActive: true,
     priority: 6,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   },
 
   // Welcome New Patient Rule
@@ -206,8 +206,8 @@ export const BUILT_IN_AUTOMATION_RULES: Record<string, AutomationRule> = {
     ],
     isActive: true,
     priority: 5,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   },
 
   // Payment Overdue Reminder
@@ -272,8 +272,8 @@ export const BUILT_IN_AUTOMATION_RULES: Record<string, AutomationRule> = {
     ],
     isActive: true,
     priority: 7,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   },
 
   // Birthday Wishes
@@ -293,7 +293,7 @@ export const BUILT_IN_AUTOMATION_RULES: Record<string, AutomationRule> = {
         field: 'patient.birthDate',
         operator: 'day_of_month',
         value: new Date().getDate(),
-        type: 'date'
+        type: 'number'
       },
       {
         field: 'patient.communicationPreferences.enableBirthdayMessages',
@@ -315,8 +315,8 @@ export const BUILT_IN_AUTOMATION_RULES: Record<string, AutomationRule> = {
     ],
     isActive: true,
     priority: 3,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   },
 
   // Treatment Completion Follow-up
@@ -368,8 +368,8 @@ export const BUILT_IN_AUTOMATION_RULES: Record<string, AutomationRule> = {
     ],
     isActive: true,
     priority: 4,
-    createdAt: new Date(),
-    updatedAt: new Date()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }
 };
 
@@ -457,8 +457,8 @@ export class AutomationRuleBuilder {
 
     return {
       ...this.rule,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     } as AutomationRule;
   }
 
@@ -682,7 +682,7 @@ export const conditionTemplates = {
   appointmentInFuture: (): AutomationCondition => ({
     field: 'appointment.date',
     operator: 'date_after',
-    value: new Date(),
+    value: new Date().toISOString(),
     type: 'date'
   }),
 

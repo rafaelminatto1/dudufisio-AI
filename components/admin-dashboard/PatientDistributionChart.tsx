@@ -147,11 +147,11 @@ const PatientDistributionChart: React.FC<PatientDistributionChartProps> = ({
         <div className="mt-4 p-3 bg-yellow-50 rounded-lg">
           <h4 className="text-sm font-semibold text-yellow-800 mb-2">Insights</h4>
           <ul className="text-xs text-yellow-700 space-y-1">
-            {dataWithPercentage.find(item => item.name === 'Inativos')?.value > 
-             dataWithPercentage.find(item => item.name === 'Ativos')?.value * 0.2 && (
+            {(dataWithPercentage.find(item => item.name === 'Inativos')?.value || 0) >
+             (dataWithPercentage.find(item => item.name === 'Ativos')?.value || 0) * 0.2 && (
               <li>• Alta taxa de pacientes inativos - considere campanha de reativação</li>
             )}
-            {dataWithPercentage.find(item => item.name === 'Em Avaliação')?.value > 
+            {(dataWithPercentage.find(item => item.name === 'Em Avaliação')?.value || 0) >
              total * 0.1 && (
               <li>• Muitos pacientes em avaliação - acelere processo de triagem</li>
             )}

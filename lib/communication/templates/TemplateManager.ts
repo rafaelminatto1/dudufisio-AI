@@ -469,13 +469,13 @@ export class TemplateManager {
    */
   private getChannelContent(template: MessageTemplate, channel: CommunicationChannel): string | undefined {
     switch (channel) {
-      case 'whatsapp':
+      case CommunicationChannel.WhatsApp:
         return template.whatsapp || template.sms || template.text;
-      case 'sms':
+      case CommunicationChannel.SMS:
         return template.sms || template.text;
-      case 'email':
+      case CommunicationChannel.Email:
         return template.email || template.html;
-      case 'push':
+      case CommunicationChannel.Push:
         return template.push || template.text;
       default:
         return template.body;
@@ -615,7 +615,7 @@ Para mais informações, responda esta mensagem.`,
     Object.values(BUILT_IN_TEMPLATES).forEach(template => {
       const cacheKey = this.buildTemplateCacheKey({
         type: template.type,
-        channel: 'email', // Default cache key
+        channel: CommunicationChannel.Email, // Default cache key
         locale: template.locale
       });
       this.templateCache.set(cacheKey, template);
@@ -691,7 +691,7 @@ Para mais informações, responda esta mensagem.`,
       // Update cache
       const cacheKey = this.buildTemplateCacheKey({
         type: template.type,
-        channel: 'email', // Default
+        channel: CommunicationChannel.Email, // Default
         locale: template.locale
       });
       this.templateCache.set(cacheKey, template);

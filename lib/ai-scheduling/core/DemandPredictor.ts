@@ -8,7 +8,7 @@
  * - Comportamento de pacientes
  */
 
-import { Appointment, Patient, WaitlistEntry } from '../../types';
+import { Appointment, Patient, WaitlistEntry, AppointmentStatus } from '../../../types';
 import { BusinessIntelligenceSystem } from '../../analytics/BusinessIntelligenceSystem';
 
 export interface DemandPrediction {
@@ -183,8 +183,8 @@ export class DemandPredictor {
     return {
       // Historical data
       historicalAppointments: historicalSameDay.map(app => 1),
-      historicalNoShows: historicalSameDay.filter(app => app.status === 'no_show').map(() => 1),
-      historicalCancellations: historicalSameDay.filter(app => app.status === 'cancelled').map(() => 1),
+      historicalNoShows: historicalSameDay.filter(app => app.status === AppointmentStatus.NoShow).map(() => 1),
+      historicalCancellations: historicalSameDay.filter(app => app.status === AppointmentStatus.Canceled).map(() => 1),
       
       // Temporal features
       dayOfWeek,

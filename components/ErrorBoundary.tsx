@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error to observability system
-    observability.error('error.boundary.captured', {
+    observability.application.error('error.boundary.captured', {
       error: error.message,
       stack: error.stack,
       componentStack: errorInfo.componentStack,
@@ -117,7 +117,7 @@ export class ErrorBoundary extends Component<Props, State> {
 // Hook para usar Error Boundary em componentes funcionais
 export const useErrorHandler = () => {
   const handleError = (error: Error, errorInfo?: string) => {
-    observability.error('error.handler.manual', {
+    observability.application.error('error.handler.manual', {
       error: error.message,
       stack: error.stack,
       context: errorInfo

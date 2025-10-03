@@ -5,12 +5,15 @@
 
 import {
   ClinicalDocument,
-  ComplianceViolation,
-  ValidationResult,
   TherapistId,
   DocumentType,
   DomainError
-} from '../../types/medical-records';
+} from '../../../types/medical-records';
+
+import {
+  ValidationResult,
+  ValidationViolation as ComplianceViolation
+} from '../clinical/assessment/ClinicalTemplateEngine';
 
 export class CFMComplianceValidator {
   private readonly therapistRegistry: TherapistRegistry;

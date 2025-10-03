@@ -1,70 +1,17 @@
 // services/taskSupplyService.ts
 import { supabase } from '../lib/supabase';
-import { 
-  Task, 
-  Supply, 
-  TaskSupplyUsed, 
+import type {
+  Task,
+  Supply,
+  TaskSupplyUsed,
   TaskTypeSupplyTemplate,
   TaskCost,
-  CreateTaskSupplyUsedData,
-  CreateTaskData,
-  UpdateTaskData
+  CreateTaskSupplyUsedData
 } from '../types';
 
 // ============================================================================
-// TIPOS PARA INTEGRAÇÃO TAREFA-INSUMO
+// TIPOS PARA OPERAÇÕES DE TAREFA
 // ============================================================================
-
-export interface TaskSupplyUsed {
-  id: string;
-  taskId: string;
-  supplyId: string;
-  supply?: Supply;
-  quantityUsed: number;
-  unitCost?: number;
-  totalCost?: number;
-  usedBy?: string;
-  patientId?: string;
-  usageDate: string;
-  batchNumber?: string;
-  expirationDate?: string;
-  notes?: string;
-  createdAt: string;
-}
-
-export interface CreateTaskSupplyUsedData {
-  taskId: string;
-  supplyId: string;
-  quantityUsed: number;
-  unitCost?: number;
-  patientId?: string;
-  batchNumber?: string;
-  expirationDate?: string;
-  notes?: string;
-}
-
-export interface TaskTypeSupplyTemplate {
-  id: string;
-  taskType: string;
-  supplyId: string;
-  supply?: Supply;
-  defaultQuantity: number;
-  isRequired: boolean;
-  notes?: string;
-  isActive: boolean;
-  createdAt: string;
-}
-
-export interface TaskCost {
-  id: string;
-  taskId: string;
-  totalSupplyCost: number;
-  laborCost: number;
-  overheadCost: number;
-  totalCost: number;
-  calculatedAt: string;
-  calculatedBy?: string;
-}
 
 export interface CreateTaskData {
   projectId?: string;
@@ -136,7 +83,7 @@ export const getTasks = async (filters?: {
   }
 };
 
-export const getTaskById = async (id: string): Promise<Task | null> => {
+export const getTaskById = async (id: string): Promise<Task | undefined> => {
   try {
     const { data, error } = await supabase
       .from('tasks')
@@ -145,7 +92,7 @@ export const getTaskById = async (id: string): Promise<Task | null> => {
       .single();
 
     if (error) throw error;
-    return data;
+    return data ?? undefined;
   } catch (error) {
     console.error('Erro ao buscar tarefa:', error);
     throw error;
@@ -331,16 +278,16 @@ export const updateTaskTypeSupplyTemplate = async (id: string, templateData: Par
 // SERVIÇO DE CUSTOS DE TAREFAS
 // ============================================================================
 
-export const getTaskCost = async (taskId: string): Promise<TaskCost | null> => {
+export const getTaskCost = async (taskId: string): Promise<TaskCost | undefined> => {
   try {
-    const { data, error } = await supabase
+    const { data, error} = await supabase
       .from('task_costs')
       .select('*')
       .eq('task_id', taskId)
       .single();
 
     if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
-    return data;
+    return data ?? undefined;
   } catch (error) {
     console.error('Erro ao buscar custo da tarefa:', error);
     throw error;

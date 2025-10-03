@@ -190,7 +190,7 @@ const ReportsDashboard: React.FC<ReportsDashboardProps> = ({
             </div>
           ) : (
             <div className="space-y-3">
-              {valuationReport?.categoryBreakdown?.slice(0, 5).map((item, index) => (
+              {valuationReport?.categoryBreakdown?.slice(0, 5).map((item: any, index: number) => (
                 <div key={item.category} className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div className={`w-3 h-3 rounded-full mr-3 ${
@@ -200,7 +200,7 @@ const ReportsDashboard: React.FC<ReportsDashboardProps> = ({
                       index === 3 ? 'bg-red-500' : 'bg-purple-500'
                     }`} />
                     <span className="text-sm font-medium text-gray-900">
-                      {item.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      {item.category.replace('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
                     </span>
                   </div>
                   <div className="text-right">

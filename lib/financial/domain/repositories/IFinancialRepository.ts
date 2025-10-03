@@ -49,7 +49,7 @@ export interface PaymentPlanFilters {
 
 export interface IFinancialTransaction {
   saveTransaction(transaction: Transaction): Promise<void>;
-  savePackage(package: Package): Promise<void>;
+  savePackage(pkg: Package): Promise<void>;
   saveInstallments(installments: Transaction[]): Promise<void>;
   saveInvoice(invoice: Invoice): Promise<void>;
   savePaymentPlan(paymentPlan: PaymentPlan): Promise<void>;
@@ -67,12 +67,12 @@ export interface IFinancialRepository {
   deleteTransaction(id: TransactionId): Promise<void>;
 
   // Package operations
-  savePackage(package: Package): Promise<void>;
+  savePackage(pkg: Package): Promise<void>;
   findPackageById(id: PackageId): Promise<Package | null>;
   findPackagesByPatient(patientId: PatientId, filters?: PackageFilters): Promise<Package[]>;
   findActivePackagesByPatient(patientId: PatientId): Promise<Package[]>;
   findExpiringPackages(daysUntilExpiry: number): Promise<Package[]>;
-  updatePackage(package: Package): Promise<void>;
+  updatePackage(pkg: Package): Promise<void>;
   deletePackage(id: PackageId): Promise<void>;
 
   // Invoice operations

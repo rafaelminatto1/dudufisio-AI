@@ -99,7 +99,7 @@ const SessionForm: React.FC<SessionFormProps> = ({
 
   const handleSave = async () => {
     if (!formData.subjective.trim() || !formData.objective.trim()) {
-      showToast('Por favor, preencha pelo menos os campos Subjetivo e Objetivo', 'warning');
+      showToast('Por favor, preencha pelo menos os campos Subjetivo e Objetivo', 'info');
       return;
     }
 
@@ -111,7 +111,6 @@ const SessionForm: React.FC<SessionFormProps> = ({
         plan: formData.plan,
         date: new Date().toISOString().split('T')[0],
         sessionNumber: formData.sessionNumber,
-        therapist: 'Fisioterapeuta', // Implementar com usuário atual
         painScale: formData.painScale
       });
       

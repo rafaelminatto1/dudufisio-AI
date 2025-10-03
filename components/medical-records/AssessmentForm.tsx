@@ -597,23 +597,13 @@ export function AssessmentForm({
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="medicalHistory.inspection"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>História Médica Passada</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Descreva doenças anteriores, hospitalizações, etc..."
-                            className="min-h-[100px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div>
+                    <FormLabel>História Médica Passada</FormLabel>
+                    <Textarea
+                      placeholder="Descreva doenças anteriores, hospitalizações, etc..."
+                      className="min-h-[100px]"
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}

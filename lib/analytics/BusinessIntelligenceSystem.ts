@@ -240,7 +240,7 @@ export class BusinessIntelligenceSystem {
     details: string[];
   }> {
     const health = {
-      status: 'healthy' as const,
+      status: 'healthy' as 'healthy' | 'warning' | 'error',
       components: {} as Record<string, 'ok' | 'error'>,
       details: [] as string[]
     };

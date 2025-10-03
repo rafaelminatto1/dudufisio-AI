@@ -111,9 +111,9 @@ export class SupabaseFinancialTransaction implements IFinancialTransaction {
     });
   }
 
-  async savePackage(package: Package): Promise<void> {
+  async savePackage(pkg: Package): Promise<void> {
     this.operations.push(async () => {
-      const data = this.packageToSupabase(package);
+      const data = this.packageToSupabase(pkg);
       const { error } = await this.client
         .from('patient_packages')
         .upsert(data);
@@ -203,8 +203,8 @@ export class SupabaseFinancialTransaction implements IFinancialTransaction {
     };
   }
 
-  private packageToSupabase(package: Package): Partial<SupabasePackage> {
-    const json = package.toJSON();
+  private packageToSupabase(pkg: Package): Partial<SupabasePackage> {
+    const json = pkg.toJSON();
     return {
       id: json.id,
       patient_id: json.patientId,
@@ -345,8 +345,8 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
   }
 
   // Package operations
-  async savePackage(package: Package): Promise<void> {
-    const data = this.packageToSupabase(package);
+  async savePackage(pkg: Package): Promise<void> {
+    const data = this.packageToSupabase(pkg);
     const { error } = await this.client
       .from('patient_packages')
       .upsert(data);
@@ -408,14 +408,14 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
     return (data || []).map(row => this.supabaseToPackage(row));
   }
 
-  async updatePackage(package: Package): Promise<void> {
-    const data = this.packageToSupabase(package);
+  async updatePackage(pkg: Package): Promise<void> {
+    const data = this.packageToSupabase(pkg);
     data.updated_at = new Date().toISOString();
-    
+
     const { error } = await this.client
       .from('patient_packages')
       .update(data)
-      .eq('id', package.getId());
+      .eq('id', pkg.getId());
 
     if (error) {
       throw new DomainError(`Failed to update package: ${error.message}`);
@@ -843,19 +843,19 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
       dueDate: new Date(data.due_date),
       paidDate: data.paid_date ? new Date(data.paid_date) : undefined,
       status: data.status as TransactionStatus,
-      gatewayTransactionId: data.gateway_transaction_id,
-      gatewayResponse: data.gateway_response,
-      description: data.description,
+      gatewayTransactionId: data.gateway_transaction_id ?? undefined,
+      gatewayResponse: data.gateway_response ?? undefined,
+      description: data.description ?? undefined,
       metadata: data.metadata || {},
-      fiscalDocumentNumber: data.fiscal_document_number,
+      fiscalDocumentNumber: data.fiscal_document_number ?? undefined,
       taxAmount: new Money(data.tax_amount, data.currency),
       createdBy: data.created_by,
-      updatedBy: data.updated_by
+      updatedBy: data.updated_by ?? undefined
     });
   }
 
-  private packageToSupabase(package: Package): Partial<SupabasePackage> {
-    const json = package.toJSON();
+  private packageToSupabase(pkg: Package): Partial<SupabasePackage> {
+    const json = pkg.toJSON();
     return {
       id: json.id,
       patient_id: json.patientId,
@@ -913,12 +913,12 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
       id: data.id,
       patientId: data.patient_id,
       transactionIds: data.transaction_ids,
-      invoiceNumber: data.invoice_number,
+      invoiceNumber: data.invoice_number ?? undefined,
       issueDate: new Date(data.issue_date),
       dueDate: new Date(data.due_date),
       lineItems: data.line_items,
       discountAmount: new Money(data.discount_amount),
-      notes: data.notes,
+      notes: data.notes ?? undefined,
       status: data.status as InvoiceStatus,
       createdBy: data.created_by
     });
@@ -944,7 +944,7 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
 
   private supabaseToPaymentPlan(data: SupabasePaymentPlan): PaymentPlan {
     const paymentMethod = PaymentMethod.create(data.payment_method);
-    
+
     return PaymentPlan.create({
       id: data.id,
       patientId: data.patient_id,
@@ -952,7 +952,7 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
       installmentCount: data.installment_count,
       paymentMethod,
       firstDueDate: new Date(data.first_due_date),
-      description: data.description,
+      description: data.description ?? undefined,
       interestRate: data.interest_rate,
       penaltyRate: data.penalty_rate,
       status: data.status as PaymentPlanStatus,

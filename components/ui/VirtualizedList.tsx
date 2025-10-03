@@ -237,7 +237,7 @@ export const useOptimizedList = (
 ) => {
   const { initialSort, initialFilter, debounceMs = 300 } = options;
   
-  const [sortFn, setSortFn] = useState<(a: any, b: any) => number | null>(initialSort || null);
+  const [sortFn, setSortFn] = useState<((a: any, b: any) => number) | null>(initialSort || null);
   const [filterFn, setFilterFn] = useState<(item: any) => boolean>(initialFilter || (() => true));
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -266,7 +266,7 @@ export const useOptimizedList = (
 
     // Aplicar ordenação
     if (sortFn) {
-      result.sort(sortFn);
+      result.sort((a, b) => sortFn(a, b) || 0);
     }
 
     return result;

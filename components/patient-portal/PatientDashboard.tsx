@@ -95,15 +95,22 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({ patientId })
             <div className="flex justify-between items-center">
               <div>
                 <p className="font-semibold">
-                  {nextAppointment.scheduledTime.toLocaleDateString()} at{' '}
-                  {nextAppointment.scheduledTime.toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
+                  {nextAppointment.scheduledTime
+                    ? new Date(nextAppointment.scheduledTime).toLocaleDateString()
+                    : nextAppointment.startTime.toLocaleDateString()} at{' '}
+                  {nextAppointment.scheduledTime
+                    ? new Date(nextAppointment.scheduledTime).toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                    : nextAppointment.startTime.toLocaleTimeString([], {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
                 </p>
                 <p className="text-sm text-gray-600">{nextAppointment.type}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Duration: {nextAppointment.duration} minutes
+                  Duration: {nextAppointment.duration ?? Math.floor((nextAppointment.endTime.getTime() - nextAppointment.startTime.getTime()) / 60000)} minutes
                 </p>
               </div>
               <Button>
@@ -245,7 +252,11 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({ patientId })
                     <p className="font-medium text-sm">{message.from}</p>
                     <p className="text-sm text-gray-800 mt-1">{message.subject}</p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {message.timestamp.toLocaleDateString()}
+                      {message.timestamp
+                        ? (typeof message.timestamp === 'string'
+                          ? new Date(message.timestamp).toLocaleDateString()
+                          : (message.timestamp as Date).toLocaleDateString())
+                        : 'No date'}
                     </p>
                   </div>
                   {!message.read && (

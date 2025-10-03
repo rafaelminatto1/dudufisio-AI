@@ -384,6 +384,7 @@ export class SupabaseMedicalRecordsService {
       name: data.name,
       type: data.type,
       specialty: data.specialty,
+      schema: data.template_schema,
       templateSchema: data.template_schema,
       defaultValues: data.default_values,
       validationRules: data.validation_rules,
@@ -398,8 +399,17 @@ export class SupabaseMedicalRecordsService {
     return {
       id: data.id,
       documentId: data.document_id,
+      signature: data.signature_data || '',
       signatureData: data.signature_data,
+      publicKey: data.public_key || '',
       certificateId: data.certificate_id,
+      timestamp: {
+        time: new Date(data.signed_at),
+        authority: data.timestamp_authority || '',
+        token: data.timestamp_token || ''
+      },
+      documentHash: data.document_hash || '',
+      algorithm: data.algorithm || 'RSA-SHA256',
       signedAt: new Date(data.signed_at),
       signedBy: data.signed_by,
       verificationStatus: data.verification_status,
@@ -411,12 +421,16 @@ export class SupabaseMedicalRecordsService {
     return {
       id: data.id,
       userId: data.user_id,
+      type: data.type || 'A1',
+      serialNumber: data.serial_number || '',
+      issuer: data.issuer || '',
       certificateData: data.certificate_data,
       publicKey: data.public_key,
       algorithm: data.algorithm,
       validFrom: new Date(data.valid_from),
       validUntil: new Date(data.valid_until),
       isActive: data.is_active,
+      status: data.status || (data.is_active ? 'active' : 'expired'),
       createdBy: data.created_by,
       createdAt: new Date(data.created_at)
     };

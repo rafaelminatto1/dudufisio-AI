@@ -14,7 +14,7 @@ import {
   DigitalSignature,
   DomainError,
   SignatureError
-} from '../../../types/medical-records';
+} from '../../../../types/medical-records';
 
 export class ClinicalDocument {
   private constructor(

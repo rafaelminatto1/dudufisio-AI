@@ -545,23 +545,13 @@ export function EvolutionEditor({
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="measurements"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Medidas e Testes</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Ex: Amplitude de movimento, força muscular, testes especiais..."
-                            className="min-h-[80px]"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div>
+                    <FormLabel>Medidas e Testes</FormLabel>
+                    <Textarea
+                      placeholder="Ex: Amplitude de movimento, força muscular, testes especiais..."
+                      className="min-h-[80px]"
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

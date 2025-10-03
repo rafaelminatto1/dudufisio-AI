@@ -19,7 +19,7 @@ export const generatePatientProgressSummary = () => Promise.resolve('');
 export const generateAppointmentReminder = () => Promise.resolve('');
 export const generateInactivePatientEmail = () => Promise.resolve('');
 export const generateClinicalMaterialContent = () => Promise.resolve('');
-export const generatePatientClinicalSummary = () => Promise.resolve('');
+export const generatePatientClinicalSummary = (_patient: any, _notes: any) => Promise.resolve('');
 
 // Mock types exports
 export interface PatientProgressData {

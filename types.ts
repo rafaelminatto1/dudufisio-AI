@@ -49,11 +49,13 @@ export enum PatientStatus {
 export interface Surgery {
   name: string;
   date: string; // YYYY-MM-DD
+  description?: string;
 }
 
 export interface Condition {
   name: string;
   date: string; // YYYY-MM-DD
+  description?: string;
 }
 
 export interface TrackedMetric {
@@ -126,6 +128,12 @@ export interface Patient {
   trackedMetrics?: TrackedMetric[];
   communicationLogs?: CommunicationLog[];
   painPoints?: PainPoint[];
+  preferredLocale?: string; // Added for internationalization
+  preferredChannel?: CommunicationChannel; // Added for communication preferences
+  preferredName?: string; // Preferred name for communications
+  age?: number; // Age for AI scheduling predictions
+  gender?: 'M' | 'F' | 'other'; // Gender for AI scheduling predictions
+  insuranceType?: 'private' | 'public' | 'none'; // Insurance type for AI scheduling predictions
 }
 
 export type PatientAlertType = 'abandonment' | 'highRisk' | 'attention';
@@ -156,6 +164,15 @@ export enum AppointmentStatus {
   Canceled = 'Cancelado',
   NoShow = 'Faltou'
 }
+
+// Mapping for AppointmentStatus to lowercase keys for UI components
+export const AppointmentStatusMap = {
+  scheduled: AppointmentStatus.Scheduled,
+  confirmed: AppointmentStatus.Scheduled, // Confirmed is a variant of scheduled
+  completed: AppointmentStatus.Completed,
+  cancelled: AppointmentStatus.Canceled,
+  no_show: AppointmentStatus.NoShow
+} as const
 
 export enum AppointmentType {
     Evaluation = 'Avaliação',
@@ -208,14 +225,18 @@ export interface Appointment {
   patientName: string;
   patientAvatarUrl: string; // Added for easier access
   therapistId: string;
+  therapistName?: string; // Added for template rendering
   startTime: Date;
   endTime: Date;
+  scheduledTime?: string; // Added for ISO string compatibility
+  duration?: number; // Added for duration in minutes
   title: string;
   type: AppointmentType;
   status: AppointmentStatus;
   value: number;
   paymentStatus: 'paid' | 'pending';
   observations?: string;
+  location?: string; // Added for appointment location
   seriesId?: string;
   recurrenceRule?: RecurrenceRule;
   sessionNumber?: number;
@@ -223,6 +244,9 @@ export interface Appointment {
   recurrenceTemplateId?: string;
   metadata?: Record<string, any>;
   cancellationReason?: string;
+  reminderSent?: boolean; // For AI scheduling no-show predictions
+  confirmationReceived?: boolean; // For AI scheduling no-show predictions
+  created_by?: string; // For tracking who created the appointment
 }
 
 export interface EnrichedAppointment extends Appointment {
@@ -784,6 +808,8 @@ export interface Exercise {
     thumbnailUrl: string;
     duration?: number; // duration in seconds
   };
+  sets?: number; // Added for exercise prescription
+  reps?: number; // Added for exercise prescription
   indications?: string[];
   contraindications?: string[];
   modifications?: {
@@ -1081,6 +1107,10 @@ export enum ExpenseCategory {
   Supplies = 'Supplies',
   Marketing = 'Marketing',
   Other = 'Other',
+  Outros = 'Outros', // Portuguese compatibility
+  Aluguel = 'Aluguel', // Portuguese for Rent
+  Salarios = 'Salarios', // Portuguese for Salaries
+  Suprimentos = 'Suprimentos', // Portuguese for Supplies
 }
 
 export interface FinancialTransaction {
@@ -1209,6 +1239,14 @@ export enum InternStatus {
   Inactive = 'Inactive',
   Graduated = 'Graduated',
   Suspended = 'Suspended'
+}
+
+// Status color mapping for InternStatus
+export const InternStatusColorMap: Record<InternStatus, string> = {
+  [InternStatus.Active]: 'bg-green-100 text-green-800',
+  [InternStatus.Inactive]: 'bg-slate-100 text-slate-800',
+  [InternStatus.Graduated]: 'bg-blue-100 text-blue-800',
+  [InternStatus.Suspended]: 'bg-red-100 text-red-800',
 }
 
 export enum CompetencyLevel {
@@ -1350,6 +1388,8 @@ export interface EducationalCase {
   id: string;
   title: string;
   description: string;
+  area?: string; // Added for compatibility
+  content?: string; // Added for compatibility
   specialty: 'Ortopedia' | 'Neurologia' | 'Cardiorrespiratória' | 'Pediatria' | 'Esportiva' | 'Gerontologia';
   difficultyLevel: 1 | 2 | 3 | 4 | 5;
   patientProfile: {
@@ -1563,12 +1603,36 @@ export interface InventoryItem {
   status: ItemStatus;
   location?: string;
   expiryDate?: string; // YYYY-MM-DD
+  brand?: string;
+  sku?: string;
 }
 
 export enum MovementType {
   In = 'In',
   Out = 'Out',
   Transfer = 'Transfer'
+}
+
+// Helper functions to convert between MovementType enum and Portuguese strings
+export const MovementTypeUtils = {
+  toPortuguese: (type: MovementType): string => {
+    switch (type) {
+      case MovementType.In: return 'entrada';
+      case MovementType.Out: return 'saida';
+      case MovementType.Transfer: return 'transferencia';
+      default: return type;
+    }
+  },
+  fromPortuguese: (str: string): MovementType => {
+    switch (str.toLowerCase()) {
+      case 'entrada': return MovementType.In;
+      case 'saida': return MovementType.Out;
+      case 'transferencia': return MovementType.Transfer;
+      default: return MovementType.In;
+    }
+  },
+  isEntrada: (type: MovementType): boolean => type === MovementType.In,
+  isSaida: (type: MovementType): boolean => type === MovementType.Out
 }
 
 export interface StockMovement {
@@ -1640,7 +1704,8 @@ export enum ProviderStatus {
   Applied = 'Applied',
   Confirmed = 'Confirmed',
   Paid = 'Paid',
-  Rejected = 'Rejected'
+  Rejected = 'Rejected',
+  Cancelled = 'Cancelled' // Added missing status
 }
 
 export interface Event {
@@ -1923,12 +1988,24 @@ export enum CommunicationChannel {
 }
 
 export enum ChannelCapability {
+  // Channel types
   Email = 'email',
   SMS = 'sms',
   WhatsApp = 'whatsapp',
   Push = 'push',
   Voice = 'voice',
-  Automation = 'automation'
+  Automation = 'automation',
+
+  // Content capabilities
+  TEXT = 'text',
+  HTML = 'html',
+  IMAGES = 'images',
+  DOCUMENTS = 'documents',
+  RICH_CONTENT = 'rich_content',
+  ATTACHMENTS = 'attachments',
+  TEMPLATES = 'templates',
+  DELIVERY_STATUS = 'delivery_status',
+  TRACKING = 'tracking'
 }
 
 export enum MessagePriority {
@@ -1941,12 +2018,14 @@ export enum MessagePriority {
 export enum MessageStatus {
   Pending = 'pending',
   Queued = 'queued',
+  Processing = 'processing',
   Sending = 'sending',
   Sent = 'sent',
   Delivered = 'delivered',
   Read = 'read',
   Failed = 'failed',
-  Cancelled = 'cancelled'
+  Cancelled = 'cancelled',
+  RetryScheduled = 'retry_scheduled'
 }
 
 // Recipient and Preferences
@@ -1984,6 +2063,8 @@ export interface OptOutStatus {
 export interface MessageContent {
   subject?: string;
   body: string;
+  text?: string; // Plain text version
+  html?: string; // HTML version
   attachments?: Attachment[];
   variables: Record<string, unknown>;
   mediaUrls?: string[];
@@ -1995,6 +2076,8 @@ export interface Attachment {
   url: string;
   type: string;
   size: number;
+  filename?: string; // Optional filename for WhatsApp/email
+  path?: string; // Optional local file path
 }
 
 export interface InteractiveElement {
@@ -2013,6 +2096,10 @@ export interface MessageMetadata {
   source: 'manual' | 'automated' | 'triggered';
   tags: string[];
   customData: Record<string, unknown>;
+  // Push notification specific
+  actions?: Array<{ id: string; title: string; icon?: string }>;
+  url?: string;
+  [key: string]: unknown; // Allow additional properties
 }
 
 export interface Message {
@@ -2028,6 +2115,17 @@ export interface Message {
   maxRetries: number;
   createdAt: Date;
   updatedAt: Date;
+  from?: string; // Added for sender information
+  subject?: string; // Added for email subject
+  timestamp?: string; // Added for ISO timestamp
+  read?: boolean; // Added for read status
+  // Analytics fields
+  status?: MessageStatus; // Message delivery status
+  channel?: CommunicationChannel; // Channel used for delivery
+  type?: MessageType; // Type of message
+  errorCode?: string; // Error code if delivery failed
+  deliveredAt?: Date; // When the message was delivered
+  cost?: number; // Cost of sending the message
 }
 
 // Delivery and Results
@@ -2235,13 +2333,14 @@ export interface CampaignMetrics {
 
 // Domain Events
 export interface DomainEvent {
-  id: string;
+  id?: string;
   type: string;
-  aggregateId: string;
-  aggregateType: string;
+  aggregateId?: string;
+  aggregateType?: string;
   data: Record<string, unknown>;
-  occurredAt: Date;
-  version: number;
+  occurredAt?: Date;
+  timestamp?: Date; // Alias for occurredAt - simplified usage
+  version?: number;
 }
 
 // Webhook Types
@@ -2301,50 +2400,164 @@ export enum TriggerType {
   FOLLOW_UP_DUE = 'FOLLOW_UP_DUE'
 }
 
+// MessageType for communication system
+export type MessageType =
+  | 'appointment_confirmation'
+  | 'appointment_reminder'
+  | 'appointment_cancellation'
+  | 'no_show_followup'
+  | 'welcome_new_patient'
+  | 'first_appointment_tips'
+  | 'payment_reminder_gentle'
+  | 'payment_reminder_urgent'
+  | 'birthday_wishes'
+  | 'treatment_completion_survey'
+  | 'maintenance_tips'
+  | 'generic'
+  | 'text'
+  | 'html'
+  | 'template'
+  | 'rich';
+
+// Automation trigger with detailed configuration
+export interface AutomationTrigger {
+  type: 'appointment' | 'patient' | 'payment' | 'system';
+  events: string[];
+  timing?: {
+    delay?: number; // milliseconds
+    timeOfDay?: [number, number]; // [startHour, endHour]
+    daysOfWeek?: number[]; // 0-6, Sunday = 0
+  };
+  filters?: Record<string, any>;
+}
+
 export interface AutomationCondition {
-  id: string;
   field: string;
-  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'is_empty' | 'is_not_empty';
-  value: string | number | boolean;
+  operator: 'equals' | 'not_equals' | 'contains' | 'not_contains' |
+           'greater_than' | 'less_than' | 'greater_than_or_equal' | 'less_than_or_equal' |
+           'is_empty' | 'is_not_empty' | 'is_null' | 'is_not_null' |
+           'starts_with' | 'ends_with' | 'in' | 'not_in' | 'regex' |
+           'date_after' | 'date_before' | 'date_between' |
+           'time_of_day_after' | 'time_of_day_before' | 'day_of_week' | 'day_of_month';
+  value: string | number | boolean | Date | any[];
+  type: 'string' | 'number' | 'boolean' | 'date' | 'time';
 }
 
 export interface AutomationAction {
-  id: string;
-  type: 'send_message' | 'send_email' | 'create_task' | 'update_status' | 'send_notification';
-  channel: CommunicationChannel;
-  templateId?: string;
-  message?: string;
-  delay?: number; // in minutes
-  conditions?: AutomationCondition[];
+  type: 'send_message' | 'send_email' | 'create_task' | 'update_status' | 'send_notification' |
+        'schedule_message' | 'update_patient' | 'log_event' | 'webhook' | 'conditional' | 'delay';
+  parameters: Record<string, any>;
 }
 
 export interface AutomationRule {
   id: string;
   name: string;
-  description: string;
-  isActive: boolean;
-  triggerType: TriggerType;
-  conditions: AutomationCondition[];
+  description?: string;
+  trigger: AutomationTrigger;
+  conditions?: AutomationCondition[];
+  conditionOperator?: 'AND' | 'OR';
   actions: AutomationAction[];
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  lastExecuted?: string;
-  executionCount: number;
+  isActive: boolean;
+  priority?: number;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+// For backward compatibility with existing code
+export interface AutomationExecution {
+  id: string;
+  ruleId: string;
+  triggeredAt: Date;
+  status: 'success' | 'failure';
+  context?: {
+    patientId?: string;
+    appointmentId?: string;
+    eventData?: any;
+  };
+  error?: string;
+  duration: number;
 }
 
 export interface MessageTemplate {
   id: string;
   name: string;
-  type: TemplateType;
-  channel: CommunicationChannel;
+  type: MessageType;
+  category?: string;
+  channel?: CommunicationChannel;
+  channels?: CommunicationChannel[]; // Added for multi-channel support
   subject?: string;
-  content: string;
+  body?: string; // Main body content
+  content?: string; // Alias for body (for backward compatibility)
+  text?: string; // Plain text version
+  html?: string; // HTML version for email
+  whatsapp?: string; // WhatsApp-specific template
+  sms?: string; // SMS-specific template
+  email?: string; // Email-specific template
+  push?: string; // Push notification template
   variables: string[];
+  locale?: string; // Language/locale for the template
+  version?: number; // Template version
+  metadata?: Record<string, any>; // Added for template metadata
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  createdBy?: string;
+}
+
+// Template context for rendering
+export interface TemplateContext {
+  patient?: {
+    id: string;
+    name: string;
+    email?: string;
+    phone?: string;
+    preferredName?: string;
+  };
+  appointment?: {
+    id: string;
+    type: string;
+    date: Date;
+    therapist: string;
+    location?: string;
+    notes?: string;
+  };
+  clinic?: {
+    name: string;
+    phone: string;
+    email: string;
+    address?: string;
+    website?: string;
+    tagline?: string;
+  };
+  recipient?: {
+    id: string;
+    name: string;
+    email?: string;
+    phone?: string;
+  };
+  cancellation?: {
+    reason?: string;
+    refund?: boolean;
+  };
+  template?: {
+    id: string;
+    name: string;
+    version?: number;
+  };
+  request?: {
+    timestamp: Date;
+    channel: CommunicationChannel;
+    locale: string;
+    device: string;
+  };
+  message?: string;
+  personalization?: Record<string, any>;
+  experiment?: {
+    id: string;
+    variant: string;
+  };
+  userAgent?: string;
+  [key: string]: any; // Allow additional context properties
 }
 
 // ============================================================================
@@ -2359,7 +2572,7 @@ export type SupplyCategory =
   | 'materiais_escritorio'
   | 'equipamentos_protecao';
 
-export type MovementType = 
+export type InventoryMovementType =
   | 'entrada'
   | 'saida'
   | 'ajuste'
@@ -2638,4 +2851,114 @@ export interface PurchaseOrderFilters {
   dateFrom?: string;
   dateTo?: string;
   isAutoGenerated?: boolean;
+}
+
+// ============================================================================
+// TIPOS ADICIONAIS PARA COMUNICAÇÃO E AUTOMAÇÃO
+// ============================================================================
+
+// AutomationExecution type for tracking automation execution
+export interface AutomationExecution {
+  id: string;
+  ruleId: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  triggeredAt: string;
+  completedAt?: string;
+  error?: string;
+  result?: any;
+}
+
+// ============================================================================
+// TASK SUPPLY INTEGRATION TYPES
+// ============================================================================
+
+export interface TaskSupplyUsed {
+  id: string;
+  taskId: string;
+  supplyId: string;
+  supply?: Supply;
+  quantityUsed: number;
+  unitCost?: number;
+  totalCost?: number;
+  usedBy?: string;
+  patientId?: string;
+  usageDate: string;
+  batchNumber?: string;
+  expirationDate?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface CreateTaskSupplyUsedData {
+  taskId: string;
+  supplyId: string;
+  quantityUsed: number;
+  unitCost?: number;
+  patientId?: string;
+  batchNumber?: string;
+  expirationDate?: string;
+  notes?: string;
+}
+
+export interface TaskTypeSupplyTemplate {
+  id: string;
+  taskType: string;
+  supplyId: string;
+  supply?: Supply;
+  defaultQuantity: number;
+  isRequired: boolean;
+  notes?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface TaskCost {
+  id: string;
+  taskId: string;
+  totalSupplyCost: number;
+  laborCost: number;
+  overheadCost: number;
+  totalCost: number;
+  calculatedAt: string;
+  calculatedBy?: string;
+}
+
+// ============================================================================
+// ADVANCED ALERT SYSTEM TYPES
+// ============================================================================
+
+export interface AutoAlertRule {
+  id: string;
+  ruleName: string;
+  ruleType: string;
+  conditions: Record<string, any>;
+  severity: AlertSeverity;
+  isActive: boolean;
+  notificationChannels: string[];
+  escalationRules?: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserNotificationSettings {
+  id: string;
+  userId: string;
+  notificationType: string;
+  channel: string;
+  isEnabled: boolean;
+  quietHoursStart?: string;
+  quietHoursEnd?: string;
+  frequency: 'immediate' | 'hourly' | 'daily' | 'weekly';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AlertHistory {
+  id: string;
+  alertId: string;
+  action: 'created' | 'read' | 'resolved' | 'escalated' | 'dismissed' | 'reopened';
+  performedBy?: string;
+  performedAt: string;
+  notes?: string;
+  metadata?: Record<string, any>;
 }

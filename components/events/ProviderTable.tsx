@@ -9,6 +9,7 @@ const statusStyles: Record<ProviderStatus, { text: string; bg: string }> = {
     [ProviderStatus.Applied]: { text: 'text-amber-700', bg: 'bg-amber-100' },
     [ProviderStatus.Confirmed]: { text: 'text-blue-700', bg: 'bg-blue-100' },
     [ProviderStatus.Paid]: { text: 'text-green-700', bg: 'bg-green-100' },
+    [ProviderStatus.Rejected]: { text: 'text-orange-700', bg: 'bg-orange-100' },
     [ProviderStatus.Cancelled]: { text: 'text-red-700', bg: 'bg-red-100' },
 };
 

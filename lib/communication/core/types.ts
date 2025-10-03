@@ -321,19 +321,69 @@ export interface CommunicationRepository {
   // Messages
   saveMessage(message: Message): Promise<void>;
   getMessage(messageId: MessageId): Promise<Message | null>;
+  getMessageByExternalId(externalMessageId: string): Promise<Message | null>;
+  updateMessage(messageId: MessageId, data: Partial<Message>): Promise<void>;
   updateMessageStatus(messageId: MessageId, status: string, metadata?: Record<string, unknown>): Promise<void>;
 
   // Recipients
   getRecipient(recipientId: string): Promise<Recipient | null>;
   getRecipients(filter: Record<string, unknown>): Promise<Recipient[]>;
 
+  // Delivery attempts
+  recordDeliveryAttempt(attempt: {
+    messageId: MessageId;
+    channel: CommunicationChannel;
+    attemptNumber: number;
+    success: boolean;
+    statusCode?: string;
+    responseMessage?: string;
+    externalId?: string;
+    cost?: number;
+    metadata?: Record<string, unknown>;
+  }): Promise<void>;
+
   // Opt-outs
   getOptOutStatus(recipientId: string, channel: CommunicationChannel): Promise<OptOutStatus>;
   setOptOutStatus(recipientId: string, channel: CommunicationChannel, optedOut: boolean, reason?: string): Promise<void>;
 
+  // Templates
+  getTemplates(filter: Record<string, unknown>): Promise<any[]>;
+  saveTemplate(template: any): Promise<void>;
+
   // Analytics
   getChannelMetrics(channel: CommunicationChannel, period: { start: Date; end: Date }): Promise<any>;
   getCampaignMetrics(campaignId: string): Promise<any>;
+
+  // Analytics-specific methods
+  getMessagesForAnalytics(filter: any): Promise<Message[]>;
+  getOptOutsForPeriod(startDate: Date, endDate: Date): Promise<OptOutStatus[]>;
+  getTimeSeriesData(metric: string, filter: any, granularity: string): Promise<Array<{
+    timestamp: Date;
+    value: number;
+    metadata?: Record<string, any>;
+  }>>;
+  getUniqueMessageTypes(filter: any): Promise<any[]>;
+  getTemplatePerformance(filter: any, limit: number): Promise<Array<{
+    id: string;
+    name: string;
+  }>>;
+  getAutomationPerformance(filter: any): Promise<Array<{
+    ruleId: string;
+    ruleName: string;
+    executions: number;
+    successRate: number;
+    messagesSent: number;
+  }>>;
+  getCohortData(cohortType: string, startDate: Date, endDate: Date): Promise<Array<{
+    id: string;
+    name: string;
+    date: Date;
+    totalUsers: number;
+    usersByPeriod: number[];
+    engagementByPeriod?: number[];
+    conversionByPeriod?: number[];
+  }>>;
+  aggregateHourlyData(startOfHour: Date, endOfHour: Date): Promise<void>;
 }
 
 /**

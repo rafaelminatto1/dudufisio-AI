@@ -1,7 +1,7 @@
 // components/alerts/NotificationSettings.tsx
 import React, { useState } from 'react';
 import { useUserNotificationSettings } from '../../hooks/useAlerts';
-import { Bell, BellOff, Mail, MessageSquare, Smartphone, Clock, Save, X } from 'lucide-react';
+import { Bell, BellOff, Mail, MessageSquare, Smartphone, Clock, Save, X, AlertTriangle } from 'lucide-react';
 
 interface NotificationSettingsProps {
   userId: string;

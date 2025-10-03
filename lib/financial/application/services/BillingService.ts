@@ -85,7 +85,7 @@ export class BillingService {
   }
 
   async generateInvoiceForPackage(
-    package: Package,
+    pkg: Package,
     patientId: PatientId,
     createdBy: UserId,
     dueDate?: Date
@@ -95,19 +95,19 @@ export class BillingService {
 
     const lineItems = [{
       id: crypto.randomUUID(),
-      description: `Pacote ${package.getTypeDisplayName()} - ${package.getTotalSessions()} sessões`,
+      description: `Pacote ${pkg.getTypeDisplayName()} - ${pkg.getTotalSessions()} sessões`,
       quantity: 1,
-      unitPrice: package.getPrice(),
-      totalPrice: package.getPrice(),
+      unitPrice: pkg.getPrice(),
+      totalPrice: pkg.getPrice(),
       metadata: {
-        packageId: package.getId(),
-        packageType: package.getType()
+        packageId: pkg.getId(),
+        packageType: pkg.getType()
       }
     }];
 
     const invoice = Invoice.create({
       patientId,
-      transactionIds: [package.getTransactionId()],
+      transactionIds: [pkg.getTransactionId()],
       issueDate,
       dueDate: invoiceDueDate,
       lineItems,
@@ -187,18 +187,18 @@ export class BillingService {
     }
   }
 
-  async calculateRefundAmount(packageId: PackageId, refundDate: Date): Promise<Money> {
-    const package = await this.repository.findPackageById(packageId);
-    if (!package) {
+  async calculateRefundAmount(packageId: string, refundDate: Date): Promise<Money> {
+    const pkg = await this.repository.findPackageById(packageId);
+    if (!pkg) {
       throw new DomainError('Package not found');
     }
 
-    if (!package.isActive()) {
+    if (!pkg.isActive()) {
       throw new BusinessRuleError('Cannot calculate refund for inactive package');
     }
 
     // Calculate refund based on remaining sessions
-    const remainingValue = package.getRemainingValue();
+    const remainingValue = pkg.getRemainingValue();
     
     // Apply refund policy (e.g., 10% retention fee)
     const retentionFee = remainingValue.multiply(0.1);
@@ -207,7 +207,7 @@ export class BillingService {
     return refundAmount;
   }
 
-  async issueInvoice(invoiceId: InvoiceId): Promise<Invoice> {
+  async issueInvoice(invoiceId: string): Promise<Invoice> {
     const invoice = await this.repository.findInvoiceById(invoiceId);
     if (!invoice) {
       throw new DomainError('Invoice not found');

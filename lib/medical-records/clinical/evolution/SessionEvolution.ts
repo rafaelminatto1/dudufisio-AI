@@ -15,7 +15,7 @@ import {
   CreateEvolutionData,
   DomainError,
   ValidationError
-} from '../../../types/medical-records';
+} from '../../../../types/medical-records';
 
 export class SessionEvolution {
   private constructor(

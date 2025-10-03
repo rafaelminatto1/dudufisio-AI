@@ -219,7 +219,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSubmit }
                     </label>
                     <select
                       value={formData.role}
-                      onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
+                      onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value as typeof prev.role }))}
                       className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     >
                       {roleOptions.map(option => (

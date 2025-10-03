@@ -76,9 +76,9 @@ export async function exemploAgendamentoIA() {
         street: 'Rua das Flores, 123',
         city: 'São Paulo',
         state: 'SP',
-        zipCode: '01234-567'
+        zip: '01234-567'
       },
-      gender: 'male',
+      gender: 'M',
       insuranceType: 'private',
       avatarUrl: 'https://i.pravatar.cc/150?u=patient_123'
     },
@@ -306,7 +306,7 @@ export async function exemploAgendamentoLote() {
     
     console.log(`✅ ${responses.length} agendamentos processados em lote`);
     
-    responses.forEach((response, index) => {
+    responses.forEach((response: any, index: number) => {
       console.log(`📅 Agendamento ${index + 1}:`, {
         paciente: response.appointment.patientName,
         tipo: response.appointment.type,

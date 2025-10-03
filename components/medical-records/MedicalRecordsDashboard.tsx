@@ -36,8 +36,10 @@ interface ClinicalDocument {
   id: string;
   patientId: string;
   type: string;
+  title: string;
   version: number;
   content: Record<string, any>;
+  metadata: Record<string, any>;
   isSigned: boolean;
   signedBy?: string;
   signedAt?: Date;
@@ -79,11 +81,16 @@ export function MedicalRecordsDashboard() {
         id: 'doc1',
         patientId: '1',
         type: 'initial_assessment',
+        title: 'Avaliação Inicial - Lombalgia',
         version: 1,
         content: {
           chiefComplaint: 'Dor lombar há 3 semanas',
           diagnosis: 'Lombalgia aguda',
           treatmentPlan: 'Fisioterapia manual e exercícios'
+        },
+        metadata: {
+          specialty: 'physiotherapy',
+          tags: ['lombar', 'dor']
         },
         isSigned: true,
         signedBy: 'Dr. Ana Costa',
@@ -98,14 +105,16 @@ export function MedicalRecordsDashboard() {
     setDocuments(mockDocuments);
   }, []);
 
-  const handleAssessmentSubmit = (data: any) => {
+  const handleAssessmentSubmit = async (data: any) => {
     console.log('Assessment submitted:', data);
     // Aqui seria a integração com o Supabase
+    return Promise.resolve();
   };
 
-  const handleEvolutionSubmit = (data: any) => {
+  const handleEvolutionSubmit = async (data: any) => {
     console.log('Evolution submitted:', data);
     // Aqui seria a integração com o Supabase
+    return Promise.resolve();
   };
 
   const getStatusColor = (status: string) => {
@@ -349,7 +358,7 @@ export function MedicalRecordsDashboard() {
 
                   {selectedDocument && (
                     <div className="mt-6">
-                      <DocumentViewer document={selectedDocument} />
+                      <DocumentViewer document={selectedDocument as any} />
                     </div>
                   )}
                 </TabsContent>
@@ -363,8 +372,12 @@ export function MedicalRecordsDashboard() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <AssessmentForm 
-                        onSubmit={handleAssessmentSubmit}
+                      <AssessmentForm
+                        patientId={selectedPatient.id}
+                        specialty="physiotherapy"
+                        onSave={handleAssessmentSubmit}
+                        onSaveDraft={handleAssessmentSubmit}
+                        onCancel={() => setActiveTab('overview')}
                         initialData={{ patientId: selectedPatient.id }}
                       />
                     </CardContent>
@@ -380,9 +393,13 @@ export function MedicalRecordsDashboard() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <EvolutionEditor 
-                        onSubmit={handleEvolutionSubmit}
-                        initialData={{ patientId: selectedPatient.id }}
+                      <EvolutionEditor
+                        patientId={selectedPatient.id}
+                        sessionId={`session-${Date.now()}`}
+                        onSave={handleEvolutionSubmit}
+                        onSaveDraft={handleEvolutionSubmit}
+                        onCancel={() => setActiveTab('overview')}
+                        initialData={{ patientId: selectedPatient.id, sessionId: `session-${Date.now()}` }}
                       />
                     </CardContent>
                   </Card>

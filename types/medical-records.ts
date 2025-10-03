@@ -20,17 +20,130 @@ export type CertificateId = string;
 // ENUMS PRINCIPAIS
 // ============================================================================
 
-// Removed unused DocumentType enum
+export enum DocumentType {
+  INITIAL_ASSESSMENT = 'initial_assessment',
+  EVOLUTION = 'evolution',
+  PROGRESS_REPORT = 'progress_report',
+  DISCHARGE_REPORT = 'discharge_report',
+  DISCHARGE_SUMMARY = 'discharge_summary',
+  REFERRAL_LETTER = 'referral_letter',
+  PRESCRIPTION = 'prescription',
+  CERTIFICATE = 'certificate'
+}
 
-// Removed unused Specialty enum
+export enum Specialty {
+  PHYSIOTHERAPY = 'physiotherapy',
+  OCCUPATIONAL_THERAPY = 'occupational_therapy',
+  SPEECH_THERAPY = 'speech_therapy',
+  ORTHOPEDICS = 'orthopedics',
+  NEUROLOGY = 'neurology',
+  SPORTS_MEDICINE = 'sports_medicine'
+}
 
-// Removed unused SessionType enum
+export enum SessionType {
+  INITIAL_ASSESSMENT = 'initial_assessment',
+  FOLLOW_UP = 'follow_up',
+  DISCHARGE = 'discharge',
+  REEVALUATION = 'reevaluation'
+}
 
-// Removed unused PainLevel enum
+export enum PainLevel {
+  NONE = 0,
+  MILD = 1,
+  MODERATE = 2,
+  SEVERE = 3,
+  VERY_SEVERE = 4,
+  WORST_POSSIBLE = 5
+}
 
-// Removed unused DocumentStatus enum
+export enum DocumentStatus {
+  DRAFT = 'draft',
+  IN_REVIEW = 'in_review',
+  SIGNED = 'signed',
+  ARCHIVED = 'archived',
+  CANCELLED = 'cancelled',
+  DELETED = 'deleted'
+}
 
-// Removed unused SignatureAlgorithm enum
+export enum SignatureAlgorithm {
+  RSA_SHA256 = 'RSA-SHA256',
+  ECDSA_SHA256 = 'ECDSA-SHA256',
+  ED25519 = 'ED25519'
+}
+
+export enum AuditAction {
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+  VIEW = 'VIEW',
+  SIGN = 'SIGN',
+  ARCHIVE = 'ARCHIVE',
+  RESTORE = 'RESTORE',
+  EXPORT = 'EXPORT'
+}
+
+// ============================================================================
+// INTERFACES PRINCIPAIS
+// ============================================================================
+
+export interface Patient {
+  readonly id: PatientId;
+  readonly name: string;
+  readonly birthDate: string;
+  readonly gender: 'M' | 'F' | 'Other';
+  readonly lastVisit?: Date;
+  readonly status: 'active' | 'inactive' | 'discharged';
+}
+
+export interface ClinicalDocument {
+  readonly id: DocumentId;
+  readonly patientId: PatientId;
+  readonly type: DocumentType;
+  readonly version: number;
+  readonly content: Record<string, unknown>;
+  readonly specialty?: Specialty;
+  readonly isSigned: boolean;
+  readonly signatureData?: string;
+  readonly signedAt?: Date;
+  readonly signedBy?: TherapistId;
+  readonly status: DocumentStatus;
+  readonly createdBy: TherapistId;
+  readonly createdAt: Date;
+  readonly updatedAt?: Date;
+  readonly updatedBy?: TherapistId;
+}
+
+export interface DigitalCertificate {
+  readonly id: CertificateId;
+  readonly userId: TherapistId;
+  readonly type: 'A1' | 'A3';
+  readonly serialNumber: string;
+  readonly issuer: string;
+  readonly validFrom: Date;
+  readonly validUntil: Date;
+  readonly publicKey: string;
+  readonly certificateData: string;
+  readonly algorithm: SignatureAlgorithm;
+  readonly isActive: boolean;
+  readonly status: 'active' | 'expired' | 'revoked';
+  readonly createdAt: Date;
+  readonly createdBy: TherapistId;
+}
+
+export interface InitialAssessment {
+  readonly id: AssessmentId;
+  readonly patientId: PatientId;
+  readonly chiefComplaint: ChiefComplaint;
+  readonly medicalHistory: MedicalHistory;
+  readonly physicalExam: PhysicalExam;
+  readonly functionalTests: FunctionalTest[];
+  readonly diagnosis: PhysiotherapyDiagnosis;
+  readonly treatmentPlan: TreatmentPlan;
+  readonly goals: TreatmentGoal[];
+  readonly specialty: Specialty;
+  readonly createdBy: TherapistId;
+  readonly createdAt: Date;
+}
 
 // ============================================================================
 // INTERFACES DE CONTEÚDO
@@ -274,11 +387,19 @@ export interface BodyMapPoint {
 // ============================================================================
 
 export interface DigitalSignature {
+  readonly id: string;
+  readonly documentId: string;
   readonly signature: string;
+  readonly signatureData: string;
   readonly publicKey: string;
+  readonly certificateId: string;
   readonly timestamp: Timestamp;
   readonly documentHash: string;
   readonly algorithm: SignatureAlgorithm;
+  readonly signedAt: Date;
+  readonly signedBy: TherapistId;
+  readonly verificationStatus: 'pending' | 'verified' | 'failed';
+  readonly createdAt: Date;
 }
 
 export interface Timestamp {
@@ -309,6 +430,7 @@ export interface ClinicalTemplate {
   readonly type: DocumentType;
   readonly specialty: Specialty;
   readonly schema: TemplateSchema;
+  readonly templateSchema: TemplateSchema;
   readonly defaultValues: Record<string, unknown>;
   readonly validationRules: ValidationRule[];
   readonly active: boolean;
@@ -467,8 +589,6 @@ export interface AuditTrail {
   readonly ipAddress?: string;
   readonly userAgent?: string;
 }
-
-// Removed unused AuditAction enum
 
 // ============================================================================
 // INTERFACES DE ARQUIVAMENTO

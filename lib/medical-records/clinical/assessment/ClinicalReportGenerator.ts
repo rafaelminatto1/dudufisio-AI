@@ -18,8 +18,9 @@ import {
   FollowUpPlan,
   PainDataPoint,
   SessionEvolution,
-  InitialAssessment
-} from '../../../types/medical-records';
+  InitialAssessment,
+  TreatmentGoal
+} from '../../../../types/medical-records';
 
 export class ClinicalReportGenerator {
   private repository: ClinicalRepository;
@@ -81,7 +82,8 @@ export class ClinicalReportGenerator {
 
       return report;
     } catch (error) {
-      throw new Error(`Failed to generate progress report: ${error.message}`);
+      const err = error instanceof Error ? error : new Error(String(error));
+      throw new Error(`Failed to generate progress report: ${err.message}`);
     }
   }
 
@@ -131,7 +133,8 @@ export class ClinicalReportGenerator {
 
       return report;
     } catch (error) {
-      throw new Error(`Failed to generate discharge report: ${error.message}`);
+      const err = error instanceof Error ? error : new Error(String(error));
+      throw new Error(`Failed to generate discharge report: ${err.message}`);
     }
   }
 
@@ -225,7 +228,7 @@ export class ClinicalReportGenerator {
     };
 
     // Contar metas alcançadas
-    const goalsAchieved = initialAssessment.goals.filter(goal => {
+    const goalsAchieved = initialAssessment.goals.filter((goal: TreatmentGoal) => {
       // Lógica simplificada para determinar se meta foi alcançada
       return this.isGoalAchieved(goal, improvements);
     }).length;
@@ -324,8 +327,8 @@ export class ClinicalReportGenerator {
     ).length;
 
     // Extrair intervenções primárias
-    const allTechniques = sessionEvolutions.flatMap(evolution => 
-      evolution.techniquesApplied?.map(technique => technique.name) || []
+    const allTechniques = sessionEvolutions.flatMap(evolution =>
+      evolution.techniquesApplied?.map((technique: { name: string }) => technique.name) || []
     );
     const techniqueCounts = this.countOccurrences(allTechniques);
     const primaryInterventions = Object.keys(techniqueCounts)
@@ -517,8 +520,8 @@ export class ClinicalReportGenerator {
   }
 
   private getMostUsedTechniques(sessionEvolutions: SessionEvolution[]): string[] {
-    const allTechniques = sessionEvolutions.flatMap(evolution => 
-      evolution.techniquesApplied?.map(technique => technique.name) || []
+    const allTechniques = sessionEvolutions.flatMap(evolution =>
+      evolution.techniquesApplied?.map((technique: { name: string }) => technique.name) || []
     );
     
     const techniqueCounts = this.countOccurrences(allTechniques);

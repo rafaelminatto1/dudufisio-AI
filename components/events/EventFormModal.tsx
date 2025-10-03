@@ -12,7 +12,7 @@ interface EventFormModalProps {
 const getInitialFormData = (): Omit<Event, 'id' | 'registrations' | 'providers'> => ({
     name: '',
     description: '',
-    eventType: EventType.Corrida,
+    eventType: EventType.Race,
     startDate: new Date(),
     endDate: new Date(),
     location: '',

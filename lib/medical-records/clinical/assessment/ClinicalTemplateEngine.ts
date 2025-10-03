@@ -15,7 +15,7 @@ import {
   ValidationRule,
   DomainError,
   ValidationError
-} from '../../../types/medical-records';
+} from '../../../../types/medical-records';
 
 export class ClinicalTemplateEngine {
   private templates = new Map<string, ClinicalTemplate>();
@@ -383,12 +383,12 @@ export class AssessmentForm {
   ) {}
 
   static fromTemplate(template: ClinicalTemplate): AssessmentForm {
-    const fields = template.schema.fields.map(field => 
-      new FormField(field, template.defaultValues[field.id])
+    const fields = template.schema.fields.map((field: TemplateField) =>
+      FormField.fromTemplateField(field, template.defaultValues[field.id])
     );
 
-    const sections = template.schema.sections.map(section => 
-      new FormSection(section, fields.filter(field => 
+    const sections = template.schema.sections.map((section: TemplateSection) =>
+      FormSection.fromTemplateSection(section, fields.filter((field: FormField) =>
         section.fields.includes(field.id)
       ))
     );
@@ -448,9 +448,9 @@ export class EvolutionForm {
     template: ClinicalTemplate,
     context: EvolutionContext
   ): EvolutionForm {
-    const fields = template.schema.fields.map(field => {
+    const fields = template.schema.fields.map((field: TemplateField) => {
       let defaultValue = template.defaultValues[field.id];
-      
+
       // Aplicar contexto específico se disponível
       if (context.previousSessions.length > 0) {
         const lastSession = context.previousSessions[0];
@@ -459,16 +459,16 @@ export class EvolutionForm {
             defaultValue = lastSession.painLevelAfter;
             break;
           case 'previous_treatment':
-            defaultValue = lastSession.techniquesApplied.map(t => t.name).join(', ');
+            defaultValue = lastSession.techniquesApplied.map((t: { name: string }) => t.name).join(', ');
             break;
         }
       }
 
-      return new FormField(field, defaultValue);
+      return FormField.fromTemplateField(field, defaultValue);
     });
 
-    const sections = template.schema.sections.map(section => 
-      new FormSection(section, fields.filter(field => 
+    const sections = template.schema.sections.map((section: TemplateSection) =>
+      FormSection.fromTemplateSection(section, fields.filter((field: FormField) =>
         section.fields.includes(field.id)
       ))
     );

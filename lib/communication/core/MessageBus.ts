@@ -5,7 +5,6 @@ import Queue from 'bull';
 import {
   Message,
   DeliveryResult,
-  MessageDeliveryAttempt,
   MessageStatus,
   CommunicationChannel,
   MessageId
@@ -21,6 +20,20 @@ import {
   CommunicationLogger,
   MetricsCollector
 } from './types';
+
+/**
+ * Message Delivery Attempt (local type)
+ */
+interface MessageDeliveryAttempt {
+  id: string;
+  messageId: MessageId;
+  channel: CommunicationChannel;
+  attemptNumber: number;
+  attemptedAt: Date;
+  result: DeliveryResult;
+  cost: number;
+  metadata: Record<string, unknown>;
+}
 
 /**
  * Message Bus Configuration
@@ -82,10 +95,10 @@ export interface MessageBusEvents {
  * Enterprise Message Bus with guaranteed delivery
  */
 export class MessageBus {
-  private queue: Queue.Queue<MessageJob>;
+  private queue!: Queue.Queue<MessageJob>;
   private channels = new Map<CommunicationChannel, ChannelRegistration>();
   private channelHealthStatus = new Map<CommunicationChannel, boolean>();
-  private deadLetterQueue: Queue.Queue<MessageJob>;
+  private deadLetterQueue!: Queue.Queue<MessageJob>;
   private config: MessageBusConfig;
   private isProcessing = false;
 
@@ -106,13 +119,12 @@ export class MessageBus {
    * Initialize Redis queues
    */
   private initializeQueues(): void {
-    const redisConfig = {
+    const redisConfig: Queue.QueueOptions = {
       redis: this.config.redis,
       defaultJobOptions: {
         removeOnComplete: 100,
         removeOnFail: 50,
         attempts: 1, // We handle retries manually for better control
-        backoff: 'fixed',
         delay: 0
       }
     };
@@ -219,7 +231,7 @@ export class MessageBus {
       // Update message status
       await this.repository.updateMessageStatus(
         message.id,
-        MessageStatus.QUEUED,
+        MessageStatus.Queued,
         { jobId: job.id, queuedAt: new Date() }
       );
 
@@ -270,7 +282,7 @@ export class MessageBus {
       // Update message status to processing
       await this.repository.updateMessageStatus(
         messageId,
-        MessageStatus.PROCESSING,
+        MessageStatus.Processing,
         { processingStarted: new Date(), attempt: attempt + 1 }
       );
 
@@ -307,7 +319,7 @@ export class MessageBus {
         // Success - update message status
         await this.repository.updateMessageStatus(
           messageId,
-          MessageStatus.DELIVERED,
+          MessageStatus.Delivered,
           {
             deliveredAt: result.deliveredAt,
             channel: selectedChannel.name,
@@ -388,7 +400,7 @@ export class MessageBus {
       // Update message status
       await this.repository.updateMessageStatus(
         messageId,
-        MessageStatus.RETRY_SCHEDULED,
+        MessageStatus.RetryScheduled,
         {
           nextRetryAt: new Date(Date.now() + retryDelay),
           attempt: attempt + 1,
@@ -424,7 +436,7 @@ export class MessageBus {
       // Update message status to failed
       await this.repository.updateMessageStatus(
         messageId,
-        MessageStatus.FAILED,
+        MessageStatus.Failed,
         {
           failedAt: new Date(),
           finalError: error.message,
@@ -625,7 +637,7 @@ export class MessageBus {
     let priority = 0;
 
     // Base priority from message
-    if (message.priority) {
+    if (message.priority && typeof message.priority === 'number') {
       priority += message.priority * 10;
     }
 
@@ -781,7 +793,7 @@ export class MessageBus {
         // Update message status
         await this.repository.updateMessageStatus(
           messageId,
-          MessageStatus.CANCELLED,
+          MessageStatus.Cancelled,
           { cancelledAt: new Date(), reason }
         );
 

@@ -1,10 +1,11 @@
 // components/supplies/SuppliesDashboard.tsx
 import React from 'react';
 import { useSuppliesDashboard } from '../../hooks/useSupplies';
-import { 
-  Package, 
-  AlertTriangle, 
-  Calendar, 
+import { MovementTypeUtils } from '../../types';
+import {
+  Package,
+  AlertTriangle,
+  Calendar,
   DollarSign,
   TrendingUp,
   Clock,
@@ -172,33 +173,36 @@ const SuppliesDashboard: React.FC<SuppliesDashboardProps> = ({
           
           {dashboardData.recentMovements.length > 0 ? (
             <div className="space-y-3">
-              {dashboardData.recentMovements.slice(0, 5).map((movement) => (
-                <div key={movement.id} className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className={`w-2 h-2 rounded-full mr-3 ${
-                      movement.movementType === 'entrada' ? 'bg-green-500' : 'bg-red-500'
-                    }`} />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {movement.supply?.name || 'Insumo não encontrado'}
+              {dashboardData.recentMovements.slice(0, 5).map((movement) => {
+                const isEntrada = MovementTypeUtils.isEntrada(movement.movementType);
+                return (
+                  <div key={movement.id} className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className={`w-2 h-2 rounded-full mr-3 ${
+                        isEntrada ? 'bg-green-500' : 'bg-red-500'
+                      }`} />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">
+                          {movement.supply?.name || 'Insumo não encontrado'}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(movement.createdAt).toLocaleDateString('pt-BR')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-sm font-medium ${
+                        isEntrada ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {isEntrada ? '+' : '-'}{movement.quantity}
                       </p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(movement.createdAt).toLocaleDateString('pt-BR')}
+                      <p className="text-xs text-gray-500 capitalize">
+                        {MovementTypeUtils.toPortuguese(movement.movementType)}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className={`text-sm font-medium ${
-                      movement.movementType === 'entrada' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {movement.movementType === 'entrada' ? '+' : '-'}{movement.quantity}
-                    </p>
-                    <p className="text-xs text-gray-500 capitalize">
-                      {movement.movementType}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <p className="text-gray-500 text-sm">Nenhuma movimentação recente</p>

@@ -313,7 +313,7 @@ export class DataLoader {
         .limit(1);
 
       if (error) throw error;
-      return data?.[0]?.[keyColumn] || null;
+      return (data?.[0] as Record<string, any>)?.[keyColumn] || null;
     } catch (error) {
       return null;
     }
@@ -329,7 +329,7 @@ export class DataLoader {
         .limit(1);
 
       if (error) throw error;
-      return data?.[0]?.[keyColumn] || null;
+      return (data?.[0] as Record<string, any>)?.[keyColumn] || null;
     } catch (error) {
       return null;
     }

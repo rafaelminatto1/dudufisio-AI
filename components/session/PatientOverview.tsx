@@ -1,6 +1,6 @@
 import React from 'react';
 import { User, AlertTriangle, Activity, Calendar, Clock, MapPin, Phone, Mail } from 'lucide-react';
-import { Patient, Condition, Surgery } from '../types';
+import { Patient, Condition, Surgery, PatientStatus } from '../../types';
 import SurgeryTimeCalculator from './SurgeryTimeCalculator';
 
 interface PatientOverviewProps {
@@ -185,12 +185,12 @@ const PatientOverview: React.FC<PatientOverviewProps> = ({ patient, className = 
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className={`w-3 h-3 rounded-full ${
-              patient.status === 'active' ? 'bg-green-500' : 
-              patient.status === 'inactive' ? 'bg-gray-500' : 'bg-yellow-500'
+              patient.status === PatientStatus.Active ? 'bg-green-500' :
+              patient.status === PatientStatus.Inactive ? 'bg-gray-500' : 'bg-yellow-500'
             }`} />
             <span className="font-medium text-slate-900 capitalize">
-              {patient.status === 'active' ? 'Ativo' : 
-               patient.status === 'inactive' ? 'Inativo' : 'Pendente'}
+              {patient.status === PatientStatus.Active ? 'Ativo' :
+               patient.status === PatientStatus.Inactive ? 'Inativo' : 'Pendente'}
             </span>
           </div>
           <div className="text-sm text-slate-600">

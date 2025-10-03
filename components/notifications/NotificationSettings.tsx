@@ -4,7 +4,7 @@ import {
   Smartphone, Monitor, Volume2, VolumeX
 } from 'lucide-react';
 import { enhancedNotificationService } from '../../services/notificationService';
-import { useData } from '../../contexts/AppContext';
+import { useApp } from '../../contexts/AppContext';
 import { auditService } from '../../services/auditService';
 
 /**
@@ -36,7 +36,7 @@ interface NotificationPreferences {
 }
 
 const NotificationSettings: React.FC = () => {
-  const { user } = useData();
+  const { user } = useApp();
   const [preferences, setPreferences] = useState<NotificationPreferences>({
     push: false,
     email: true,

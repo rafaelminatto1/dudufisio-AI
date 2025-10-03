@@ -5,31 +5,33 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  Users, 
-  CreditCard, 
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Users,
+  CreditCard,
   AlertTriangle,
   Calendar,
   FileText,
   PieChart,
   BarChart3,
   Download,
-  RefreshCw
+  RefreshCw,
+  CheckCircle
 } from 'lucide-react';
-import { 
-  LineChart, 
-  Line, 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart as RechartsPieChart,
+  Pie,
   Cell,
   BarChart,
   Bar
@@ -389,7 +391,7 @@ export function FinancialDashboard() {
                       cy="50%"
                       outerRadius={80}
                       dataKey="value"
-                      label={({ method, percentage }) => `${method}: ${percentage}%`}
+                      label={({ method, percentage }: any) => `${method}: ${percentage}%`}
                     >
                       {paymentMethodData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />

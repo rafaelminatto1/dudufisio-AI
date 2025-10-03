@@ -473,7 +473,7 @@ export class DataWarehouse {
   /**
    * Populate date dimension with 5 years of data
    */
-  private async populateDateDimension(): Promise<void> {
+  async populateDateDimension(): Promise<void> {
     const startDate = new Date(2023, 0, 1); // January 1, 2023
     const endDate = new Date(2028, 11, 31); // December 31, 2028
     const dates: any[] = [];
@@ -593,5 +593,48 @@ export class DataWarehouse {
       dataQuality: 0.95, // This would be calculated from data quality rules
       storageUsed: 0 // This would come from database statistics
     };
+  }
+
+  /**
+   * Optimize data warehouse performance
+   */
+  async optimizePerformance(): Promise<void> {
+    try {
+      console.log('Optimizing data warehouse performance...');
+
+      // Vacuum analyze tables to reclaim space and update statistics
+      const tables = [
+        'dim_patients',
+        'dim_therapists',
+        'dim_date',
+        'dim_treatments',
+        'fact_appointments',
+        'fact_financial_transactions',
+        'fact_clinical_outcomes',
+        'fact_patient_engagement'
+      ];
+
+      for (const table of tables) {
+        await this.query(`VACUUM ANALYZE ${table}`);
+      }
+
+      console.log('Performance optimization completed');
+    } catch (error) {
+      console.error('Failed to optimize performance:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Analyze table statistics
+   */
+  async analyzeTable(tableName: string): Promise<void> {
+    try {
+      await this.query(`ANALYZE ${tableName}`);
+      console.log(`Table ${tableName} analyzed successfully`);
+    } catch (error) {
+      console.error(`Failed to analyze table ${tableName}:`, error);
+      throw error;
+    }
   }
 }

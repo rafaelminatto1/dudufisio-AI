@@ -8,7 +8,7 @@
  * - Monitoramento e métricas
  */
 
-import { Appointment, Patient, User } from '../../types';
+import { Appointment, Patient, User } from '../../../types';
 import { BusinessIntelligenceSystem } from '../../analytics/BusinessIntelligenceSystem';
 import { SchedulingEngine, SmartSchedulingRequest, SmartSchedulingResponse } from '../core/SchedulingEngine';
 import { AIPromptManager, PromptRequest, PromptResponse } from '../core/AIPromptManager';

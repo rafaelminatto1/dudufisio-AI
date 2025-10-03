@@ -15,6 +15,45 @@ const getInitialFormData = (): Omit<EducationalCase, 'id' | 'createdAt' | 'creat
   description: '',
   area: 'Ortopedia',
   content: '',
+  specialty: 'Ortopedia',
+  difficultyLevel: 3,
+  patientProfile: {
+    age: 0,
+    gender: 'M',
+    occupation: '',
+    medicalHistory: [],
+    currentComplaints: ''
+  },
+  clinicalPresentation: {
+    symptoms: [],
+    physicalExam: '',
+    functionalTests: [],
+    imaging: []
+  },
+  diagnosis: {
+    primary: '',
+    secondary: [],
+    differentialDiagnosis: []
+  },
+  treatmentPlan: {
+    goals: [],
+    interventions: [],
+    duration: '',
+    frequency: '',
+    progressIndicators: []
+  },
+  outcomes: {
+    shortTerm: [],
+    longTerm: []
+  },
+  learningObjectives: [],
+  discussionPoints: [],
+  references: [],
+  lastUpdated: new Date().toISOString().split('T')[0],
+  tags: [],
+  isPublished: false,
+  discussions: [],
+  evaluations: []
 });
 
 const CaseFormModal: React.FC<CaseFormModalProps> = ({ isOpen, onClose, onSave, caseToEdit }) => {

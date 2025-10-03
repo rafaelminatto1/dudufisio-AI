@@ -1,7 +1,9 @@
 // Advanced Template Engine with Handlebars
 // Provides template compilation, caching, and context-aware rendering
 
-import Handlebars from 'handlebars';
+// Optional import - install handlebars if using template engine
+// import Handlebars from 'handlebars';
+type HandlebarsTemplateDelegate = (context: any) => string;
 import {
   Message,
   MessageTemplate,
@@ -274,16 +276,16 @@ export class TemplateEngine {
   private selectTemplateForChannel(template: MessageTemplate, channel: CommunicationChannel): string {
     // Channel-specific template selection logic
     switch (channel) {
-      case 'whatsapp':
-        return template.whatsapp || template.sms || template.text || template.body;
-      case 'sms':
-        return template.sms || template.text || template.body;
-      case 'email':
-        return template.email || template.html || template.body;
-      case 'push':
-        return template.push || template.text || template.body;
+      case CommunicationChannel.WhatsApp:
+        return (template as any).whatsapp || (template as any).sms || (template as any).text || template.body;
+      case CommunicationChannel.SMS:
+        return (template as any).sms || (template as any).text || template.body;
+      case CommunicationChannel.Email:
+        return (template as any).email || template.html || template.body;
+      case CommunicationChannel.Push:
+        return (template as any).push || (template as any).text || template.body;
       default:
-        return template.body;
+        return template.body || '';
     }
   }
 
@@ -295,7 +297,7 @@ export class TemplateEngine {
 
     // Channel-specific preprocessing
     switch (context.channel) {
-      case 'sms':
+      case CommunicationChannel.SMS:
         // Remove HTML tags for SMS
         processed = processed.replace(/<[^>]*>/g, '');
         // Convert HTML entities
@@ -305,7 +307,7 @@ export class TemplateEngine {
         processed = processed.replace(/&gt;/g, '>');
         break;
 
-      case 'whatsapp':
+      case CommunicationChannel.WhatsApp:
         // WhatsApp supports basic formatting
         processed = processed.replace(/<b>(.*?)<\/b>/g, '*$1*');
         processed = processed.replace(/<i>(.*?)<\/i>/g, '_$1_');
@@ -313,11 +315,11 @@ export class TemplateEngine {
         processed = processed.replace(/\n/g, '\n'); // Preserve line breaks
         break;
 
-      case 'email':
+      case CommunicationChannel.Email:
         // Email supports full HTML
         break;
 
-      case 'push':
+      case CommunicationChannel.Push:
         // Push notifications have character limits
         processed = processed.replace(/<[^>]*>/g, ''); // Remove HTML
         break;
@@ -621,25 +623,25 @@ export class TemplateEngine {
     };
 
     switch (channel) {
-      case 'email':
+      case CommunicationChannel.Email:
         return {
           ...baseContext,
           supportsHtml: true,
           supportsImages: true,
           maxLength: 0 // No practical limit
         };
-      case 'whatsapp':
+      case CommunicationChannel.WhatsApp:
         return {
           ...baseContext,
           supportsImages: true,
           maxLength: 4096
         };
-      case 'sms':
+      case CommunicationChannel.SMS:
         return {
           ...baseContext,
           maxLength: 1600
         };
-      case 'push':
+      case CommunicationChannel.Push:
         return {
           ...baseContext,
           maxLength: 300

@@ -11,12 +11,14 @@ interface CasesListProps {
 }
 
 const CasesList: React.FC<CasesListProps> = ({ cases, onAdd, onView, onEdit }) => {
-    
-    const areaColorMap: Record<EducationalCase['area'], string> = {
+
+    const areaColorMap: Record<string, string> = {
         'Ortopedia': 'bg-blue-100 text-blue-800',
         'Neurologia': 'bg-purple-100 text-purple-800',
         'Esportiva': 'bg-green-100 text-green-800',
         'Gerontologia': 'bg-amber-100 text-amber-800',
+        'Cardiorrespiratória': 'bg-red-100 text-red-800',
+        'Pediatria': 'bg-pink-100 text-pink-800',
     };
 
     return (
@@ -36,8 +38,8 @@ const CasesList: React.FC<CasesListProps> = ({ cases, onAdd, onView, onEdit }) =
                         <div className="flex justify-between items-start">
                              <div className="flex-1 cursor-pointer" onClick={() => onView(clinicalCase)}>
                                 <div className="flex items-center gap-2">
-                                     <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${areaColorMap[clinicalCase.area]}`}>
-                                        {clinicalCase.area}
+                                     <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${areaColorMap[(clinicalCase.area || clinicalCase.specialty)] || 'bg-gray-100 text-gray-800'}`}>
+                                        {clinicalCase.area || clinicalCase.specialty}
                                     </span>
                                 </div>
                                 <p className="font-semibold text-slate-800 mt-1">{clinicalCase.title}</p>

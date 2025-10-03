@@ -92,6 +92,12 @@ export type {
   WhatsAppAnalytics
 } from './integrations/WhatsAppBusinessIntegration';
 
+// Import classes for factory functions
+import { AISchedulingService } from './services/AISchedulingService';
+import { WhatsAppBusinessIntegration } from './integrations/WhatsAppBusinessIntegration';
+import type { AISchedulingConfig } from './services/AISchedulingService';
+import type { WhatsAppBusinessConfig } from './integrations/WhatsAppBusinessIntegration';
+
 // Factory Functions
 export function createAISchedulingService(
   biSystem: any,
@@ -253,6 +259,7 @@ export const DEFAULT_AI_SCHEDULING_CONFIG: AISchedulingConfig = {
   enableNoShowPrediction: true,
   enableResourceOptimization: true,
   enablePrompts: true,
+  enableCompliance: true,
   cacheEnabled: true,
   cacheTTL: 30,
   maxConcurrentRequests: 10,

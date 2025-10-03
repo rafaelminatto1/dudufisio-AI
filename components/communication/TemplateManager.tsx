@@ -4,7 +4,7 @@ import {
   MessageSquare, Mail, Smartphone, Bell, Code, Type,
   Image, Link, AlertCircle, CheckCircle, Clock
 } from 'lucide-react';
-import { MessageTemplate, TemplateType, CommunicationChannel } from '../../types';
+import { MessageTemplate, MessageType, CommunicationChannel } from '../../types';
 
 interface TemplateManagerProps {
   className?: string;
@@ -12,7 +12,7 @@ interface TemplateManagerProps {
 
 interface TemplateFormData {
   name: string;
-  type: TemplateType;
+  type: MessageType;
   channels: CommunicationChannel[];
   subject?: string;
   content: string;
@@ -21,20 +21,20 @@ interface TemplateFormData {
   isActive: boolean;
 }
 
-const channelIcons = {
-  whatsapp: MessageSquare,
-  sms: Smartphone,
-  email: Mail,
-  push: Bell
+const channelIcons: Record<string, React.ComponentType<any>> = {
+  [CommunicationChannel.WhatsApp]: MessageSquare,
+  [CommunicationChannel.SMS]: Smartphone,
+  [CommunicationChannel.Email]: Mail,
+  [CommunicationChannel.Push]: Bell
 };
 
-const templateTypes: { value: TemplateType; label: string; description: string }[] = [
-  { value: TemplateType.APPOINTMENT_REMINDER, label: 'Lembrete de Consulta', description: 'Notifica pacientes sobre consultas agendadas' },
-  { value: TemplateType.APPOINTMENT_CONFIRMATION, label: 'Confirmação de Consulta', description: 'Confirma agendamento de nova consulta' },
-  { value: TemplateType.TREATMENT_UPDATE, label: 'Atualização de Tratamento', description: 'Informa progresso do tratamento' },
-  { value: TemplateType.PAYMENT_REMINDER, label: 'Lembrete de Pagamento', description: 'Notifica sobre pagamentos pendentes' },
-  { value: TemplateType.WELCOME, label: 'Boas-vindas', description: 'Mensagem de boas-vindas para novos pacientes' },
-  { value: TemplateType.MARKETING, label: 'Marketing', description: 'Campanhas promocionais e informativas' }
+const templateTypes: { value: MessageType; label: string; description: string }[] = [
+  { value: 'appointment_reminder', label: 'Lembrete de Consulta', description: 'Notifica pacientes sobre consultas agendadas' },
+  { value: 'appointment_confirmation', label: 'Confirmação de Consulta', description: 'Confirma agendamento de nova consulta' },
+  { value: 'maintenance_tips', label: 'Atualização de Tratamento', description: 'Informa progresso do tratamento' },
+  { value: 'payment_reminder_gentle', label: 'Lembrete de Pagamento', description: 'Notifica sobre pagamentos pendentes' },
+  { value: 'welcome_new_patient', label: 'Boas-vindas', description: 'Mensagem de boas-vindas para novos pacientes' },
+  { value: 'generic', label: 'Genérico', description: 'Template genérico customizado' }
 ];
 
 const availableVariables = [
@@ -59,7 +59,7 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({ className = ''
   const [templates, setTemplates] = useState<MessageTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState<TemplateType | 'all'>('all');
+  const [selectedType, setSelectedType] = useState<MessageType | 'all'>('all');
   const [selectedChannel, setSelectedChannel] = useState<CommunicationChannel | 'all'>('all');
   const [isCreating, setIsCreating] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState<MessageTemplate | null>(null);
@@ -67,8 +67,8 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({ className = ''
 
   const [formData, setFormData] = useState<TemplateFormData>({
     name: '',
-    type: 'custom',
-    channels: ['whatsapp'],
+    type: 'generic',
+    channels: [CommunicationChannel.WhatsApp],
     subject: '',
     content: '',
     variables: [],
@@ -99,10 +99,10 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({ className = ''
   const filteredTemplates = useMemo(() => {
     return templates.filter(template => {
       const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           template.content.toLowerCase().includes(searchTerm.toLowerCase());
+                           (template.content || template.body || '').toLowerCase().includes(searchTerm.toLowerCase());
       const matchesType = selectedType === 'all' || template.type === selectedType;
       const matchesChannel = selectedChannel === 'all' ||
-                             template.channels.includes(selectedChannel);
+                             (template.channels || []).includes(selectedChannel);
 
       return matchesSearch && matchesType && matchesChannel;
     });
@@ -155,11 +155,11 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({ className = ''
     setFormData({
       name: `${template.name} (Cópia)`,
       type: template.type,
-      channels: [...template.channels],
+      channels: [...(template.channels || [])],
       subject: template.subject,
-      content: template.content,
+      content: template.body || template.content || '',
       variables: [...template.variables],
-      metadata: { ...template.metadata },
+      metadata: { ...(template.metadata || {}) },
       isActive: false
     });
     setIsCreating(true);
@@ -169,11 +169,11 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({ className = ''
     setFormData({
       name: template.name,
       type: template.type,
-      channels: [...template.channels],
+      channels: [...(template.channels || [])],
       subject: template.subject,
-      content: template.content,
+      content: template.body || template.content || '',
       variables: [...template.variables],
-      metadata: { ...template.metadata },
+      metadata: { ...(template.metadata || {}) },
       isActive: template.isActive
     });
     setEditingTemplate(template);
@@ -185,8 +185,8 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({ className = ''
     setEditingTemplate(null);
     setFormData({
       name: '',
-      type: 'custom',
-      channels: ['whatsapp'],
+      type: 'generic',
+      channels: [CommunicationChannel.WhatsApp],
       subject: '',
       content: '',
       variables: [],
@@ -350,7 +350,7 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({ className = ''
                   </label>
                   <select
                     value={formData.type}
-                    onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as TemplateType }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as MessageType }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                   >
                     {templateTypes.map(type => (
@@ -394,7 +394,7 @@ export const TemplateManager: React.FC<TemplateManagerProps> = ({ className = ''
               </div>
 
               {/* Subject (for email) */}
-              {formData.channels.includes('email') && (
+              {formData.channels.includes(CommunicationChannel.Email) && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Assunto (Email)
@@ -524,6 +524,8 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
   onPreview
 }) => {
   const templateTypeInfo = templateTypes.find(t => t.value === template.type);
+  const content = template.body || template.content || '';
+  const channels = template.channels || [];
 
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow">
@@ -545,9 +547,9 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
 
       {/* Channels */}
       <div className="flex items-center space-x-2 mb-4">
-        {template.channels.map(channel => {
+        {channels.map(channel => {
           const Icon = channelIcons[channel];
-          return (
+          return Icon ? (
             <div
               key={channel}
               className="flex items-center space-x-1 px-2 py-1 bg-gray-100 rounded-lg"
@@ -555,16 +557,16 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
               <Icon className="h-3 w-3" />
               <span className="text-xs capitalize">{channel}</span>
             </div>
-          );
+          ) : null;
         })}
       </div>
 
       {/* Content Preview */}
       <div className="mb-4">
         <p className="text-sm text-gray-700 line-clamp-3">
-          {template.content.length > 100
-            ? `${template.content.substring(0, 100)}...`
-            : template.content
+          {content.length > 100
+            ? `${content.substring(0, 100)}...`
+            : content
           }
         </p>
       </div>
@@ -631,6 +633,8 @@ interface TemplatePreviewModalProps {
 
 const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({ template, onClose }) => {
   const [previewData, setPreviewData] = useState<Record<string, string>>({});
+  const content = template.body || template.content || '';
+  const channels = template.channels || [];
 
   useEffect(() => {
     // Initialize preview data with sample values
@@ -680,9 +684,9 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({ template, o
           {/* Template Info */}
           <div className="flex items-center space-x-4">
             <div className="flex space-x-2">
-              {template.channels.map(channel => {
+              {channels.map(channel => {
                 const Icon = channelIcons[channel];
-                return (
+                return Icon ? (
                   <div
                     key={channel}
                     className="flex items-center space-x-1 px-2 py-1 bg-gray-100 rounded-lg"
@@ -690,7 +694,7 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({ template, o
                     <Icon className="h-4 w-4" />
                     <span className="text-sm capitalize">{channel}</span>
                   </div>
-                );
+                ) : null;
               })}
             </div>
             <span className="text-sm text-gray-500">
@@ -705,7 +709,7 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({ template, o
                 Assunto
               </label>
               <div className="p-3 bg-gray-50 rounded-lg">
-                <p className="text-sm">{renderPreview(template.subject)}</p>
+                <p className="text-sm">{renderPreview(template.subject || '')}</p>
               </div>
             </div>
           )}
@@ -716,7 +720,7 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({ template, o
               Conteúdo da Mensagem
             </label>
             <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm whitespace-pre-wrap">{renderPreview(template.content)}</p>
+              <p className="text-sm whitespace-pre-wrap">{renderPreview(content)}</p>
             </div>
           </div>
 

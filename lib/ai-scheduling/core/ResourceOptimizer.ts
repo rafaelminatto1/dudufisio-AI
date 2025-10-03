@@ -8,7 +8,7 @@
  * - Minimização de conflitos
  */
 
-import { Appointment, Patient, User } from '../../types';
+import { Appointment, Patient, User } from '../../../types';
 import { BusinessIntelligenceSystem } from '../../analytics/BusinessIntelligenceSystem';
 
 export interface ResourceOptimization {
@@ -107,6 +107,7 @@ export interface OptimizationConstraints {
   requiredEquipment?: string[];
   maxWaitTime?: number;
   budget?: number;
+  usedResources?: string[];
 }
 
 export class ResourceOptimizer {
@@ -351,10 +352,10 @@ export class ResourceOptimizer {
                  equipment.reduce((sum, eq) => sum + eq.cost, 0);
     
     // Calcular qualidade média
-    const quality = (therapist?.quality || 0 + 
-                    room?.quality || 0 + 
-                    equipment.reduce((sum, eq) => sum + eq.quality, 0)) / 
-                   (therapist ? 1 : 0 + room ? 1 : 0 + equipment.length);
+    const quality = ((therapist?.quality || 0) +
+                    (room?.quality || 0) +
+                    equipment.reduce((sum, eq) => sum + eq.quality, 0)) /
+                   ((therapist ? 1 : 0) + (room ? 1 : 0) + equipment.length);
     
     // Calcular eficiência
     const efficiency = this.calculateResourceEfficiency(combination, request);

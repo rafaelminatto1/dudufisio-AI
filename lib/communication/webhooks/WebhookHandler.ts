@@ -1,6 +1,5 @@
 // Webhook Handler - Processes delivery status webhooks from communication providers
 
-import { Request, Response } from 'express';
 import crypto from 'crypto';
 import {
   DeliveryResult,
@@ -15,6 +14,19 @@ import {
   MetricsCollector,
   EventDispatcher
 } from '../core/types';
+
+// Express types (for webhook endpoints)
+interface Request {
+  body: any;
+  headers: Record<string, string | string[] | undefined>;
+  ip?: string;
+  rawBody?: string;
+}
+
+interface Response {
+  status(code: number): Response;
+  json(data: any): void;
+}
 
 /**
  * Webhook Configuration
@@ -59,7 +71,7 @@ interface WebhookProcessor {
  */
 class TwilioSMSProcessor implements WebhookProcessor {
   name = 'twilio_sms';
-  channel = 'sms' as const;
+  channel: CommunicationChannel = CommunicationChannel.SMS;
 
   verifySignature(payload: string, signature: string, secret: string): boolean {
     if (!signature || !secret) return false;
@@ -120,15 +132,15 @@ class TwilioSMSProcessor implements WebhookProcessor {
 
   mapStatus(providerStatus: string): MessageStatus {
     const statusMap: Record<string, MessageStatus> = {
-      'queued': 'queued',
-      'sent': 'sent',
-      'delivered': 'delivered',
-      'undelivered': 'failed',
-      'failed': 'failed',
-      'received': 'delivered'
+      'queued': MessageStatus.Queued,
+      'sent': MessageStatus.Sent,
+      'delivered': MessageStatus.Delivered,
+      'undelivered': MessageStatus.Failed,
+      'failed': MessageStatus.Failed,
+      'received': MessageStatus.Delivered
     };
 
-    return statusMap[providerStatus] || 'failed';
+    return statusMap[providerStatus] || MessageStatus.Failed;
   }
 }
 
@@ -137,7 +149,7 @@ class TwilioSMSProcessor implements WebhookProcessor {
  */
 class WhatsAppBusinessProcessor implements WebhookProcessor {
   name = 'whatsapp_business';
-  channel = 'whatsapp' as const;
+  channel: CommunicationChannel = CommunicationChannel.WhatsApp;
 
   verifySignature(payload: string, signature: string, secret: string): boolean {
     if (!signature || !secret) return false;
@@ -215,13 +227,13 @@ class WhatsAppBusinessProcessor implements WebhookProcessor {
 
   mapStatus(providerStatus: string): MessageStatus {
     const statusMap: Record<string, MessageStatus> = {
-      'sent': 'sent',
-      'delivered': 'delivered',
-      'read': 'read',
-      'failed': 'failed'
+      'sent': MessageStatus.Sent,
+      'delivered': MessageStatus.Delivered,
+      'read': MessageStatus.Read,
+      'failed': MessageStatus.Failed
     };
 
-    return statusMap[providerStatus] || 'failed';
+    return statusMap[providerStatus] || MessageStatus.Failed;
   }
 }
 
@@ -230,7 +242,7 @@ class WhatsAppBusinessProcessor implements WebhookProcessor {
  */
 class EmailProviderProcessor implements WebhookProcessor {
   name = 'email_provider';
-  channel = 'email' as const;
+  channel: CommunicationChannel = CommunicationChannel.Email;
 
   verifySignature(payload: string, signature: string, secret: string): boolean {
     if (!signature || !secret) return false;
@@ -301,17 +313,17 @@ class EmailProviderProcessor implements WebhookProcessor {
 
   mapStatus(providerStatus: string): MessageStatus {
     const statusMap: Record<string, MessageStatus> = {
-      'delivered': 'delivered',
-      'opened': 'read',
-      'clicked': 'read',
-      'bounced': 'failed',
-      'dropped': 'failed',
-      'spam': 'failed',
-      'unsubscribed': 'failed',
-      'rejected': 'failed'
+      'delivered': MessageStatus.Delivered,
+      'opened': MessageStatus.Read,
+      'clicked': MessageStatus.Read,
+      'bounced': MessageStatus.Failed,
+      'dropped': MessageStatus.Failed,
+      'spam': MessageStatus.Failed,
+      'unsubscribed': MessageStatus.Failed,
+      'rejected': MessageStatus.Failed
     };
 
-    return statusMap[providerStatus] || 'failed';
+    return statusMap[providerStatus] || MessageStatus.Failed;
   }
 }
 
@@ -320,7 +332,7 @@ class EmailProviderProcessor implements WebhookProcessor {
  */
 class PushNotificationProcessor implements WebhookProcessor {
   name = 'push_notification';
-  channel = 'push' as const;
+  channel: CommunicationChannel = CommunicationChannel.Push;
 
   verifySignature(payload: string, signature: string, secret: string): boolean {
     // Push notifications typically don't have webhooks
@@ -352,13 +364,13 @@ class PushNotificationProcessor implements WebhookProcessor {
 
   mapStatus(providerStatus: string): MessageStatus {
     const statusMap: Record<string, MessageStatus> = {
-      'delivered': 'delivered',
-      'opened': 'read',
-      'failed': 'failed',
-      'expired': 'failed'
+      'delivered': MessageStatus.Delivered,
+      'opened': MessageStatus.Read,
+      'failed': MessageStatus.Failed,
+      'expired': MessageStatus.Failed
     };
 
-    return statusMap[providerStatus] || 'delivered';
+    return statusMap[providerStatus] || MessageStatus.Delivered;
   }
 }
 

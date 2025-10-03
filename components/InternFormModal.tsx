@@ -12,9 +12,19 @@ interface InternFormModalProps {
 
 const getInitialFormData = (): Omit<Intern, 'id' | 'avatarUrl'> => ({
   name: '',
+  email: '',
+  phone: '',
   institution: '',
+  semester: 1,
   startDate: new Date().toISOString().split('T')[0] as string,
+  endDate: new Date(new Date().setMonth(new Date().getMonth() + 6)).toISOString().split('T')[0] as string,
   status: InternStatus.Active,
+  supervisorId: '',
+  supervisorName: '',
+  totalHours: 0,
+  completedHours: 0,
+  competencies: [],
+  clinicalCases: []
 });
 
 const InternFormModal: React.FC<InternFormModalProps> = ({ isOpen, onClose, onSave, internToEdit }) => {

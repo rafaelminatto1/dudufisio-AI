@@ -139,8 +139,8 @@ export function useOptimizedTherapists(options: UseOptimizedDataOptions = {}) {
   return useOptimizedData(
     'therapists',
     async () => {
-      const { default: therapistService } = await import('../services/therapistService');
-      return therapistService.getTherapists();
+      const { getTherapists } = await import('../services/therapistService');
+      return getTherapists();
     },
     { ttl: 10 * 60 * 1000, ...options } // 10 minutos para terapeutas
   );
@@ -153,8 +153,8 @@ export function useOptimizedPatients(options: UseOptimizedDataOptions = {}) {
   return useOptimizedData(
     'patients',
     async () => {
-      const { default: patientService } = await import('../services/patientService');
-      return patientService.getAllPatients();
+      const { getAllPatients } = await import('../services/patientService');
+      return getAllPatients();
     },
     { ttl: 2 * 60 * 1000, ...options } // 2 minutos para pacientes
   );
@@ -167,8 +167,8 @@ export function useOptimizedAppointments(options: UseOptimizedDataOptions = {}) 
   return useOptimizedData(
     'appointments',
     async () => {
-      const { default: appointmentService } = await import('../services/appointmentService');
-      return appointmentService.getAppointments();
+      const { getAppointments } = await import('../services/appointmentService');
+      return getAppointments();
     },
     { ttl: 1 * 60 * 1000, ...options } // 1 minuto para agendamentos
   );

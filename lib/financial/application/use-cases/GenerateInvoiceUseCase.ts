@@ -178,15 +178,15 @@ export class GenerateInvoiceUseCase {
   ): Promise<GenerateInvoiceResult> {
     try {
       // 1. Get package
-      const package = await this.repository.findPackageById(packageId);
-      if (!package) {
+      const pkg = await this.repository.findPackageById(packageId);
+      if (!pkg) {
         throw new DomainError('Package not found');
       }
 
       // 2. Generate invoice using billing service
       const invoice = await this.billingService.generateInvoiceForPackage(
-        package,
-        package.getPatientId(),
+        pkg,
+        pkg.getPatientId(),
         createdBy,
         dueDate
       );

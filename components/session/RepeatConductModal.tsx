@@ -61,7 +61,6 @@ const RepeatConductModal: React.FC<RepeatConductModalProps> = ({
       ...conductData,
       date: new Date().toISOString().split('T')[0],
       sessionNumber: (previousNote.sessionNumber || 1) + 1,
-      therapist: 'Fisioterapeuta', // Implementar com usuário atual
       painScale: undefined // Sempre começar com escala de dor vazia
     });
     onClose();
@@ -144,7 +143,6 @@ const RepeatConductModal: React.FC<RepeatConductModalProps> = ({
                 value={conductData.subjective}
                 onChange={(value) => handleFieldChange('subjective', value)}
                 placeholder="Descreva as queixas e relatos do paciente..."
-                className="min-h-32"
               />
             </div>
 
@@ -163,7 +161,6 @@ const RepeatConductModal: React.FC<RepeatConductModalProps> = ({
                 value={conductData.objective}
                 onChange={(value) => handleFieldChange('objective', value)}
                 placeholder="Descreva os achados objetivos da avaliação..."
-                className="min-h-32"
               />
             </div>
 
@@ -182,7 +179,6 @@ const RepeatConductModal: React.FC<RepeatConductModalProps> = ({
                 value={conductData.assessment}
                 onChange={(value) => handleFieldChange('assessment', value)}
                 placeholder="Descreva sua avaliação clínica..."
-                className="min-h-32"
               />
             </div>
 
@@ -201,7 +197,6 @@ const RepeatConductModal: React.FC<RepeatConductModalProps> = ({
                 value={conductData.plan}
                 onChange={(value) => handleFieldChange('plan', value)}
                 placeholder="Descreva o plano de tratamento..."
-                className="min-h-32"
               />
             </div>
           </div>

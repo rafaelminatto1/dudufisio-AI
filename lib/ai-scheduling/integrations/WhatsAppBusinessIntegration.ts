@@ -8,7 +8,7 @@
  * - Compliance com políticas
  */
 
-import { Appointment, Patient } from '../../types';
+import { Appointment, Patient } from '../../../types';
 import { BusinessIntelligenceSystem } from '../../analytics/BusinessIntelligenceSystem';
 
 export interface WhatsAppBusinessConfig {

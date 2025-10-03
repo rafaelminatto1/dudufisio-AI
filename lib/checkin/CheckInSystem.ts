@@ -1,6 +1,6 @@
 import { CheckInEngine } from './core/CheckInEngine';
 import { FaceRecognitionService } from './core/FaceRecognition';
-import { QueueManager } from './core/QueueManager';
+import { QueueManager, QueueConfig } from './core/QueueManager';
 import { PushNotificationService } from './notifications/PushNotificationService';
 import { CheckInAnalytics } from './analytics/CheckInAnalytics';
 import { OfflineManager } from './offline/OfflineManager';
@@ -13,8 +13,7 @@ import {
   PatientId,
   DeviceId,
   FaceRecognitionConfig,
-  TabletConfig,
-  QueueConfig
+  TabletConfig
 } from '../../types/checkin';
 import { getFCMConfig, validateFirebaseConfig } from './config/firebase-production';
 

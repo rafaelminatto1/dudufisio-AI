@@ -36,10 +36,11 @@ const RecurrenceSelector: React.FC<RecurrenceSelectorProps> = ({ recurrenceRule,
     
     const handleDayToggle = (dayValue: number) => {
         if (!recurrenceRule) return;
-        const newDays = recurrenceRule.days.includes(dayValue)
-            ? recurrenceRule.days.filter(d => d !== dayValue)
-            : [...recurrenceRule.days, dayValue];
-        
+        const currentDays = recurrenceRule.days || [];
+        const newDays = currentDays.includes(dayValue)
+            ? currentDays.filter(d => d !== dayValue)
+            : [...currentDays, dayValue];
+
         // Ensure at least one day is selected if recurring
         if (newDays.length > 0) {
            onChange({ ...recurrenceRule, days: newDays });
@@ -76,7 +77,7 @@ const RecurrenceSelector: React.FC<RecurrenceSelectorProps> = ({ recurrenceRule,
                                     type="button"
                                     onClick={() => handleDayToggle(day.value)}
                                     className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold transition-colors
-                                        ${recurrenceRule.days.includes(day.value) ? 'bg-sky-500 text-white' : 'bg-slate-200 text-slate-600 hover:bg-slate-300'}
+                                        ${(recurrenceRule.days || []).includes(day.value) ? 'bg-sky-500 text-white' : 'bg-slate-200 text-slate-600 hover:bg-slate-300'}
                                     `}
                                 >
                                     {day.label}

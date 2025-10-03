@@ -268,4 +268,8 @@ class ExerciseService {
 }
 
 export const exerciseService = new ExerciseService();
+
+// Export getExerciseByName as standalone function for compatibility
+export const getExerciseByName = (name: string) => exerciseService.getExerciseByName(name);
+
 export default exerciseService;

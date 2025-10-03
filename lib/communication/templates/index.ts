@@ -206,7 +206,7 @@ export class TemplatePreview {
           }
         };
 
-      case 'payment_reminder':
+      case 'payment_reminder' as any:
         return {
           ...baseContext,
           patient: {
@@ -223,7 +223,7 @@ export class TemplatePreview {
           }
         };
 
-      case 'welcome':
+      case 'welcome' as any:
         return {
           ...baseContext,
           patient: {
@@ -257,7 +257,12 @@ export class TemplatePreview {
     context?: TemplateContext
   ): Promise<Record<CommunicationChannel, any>> {
     const previewContext = context || this.generatePreviewContext(template.type);
-    const channels: CommunicationChannel[] = ['email', 'whatsapp', 'sms', 'push'];
+    const channels: CommunicationChannel[] = [
+      CommunicationChannel.Email,
+      CommunicationChannel.WhatsApp,
+      CommunicationChannel.SMS,
+      CommunicationChannel.Push
+    ];
     const results: Record<string, any> = {};
 
     for (const channel of channels) {
@@ -358,7 +363,7 @@ export class TemplatePerformance {
     }
 
     // Complex expressions
-    const complexExpressions = (template.body.match(/\{\{#.*?\}\}/g) || []).length;
+    const complexExpressions = ((template.body || '').match(/\{\{#.*?\}\}/g) || []).length;
     if (complexExpressions > 10) {
       score += 25;
       factors.push('Many conditional expressions');
@@ -369,7 +374,7 @@ export class TemplatePerformance {
     }
 
     // HTML content
-    if (template.html && template.html.length > template.body.length * 2) {
+    if (template.html && template.body && template.html.length > template.body.length * 2) {
       score += 15;
       factors.push('Complex HTML structure');
       recommendations.push('Optimize HTML content');

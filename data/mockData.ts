@@ -1001,15 +1001,114 @@ export const mockExpenses: FinancialTransaction[] = [
 ];
 
 export const mockInterns: Intern[] = [
-  { id: 'intern_1', name: 'Lucas Mendes', institution: 'Universidade Federal de SP', startDate: '2024-02-01', status: InternStatus.Active, avatarUrl: 'https://i.pravatar.cc/150?u=intern_1', averageGrade: 8.5 },
-  { id: 'intern_2', name: 'Mariana Almeida', institution: 'USP', startDate: '2024-03-15', status: InternStatus.Active, avatarUrl: 'https://i.pravatar.cc/150?u=intern_2', averageGrade: 9.2 },
-  { id: 'intern_3', name: 'Pedro Carvalho', institution: 'UNINOVE', startDate: '2023-11-01', status: InternStatus.Inactive, avatarUrl: 'https://i.pravatar.cc/150?u=intern_3', averageGrade: 7.8 },
+  {
+    id: 'intern_1',
+    name: 'Lucas Mendes',
+    email: 'lucas.mendes@usp.br',
+    phone: '(11) 98765-4321',
+    institution: 'Universidade Federal de SP',
+    semester: 8,
+    startDate: '2024-02-01',
+    endDate: '2024-12-01',
+    status: InternStatus.Active,
+    avatarUrl: 'https://i.pravatar.cc/150?u=intern_1',
+    supervisorId: 'therapist_1',
+    supervisorName: 'Dr. Roberto',
+    averageGrade: 8.5,
+    totalHours: 400,
+    completedHours: 280,
+    competencies: [],
+    clinicalCases: []
+  },
+  {
+    id: 'intern_2',
+    name: 'Mariana Almeida',
+    email: 'mariana.almeida@usp.br',
+    phone: '(11) 98765-4322',
+    institution: 'USP',
+    semester: 7,
+    startDate: '2024-03-15',
+    endDate: '2024-12-15',
+    status: InternStatus.Active,
+    avatarUrl: 'https://i.pravatar.cc/150?u=intern_2',
+    supervisorId: 'therapist_1',
+    supervisorName: 'Dr. Roberto',
+    averageGrade: 9.2,
+    totalHours: 350,
+    completedHours: 245,
+    competencies: [],
+    clinicalCases: []
+  },
+  {
+    id: 'intern_3',
+    name: 'Pedro Carvalho',
+    email: 'pedro.carvalho@uninove.br',
+    phone: '(11) 98765-4323',
+    institution: 'UNINOVE',
+    semester: 6,
+    startDate: '2023-11-01',
+    endDate: '2024-06-01',
+    status: InternStatus.Inactive,
+    avatarUrl: 'https://i.pravatar.cc/150?u=intern_3',
+    supervisorId: 'therapist_1',
+    supervisorName: 'Dr. Roberto',
+    averageGrade: 7.8,
+    totalHours: 400,
+    completedHours: 400,
+    competencies: [],
+    clinicalCases: []
+  },
 ];
 
 export const mockEducationalCases: EducationalCase[] = [
-  { id: 'case_1', title: 'P.O. de LCA em atleta de vôlei', description: 'Paciente de 22 anos, atleta amador de vôlei, 3 meses de P.O. de reconstrução de LCA. Apresenta...', area: 'Esportiva', createdBy: 'Dr. Roberto', createdAt: '2024-06-10', content: '### Histórico\nPaciente J.P., 22 anos, masculino, atleta amador de vôlei, sofreu entorse de joelho direito durante partida. Exames de imagem confirmaram ruptura total do Ligamento Cruzado Anterior (LCA).\n\n### Avaliação Pós-operatória (3 meses)\n- ADM: 0-125° (Déficit de 5° de extensão)\n- Força de Quadríceps: Grau 4 (D/E)\n- Edema: Leve, peripatelar\n- Testes: Lachman positivo, Gaveta Anterior positivo.\n\n### Plano de Tratamento\n- Foco em ganho de ADM final\n- Fortalecimento em cadeia cinética fechada e aberta\n- Início de treino de propriocepção e pliometria leve.' },
-  { id: 'case_2', title: 'Hérnia de disco lombar L4-L5', description: 'Paciente de 45 anos, motorista, com dor ciática irradiada para membro inferior esquerdo.', area: 'Ortopedia', createdBy: 'Dra. Camila', createdAt: '2024-05-22', content: '### Histórico\nPaciente M.S., 45 anos, masculino, motorista, refere dor lombar que iniciou há 2 meses, com irradiação para a face posterior da coxa e perna esquerda. Piora ao ficar sentado por longos períodos.\n\n### Avaliação\n- Postura: Retificação da lordose lombar\n- Testes: Lasègue positivo a 40° à E, Teste de Slump positivo.\n- Sensibilidade: Hipoestesia em dermátomo de L5.\n\n### Plano de Tratamento\n- Exercícios de McKenzie para centralização da dor\n- Mobilização neural do ciático\n- Ativação do CORE (transverso do abdômen e multífidos)\n- Orientações de ergonomia para dirigir.' },
-  { id: 'case_3', title: 'AVC Isquêmico com Hemiparesia à D', description: 'Paciente de 68 anos, aposentada, 6 meses pós-AVC com sequelas motoras em hemicorpo direito.', area: 'Neurologia', createdBy: 'Dr. Fernando', createdAt: '2024-07-01', content: '### Histórico\nPaciente A.L., 68 anos, feminina, destra, aposentada, sofreu Acidente Vascular Cerebral Isquêmico em território de Artéria Cerebral Média E há 6 meses. Histórico de Hipertensão Arterial Sistêmica.\n\n### Avaliação Funcional\n- Marcha: Hemiperética, com uso de bengala de 1 ponto.\n- Tônus: Espasticidade grau 2 na escala de Ashworth Modificada para flexores de punho e dedos D.\n- Força Muscular: Força grau 3 para principais grupos musculares de MSD, e grau 4- para MI D.\n\n### Plano de Tratamento\n- Terapia de Contenção Induzida para MSD.\n- Treino de marcha em esteira com suporte parcial de peso.\n- FNP (Facilitação Neuromuscular Proprioceptiva) para melhora do controle motor.' },
+  {
+    id: 'case_1',
+    title: 'P.O. de LCA em atleta de vôlei',
+    description: 'Paciente de 22 anos, atleta amador de vôlei, 3 meses de P.O. de reconstrução de LCA.',
+    area: 'Esportiva',
+    specialty: 'Esportiva',
+    difficultyLevel: 4,
+    patientProfile: {
+      age: 22,
+      gender: 'M',
+      occupation: 'Atleta de vôlei',
+      medicalHistory: ['Ruptura de LCA'],
+      currentComplaints: 'Dor e limitação funcional pós-cirurgia'
+    },
+    clinicalPresentation: {
+      symptoms: ['Dor leve', 'Edema peripatelar'],
+      physicalExam: 'ADM: 0-125° (Déficit de 5° de extensão)',
+      functionalTests: ['Lachman positivo', 'Gaveta Anterior positivo'],
+      imaging: ['RM confirmando ruptura LCA']
+    },
+    diagnosis: {
+      primary: 'Pós-operatório de LCA',
+      secondary: ['Hipotrofia de quadríceps'],
+      differentialDiagnosis: []
+    },
+    treatmentPlan: {
+      goals: ['Ganho de ADM final', 'Fortalecimento muscular'],
+      interventions: ['Exercícios de cadeia cinética', 'Propriocepção'],
+      duration: '6 meses',
+      frequency: '3x por semana',
+      progressIndicators: ['ADM completa', 'Força grau 5']
+    },
+    outcomes: {
+      shortTerm: ['Redução da dor'],
+      longTerm: ['Retorno ao esporte']
+    },
+    learningObjectives: ['Reabilitação pós-LCA'],
+    discussionPoints: ['Timing cirúrgico'],
+    references: [],
+    createdBy: 'Dr. Roberto',
+    createdAt: '2024-06-10',
+    lastUpdated: '2024-06-10',
+    tags: ['Ortopedia', 'Esportiva'],
+    isPublished: true,
+    discussions: [],
+    evaluations: [],
+    content: '### Histórico\nPaciente J.P., 22 anos...'
+  }
 ];
 
 // --- Inventory Mock Data ---
@@ -1021,8 +1120,28 @@ export const mockInventoryCategories: InventoryCategory[] = [
 ];
 
 export const mockSuppliers: Supplier[] = [
-    { id: 'sup-1', name: 'FisioSupply Brasil', contactPerson: 'Carlos Mendes', phone: '(11) 5555-1020' },
-    { id: 'sup-2', name: 'Medical Express', contactPerson: 'Ana Pereira', email: 'vendas@medicalexpress.com' },
+    {
+      id: 'sup-1',
+      name: 'FisioSupply Brasil',
+      contactPerson: 'Carlos Mendes',
+      phone: '(11) 5555-1020',
+      email: 'contato@fisiosupply.com.br',
+      deliveryTimeDays: 7,
+      isActive: true,
+      createdAt: '2024-01-01',
+      updatedAt: '2024-01-01'
+    },
+    {
+      id: 'sup-2',
+      name: 'Medical Express',
+      contactPerson: 'Ana Pereira',
+      email: 'vendas@medicalexpress.com',
+      phone: '(11) 5555-1021',
+      deliveryTimeDays: 5,
+      isActive: true,
+      createdAt: '2024-01-01',
+      updatedAt: '2024-01-01'
+    },
 ];
 
 const getDateInFuture = (days: number): string => {
@@ -1060,9 +1179,9 @@ export const mockInventoryItems: InventoryItem[] = [
 ];
 
 export const mockStockMovements: StockMovement[] = [
-    { id: 'mov-1', itemId: 'item-1', movementType: MovementType.Out, quantity: 1, userId: 'user_1', createdAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), reason: 'Uso com paciente', patientId: '1' },
-    { id: 'mov-2', itemId: 'item-2', movementType: MovementType.Out, quantity: 1, userId: 'user_1', createdAt: new Date(Date.now() - 3 * 3600 * 1000).toISOString(), reason: 'Uso com paciente', patientId: '2' },
-    { id: 'mov-3', itemId: 'item-4', movementType: MovementType.In, quantity: 10, userId: 'user_admin', createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(), reason: 'Recebimento de pedido' },
+    { id: 'mov-1', supplyId: 'item-1', itemId: 'item-1', movementType: MovementType.Out, quantity: 1, userId: 'user_1', createdAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), reason: 'Uso com paciente', patientId: '1' },
+    { id: 'mov-2', supplyId: 'item-2', itemId: 'item-2', movementType: MovementType.Out, quantity: 1, userId: 'user_1', createdAt: new Date(Date.now() - 3 * 3600 * 1000).toISOString(), reason: 'Uso com paciente', patientId: '2' },
+    { id: 'mov-3', supplyId: 'item-4', itemId: 'item-4', movementType: MovementType.In, quantity: 10, userId: 'user_admin', createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(), reason: 'Recebimento de pedido' },
 ];
 
 
@@ -1087,7 +1206,7 @@ export const mockEvents: Event[] = [
     id: 'event_1',
     name: 'Corrida FisioFlow 5K - Etapa Ibirapuera',
     description: 'Participe da nossa corrida de rua com suporte fisioterapêutico completo, incluindo aquecimento, acompanhamento e recovery pós-prova.',
-    eventType: EventType.Corrida,
+    eventType: EventType.Race,
     startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)), // Past event
     endDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
     location: 'Parque Ibirapuera, São Paulo',
@@ -1126,7 +1245,7 @@ export const mockEvents: Event[] = [
     id: 'event_3',
     name: 'Campanha de Saúde Postural',
     description: 'Avaliações posturais gratuitas e orientação para trabalhadores de escritório. Parceria com a Empresa XYZ.',
-    eventType: EventType.Campanha,
+    eventType: EventType.Campaign,
     startDate: new Date(new Date().setDate(new Date().getDate() + 30)), // Future event
     endDate: new Date(new Date().setDate(new Date().getDate() + 30)),
     location: 'Sede da Empresa XYZ',

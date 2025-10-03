@@ -18,6 +18,7 @@ interface RuleFormData {
   name: string;
   description: string;
   isActive: boolean;
+  priority: number;
   actions: AutomationAction[];
 }
 
@@ -71,11 +72,11 @@ const conditionOperators = [
   { value: 'ends_with', label: 'Termina com' }
 ];
 
-const channelIcons = {
-  whatsapp: MessageSquare,
-  sms: Smartphone,
-  email: Mail,
-  push: Bell
+const channelIcons: Record<string, React.ComponentType<any>> = {
+  [CommunicationChannel.WhatsApp]: MessageSquare,
+  [CommunicationChannel.SMS]: Smartphone,
+  [CommunicationChannel.Email]: Mail,
+  [CommunicationChannel.Push]: Bell
 };
 
 export const AutomationRulesManager: React.FC<AutomationRulesManagerProps> = ({
@@ -94,6 +95,7 @@ export const AutomationRulesManager: React.FC<AutomationRulesManagerProps> = ({
     name: '',
     description: '',
     isActive: true,
+    priority: 5,
     actions: []
   });
 
@@ -128,8 +130,9 @@ export const AutomationRulesManager: React.FC<AutomationRulesManagerProps> = ({
   const filteredRules = useMemo(() => {
     return rules.filter(rule => {
       const matchesSearch = rule.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           rule.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesTrigger = selectedTrigger === 'all' || rule.triggerType === selectedTrigger;
+                           (rule.description || '').toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesTrigger = selectedTrigger === 'all' ||
+                            (rule.trigger?.type || '').includes(selectedTrigger);
       const matchesStatus = selectedStatus === 'all' ||
                            (selectedStatus === 'active' && rule.isActive) ||
                            (selectedStatus === 'inactive' && !rule.isActive);
@@ -200,8 +203,9 @@ export const AutomationRulesManager: React.FC<AutomationRulesManagerProps> = ({
   const handleEditRule = (rule: AutomationRule) => {
     setFormData({
       name: rule.name,
-      description: rule.description,
+      description: rule.description || '',
       isActive: rule.isActive,
+      priority: rule.priority || 5,
       actions: [...rule.actions]
     });
     setEditingRule(rule);
@@ -215,13 +219,8 @@ export const AutomationRulesManager: React.FC<AutomationRulesManagerProps> = ({
       name: '',
       description: '',
       isActive: true,
-      trigger: {
-        type: 'appointment_scheduled',
-        conditions: []
-      },
-      actions: [],
       priority: 5,
-      metadata: {}
+      actions: []
     });
   };
 
@@ -240,10 +239,11 @@ export const AutomationRulesManager: React.FC<AutomationRulesManagerProps> = ({
   const addAction = () => {
     const newAction: AutomationAction = {
       type: 'send_message',
-      channel: CommunicationChannel.WHATSAPP,
-      templateId: '',
-      delay: 0,
-      config: {}
+      parameters: {
+        channel: CommunicationChannel.WhatsApp,
+        templateId: '',
+        delay: 0
+      }
     };
 
     setFormData(prev => ({
@@ -468,42 +468,7 @@ export const AutomationRulesManager: React.FC<AutomationRulesManagerProps> = ({
                     </button>
                   </div>
 
-                  {[].map((condition, index) => (
-                    <div key={index} className="flex items-center space-x-3 mb-3 p-3 border rounded-lg">
-                      <input
-                        type="text"
-                        value={condition.field}
-                        onChange={(e) => updateCondition(index, { ...condition, field: e.target.value })}
-                        placeholder="Campo"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500"
-                      />
-
-                      <select
-                        value={condition.operator}
-                        onChange={(e) => updateCondition(index, { ...condition, operator: e.target.value as any })}
-                        className="px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500"
-                      >
-                        {conditionOperators.map(op => (
-                          <option key={op.value} value={op.value}>{op.label}</option>
-                        ))}
-                      </select>
-
-                      <input
-                        type="text"
-                        value={condition.value}
-                        onChange={(e) => updateCondition(index, { ...condition, value: e.target.value })}
-                        placeholder="Valor"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-purple-500"
-                      />
-
-                      <button
-                        onClick={() => removeCondition(index)}
-                        className="p-2 text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  ))}
+                  {/* Conditions would be rendered here when implemented */}
                 </div>
               </div>
             </div>
@@ -520,70 +485,85 @@ export const AutomationRulesManager: React.FC<AutomationRulesManagerProps> = ({
                 </button>
               </div>
 
-              {formData.actions.map((action, index) => (
-                <div key={index} className="p-4 border rounded-lg mb-4">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Canal
-                      </label>
-                      <select
-                        value={action.channel}
-                        onChange={(e) => updateAction(index, { ...action, channel: e.target.value as CommunicationChannel })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                      >
-                        <option value="whatsapp">WhatsApp</option>
-                        <option value="sms">SMS</option>
-                        <option value="email">Email</option>
-                        <option value="push">Push</option>
-                      </select>
+              {formData.actions.map((action, index) => {
+                const channel = action.parameters?.channel || CommunicationChannel.WhatsApp;
+                const templateId = action.parameters?.templateId || '';
+                const delay = action.parameters?.delay || 0;
+
+                return (
+                  <div key={index} className="p-4 border rounded-lg mb-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Canal
+                        </label>
+                        <select
+                          value={channel}
+                          onChange={(e) => updateAction(index, {
+                            ...action,
+                            parameters: { ...action.parameters, channel: e.target.value as CommunicationChannel }
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        >
+                          <option value={CommunicationChannel.WhatsApp}>WhatsApp</option>
+                          <option value={CommunicationChannel.SMS}>SMS</option>
+                          <option value={CommunicationChannel.Email}>Email</option>
+                          <option value={CommunicationChannel.Push}>Push</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Template
+                        </label>
+                        <select
+                          value={templateId}
+                          onChange={(e) => updateAction(index, {
+                            ...action,
+                            parameters: { ...action.parameters, templateId: e.target.value }
+                          })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        >
+                          <option value="">Selecione um template</option>
+                          {templates
+                            .filter(template => (template.channels || []).includes(channel))
+                            .map(template => (
+                              <option key={template.id} value={template.id}>
+                                {template.name}
+                              </option>
+                            ))
+                          }
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Delay (minutos)
+                        </label>
+                        <input
+                          type="number"
+                          value={delay}
+                          onChange={(e) => updateAction(index, {
+                            ...action,
+                            parameters: { ...action.parameters, delay: Number(e.target.value) }
+                          })}
+                          min="0"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                        />
+                      </div>
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Template
-                      </label>
-                      <select
-                        value={action.templateId}
-                        onChange={(e) => updateAction(index, { ...action, templateId: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => removeAction(index)}
+                        className="text-red-600 hover:text-red-700"
                       >
-                        <option value="">Selecione um template</option>
-                        {templates
-                          .filter(template => template.channels.includes(action.channel))
-                          .map(template => (
-                            <option key={template.id} value={template.id}>
-                              {template.name}
-                            </option>
-                          ))
-                        }
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Delay (minutos)
-                      </label>
-                      <input
-                        type="number"
-                        value={action.delay}
-                        onChange={(e) => updateAction(index, { ...action, delay: Number(e.target.value) })}
-                        min="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-                      />
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex justify-end">
-                    <button
-                      onClick={() => removeAction(index)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
 
               {formData.actions.length === 0 && (
                 <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
@@ -638,8 +618,10 @@ interface RuleCardProps {
 }
 
 const RuleCard: React.FC<RuleCardProps> = ({ rule, onEdit, onDelete, onToggle }) => {
-  const triggerInfo = triggerTypes.find(t => t.value === rule.triggerType);
+  const triggerType = rule.trigger?.type || '';
+  const triggerInfo = triggerTypes.find(t => t.value.toString().includes(triggerType));
   const TriggerIcon = triggerInfo?.icon || Settings;
+  const conditions = rule.conditions || [];
 
   return (
     <div className="bg-white rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow">
@@ -651,7 +633,7 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, onEdit, onDelete, onToggle })
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900">{rule.name}</h3>
-              <p className="text-sm text-gray-600">{triggerInfo?.label}</p>
+              <p className="text-sm text-gray-600">{triggerInfo?.label || 'Trigger Personalizado'}</p>
             </div>
             <div className="flex items-center space-x-2">
               {!rule.isActive && (
@@ -659,13 +641,10 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, onEdit, onDelete, onToggle })
                   Inativa
                 </span>
               )}
-              <span className="px-2 py-1 bg-purple-100 text-purple-600 text-xs rounded-full">
-                Execuções {rule.executionCount}
-              </span>
             </div>
           </div>
 
-          <p className="text-sm text-gray-700 mb-4">{rule.description}</p>
+          <p className="text-sm text-gray-700 mb-4">{rule.description || 'Sem descrição'}</p>
 
           {/* Actions Summary */}
           <div className="flex items-center space-x-4 mb-4">
@@ -673,25 +652,26 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, onEdit, onDelete, onToggle })
               <span className="text-sm text-gray-600">Ações:</span>
               <div className="flex space-x-1">
                 {rule.actions.map((action, index) => {
-                  const Icon = channelIcons[action.channel];
+                  const channel = action.parameters?.channel || CommunicationChannel.WhatsApp;
+                  const Icon = channelIcons[channel] || MessageSquare;
                   return (
                     <div
                       key={index}
                       className="flex items-center space-x-1 px-2 py-1 bg-gray-100 rounded text-xs"
                     >
                       <Icon className="h-3 w-3" />
-                      <span className="capitalize">{action.channel}</span>
+                      <span className="capitalize">{channel}</span>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {rule.conditions.length > 0 && (
+            {conditions.length > 0 && (
               <div className="flex items-center space-x-2">
                 <Filter className="h-4 w-4 text-gray-400" />
                 <span className="text-sm text-gray-600">
-                  {rule.conditions.length} condição{rule.conditions.length > 1 ? 'ões' : ''}
+                  {conditions.length} condição{conditions.length > 1 ? 'ões' : ''}
                 </span>
               </div>
             )}
@@ -701,11 +681,7 @@ const RuleCard: React.FC<RuleCardProps> = ({ rule, onEdit, onDelete, onToggle })
           <div className="flex items-center space-x-6 text-sm text-gray-600">
             <div className="flex items-center space-x-1">
               <Activity className="h-4 w-4" />
-              <span>Executada {rule.executionCount}x</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Clock className="h-4 w-4" />
-              <span>Última execução: {rule.lastExecuted || 'Nunca'}</span>
+              <span>Criada em {new Date(rule.createdAt).toLocaleDateString()}</span>
             </div>
           </div>
         </div>

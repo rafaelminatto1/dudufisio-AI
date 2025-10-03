@@ -686,7 +686,7 @@ export const mockProtocols: Protocol[] = [
           {
             type: 'functional',
             parameter: 'Ativação do core',
-            operator: 'adequate',
+            operator: 'achieved',
             value: 'adequada',
             weight: 8
           }

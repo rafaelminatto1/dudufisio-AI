@@ -170,7 +170,8 @@ export class MLModels {
     const featureImportance: Record<string, number> = {};
 
     // Historical pattern (highest importance)
-    if (features.historical_no_show_rate > 0.2) {
+    const historicalRate = typeof features.historical_no_show_rate === 'number' ? features.historical_no_show_rate : 0;
+    if (historicalRate > 0.2) {
       score += 0.3;
       factors.push('Histórico de faltas elevado');
       featureImportance['historical_no_show_rate'] = 0.35;
@@ -198,14 +199,16 @@ export class MLModels {
     }
 
     // Age factor
-    if (features.patient_age < 25 || features.patient_age > 65) {
+    const patientAge = typeof features.patient_age === 'number' ? features.patient_age : 0;
+    if (patientAge < 25 || patientAge > 65) {
       score += 0.05;
       factors.push('Faixa etária de risco');
       featureImportance['patient_age'] = 0.1;
     }
 
     // Data quality
-    if (features.data_quality_score < 50) {
+    const dataQuality = typeof features.data_quality_score === 'number' ? features.data_quality_score : 100;
+    if (dataQuality < 50) {
       score += 0.08;
       factors.push('Dados de contato incompletos');
       featureImportance['data_quality_score'] = 0.1;
@@ -235,10 +238,10 @@ export class MLModels {
       .eq('patient_key', patient?.patient_key || '');
 
     // Calculate features
-    const avgPainImprovement = history?.length > 0 ?
+    const avgPainImprovement = (history && history.length > 0) ?
       history.reduce((sum, h) => sum + (h.pain_improvement || 0), 0) / history.length : 0;
 
-    const avgSatisfaction = history?.length > 0 ?
+    const avgSatisfaction = (history && history.length > 0) ?
       history.reduce((sum, h) => sum + (h.patient_satisfaction || 0), 0) / history.length : 0;
 
     return {
@@ -269,10 +272,11 @@ export class MLModels {
     const featureImportance: Record<string, number> = {};
 
     // Historical success
+    const historicalSessions = typeof features.historical_sessions === 'number' ? features.historical_sessions : 0;
     if (features.has_previous_success) {
       successScore += 0.15;
       featureImportance['previous_success'] = 0.3;
-    } else if (features.historical_sessions > 0) {
+    } else if (historicalSessions > 0) {
       successScore -= 0.1;
       riskFactors.push('Histórico de resultados limitados');
       featureImportance['previous_success'] = 0.3;
@@ -292,7 +296,8 @@ export class MLModels {
     }
 
     // Data quality impact
-    if (features.data_quality_score > 80) {
+    const outcomeDataQuality = typeof features.data_quality_score === 'number' ? features.data_quality_score : 0;
+    if (outcomeDataQuality > 80) {
       successScore += 0.05;
       featureImportance['data_quality'] = 0.1;
     }
@@ -300,7 +305,7 @@ export class MLModels {
     // Estimate sessions based on complexity
     let estimatedSessions = 8;
     if (features.age_group_elderly) estimatedSessions += 2;
-    if (features.historical_sessions > 5) estimatedSessions += 1;
+    if (historicalSessions > 5) estimatedSessions += 1;
     if (features.has_previous_success) estimatedSessions -= 1;
 
     return {

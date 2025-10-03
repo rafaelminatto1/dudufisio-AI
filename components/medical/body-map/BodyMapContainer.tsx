@@ -104,12 +104,12 @@ const BodyMapContainer: React.FC<BodyMapContainerProps> = ({
       } else if (newPointCoordinates) {
         // Add new point
         const newPoint: Omit<BodyPoint, 'id' | 'createdAt' | 'updatedAt'> = {
+          ...pointData as Required<Partial<BodyPoint>>,
           patientId: patient.id,
           coordinates: newPointCoordinates,
           bodySide: state.activeSide,
           createdBy: 'current-user', // TODO: Get from auth context
-          sessionId,
-          ...pointData as Required<Partial<BodyPoint>>
+          sessionId
         };
 
         await addPoint(newPoint);

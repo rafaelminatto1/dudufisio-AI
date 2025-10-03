@@ -5,7 +5,6 @@
 
 import {
   DigitalSignature,
-  SignatureVerificationResult,
   SignatureDetails,
   SignatureAlgorithm,
   Timestamp,
@@ -14,7 +13,7 @@ import {
   DocumentId,
   DomainError,
   SignatureError
-} from '../../../types/medical-records';
+} from '../../../../types/medical-records';
 
 export class DigitalSignatureService {
   private readonly certificateStore: CertificateStore;
@@ -64,19 +63,28 @@ export class DigitalSignatureService {
       // Obter timestamp confiável
       const timestamp = await this.timestampService.getTimestamp(signature);
 
-      return new DigitalSignature(
+      return {
+        id: `sig-${documentId}-${Date.now()}`,
+        documentId,
         signature,
-        certificate.getPublicKey(),
+        signatureData: signature,
+        publicKey: certificate.getPublicKey(),
+        certificateId,
         timestamp,
         documentHash,
-        SignatureAlgorithm.RSA_SHA256
-      );
+        algorithm: SignatureAlgorithm.RSA_SHA256,
+        signedAt: new Date(),
+        signedBy: therapistId,
+        verificationStatus: 'pending' as const,
+        createdAt: new Date()
+      };
     } catch (error) {
       if (error instanceof SignatureError) {
         throw error;
       }
+      const err = error instanceof Error ? error : new Error(String(error));
       throw new SignatureError(
-        `Failed to sign document: ${error.message}`,
+        `Failed to sign document: ${err.message}`,
         'signature'
       );
     }
@@ -132,8 +140,9 @@ export class DigitalSignatureService {
         algorithm: signature.algorithm
       });
     } catch (error) {
+      const err = error instanceof Error ? error : new Error(String(error));
       return SignatureVerificationResult.invalid(
-        `Verification failed: ${error.message}`
+        `Verification failed: ${err.message}`
       );
     }
   }

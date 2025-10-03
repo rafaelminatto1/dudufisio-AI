@@ -94,20 +94,20 @@ export const useBodyMap = (patientId: string): UseBodyMapReturn => {
     // Obter pontos por data
     const getPointsByDate = useCallback((date: string) => {
         return bodyPoints.filter(point => {
-            const pointDate = new Date(point.created_at).toLocaleDateString('pt-BR');
+            const pointDate = new Date(point.createdAt).toLocaleDateString('pt-BR');
             return pointDate === date;
         });
     }, [bodyPoints]);
 
     // Obter pontos por lado (frente/costas)
     const getPointsBySide = useCallback((side: 'front' | 'back') => {
-        return bodyPoints.filter(point => point.body_side === side);
+        return bodyPoints.filter(point => point.bodySide === side);
     }, [bodyPoints]);
 
     // Calcular nível médio de dor
     const getAverageePainLevel = useCallback(() => {
         if (bodyPoints.length === 0) return 0;
-        const total = bodyPoints.reduce((sum, point) => sum + point.pain_level, 0);
+        const total = bodyPoints.reduce((sum, point) => sum + point.painLevel, 0);
         return Math.round((total / bodyPoints.length) * 10) / 10;
     }, [bodyPoints]);
 

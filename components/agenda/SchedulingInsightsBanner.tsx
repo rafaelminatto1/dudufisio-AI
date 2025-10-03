@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '../ui/card';
-import { Alert, AlertTriangle, Users } from 'lucide-react';
+import { AlertTriangle, Users } from 'lucide-react';
 
 interface SchedulingAlert {
   id: string;

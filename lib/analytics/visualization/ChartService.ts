@@ -262,7 +262,7 @@ export class ChartService {
           label: 'Receita (R$)',
           data: [previousData, currentData],
           backgroundColor: ['#94a3b8', '#10b981'],
-          borderColor: ['#64748b', '#059669'],
+          borderColor: '#64748b',
           borderWidth: 1
         }]
       },
@@ -270,7 +270,7 @@ export class ChartService {
         responsive: true,
         plugins: {
           title: { display: true, text: 'Comparação entre Períodos' },
-          legend: { display: false }
+          legend: { display: false, position: 'top' }
         },
         scales: {
           y: {
@@ -520,7 +520,7 @@ export class ChartService {
         responsive: true,
         plugins: {
           title: { display: true, text: 'Receita por Tipo de Serviço' },
-          legend: { display: false }
+          legend: { display: false, position: 'top' }
         },
         scales: {
           y: {

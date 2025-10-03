@@ -13,6 +13,7 @@ const statusStyles: Record<EventStatus, { text: string; bg: string; dot: string;
     [EventStatus.Draft]: { text: 'text-slate-700', bg: 'bg-slate-200', dot: 'bg-slate-500' },
     [EventStatus.Published]: { text: 'text-blue-700', bg: 'bg-blue-200', dot: 'bg-blue-500' },
     [EventStatus.Active]: { text: 'text-green-700', bg: 'bg-green-200', dot: 'bg-green-500' },
+    [EventStatus.InProgress]: { text: 'text-purple-700', bg: 'bg-purple-200', dot: 'bg-purple-500' },
     [EventStatus.Completed]: { text: 'text-gray-700', bg: 'bg-gray-300', dot: 'bg-gray-600' },
     [EventStatus.Cancelled]: { text: 'text-red-700', bg: 'bg-red-200', dot: 'bg-red-500' },
 };

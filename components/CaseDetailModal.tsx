@@ -19,7 +19,7 @@ const CaseDetailModal: React.FC<CaseDetailModalProps> = ({ clinicalCase, onClose
                     <div className="flex-1">
                         <h2 className="text-lg font-bold text-slate-800">{clinicalCase.title}</h2>
                         <p className="text-sm text-slate-500">
-                            Área: {clinicalCase.area} | Criado por: {clinicalCase.createdBy} em {clinicalCase.createdAt}
+                            Área: {clinicalCase.area || clinicalCase.specialty || 'N/A'} | Criado por: {clinicalCase.createdBy} em {clinicalCase.createdAt}
                         </p>
                     </div>
                     <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 ml-4">
@@ -27,7 +27,7 @@ const CaseDetailModal: React.FC<CaseDetailModalProps> = ({ clinicalCase, onClose
                     </button>
                 </header>
                 <main className="p-6 flex-1 overflow-y-auto">
-                    <MarkdownRenderer content={clinicalCase.content} />
+                    <MarkdownRenderer content={clinicalCase.content || ''} />
                 </main>
             </div>
         </div>

@@ -221,7 +221,7 @@ O sistema monitora automaticamente:
 
 ## 🎯 Funcionalidades por Provider
 
-| Funcionalidade | Google |  | ICS | Apple* |
+| Funcionalidade | Google | ICS | Apple* |
 |---------------|--------|---------|-----|--------|
 | Criar Evento | ✅ | ✅  | 📋 |
 | Atualizar Evento | ✅ | ❌ | 📋 |

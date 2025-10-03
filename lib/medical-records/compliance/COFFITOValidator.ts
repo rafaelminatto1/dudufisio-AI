@@ -5,13 +5,16 @@
 
 import {
   ClinicalDocument,
-  ComplianceViolation,
-  ValidationResult,
   TherapistId,
   DocumentType,
   Specialty,
   DomainError
-} from '../../types/medical-records';
+} from '../../../types/medical-records';
+
+import {
+  ValidationResult,
+  ValidationViolation as ComplianceViolation
+} from '../clinical/assessment/ClinicalTemplateEngine';
 
 export class COFFITOValidator {
   private readonly therapistRegistry: TherapistRegistry;

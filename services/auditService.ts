@@ -25,14 +25,16 @@ export type AuditAction =
   // System Actions
   | 'AI_QUERY' | 'SYSTEM_BACKUP' | 'SYSTEM_RESTORE' | 'ASSIGN_TASK'
   // Exports and Reports
-  | 'EXPORT_DATA' | 'GENERATE_REPORT' | 'VIEW_AUDIT_LOG';
+  | 'EXPORT_DATA' | 'GENERATE_REPORT' | 'VIEW_AUDIT_LOG'
+  // Settings and Preferences
+  | 'UPDATE_NOTIFICATION_PREFERENCES' | 'UPDATE_USER_SETTINGS';
 
 export interface CreateAuditLogParams {
   user: string;
   action: AuditAction;
   details: string;
   resourceId?: string;
-  resourceType?: 'patient' | 'appointment' | 'treatment' | 'transaction' | 'user';
+  resourceType?: 'patient' | 'appointment' | 'treatment' | 'transaction' | 'user' | 'settings';
   metadata?: Record<string, any>;
   ipAddress?: string;
 }

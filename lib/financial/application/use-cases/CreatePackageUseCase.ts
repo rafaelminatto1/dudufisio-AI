@@ -97,7 +97,7 @@ export class CreatePackageUseCase {
       }
 
       // 5. Create package
-      const package = Package.create({
+      const pkg = Package.create({
         patientId: command.patientId,
         transactionId: transaction.getId(),
         type: command.packageType,
@@ -110,7 +110,7 @@ export class CreatePackageUseCase {
       // 6. Save everything in a transaction
       await this.repository.withTransaction(async (tx) => {
         await tx.saveTransaction(transaction);
-        await tx.savePackage(package);
+        await tx.savePackage(pkg);
 
         // Create installment transactions if needed
         if (command.installments && command.installments > 1) {
@@ -127,7 +127,7 @@ export class CreatePackageUseCase {
 
       return {
         success: true,
-        package,
+        package: pkg,
         transaction,
         paymentResult
       };

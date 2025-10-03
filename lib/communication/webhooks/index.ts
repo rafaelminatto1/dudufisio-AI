@@ -5,16 +5,23 @@ export { WebhookHandler, defaultWebhookConfig } from './WebhookHandler';
 export type { WebhookConfig } from './WebhookHandler';
 
 // Express route helpers for webhook endpoints
-import { Router, Request, Response } from 'express';
+// Optional import - install express if using webhooks
+// import { Router, Request, Response } from 'express';
 import { WebhookHandler } from './WebhookHandler';
+
+// Simple types to avoid express dependency
+type Router = any;
+type Request = any;
+type Response = any;
+type NextFunction = () => void;
 
 /**
  * Middleware to capture raw body for signature verification
  */
-export function rawBodyMiddleware(req: Request, res: Response, next: Function): void {
+export function rawBodyMiddleware(req: Request, res: Response, next: NextFunction): void {
   let rawBody = '';
 
-  req.on('data', (chunk) => {
+  req.on('data', (chunk: any) => {
     rawBody += chunk;
   });
 
@@ -27,8 +34,14 @@ export function rawBodyMiddleware(req: Request, res: Response, next: Function): 
 /**
  * Create Express router with webhook endpoints
  */
-export function createWebhookRouter(webhookHandler: WebhookHandler): Router {
-  const router = Router();
+export function createWebhookRouter(webhookHandler: WebhookHandler): any {
+  // Requires express Router - install express to use this function
+  // const router = Router();
+  const router: any = null;
+
+  if (!router) {
+    throw new Error('Express Router not available - install express package');
+  }
 
   // Middleware to capture raw body for signature verification
   router.use('/webhooks/*', rawBodyMiddleware);

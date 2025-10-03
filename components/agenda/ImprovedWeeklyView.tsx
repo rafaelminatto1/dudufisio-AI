@@ -157,16 +157,24 @@ const MultiTherapistAppointmentCard: React.FC<{
       sky: 'bg-sky-600 border-sky-700 hover:bg-sky-700 shadow-sm',
     };
 
-    const statusStyles = {
-      scheduled: '',
-      confirmed: 'ring-2 ring-green-400',
-      completed: 'opacity-80',
-      cancelled: 'opacity-60 bg-slate-500 border-slate-600',
-      no_show: 'opacity-70 bg-orange-500 border-orange-600',
+    // Map status enum values to CSS classes
+    const getStatusStyle = (status: AppointmentStatus): string => {
+      switch (status) {
+        case AppointmentStatus.Scheduled:
+          return ''; // Default style
+        case AppointmentStatus.Completed:
+          return 'opacity-80';
+        case AppointmentStatus.Canceled:
+          return 'opacity-60 bg-slate-500 border-slate-600';
+        case AppointmentStatus.NoShow:
+          return 'opacity-70 bg-orange-500 border-orange-600';
+        default:
+          return '';
+      }
     };
 
     const colorStyle = baseStyles[color as keyof typeof baseStyles] || 'bg-slate-600 border-slate-700 hover:bg-slate-700 shadow-sm';
-    const statusStyle = statusStyles[status] || '';
+    const statusStyle = getStatusStyle(status);
 
     return `${colorStyle} ${statusStyle}`;
   };

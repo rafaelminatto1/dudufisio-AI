@@ -1,10 +1,10 @@
 // Hook personalizado para gerenciar o estado do sistema de prontuário eletrônico
 
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  ClinicalDocument, 
-  DigitalSignature, 
-  DigitalCertificate, 
+import {
+  ClinicalDocument,
+  DigitalSignature,
+  DigitalCertificate,
   ClinicalTemplate,
   Patient,
   ProgressReport,

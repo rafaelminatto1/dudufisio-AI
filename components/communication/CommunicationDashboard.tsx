@@ -9,7 +9,51 @@ import {
   Users, Clock, AlertTriangle, CheckCircle, XCircle,
   Filter, Download, RefreshCw, Calendar
 } from 'lucide-react';
-import { CommunicationMetrics, DashboardData, AnalyticsFilter } from '../../lib/communication/analytics/AnalyticsEngine';
+import { CommunicationChannel } from '../../types';
+
+// Temporary interfaces until analytics module is properly integrated
+interface DashboardData {
+  overview: {
+    totalSent: number;
+    sentGrowth?: number;
+    deliveryRate: number;
+    engagementRate: number;
+    totalCost: number;
+    delivered?: number;
+    failed?: number;
+  };
+  timeSeries: { timestamp: string; messages: number }[];
+  channelPerformance: Record<string, {
+    totalSent: number;
+    delivered?: number;
+    failed?: number;
+    deliveryRate?: number;
+  }>;
+  messageTypePerformance: Record<string, {
+    totalSent: number;
+    delivered?: number;
+    failed?: number;
+  }>;
+  recentActivity: {
+    channel: string;
+    type: string;
+    recipient: string;
+    status: string;
+    timestamp: string;
+  }[];
+  alerts?: {
+    type: string;
+    message: string;
+    severity: number;
+  }[];
+}
+
+interface AnalyticsFilter {
+  startDate?: Date;
+  endDate?: Date;
+  channels?: CommunicationChannel[];
+  timezone?: string;
+}
 
 interface CommunicationDashboardProps {
   className?: string;
@@ -17,11 +61,11 @@ interface CommunicationDashboardProps {
 
 const COLORS = ['#8B5CF6', '#06B6D4', '#10B981', '#F59E0B', '#EF4444'];
 
-const channelIcons = {
-  whatsapp: MessageSquare,
-  sms: Smartphone,
-  email: Mail,
-  push: Bell
+const channelIcons: Record<string, React.ComponentType<any>> = {
+  [CommunicationChannel.WhatsApp]: MessageSquare,
+  [CommunicationChannel.SMS]: Smartphone,
+  [CommunicationChannel.Email]: Mail,
+  [CommunicationChannel.Push]: Bell
 };
 
 export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
@@ -32,18 +76,28 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [selectedTimeRange, setSelectedTimeRange] = useState<'24h' | '7d' | '30d' | '90d'>('7d');
   const [selectedChannels, setSelectedChannels] = useState<CommunicationChannel[]>([
-    CommunicationChannel.WHATSAPP, 
-    CommunicationChannel.SMS, 
-    CommunicationChannel.EMAIL, 
-    CommunicationChannel.PUSH_NOTIFICATION
+    CommunicationChannel.WhatsApp,
+    CommunicationChannel.SMS,
+    CommunicationChannel.Email,
+    CommunicationChannel.Push
   ]);
   const [autoRefresh, setAutoRefresh] = useState(true);
 
-  const analyticsFilter = useMemo((): AnalyticsFilter => ({
-    timeRange: selectedTimeRange,
-    channels: selectedChannels,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-  }), [selectedTimeRange, selectedChannels]);
+  const analyticsFilter = useMemo((): AnalyticsFilter => {
+    const now = new Date();
+    const ranges = {
+      '24h': 24 * 60 * 60 * 1000,
+      '7d': 7 * 24 * 60 * 60 * 1000,
+      '30d': 30 * 24 * 60 * 60 * 1000,
+      '90d': 90 * 24 * 60 * 60 * 1000
+    };
+    return {
+      startDate: new Date(now.getTime() - ranges[selectedTimeRange]),
+      endDate: now,
+      channels: selectedChannels,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    };
+  }, [selectedTimeRange, selectedChannels]);
 
   const loadDashboardData = async () => {
     try {
@@ -83,7 +137,7 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
     }
   }, [autoRefresh, analyticsFilter]);
 
-  const handleChannelToggle = (channel: string) => {
+  const handleChannelToggle = (channel: CommunicationChannel) => {
     setSelectedChannels(prev =>
       prev.includes(channel)
         ? prev.filter(c => c !== channel)
@@ -190,8 +244,8 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
           <label key={channel} className="flex items-center space-x-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={selectedChannels.includes(channel)}
-              onChange={() => handleChannelToggle(channel)}
+              checked={selectedChannels.includes(channel as CommunicationChannel)}
+              onChange={() => handleChannelToggle(channel as CommunicationChannel)}
               className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
             />
             <Icon className="h-4 w-4" />
@@ -231,28 +285,28 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
         <MetricCard
           title="Mensagens Enviadas"
           value={formatNumber(dashboardData.overview.totalSent)}
-          change={dashboardData.overview.sentGrowth}
+          change={dashboardData.overview.sentGrowth || 0}
           icon={MessageSquare}
           color="purple"
         />
         <MetricCard
           title="Taxa de Entrega"
           value={formatPercentage(dashboardData.overview.deliveryRate)}
-          change={dashboardData.overview.deliveryRate}
+          change={0}
           icon={CheckCircle}
           color="green"
         />
         <MetricCard
           title="Taxa de Engajamento"
           value={formatPercentage(dashboardData.overview.engagementRate)}
-          change={dashboardData.overview.engagementRate}
+          change={0}
           icon={Users}
           color="blue"
         />
         <MetricCard
           title="Custo Total"
           value={`R$ ${dashboardData.overview.totalCost.toFixed(2)}`}
-          change={dashboardData.overview.totalCost}
+          change={0}
           icon={TrendingUp}
           color="orange"
         />
@@ -287,8 +341,9 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
             <BarChart data={Object.entries(dashboardData.channelPerformance).map(([channel, metrics]) => ({
               channel,
               sent: metrics.totalSent,
-              delivered: metrics.delivered,
-              failed: metrics.failed
+              delivered: metrics.delivered || 0,
+              failed: metrics.failed || 0,
+              deliveryRate: metrics.deliveryRate || 0
             }))}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="channel" />
@@ -307,9 +362,10 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
               <Pie
                 data={Object.entries(dashboardData.messageTypePerformance).map(([type, metrics]) => ({
                   type,
+                  count: metrics.totalSent,
                   sent: metrics.totalSent,
-                  delivered: metrics.delivered,
-                  failed: metrics.failed
+                  delivered: metrics.delivered || 0,
+                  failed: metrics.failed || 0
                 }))}
                 dataKey="count"
                 nameKey="type"
@@ -318,7 +374,7 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
                 outerRadius={80}
                 label
               >
-                {Object.entries(dashboardData.messageTypePerformance).map(([type, metrics], index) => (
+                {Object.entries(dashboardData.messageTypePerformance).map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -334,14 +390,14 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
           <div className="space-y-4">
             {Object.entries({
               sent: dashboardData.overview.totalSent,
-              delivered: dashboardData.overview.delivered,
-              failed: dashboardData.overview.failed
+              delivered: dashboardData.overview.delivered || 0,
+              failed: dashboardData.overview.failed || 0
             }).map(([status, count]) => (
               <div key={status} className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   {status === 'delivered' && <CheckCircle className="h-4 w-4 text-green-600" />}
                   {status === 'failed' && <XCircle className="h-4 w-4 text-red-600" />}
-                  {status === 'pending' && <Clock className="h-4 w-4 text-yellow-600" />}
+                  {status === 'sent' && <Clock className="h-4 w-4 text-yellow-600" />}
                   <span className="capitalize">{status}</span>
                 </div>
                 <span className="font-medium">{formatNumber(count)}</span>
@@ -369,27 +425,27 @@ export const CommunicationDashboard: React.FC<CommunicationDashboardProps> = ({
             </thead>
             <tbody className="divide-y divide-gray-200">
               {dashboardData.recentActivity.map((activity, index) => {
-                const Icon = channelIcons[activity.channel as keyof typeof channelIcons];
+                const Icon = channelIcons[activity.channel] || MessageSquare;
                 return (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <Icon className="h-4 w-4" />
-                        <span className="capitalize">{message.channel}</span>
+                        <span className="capitalize">{activity.channel}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 capitalize">{message.type}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{message.recipient}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900 capitalize">{activity.type}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{activity.recipient}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        message.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                        message.status === 'failed' ? 'bg-red-100 text-red-800' :
+                        activity.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                        activity.status === 'failed' ? 'bg-red-100 text-red-800' :
                         'bg-yellow-100 text-yellow-800'
                       }`}>
-                        {message.status}
+                        {activity.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{message.timestamp}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{activity.timestamp}</td>
                   </tr>
                 );
               })}

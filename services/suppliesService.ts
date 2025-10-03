@@ -82,7 +82,7 @@ export const getSupplies = async (filters?: SupplyFilters): Promise<Supply[]> =>
   try {
     let query = supabase
       .from('supplies')
-      .select(`
+      .select<'*', Supply>(`
         *,
         supplier:suppliers(*)
       `);
@@ -98,7 +98,8 @@ export const getSupplies = async (filters?: SupplyFilters): Promise<Supply[]> =>
         query = query.eq('is_active', filters.isActive);
       }
       if (filters.lowStock) {
-        query = query.lte('current_stock', supabase.rpc('get_minimum_stock'));
+        // Filter for supplies where current_stock <= minimum_stock
+        query = query.filter('current_stock', 'lte', 'minimum_stock');
       }
       if (filters.expiring) {
         const thirtyDaysFromNow = new Date();
@@ -120,7 +121,7 @@ export const getSupplies = async (filters?: SupplyFilters): Promise<Supply[]> =>
   }
 };
 
-export const getSupplyById = async (id: string): Promise<Supply | null> => {
+export const getSupplyById = async (id: string): Promise<Supply | undefined> => {
   try {
     const { data, error } = await supabase
       .from('supplies')
@@ -132,7 +133,7 @@ export const getSupplyById = async (id: string): Promise<Supply | null> => {
       .single();
 
     if (error) throw error;
-    return data;
+    return data ?? undefined;
   } catch (error) {
     console.error('Erro ao buscar insumo:', error);
     throw error;
@@ -206,7 +207,7 @@ export const getStockMovements = async (filters?: StockMovementFilters): Promise
   try {
     let query = supabase
       .from('stock_movements')
-      .select(`
+      .select<'*', StockMovement>(`
         *,
         supply:supplies(*)
       `);
@@ -273,7 +274,7 @@ export const getPurchaseOrders = async (filters?: PurchaseOrderFilters): Promise
   try {
     let query = supabase
       .from('purchase_orders')
-      .select(`
+      .select<'*', PurchaseOrder>(`
         *,
         supplier:suppliers(*),
         items:purchase_order_items(
@@ -398,7 +399,7 @@ export const getSupplyAlerts = async (unreadOnly: boolean = false): Promise<Supp
   try {
     let query = supabase
       .from('supply_alerts')
-      .select(`
+      .select<'*', SupplyAlert>(`
         *,
         supply:supplies(*)
       `)
@@ -481,7 +482,7 @@ export const getSuppliesDashboardData = async (): Promise<SuppliesDashboardData>
     // Top insumos mais consumidos
     const consumptionMap = new Map<string, number>();
     movements
-      .filter(m => m.movementType === 'saida')
+      .filter(m => m.movementType === MovementType.Out)
       .forEach(movement => {
         const current = consumptionMap.get(movement.supplyId) || 0;
         consumptionMap.set(movement.supplyId, current + movement.quantity);
@@ -534,11 +535,11 @@ export const getConsumptionReport = async (
       const supplyMovements = movements.filter(m => m.supplyId === supply.id);
       
       const totalConsumed = supplyMovements
-        .filter(m => m.movementType === 'saida')
+        .filter(m => m.movementType === MovementType.Out)
         .reduce((sum, m) => sum + m.quantity, 0);
-      
+
       const totalReceived = supplyMovements
-        .filter(m => m.movementType === 'entrada')
+        .filter(m => m.movementType === MovementType.In)
         .reduce((sum, m) => sum + m.quantity, 0);
 
       const daysDiff = dateFrom && dateTo ? 

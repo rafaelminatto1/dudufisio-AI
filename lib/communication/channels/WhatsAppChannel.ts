@@ -1,6 +1,7 @@
 // WhatsApp Communication Channel using WhatsApp Business API
 
-import { Client as WhatsAppWebClient, LocalAuth, MessageMedia, GroupChat } from 'whatsapp-web.js';
+// Optional import - install whatsapp-web.js if using web client
+// import { Client as WhatsAppWebClient, LocalAuth, MessageMedia, GroupChat } from 'whatsapp-web.js';
 import {
   Message,
   DeliveryResult,
@@ -73,8 +74,7 @@ export class WhatsAppChannel extends BaseChannel {
     ChannelCapability.IMAGES,
     ChannelCapability.DOCUMENTS,
     ChannelCapability.RICH_CONTENT,
-    ChannelCapability.DELIVERY_STATUS,
-    ChannelCapability.READ_RECEIPTS
+    ChannelCapability.DELIVERY_STATUS
   ];
   readonly priority = 85; // High priority
   readonly maxRetries = 3;
@@ -123,18 +123,18 @@ export class WhatsAppChannel extends BaseChannel {
         this.metrics.increment('whatsapp.web_client.ready');
       });
 
-      this.webClient.on('auth_failure', (msg) => {
+      this.webClient.on('auth_failure', (msg: string) => {
         this.logger.error('WhatsApp Web Client authentication failed', new Error(msg));
         this.metrics.increment('whatsapp.web_client.auth_failure');
       });
 
-      this.webClient.on('disconnected', (reason) => {
+      this.webClient.on('disconnected', (reason: string) => {
         this.isWebClientReady = false;
         this.logger.warn('WhatsApp Web Client disconnected', { reason });
         this.metrics.increment('whatsapp.web_client.disconnected');
       });
 
-      this.webClient.on('message', (message) => {
+      this.webClient.on('message', (message: any) => {
         // Handle incoming messages for webhooks/callbacks
         this.handleIncomingMessage(message);
       });

@@ -15,6 +15,7 @@ const statusStyles: Record<EventStatus, { text: string; bg: string; dot: string;
     [EventStatus.Draft]: { text: 'text-slate-700', bg: 'bg-slate-100', dot: 'bg-slate-400' },
     [EventStatus.Published]: { text: 'text-blue-700', bg: 'bg-blue-100', dot: 'bg-blue-400' },
     [EventStatus.Active]: { text: 'text-green-700', bg: 'bg-green-100', dot: 'bg-green-400' },
+    [EventStatus.InProgress]: { text: 'text-purple-700', bg: 'bg-purple-100', dot: 'bg-purple-400' },
     [EventStatus.Completed]: { text: 'text-gray-700', bg: 'bg-gray-200', dot: 'bg-gray-500' },
     [EventStatus.Cancelled]: { text: 'text-red-700', bg: 'bg-red-100', dot: 'bg-red-400' },
 };

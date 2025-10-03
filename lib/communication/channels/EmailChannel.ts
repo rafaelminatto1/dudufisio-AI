@@ -101,7 +101,7 @@ export class EmailChannel extends BaseChannel {
   readonly priority = 60; // Medium priority
   readonly maxRetries = 3;
 
-  private transporter: nodemailer.Transporter;
+  private transporter!: nodemailer.Transporter;
 
   constructor(
     config: EmailConfig,
@@ -127,7 +127,7 @@ export class EmailChannel extends BaseChannel {
     }
 
     try {
-      this.transporter = nodemailer.createTransporter({
+      this.transporter = nodemailer.createTransport({
         host: config.smtp.host,
         port: config.smtp.port,
         secure: config.smtp.secure,
@@ -324,12 +324,12 @@ export class EmailChannel extends BaseChannel {
 
         // Check individual attachment size
         if (attachment.size && attachment.size > config.maxAttachmentSize) {
-          errors.push(`Attachment ${attachment.filename} exceeds maximum size limit`);
+          errors.push(`Attachment ${attachment.name} exceeds maximum size limit`);
         }
 
         // Check for potentially dangerous file types
-        if (attachment.filename && this.isDangerousAttachment(attachment.filename)) {
-          warnings.push(`Attachment ${attachment.filename} may be blocked by email providers`);
+        if (attachment.name && this.isDangerousAttachment(attachment.name)) {
+          warnings.push(`Attachment ${attachment.name} may be blocked by email providers`);
         }
       }
 
