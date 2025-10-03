@@ -180,10 +180,11 @@ export class CFMComplianceValidator {
    */
   private async validateMinimumContent(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
+    const data = content.data as Record<string, any>;
 
     // Verificar identificação do paciente
-    if (!content.data.patientId) {
+    if (!data.patientId) {
       violations.push(new ComplianceViolation(
         'CFM_009',
         'Patient identification is required',
@@ -193,7 +194,7 @@ export class CFMComplianceValidator {
     }
 
     // Verificar data da consulta
-    if (!content.data.consultationDate) {
+    if (!data.consultationDate) {
       violations.push(new ComplianceViolation(
         'CFM_010',
         'Consultation date is required',
@@ -203,7 +204,7 @@ export class CFMComplianceValidator {
     }
 
     // Verificar anamnese
-    if (!content.data.anamnesis || content.data.anamnesis.trim().length < 50) {
+    if (!data.anamnesis || data.anamnesis.trim().length < 50) {
       violations.push(new ComplianceViolation(
         'CFM_011',
         'Anamnesis must be at least 50 characters',
@@ -213,7 +214,7 @@ export class CFMComplianceValidator {
     }
 
     // Verificar exame físico
-    if (!content.data.physicalExam || content.data.physicalExam.trim().length < 30) {
+    if (!data.physicalExam || data.physicalExam.trim().length < 30) {
       violations.push(new ComplianceViolation(
         'CFM_012',
         'Physical exam description must be at least 30 characters',
@@ -223,7 +224,7 @@ export class CFMComplianceValidator {
     }
 
     // Verificar diagnóstico
-    if (!content.data.diagnosis || content.data.diagnosis.trim().length < 10) {
+    if (!data.diagnosis || data.diagnosis.trim().length < 10) {
       violations.push(new ComplianceViolation(
         'CFM_013',
         'Diagnosis is required and must be at least 10 characters',
@@ -233,7 +234,7 @@ export class CFMComplianceValidator {
     }
 
     // Verificar conduta
-    if (!content.data.conduct || content.data.conduct.trim().length < 20) {
+    if (!data.conduct || data.conduct.trim().length < 20) {
       violations.push(new ComplianceViolation(
         'CFM_014',
         'Conduct/treatment plan must be at least 20 characters',
@@ -293,8 +294,11 @@ export class CFMComplianceValidator {
     const violations: ComplianceViolation[] = [];
 
     // Verificar se documento tem política de retenção definida
-    const content = document.getContent();
-    if (!content.metadata.retentionPolicy) {
+    const content = document.content;
+    const metadata = content.metadata as Record<string, any>;
+    const data = content.data as Record<string, any>;
+
+    if (!metadata.retentionPolicy) {
       violations.push(new ComplianceViolation(
         'CFM_017',
         'Document must have retention policy defined',
@@ -304,8 +308,8 @@ export class CFMComplianceValidator {
     }
 
     // Verificar se dados sensíveis estão adequadamente protegidos
-    if (this.containsSensitiveData(content.data)) {
-      if (!content.metadata.encryptionLevel || content.metadata.encryptionLevel !== 'high') {
+    if (this.containsSensitiveData(data)) {
+      if (!metadata.encryptionLevel || metadata.encryptionLevel !== 'high') {
         violations.push(new ComplianceViolation(
           'CFM_018',
           'Sensitive data must be encrypted with high-level encryption',

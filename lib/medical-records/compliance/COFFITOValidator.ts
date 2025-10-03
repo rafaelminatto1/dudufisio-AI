@@ -151,7 +151,7 @@ export class COFFITOValidator {
   private async validateSpecialty(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
 
-    const content = document.getContent();
+    const content = document.content;
     const documentSpecialty = content.metadata.specialty;
 
     try {
@@ -204,10 +204,11 @@ export class COFFITOValidator {
    */
   private async validatePhysiotherapyContent(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
+    const data = content.data as Record<string, any>;
 
     // Verificar avaliação postural
-    if (!content.data.posturalAssessment) {
+    if (!data.posturalAssessment) {
       violations.push(new ComplianceViolation(
         'COFFITO_010',
         'Postural assessment is required for physiotherapy documents',
@@ -217,7 +218,7 @@ export class COFFITOValidator {
     }
 
     // Verificar avaliação de amplitude de movimento
-    if (!content.data.rangeOfMotion) {
+    if (!data.rangeOfMotion) {
       violations.push(new ComplianceViolation(
         'COFFITO_011',
         'Range of motion assessment is required',
@@ -227,7 +228,7 @@ export class COFFITOValidator {
     }
 
     // Verificar avaliação de força muscular
-    if (!content.data.muscleStrength) {
+    if (!data.muscleStrength) {
       violations.push(new ComplianceViolation(
         'COFFITO_012',
         'Muscle strength assessment is required',
@@ -237,7 +238,7 @@ export class COFFITOValidator {
     }
 
     // Verificar testes especiais
-    if (!content.data.specialTests || content.data.specialTests.length === 0) {
+    if (!data.specialTests || data.specialTests.length === 0) {
       violations.push(new ComplianceViolation(
         'COFFITO_013',
         'At least one special test must be performed',
@@ -247,7 +248,7 @@ export class COFFITOValidator {
     }
 
     // Verificar avaliação funcional
-    if (!content.data.functionalAssessment) {
+    if (!data.functionalAssessment) {
       violations.push(new ComplianceViolation(
         'COFFITO_014',
         'Functional assessment is required',
@@ -264,10 +265,11 @@ export class COFFITOValidator {
    */
   private async validateFunctionalAssessment(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
+    const data = content.data as Record<string, any>;
 
-    if (content.data.functionalAssessment) {
-      const assessment = content.data.functionalAssessment;
+    if (data.functionalAssessment) {
+      const assessment = data.functionalAssessment;
 
       // Verificar se tem testes funcionais específicos
       const requiredTests = [
@@ -314,10 +316,11 @@ export class COFFITOValidator {
    */
   private async validateTreatmentPlan(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
+    const data = content.data as Record<string, any>;
 
-    if (content.data.treatmentPlan) {
-      const plan = content.data.treatmentPlan;
+    if (data.treatmentPlan) {
+      const plan = data.treatmentPlan;
 
       // Verificar objetivos do tratamento
       if (!plan.goals || plan.goals.length === 0) {
@@ -380,10 +383,11 @@ export class COFFITOValidator {
     const violations: ComplianceViolation[] = [];
 
     if (document.type === DocumentType.SESSION_EVOLUTION) {
-      const content = document.getContent();
+      const content = document.content;
+      const data = content.data as Record<string, any>;
 
       // Verificar avaliação subjetiva
-      if (!content.data.subjectiveAssessment || content.data.subjectiveAssessment.trim().length < 20) {
+      if (!data.subjectiveAssessment || data.subjectiveAssessment.trim().length < 20) {
         violations.push(new ComplianceViolation(
           'COFFITO_023',
           'Subjective assessment must be at least 20 characters',
@@ -393,7 +397,7 @@ export class COFFITOValidator {
       }
 
       // Verificar avaliação objetiva
-      if (!content.data.objectiveFindings || content.data.objectiveFindings.trim().length < 20) {
+      if (!data.objectiveFindings || data.objectiveFindings.trim().length < 20) {
         violations.push(new ComplianceViolation(
           'COFFITO_024',
           'Objective findings must be at least 20 characters',
@@ -403,7 +407,7 @@ export class COFFITOValidator {
       }
 
       // Verificar técnicas aplicadas
-      if (!content.data.techniquesApplied || content.data.techniquesApplied.length === 0) {
+      if (!data.techniquesApplied || data.techniquesApplied.length === 0) {
         violations.push(new ComplianceViolation(
           'COFFITO_025',
           'Applied techniques must be documented',
@@ -413,7 +417,7 @@ export class COFFITOValidator {
       }
 
       // Verificar resposta do paciente
-      if (!content.data.patientResponse || content.data.patientResponse.trim().length < 10) {
+      if (!data.patientResponse || data.patientResponse.trim().length < 10) {
         violations.push(new ComplianceViolation(
           'COFFITO_026',
           'Patient response must be documented',
@@ -423,7 +427,7 @@ export class COFFITOValidator {
       }
 
       // Verificar plano para próxima sessão
-      if (!content.data.nextSessionPlan || content.data.nextSessionPlan.trim().length < 15) {
+      if (!data.nextSessionPlan || data.nextSessionPlan.trim().length < 15) {
         violations.push(new ComplianceViolation(
           'COFFITO_027',
           'Next session plan must be specified',
@@ -441,10 +445,11 @@ export class COFFITOValidator {
    */
   private async validateExercisePrescription(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
+    const data = content.data as Record<string, any>;
 
-    if (content.data.exercises || content.data.homeExercises) {
-      const exercises = content.data.exercises || content.data.homeExercises;
+    if (data.exercises || data.homeExercises) {
+      const exercises = data.exercises || data.homeExercises;
 
       if (exercises && exercises.length > 0) {
         for (let i = 0; i < exercises.length; i++) {

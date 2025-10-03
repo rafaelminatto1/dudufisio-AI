@@ -377,13 +377,13 @@ export const useSuppliesDashboard = () => {
 // ============================================================================
 
 export const useSupply = (id: string) => {
-  const [supply, setSupply] = useState<Supply | null>(null);
+  const [supply, setSupply] = useState<Supply | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchSupply = useCallback(async () => {
     if (!id) return;
-    
+
     try {
       setLoading(true);
       setError(null);

@@ -6,6 +6,8 @@ import {
   preloadCriticalComponents,
   preloadUserRoleComponents
 } from './lib/lazyLoading';
+import { initializeLazyLoading } from './lib/advancedLazyLoading';
+import { AppStateProvider, PerformanceProfiler } from './lib/performanceOptimizations';
 import { BrowserRouter } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
@@ -128,6 +130,7 @@ const AppContent: React.FC = () => {
     // 🚀 Preloading inteligente de componentes
     useEffect(() => {
         preloadCriticalComponents();
+        initializeLazyLoading();
         
         if (user?.role) {
             preloadUserRoleComponents(user.role);
@@ -220,11 +223,22 @@ const AppRoutes: React.FC = () => {
                 <DebugProvider>
                     <SupabaseAuthProvider>
                         <AppProvider>
-                            <ToastProvider>
-                                <AppContent />
-                                {/* 📡 Indicador de status offline/online */}
-                                <OfflineIndicator />
-                            </ToastProvider>
+                            <AppStateProvider>
+                                <PerformanceProfiler 
+                                    id="AppRoutes" 
+                                    onRender={(id, phase, actualDuration) => {
+                                        if (actualDuration > 16) {
+                                            console.warn(`⚠️ Performance issue in ${id}: ${actualDuration}ms`);
+                                        }
+                                    }}
+                                >
+                                    <ToastProvider>
+                                        <AppContent />
+                                        {/* 📡 Indicador de status offline/online */}
+                                        <OfflineIndicator />
+                                    </ToastProvider>
+                                </PerformanceProfiler>
+                            </AppStateProvider>
                         </AppProvider>
                     </SupabaseAuthProvider>
                 </DebugProvider>

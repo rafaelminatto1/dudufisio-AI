@@ -70,7 +70,7 @@ const PatientDashboardPage: React.FC = () => {
                             return details ? { ...details, prescription: p } : null;
                         })
                     );
-                    setExercises(enriched.filter((ex): ex is EnrichedExercise => ex !== null));
+                    setExercises(enriched.filter((ex): ex is NonNullable<typeof ex> => ex !== null));
                 }
                 setIsLoadingExercises(false);
             }

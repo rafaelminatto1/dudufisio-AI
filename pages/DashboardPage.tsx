@@ -107,7 +107,7 @@ const DashboardPage: React.FC = () => {
 
             <div className="space-y-8">
                 <KPICards stats={stats} isLoading={isLoading} />
-                
+
                 <div>
                     <h2 className="text-2xl font-bold text-slate-800 mb-4">Resumo do Dia</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -118,8 +118,8 @@ const DashboardPage: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <RevenueChart appointments={appointments} />
-                    <PatientFlowChart patients={patients} />
+                    <RevenueChart appointments={appointments ?? []} />
+                    <PatientFlowChart patients={patients ?? []} />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -127,13 +127,13 @@ const DashboardPage: React.FC = () => {
                         <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
                             <Activity className="w-5 h-5 mr-2 text-teal-500" /> Mapa de Calor de Agendamentos
                         </h3>
-                        <AppointmentHeatmap appointments={appointments} />
+                        <AppointmentHeatmap appointments={appointments ?? []} />
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-sm">
                         <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
                             <Users className="w-5 h-5 mr-2 text-teal-500" /> Produtividade da Equipe
                         </h3>
-                        <TeamProductivityChart appointments={appointments} therapists={therapists} />
+                        <TeamProductivityChart appointments={appointments ?? []} therapists={therapists} />
                     </div>
                 </div>
             </div>

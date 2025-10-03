@@ -46,7 +46,7 @@ const InventoryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | undefined>(undefined);
   const [showMovementModal, setShowMovementModal] = useState(false);
   const [movementType, setMovementType] = useState<MovementType>('IN');
 
@@ -476,7 +476,7 @@ const InventoryPage: React.FC = () => {
         isOpen={showCreateModal}
         onClose={() => {
           setShowCreateModal(false);
-          setSelectedItem(null);
+          setSelectedItem(undefined);
         }}
         onSave={handleSaveItem}
         itemToEdit={selectedItem}

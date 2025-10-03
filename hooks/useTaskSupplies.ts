@@ -238,13 +238,13 @@ export const useTaskTypeSupplyTemplates = (taskType?: string) => {
 // ============================================================================
 
 export const useTaskCost = (taskId: string) => {
-  const [taskCost, setTaskCost] = useState<TaskCost | null>(null);
+  const [taskCost, setTaskCost] = useState<TaskCost | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTaskCost = useCallback(async () => {
     if (!taskId) return;
-    
+
     try {
       setLoading(true);
       setError(null);
@@ -366,13 +366,13 @@ export const useSuggestedSupplies = (taskType?: string) => {
 // ============================================================================
 
 export const useTask = (taskId: string) => {
-  const [task, setTask] = useState<Task | null>(null);
+  const [task, setTask] = useState<Task | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTask = useCallback(async () => {
     if (!taskId) return;
-    
+
     try {
       setLoading(true);
       setError(null);

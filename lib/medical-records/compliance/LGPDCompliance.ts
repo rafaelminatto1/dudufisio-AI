@@ -170,7 +170,7 @@ export class LGPDComplianceValidator {
    */
   private async validateDataPurpose(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
 
     // Verificar se finalidade está definida
     if (!content.metadata.purpose) {
@@ -218,7 +218,7 @@ export class LGPDComplianceValidator {
    */
   private async validateDataMinimization(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
 
     // Verificar se dados são adequados
     if (!this.areDataAdequate(content.data, document.type)) {
@@ -268,7 +268,7 @@ export class LGPDComplianceValidator {
    */
   private async validateDataSecurity(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
 
     // Verificar se dados sensíveis estão criptografados
     if (this.containsSensitiveData(content.data)) {
@@ -320,7 +320,7 @@ export class LGPDComplianceValidator {
    */
   private async validateDataRetention(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
 
     // Verificar se política de retenção está definida
     if (!content.metadata.retentionPolicy) {
@@ -365,7 +365,7 @@ export class LGPDComplianceValidator {
    */
   private async validateDataSubjectRights(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
 
     // Verificar se há procedimento para acesso
     if (!content.metadata.accessProcedure) {
@@ -415,7 +415,7 @@ export class LGPDComplianceValidator {
    */
   private async validateDataTransfer(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    const content = document.getContent();
+    const content = document.content;
 
     // Verificar se há transferência internacional
     if (content.metadata.internationalTransfer) {
