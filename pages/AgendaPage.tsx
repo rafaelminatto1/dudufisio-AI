@@ -545,7 +545,7 @@ export default function AgendaPage() {
                                 Voltar para Agenda
                             </Button>
                             <h2 className="text-lg font-semibold text-slate-800">
-                                Formulário de Sessão - {selectedAppointmentForSession.patient?.name}
+                                Formulário de Sessão - {selectedAppointmentForSession.patientName}
                             </h2>
                         </div>
                         <SessionFormPage

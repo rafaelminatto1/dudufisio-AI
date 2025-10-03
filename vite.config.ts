@@ -62,8 +62,7 @@ export default defineConfig({
       'clsx',
       'tailwind-merge'
     ],
-    exclude: ['@playwright/test'],
-    force: true
+    exclude: ['@playwright/test']
   },
   build: {
     target: 'es2020',
@@ -80,23 +79,52 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           // Otimização de chunks para melhor cache e performance
-          if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
-            return 'react-vendor';
+          // Split React packages separately to reduce react-vendor size
+          if (id.includes('react-dom')) {
+            return 'react-dom-vendor';
           }
-          if (id.includes('@radix-ui') || id.includes('lucide-react') || id.includes('framer-motion')) {
-            return 'ui-vendor';
+          if (id.includes('react-router')) {
+            return 'react-router-vendor';
+          }
+          if (id.includes('node_modules/react/') && !id.includes('react-dom') && !id.includes('react-router')) {
+            return 'react-core-vendor';
+          }
+          if (id.includes('@radix-ui')) {
+            return 'radix-vendor';
+          }
+          if (id.includes('lucide-react')) {
+            return 'lucide-vendor';
+          }
+          if (id.includes('framer-motion')) {
+            return 'framer-vendor';
           }
           if (id.includes('@google/generative-ai') || id.includes('groq-sdk')) {
             return 'ai-vendor';
           }
-          if (id.includes('@supabase') || id.includes('axios') || id.includes('resend')) {
-            return 'api-vendor';
+          if (id.includes('@supabase')) {
+            return 'supabase-vendor';
           }
-          if (id.includes('recharts') || id.includes('date-fns') || id.includes('html2canvas')) {
-            return 'charts-vendor';
+          if (id.includes('axios') || id.includes('resend')) {
+            return 'http-vendor';
           }
-          if (id.includes('jspdf') || id.includes('html2pdf') || id.includes('ics')) {
-            return 'pdf-vendor';
+          if (id.includes('recharts')) {
+            return 'recharts-vendor';
+          }
+          if (id.includes('date-fns')) {
+            return 'date-vendor';
+          }
+          if (id.includes('html2canvas')) {
+            return 'canvas-vendor';
+          }
+          // Split PDF libraries to reduce pdf-vendor size
+          if (id.includes('jspdf')) {
+            return 'jspdf-vendor';
+          }
+          if (id.includes('html2pdf')) {
+            return 'html2pdf-vendor';
+          }
+          if (id.includes('ics')) {
+            return 'ics-vendor';
           }
           if (id.includes('bull') || id.includes('redis')) {
             return 'queue-vendor';
@@ -130,6 +158,6 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
-    chunkSizeWarningLimit: 500
+    chunkSizeWarningLimit: 600
   }
 });

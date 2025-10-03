@@ -1,9 +1,10 @@
 import React, { lazy, Suspense, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AgendaPage from './AgendaPage'; // Import directly to avoid React duplication issue
 
 // Lazy load all pages for better performance
-const AgendaPage = lazy(() => import('./AgendaPage'));
+// const AgendaPage = lazy(() => import('./AgendaPage')); // Temporarily disabled due to React duplication
 const PatientListPage = lazy(() => import('./PatientListPage'));
 const PatientDetailPage = lazy(() => import('./PatientDetailPage'));
 const SessionPage = lazy(() => import('./SessionPage'));

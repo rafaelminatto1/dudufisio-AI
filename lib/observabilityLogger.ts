@@ -38,6 +38,7 @@ export const observability = {
   database: createLogger('database'),
   application: createLogger('application'),
   communication: createLogger('communication'),
+  audit: createLogger('security'),
   service: {
     ...createLogger('application'),
     call: (event: string, payload?: unknown) => {
