@@ -337,8 +337,8 @@ export type { Database } from './database';
 export type AppointmentRow = TableRow<'appointments'>;
 export type PatientRow = TableRow<'patients'>;
 export type UserRow = TableRow<'users'>;
-export type PainPointRow = TableRow<'pain_points'>;
-export type SessionRow = TableRow<'sessions'>;
+// export type PainPointRow = TableRow<'pain_points'>; // Table doesn't exist in schema
+// export type SessionRow = TableRow<'sessions'>; // Table doesn't exist in schema
 
 export type AppointmentInsert = TableInsert<'appointments'>;
 export type PatientInsert = TableInsert<'patients'>;

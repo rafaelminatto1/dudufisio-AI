@@ -820,9 +820,12 @@ class VideoCallService {
     } catch (error) {
       console.error('❌ Erro ao processar gravação:', error);
 
-      if (session && session.recording) {
-        session.recording.status = 'failed';
-        this.emit('recordingError', { sessionId, error });
+      if (this.sessions.has(sessionId)) {
+        const currentSession = this.sessions.get(sessionId);
+        if (currentSession && currentSession.recording) {
+          currentSession.recording.status = 'failed';
+          this.emit('recordingError', { sessionId, error });
+        }
       }
     }
   }
@@ -836,7 +839,7 @@ class VideoCallService {
 
       this.screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: {
-          cursor: screen.cursor as any
+          cursor: screen.cursor ? 'always' : 'never'
         },
         audio: screen.withAudio
       });

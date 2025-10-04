@@ -28,6 +28,34 @@ type Appointment = Database['public']['Tables']['appointments']['Row'];
 type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
 type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 
+// Helper function to map Supabase appointment to domain appointment
+function mapAppointmentToDomain(data: Appointment): any {
+  return {
+    id: data.id,
+    patient_id: data.patient_id,
+    therapist_id: data.therapist_id,
+    scheduled_at: data.scheduled_at,
+    appointment_date: data.scheduled_at ? new Date(data.scheduled_at).toISOString().split('T')[0] : undefined,
+    start_time: data.scheduled_at ? new Date(data.scheduled_at).toTimeString().slice(0, 5) : undefined,
+    duration_minutes: 60, // Default duration
+    status: data.status as any,
+    appointment_type: undefined, // Not in Supabase schema
+    cancellation_reason: data.cancellation_reason,
+    created_at: data.created_at || new Date().toISOString(),
+    updated_at: data.updated_at,
+    metadata: data.metadata,
+    payment_status: data.payment_status,
+    recurrence_rule: data.recurrence_rule,
+    recurrence_template_id: data.recurrence_template_id,
+    series_id: data.series_id,
+    value: data.value
+  };
+}
+
+// Import missing types
+import type { ConflictInfo } from '../../types/appointment';
+import type { SupabaseRealtimePayload } from '@supabase/supabase-js';
+
 export interface AppointmentFilters {
   therapistId?: string;
   patientId?: string;
@@ -116,17 +144,14 @@ class AppointmentService {
   // Create appointment
   async createAppointment(appointment: AppointmentInsert) {
     try {
-      // Check for conflicts
+      // Check for conflicts using scheduled_at
       const conflicts = await this.checkAppointmentConflict(
-        appointment.therapist_id,
-        appointment.appointment_date,
-        appointment.start_time,
-        appointment.end_time,
-        appointment.room ?? undefined
+        appointment.therapist_id!,
+        appointment.scheduled_at
       );
 
       if (conflicts.length > 0) {
-        throw new Error('Horário já ocupado para este fisioterapeuta ou sala');
+        throw new Error('Horário já ocupado para este fisioterapeuta');
       }
 
       const { data, error } = await supabase
@@ -146,7 +171,7 @@ class AppointmentService {
   async updateAppointment(id: string, updates: AppointmentUpdate) {
     try {
       // If updating time/date, check for conflicts
-      if (updates.appointment_date || updates.start_time || updates.end_time || updates.therapist_id) {
+      if (updates.scheduled_at || updates.therapist_id) {
         const current = await this.getAppointmentById(id);
         
         if (!current) {
@@ -154,16 +179,13 @@ class AppointmentService {
         }
 
         const conflicts = await this.checkAppointmentConflict(
-          updates.therapist_id ?? current.therapist_id,
-          updates.appointment_date ?? current.appointment_date,
-          updates.start_time ?? current.start_time,
-          updates.end_time ?? current.end_time,
-          updates.room ?? current.room ?? undefined,
+          updates.therapist_id ?? current.therapist_id!,
+          updates.scheduled_at ?? current.scheduled_at,
           id
         );
 
         if (conflicts.length > 0) {
-          throw new Error('Horário já ocupado para este fisioterapeuta ou sala');
+          throw new Error('Horário já ocupado para este fisioterapeuta');
         }
       }
 
@@ -250,28 +272,37 @@ class AppointmentService {
   // Check appointment conflicts
   async checkAppointmentConflict(
     therapistId: string,
-    date: string,
-    startTime: string,
-    endTime: string,
-    room?: string,
+    scheduledAt: string,
     excludeId?: string
-  ) {
+  ): Promise<ConflictInfo[]> {
     try {
-      // Avoid sending nulls for optional params; Supabase typed client treats undefined as omitted
-      const args: Record<string, string> = {
-        p_therapist_id: therapistId,
-        p_date: date,
-        p_start_time: startTime,
-        p_end_time: endTime,
-      };
-
-      if (room !== undefined) args['p_room'] = room;
-      if (excludeId !== undefined) args['p_exclude_id'] = excludeId;
-
-      const { data, error } = await supabase.rpc('check_appointment_conflict', args);
+      // Check for overlapping appointments using scheduled_at
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('id, patient_id, scheduled_at')
+        .eq('therapist_id', therapistId)
+        .neq('status', 'cancelled')
+        .neq('status', 'no_show');
 
       if (error) throw error;
-      return data ?? [];
+
+      // Filter for conflicts (simplified logic)
+      const conflicts = (data || []).filter(apt => {
+        if (excludeId && apt.id === excludeId) return false;
+        const aptTime = new Date(apt.scheduled_at);
+        const newTime = new Date(scheduledAt);
+        
+        // Check if appointments overlap (assuming 60min duration)
+        const timeDiff = Math.abs(aptTime.getTime() - newTime.getTime());
+        return timeDiff < (60 * 60 * 1000); // Less than 60 minutes apart
+      });
+
+      return conflicts.map(conflict => ({
+        appointment_id: conflict.id,
+        patient_name: 'Paciente', // Would need to join with patients table
+        start_time: new Date(conflict.scheduled_at).toTimeString().slice(0, 5),
+        end_time: new Date(new Date(conflict.scheduled_at).getTime() + 60 * 60 * 1000).toTimeString().slice(0, 5)
+      }));
     } catch (error) {
       throw new Error(handleSupabaseError(error));
     }
@@ -287,9 +318,10 @@ class AppointmentService {
       // Get all appointments for the therapist on the given date
       const { data: appointments, error } = await supabase
         .from('appointments')
-        .select('start_time, end_time')
+        .select('scheduled_at')
         .eq('therapist_id', therapistId)
-        .eq('appointment_date', date)
+        .gte('scheduled_at', `${date}T00:00:00`)
+        .lt('scheduled_at', `${date}T23:59:59`)
         .not('status', 'in', '(cancelled,no_show)');
 
       if (error) throw error;
@@ -306,11 +338,15 @@ class AppointmentService {
           const endTime = this.addMinutes(time, duration);
 
           // Check if this slot conflicts with any existing appointment
-          const hasConflict = appointments?.some((apt: { start_time: string; end_time: string }) => {
+          const hasConflict = appointments?.some((apt: { scheduled_at: string }) => {
+            const aptTime = new Date(apt.scheduled_at);
+            const slotTime = new Date(`${date}T${time}`);
+            const slotEndTime = new Date(slotTime.getTime() + duration * 60000);
+            
             return (
-              (time >= apt.start_time && time < apt.end_time) ||
-              (endTime > apt.start_time && endTime <= apt.end_time) ||
-              (time <= apt.start_time && endTime >= apt.end_time)
+              (slotTime >= aptTime && slotTime < new Date(aptTime.getTime() + 60 * 60000)) ||
+              (slotEndTime > aptTime && slotEndTime <= new Date(aptTime.getTime() + 60 * 60000)) ||
+              (slotTime <= aptTime && slotEndTime >= new Date(aptTime.getTime() + 60 * 60000))
             );
           });
 
@@ -404,29 +440,29 @@ class AppointmentService {
   ) {
     try {
       const appointments: AppointmentInsert[] = [];
-      let currentDate = new Date(baseAppointment.appointment_date);
+      let currentDateTime = new Date(baseAppointment.scheduled_at);
 
       for (let i = 0; i < occurrences; i++) {
         if (i > 0) {
           switch (recurrenceType) {
             case 'daily':
-              currentDate = addDaysLocal(currentDate, 1);
+              currentDateTime = addDaysLocal(currentDateTime, 1);
               break;
             case 'weekly':
-              currentDate = addDaysLocal(currentDate, 7);
+              currentDateTime = addDaysLocal(currentDateTime, 7);
               break;
             case 'biweekly':
-              currentDate = addDaysLocal(currentDate, 14);
+              currentDateTime = addDaysLocal(currentDateTime, 14);
               break;
             case 'monthly':
-              currentDate.setMonth(currentDate.getMonth() + 1);
+              currentDateTime.setMonth(currentDateTime.getMonth() + 1);
               break;
           }
         }
 
         appointments.push({
           ...baseAppointment,
-          appointment_date: formatDate(currentDate),
+          scheduled_at: currentDateTime.toISOString(),
         });
       }
 
@@ -434,16 +470,13 @@ class AppointmentService {
       const conflicts = [];
       for (const apt of appointments) {
         const conflictCheck = await this.checkAppointmentConflict(
-          apt.therapist_id,
-          apt.appointment_date,
-          apt.start_time,
-          apt.end_time,
-          apt.room ?? undefined
+          apt.therapist_id!,
+          apt.scheduled_at
         );
         
         if (conflictCheck.length > 0) {
           conflicts.push({
-            date: apt.appointment_date,
+            date: new Date(apt.scheduled_at).toISOString().split('T')[0],
             conflicts: conflictCheck,
           });
         }

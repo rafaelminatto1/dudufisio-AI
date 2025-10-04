@@ -32,37 +32,48 @@ export interface Appointment {
   patient_id: string;
   therapist_id: string;
 
-  // Scheduling
-  appointment_date: string; // ISO date string (YYYY-MM-DD)
-  start_time: string; // Time string (HH:MM)
-  duration_minutes: number;
+  // Scheduling - using Supabase schema
+  scheduled_at: string; // ISO datetime string
+  appointment_date?: string; // Computed from scheduled_at
+  start_time?: string; // Computed from scheduled_at
+  duration_minutes?: number; // Default 60 if not specified
 
   // Status & Type
   status: AppointmentStatusType;
-  appointment_type: AppointmentTypeType;
+  appointment_type?: AppointmentTypeType;
   cancellation_reason?: string | null;
 
   // Related data
-  patient: PatientSummary;
-  therapist: TherapistSummary;
+  patient?: PatientSummary;
+  therapist?: TherapistSummary;
 
   // System fields
   created_at: string;
   updated_at?: string;
-  created_by: string;
+  created_by?: string;
+  
+  // Additional Supabase fields
+  metadata?: any;
+  payment_status?: string | null;
+  recurrence_rule?: any;
+  recurrence_template_id?: string | null;
+  series_id?: string | null;
+  value?: number | null;
 }
 
 // Request/Response types
 export interface CreateAppointmentRequest {
   patient_id: string;
   therapist_id: string;
-  appointment_date: string;
-  start_time: string;
+  scheduled_at: string; // ISO datetime string
+  appointment_date?: string; // Optional, computed from scheduled_at
+  start_time?: string; // Optional, computed from scheduled_at
   duration_minutes?: number;
-  appointment_type: AppointmentTypeType;
+  appointment_type?: AppointmentTypeType;
 }
 
 export interface UpdateAppointmentRequest {
+  scheduled_at?: string;
   appointment_date?: string;
   start_time?: string;
   duration_minutes?: number;
@@ -123,15 +134,21 @@ export const createAppointmentSchema = z.object({
   patient_id: z.string().uuid('ID do paciente deve ser um UUID válido'),
   therapist_id: z.string().uuid('ID do fisioterapeuta deve ser um UUID válido'),
 
+  scheduled_at: z
+    .string()
+    .datetime('Data e hora devem estar no formato ISO')
+    .refine(date => new Date(date) >= new Date(),
+      'Não é possível agendar para o passado'),
+
   appointment_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar no formato YYYY-MM-DD')
-    .refine(date => new Date(date) >= new Date(new Date().toDateString()),
-      'Não é possível agendar para o passado'),
+    .optional(),
 
   start_time: z
     .string()
-    .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Horário deve estar no formato HH:MM'),
+    .regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Horário deve estar no formato HH:MM')
+    .optional(),
 
   duration_minutes: z
     .number()
@@ -139,10 +156,15 @@ export const createAppointmentSchema = z.object({
     .max(240, 'Duração máxima é 240 minutos')
     .default(60),
 
-  appointment_type: z.enum(['avaliacao', 'retorno', 'sessao', 'reavaliacao'])
+  appointment_type: z.enum(['avaliacao', 'retorno', 'sessao', 'reavaliacao']).optional()
 });
 
 export const updateAppointmentSchema = z.object({
+  scheduled_at: z
+    .string()
+    .datetime('Data e hora devem estar no formato ISO')
+    .optional(),
+
   appointment_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar no formato YYYY-MM-DD')
@@ -234,7 +256,7 @@ export function getAppointmentStatusColor(status: AppointmentStatusType): string
 // Business logic helpers
 export function isAppointmentEditable(appointment: Appointment): boolean {
   return appointment.status === 'scheduled' &&
-         new Date(`${appointment.appointment_date}T${appointment.start_time}`) > new Date();
+         new Date(appointment.scheduled_at) > new Date();
 }
 
 export function canCancelAppointment(appointment: Appointment): boolean {
@@ -243,5 +265,21 @@ export function canCancelAppointment(appointment: Appointment): boolean {
 
 export function canMarkAsCompleted(appointment: Appointment): boolean {
   return appointment.status === 'scheduled' &&
-         new Date(`${appointment.appointment_date}T${appointment.start_time}`) <= new Date();
+         new Date(appointment.scheduled_at) <= new Date();
+}
+
+// Helper functions to work with the new schema
+export function getAppointmentDate(appointment: Appointment): string {
+  if (appointment.appointment_date) {
+    return appointment.appointment_date;
+  }
+  return new Date(appointment.scheduled_at).toISOString().split('T')[0];
+}
+
+export function getAppointmentTime(appointment: Appointment): string {
+  if (appointment.start_time) {
+    return appointment.start_time;
+  }
+  const date = new Date(appointment.scheduled_at);
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 }

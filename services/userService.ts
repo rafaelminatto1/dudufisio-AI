@@ -56,7 +56,11 @@ class UserService {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []).map(user => ({
+        ...user,
+        full_name: user.full_name || 'Nome não informado',
+        role: (user.role as any) || 'patient'
+      }));
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);
       throw error;
@@ -72,7 +76,10 @@ class UserService {
         .single();
 
       if (error) throw error;
-      return data;
+      return {
+        ...data,
+        full_name: data.full_name || 'Nome não informado'
+      };
     } catch (error) {
       console.error('Erro ao buscar usuário:', error);
       throw error;
@@ -89,7 +96,11 @@ class UserService {
         .order('full_name');
 
       if (error) throw error;
-      return data || [];
+      return (data || []).map(user => ({
+        ...user,
+        full_name: user.full_name || 'Nome não informado',
+        role: (user.role as any) || 'patient'
+      }));
     } catch (error) {
       console.error('Erro ao buscar usuários por role:', error);
       throw error;
@@ -123,7 +134,10 @@ class UserService {
         .single();
 
       if (error) throw error;
-      return data;
+      return {
+        ...data,
+        full_name: data.full_name || 'Nome não informado'
+      };
     } catch (error) {
       console.error('Erro ao criar usuário:', error);
       throw error;
@@ -143,7 +157,10 @@ class UserService {
         .single();
 
       if (error) throw error;
-      return data;
+      return {
+        ...data,
+        full_name: data.full_name || 'Nome não informado'
+      };
     } catch (error) {
       console.error('Erro ao atualizar usuário:', error);
       throw error;
@@ -209,7 +226,7 @@ class UserService {
         .single();
 
       if (error) throw error;
-      return data?.permissions || [];
+      return Array.isArray(data?.permissions) ? data.permissions as string[] : [];
     } catch (error) {
       console.error('Erro ao buscar permissões:', error);
       return [];
