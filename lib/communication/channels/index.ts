@@ -8,10 +8,6 @@ export type { BaseChannelConfig } from './BaseChannel';
 export { WhatsAppChannel, defaultWhatsAppConfig } from './WhatsAppChannel';
 export type { WhatsAppConfig } from './WhatsAppChannel';
 
-// SMS Channel
-export { SMSChannel, defaultSMSConfig } from './SMSChannel';
-export type { SMSConfig } from './SMSChannel';
-
 // Email Channel
 export { EmailChannel, defaultEmailConfig } from './EmailChannel';
 export type { EmailConfig } from './EmailChannel';
@@ -28,7 +24,6 @@ export type { PushConfig } from './PushChannel';
 import { CommunicationChannelInterface } from '../core/types';
 import { BaseChannelConfig } from './BaseChannel';
 import { WhatsAppChannel, WhatsAppConfig } from './WhatsAppChannel';
-import { SMSChannel, SMSConfig } from './SMSChannel';
 import { EmailChannel, EmailConfig } from './EmailChannel';
 import { ResendEmailChannel, ResendEmailConfig } from './ResendEmailChannel';
 import { PushChannel, PushConfig } from './PushChannel';
@@ -36,7 +31,7 @@ import { PushChannel, PushConfig } from './PushChannel';
 /**
  * Channel configuration union type
  */
-export type ChannelConfig = WhatsAppConfig | SMSConfig | EmailConfig | ResendEmailConfig | PushConfig;
+export type ChannelConfig = WhatsAppConfig | EmailConfig | ResendEmailConfig | PushConfig;
 
 /**
  * Channel factory for creating channel instances
@@ -98,7 +93,6 @@ export class ChannelFactory {
 
 // Register all available channels
 ChannelFactory.register('whatsapp', WhatsAppChannel);
-ChannelFactory.register('sms', SMSChannel);
 ChannelFactory.register('email', EmailChannel);
 ChannelFactory.register('resend-email', ResendEmailChannel);
 ChannelFactory.register('push', PushChannel);
@@ -117,21 +111,6 @@ export const defaultChannelConfigs = {
     useWebClient: false,
     sessionPath: './wa-session'
   } as WhatsAppConfig,
-
-  sms: {
-    enabled: true,
-    maxRetries: 3,
-    timeout: 30000,
-    rateLimitPerMinute: 100,
-    costPerMessage: 0.0075,
-    testMode: false,
-    twilioAccountSid: '',
-    twilioAuthToken: '',
-    twilioPhoneNumber: '',
-    maxMessageLength: 1600,
-    enableDeliveryReceipts: true,
-    enableLongMessages: true
-  } as SMSConfig,
 
   email: {
     enabled: true,
@@ -189,7 +168,6 @@ export const defaultChannelConfigs = {
 export const channelPriorities = {
   push: 90,    // Highest priority - instant notifications
   whatsapp: 85, // High priority - widely used
-  sms: 75,     // Medium-high priority - reliable
   email: 60    // Medium priority - asynchronous
 };
 
@@ -241,19 +219,6 @@ export function validateChannelConfig(name: string, config: ChannelConfig): {
         if (!whatsappConfig.businessPhoneNumberId) {
           errors.push('Business phone number ID required for WhatsApp Business API');
         }
-      }
-      break;
-
-    case 'sms':
-      const smsConfig = config as SMSConfig;
-      if (!smsConfig.twilioAccountSid) {
-        errors.push('Twilio Account SID is required for SMS');
-      }
-      if (!smsConfig.twilioAuthToken) {
-        errors.push('Twilio Auth Token is required for SMS');
-      }
-      if (!smsConfig.twilioPhoneNumber) {
-        errors.push('Twilio Phone Number is required for SMS');
       }
       break;
 
@@ -309,12 +274,6 @@ export function getRequiredEnvironmentVariables(channelName: string): string[] {
         'WHATSAPP_BUSINESS_PHONE_NUMBER_ID',
         'WHATSAPP_WEBHOOK_VERIFY_TOKEN'
       ];
-    case 'sms':
-      return [
-        'TWILIO_ACCOUNT_SID',
-        'TWILIO_AUTH_TOKEN',
-        'TWILIO_PHONE_NUMBER'
-      ];
     case 'email':
       return [
         'EMAIL_HOST',
@@ -358,20 +317,6 @@ export function createChannelConfigFromEnv(channelName: string): ChannelConfig {
         sessionPath: process.env.WHATSAPP_SESSION_PATH || './wa-session',
         costPerMessage: 0.005
       } as WhatsAppConfig;
-
-    case 'sms':
-      return {
-        ...baseConfig,
-        twilioAccountSid: process.env.TWILIO_ACCOUNT_SID || '',
-        twilioAuthToken: process.env.TWILIO_AUTH_TOKEN || '',
-        twilioPhoneNumber: process.env.TWILIO_PHONE_NUMBER || '',
-        messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
-        statusCallbackUrl: process.env.TWILIO_STATUS_CALLBACK_URL,
-        maxMessageLength: parseInt(process.env.SMS_MAX_LENGTH || '1600'),
-        enableDeliveryReceipts: process.env.SMS_ENABLE_DELIVERY_RECEIPTS !== 'false',
-        enableLongMessages: process.env.SMS_ENABLE_LONG_MESSAGES !== 'false',
-        costPerMessage: 0.0075
-      } as SMSConfig;
 
     case 'email':
       return {

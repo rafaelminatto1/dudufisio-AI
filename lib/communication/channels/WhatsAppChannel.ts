@@ -1,7 +1,7 @@
 // WhatsApp Communication Channel using WhatsApp Business API
 
-// Optional import - install whatsapp-web.js if using web client
-// import { Client as WhatsAppWebClient, LocalAuth, MessageMedia, GroupChat } from 'whatsapp-web.js';
+// Using mock for whatsapp-web.js
+import { WhatsAppWebClient, LocalAuth, MessageMedia } from '../mocks/whatsapp-web-mock';
 import {
   Message,
   DeliveryResult,

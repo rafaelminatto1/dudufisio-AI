@@ -244,7 +244,14 @@ export const preloadingStrategies = {
 
   // Preload baseado em conexão
   connectionBasedPreload: () => {
-    const { connectionSpeed } = useNetworkStatus();
+    // ✅ Detectar velocidade da conexão sem usar hooks
+    let connectionSpeed: 'slow' | 'fast' | 'unknown' = 'unknown';
+
+    if ('connection' in navigator) {
+      const connection = (navigator as any).connection;
+      const speed = connection?.effectiveType;
+      connectionSpeed = speed === 'slow-2g' || speed === '2g' ? 'slow' : 'fast';
+    }
 
     if (connectionSpeed === 'fast') {
       // Conexão rápida - preload mais componentes

@@ -1080,7 +1080,7 @@ export class AutomationEngine {
             eventData: context.eventData
           } : undefined,
           error: error instanceof Error ? error.message : undefined,
-          duration: 0 // Would be calculated properly in real implementation
+          // duration: 0 // Removed - not in AutomationExecution interface
         };
 
         // Note: This would need to be implemented in the repository

@@ -124,7 +124,7 @@ const DailyView: React.FC<DailyViewProps> = ({
                     {timeSlots.map((time, index) => (
                       <div
                         key={time}
-                        className="absolute left-0 right-0 border-t border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors"
+                        className="absolute left-0 right-0 border-t border-slate-100 cursor-pointer hover:bg-blue-50/50 transition-colors group hover:shadow-sm"
                         style={{
                           top: `${index * SLOT_DURATION * PIXELS_PER_MINUTE}px`,
                           height: `${SLOT_DURATION * PIXELS_PER_MINUTE}px`

@@ -168,22 +168,22 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
 
       {/* Main calendar grid */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Time column */}
-        <div className="w-16 flex-shrink-0 border-r bg-slate-50">
+        {/* Time column - Professional design */}
+        <div className="w-16 flex-shrink-0 border-r border-slate-200 bg-slate-50/30">
           <div className="h-12"></div> {/* Header spacer */}
           {timeSlots.map(time => (
-            <div key={time} className="h-12 text-right pr-2 text-xs text-slate-400 font-medium flex items-start pt-1">
+            <div key={time} className="h-12 text-right pr-2 text-xs text-slate-600 font-medium flex items-start pt-1 border-b border-slate-100">
               {time.endsWith('00') ? time : ''}
             </div>
           ))}
         </div>
 
-        {/* Days grid */}
-        <div className="flex-1 grid grid-cols-6 gap-px bg-slate-200 overflow-auto">
+        {/* Days grid - Professional design */}
+        <div className="flex-1 grid grid-cols-6 gap-px bg-slate-100/50 overflow-auto">
           {weekDays.map((day) => (
-            <div key={day.toISOString()} className="bg-white">
+            <div key={day.toISOString()} className="bg-white shadow-sm">
               {/* Therapist header */}
-              <div className="h-12 border-b border-slate-200 bg-slate-50 px-2 py-1">
+              <div className="h-12 border-b border-slate-200 bg-slate-50/50 px-2 py-1">
                 <div className="grid grid-cols-3 gap-1 h-full">
                   {therapists.slice(0, 3).map((therapist) => (
                     <div
@@ -205,7 +205,7 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({
                 {timeSlots.map((time, index) => (
                   <div
                     key={time}
-                    className="absolute left-0 right-0 border-t border-slate-100 hover:bg-blue-50 transition-colors cursor-pointer"
+                    className="absolute left-0 right-0 border-t border-slate-100 hover:bg-blue-50/50 transition-colors cursor-pointer group hover:shadow-sm"
                     style={{
                       top: `${index * SLOT_DURATION * PIXELS_PER_MINUTE}px`,
                       height: `${SLOT_DURATION * PIXELS_PER_MINUTE}px`

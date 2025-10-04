@@ -2,7 +2,7 @@
 // Componentes principais do sistema
 
 export { MedicalRecordsSystem } from './MedicalRecordsSystem';
-export { MedicalRecordsDashboard } from './MedicalRecordsDashboard';
+export { default as MedicalRecordsDashboard } from './MedicalRecordsDashboard';
 export { ClinicalTemplatesManager } from './ClinicalTemplatesManager';
 export { DigitalSignatureManager } from './DigitalSignatureManager';
 export { ClinicalReportsGenerator } from './ClinicalReportsGenerator';

@@ -2,17 +2,17 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:5174",
+  "localEndpoint": "http://localhost:5175",
   "loginUser": "admin@dudufisio.com",
   "loginPassword": "demo123456",
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "Execute todos os testes do plano para identificar erros e problemas no sistema",
+    "additionalInstruction": "",
     "envs": {
       "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
     }
   },
-  "proxy": "http://10a29c10-27c8-433a-b5ac-0b644270e1b5:I5863vFWEcMrWmjrMlRCFwBa7oWCzcqn@tun.testsprite.com:8080"
+  "proxy": "http://2db87c2e-29de-474e-9b2a-122ea2271696:n4nKVNakPtERHYugtfVMBF3NL5VpsGR2@tun.testsprite.com:8080"
 }

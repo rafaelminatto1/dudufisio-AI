@@ -357,7 +357,7 @@ export const mockScheduleBlocks: ScheduleBlock[] = [
 export const mockWaitlistEntries: WaitlistEntry[] = [
     {
         id: `wait_${Date.now() - 5400000}`,
-        patientId: '4',
+        patientId: '4', // Daniel Almeida
         therapistId: 'therapist_1',
         preferredStartFrom: getFutureDate(0, 9),
         preferredStartTo: getFutureDate(0, 17),
@@ -372,7 +372,7 @@ export const mockWaitlistEntries: WaitlistEntry[] = [
     },
     {
         id: `wait_${Date.now() - 10800000}`,
-        patientId: '6',
+        patientId: '6', // Lúcia Martins
         therapistId: 'therapist_3',
         preferredStartFrom: getFutureDate(1, 13),
         preferredStartTo: getFutureDate(1, 17),
@@ -383,6 +383,21 @@ export const mockWaitlistEntries: WaitlistEntry[] = [
         notes: 'Paciente VIP, ajuste prioritário para horários da tarde',
         createdAt: new Date(Date.now() - 10800000),
         updatedAt: new Date(Date.now() - 10800000),
+    },
+    {
+        id: `wait_${Date.now() - 16200000}`,
+        patientId: '2', // Bruno Gomes
+        therapistId: 'therapist_2',
+        preferredStartFrom: getFutureDate(2, 8),
+        preferredStartTo: getFutureDate(2, 12),
+        preferredDays: [1, 2, 3, 4, 5],
+        preferredTimeRanges: [{ start: '08:00', end: '12:00' }],
+        urgency: 3,
+        noShowRisk: 0.3,
+        status: 'waiting',
+        notes: 'Dor lombar crônica, prefere horários da manhã',
+        createdAt: new Date(Date.now() - 16200000),
+        updatedAt: new Date(Date.now() - 16200000),
     },
 ];
 

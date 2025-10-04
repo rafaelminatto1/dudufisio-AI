@@ -2005,7 +2005,8 @@ export enum ChannelCapability {
   ATTACHMENTS = 'attachments',
   TEMPLATES = 'templates',
   DELIVERY_STATUS = 'delivery_status',
-  TRACKING = 'tracking'
+  TRACKING = 'tracking',
+  SHORT_LINKS = 'short_links'
 }
 
 export enum MessagePriority {
@@ -2136,18 +2137,13 @@ export interface DeliveryResult {
   channel: CommunicationChannel;
   deliveredAt?: Date;
   cost?: number;
-  error?: CommunicationError;
+  error?: any; // CommunicationError class from lib/communication/core/types.ts
   retryable: boolean;
   metadata?: Record<string, unknown>;
 }
 
-export interface CommunicationError {
-  code: string;
-  message: string;
-  details?: unknown;
-  retryable: boolean;
-  retryAfter?: number; // seconds
-}
+// CommunicationError is now defined as a class in lib/communication/core/types.ts
+// Import it from there when needed
 
 export interface ValidationResult {
   valid: boolean;
@@ -2277,11 +2273,12 @@ export interface WhatsAppConfig {
   apiVersion?: string;
 }
 
-export interface TwilioConfig {
-  accountSid: string;
-  authToken: string;
-  fromNumber: string;
-}
+// SMS/Twilio removed - not used in Brazil
+// export interface TwilioConfig {
+//   accountSid: string;
+//   authToken: string;
+//   fromNumber: string;
+// }
 
 export interface EmailConfig {
   provider: 'resend' | 'sendgrid' | 'ses';
@@ -2463,20 +2460,7 @@ export interface AutomationRule {
   updatedAt: string | Date;
 }
 
-// For backward compatibility with existing code
-export interface AutomationExecution {
-  id: string;
-  ruleId: string;
-  triggeredAt: Date;
-  status: 'success' | 'failure';
-  context?: {
-    patientId?: string;
-    appointmentId?: string;
-    eventData?: any;
-  };
-  error?: string;
-  duration: number;
-}
+// Removed duplicate AutomationExecution interface - using unified version above
 
 export interface MessageTemplate {
   id: string;
@@ -2854,18 +2838,62 @@ export interface PurchaseOrderFilters {
 }
 
 // ============================================================================
+// AUDIT TYPES
+// ============================================================================
+
+export type AuditAction =
+  // Authentication
+  | 'LOGIN_SUCCESS' | 'LOGIN_ATTEMPT_FAILED' | 'LOGOUT' | 'AUTO_LOGOUT' | 'PASSWORD_CHANGE'
+  // Patient Management
+  | 'CREATE_PATIENT' | 'UPDATE_PATIENT' | 'DELETE_PATIENT' | 'VIEW_PATIENT_RECORD'
+  // Appointment Management
+  | 'CREATE_APPOINTMENT' | 'UPDATE_APPOINTMENT' | 'CANCEL_APPOINTMENT' | 'RESCHEDULE_APPOINTMENT'
+  // Treatment Management
+  | 'CREATE_TREATMENT' | 'UPDATE_TREATMENT' | 'COMPLETE_TREATMENT' | 'CANCEL_TREATMENT'
+  // Financial Operations
+  | 'CREATE_INVOICE' | 'PROCESS_PAYMENT' | 'REFUND_PAYMENT' | 'UPDATE_PAYMENT_STATUS'
+  // Medical Records
+  | 'CREATE' | 'UPDATE' | 'DELETE' | 'VIEW' | 'SIGN' | 'ARCHIVE' | 'RESTORE' | 'EXPORT'
+  // System Operations
+  | 'SYSTEM_BACKUP' | 'SYSTEM_RESTORE' | 'DATA_EXPORT' | 'DATA_IMPORT'
+  // Settings and Preferences
+  | 'UPDATE_NOTIFICATION_PREFERENCES' | 'UPDATE_USER_SETTINGS'
+  // Video Call Operations
+  | 'VIDEOCALL_CONFIG_UPDATE' | 'VIDEOCALL_SESSION_CREATED' | 'VIDEOCALL_SESSION_JOINED' | 'VIDEOCALL_SESSION_LEFT' | 'VIDEOCALL_SESSION_ENDED' | 'VIDEOCALL_RECORDING_STARTED' | 'VIDEOCALL_RECORDING_COMPLETED';
+
+export type ResourceType = 'user' | 'appointment' | 'patient' | 'treatment' | 'transaction' | 'settings' | 'videocall-config' | 'videocall-session' | 'videocall-recording';
+
+export interface AuditLog {
+  id: string;
+  user: string;
+  action: AuditAction;
+  details: string;
+  resourceId?: string;
+  resourceType?: ResourceType;
+  metadata?: Record<string, any>;
+  ipAddress?: string;
+  userAgent?: string;
+  timestamp: Date;
+}
+
+// ============================================================================
 // TIPOS ADICIONAIS PARA COMUNICAÇÃO E AUTOMAÇÃO
 // ============================================================================
 
-// AutomationExecution type for tracking automation execution
+// AutomationExecution type for tracking automation execution (unified)
 export interface AutomationExecution {
   id: string;
   ruleId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  triggeredAt: string;
-  completedAt?: string;
+  status: 'success' | 'failure' | 'pending' | 'running' | 'completed' | 'failed';
+  triggeredAt: Date;
+  completedAt?: Date;
   error?: string;
   result?: any;
+  context?: {
+    patientId?: string;
+    appointmentId?: string;
+    eventData?: any;
+  };
 }
 
 // ============================================================================

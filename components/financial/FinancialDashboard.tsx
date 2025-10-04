@@ -67,7 +67,7 @@ interface OverdueData {
   type: string;
 }
 
-export function FinancialDashboard() {
+export default function FinancialDashboard() {
   const [metrics, setMetrics] = useState<DashboardMetric[]>([]);
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
   const [paymentMethodData, setPaymentMethodData] = useState<PaymentMethodData[]>([]);

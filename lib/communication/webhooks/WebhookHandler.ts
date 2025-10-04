@@ -67,8 +67,9 @@ interface WebhookProcessor {
 }
 
 /**
- * Twilio SMS Webhook Processor
+ * Twilio SMS Webhook Processor - DISABLED (SMS not used in Brazil)
  */
+/* DISABLED - SMS/Twilio not used
 class TwilioSMSProcessor implements WebhookProcessor {
   name = 'twilio_sms';
   channel: CommunicationChannel = CommunicationChannel.SMS;
@@ -143,6 +144,7 @@ class TwilioSMSProcessor implements WebhookProcessor {
     return statusMap[providerStatus] || MessageStatus.Failed;
   }
 }
+*/ // END DISABLED TwilioSMSProcessor
 
 /**
  * WhatsApp Business API Webhook Processor
@@ -396,7 +398,8 @@ export class WebhookHandler {
    * Initialize webhook processors
    */
   private initializeProcessors(): void {
-    this.processors.set('twilio_sms', new TwilioSMSProcessor());
+    // SMS/Twilio disabled - not used in Brazil
+    // this.processors.set('twilio_sms', new TwilioSMSProcessor());
     this.processors.set('whatsapp_business', new WhatsAppBusinessProcessor());
     this.processors.set('email_provider', new EmailProviderProcessor());
     this.processors.set('push_notification', new PushNotificationProcessor());
@@ -407,11 +410,12 @@ export class WebhookHandler {
   }
 
   /**
-   * Handle incoming webhook for Twilio SMS
+   * Handle incoming webhook for Twilio SMS - DISABLED
    */
-  async handleTwilioSMSWebhook(req: Request, res: Response): Promise<void> {
-    await this.processWebhook('twilio_sms', req, res);
-  }
+  // SMS/Twilio disabled - not used in Brazil
+  // async handleTwilioSMSWebhook(req: Request, res: Response): Promise<void> {
+  //   await this.processWebhook('twilio_sms', req, res);
+  // }
 
   /**
    * Handle incoming webhook for WhatsApp Business API
@@ -769,7 +773,7 @@ export const defaultWebhookConfig: WebhookConfig = {
   verifySignatures: true,
   timeout: 30000,
   maxRetries: 3,
-  supportedProviders: ['twilio', 'whatsapp_business', 'sendgrid', 'mailgun'],
+  supportedProviders: ['whatsapp_business', 'sendgrid', 'mailgun'], // 'twilio' removed - SMS not used
   enableLogging: true,
   rateLimitPerMinute: 100
 };

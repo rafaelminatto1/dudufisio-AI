@@ -1,4 +1,4 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
-export type SupabaseRealtimePayload<T> = RealtimePostgresChangesPayload<T>;
+export type SupabaseRealtimePayload<T extends Record<string, any>> = RealtimePostgresChangesPayload<T>;
 

@@ -85,10 +85,10 @@ const EnhancedAppointmentCard: React.FC<EnhancedAppointmentCardProps> = ({
     <Card
       className={cn(
         "relative w-full transition-all duration-200 cursor-pointer group",
-        "hover:shadow-md hover:scale-[1.02]",
+        "hover:shadow-lg hover:scale-[1.02] font-semibold",
         isBeingDragged && "opacity-50 ring-2 ring-blue-400 scale-105",
-        isPast && !isCompleted && "opacity-70",
-        isCancelled && "opacity-60"
+        isPast && !isCompleted && "bg-gray-600 hover:bg-gray-700",
+        isCancelled && "bg-gray-700 hover:bg-gray-800"
       )}
       style={{ 
         top: `${top}px`, 
@@ -119,12 +119,12 @@ const EnhancedAppointmentCard: React.FC<EnhancedAppointmentCardProps> = ({
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className={cn(
-                "font-semibold text-sm truncate",
-                isCancelled && "line-through opacity-60"
+                "font-bold text-sm truncate text-white",
+                isCancelled && "line-through"
               )}>
                 {appointment.patientName}
               </p>
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="text-xs text-white font-medium truncate">
                 {appointment.type}
               </p>
             </div>
@@ -137,8 +137,8 @@ const EnhancedAppointmentCard: React.FC<EnhancedAppointmentCardProps> = ({
 
         {/* Time and Duration */}
         <div className="flex items-center space-x-2 mb-2">
-          <Clock className="w-3 h-3 text-muted-foreground" />
-          <span className="text-xs font-medium">
+          <Clock className="w-3 h-3 text-white" />
+          <span className="text-xs font-bold text-white">
             {formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}
           </span>
         </div>
@@ -156,7 +156,7 @@ const EnhancedAppointmentCard: React.FC<EnhancedAppointmentCardProps> = ({
             )}
             
             {appointment.notes && (
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="text-xs text-white font-medium truncate">
                 {appointment.notes}
               </p>
             )}
@@ -166,7 +166,7 @@ const EnhancedAppointmentCard: React.FC<EnhancedAppointmentCardProps> = ({
         {/* Series Indicator */}
         {appointment.seriesId && (
           <div className="absolute top-2 right-2">
-            <Repeat className="w-3 h-3 text-muted-foreground" />
+            <Repeat className="w-3 h-3 text-white" />
           </div>
         )}
 
@@ -174,12 +174,7 @@ const EnhancedAppointmentCard: React.FC<EnhancedAppointmentCardProps> = ({
         <div className="absolute bottom-2 right-2">
           <Badge 
             variant="outline" 
-            className="text-xs px-1.5 py-0.5"
-            style={{ 
-              borderColor: therapistColor[300],
-              color: therapistColor[700],
-              backgroundColor: therapistColor[50]
-            }}
+            className="text-xs px-1.5 py-0.5 bg-white/90 text-slate-800 border-white"
           >
             {appointment.therapistName}
           </Badge>

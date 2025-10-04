@@ -56,18 +56,29 @@ export async function exemploAgendamentoComCompliance() {
     patient: {
       id: 'patient_123',
       name: 'João Silva',
+      cpf: '123.456.789-00',
+      birthDate: '1989-01-15',
       age: 35,
       phone: '11999999999',
       email: 'joao@email.com',
+      emergencyContact: {
+        name: 'Maria Silva',
+        phone: '11988888888'
+      },
       address: {
         street: 'Rua das Flores, 123',
         city: 'São Paulo',
         state: 'SP',
         zip: '01234-567'
       },
+      status: 'Active' as any,
+      lastVisit: '2024-01-10',
+      registrationDate: '2023-01-15',
       gender: 'M',
       insuranceType: 'private',
-      avatarUrl: 'https://i.pravatar.cc/150?u=patient_123'
+      avatarUrl: 'https://i.pravatar.cc/150?u=patient_123',
+      consentGiven: true,
+      whatsappConsent: 'opt-in' as const
     },
     appointmentType: AppointmentType.Evaluation,
     preferredDate: new Date('2024-01-15'),

@@ -207,9 +207,9 @@ const ImprovedAppointmentCard: React.FC<ImprovedAppointmentCardProps> = ({
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
             className={cn(
-              "absolute left-1 right-1 p-2 rounded-lg text-white z-10 cursor-pointer transition-all overflow-hidden flex flex-col group border-l-4 shadow-sm",
+              "absolute left-1 right-1 p-2 rounded-lg text-white z-10 cursor-pointer transition-all overflow-hidden flex flex-col group border-l-4 shadow-md font-semibold",
               style,
-              (isCompleted || isCancelled) && 'opacity-60 hover:opacity-100',
+              (isCompleted || isCancelled) && 'bg-gray-600 hover:bg-gray-700',
               isBeingDragged && 'opacity-50 ring-2 ring-sky-400'
             )}
             style={{ top: `${top}px`, height: `${height}px`, minHeight: '32px' }}
@@ -218,11 +218,11 @@ const ImprovedAppointmentCard: React.FC<ImprovedAppointmentCardProps> = ({
               <p className={cn("font-bold text-sm leading-tight", isCancelled && "line-through")}>
                 {appointment.patientName}
               </p>
-              <p className="text-xs opacity-90 truncate">{appointment.type}</p>
+              <p className="text-xs text-white font-medium truncate">{appointment.type}</p>
             </div>
             {appointment.seriesId && (
               <div className="flex-shrink-0 mt-auto text-right">
-                <Repeat className="w-3 h-3 text-white/70" />
+                <Repeat className="w-3 h-3 text-white" />
               </div>
             )}
           </div>

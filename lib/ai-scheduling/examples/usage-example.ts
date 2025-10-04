@@ -69,18 +69,29 @@ export async function exemploAgendamentoIA() {
     patient: {
       id: 'patient_123',
       name: 'João Silva',
+      cpf: '123.456.789-00',
+      birthDate: '1989-01-15',
       age: 35,
       phone: '11999999999',
       email: 'joao@email.com',
+      emergencyContact: {
+        name: 'Maria Silva',
+        phone: '11988888888'
+      },
       address: {
         street: 'Rua das Flores, 123',
         city: 'São Paulo',
         state: 'SP',
         zip: '01234-567'
       },
+      status: 'Active' as any,
+      lastVisit: '2024-01-10',
+      registrationDate: '2023-01-15',
       gender: 'M',
       insuranceType: 'private',
-      avatarUrl: 'https://i.pravatar.cc/150?u=patient_123'
+      avatarUrl: 'https://i.pravatar.cc/150?u=patient_123',
+      consentGiven: true,
+      whatsappConsent: 'opt-in' as const
     },
     appointmentType: APPOINTMENT_TYPES.EVALUATION,
     preferredDate: new Date('2024-01-15'),
@@ -361,14 +372,14 @@ export async function exemploWebhookWhatsApp() {
   console.log('🔗 Exemplo 6: Webhook WhatsApp');
   
   const webhookEvent = {
-    object: 'whatsapp_business_account',
+    object: 'whatsapp_business_account' as const,
     entry: [
       {
         id: 'entry_123',
         changes: [
           {
             value: {
-              messaging_product: 'whatsapp',
+              messaging_product: 'whatsapp' as const,
               metadata: {
                 display_phone_number: '5511999999999',
                 phone_number_id: 'phone_number_123'
@@ -393,7 +404,7 @@ export async function exemploWebhookWhatsApp() {
                 }
               ]
             },
-            field: 'messages'
+            field: 'messages' as const
           }
         ]
       }

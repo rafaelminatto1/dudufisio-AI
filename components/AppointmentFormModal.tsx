@@ -23,7 +23,7 @@ interface AppointmentFormModalProps {
   onDelete?: (id: string, seriesId?: string) => Promise<boolean>;
   appointment?: Appointment;
   appointmentToEdit?: Appointment;
-  initialData?: { date: Date, therapistId?: string };
+  initialData?: { date: Date, therapistId?: string, patientId?: string };
   patients?: Patient[];
   therapists?: Therapist[];
   allAppointments?: Appointment[];
@@ -63,7 +63,13 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             setSlotTime(format(appointmentToEdit.startTime, 'HH:mm'));
             setRecurrenceRule(appointmentToEdit.recurrenceRule);
         } else {
-            setSelectedPatient(null);
+            // Se temos initialData com patientId (vindo da lista de espera), pré-selecionar o paciente
+            if (initialData && 'patientId' in initialData && initialData.patientId) {
+                const patient = patients.find(p => p.id === initialData.patientId);
+                setSelectedPatient(patient || null);
+            } else {
+                setSelectedPatient(null);
+            }
             setAppointmentType(AppointmentType.Session);
             setDuration(60);
             setNotes('');

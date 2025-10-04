@@ -22,7 +22,7 @@ interface PatientDashboardProps {
   patientId: PatientId;
 }
 
-export const PatientDashboard: React.FC<PatientDashboardProps> = ({ patientId }) => {
+const PatientDashboard: React.FC<PatientDashboardProps> = ({ patientId }) => {
   const [dashboardData, setDashboardData] = useState<PatientDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -391,3 +391,5 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({ patientId })
     </div>
   );
 };
+
+export default PatientDashboard;

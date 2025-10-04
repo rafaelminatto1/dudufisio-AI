@@ -1,8 +1,8 @@
 // Advanced Template Engine with Handlebars
 // Provides template compilation, caching, and context-aware rendering
 
-// Optional import - install handlebars if using template engine
-// import Handlebars from 'handlebars';
+// Using mock for Handlebars
+import Handlebars from '../mocks/handlebars-mock';
 type HandlebarsTemplateDelegate = (context: any) => string;
 import {
   Message,

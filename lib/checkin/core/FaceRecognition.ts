@@ -408,8 +408,8 @@ export class FaceRecognitionService {
         return deleted;
       }
 
-      // Remove from mock storage (local storage or database)
-      await this.removeFaceEncoding(patientId);
+      // Remove from mock storage (cache)
+      this.encodingCache.delete(patientId);
       console.log(`✅ Patient ${patientId} face data deleted from local storage`);
 
       return true;

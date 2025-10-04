@@ -9,7 +9,7 @@ import {
 interface AnalyticsEvent {
   id: string;
   eventType: string;
-  eventCategory: 'checkin' | 'portal' | 'notification' | 'exercise' | 'error';
+  eventCategory: 'checkin' | 'portal' | 'notification' | 'exercise' | 'error' | 'system' | 'offline';
   patientId?: PatientId;
   sessionId?: string;
   deviceId?: DeviceId;

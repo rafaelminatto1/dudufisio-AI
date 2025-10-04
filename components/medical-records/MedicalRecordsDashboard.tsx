@@ -48,7 +48,7 @@ interface ClinicalDocument {
   status: 'draft' | 'signed' | 'archived';
 }
 
-export function MedicalRecordsDashboard() {
+export default function MedicalRecordsDashboard() {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [selectedDocument, setSelectedDocument] = useState<ClinicalDocument | null>(null);
   const [activeTab, setActiveTab] = useState('overview');

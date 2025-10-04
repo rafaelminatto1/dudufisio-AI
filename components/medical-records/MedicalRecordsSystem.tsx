@@ -16,7 +16,7 @@ import {
   Clock,
   AlertTriangle
 } from 'lucide-react';
-import { MedicalRecordsDashboard } from './MedicalRecordsDashboard';
+import MedicalRecordsDashboard from './MedicalRecordsDashboard';
 import { ClinicalTemplatesManager } from './ClinicalTemplatesManager';
 import { DigitalSignatureManager } from './DigitalSignatureManager';
 import { ClinicalReportsGenerator } from './ClinicalReportsGenerator';

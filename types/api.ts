@@ -297,7 +297,7 @@ export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES];
 
 // Helper functions for error handling
 export function isApiError(error: unknown): error is ApiError {
-  return error && typeof error === 'object' && 'error' in error && 'message' in error;
+  return Boolean(error && typeof error === 'object' && 'error' in error && 'message' in error);
 }
 
 export function isValidationError(error: unknown): error is ApiError {
@@ -309,7 +309,7 @@ export function isAuthenticationError(error: unknown): error is AuthenticationEr
     ERROR_CODES.AUTH_REQUIRED,
     ERROR_CODES.TOKEN_EXPIRED,
     ERROR_CODES.INVALID_CREDENTIALS
-  ].includes(error.code as string ?? '');
+  ].includes(error.code as 'AUTH_REQUIRED' | 'TOKEN_EXPIRED' | 'INVALID_CREDENTIALS');
 }
 
 export function isAuthorizationError(error: unknown): error is AuthorizationError {

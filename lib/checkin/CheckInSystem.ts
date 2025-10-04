@@ -139,8 +139,8 @@ export class CheckInSystem {
       await this.analytics.trackError(
         'system_initialization',
         'INIT_FAILED',
-        `System initialization failed: ${error}`,
-        { error: error.toString() }
+        `System initialization failed: ${error instanceof Error ? error.message : String(error)}`,
+        { error: error instanceof Error ? error.toString() : String(error) }
       );
 
       throw error;
@@ -264,10 +264,15 @@ export class CheckInSystem {
   }
 
   async sendCustomNotification(patientId: PatientId, title: string, body: string, data?: Record<string, any>) {
-    await this.notificationService.sendImmediate(patientId, {
-      title,
-      body,
-      data: data || {}
+    // sendImmediate is private, use send instead
+    await this.notificationService.send({
+      patientId,
+      notification: {
+        title,
+        body,
+        data: { ...data, type: 'custom' }
+      },
+      priority: 'high'
     });
   }
 

@@ -1,4 +1,4 @@
-import { AuditLogEntry } from '../types';
+import { AuditLogEntry, AuditAction, ResourceType } from '../types';
 import { mockAuditLogs } from '../data/mockData';
 import { observability } from '../lib/observabilityLogger';
 
@@ -9,32 +9,14 @@ import { observability } from '../lib/observabilityLogger';
  * de todas as ações críticas realizadas no sistema
  */
 
-export type AuditAction =
-  // Authentication
-  | 'LOGIN_SUCCESS' | 'LOGIN_ATTEMPT_FAILED' | 'LOGOUT' | 'AUTO_LOGOUT' | 'PASSWORD_CHANGE'
-  // Patient Management
-  | 'CREATE_PATIENT' | 'UPDATE_PATIENT' | 'DELETE_PATIENT' | 'VIEW_PATIENT_RECORD'
-  // Appointment Management
-  | 'CREATE_APPOINTMENT' | 'UPDATE_APPOINTMENT' | 'DELETE_APPOINTMENT' | 'RESCHEDULE_APPOINTMENT'
-  // Financial Operations
-  | 'CREATE_TRANSACTION' | 'UPDATE_TRANSACTION' | 'DELETE_TRANSACTION' | 'VIEW_FINANCIAL_REPORT'
-  // Treatment Management
-  | 'CREATE_TREATMENT' | 'UPDATE_TREATMENT' | 'DELETE_TREATMENT' | 'CREATE_SOAP_NOTE'
-  // Security Actions
-  | 'SECURITY_PASSWORD_CHANGE' | 'SECURITY_LOGIN_SUSPICIOUS' | 'SECURITY_ACCESS_DENIED'
-  // System Actions
-  | 'AI_QUERY' | 'SYSTEM_BACKUP' | 'SYSTEM_RESTORE' | 'ASSIGN_TASK'
-  // Exports and Reports
-  | 'EXPORT_DATA' | 'GENERATE_REPORT' | 'VIEW_AUDIT_LOG'
-  // Settings and Preferences
-  | 'UPDATE_NOTIFICATION_PREFERENCES' | 'UPDATE_USER_SETTINGS';
+// Using centralized AuditAction type from @/types
 
 export interface CreateAuditLogParams {
   user: string;
   action: AuditAction;
   details: string;
   resourceId?: string;
-  resourceType?: 'patient' | 'appointment' | 'treatment' | 'transaction' | 'user' | 'settings';
+  resourceType?: ResourceType;
   metadata?: Record<string, any>;
   ipAddress?: string;
 }

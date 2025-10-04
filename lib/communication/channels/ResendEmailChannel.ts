@@ -53,7 +53,7 @@ export class ResendEmailChannel extends BaseChannel {
   readonly priority = 60; // Medium priority
   readonly maxRetries = 3;
 
-  private resendService: ResendService;
+  private resendService!: ResendService;
 
   constructor(
     config: ResendEmailConfig,

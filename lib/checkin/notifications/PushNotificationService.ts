@@ -148,6 +148,11 @@ export class PushNotificationService {
     console.log(`Appointment reminder scheduled for patient ${patientId} at ${scheduledTime.toISOString()}`);
   }
 
+  // Public send method for external use
+  async send(params: { patientId: PatientId; notification: PushNotification; priority?: string }): Promise<void> {
+    await this.sendImmediate(params.patientId, params.notification);
+  }
+
   async sendCheckInConfirmation(patientId: PatientId, queuePosition: number, estimatedWaitTime: number): Promise<void> {
     const notification: PushNotification = {
       title: 'Check-in Realizado com Sucesso',

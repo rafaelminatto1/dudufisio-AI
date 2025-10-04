@@ -147,36 +147,36 @@ const MultiTherapistAppointmentCard: React.FC<{
 
   const getAppointmentStyle = (color: string, status: AppointmentStatus) => {
     const baseStyles = {
-      purple: 'bg-purple-600 border-purple-700 hover:bg-purple-700 shadow-sm',
-      emerald: 'bg-emerald-600 border-emerald-700 hover:bg-emerald-700 shadow-sm',
-      blue: 'bg-blue-600 border-blue-700 hover:bg-blue-700 shadow-sm',
-      amber: 'bg-amber-600 border-amber-700 hover:bg-amber-700 shadow-sm',
-      red: 'bg-red-600 border-red-700 hover:bg-red-700 shadow-sm',
-      indigo: 'bg-indigo-600 border-indigo-700 hover:bg-indigo-700 shadow-sm',
-      teal: 'bg-teal-600 border-teal-700 hover:bg-teal-700 shadow-sm',
-      sky: 'bg-sky-600 border-sky-700 hover:bg-sky-700 shadow-sm',
+      purple: 'bg-purple-600 hover:bg-purple-700 shadow-md',
+      emerald: 'bg-emerald-600 hover:bg-emerald-700 shadow-md',
+      blue: 'bg-blue-600 hover:bg-blue-700 shadow-md',
+      amber: 'bg-amber-600 hover:bg-amber-700 shadow-md',
+      red: 'bg-red-600 hover:bg-red-700 shadow-md',
+      indigo: 'bg-indigo-600 hover:bg-indigo-700 shadow-md',
+      teal: 'bg-teal-600 hover:bg-teal-700 shadow-md',
+      sky: 'bg-sky-600 hover:bg-sky-700 shadow-md',
     };
 
-    // Map status enum values to CSS classes
+    // Map status enum values to CSS classes - sem transparência
     const getStatusStyle = (status: AppointmentStatus): string => {
       switch (status) {
         case AppointmentStatus.Scheduled:
-          return ''; // Default style
+          return ''; // Default style - cores vivas
         case AppointmentStatus.Completed:
-          return 'opacity-80';
+          return 'bg-green-600 hover:bg-green-700'; // Verde vibrante para concluídos
         case AppointmentStatus.Canceled:
-          return 'opacity-60 bg-slate-500 border-slate-600';
+          return 'bg-gray-600 hover:bg-gray-700'; // Cinza sólido para cancelados
         case AppointmentStatus.NoShow:
-          return 'opacity-70 bg-orange-500 border-orange-600';
+          return 'bg-orange-600 hover:bg-orange-700'; // Laranja vibrante para faltas
         default:
           return '';
       }
     };
 
-    const colorStyle = baseStyles[color as keyof typeof baseStyles] || 'bg-slate-600 border-slate-700 hover:bg-slate-700 shadow-sm';
+    const colorStyle = baseStyles[color as keyof typeof baseStyles] || 'bg-slate-600 hover:bg-slate-700 shadow-md';
     const statusStyle = getStatusStyle(status);
 
-    return `${colorStyle} ${statusStyle}`;
+    return statusStyle || colorStyle;
   };
 
   return (
@@ -188,7 +188,7 @@ const MultiTherapistAppointmentCard: React.FC<{
         onDragStart={(e) => onDragStart(e, appointment)}
         onDragEnd={onDragEnd}
         className={cn(
-          "absolute p-1 rounded-md text-white cursor-pointer transition-all overflow-hidden flex flex-col border-l-2 hover:shadow-md hover:scale-[1.01]",
+          "absolute p-1 rounded-md text-white cursor-pointer transition-all overflow-hidden flex flex-col border-l-2 hover:shadow-lg hover:scale-[1.02] font-semibold",
           getAppointmentStyle(appointment.therapistColor, appointment.status),
           isBeingDragged && 'opacity-50 ring-2 ring-blue-400 scale-105'
         )}
@@ -210,7 +210,7 @@ const MultiTherapistAppointmentCard: React.FC<{
               <div className="w-2 h-2 bg-green-300 rounded-full ml-1 flex-shrink-0"></div>
             )}
           </div>
-          <div className="text-xs opacity-95 leading-tight font-mono">
+          <div className="text-xs leading-tight font-mono text-white font-bold">
             {format(appointment.startTime, 'HH:mm')}
           </div>
         </div>
@@ -305,27 +305,34 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
 
       {/* Main calendar grid */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Time column - Compact design */}
-        <div className="w-20 flex-shrink-0 border-r bg-slate-50/50 ml-2">
-          <div className="h-8 text-center text-xs font-semibold text-slate-600 py-1">Hora</div>
+        {/* Time column - Professional design */}
+        <div className="w-20 flex-shrink-0 border-r border-slate-200 bg-slate-50/30 ml-2">
+          <div className="h-8 text-center text-xs font-semibold text-slate-700 py-1 bg-slate-100/50">Hora</div>
           {timeSlots.map(time => (
-            <div key={time} className="h-8 text-right pr-4 text-xs text-slate-500 font-medium flex items-center border-b border-slate-200">
+            <div key={time} className="h-8 text-right pr-4 text-xs text-slate-600 font-medium flex items-center border-b border-slate-100">
               {time.endsWith('00') ? time : ''}
             </div>
           ))}
         </div>
 
-        {/* Days grid - Improved design */}
-        <div className="flex-1 grid grid-cols-6 gap-0.5 bg-slate-200 overflow-auto scroll-smooth ml-2" data-testid="calendar-grid">
+        {/* Days grid - Professional design */}
+        <div className="flex-1 grid grid-cols-6 gap-0.5 bg-slate-100/50 overflow-auto scroll-smooth ml-2" data-testid="calendar-grid">
           {weekDays.map((day) => {
             const dayAppointments = appointments.filter(app => isSameDay(app.startTime, day));
             const groupedAppointments = groupOverlappingAppointments(dayAppointments);
 
             return (
-              <div key={day.toISOString()} className="bg-white relative">
-                {/* Time lines for each hour */}
+              <div key={day.toISOString()} className="bg-white relative shadow-sm">
+                {/* Time lines for each hour - Subtle and professional */}
                 {timeSlots.map(time => (
-                  <div key={time} className="absolute w-full border-b border-slate-200" style={{ top: `${(parseInt(time.split(':')[0]) - START_HOUR) * 60 * PIXELS_PER_MINUTE}px`, height: '1px' }}></div>
+                  <div 
+                    key={time} 
+                    className={cn(
+                      "absolute w-full border-b transition-colors",
+                      time.endsWith('00') ? "border-slate-200" : "border-slate-100"
+                    )} 
+                    style={{ top: `${(parseInt(time.split(':')[0]) - START_HOUR) * 60 * PIXELS_PER_MINUTE}px`, height: '1px' }}
+                  ></div>
                 ))}
 
                 {/* Time slots with improved drop zones */}
@@ -335,7 +342,7 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                     {therapists.slice(0, 3).map((therapist) => (
                       <div
                         key={therapist.id}
-                        className="border-r border-slate-300 last:border-r-0"
+                        className="border-r border-slate-200 last:border-r-0 hover:bg-slate-50/50 transition-colors"
                         onDragOver={onDragOver}
                         onDrop={(e) => onDrop(e, day, therapist.id)}
                       >
@@ -343,8 +350,9 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                           <div
                             key={time}
                             className={cn(
-                              "border-t border-slate-100 hover:bg-blue-50 transition-colors cursor-pointer",
-                              time.endsWith('00') ? "border-slate-200" : "border-slate-100"
+                              "border-t border-slate-100 hover:bg-blue-50/50 transition-colors cursor-pointer group",
+                              time.endsWith('00') ? "border-slate-200" : "border-slate-100",
+                              "hover:shadow-sm"
                             )}
                             style={{
                               height: `${SLOT_DURATION * PIXELS_PER_MINUTE}px`,

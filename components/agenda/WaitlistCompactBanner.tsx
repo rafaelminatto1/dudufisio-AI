@@ -1,22 +1,27 @@
 import React, { useState } from 'react';
-import { Users, Plus, Eye } from 'lucide-react';
+import { Users, Plus, Eye, Clock, Calendar } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { WaitlistEntry, Patient } from '../../types';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { cn } from '../../lib/utils';
 
 interface WaitlistCompactBannerProps {
   waitlistEntries: WaitlistEntry[];
   patients: Patient[];
   onAddToWaitlist?: () => void;
   onViewWaitlist?: () => void;
+  onScheduleFromWaitlist?: (entry: WaitlistEntry) => void;
 }
 
 const WaitlistCompactBanner: React.FC<WaitlistCompactBannerProps> = ({
   waitlistEntries,
   patients,
   onAddToWaitlist,
-  onViewWaitlist
+  onViewWaitlist,
+  onScheduleFromWaitlist
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -25,17 +30,17 @@ const WaitlistCompactBanner: React.FC<WaitlistCompactBannerProps> = ({
   }
 
   return (
-    <Card className="mb-2 border-blue-200 bg-blue-50/50">
-      <CardContent className="p-2">
+    <Card className="mb-2 border-slate-200 bg-gradient-to-r from-blue-50/30 to-indigo-50/30 shadow-sm">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-blue-600">
-              <Users className="w-3.5 h-3.5" />
-              <span className="text-xs font-medium">
+            <div className="flex items-center gap-1.5 text-blue-700">
+              <Users className="w-4 h-4" />
+              <span className="text-sm font-semibold">
                 Lista de Espera
               </span>
               {waitlistEntries.length > 0 && (
-                <Badge variant="secondary" className="h-4 px-1.5 text-xs">
+                <Badge variant="secondary" className="h-5 px-2 text-xs bg-blue-100 text-blue-700 border-blue-200">
                   {waitlistEntries.length}
                 </Badge>
               )}
@@ -46,9 +51,9 @@ const WaitlistCompactBanner: React.FC<WaitlistCompactBannerProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="h-5 px-1.5 text-xs text-blue-600 hover:text-blue-700"
+                className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-100/50"
               >
-                <Eye className="w-3 h-3 mr-0.5" />
+                <Eye className="w-3 h-3 mr-1" />
                 {isExpanded ? 'Ocultar' : 'Ver'}
               </Button>
             )}
@@ -59,9 +64,9 @@ const WaitlistCompactBanner: React.FC<WaitlistCompactBannerProps> = ({
               variant="outline"
               size="sm"
               onClick={onAddToWaitlist}
-              className="h-5 px-1.5 text-xs border-blue-300 text-blue-600 hover:bg-blue-100"
+              className="h-6 px-2 text-xs border-blue-300 text-blue-600 hover:bg-blue-100/50 hover:border-blue-400"
             >
-              <Plus className="w-3 h-3 mr-0.5" />
+              <Plus className="w-3 h-3 mr-1" />
               Adicionar
             </Button>
           )}
@@ -71,26 +76,70 @@ const WaitlistCompactBanner: React.FC<WaitlistCompactBannerProps> = ({
           <div className="mt-2 space-y-1.5">
             {waitlistEntries.slice(0, 2).map((entry) => {
               const patient = patients.find(p => p.id === entry.patientId);
+              const hasTimePreferences = entry.preferredStartFrom || entry.preferredStartTo;
+              
               return (
-                <div key={entry.id} className="flex items-center justify-between p-1.5 bg-white rounded border text-xs">
-                  <div className="flex items-center gap-1.5 flex-1">
+                <div 
+                  key={entry.id} 
+                  className={cn(
+                    "flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200 text-xs cursor-pointer transition-all duration-200 shadow-sm",
+                    onScheduleFromWaitlist && "hover:bg-blue-50/50 hover:border-blue-300 hover:shadow-md"
+                  )}
+                  onClick={() => onScheduleFromWaitlist?.(entry)}
+                >
+                  <div className="flex items-center gap-2 flex-1">
                     <div className="w-1.5 h-1.5 bg-orange-400 rounded-full flex-shrink-0"></div>
                     <div className="flex flex-col min-w-0 flex-1">
-                      <span className="font-medium truncate">
+                      <span className="font-medium truncate text-slate-900">
                         {patient?.name || `Paciente #${entry.patientId.slice(-4)}`}
                       </span>
-                      <span className="text-slate-500 text-xs">
-                        {entry.preferredStartFrom ? 
-                          new Date(entry.preferredStartFrom).toLocaleDateString('pt-BR') : 
-                          'Data flexível'
-                        }
-                      </span>
+                      <div className="flex items-center gap-4 text-slate-600 mt-1">
+                        {entry.preferredStartFrom ? (
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="w-3 h-3 text-slate-500" />
+                            <span className="text-xs">
+                              {format(new Date(entry.preferredStartFrom), 'dd/MM/yyyy', { locale: ptBR })}
+                              {entry.preferredStartTo && ` - ${format(new Date(entry.preferredStartTo), 'dd/MM/yyyy', { locale: ptBR })}`}
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="w-3 h-3 text-slate-500" />
+                            <span className="text-xs">Data flexível</span>
+                          </div>
+                        )}
+                        
+                        {hasTimePreferences && (
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-3 h-3 text-slate-500" />
+                            <span className="text-xs">
+                              {entry.preferredStartFrom ? format(new Date(entry.preferredStartFrom), 'HH:mm', { locale: ptBR }) : 'Horário flexível'}
+                              {entry.preferredStartTo && ` - ${format(new Date(entry.preferredStartTo), 'HH:mm', { locale: ptBR })}`}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    {entry.urgency > 3 && (
-                      <Badge variant="destructive" className="h-4 px-1 text-xs flex-shrink-0">
-                        Urgente
-                      </Badge>
-                    )}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      {entry.urgency > 3 && (
+                        <Badge variant="destructive" className="h-5 px-2 text-xs bg-red-100 text-red-700 border-red-200">
+                          Urgente
+                        </Badge>
+                      )}
+                      {onScheduleFromWaitlist && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-100/50"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onScheduleFromWaitlist(entry);
+                          }}
+                        >
+                          Agendar
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );

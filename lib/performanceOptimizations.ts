@@ -1,33 +1,10 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import { createContainer } from 'react-tracked';
 
 // 🚀 Otimizações de Performance baseadas no Context7
 // Implementa as melhores práticas do React Design Patterns
 
-// 🎯 1. React Tracked - Otimização de Re-renders
-interface AppState {
-  user: any;
-  patients: any[];
-  appointments: any[];
-  notifications: any[];
-  settings: any;
-  isLoading: boolean;
-  error: string | null;
-}
-
-const initialState: AppState = {
-  user: null,
-  patients: [],
-  appointments: [],
-  notifications: [],
-  settings: {},
-  isLoading: false,
-  error: null
-};
-
-const useAppState = () => useState(initialState);
-
-export const { Provider: AppStateProvider, useTracked: useTrackedAppState } = createContainer(useAppState);
+// ✅ REMOVIDO: React Tracked - Incompatível com React 18
+// Usando React Context puro para state management
 
 // 🎯 2. Memoização Inteligente de Componentes
 export const withPerformanceOptimization = <P extends object>(
@@ -479,8 +456,6 @@ export const useMemoryOptimization = () => {
 
 // 🎯 Exportações
 export default {
-  AppStateProvider,
-  useTrackedAppState,
   withPerformanceOptimization,
   useDebounce,
   useThrottle,

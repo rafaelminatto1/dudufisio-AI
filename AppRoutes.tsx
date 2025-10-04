@@ -7,7 +7,7 @@ import {
   preloadUserRoleComponents
 } from './lib/lazyLoading';
 import { initializeLazyLoading } from './lib/advancedLazyLoading';
-import { AppStateProvider, PerformanceProfiler } from './lib/performanceOptimizations';
+import { PerformanceProfiler } from './lib/performanceOptimizations';
 import { BrowserRouter } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
@@ -223,22 +223,20 @@ const AppRoutes: React.FC = () => {
                 <DebugProvider>
                     <SupabaseAuthProvider>
                         <AppProvider>
-                            <AppStateProvider>
-                                <PerformanceProfiler 
-                                    id="AppRoutes" 
-                                    onRender={(id, phase, actualDuration) => {
-                                        if (actualDuration > 16) {
-                                            console.warn(`⚠️ Performance issue in ${id}: ${actualDuration}ms`);
-                                        }
-                                    }}
-                                >
-                                    <ToastProvider>
-                                        <AppContent />
-                                        {/* 📡 Indicador de status offline/online */}
-                                        <OfflineIndicator />
-                                    </ToastProvider>
-                                </PerformanceProfiler>
-                            </AppStateProvider>
+                            <PerformanceProfiler
+                                id="AppRoutes"
+                                onRender={(id, phase, actualDuration) => {
+                                    if (actualDuration > 16) {
+                                        console.warn(`⚠️ Performance issue in ${id}: ${actualDuration}ms`);
+                                    }
+                                }}
+                            >
+                                <ToastProvider>
+                                    <AppContent />
+                                    {/* 📡 Indicador de status offline/online */}
+                                    <OfflineIndicator />
+                                </ToastProvider>
+                            </PerformanceProfiler>
                         </AppProvider>
                     </SupabaseAuthProvider>
                 </DebugProvider>

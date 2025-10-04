@@ -288,6 +288,29 @@ export default function AgendaPage() {
         showToast('Visualização completa da lista de espera em desenvolvimento', 'info');
     };
 
+    const handleScheduleFromWaitlist = (entry: WaitlistEntry) => {
+        const patient = patients.find(p => p.id === entry.patientId);
+        if (!patient) {
+            showToast('Paciente não encontrado', 'error');
+            return;
+        }
+
+        // Preencher dados iniciais do formulário baseado na lista de espera
+        const initialData: { date: Date; therapistId: string; patientId: string } = {
+            date: entry.preferredStartFrom ? new Date(entry.preferredStartFrom) : new Date(),
+            therapistId: entry.therapistId || '',
+            patientId: entry.patientId
+        };
+
+        setInitialFormData(initialData);
+        setIsFormOpen(true);
+        
+        // Fechar modal da lista de espera se estiver aberto
+        setIsWaitlistModalOpen(false);
+        
+        showToast(`Abrindo agendamento para ${patient.name}`, 'info');
+    };
+
     const fullSelectedPatient = useMemo(() => patients.find(p => p.id === selectedAppointment?.patientId), [patients, selectedAppointment]);
     const selectedTherapistData = useMemo(() => therapists.find(t => t.id === selectedAppointment?.therapistId), [therapists, selectedAppointment]);
     const highlightedPatient = useMemo(
@@ -468,6 +491,7 @@ export default function AgendaPage() {
                                 patients={patients}
                                 onAddToWaitlist={() => setIsWaitlistModalOpen(true)}
                                 onViewWaitlist={handleViewWaitlist}
+                                onScheduleFromWaitlist={handleScheduleFromWaitlist}
                             />
                         </div>
 

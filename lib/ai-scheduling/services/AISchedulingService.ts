@@ -407,7 +407,7 @@ export class AISchedulingService {
       title: `Consulta de ${request.appointmentType}`,
       startTime: request.preferredTime || new Date(),
       endTime: new Date((request.preferredTime || new Date()).getTime() + request.duration * 60 * 1000),
-      status: 'scheduled' as const,
+      status: 'Agendado' as any,
       type: request.appointmentType as any,
       value: 120,
       paymentStatus: 'pending' as const,

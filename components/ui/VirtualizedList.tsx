@@ -112,7 +112,7 @@ interface VirtualizedListProps {
 }
 
 // Componente de Lista Virtualizada
-export const VirtualizedList = (props: VirtualizedListProps) => {
+const VirtualizedList = (props: VirtualizedListProps) => {
   const {
     items,
     itemHeight,
@@ -282,3 +282,5 @@ export const useOptimizedList = (
     totalCount: items.length
   };
 };
+
+export default VirtualizedList;
