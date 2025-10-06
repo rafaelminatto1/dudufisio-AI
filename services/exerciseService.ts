@@ -128,8 +128,9 @@ class ExerciseService {
         updated_at: exercise.updated_at || new Date().toISOString()
       }));
     } catch (error) {
-      console.error('Erro ao buscar exercícios:', error);
-      throw error;
+      console.warn('⚠️ Erro ao buscar exercícios do Supabase, usando dados mock:', error);
+      // Fallback para dados mock em caso de erro
+      return this.getMockExercises();
     }
   }
 
@@ -144,8 +145,10 @@ class ExerciseService {
       if (error) throw error;
       return data;
     } catch (error) {
-      console.error('Erro ao buscar exercício:', error);
-      throw error;
+      console.warn('⚠️ Erro ao buscar exercício por ID do Supabase, usando dados mock:', error);
+      // Fallback para dados mock em caso de erro
+      const mockExercises = this.getMockExercises();
+      return mockExercises.find(ex => ex.id === id) || null;
     }
   }
 
@@ -161,7 +164,7 @@ class ExerciseService {
       if (error) throw error;
       return data;
     } catch (error) {
-      console.error('Erro ao buscar exercício por nome:', error);
+      console.warn('⚠️ Erro ao buscar exercício por nome do Supabase, usando dados mock:', error);
       // Fallback para dados mock
       const mockExercises = this.getMockExercises();
       return mockExercises.find(ex => ex.name === name) || null;

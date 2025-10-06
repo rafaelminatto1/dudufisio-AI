@@ -4,265 +4,295 @@
     "date": "2025-10-04",
     "prepared_by": "Software Development Manager"
   },
-  "product_overview": "DuduFisio-AI is an integrated management system designed for physiotherapy clinics that blends traditional clinical management functions with Artificial Intelligence assistance to enhance patient care, clinical documentation, and operational management.",
+  "product_overview": "DuduFisio-AI is an integrated management system for physiotherapy clinics that combines traditional clinical management features with Artificial Intelligence assistance to optimize patient care, clinical documentation, and operational management.",
   "core_goals": [
-    "Digitize and automate physiotherapy clinical processes",
-    "Improve clinical documentation quality using AI",
+    "Digitalize and automate physiotherapy clinical processes",
+    "Enhance quality of clinical documentation using AI",
     "Increase operational efficiency and patient satisfaction"
   ],
   "key_features": [
-    "Comprehensive patient management with detailed medical records, interactive body map, and advanced search capabilities",
-    "Robust appointment system with calendar views, conflict prevention, recurring scheduling, and automatic notifications",
-    "Rich clinical documentation with SOAP notes editor, auto-save, customizable templates, and version control",
-    "AI assistant for automatic report generation, treatment protocol suggestions, risk analysis, clinical queries, and economic insights",
-    "Exercise library categorized by specialty with multimedia content, personalized prescriptions, and safety alerts",
-    "Secure patient portal for accessing personal data, prescribed exercises, appointment management, and communication with the clinic",
-    "Interactive dashboards and customizable reports covering operational, clinical, and financial metrics",
-    "Financial management including payments, revenue reports, delinquency tracking, and multiple payment integrations such as PIX",
-    "Inventory and material management with stock control, alerts, and transaction history",
-    "Task management system for activity creation, prioritization, progress tracking, and notifications"
+    "Complete patient management system with personal data, clinical history, and interactive body map",
+    "Advanced scheduling system with multiple views, conflict prevention, recurring appointments, and notifications",
+    "Comprehensive clinical documentation module with rich text editor, auto-save, version history, and customizable templates",
+    "AI Assistant for automatic report generation, treatment protocol suggestions, risk analysis, clinical consultations, and financial insights",
+    "Extensive exercise library with categories, multimedia support, personalized prescription, contraindication alerts, and difficulty levels",
+    "Patient Portal for secure access to personal records, prescribed exercises, appointment scheduling, and communication with the clinic",
+    "Dashboard and Reports providing operational metrics, financial indicators, clinical analytics, and customizable export",
+    "Financial management with payment control, delinquency tracking, and multiple payment integrations",
+    "Inventory management system with stock alerts and movement history",
+    "Task management with prioritization, progress tracking, and notifications",
+    "Teleconsultation system integrated with video calls",
+    "Real-time notification system",
+    "Automated backup and audit logging systems",
+    "Integration with external APIs and legacy systems",
+    "Performance optimizations including lazy loading and PWA support",
+    "Security features including two-factor authentication, role-based access, encryption, and LGPD compliance"
   ],
   "user_flow_summary": [
-    "User authentication and role-based access control to tailor functionalities for Administrators, Physiotherapists, Interns, and Patients",
-    "Patient onboarding capturing personal info, medical history, photos, and interactive body map details",
-    "Scheduling appointments with conflict checks, recurring options, status updates, and notifications",
-    "Clinical documentation creation and editing using rich text editors, templates, versioning, and AI-generated reports",
-    "Exercise prescription via categorized library with multimedia, contraindications, and difficulty levels",
-    "Patient portal access for exercise tracking, viewing medical history, requesting appointments, and clinic communications",
-    "Financial transactions processing with integration to payment services and informed by analytics dashboards",
-    "Management of inventory, tasks, and events with alert systems to optimize clinic operations"
+    "User logs in via secure authentication with role-based access control",
+    "Administrator manages users, financial data, inventory, and system settings",
+    "Physiotherapists access patient records, document clinical sessions, prescribe exercises, and manage schedules",
+    "Patients use the portal to view their records, follow exercise plans, request or view appointments, and communicate with the clinic",
+    "Booking appointments using daily, weekly, or monthly calendar views with automatic conflict checking and notifications",
+    "Clinicians use AI Assistant to generate reports, receive treatment suggestions, and consult clinical queries",
+    "Clinic generates and exports detailed reports and analytics from dashboard",
+    "Manage financial transactions and monitor payment statuses",
+    "Healthcare staff mark body pain points on interactive body map and track evolution"
   ],
   "validation_criteria": [
-    "System supports user registration, profile editing, login sessions with automatic timeouts, and role-based access",
-    "Patient data entry validates CPF uniqueness and supports secure upload of photos and documents",
-    "Appointment system prevents scheduling conflicts, supports recurring appointments, sends notifications, and tracks appointment status",
-    "Clinical documentation includes rich text editing, auto-saving, version history, customizable templates, and AI-generated reports",
-    "AI assistant accurately generates physiotherapy reports, suggests treatment protocols, analyses dropout risks, responds to clinical queries, and provides economic insights",
-    "Exercise library categorization, multimedia management, personalized prescription, alerts for contraindications, and difficulty classification are functional",
-    "Patient portal provides secure login, displays prescribed exercises, medical histories, appointment scheduling, and communication channels",
-    "Reports and dashboards generate operational, financial, and clinical metrics with export options in PDF format",
-    "System performs page loads within 2 seconds, handles multiple simultaneous users, ensures 99.5% uptime, and processes AI queries within 10 seconds",
-    "Data encryption in transit and at rest is implemented, two-factor authentication is enabled, and logs of all changes and access are maintained for compliance with LGPD"
+    "System supports multi-role authentication and session management with timeout",
+    "Patient data validation includes unique CPF and secure photo/document uploads",
+    "Scheduling prevents conflicts, allows recurring events, and sends notifications reliably",
+    "Rich text clinical documentation auto-saves and maintains version history",
+    "AI assistant generates accurate reports with over 95% precision and suggests treatment protocols",
+    "Exercise prescriptions respect contraindications and reflect personalized plans",
+    "Patient portal provides secure access with data privacy adherence and communication capabilities",
+    "Reports export correctly in PDF and data is visually accurate",
+    "Financial system processes payments including PIX and generates financial metrics reliably",
+    "System uptime meets 99.5% availability and handles 100 concurrent users",
+    "Backup runs automatically daily and audit logs are comprehensive and secure",
+    "System is responsive across devices and maintains a load time under 2 seconds"
   ],
   "code_summary": {
     "tech_stack": [
       "TypeScript",
-      "React 18.2.0",
-      "Vite 6.3.6",
-      "Supabase (PostgreSQL)",
+      "React 18/19",
+      "Next.js 14",
+      "Vite",
+      "Supabase",
+      "PostgreSQL",
       "Tailwind CSS",
       "shadcn/ui",
-      "React Hook Form",
-      "Zod",
+      "Radix UI",
+      "React Router DOM",
       "Playwright",
-      "Jest",
-      "Framer Motion",
-      "Recharts",
-      "Lucide React",
-      "Axios",
-      "Google Generative AI",
-      "Stripe",
-      "Resend",
-      "Redis",
-      "Bull",
-      "Nodemailer"
+      "ESLint",
+      "Husky"
     ],
     "features": [
       {
-        "name": "Medical Records System",
-        "description": "Sistema completo de prontuário eletrônico médico com padrões HL7 FHIR, assinatura digital e compliance CFM/COFFITO/LGPD",
+        "name": "Sistema de Autenticação",
+        "description": "Sistema completo de autenticação com Supabase, 2FA, roles e permissões",
+        "files": [
+          "contexts/SupabaseAuthContext.tsx",
+          "pages/auth/LoginPage.tsx",
+          "pages/auth/TwoFactorSetupPage.tsx",
+          "pages/auth/RegisterPage.tsx",
+          "components/auth/AuthProvider.tsx",
+          "components/auth/PermissionGuard.tsx",
+          "components/RoleGuard.tsx"
+        ]
+      },
+      {
+        "name": "Dashboard Principal",
+        "description": "Dashboard completo com métricas, gráficos e navegação baseada em roles",
+        "files": [
+          "pages/CompleteDashboard.tsx",
+          "pages/TherapistDashboard.tsx",
+          "pages/AdminDashboardPage.tsx",
+          "pages/PatientPortalDashboard.tsx",
+          "pages/PartnerPortalDashboard.tsx",
+          "components/dashboard/MetricCard.tsx",
+          "components/dashboard/DashboardFilters.tsx"
+        ]
+      },
+      {
+        "name": "Sistema de Agenda",
+        "description": "Sistema avançado de agendamento com múltiplas visualizações e funcionalidades",
+        "files": [
+          "pages/AgendaPage.tsx",
+          "components/agenda/EnhancedAgendaPage.tsx",
+          "components/agenda/WeeklyView.tsx",
+          "components/agenda/DailyView.tsx",
+          "components/agenda/MonthlyView.tsx",
+          "components/agenda/BookingModal.tsx",
+          "components/agenda/AppointmentDetailPopover.tsx"
+        ]
+      },
+      {
+        "name": "Gestão de Pacientes",
+        "description": "Sistema completo de gestão de pacientes com histórico clínico",
+        "files": [
+          "pages/PatientListPage.tsx",
+          "pages/PatientDetailPage.tsx",
+          "components/PatientFormModal.tsx",
+          "components/PatientTooltip.tsx",
+          "components/ClinicalHistoryTimeline.tsx",
+          "components/pacientes/PatientCard.tsx"
+        ]
+      },
+      {
+        "name": "Sistema de Exercícios",
+        "description": "Biblioteca de exercícios com IA para prescrição inteligente",
+        "files": [
+          "pages/ExerciseLibraryPage.tsx",
+          "components/ExerciseCard.tsx",
+          "components/ExerciseFormModal.tsx",
+          "hooks/useExercises.ts",
+          "lib/ai-prescription/RecommendationEngine.ts"
+        ]
+      },
+      {
+        "name": "Sistema de Prontuário Eletrônico",
+        "description": "Prontuário médico completo com padrões HL7 FHIR e compliance",
         "files": [
           "components/medical-records/MedicalRecordsSystem.tsx",
           "components/medical-records/MedicalRecordsDashboard.tsx",
           "components/medical-records/ClinicalTemplatesManager.tsx",
           "components/medical-records/DigitalSignatureManager.tsx",
-          "components/medical-records/ClinicalReportsGenerator.tsx",
-          "components/medical-records/DocumentViewer.tsx",
-          "hooks/useMedicalRecords.ts"
+          "lib/medical-records/ClinicalDocument.ts",
+          "lib/medical-records/DigitalSignatureService.ts"
         ]
       },
       {
-        "name": "Authentication & Authorization",
-        "description": "Sistema de autenticação e controle de acesso baseado em roles com permissões granulares",
+        "name": "Sistema de Atendimento",
+        "description": "Sistema completo de atendimento clínico com evolução e protocolos",
         "files": [
-          "components/auth/PermissionGuard.tsx",
-          "contexts/AppContext.tsx",
-          "services/userService.ts"
+          "pages/AtendimentoPage.tsx",
+          "pages/SessionPage.tsx",
+          "pages/SessionEvolutionPage.tsx",
+          "components/NewSoapNoteModal.tsx",
+          "components/session/SessionForm.tsx",
+          "components/session/SessionEvolution.tsx"
         ]
       },
       {
-        "name": "Dashboard & Analytics",
-        "description": "Dashboards interativos com métricas de negócio, analytics clínicos e Business Intelligence",
+        "name": "Mapa Corporal Interativo",
+        "description": "Mapa corporal para registro de pontos de dor e avaliação",
         "files": [
-          "pages/CompleteDashboard.tsx",
-          "pages/SimpleDashboard.tsx",
-          "pages/TherapistDashboard.tsx",
+          "components/BodyMap.tsx",
+          "components/InteractiveBodyMap.tsx",
+          "components/BodyPointModal.tsx",
+          "components/PainScale.tsx",
+          "components/PainEvolutionChart.tsx"
+        ]
+      },
+      {
+        "name": "Sistema de Relatórios",
+        "description": "Sistema avançado de relatórios clínicos e financeiros",
+        "files": [
+          "pages/ReportsPage.tsx",
           "pages/AdvancedReportsPage.tsx",
-          "components/dashboard/glance/RecentActivity.tsx",
-          "components/dashboard/glance/TodaysAppointments.tsx",
-          "components/dashboard/glance/PendingTasks.tsx"
+          "pages/ClinicalAnalyticsPage.tsx",
+          "components/reports/ReportGenerator.tsx",
+          "components/reports/ClinicalReportsGenerator.tsx",
+          "components/analytics/ClinicalAnalyticsDashboard.tsx"
         ]
       },
       {
-        "name": "Patient Management",
-        "description": "Gestão completa de pacientes com prontuários, agendamentos e histórico clínico",
+        "name": "Sistema de IA",
+        "description": "Integração com IA para sugestões e análise inteligente",
         "files": [
-          "hooks/usePatients.ts",
-          "services/supabase/patientService.ts",
-          "pages/PatientPortalDashboard.tsx"
+          "components/ai/GroqChat.tsx",
+          "components/ai/XAIChat.tsx",
+          "components/AiAssistant.tsx",
+          "components/acompanhamento/AiSuggestionModal.tsx",
+          "lib/ai-scheduling/SmartSchedulingEngine.ts"
         ]
       },
       {
-        "name": "Appointment System",
-        "description": "Sistema de agendamentos com calendário integrado e gestão de consultas",
+        "name": "Portal do Paciente",
+        "description": "Portal dedicado para pacientes com exercícios e acompanhamento",
         "files": [
-          "services/supabase/appointmentService.ts",
-          "services/supabase/appointmentServiceSupabase.ts",
-          "pages/AtendimentoPage.tsx"
+          "pages/patient-portal/PatientDashboardPage.tsx",
+          "pages/patient-portal/MyExercisesPage.tsx",
+          "pages/patient-portal/MyAppointmentsPage.tsx",
+          "pages/patient-portal/PatientProgressPage.tsx",
+          "components/patient-portal/PatientExerciseCard.tsx"
         ]
       },
       {
-        "name": "Inventory Management",
-        "description": "Gestão de estoque, insumos e controle de materiais com alertas automáticos",
-        "files": [
-          "hooks/useInventory.ts",
-          "hooks/useSupplies.ts",
-          "hooks/useTaskSupplies.ts",
-          "services/inventoryService.ts",
-          "services/suppliesService.ts",
-          "services/taskSupplyService.ts",
-          "pages/InventoryDashboardPage.tsx"
-        ]
-      },
-      {
-        "name": "AI Tools & Analytics",
-        "description": "Ferramentas de IA para geração de laudos, evoluções, planos de tratamento e análise de risco",
-        "files": [
-          "components/ai-tools/ConsolidatedAITools.tsx",
-          "services/aiService.ts",
-          "lib/ai/geminiService.ts"
-        ]
-      },
-      {
-        "name": "Exercise Library",
-        "description": "Biblioteca de exercícios com categorias, dificuldades e prescrições personalizadas",
-        "files": [
-          "hooks/useExercises.ts",
-          "hooks/useExerciseLibrary.ts",
-          "services/exerciseService.ts",
-          "pages/ExerciseLibraryPage.tsx"
-        ]
-      },
-      {
-        "name": "Reporting & Business Intelligence",
-        "description": "Sistema de relatórios avançados com templates dinâmicos e métricas de BI",
-        "files": [
-          "hooks/useReporting.ts",
-          "hooks/useReports.ts",
-          "services/reportingService.ts",
-          "services/reportsService.ts"
-        ]
-      },
-      {
-        "name": "Financial Management",
-        "description": "Gestão financeira com pagamentos, cobranças e relatórios de receita",
-        "files": [
-          "services/paymentService.ts",
-          "components/financial/FinancialDashboard.tsx",
-          "pages/PartnerPortalDashboard.tsx"
-        ]
-      },
-      {
-        "name": "Notification System",
-        "description": "Sistema de notificações e alertas com configurações personalizáveis",
-        "files": [
-          "hooks/useNotifications.ts",
-          "hooks/useAlerts.ts",
-          "services/alertService.ts",
-          "services/notificationService.ts"
-        ]
-      },
-      {
-        "name": "Teleconsultation",
-        "description": "Sistema de teleconsulta com integração WebRTC e gestão de consultas online",
+        "name": "Sistema de Teleconsulta",
+        "description": "Sistema de teleconsulta integrado com videochamadas",
         "files": [
           "pages/TeleconsultaPage.tsx",
-          "services/teleconsultationService.ts"
+          "components/teleconsulta/VideoCallInterface.tsx",
+          "components/teleconsulta/TeleconsultaModal.tsx",
+          "components/teleconsulta/PatientVideoInterface.tsx"
         ]
       },
       {
-        "name": "User Interface Components",
-        "description": "Componentes de UI reutilizáveis baseados em shadcn/ui com Tailwind CSS",
+        "name": "Sistema Financeiro",
+        "description": "Gestão financeira completa com métricas e relatórios",
         "files": [
-          "components/ui/button.tsx",
-          "components/ui/card.tsx",
-          "components/ui/tabs.tsx",
-          "components/ui/input.tsx",
-          "components/ui/select.tsx",
-          "components/ui/dialog.tsx",
-          "components/ui/toast.tsx",
-          "components/ui/badge.tsx",
-          "components/ui/avatar.tsx",
-          "components/ui/progress.tsx"
+          "pages/FinancialDashboardPage.tsx",
+          "pages/FinancialPage.tsx",
+          "components/financial/FinancialMetricsCards.tsx",
+          "components/financial/RevenueEvolutionChart.tsx",
+          "components/financial/PaymentTracking.tsx"
         ]
       },
       {
-        "name": "Layout & Navigation",
-        "description": "Layout responsivo com sidebar, breadcrumbs e navegação baseada em roles",
+        "name": "Sistema de Inventário",
+        "description": "Gestão de equipamentos e materiais da clínica",
         "files": [
-          "components/Sidebar.tsx",
-          "components/Layout.tsx",
-          "components/Breadcrumbs.tsx",
-          "layouts/MainLayout.tsx"
+          "pages/InventoryDashboardPage.tsx",
+          "pages/InventoryPage.tsx",
+          "components/inventory/InventoryDashboard.tsx",
+          "components/inventory/EquipmentTracker.tsx",
+          "components/inventory/SupplyManager.tsx"
         ]
       },
       {
-        "name": "Backup & Maintenance",
-        "description": "Sistema de backup automatizado e ferramentas de manutenção",
+        "name": "Sistema de Backup",
+        "description": "Sistema automatizado de backup e recuperação de dados",
         "files": [
-          "hooks/useBackup.ts",
+          "pages/BackupManagementPage.tsx",
+          "components/backup/BackupDashboard.tsx",
           "services/backupService.ts",
-          "scripts/maintenance.js"
+          "lib/backupManager.ts"
         ]
       },
       {
-        "name": "Body Map Pro",
-        "description": "Ferramenta de mapeamento corporal para localização de dor e lesões",
+        "name": "Sistema de Auditoria",
+        "description": "Auditoria completa de ações e acessos do sistema",
         "files": [
-          "hooks/useBodyMapPro.ts",
-          "components/body-map/BodyMapPro.tsx"
+          "pages/AuditLogPage.tsx",
+          "components/audit/AuditNotification.tsx",
+          "services/auditService.ts",
+          "lib/auditLogger.ts"
         ]
       },
       {
-        "name": "Event Management",
-        "description": "Sistema de gestão de eventos, workshops e atividades",
+        "name": "Sistema de Notificações",
+        "description": "Sistema de notificações em tempo real",
         "files": [
-          "pages/EventDetailPage.tsx",
-          "services/eventService.ts"
+          "components/NotificationBell.tsx",
+          "components/alerts/AlertCenter.tsx",
+          "components/alerts/NotificationSettings.tsx",
+          "contexts/ToastContext.tsx"
         ]
       },
       {
-        "name": "Material Management",
-        "description": "Gestão de materiais e equipamentos com controle de custos",
+        "name": "Sistema de Integração",
+        "description": "Integrações com serviços externos e APIs",
         "files": [
-          "pages/MaterialDetailPage.tsx",
-          "services/materialService.ts"
+          "pages/IntegrationsTestPage.tsx",
+          "pages/BIIntegrationTestPage.tsx",
+          "services/emailService.ts",
+          "services/whatsappService.ts",
+          "services/stripeService.ts"
         ]
       },
       {
-        "name": "Medical Reports",
-        "description": "Geração de relatórios médicos com templates personalizáveis",
+        "name": "Sistema de Performance",
+        "description": "Otimizações de performance e lazy loading",
         "files": [
-          "pages/MedicalReportPage.tsx",
-          "services/medicalReportService.ts"
+          "lib/lazyLoading.ts",
+          "lib/advancedLazyLoading.ts",
+          "lib/performanceOptimizations.ts",
+          "lib/serviceWorkerManager.ts",
+          "components/LazyImage.tsx"
         ]
       },
       {
-        "name": "Performance Optimization",
-        "description": "Otimizações de performance com lazy loading e virtual scrolling",
+        "name": "Sistema de Configurações",
+        "description": "Configurações globais e personalização do sistema",
         "files": [
-          "lib/lazyLoading.tsx",
-          "lib/performanceOptimization.tsx"
+          "pages/SettingsPage.tsx",
+          "pages/AgendaSettingsPage.tsx",
+          "components/settings/SettingsPanel.tsx",
+          "contexts/AppContext.tsx"
         ]
       }
     ]

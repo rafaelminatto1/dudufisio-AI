@@ -68,7 +68,6 @@ class AuditService {
     observability.audit.info('audit.log.created', {
       action: logEntry.action,
       user: logEntry.user,
-      action: logEntry.action,
       details: logEntry.details,
       timestamp: logEntry.timestamp
     });
@@ -81,10 +80,10 @@ class AuditService {
    */
   public getLogs(filters?: {
     user?: string;
-    action?: string;
+    action?: AuditAction;
     dateFrom?: Date;
     dateTo?: Date;
-    resourceType?: string;
+    resourceType?: ResourceType;
   }): AuditLogEntry[] {
     let filteredLogs = [...this.logs];
 
@@ -96,7 +95,7 @@ class AuditService {
         );
       }
 
-      if (filters.action && filters.action !== 'All') {
+      if (filters.action) {
         filteredLogs = filteredLogs.filter(log => log.action === filters.action);
       }
 
@@ -110,7 +109,7 @@ class AuditService {
 
       if (filters.resourceType) {
         filteredLogs = filteredLogs.filter(log =>
-          (log as any).resourceType === filters.resourceType
+          log.resourceType === filters.resourceType
         );
       }
     }

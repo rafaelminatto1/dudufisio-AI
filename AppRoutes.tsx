@@ -1,4 +1,4 @@
-import React, { lazy, useState, useEffect, Component, ErrorInfo, ReactNode } from 'react';
+import React, { lazy, useState, useEffect, Component, ErrorInfo, ReactNode, memo, useMemo, useCallback } from 'react';
 import { 
   CompleteDashboard, 
   PatientPortalDashboard, 
@@ -8,7 +8,7 @@ import {
 } from './lib/lazyLoading';
 import { initializeLazyLoading } from './lib/advancedLazyLoading';
 import { PerformanceProfiler } from './lib/performanceOptimizations';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
 import { ToastProvider } from './contexts/ToastContext';
@@ -108,12 +108,12 @@ class AppErrorBoundary extends Component<
 const IntegrationsTestPage = lazy(() => import('./pages/IntegrationsTestPage'));
 const BIIntegrationTestPage = lazy(() => import('./pages/BIIntegrationTestPage'));
 
-const AppContent: React.FC = () => {
+const AppContent: React.FC = memo(() => {
     const { user, isAuthenticated, loading, logout } = useSupabaseAuth();
     const [show2FASetup, setShow2FASetup] = useState(false);
 
-    // 🚀 Inicializa Service Worker (apenas em produção)
-    useEffect(() => {
+    // 🚀 Inicializa Service Worker (apenas em produção) - memoizado
+    const initializeServiceWorkerCallback = useCallback(() => {
         if (import.meta.env.PROD) {
             initializeServiceWorker().then((registered) => {
                 if (registered) {
@@ -127,8 +127,12 @@ const AppContent: React.FC = () => {
         }
     }, []);
 
-    // 🚀 Preloading inteligente de componentes
     useEffect(() => {
+        initializeServiceWorkerCallback();
+    }, [initializeServiceWorkerCallback]);
+
+    // 🚀 Preloading inteligente de componentes - memoizado
+    const preloadComponentsCallback = useCallback(() => {
         preloadCriticalComponents();
         initializeLazyLoading();
         
@@ -137,27 +141,45 @@ const AppContent: React.FC = () => {
         }
     }, [user?.role]);
 
-    // 📊 Log estado de autenticação para debug
     useEffect(() => {
-        console.log('🔐 Auth State:', { 
-            isAuthenticated, 
-            hasUser: !!user, 
-            loading,
-            userRole: user?.role,
-            userId: user?.id
-        });
-    }, [isAuthenticated, user, loading]);
+        preloadComponentsCallback();
+    }, [preloadComponentsCallback]);
+
+    // 📊 Log estado de autenticação para debug - memoizado
+    const authState = useMemo(() => ({
+        isAuthenticated, 
+        hasUser: !!user, 
+        loading,
+        userRole: user?.role,
+        userId: user?.id
+    }), [isAuthenticated, user, loading]);
+
+    useEffect(() => {
+        console.log('🔐 Auth State:', authState);
+    }, [authState]);
+
+    // Memoizar componentes de loading
+    const LoadingScreen = useMemo(() => (
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Carregando...</p>
+            </div>
+        </div>
+    ), []);
+
+    const DashboardLoadingScreen = useMemo(() => (
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Carregando dashboard...</p>
+            </div>
+        </div>
+    ), []);
 
     // Loading state
     if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Carregando...</p>
-                </div>
-            </div>
-        );
+        return LoadingScreen;
     }
 
     // 2FA Setup flow
@@ -170,7 +192,8 @@ const AppContent: React.FC = () => {
         );
     }
 
-    const renderDashboard = () => {
+    // Memoizar renderDashboard para evitar re-renderizações desnecessárias
+    const renderDashboard = useCallback(() => {
         if (!user) return null;
 
         // Route to appropriate dashboard based on user role
@@ -184,18 +207,11 @@ const AppContent: React.FC = () => {
             default:
                 return <CompleteDashboard user={user} onLogout={logout} />;
         }
-    };
+    }, [user, logout]);
 
     if (isAuthenticated && user) {
         return (
-            <React.Suspense fallback={
-                <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-                    <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-                        <p className="text-gray-600">Carregando dashboard...</p>
-                    </div>
-                </div>
-            }>
+            <React.Suspense fallback={DashboardLoadingScreen}>
                 {renderDashboard()}
             </React.Suspense>
         );
@@ -209,12 +225,22 @@ const AppContent: React.FC = () => {
             }}
         />
     );
+});
+
+// Wrapper para BrowserRouter para evitar problemas com React 19
+const RouterWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    try {
+        return <BrowserRouter>{children}</BrowserRouter>;
+    } catch (error) {
+        console.error('❌ BrowserRouter error:', error);
+        return <div>Erro ao carregar roteador. Recarregue a página.</div>;
+    }
 };
 
 const AppRoutes: React.FC = () => {
     return (
         <AppErrorBoundary>
-            <BrowserRouter>
+            <RouterWrapper>
                 <DebugProvider>
                     <SupabaseAuthProvider>
                         <AppProvider>
@@ -235,7 +261,7 @@ const AppRoutes: React.FC = () => {
                         </AppProvider>
                     </SupabaseAuthProvider>
                 </DebugProvider>
-            </BrowserRouter>
+            </RouterWrapper>
         </AppErrorBoundary>
     );
 };

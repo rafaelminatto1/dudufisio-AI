@@ -32,6 +32,17 @@ FilterCheckbox.displayName = 'FilterCheckbox';
 
 const ExerciseLibraryPage: React.FC = () => {
   const { exercises, categories, isLoading, addExercise, updateExercise, deleteExercise, addCategory, updateCategory, copyCategory, deleteCategory, uniqueBodyParts, uniqueEquipment } = useExercises();
+  
+  // Debug logs to understand what's being returned
+  console.log('🔍 ExerciseLibraryPage debug:', {
+    exercises: exercises?.length || 0,
+    categories: categories?.length || 0,
+    uniqueBodyParts: uniqueBodyParts?.length || 0,
+    uniqueEquipment: uniqueEquipment?.length || 0,
+    isLoading,
+    uniqueBodyPartsType: typeof uniqueBodyParts,
+    uniqueBodyPartsValue: uniqueBodyParts
+  });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
@@ -208,13 +219,13 @@ const ExerciseLibraryPage: React.FC = () => {
                      <div>
                         <h4 className="text-sm font-semibold text-slate-700 mb-2">Parte do Corpo</h4>
                         <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
-                           {uniqueBodyParts.map(part => <FilterCheckbox key={part} id={`part-${part}`} label={part} checked={selectedBodyParts.includes(part)} onChange={(c) => handleBodyPartChange(part, c)} />)}
+                           {Array.isArray(uniqueBodyParts) ? uniqueBodyParts.map(part => <FilterCheckbox key={part} id={`part-${part}`} label={part} checked={selectedBodyParts.includes(part)} onChange={(c) => handleBodyPartChange(part, c)} />) : <div className="text-sm text-gray-500">Carregando...</div>}
                         </div>
                     </div>
                      <div>
                         <h4 className="text-sm font-semibold text-slate-700 mb-2">Equipamento</h4>
                         <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
-                            {uniqueEquipment.map(equip => <FilterCheckbox key={equip} id={`equip-${equip}`} label={equip} checked={selectedEquipment.includes(equip)} onChange={(c) => handleEquipmentChange(equip, c)} />)}
+                            {Array.isArray(uniqueEquipment) ? uniqueEquipment.map(equip => <FilterCheckbox key={equip} id={`equip-${equip}`} label={equip} checked={selectedEquipment.includes(equip)} onChange={(c) => handleEquipmentChange(equip, c)} />) : <div className="text-sm text-gray-500">Carregando...</div>}
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 // hooks/useExercises.ts
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { exerciseService, Exercise, CreateExerciseRequest, UpdateExerciseRequest } from '../services/exerciseService';
+import { useErrorHandler } from './useErrorHandler';
 
 interface UseExercisesState {
   exercises: Exercise[];
@@ -14,32 +15,42 @@ export function useExercises() {
     loading: true,
     error: null,
   });
+  
+  // Force hook refresh by adding a version counter
+  const [version, setVersion] = useState(0);
 
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | undefined>(undefined);
+  
+  // Usar o novo sistema de tratamento de erros
+  const { handleError, clearError, errorState } = useErrorHandler();
 
   useEffect(() => {
     loadExercises();
-  }, []);
+  }, [version]); // Adicionar dependência para forçar refresh quando necessário
 
   const loadExercises = async () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
+      clearError(); // Limpar erros anteriores
 
       // For now, use mock data until Supabase tables are ready
       const exercises = exerciseService.getMockExercises();
       setState(prev => ({ ...prev, exercises, loading: false }));
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao carregar exercícios';
       setState(prev => ({
         ...prev,
         loading: false,
-        error: error instanceof Error ? error.message : 'Erro ao carregar exercícios',
+        error: errorMessage,
       }));
+      handleError(error, 'carregar exercícios');
     }
   };
 
   const createExercise = async (exerciseData: CreateExerciseRequest): Promise<Exercise> => {
     try {
       setState(prev => ({ ...prev, error: null }));
+      clearError(); // Limpar erros anteriores
 
       // Mock creation for now
       const newExercise: Exercise = {
@@ -59,6 +70,7 @@ export function useExercises() {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro ao criar exercício';
       setState(prev => ({ ...prev, error: errorMessage }));
+      handleError(error, 'criar exercício');
       throw error;
     }
   };
@@ -85,7 +97,7 @@ export function useExercises() {
         ),
       }));
 
-      if (selectedExercise?.id === id) {
+      if (selectedExercise && selectedExercise.id === id) {
         setSelectedExercise(updated);
       }
 
@@ -112,9 +124,9 @@ export function useExercises() {
     }
   };
 
-  const getExerciseById = async (id: string): Promise<Exercise | null> => {
+  const getExerciseById = async (id: string): Promise<Exercise | undefined> => {
     try {
-      const exercise = state.exercises.find(ex => ex.id === id) || null;
+      const exercise = state.exercises.find(ex => ex.id === id) || undefined;
       setSelectedExercise(exercise);
       return exercise;
     } catch (error) {
@@ -122,7 +134,7 @@ export function useExercises() {
         ...prev,
         error: error instanceof Error ? error.message : 'Erro ao buscar exercício',
       }));
-      return null;
+      return undefined;
     }
   };
 
@@ -197,15 +209,62 @@ export function useExercises() {
     setState(prev => ({ ...prev, error: null }));
   };
 
+  // Computed values for UI with safety checks
+  const categories = useMemo(() => {
+    const cats = getCategories();
+    console.log('🔍 getCategories result:', cats);
+    return Array.isArray(cats) ? cats : [];
+  }, [state.exercises]);
+  
+  const uniqueBodyParts = useMemo(() => {
+    const parts = getMuscleGroups();
+    console.log('🔍 getMuscleGroups result:', parts);
+    return Array.isArray(parts) ? parts : [];
+  }, [state.exercises]);
+  
+  const uniqueEquipment = useMemo(() => {
+    const equip = getEquipment();
+    console.log('🔍 getEquipment result:', equip);
+    return Array.isArray(equip) ? equip : [];
+  }, [state.exercises]);
+  
+  // Debug logs to understand what's happening
+  console.log('🔍 useExercises debug:', {
+    exercisesCount: state.exercises.length,
+    categories: categories.length,
+    uniqueBodyParts: uniqueBodyParts.length,
+    uniqueEquipment: uniqueEquipment.length,
+    isLoading: state.loading
+  });
+
   return {
     exercises: state.exercises,
-    loading: state.loading,
+    categories,
+    uniqueBodyParts,
+    uniqueEquipment,
+    isLoading: state.loading,
     error: state.error,
     selectedExercise,
     setSelectedExercise,
-    createExercise,
-    updateExercise,
-    deleteExercise,
+    addExercise: createExercise,
+    updateExercise: (exercise: Exercise) => updateExercise(exercise.id, exercise),
+    deleteExercise: (id: string) => deleteExercise(id),
+    addCategory: (name: string) => {
+      // Mock implementation for now
+      console.log('Adding category:', name);
+    },
+    updateCategory: (oldName: string, newName: string) => {
+      // Mock implementation for now
+      console.log('Updating category:', oldName, 'to', newName);
+    },
+    copyCategory: (name: string) => {
+      // Mock implementation for now
+      console.log('Copying category:', name);
+    },
+    deleteCategory: (name: string) => {
+      // Mock implementation for now
+      console.log('Deleting category:', name);
+    },
     getExerciseById,
     searchExercises,
     getExercisesByCategory,

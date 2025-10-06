@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste React</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module">
+        import React from 'react';
+        import { createRoot } from 'react-dom/client';
+        
+        console.log('React version:', React.version);
+        console.log('React object:', React);
+        console.log('useState available:', typeof React.useState);
+        
+        const TestComponent = () => {
+            const [test, setTest] = React.useState('test');
+            return React.createElement('div', null, `Teste: ${test}`);
+        };
+        
+        const root = createRoot(document.getElementById('root'));
+        root.render(React.createElement(TestComponent));
+    </script>
+</body>
+</html>

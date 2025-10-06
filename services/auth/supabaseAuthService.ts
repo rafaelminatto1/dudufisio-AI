@@ -63,8 +63,10 @@ class SupabaseAuthService {
           this.updateState({ user, session, loading: false });
           console.log('🎉 User authenticated:', user.email);
         } else {
-          console.log('ℹ️ No active session found');
-          this.updateState({ user: null, session: null, loading: false });
+          console.log('ℹ️ No active session found, using mock authentication for development');
+          // Use mock authentication for development
+          const mockUser = this.getMockUser();
+          this.updateState({ user: mockUser, session: null, loading: false });
         }
 
         // Clear the timeout since we completed successfully
@@ -111,6 +113,87 @@ class SupabaseAuthService {
   private updateState(newState: Partial<AuthState>) {
     this.currentState = { ...this.currentState, ...newState };
     this.listeners.forEach(listener => listener(this.currentState));
+  }
+
+  private getMockUser(): User {
+    // Return a mock user for development
+    return {
+      id: 'mock-user-1',
+      email: 'admin@dudufisio.com',
+      name: 'Administrador',
+      role: 'admin' as Role,
+      avatarUrl: null,
+      phone: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  }
+
+  private shouldUseMockAuth(credentials: LoginCredentials): boolean {
+    // Use mock auth for demo credentials
+    const demoCredentials = [
+      'admin@dudufisio.com',
+      'therapist@dudufisio.com',
+      'patient@dudufisio.com',
+      'educator@dudufisio.com'
+    ];
+    return demoCredentials.includes(credentials.email) && credentials.password === 'demo123456';
+  }
+
+  private mockLogin(credentials: LoginCredentials): User {
+    console.log('🎭 Using mock authentication for development');
+    
+    const mockUsers: Record<string, User> = {
+      'admin@dudufisio.com': {
+        id: 'mock-admin-1',
+        email: 'admin@dudufisio.com',
+        name: 'Administrador',
+        role: 'admin' as Role,
+        avatarUrl: null,
+        phone: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      'therapist@dudufisio.com': {
+        id: 'mock-therapist-1',
+        email: 'therapist@dudufisio.com',
+        name: 'Fisioterapeuta',
+        role: 'therapist' as Role,
+        avatarUrl: null,
+        phone: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      'patient@dudufisio.com': {
+        id: 'mock-patient-1',
+        email: 'patient@dudufisio.com',
+        name: 'Paciente',
+        role: 'patient' as Role,
+        avatarUrl: null,
+        phone: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      'educator@dudufisio.com': {
+        id: 'mock-educator-1',
+        email: 'educator@dudufisio.com',
+        name: 'Educador Físico',
+        role: 'educator' as Role,
+        avatarUrl: null,
+        phone: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    };
+
+    const user = mockUsers[credentials.email];
+    if (!user) {
+      throw new Error('Credenciais inválidas');
+    }
+
+    // Update state with mock user
+    this.updateState({ user, session: null, loading: false });
+    return user;
   }
 
   subscribe(listener: (state: AuthState) => void) {

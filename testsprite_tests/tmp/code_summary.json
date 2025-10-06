@@ -1,222 +1,243 @@
 {
   "tech_stack": [
     "TypeScript",
-    "React 18.2.0",
-    "Vite 6.3.6",
-    "Supabase (PostgreSQL)",
+    "React 18/19",
+    "Next.js 14",
+    "Vite",
+    "Supabase",
+    "PostgreSQL",
     "Tailwind CSS",
     "shadcn/ui",
-    "React Hook Form",
-    "Zod",
+    "Radix UI",
+    "React Router DOM",
     "Playwright",
-    "Jest",
-    "Framer Motion",
-    "Recharts",
-    "Lucide React",
-    "Axios",
-    "Google Generative AI",
-    "Stripe",
-    "Resend",
-    "Redis",
-    "Bull",
-    "Nodemailer"
+    "ESLint",
+    "Husky"
   ],
   "features": [
     {
-      "name": "Medical Records System",
-      "description": "Sistema completo de prontuário eletrônico médico com padrões HL7 FHIR, assinatura digital e compliance CFM/COFFITO/LGPD",
+      "name": "Sistema de Autenticação",
+      "description": "Sistema completo de autenticação com Supabase, 2FA, roles e permissões",
+      "files": [
+        "contexts/SupabaseAuthContext.tsx",
+        "pages/auth/LoginPage.tsx",
+        "pages/auth/TwoFactorSetupPage.tsx",
+        "pages/auth/RegisterPage.tsx",
+        "components/auth/AuthProvider.tsx",
+        "components/auth/PermissionGuard.tsx",
+        "components/RoleGuard.tsx"
+      ]
+    },
+    {
+      "name": "Dashboard Principal",
+      "description": "Dashboard completo com métricas, gráficos e navegação baseada em roles",
+      "files": [
+        "pages/CompleteDashboard.tsx",
+        "pages/TherapistDashboard.tsx",
+        "pages/AdminDashboardPage.tsx",
+        "pages/PatientPortalDashboard.tsx",
+        "pages/PartnerPortalDashboard.tsx",
+        "components/dashboard/MetricCard.tsx",
+        "components/dashboard/DashboardFilters.tsx"
+      ]
+    },
+    {
+      "name": "Sistema de Agenda",
+      "description": "Sistema avançado de agendamento com múltiplas visualizações e funcionalidades",
+      "files": [
+        "pages/AgendaPage.tsx",
+        "components/agenda/EnhancedAgendaPage.tsx",
+        "components/agenda/WeeklyView.tsx",
+        "components/agenda/DailyView.tsx",
+        "components/agenda/MonthlyView.tsx",
+        "components/agenda/BookingModal.tsx",
+        "components/agenda/AppointmentDetailPopover.tsx"
+      ]
+    },
+    {
+      "name": "Gestão de Pacientes",
+      "description": "Sistema completo de gestão de pacientes com histórico clínico",
+      "files": [
+        "pages/PatientListPage.tsx",
+        "pages/PatientDetailPage.tsx",
+        "components/PatientFormModal.tsx",
+        "components/PatientTooltip.tsx",
+        "components/ClinicalHistoryTimeline.tsx",
+        "components/pacientes/PatientCard.tsx"
+      ]
+    },
+    {
+      "name": "Sistema de Exercícios",
+      "description": "Biblioteca de exercícios com IA para prescrição inteligente",
+      "files": [
+        "pages/ExerciseLibraryPage.tsx",
+        "components/ExerciseCard.tsx",
+        "components/ExerciseFormModal.tsx",
+        "hooks/useExercises.ts",
+        "lib/ai-prescription/RecommendationEngine.ts"
+      ]
+    },
+    {
+      "name": "Sistema de Prontuário Eletrônico",
+      "description": "Prontuário médico completo com padrões HL7 FHIR e compliance",
       "files": [
         "components/medical-records/MedicalRecordsSystem.tsx",
         "components/medical-records/MedicalRecordsDashboard.tsx",
         "components/medical-records/ClinicalTemplatesManager.tsx",
         "components/medical-records/DigitalSignatureManager.tsx",
-        "components/medical-records/ClinicalReportsGenerator.tsx",
-        "components/medical-records/DocumentViewer.tsx",
-        "hooks/useMedicalRecords.ts"
+        "lib/medical-records/ClinicalDocument.ts",
+        "lib/medical-records/DigitalSignatureService.ts"
       ]
     },
     {
-      "name": "Authentication & Authorization",
-      "description": "Sistema de autenticação e controle de acesso baseado em roles com permissões granulares",
+      "name": "Sistema de Atendimento",
+      "description": "Sistema completo de atendimento clínico com evolução e protocolos",
       "files": [
-        "components/auth/PermissionGuard.tsx",
-        "contexts/AppContext.tsx",
-        "services/userService.ts"
+        "pages/AtendimentoPage.tsx",
+        "pages/SessionPage.tsx",
+        "pages/SessionEvolutionPage.tsx",
+        "components/NewSoapNoteModal.tsx",
+        "components/session/SessionForm.tsx",
+        "components/session/SessionEvolution.tsx"
       ]
     },
     {
-      "name": "Dashboard & Analytics",
-      "description": "Dashboards interativos com métricas de negócio, analytics clínicos e Business Intelligence",
+      "name": "Mapa Corporal Interativo",
+      "description": "Mapa corporal para registro de pontos de dor e avaliação",
       "files": [
-        "pages/CompleteDashboard.tsx",
-        "pages/SimpleDashboard.tsx",
-        "pages/TherapistDashboard.tsx",
+        "components/BodyMap.tsx",
+        "components/InteractiveBodyMap.tsx",
+        "components/BodyPointModal.tsx",
+        "components/PainScale.tsx",
+        "components/PainEvolutionChart.tsx"
+      ]
+    },
+    {
+      "name": "Sistema de Relatórios",
+      "description": "Sistema avançado de relatórios clínicos e financeiros",
+      "files": [
+        "pages/ReportsPage.tsx",
         "pages/AdvancedReportsPage.tsx",
-        "components/dashboard/glance/RecentActivity.tsx",
-        "components/dashboard/glance/TodaysAppointments.tsx",
-        "components/dashboard/glance/PendingTasks.tsx"
+        "pages/ClinicalAnalyticsPage.tsx",
+        "components/reports/ReportGenerator.tsx",
+        "components/reports/ClinicalReportsGenerator.tsx",
+        "components/analytics/ClinicalAnalyticsDashboard.tsx"
       ]
     },
     {
-      "name": "Patient Management",
-      "description": "Gestão completa de pacientes com prontuários, agendamentos e histórico clínico",
+      "name": "Sistema de IA",
+      "description": "Integração com IA para sugestões e análise inteligente",
       "files": [
-        "hooks/usePatients.ts",
-        "services/supabase/patientService.ts",
-        "pages/PatientPortalDashboard.tsx"
+        "components/ai/GroqChat.tsx",
+        "components/ai/XAIChat.tsx",
+        "components/AiAssistant.tsx",
+        "components/acompanhamento/AiSuggestionModal.tsx",
+        "lib/ai-scheduling/SmartSchedulingEngine.ts"
       ]
     },
     {
-      "name": "Appointment System",
-      "description": "Sistema de agendamentos com calendário integrado e gestão de consultas",
+      "name": "Portal do Paciente",
+      "description": "Portal dedicado para pacientes com exercícios e acompanhamento",
       "files": [
-        "services/supabase/appointmentService.ts",
-        "services/supabase/appointmentServiceSupabase.ts",
-        "pages/AtendimentoPage.tsx"
+        "pages/patient-portal/PatientDashboardPage.tsx",
+        "pages/patient-portal/MyExercisesPage.tsx",
+        "pages/patient-portal/MyAppointmentsPage.tsx",
+        "pages/patient-portal/PatientProgressPage.tsx",
+        "components/patient-portal/PatientExerciseCard.tsx"
       ]
     },
     {
-      "name": "Inventory Management",
-      "description": "Gestão de estoque, insumos e controle de materiais com alertas automáticos",
-      "files": [
-        "hooks/useInventory.ts",
-        "hooks/useSupplies.ts",
-        "hooks/useTaskSupplies.ts",
-        "services/inventoryService.ts",
-        "services/suppliesService.ts",
-        "services/taskSupplyService.ts",
-        "pages/InventoryDashboardPage.tsx"
-      ]
-    },
-    {
-      "name": "AI Tools & Analytics",
-      "description": "Ferramentas de IA para geração de laudos, evoluções, planos de tratamento e análise de risco",
-      "files": [
-        "components/ai-tools/ConsolidatedAITools.tsx",
-        "services/aiService.ts",
-        "lib/ai/geminiService.ts"
-      ]
-    },
-    {
-      "name": "Exercise Library",
-      "description": "Biblioteca de exercícios com categorias, dificuldades e prescrições personalizadas",
-      "files": [
-        "hooks/useExercises.ts",
-        "hooks/useExerciseLibrary.ts",
-        "services/exerciseService.ts",
-        "pages/ExerciseLibraryPage.tsx"
-      ]
-    },
-    {
-      "name": "Reporting & Business Intelligence",
-      "description": "Sistema de relatórios avançados com templates dinâmicos e métricas de BI",
-      "files": [
-        "hooks/useReporting.ts",
-        "hooks/useReports.ts",
-        "services/reportingService.ts",
-        "services/reportsService.ts"
-      ]
-    },
-    {
-      "name": "Financial Management",
-      "description": "Gestão financeira com pagamentos, cobranças e relatórios de receita",
-      "files": [
-        "services/paymentService.ts",
-        "components/financial/FinancialDashboard.tsx",
-        "pages/PartnerPortalDashboard.tsx"
-      ]
-    },
-    {
-      "name": "Notification System",
-      "description": "Sistema de notificações e alertas com configurações personalizáveis",
-      "files": [
-        "hooks/useNotifications.ts",
-        "hooks/useAlerts.ts",
-        "services/alertService.ts",
-        "services/notificationService.ts"
-      ]
-    },
-    {
-      "name": "Teleconsultation",
-      "description": "Sistema de teleconsulta com integração WebRTC e gestão de consultas online",
+      "name": "Sistema de Teleconsulta",
+      "description": "Sistema de teleconsulta integrado com videochamadas",
       "files": [
         "pages/TeleconsultaPage.tsx",
-        "services/teleconsultationService.ts"
+        "components/teleconsulta/VideoCallInterface.tsx",
+        "components/teleconsulta/TeleconsultaModal.tsx",
+        "components/teleconsulta/PatientVideoInterface.tsx"
       ]
     },
     {
-      "name": "User Interface Components",
-      "description": "Componentes de UI reutilizáveis baseados em shadcn/ui com Tailwind CSS",
+      "name": "Sistema Financeiro",
+      "description": "Gestão financeira completa com métricas e relatórios",
       "files": [
-        "components/ui/button.tsx",
-        "components/ui/card.tsx",
-        "components/ui/tabs.tsx",
-        "components/ui/input.tsx",
-        "components/ui/select.tsx",
-        "components/ui/dialog.tsx",
-        "components/ui/toast.tsx",
-        "components/ui/badge.tsx",
-        "components/ui/avatar.tsx",
-        "components/ui/progress.tsx"
+        "pages/FinancialDashboardPage.tsx",
+        "pages/FinancialPage.tsx",
+        "components/financial/FinancialMetricsCards.tsx",
+        "components/financial/RevenueEvolutionChart.tsx",
+        "components/financial/PaymentTracking.tsx"
       ]
     },
     {
-      "name": "Layout & Navigation",
-      "description": "Layout responsivo com sidebar, breadcrumbs e navegação baseada em roles",
+      "name": "Sistema de Inventário",
+      "description": "Gestão de equipamentos e materiais da clínica",
       "files": [
-        "components/Sidebar.tsx",
-        "components/Layout.tsx",
-        "components/Breadcrumbs.tsx",
-        "layouts/MainLayout.tsx"
+        "pages/InventoryDashboardPage.tsx",
+        "pages/InventoryPage.tsx",
+        "components/inventory/InventoryDashboard.tsx",
+        "components/inventory/EquipmentTracker.tsx",
+        "components/inventory/SupplyManager.tsx"
       ]
     },
     {
-      "name": "Backup & Maintenance",
-      "description": "Sistema de backup automatizado e ferramentas de manutenção",
+      "name": "Sistema de Backup",
+      "description": "Sistema automatizado de backup e recuperação de dados",
       "files": [
-        "hooks/useBackup.ts",
+        "pages/BackupManagementPage.tsx",
+        "components/backup/BackupDashboard.tsx",
         "services/backupService.ts",
-        "scripts/maintenance.js"
+        "lib/backupManager.ts"
       ]
     },
     {
-      "name": "Body Map Pro",
-      "description": "Ferramenta de mapeamento corporal para localização de dor e lesões",
+      "name": "Sistema de Auditoria",
+      "description": "Auditoria completa de ações e acessos do sistema",
       "files": [
-        "hooks/useBodyMapPro.ts",
-        "components/body-map/BodyMapPro.tsx"
+        "pages/AuditLogPage.tsx",
+        "components/audit/AuditNotification.tsx",
+        "services/auditService.ts",
+        "lib/auditLogger.ts"
       ]
     },
     {
-      "name": "Event Management",
-      "description": "Sistema de gestão de eventos, workshops e atividades",
+      "name": "Sistema de Notificações",
+      "description": "Sistema de notificações em tempo real",
       "files": [
-        "pages/EventDetailPage.tsx",
-        "services/eventService.ts"
+        "components/NotificationBell.tsx",
+        "components/alerts/AlertCenter.tsx",
+        "components/alerts/NotificationSettings.tsx",
+        "contexts/ToastContext.tsx"
       ]
     },
     {
-      "name": "Material Management",
-      "description": "Gestão de materiais e equipamentos com controle de custos",
+      "name": "Sistema de Integração",
+      "description": "Integrações com serviços externos e APIs",
       "files": [
-        "pages/MaterialDetailPage.tsx",
-        "services/materialService.ts"
+        "pages/IntegrationsTestPage.tsx",
+        "pages/BIIntegrationTestPage.tsx",
+        "services/emailService.ts",
+        "services/whatsappService.ts",
+        "services/stripeService.ts"
       ]
     },
     {
-      "name": "Medical Reports",
-      "description": "Geração de relatórios médicos com templates personalizáveis",
+      "name": "Sistema de Performance",
+      "description": "Otimizações de performance e lazy loading",
       "files": [
-        "pages/MedicalReportPage.tsx",
-        "services/medicalReportService.ts"
+        "lib/lazyLoading.ts",
+        "lib/advancedLazyLoading.ts",
+        "lib/performanceOptimizations.ts",
+        "lib/serviceWorkerManager.ts",
+        "components/LazyImage.tsx"
       ]
     },
     {
-      "name": "Performance Optimization",
-      "description": "Otimizações de performance com lazy loading e virtual scrolling",
+      "name": "Sistema de Configurações",
+      "description": "Configurações globais e personalização do sistema",
       "files": [
-        "lib/lazyLoading.tsx",
-        "lib/performanceOptimization.tsx"
+        "pages/SettingsPage.tsx",
+        "pages/AgendaSettingsPage.tsx",
+        "components/settings/SettingsPanel.tsx",
+        "contexts/AppContext.tsx"
       ]
     }
   ]

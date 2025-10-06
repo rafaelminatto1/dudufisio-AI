@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AdminDashboardPage: React.FC = () => {
+const AdminDashboardPageSimple: React.FC = () => {
   const [test, setTest] = React.useState('test');
   
   return (
@@ -23,4 +23,4 @@ const AdminDashboardPage: React.FC = () => {
   );
 };
 
-export default AdminDashboardPage;
+export default AdminDashboardPageSimple;

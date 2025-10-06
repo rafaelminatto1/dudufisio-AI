@@ -184,9 +184,9 @@ const TherapistDashboard: React.FC = () => {
     const todayAppointments = appointments.filter(apt => {
       // Garantir que apt.startTime seja uma string ou Date
       const startTime = apt.startTime instanceof Date 
-        ? apt.startTime.toISOString() 
-        : String(apt.startTime || '');
-      return startTime.split('T')[0] === todayStr;
+        ? apt.startTime 
+        : new Date(apt.startTime || '');
+      return startTime.toDateString() === today.toDateString();
     }).length;
 
     const weekAppointments = appointments.filter(apt => {
@@ -304,9 +304,11 @@ const TherapistDashboard: React.FC = () => {
           {/* Consultas de Hoje */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <TodaysAppointments
-              appointments={appointments.filter(apt =>
-                apt.startTime.split('T')[0] === new Date().toISOString().split('T')[0]
-              )}
+              appointments={appointments.filter(apt => {
+                const startTime = apt.startTime instanceof Date ? apt.startTime : new Date(apt.startTime);
+                const today = new Date();
+                return startTime.toDateString() === today.toDateString();
+              })}
               patients={patients}
               therapists={therapists}
             />
