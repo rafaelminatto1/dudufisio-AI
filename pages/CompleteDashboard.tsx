@@ -315,8 +315,8 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/dashboard" element={<DashboardContent />} />
                 
                 {/* Dashboard Routes */}
-                <Route path="/admin-dashboard" element={LazyElement(AdminDashboardPage)} />
-                <Route path="/therapist-dashboard" element={LazyElement(TherapistDashboard)} />
+                <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
+                <Route path="/therapist-dashboard" element={<TherapistDashboard />} />
                 <Route path="/partner-dashboard" element={LazyElement(PartnerDashboard)} />
                 <Route path="/admin/performance" element={LazyElement(PerformanceDashboard)} />
                 <Route path="/simple-dashboard" element={LazyElement(SimpleDashboard)} />
@@ -324,10 +324,10 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 
                 {/* Main Navigation */}
                 <Route path="/agenda" element={<AgendaPage />} />
-                <Route path="/patients" element={LazyElement(PatientListPage)} />
-                <Route path="/patients/:id" element={LazyElement(PatientDetailPage)} />
-                <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
-                <Route path="/notifications" element={LazyElement(NotificationCenterPage)} />
+                <Route path="/patients" element={<PatientListPage />} />
+                <Route path="/patients/:id" element={<PatientDetailPage />} />
+                <Route path="/acompanhamento" element={<AcompanhamentoPage />} />
+                <Route path="/notifications" element={<NotificationCenterPage />} />
                 <Route path="/tasks" element={LazyElement(KanbanPage)} />
                 <Route path="/session-evolution" element={LazyElement(SessionEvolutionPage)} />
                 
@@ -364,10 +364,10 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/users" element={LazyElement(UserManagementPage)} />
                 <Route path="/user-management" element={LazyElement(UserManagementPage)} />
                 <Route path="/groups" element={LazyElement(GroupsPage)} />
-                <Route path="/exercises" element={LazyElement(ExerciseLibraryPage)} />
-                <Route path="/exercise-library" element={LazyElement(ExerciseLibraryPage)} />
-                <Route path="/materials" element={LazyElement(MaterialDetailPage)} />
-                <Route path="/clinical-library" element={LazyElement(ClinicalLibraryPage)} />
+                <Route path="/exercises" element={<ExerciseLibraryPage />} />
+                <Route path="/exercise-library" element={<ExerciseLibraryPage />} />
+                <Route path="/materials" element={<MaterialDetailPage />} />
+                <Route path="/clinical-library" element={<ClinicalLibraryPage />} />
                 <Route path="/material-detail" element={LazyElement(MaterialDetailPage)} />
                 <Route path="/protocolos" element={LazyElement(ProtocolsPage)} />
                 <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
