@@ -6,19 +6,19 @@ import { LazyPages, LazyComponents, createLazyComponent } from '../lib/lazyLoadi
 
 // ✅ IMPORTANTE: Todos os lazy imports agora vêm de LazyPages/LazyComponents centralizados
 // Isso evita múltiplas instâncias do React e erros "Cannot read properties of null"
-const AgendaPage = LazyPages.AgendaPage;
-const PatientListPage = LazyPages.PatientListPage;
-const PatientDetailPage = LazyPages.PatientDetailPage;
+const AgendaPage = createLazyComponent(() => import('./AgendaPage'));
+const PatientListPage = createLazyComponent(() => import('./PatientListPage'));
+const PatientDetailPage = createLazyComponent(() => import('./PatientDetailPage'));
 const SessionFormPage = LazyPages.SessionFormPage;
 const SessionViewPage = LazyPages.SessionViewPage;
 const FinancialDashboardPage = LazyPages.FinancialDashboardPage;
-const AdminDashboardPage = LazyPages.AdminDashboardPage;
+const AdminDashboardPage = createLazyComponent(() => import('./AdminDashboardPage'));
 const ReportsPage = LazyPages.ReportsPage;
 const AiAnalyticsPage = LazyPages.AiAnalyticsPage;
 const InventoryPage = LazyPages.InventoryPage;
 const UserManagementPage = LazyPages.UserManagementPage;
 const DashboardPage = LazyPages.DashboardPage;
-const TherapistDashboard = LazyPages.TherapistDashboard;
+const TherapistDashboard = createLazyComponent(() => import('./TherapistDashboard'));
 
 // Páginas que não estão no LazyPages ainda - usando createLazyComponent
 const ExerciseLibraryPage = createLazyComponent(() => import('./ExerciseLibraryPage'));
@@ -315,19 +315,19 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/dashboard" element={<DashboardContent />} />
                 
                 {/* Dashboard Routes */}
-                <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
-                <Route path="/therapist-dashboard" element={<TherapistDashboard />} />
+                <Route path="/admin-dashboard" element={LazyElement(AdminDashboardPage)} />
+                <Route path="/therapist-dashboard" element={LazyElement(TherapistDashboard)} />
                 <Route path="/partner-dashboard" element={LazyElement(PartnerDashboard)} />
                 <Route path="/admin/performance" element={LazyElement(PerformanceDashboard)} />
                 <Route path="/simple-dashboard" element={LazyElement(SimpleDashboard)} />
                 <Route path="/dashboard-page" element={LazyElement(DashboardPage)} />
                 
                 {/* Main Navigation */}
-                <Route path="/agenda" element={<AgendaPage />} />
-                <Route path="/patients" element={<PatientListPage />} />
-                <Route path="/patients/:id" element={<PatientDetailPage />} />
-                <Route path="/acompanhamento" element={<AcompanhamentoPage />} />
-                <Route path="/notifications" element={<NotificationCenterPage />} />
+                <Route path="/agenda" element={LazyElement(AgendaPage)} />
+                <Route path="/patients" element={LazyElement(PatientListPage)} />
+                <Route path="/patients/:id" element={LazyElement(PatientDetailPage)} />
+                <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
+                <Route path="/notifications" element={LazyElement(NotificationCenterPage)} />
                 <Route path="/tasks" element={LazyElement(KanbanPage)} />
                 <Route path="/session-evolution" element={LazyElement(SessionEvolutionPage)} />
                 
