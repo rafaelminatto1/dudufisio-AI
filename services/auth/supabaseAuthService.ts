@@ -124,8 +124,7 @@ class SupabaseAuthService {
       role: 'admin' as Role,
       avatarUrl: '',
       phone: undefined,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      createdAt: new Date().toISOString()
     };
   }
 
@@ -582,70 +581,6 @@ class SupabaseAuthService {
 
   // Mock authentication methods for development - removed duplicate
 
-  private async mockLogin(credentials: LoginCredentials): Promise<User> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Mock user data based on email
-    const mockUserData = {
-      'admin@dudufisio.com': {
-        id: 'user_admin',
-        name: 'Admin',
-        email: 'admin@dudufisio.com',
-        role: 'Admin' as const,
-        avatarUrl: 'https://i.pravatar.cc/150?u=user_admin',
-        phone: '(11) 98765-4321'
-      },
-      'therapist@dudufisio.com': {
-        id: 'user_1',
-        name: 'Dr. Roberto',
-        email: 'therapist@dudufisio.com',
-        role: 'Fisioterapeuta' as const,
-        avatarUrl: 'https://i.pravatar.cc/150?u=user_1',
-        phone: '(11) 91234-5678'
-      },
-      'patient@dudufisio.com': {
-        id: 'user_patient_1',
-        name: 'Ana Beatriz Costa',
-        email: 'patient@dudufisio.com',
-        role: 'Paciente' as const,
-        avatarUrl: 'https://picsum.photos/id/1027/200/200',
-        patientId: '1',
-        phone: '(11) 98765-4321'
-      },
-      'educator@dudufisio.com': {
-        id: 'user_educator_1',
-        name: 'Dra. Juliana',
-        email: 'educator@dudufisio.com',
-        role: 'EducadorFisico' as const,
-        avatarUrl: 'https://i.pravatar.cc/150?u=user_educator_1',
-        phone: '(11) 91111-2222'
-      }
-    };
-
-    const user = mockUserData[credentials.email as keyof typeof mockUserData];
-
-    if (!user) {
-      throw new Error('Credenciais inválidas');
-    }
-
-    // Create mock session
-    const mockSession = {
-      access_token: 'mock_access_token',
-      expires_at: Math.floor(Date.now() / 1000) + 3600,
-      user: { id: user.id, email: user.email }
-    };
-
-    // Update state
-    this.updateState({
-      user: user as User,
-      session: mockSession,
-      loading: false
-    });
-
-    console.log('🎭 Mock authentication successful for:', user.email);
-    return user as User;
-  }
 }
 
 // Create singleton instance

@@ -117,7 +117,7 @@ class ExerciseService {
         contraindications: exercise.contraindications || [],
         instructions: exercise.instructions || [],
         equipment: exercise.equipment || [],
-        difficulty_level: exercise.difficulty_level || 'beginner',
+        difficulty_level: (exercise.difficulty_level as 'beginner' | 'intermediate' | 'advanced') || 'beginner',
         duration: (exercise as any).duration || 0,
         repetitions: (exercise as any).repetitions || 0,
         sets: (exercise as any).sets || 0,
@@ -125,6 +125,7 @@ class ExerciseService {
         video_url: exercise.video_url || '',
         image_urls: exercise.image_urls || [],
         muscle_groups: exercise.muscle_groups || [],
+        tags: exercise.tags || [],
         created_at: exercise.created_at || new Date().toISOString(),
         updated_at: exercise.updated_at || new Date().toISOString()
       }));
