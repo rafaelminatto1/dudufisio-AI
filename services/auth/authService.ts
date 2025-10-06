@@ -143,9 +143,9 @@ class AuthService {
       return {
         id: data.id,
         email: data.email,
-        full_name: data.full_name,
+        full_name: data.full_name || '',
         // phone: data.phone ?? undefined, // Campo não existe no schema atual
-        role: data.role,
+        role: data.role || '',
         // specialization: data.specialization ?? undefined, // Campo não existe no schema atual
         // professional_id: data.professional_id ?? undefined, // Campo não existe no schema atual
         is_active: data.is_active,
@@ -184,9 +184,9 @@ class AuthService {
       return {
         id: data.id,
         email: data.email,
-        full_name: data.full_name,
+        full_name: data.full_name || '',
         // phone: data.phone ?? undefined, // Campo não existe no schema atual
-        role: data.role,
+        role: data.role || '',
         // specialization: data.specialization ?? undefined, // Campo não existe no schema atual
         // professional_id: data.professional_id ?? undefined, // Campo não existe no schema atual
         is_active: data.is_active,
@@ -311,11 +311,11 @@ class AuthService {
         id: user.id,
         email: user.email,
         fullName: user.full_name,
-        phone: user.phone,
-        role: user.role,
-        specialization: user.specialization,
-        professionalId: user.professional_id,
-        active: user.active,
+        phone: (user as any).phone || undefined,
+        role: user.role || '',
+        specialization: (user as any).specialization || undefined,
+        professionalId: (user as any).professional_id || undefined,
+        active: user.is_active || false,
         createdAt: user.created_at,
         updatedAt: user.updated_at,
       }));
@@ -341,7 +341,7 @@ class AuthService {
         email: data.email,
         fullName: data.full_name,
         // phone: data.phone ?? undefined, // Campo não existe no schema atual
-        role: data.role,
+        role: data.role || '',
         // specialization: data.specialization ?? undefined, // Campo não existe no schema atual
         // professionalId: data.professional_id ?? undefined, // Campo não existe no schema atual
         is_active: data.is_active,

@@ -118,12 +118,13 @@ class ExerciseService {
         instructions: exercise.instructions || [],
         equipment: exercise.equipment || [],
         difficulty_level: exercise.difficulty_level || 'beginner',
-        duration: exercise.duration || 0,
-        repetitions: exercise.repetitions || 0,
-        sets: exercise.sets || 0,
-        rest_time: exercise.rest_time || 0,
+        duration: (exercise as any).duration || 0,
+        repetitions: (exercise as any).repetitions || 0,
+        sets: (exercise as any).sets || 0,
+        rest_time: (exercise as any).rest_time || 0,
         video_url: exercise.video_url || '',
         image_urls: exercise.image_urls || [],
+        muscle_groups: exercise.muscle_groups || [],
         created_at: exercise.created_at || new Date().toISOString(),
         updated_at: exercise.updated_at || new Date().toISOString()
       }));
@@ -143,7 +144,24 @@ class ExerciseService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ? {
+        ...data,
+        description: data.description || '',
+        benefits: data.benefits || [],
+        contraindications: data.contraindications || [],
+        instructions: data.instructions || [],
+        equipment: data.equipment || [],
+        difficulty_level: data.difficulty_level || 'beginner',
+        duration: (data as any).duration || 0,
+        repetitions: (data as any).repetitions || 0,
+        sets: (data as any).sets || 0,
+        rest_time: (data as any).rest_time || 0,
+        video_url: data.video_url || '',
+        image_urls: data.image_urls || [],
+        muscle_groups: data.muscle_groups || [],
+        created_at: data.created_at || new Date().toISOString(),
+        updated_at: data.updated_at || new Date().toISOString()
+      } : null;
     } catch (error) {
       console.warn('⚠️ Erro ao buscar exercício por ID do Supabase, usando dados mock:', error);
       // Fallback para dados mock em caso de erro
@@ -162,7 +180,24 @@ class ExerciseService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ? {
+        ...data,
+        description: data.description || '',
+        benefits: data.benefits || [],
+        contraindications: data.contraindications || [],
+        instructions: data.instructions || [],
+        equipment: data.equipment || [],
+        difficulty_level: data.difficulty_level || 'beginner',
+        duration: (data as any).duration || 0,
+        repetitions: (data as any).repetitions || 0,
+        sets: (data as any).sets || 0,
+        rest_time: (data as any).rest_time || 0,
+        video_url: data.video_url || '',
+        image_urls: data.image_urls || [],
+        muscle_groups: data.muscle_groups || [],
+        created_at: data.created_at || new Date().toISOString(),
+        updated_at: data.updated_at || new Date().toISOString()
+      } : null;
     } catch (error) {
       console.warn('⚠️ Erro ao buscar exercício por nome do Supabase, usando dados mock:', error);
       // Fallback para dados mock
