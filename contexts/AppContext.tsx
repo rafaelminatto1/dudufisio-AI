@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback, use } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { User, Therapist, Patient, Appointment } from '../types';
 import type { Result } from '../types/utils';
 import { useSupabaseAuth } from './SupabaseAuthContext';

@@ -1,7 +1,6 @@
 import { supabase } from '../../lib/supabase';
 import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import type { Database } from '../../types/supabase';
-import { SupabaseRealtimePayload } from '@supabase/supabase-js/dist/main/types';
 
 export type RealtimeEvent = 'INSERT' | 'UPDATE' | 'DELETE';
 
@@ -16,7 +15,7 @@ class RealtimeService {
   // Subscribe to all changes in a table
   subscribeToTable<Schema extends keyof Database['public']['Tables'] & string>(
     table: Schema,
-    callback: (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => void,
+    callback: (payload: RealtimePostgresChangesPayload<Database['public']['Tables'][Schema]['Row']>) => void,
     events: RealtimeEvent[] = ['INSERT', 'UPDATE', 'DELETE']
   ): RealtimeSubscription {
     const channelName = `${table}_all_changes`;
@@ -365,13 +364,10 @@ export const subscriptions = {
   // Subscribe to session updates for a patient
   patientSessions: (patientId: string, callback: (payload: any) => void) => {
     return realtimeService.subscribeToMultipleTables(
-      ['sessions', 'appointments'],
+      ['appointments'],
       (table, payload) => {
         // Filter for patient's data
         if (table === 'appointments' && payload.new?.patient_id === patientId) {
-          callback(payload);
-        } else if (table === 'sessions') {
-          // Need to check if session belongs to patient
           callback(payload);
         }
       }
@@ -380,26 +376,22 @@ export const subscriptions = {
 
   // Subscribe to financial updates for a patient
   patientFinancials: (patientId: string, callback: (payload: any) => void) => {
-    return realtimeService.subscribeToFiltered(
-      'financial_transactions',
-      { column: 'patient_id', operator: 'eq', value: patientId },
-      callback
-    );
+    // Financial transactions table not available in current schema
+    console.warn('Financial transactions table not available in current schema');
+    return { channel: null, unsubscribe: () => {} };
   },
 
   // Subscribe to exercise prescription updates
   patientExercises: (patientId: string, callback: (payload: any) => void) => {
-    return realtimeService.subscribeToFiltered(
-      'exercise_prescriptions',
-      { column: 'patient_id', operator: 'eq', value: patientId },
-      callback
-    );
+    // Exercise prescriptions table not available in current schema
+    console.warn('Exercise prescriptions table not available in current schema');
+    return { channel: null, unsubscribe: () => {} };
   },
 
   // Subscribe to clinic-wide updates (admin only)
   clinicDashboard: (callback: (table: string, payload: any) => void) => {
     return realtimeService.subscribeToMultipleTables(
-      ['appointments', 'patients', 'sessions', 'financial_transactions'],
+      ['appointments', 'patients'],
       callback
     );
   },

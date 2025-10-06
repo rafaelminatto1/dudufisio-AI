@@ -205,7 +205,7 @@ export function useExercises() {
     loadExercises();
   };
 
-  const clearError = () => {
+  const clearLocalError = () => {
     setState(prev => ({ ...prev, error: null }));
   };
 
@@ -272,7 +272,7 @@ export function useExercises() {
     getMuscleGroups,
     getEquipment,
     refreshExercises,
-    clearError,
+    clearError: clearLocalError,
   };
 }
 

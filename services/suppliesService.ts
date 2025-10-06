@@ -16,10 +16,85 @@ import {
   PurchaseOrderFilters,
   SuppliesDashboardData,
   SupplyConsumptionReport,
-  StockValuationReport
+  StockValuationReport,
+  MovementType
 } from '../types';
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+// Mapeamento de dados do Supabase para tipos da aplicação
+const mapSupabaseSupplierToSupplier = (data: any): Supplier => ({
+  id: data.id,
+  name: data.name,
+  contactPerson: data.contact_person,
+  email: data.email,
+  phone: data.phone,
+  address: data.address,
+  cnpj: data.cnpj,
+  paymentTerms: data.payment_terms,
+  deliveryTimeDays: data.delivery_time_days || 0,
+  isActive: data.is_active || false,
+  createdAt: data.created_at || new Date().toISOString(),
+  updatedAt: data.updated_at || new Date().toISOString(),
+});
+
+const mapSupplierToSupabase = (supplier: Omit<Supplier, 'id' | 'createdAt' | 'updatedAt'>) => ({
+  name: supplier.name,
+  contact_person: supplier.contactPerson,
+  email: supplier.email,
+  phone: supplier.phone,
+  address: supplier.address,
+  cnpj: supplier.cnpj,
+  payment_terms: supplier.paymentTerms,
+  delivery_time_days: supplier.deliveryTimeDays,
+  is_active: supplier.isActive,
+});
+
+const mapSupabaseSupplyToSupply = (data: any): Supply => ({
+  id: data.id,
+  name: data.name,
+  description: data.description,
+  category: data.category,
+  subcategory: data.subcategory,
+  brand: data.brand,
+  model: data.model,
+  unitOfMeasure: data.unit_of_measure || 'unidade',
+  currentStock: data.current_stock || 0,
+  minimumStock: data.minimum_stock || 0,
+  maximumStock: data.maximum_stock,
+  unitCost: data.unit_cost,
+  supplierId: data.supplier_id,
+  supplier: data.supplier ? mapSupabaseSupplierToSupplier(data.supplier) : undefined,
+  barcode: data.barcode,
+  expirationDate: data.expiration_date,
+  storageLocation: data.storage_location,
+  isActive: data.is_active || false,
+  requiresPrescription: data.requires_prescription || false,
+  createdBy: data.created_by,
+  createdAt: data.created_at || new Date().toISOString(),
+  updatedAt: data.updated_at || new Date().toISOString(),
+});
+
+const mapSupplyToSupabase = (supply: Omit<Supply, 'id' | 'createdAt' | 'updatedAt'>) => ({
+  name: supply.name,
+  description: supply.description,
+  category: supply.category,
+  subcategory: supply.subcategory,
+  brand: supply.brand,
+  model: supply.model,
+  unit_of_measure: supply.unitOfMeasure,
+  current_stock: supply.currentStock,
+  minimum_stock: supply.minimumStock,
+  maximum_stock: supply.maximumStock,
+  unit_cost: supply.unitCost,
+  supplier_id: supply.supplierId,
+  barcode: supply.barcode,
+  expiration_date: supply.expirationDate,
+  storage_location: supply.storageLocation,
+  is_active: supply.isActive,
+  requires_prescription: supply.requiresPrescription,
+  created_by: supply.createdBy,
+});
 
 // ============================================================================
 // SERVIÇO DE FORNECEDORES
@@ -34,7 +109,7 @@ export const getSuppliers = async (): Promise<Supplier[]> => {
       .order('name');
 
     if (error) throw error;
-    return data || [];
+    return (data || []).map(mapSupabaseSupplierToSupplier);
   } catch (error) {
     console.error('Erro ao buscar fornecedores:', error);
     throw error;
@@ -45,12 +120,12 @@ export const createSupplier = async (supplierData: Omit<Supplier, 'id' | 'create
   try {
     const { data, error } = await supabase
       .from('suppliers')
-      .insert([supplierData])
+      .insert([mapSupplierToSupabase(supplierData)])
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return mapSupabaseSupplierToSupplier(data);
   } catch (error) {
     console.error('Erro ao criar fornecedor:', error);
     throw error;
@@ -59,15 +134,16 @@ export const createSupplier = async (supplierData: Omit<Supplier, 'id' | 'create
 
 export const updateSupplier = async (id: string, supplierData: Partial<Supplier>): Promise<Supplier> => {
   try {
+    const supabaseData = mapSupplierToSupabase(supplierData as Omit<Supplier, 'id' | 'createdAt' | 'updatedAt'>);
     const { data, error } = await supabase
       .from('suppliers')
-      .update({ ...supplierData, updated_at: new Date().toISOString() })
+      .update({ ...supabaseData, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return mapSupabaseSupplierToSupplier(data);
   } catch (error) {
     console.error('Erro ao atualizar fornecedor:', error);
     throw error;
@@ -82,7 +158,7 @@ export const getSupplies = async (filters?: SupplyFilters): Promise<Supply[]> =>
   try {
     let query = supabase
       .from('supplies')
-      .select<'*', Supply>(`
+      .select(`
         *,
         supplier:suppliers(*)
       `);
@@ -114,7 +190,7 @@ export const getSupplies = async (filters?: SupplyFilters): Promise<Supply[]> =>
     const { data, error } = await query.order('name');
 
     if (error) throw error;
-    return data || [];
+    return (data || []).map(mapSupabaseSupplyToSupply);
   } catch (error) {
     console.error('Erro ao buscar insumos:', error);
     throw error;
@@ -133,7 +209,7 @@ export const getSupplyById = async (id: string): Promise<Supply | undefined> => 
       .single();
 
     if (error) throw error;
-    return data ?? undefined;
+    return data ? mapSupabaseSupplyToSupply(data) : undefined;
   } catch (error) {
     console.error('Erro ao buscar insumo:', error);
     throw error;
@@ -142,12 +218,31 @@ export const getSupplyById = async (id: string): Promise<Supply | undefined> => 
 
 export const createSupply = async (supplyData: CreateSupplyData): Promise<Supply> => {
   try {
+    // Simplified approach - create basic supply data
+    const basicData = {
+      name: supplyData.name,
+      description: supplyData.description,
+      category: supplyData.category,
+      subcategory: supplyData.subcategory,
+      brand: supplyData.brand,
+      model: supplyData.model,
+      unit_of_measure: supplyData.unitOfMeasure || 'unidade',
+      current_stock: supplyData.currentStock || 0,
+      minimum_stock: supplyData.minimumStock || 0,
+      maximum_stock: supplyData.maximumStock,
+      unit_cost: supplyData.unitCost,
+      supplier_id: supplyData.supplierId,
+      barcode: supplyData.barcode,
+      expiration_date: supplyData.expirationDate,
+      storage_location: supplyData.storageLocation,
+      is_active: supplyData.isActive !== false,
+      requires_prescription: supplyData.requiresPrescription || false,
+      created_by: (await supabase.auth.getUser()).data.user?.id
+    };
+
     const { data, error } = await supabase
       .from('supplies')
-      .insert([{
-        ...supplyData,
-        created_by: (await supabase.auth.getUser()).data.user?.id
-      }])
+      .insert([basicData])
       .select(`
         *,
         supplier:suppliers(*)
@@ -155,7 +250,7 @@ export const createSupply = async (supplyData: CreateSupplyData): Promise<Supply
       .single();
 
     if (error) throw error;
-    return data;
+    return mapSupabaseSupplyToSupply(data);
   } catch (error) {
     console.error('Erro ao criar insumo:', error);
     throw error;

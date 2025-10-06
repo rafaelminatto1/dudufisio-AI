@@ -9,7 +9,7 @@ interface ExerciseSharePanelProps {
 }
 
 const ExerciseSharePanel: React.FC<ExerciseSharePanelProps> = ({ onShare }) => {
-    const { exercises, loading } = useExercises();
+    const { exercises, isLoading } = useExercises();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
 
@@ -35,7 +35,7 @@ const ExerciseSharePanel: React.FC<ExerciseSharePanelProps> = ({ onShare }) => {
             </div>
 
             <div className="flex-1 overflow-y-auto pr-2 -mr-2 space-y-2">
-                {loading ? <p>Carregando...</p> : (
+                {isLoading ? <p>Carregando...</p> : (
                     filteredExercises.map(ex => (
                          <div key={ex.id} onClick={() => setSelectedExercise(ex as any)} className={`p-2 rounded-md cursor-pointer ${selectedExercise?.id === ex.id ? 'bg-teal-500/20' : 'hover:bg-slate-700'}`}>
                             <p className="font-semibold text-sm text-slate-200">{ex.name}</p>

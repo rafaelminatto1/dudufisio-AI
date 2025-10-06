@@ -95,7 +95,7 @@ export function mapSupabaseBodyPointToBodyPoint(supabaseBodyPoint: SupabaseBodyP
     patientId: supabaseBodyPoint.patient_id,
     bodySide: supabaseBodyPoint.body_side,
     painLevel: supabaseBodyPoint.pain_level,
-    notes: supabaseBodyPoint.notes,
+    notes: supabaseBodyPoint.notes || null,
     createdAt: supabaseBodyPoint.created_at,
     updatedAt: supabaseBodyPoint.updated_at,
   };
@@ -110,9 +110,13 @@ export function mapSupabaseExerciseToExercise(supabaseExercise: SupabaseExercise
     difficultyLevel: supabaseExercise.difficulty_level,
     benefits: supabaseExercise.benefits as string[] | null,
     contraindications: supabaseExercise.contraindications as string[] | null,
-    instructions: supabaseExercise.instructions,
+    instructions: Array.isArray(supabaseExercise.instructions) 
+      ? supabaseExercise.instructions.join('\n') 
+      : supabaseExercise.instructions,
     videoUrl: supabaseExercise.video_url,
-    imageUrl: supabaseExercise.image_url,
+    imageUrl: Array.isArray(supabaseExercise.image_urls) && supabaseExercise.image_urls.length > 0
+      ? supabaseExercise.image_urls[0]
+      : null,
     createdAt: supabaseExercise.created_at,
     updatedAt: supabaseExercise.updated_at,
     createdBy: supabaseExercise.created_by,

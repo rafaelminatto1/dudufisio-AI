@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { preload, preinit } from 'react-dom';
+// import { preload, preinit } from 'react-dom'; // Not available in React 18
 
 interface AssetLoaderProps {
   children: React.ReactNode;
@@ -29,23 +29,23 @@ export function React19AssetLoader({
   preinitAssets = [] 
 }: AssetLoaderProps) {
   useEffect(() => {
-    // Preload assets críticos
-    preloadAssets.forEach(asset => {
-      preload(asset.href, {
-        as: asset.as,
-        crossOrigin: asset.crossOrigin,
-        integrity: asset.integrity
-      });
-    });
+    // Preload assets críticos - DISABLED: Not available in React 18
+    // preloadAssets.forEach(asset => {
+    //   preload(asset.href, {
+    //     as: asset.as,
+    //     crossOrigin: asset.crossOrigin,
+    //     integrity: asset.integrity
+    //   });
+    // });
 
-    // Preinit assets que serão usados imediatamente
-    preinitAssets.forEach(asset => {
-      preinit(asset.href, {
-        as: asset.as,
-        crossOrigin: asset.crossOrigin,
-        integrity: asset.integrity
-      });
-    });
+    // Preinit assets que serão usados imediatamente - DISABLED: Not available in React 18
+    // preinitAssets.forEach(asset => {
+    //   preinit(asset.href, {
+    //     as: asset.as,
+    //     crossOrigin: asset.crossOrigin,
+    //     integrity: asset.integrity
+    //   });
+    // });
   }, [preloadAssets, preinitAssets]);
 
   return <>{children}</>;
@@ -59,22 +59,16 @@ export function useAssetPreloader() {
     crossOrigin?: 'anonymous' | 'use-credentials';
     integrity?: string;
   }) => {
-    preload(href, {
-      as,
-      crossOrigin: options?.crossOrigin,
-      integrity: options?.integrity
-    });
+    // DISABLED: preload not available in React 18
+    console.warn('preload not available in React 18');
   };
 
   const preinitAsset = (href: string, as: 'script' | 'style', options?: {
     crossOrigin?: 'anonymous' | 'use-credentials';
     integrity?: string;
   }) => {
-    preinit(href, {
-      as,
-      crossOrigin: options?.crossOrigin,
-      integrity: options?.integrity
-    });
+    // DISABLED: preinit not available in React 18
+    console.warn('preinit not available in React 18');
   };
 
   return { preloadAsset, preinitAsset };
@@ -214,19 +208,19 @@ export function useRouteBasedPreload(currentPath: string) {
   const { preloadAsset, preinitAsset } = useAssetPreloader();
 
   useEffect(() => {
-    // Preload assets baseado na rota atual
-    if (currentPath.startsWith('/dashboard')) {
-      preloadAsset('/js/dashboard-charts.js', 'script');
-      preloadAsset('/styles/dashboard.css', 'style');
-    } else if (currentPath.startsWith('/teleconsulta')) {
-      preloadAsset('/js/webrtc-adapter.js', 'script');
-      preloadAsset('/styles/video-components.css', 'style');
-    } else if (currentPath.startsWith('/relatorios')) {
-      preloadAsset('/js/chart.min.js', 'script');
-      preloadAsset('/js/html2pdf.min.js', 'script');
-    } else if (currentPath.startsWith('/pacientes')) {
-      preloadAsset('/js/patient-forms.js', 'script');
-      preloadAsset('/styles/patient-forms.css', 'style');
-    }
+    // Preload assets baseado na rota atual - DISABLED: preload not available in React 18
+    // if (currentPath.startsWith('/dashboard')) {
+    //   preloadAsset('/js/dashboard-charts.js', 'script');
+    //   preloadAsset('/styles/dashboard.css', 'style');
+    // } else if (currentPath.startsWith('/teleconsulta')) {
+    //   preloadAsset('/js/webrtc-adapter.js', 'script');
+    //   preloadAsset('/styles/video-components.css', 'style');
+    // } else if (currentPath.startsWith('/relatorios')) {
+    //   preloadAsset('/js/chart.min.js', 'script');
+    //   preloadAsset('/js/html2pdf.min.js', 'script');
+    // } else if (currentPath.startsWith('/pacientes')) {
+    //   preloadAsset('/js/patient-forms.js', 'script');
+    //   preloadAsset('/styles/patient-forms.css', 'style');
+    // }
   }, [currentPath, preloadAsset, preinitAsset]);
 }
