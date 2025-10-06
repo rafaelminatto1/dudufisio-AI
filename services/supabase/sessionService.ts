@@ -353,7 +353,7 @@ class SessionService {
         // objective_assessment: objective, // Field not available
         // treatment_performed: assessment, // Field not available
         notes: `SOAP - Subjective: ${subjective}, Objective: ${objective}, Assessment: ${assessment}, Plan: ${plan}`,
-        next_session_notes: plan,
+        // next_session_notes: plan, // Field not available in current schema
       };
 
       return await this.updateSession(sessionId, updates);
@@ -444,11 +444,11 @@ class SessionService {
           table: 'sessions',
         },
         async (payload) => {
-          if (payload.new?.appointment_id) {
+          if (payload.new && 'appointment_id' in payload.new && payload.new.appointment_id) {
             const { data: appointment } = await supabase
               .from('appointments')
               .select('therapist_id')
-              .eq('id', payload.new.appointment_id)
+              .eq('id', payload.new.appointment_id as string)
               .single();
 
             if (appointment?.therapist_id === therapistId) {

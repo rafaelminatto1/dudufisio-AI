@@ -95,7 +95,7 @@ export function mapSupabaseBodyPointToBodyPoint(supabaseBodyPoint: SupabaseBodyP
     patientId: supabaseBodyPoint.patient_id,
     bodySide: supabaseBodyPoint.body_side,
     painLevel: supabaseBodyPoint.pain_level,
-    notes: supabaseBodyPoint.notes || null,
+    notes: (supabaseBodyPoint as any).notes || null, // Field may not exist in current schema
     createdAt: supabaseBodyPoint.created_at,
     updatedAt: supabaseBodyPoint.updated_at,
   };

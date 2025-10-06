@@ -36,7 +36,7 @@ class RealtimeService {
           schema: 'public',
           table,
         },
-        (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => {
+        (payload: RealtimePostgresChangesPayload<Database['public']['Tables'][Schema]['Row']>) => {
           if (events.includes(payload.eventType as RealtimeEvent)) {
             callback(payload);
           }
@@ -56,7 +56,7 @@ class RealtimeService {
   subscribeToRecord<Schema extends keyof Database['public']['Tables'] & string>(
     table: Schema,
     recordId: string,
-    callback: (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => void,
+    callback: (payload: RealtimePostgresChangesPayload<Database['public']['Tables'][Schema]['Row']>) => void,
     events: RealtimeEvent[] = ['UPDATE', 'DELETE']
   ): RealtimeSubscription {
     const channelName = `${table}_${recordId}_changes`;
@@ -78,7 +78,7 @@ class RealtimeService {
           table,
           filter: `id=eq.${recordId}`,
         },
-        (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => {
+        (payload: RealtimePostgresChangesPayload<Database['public']['Tables'][Schema]['Row']>) => {
           if (events.includes(payload.eventType as RealtimeEvent)) {
             callback(payload);
           }
@@ -98,7 +98,7 @@ class RealtimeService {
   subscribeToFiltered<Schema extends keyof Database['public']['Tables'] & string>(
     table: Schema,
     filter: { column: string; operator: string; value: string },
-    callback: (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => void,
+    callback: (payload: RealtimePostgresChangesPayload<Database['public']['Tables'][Schema]['Row']>) => void,
     events: RealtimeEvent[] = ['INSERT', 'UPDATE', 'DELETE']
   ): RealtimeSubscription {
     const channelName = `${table}_${filter.column}_${filter.value}_changes`;
@@ -120,7 +120,7 @@ class RealtimeService {
           table,
           filter: `${filter.column}=${filter.operator}.${filter.value}`,
         },
-        (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => {
+        (payload: RealtimePostgresChangesPayload<Database['public']['Tables'][Schema]['Row']>) => {
           if (events.includes(payload.eventType as RealtimeEvent)) {
             callback(payload);
           }
@@ -139,7 +139,7 @@ class RealtimeService {
   // Subscribe to multiple tables
   subscribeToMultipleTables<Schema extends keyof Database['public']['Tables'] & string>(
     tables: Schema[],
-    callback: (table: Schema, payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => void,
+    callback: (table: Schema, payload: RealtimePostgresChangesPayload<Database['public']['Tables'][Schema]['Row']>) => void,
     events: RealtimeEvent[] = ['INSERT', 'UPDATE', 'DELETE']
   ): RealtimeSubscription {
     const channelName = `multi_${tables.join('_')}_changes`;
@@ -161,7 +161,7 @@ class RealtimeService {
           schema: 'public',
           table,
         },
-        (payload: SupabaseRealtimePayload<Database['public']['Tables'][Schema]['Row']>) => {
+        (payload: RealtimePostgresChangesPayload<Database['public']['Tables'][Schema]['Row']>) => {
           if (events.includes(payload.eventType as RealtimeEvent)) {
             callback(table, payload);
           }
