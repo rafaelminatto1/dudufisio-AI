@@ -48,7 +48,7 @@ const InventoryPage: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | undefined>(undefined);
   const [showMovementModal, setShowMovementModal] = useState(false);
-  const [movementType, setMovementType] = useState<MovementType>('IN');
+  const [movementType, setMovementType] = useState<MovementType>(MovementType.In);
 
   const filteredItems = React.useMemo(() => {
     let result = searchQuery ? searchItems(searchQuery) : items;
@@ -67,7 +67,7 @@ const InventoryPage: React.FC = () => {
     try {
       await addMovement(itemId, type, quantity, reason);
       setShowMovementModal(false);
-      setSelectedItem(null);
+      setSelectedItem(undefined);
     } catch (error) {
       console.error('Error adding movement:', error);
     }
@@ -81,7 +81,7 @@ const InventoryPage: React.FC = () => {
         await createItem(itemData);
       }
       setShowCreateModal(false);
-      setSelectedItem(null);
+      setSelectedItem(undefined);
     } catch (error) {
       console.error('Error saving item:', error);
     }
@@ -489,7 +489,7 @@ const InventoryPage: React.FC = () => {
         isOpen={showMovementModal}
         onClose={() => {
           setShowMovementModal(false);
-          setSelectedItem(null);
+          setSelectedItem(undefined);
         }}
         onSave={handleAddMovement}
         item={selectedItem}

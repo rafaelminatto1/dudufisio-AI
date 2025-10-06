@@ -95,7 +95,7 @@ const PatientProgressCard = memo<{
           />
           <div>
             <p className="font-medium text-slate-900">{patient.name}</p>
-            <p className="text-sm text-slate-500">{patient.conditions[0]?.name || 'Condição não informada'}</p>
+            <p className="text-sm text-slate-500">{(patient.conditions || [])[0]?.name || 'Condição não informada'}</p>
           </div>
         </div>
         <span className={`px-3 py-1 rounded-full text-xs font-medium ${config.bg} ${config.color}`}>
@@ -126,7 +126,8 @@ const PatientProgressCard = memo<{
 PatientProgressCard.displayName = 'PatientProgressCard';
 
 const TherapistDashboard: React.FC = () => {
-  const { therapists, user } = useData();
+  const { therapists } = useData();
+  const { user } = useSupabaseAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -308,7 +309,7 @@ const TherapistDashboard: React.FC = () => {
                 const startTime = apt.startTime instanceof Date ? apt.startTime : new Date(apt.startTime);
                 const today = new Date();
                 return startTime.toDateString() === today.toDateString();
-              })}
+              }) as any}
               patients={patients}
               therapists={therapists}
             />

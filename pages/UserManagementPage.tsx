@@ -47,7 +47,7 @@ const UserManagementPage: React.FC = () => {
   // 🚀 Filtro memoizado
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
-      const matchesSearch = user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      const matchesSearch = (user.full_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                            user.email.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesRole = filterRole === 'all' || user.role === filterRole;
       const matchesStatus = filterStatus === 'all' ||
@@ -99,21 +99,21 @@ const UserManagementPage: React.FC = () => {
           <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
             user.is_active ? 'bg-teal-100 text-teal-600' : 'bg-gray-100 text-gray-400'
           }`}>
-            {user.profile_settings?.avatar_url ? (
+            {(user.profile_settings as any)?.avatar_url ? (
               <img
-                src={user.profile_settings.avatar_url}
-                alt={user.full_name}
+                src={(user.profile_settings as any).avatar_url}
+                alt={user.full_name || 'User'}
                 className="w-12 h-12 rounded-full object-cover"
               />
             ) : (
               <span className="text-lg font-semibold">
-                {user.full_name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                {(user.full_name || 'User').split(' ').map(n => n[0]).join('').toUpperCase()}
               </span>
             )}
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900">{user.full_name}</h3>
+            <h3 className="font-semibold text-gray-900">{user.full_name || 'Nome não informado'}</h3>
             <p className="text-sm text-gray-600">{user.email}</p>
             <div className="flex items-center space-x-2 mt-1">
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${

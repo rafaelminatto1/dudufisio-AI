@@ -122,8 +122,8 @@ class SupabaseAuthService {
       email: 'admin@dudufisio.com',
       name: 'Administrador',
       role: 'admin' as Role,
-      avatarUrl: null,
-      phone: null,
+      avatarUrl: '',
+      phone: undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -149,8 +149,8 @@ class SupabaseAuthService {
         email: 'admin@dudufisio.com',
         name: 'Administrador',
         role: 'admin' as Role,
-        avatarUrl: null,
-        phone: null,
+        avatarUrl: '',
+        phone: undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       },
@@ -159,8 +159,8 @@ class SupabaseAuthService {
         email: 'therapist@dudufisio.com',
         name: 'Fisioterapeuta',
         role: 'therapist' as Role,
-        avatarUrl: null,
-        phone: null,
+        avatarUrl: '',
+        phone: undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       },
@@ -169,8 +169,8 @@ class SupabaseAuthService {
         email: 'patient@dudufisio.com',
         name: 'Paciente',
         role: 'patient' as Role,
-        avatarUrl: null,
-        phone: null,
+        avatarUrl: '',
+        phone: undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       },
@@ -179,8 +179,8 @@ class SupabaseAuthService {
         email: 'educator@dudufisio.com',
         name: 'Educador Físico',
         role: 'educator' as Role,
-        avatarUrl: null,
-        phone: null,
+        avatarUrl: '',
+        phone: undefined,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
@@ -580,24 +580,7 @@ class SupabaseAuthService {
     return expiresAt <= new Date();
   }
 
-  // Mock authentication methods for development
-  private shouldUseMockAuth(credentials: LoginCredentials): boolean {
-    const demoEmails = [
-      'admin@dudufisio.com',
-      'therapist@dudufisio.com',
-      'patient@dudufisio.com',
-      'educator@dudufisio.com'
-    ];
-
-    // Check if using demo credentials or if Supabase is not properly configured
-    const isUsingDemoCredentials = demoEmails.includes(credentials.email) &&
-                                   credentials.password === 'demo123456';
-
-    const supabaseNotConfigured = !(import.meta as any).env.VITE_SUPABASE_ANON_KEY ||
-                                  (import.meta as any).env.VITE_SUPABASE_ANON_KEY === 'your_anon_key_here';
-
-    return isUsingDemoCredentials || supabaseNotConfigured;
-  }
+  // Mock authentication methods for development - removed duplicate
 
   private async mockLogin(credentials: LoginCredentials): Promise<User> {
     // Simulate API delay
