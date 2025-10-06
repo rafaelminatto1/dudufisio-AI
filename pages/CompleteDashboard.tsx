@@ -56,7 +56,7 @@ const AuditLogPage = createLazyComponent(() => import('./AuditLogPage'));
 const BackupManagementPage = createLazyComponent(() => import('./BackupManagementPage'));
 const MentoriaPageOld = createLazyComponent(() => import('./MentoriaPage'));
 const GroupsPage = createLazyComponent(() => import('./GroupsPage'));
-const KanbanPage = createLazyComponent(() => import('./KanbanPage'));
+import KanbanPage from './KanbanPage';
 const RiskAnalysisPage = createLazyComponent(() => import('./RiskAnalysisPage'));
 const ClinicalAnalyticsPage = createLazyComponent(() => import('./ClinicalAnalyticsPage'));
 const SettingsPage = createLazyComponent(() => import('./SettingsPage'));
@@ -328,7 +328,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/patients/:id" element={LazyElement(PatientDetailPage)} />
                 <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
                 <Route path="/notifications" element={LazyElement(NotificationCenterPage)} />
-                <Route path="/tasks" element={LazyElement(KanbanPage)} />
+                <Route path="/tasks" element={<KanbanPage />} />
                 <Route path="/session-evolution" element={LazyElement(SessionEvolutionPage)} />
                 
                 {/* Sessions and Treatment */}
