@@ -254,7 +254,7 @@ class APMService {
     };
 
     this.supabase.from('user_sessions').insert(session);
-    this.addBreadcrumb('session', 'Session started', 'info');
+    this.addBreadcrumb('user', 'Session started', 'info');
   }
 
   private setupErrorMonitoring(): void {
@@ -838,7 +838,7 @@ class APMService {
       })
       .eq('id', this.sessionId);
 
-    this.addBreadcrumb('session', 'Session ended', 'info');
+    this.addBreadcrumb('user', 'Session ended', 'info');
   }
 
   // Utility methods

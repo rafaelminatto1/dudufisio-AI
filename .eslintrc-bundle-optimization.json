@@ -1,0 +1,57 @@
+{
+  "extends": ["./.eslintrc.json"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "lodash",
+            "message": "Use lodash-es ou import específico: import debounce from 'lodash/debounce'"
+          },
+          {
+            "name": "date-fns",
+            "message": "Import funções específicas: import { format } from 'date-fns'"
+          },
+          {
+            "name": "recharts",
+            "message": "Import componentes específicos para melhor tree shaking"
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["@radix-ui/react-*"],
+            "message": "Importe apenas os componentes necessários do Radix UI"
+          },
+          {
+            "group": ["lucide-react"],
+            "importNames": ["*"],
+            "message": "Import ícones específicos: import { Home, User } from 'lucide-react'"
+          }
+        ]
+      }
+    ],
+    "import/no-duplicates": "error",
+    "import/no-unused-modules": [
+      "error",
+      {
+        "unusedExports": true,
+        "missingExports": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/consistent-type-imports": [
+          "error",
+          {
+            "prefer": "type-imports",
+            "disallowTypeAnnotations": false
+          }
+        ]
+      }
+    }
+  ]
+}

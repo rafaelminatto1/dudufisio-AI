@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, ComponentType } from 'react';
 import OptimizedLoader from '../components/ui/OptimizedLoader';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 /**
  * 🚀 Sistema de Lazy Loading Otimizado
@@ -26,11 +27,33 @@ export function createLazyComponent<T extends ComponentType<any>>(
   const LazyComponent = lazy(importFn);
 
   return React.forwardRef<any, React.ComponentProps<T> & LazyComponentProps>((props, ref) => (
-    <Suspense fallback={fallback || <OptimizedLoader variant="skeleton" />}>
-      <LazyComponent {...props} ref={ref} />
-    </Suspense>
+    <ErrorBoundary
+      onError={(error, errorInfo) => {
+        console.error('🚨 Erro no componente lazy:', error, errorInfo);
+      }}
+    >
+      <Suspense fallback={fallback || <OptimizedLoader variant="skeleton" />}>
+        <LazyComponent {...props} ref={ref} />
+      </Suspense>
+    </ErrorBoundary>
   ));
 }
+
+/**
+ * 🎯 Lazy Components Otimizados - Dashboard Pages
+ * Exports individuais para compatibilidade com AppRoutes.tsx
+ */
+export const CompleteDashboard = createLazyComponent(
+  () => import('../pages/CompleteDashboard')
+);
+
+export const PatientPortalDashboard = createLazyComponent(
+  () => import('../pages/PatientPortalDashboard')
+);
+
+export const PartnerPortalDashboard = createLazyComponent(
+  () => import('../pages/PartnerPortalDashboard')
+);
 
 /**
  * Lazy loading para páginas principais
@@ -47,7 +70,7 @@ export const LazyPages = {
   InventoryPage: createLazyComponent(() => import('../pages/InventoryPage')),
   UserManagementPage: createLazyComponent(() => import('../pages/UserManagementPage')),
   AdminDashboardPage: createLazyComponent(() => import('../pages/AdminDashboardPage')),
-  CompleteDashboard: createLazyComponent(() => import('../pages/CompleteDashboard')),
+  CompleteDashboard: CompleteDashboard,
   SessionFormPage: createLazyComponent(() => import('../pages/SessionFormPage')),
   SessionViewPage: createLazyComponent(() => import('../pages/SessionViewPage')),
   SuppliesPage: createLazyComponent(() => import('../pages/SuppliesPage')),
@@ -96,7 +119,7 @@ export function usePreload() {
     const component = LazyPages[pageName];
     if (component) {
       // Preload do componente lazy
-      preload(() => import(`../pages/${pageName}`), `page-${pageName}`);
+      preload(() => import(/* @vite-ignore */ `../pages/${pageName}`), `page-${pageName}`);
     }
   }, [preload]);
 
@@ -156,9 +179,15 @@ export class SuspenseWrapper extends React.Component<
     }
 
     return (
-      <Suspense fallback={this.props.fallback || <OptimizedLoader variant="skeleton" />}>
-        {this.props.children}
-      </Suspense>
+      <ErrorBoundary
+        onError={(error, errorInfo) => {
+          console.error('🚨 Erro no SuspenseWrapper:', error, errorInfo);
+        }}
+      >
+        <Suspense fallback={this.props.fallback || <OptimizedLoader variant="skeleton" />}>
+          {this.props.children}
+        </Suspense>
+      </ErrorBoundary>
     );
   }
 }
@@ -178,9 +207,52 @@ export const preloadCriticalRoutes = () => {
   criticalPages.forEach(pageName => {
     // Preload em background
     setTimeout(() => {
-      import(`../pages/${pageName}`).catch(console.error);
+      import(/* @vite-ignore */ `../pages/${pageName}`).catch(console.error);
     }, 100);
   });
+};
+
+// 🎯 Preloading de componentes críticos
+export const preloadCriticalComponents = () => {
+  // Preload componentes críticos após carregamento inicial
+  setTimeout(() => {
+    Promise.all([
+      import('../pages/CompleteDashboard'),
+      import('../components/Sidebar'),
+      import('../components/Breadcrumbs')
+    ]).catch(() => {
+      // Silenciosamente falha no preload
+    });
+  }, 3000);
+};
+
+// 🎯 Preloading baseado em role do usuário
+export const preloadUserRoleComponents = (userRole: string) => {
+  setTimeout(() => {
+    switch (userRole) {
+      case 'Admin':
+      case 'Therapist':
+        Promise.all([
+          import('../pages/AcompanhamentoPage'),
+          import('../pages/GroupsPage'),
+          import('../pages/NotificationCenterPage')
+        ]).catch(() => {});
+        break;
+      case 'Patient':
+        Promise.all([
+          import('../pages/patient-portal/PatientDashboardPage'),
+          import('../pages/patient-portal/MyAppointmentsPage'),
+          import('../pages/patient-portal/MyExercisesPage')
+        ]).catch(() => {});
+        break;
+      case 'EducadorFisico':
+        Promise.all([
+          import('../pages/partner-portal/EducatorDashboardPage'),
+          import('../pages/partner-portal/ClientListPage')
+        ]).catch(() => {});
+        break;
+    }
+  }, 2000);
 };
 
 export default LazyPages;

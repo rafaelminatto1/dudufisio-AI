@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback, memo } from 'react';
 import { Plus, Search, Filter, Edit, Trash2, Eye, MoreVertical, Users, Calendar, Phone, Mail } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -137,10 +137,10 @@ const PatientListPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
+    <main className="min-h-screen bg-slate-50 py-8" role="main">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-4xl font-bold text-slate-900 mb-2">
               Lista de Pacientes
@@ -153,7 +153,7 @@ const PatientListPage: React.FC = () => {
             <Plus className="w-4 h-4 mr-2" />
             Novo Paciente
           </Button>
-        </div>
+        </header>
 
         {/* Filtros e Busca */}
         <Card className="mb-6">
@@ -347,7 +347,7 @@ const PatientListPage: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

@@ -83,7 +83,7 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
   const maxTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastCallTimeRef = useRef<number>(0);
   const lastInvokeTimeRef = useRef<number>(0);
-  const lastArgsRef = useRef<Parameters<T>>();
+  const lastArgsRef = useRef<Parameters<T> | undefined>(undefined);
   const isLeadingRef = useRef(false);
   const isInvokingRef = useRef(false);
 

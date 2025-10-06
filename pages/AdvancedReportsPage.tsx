@@ -5,7 +5,7 @@
  * analytics preditivos e sistemas de compliance integrados.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useReporting, useFinancialReports, useClinicalReports, useOperationalReports, useComplianceReports } from '../hooks/useReporting';
 import PermissionGuard, { IfPermission } from '../components/auth/PermissionGuard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -68,14 +68,14 @@ const AdvancedReportsPage: React.FC = () => {
     refreshData();
   }, [dateRange]);
 
-  const handleGenerateReport = async (templateId: string, parameters: Record<string, any>) => {
+  const handleGenerateReport = useCallback(async (templateId: string, parameters: Record<string, any>) => {
     try {
       await generateReport(templateId, parameters);
       setReportModal({ isOpen: false, templateId: null });
     } catch (error) {
       console.error('Erro ao gerar relatório:', error);
     }
-  };
+  }, [generateReport]);
 
   const handleExportReport = async (reportId: string, format: string) => {
     try {
@@ -86,19 +86,24 @@ const AdvancedReportsPage: React.FC = () => {
     }
   };
 
-  const filteredTemplates = templates.filter(template => {
-    const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         template.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || template.category === filterCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // 🚀 Filtros memoizados para melhor performance
+  const filteredTemplates = useMemo(() => {
+    return templates.filter(template => {
+      const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           template.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = filterCategory === 'all' || template.category === filterCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [templates, searchTerm, filterCategory]);
 
-  const filteredReports = reports.filter(report => {
-    const template = templates.find(t => t.id === report.templateId);
-    const matchesSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || template?.category === filterCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredReports = useMemo(() => {
+    return reports.filter(report => {
+      const template = templates.find(t => t.id === report.templateId);
+      const matchesSearch = report.title.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = filterCategory === 'all' || template?.category === filterCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [reports, templates, searchTerm, filterCategory]);
 
   const getMetricChangeIcon = (changeType?: 'positive' | 'negative' | 'neutral') => {
     switch (changeType) {
@@ -296,7 +301,7 @@ const AdvancedReportsPage: React.FC = () => {
               </div>
               <div className="p-6">
                 <div className="space-y-4">
-                  {reports.slice(0, 5).map((report) => (
+                  {reports.slice(0, 5).map((report: any) => (
                     <div key={report.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3">
                         {getCategoryIcon(templates.find(t => t.id === report.templateId)?.category || '')}
@@ -419,7 +424,7 @@ const AdvancedReportsPage: React.FC = () => {
               </div>
               <div className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredTemplates.map((template) => (
+                  {filteredTemplates.map((template: any) => (
                     <div key={template.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
@@ -494,7 +499,7 @@ const AdvancedReportsPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredReports.map((report) => {
+                    {filteredReports.map((report: any) => {
                       const template = templates.find(t => t.id === report.templateId);
                       return (
                         <tr key={report.id} className="hover:bg-gray-50">

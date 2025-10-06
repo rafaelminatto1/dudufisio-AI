@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Plus, Search } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { Group, Therapist } from '../types';
@@ -22,7 +22,8 @@ const GroupsPage: React.FC = () => {
     const { showToast } = useToast();
     const { user } = useApp();
 
-    const fetchData = async () => {
+    // 🚀 Função de carregamento memoizada
+    const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
             const groupsData = await groupService.getGroups();
@@ -33,11 +34,11 @@ const GroupsPage: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [showToast]);
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [fetchData]);
 
     const filteredGroups = useMemo(() => {
         return groups.filter(group =>
@@ -45,17 +46,18 @@ const GroupsPage: React.FC = () => {
         );
     }, [searchTerm, groups]);
 
-    const handleOpenModal = (group?: Group) => {
+    // 🚀 Handlers memoizados
+    const handleOpenModal = useCallback((group?: Group) => {
         setGroupToEdit(group);
         setIsModalOpen(true);
-    };
+    }, []);
 
-    const handleCloseModal = () => {
+    const handleCloseModal = useCallback(() => {
         setGroupToEdit(undefined);
         setIsModalOpen(false);
-    };
+    }, []);
 
-    const handleSaveGroup = async (name: string) => {
+    const handleSaveGroup = useCallback(async (name: string) => {
         try {
             let groupData: Omit<Group, 'id' | 'capacity' | 'status'> & { id?: string };
             if (groupToEdit) {
@@ -79,9 +81,13 @@ const GroupsPage: React.FC = () => {
         } catch {
             showToast('Falha ao salvar o grupo.', 'error');
         }
-    };
-    
-    const isPageLoading = isLoading || isTherapistsLoading;
+    }, [groupToEdit, user?.id, therapists, fetchData, showToast]);
+
+    // 🚀 Valor computado memoizado
+    const isPageLoading = useMemo(
+        () => isLoading || isTherapistsLoading,
+        [isLoading, isTherapistsLoading]
+    );
 
     const renderContent = () => {
         if (isPageLoading) {

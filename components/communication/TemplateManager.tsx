@@ -4,7 +4,8 @@ import {
   MessageSquare, Mail, Smartphone, Bell, Code, Type,
   Image, Link, AlertCircle, CheckCircle, Clock
 } from 'lucide-react';
-import { MessageTemplate, MessageType, CommunicationChannel } from '../../types';
+import type { MessageTemplate } from '../../types';
+import { MessageType, CommunicationChannel } from '../../types';
 
 interface TemplateManagerProps {
   className?: string;

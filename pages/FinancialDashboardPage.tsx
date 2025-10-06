@@ -446,7 +446,7 @@ const FinancialDashboardPage: React.FC = () => {
               Alertas Financeiros
             </h3>
             <div className="space-y-3">
-              {financialAlerts.map((alert) => (
+              {financialAlerts.map((alert: any) => (
                 <div key={alert.id} className={`border rounded-lg p-3 ${getSeverityColor(alert.severity)}`}>
                   <div className="flex items-start gap-3">
                     {getAlertIcon(alert.type)}
@@ -634,7 +634,7 @@ const FinancialDashboardPage: React.FC = () => {
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
-                    {paymentMethods.map((method) => (
+                    {paymentMethods.map((method: any) => (
                       <div key={method.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
                         <div className="flex items-center gap-3">
                           <div className="p-2 bg-sky-100 rounded-lg">
@@ -665,7 +665,7 @@ const FinancialDashboardPage: React.FC = () => {
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
-                    {recurrentPayments.map((payment) => (
+                    {recurrentPayments.map((payment: any) => (
                       <div key={payment.id} className="border border-gray-200 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-medium text-gray-900">{payment.patientName}</h4>
@@ -744,7 +744,7 @@ const FinancialDashboardPage: React.FC = () => {
               </div>
               <div className="p-6">
                 <div className="grid gap-6">
-                  {financialGoals.map((goal) => {
+                  {financialGoals.map((goal: any) => {
                     const progress = getProgressPercentage(goal.current, goal.target);
                     return (
                       <div key={goal.id} className="border border-gray-200 rounded-lg p-6">

@@ -1,10 +1,10 @@
 // services/reportsService.ts
 import { supabase } from '../lib/supabase';
-import { 
-  SupplyConsumptionReport,
-  StockValuationReport,
-  CostAnalysisReport
-} from '../types';
+import type { Database } from '../types/database';
+
+type ConsumptionAnalytics = Database['public']['Tables']['supply_consumption_analytics']['Row'];
+type TaskCostAnalytics = Database['public']['Tables']['task_cost_analytics']['Row'];
+type SupplierPerformanceAnalytics = Database['public']['Tables']['supplier_performance_analytics']['Row'];
 
 // ============================================================================
 // TIPOS PARA RELATÓRIOS E ANALYTICS
@@ -168,14 +168,14 @@ export const getConsumptionAnalytics = async (filters?: ReportFilters): Promise<
   }
 };
 
-export const getConsumptionReport = async (filters: ReportFilters): Promise<SupplyConsumptionReport[]> => {
+export const getConsumptionReport = async (filters: ReportFilters): Promise<ConsumptionAnalytics[]> => {
   try {
-    const { data, error } = await supabase.rpc('generate_consumption_report', {
-      start_date: filters.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      end_date: filters.endDate || new Date().toISOString().split('T')[0],
-      supply_category: filters.category || null,
-      supplier_id: filters.supplierId || null
-    });
+    // Use the analytics table instead of RPC function
+    const { data, error } = await supabase
+      .from('supply_consumption_analytics')
+      .select('*')
+      .gte('created_at', filters.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+      .lte('created_at', filters.endDate || new Date().toISOString());
 
     if (error) throw error;
     return data || [];
@@ -225,19 +225,9 @@ export const getTaskCostAnalytics = async (filters?: ReportFilters): Promise<Tas
   }
 };
 
-export const getCostAnalysisReport = async (filters: ReportFilters): Promise<CostAnalysisReport[]> => {
+export const getCostAnalysisReport = async (filters: ReportFilters): Promise<TaskCostAnalytics[]> => {
   try {
-    const taskAnalytics = await getTaskCostAnalytics(filters);
-    
-    return taskAnalytics.map(task => ({
-      taskId: task.taskId,
-      taskType: task.taskType,
-      patientId: task.patientId,
-      patientName: task.patientName,
-      totalCost: task.totalSupplyCost + (task.laborCost || 0) + (task.overheadCost || 0),
-      suppliesUsed: [], // Será preenchido com dados detalhados se necessário
-      date: task.taskDate
-    }));
+    return await getTaskCostAnalytics(filters);
   } catch (error) {
     console.error('Erro ao gerar relatório de análise de custos:', error);
     throw error;
@@ -383,13 +373,15 @@ export const getPerformanceMetrics = async (period?: {
 
 export const calculatePerformanceMetrics = async (periodStart?: string, periodEnd?: string): Promise<number> => {
   try {
-    const { data, error } = await supabase.rpc('calculate_performance_metrics', {
-      period_start: periodStart || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      period_end: periodEnd || new Date().toISOString().split('T')[0]
-    });
+    // Use the performance metrics table instead of RPC function
+    const { data, error } = await supabase
+      .from('performance_metrics')
+      .select('metric_value')
+      .gte('period_start', periodStart || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
+      .lte('period_end', periodEnd || new Date().toISOString().split('T')[0]);
 
     if (error) throw error;
-    return data || 0;
+    return data?.length || 0;
   } catch (error) {
     console.error('Erro ao calcular métricas de performance:', error);
     throw error;

@@ -1,5 +1,5 @@
 // pages/UserManagementPage.tsx
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, memo } from 'react';
 import { Plus, Search, Filter, UserPlus, Shield, Eye, Edit, Trash2, Power, PowerOff } from 'lucide-react';
 import useUsers from '../hooks/useUsers';
 import { UserProfile } from '../services/userService';
@@ -44,27 +44,31 @@ const UserManagementPage: React.FC = () => {
     inactive: 'Inativo',
   };
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = filterRole === 'all' || user.role === filterRole;
-    const matchesStatus = filterStatus === 'all' ||
-                         (filterStatus === 'active' && user.is_active) ||
-                         (filterStatus === 'inactive' && !user.is_active);
+  // 🚀 Filtro memoizado
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => {
+      const matchesSearch = user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesRole = filterRole === 'all' || user.role === filterRole;
+      const matchesStatus = filterStatus === 'all' ||
+                           (filterStatus === 'active' && user.is_active) ||
+                           (filterStatus === 'inactive' && !user.is_active);
 
-    return matchesSearch && matchesRole && matchesStatus;
-  });
+      return matchesSearch && matchesRole && matchesStatus;
+    });
+  }, [users, searchTerm, filterRole, filterStatus]);
 
-  const handleCreateUser = async (userData: any) => {
+  // 🚀 Handlers memoizados
+  const handleCreateUser = useCallback(async (userData: any) => {
     try {
       await createUser(userData);
       setShowCreateModal(false);
     } catch (error) {
       // Error is handled by the hook
     }
-  };
+  }, [createUser]);
 
-  const handleUpdateUser = async (userData: any) => {
+  const handleUpdateUser = useCallback(async (userData: any) => {
     if (!editingUser) return;
 
     try {
@@ -73,9 +77,9 @@ const UserManagementPage: React.FC = () => {
     } catch (error) {
       // Error is handled by the hook
     }
-  };
+  }, [editingUser, updateUser]);
 
-  const handleToggleStatus = async (user: UserProfile) => {
+  const handleToggleStatus = useCallback(async (user: UserProfile) => {
     try {
       if (user.is_active) {
         await deactivateUser(user.id);
@@ -85,9 +89,10 @@ const UserManagementPage: React.FC = () => {
     } catch (error) {
       // Error is handled by the hook
     }
-  };
+  }, [deactivateUser, activateUser]);
 
-  const UserCard: React.FC<{ user: UserProfile }> = ({ user }) => (
+  // 🚀 Componente UserCard memoizado
+  const UserCard = memo<{ user: UserProfile }>(({ user }) => (
     <div className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-4">
@@ -179,7 +184,8 @@ const UserManagementPage: React.FC = () => {
         </p>
       )}
     </div>
-  );
+  ));
+  UserCard.displayName = 'UserCard';
 
   const UsersList: React.FC<{ users: UserProfile[] }> = ({ users }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

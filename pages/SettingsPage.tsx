@@ -1,13 +1,14 @@
 
 
 'use client';
-import React from 'react';
+import React, { memo } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
 import { User, Shield, Bell, KeyRound, FileText, CreditCard, ExternalLink } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 
-const SettingsCard: React.FC<{ icon: React.ReactNode; title: string; description: string; children: React.ReactNode }> = ({ icon, title, description, children }) => (
+// 🚀 Componente SettingsCard memoizado
+const SettingsCard = memo<{ icon: React.ReactNode; title: string; description: string; children: React.ReactNode }>(({ icon, title, description, children }) => (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
         <div className="p-6">
             <div className="flex items-center">
@@ -24,7 +25,8 @@ const SettingsCard: React.FC<{ icon: React.ReactNode; title: string; description
             </div>
         </div>
     </div>
-);
+));
+SettingsCard.displayName = 'SettingsCard';
 
 const SettingsPage: React.FC = () => {
     return (

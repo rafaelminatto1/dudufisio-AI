@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -112,7 +112,6 @@ const AdminDashboardPage: React.FC = () => {
           {mockAlerts.map(alert => (
             <Card key={alert.id} className={`border-l-4 ${
               alert.type === 'warning' ? 'border-yellow-500 bg-yellow-50' :
-              alert.type === 'error' ? 'border-red-500 bg-red-50' :
               alert.type === 'success' ? 'border-green-500 bg-green-50' :
               'border-blue-500 bg-blue-50'
             }`}>
@@ -120,7 +119,6 @@ const AdminDashboardPage: React.FC = () => {
                 <div className="flex items-start">
                   <AlertTriangle className={`h-5 w-5 mt-0.5 mr-3 ${
                     alert.type === 'warning' ? 'text-yellow-600' :
-                    alert.type === 'error' ? 'text-red-600' :
                     alert.type === 'success' ? 'text-green-600' :
                     'text-blue-600'
                   }`} />

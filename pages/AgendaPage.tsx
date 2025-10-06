@@ -227,10 +227,10 @@ export default function AgendaPage() {
     };
 
     const handleStartSession = useCallback((appointment: EnrichedAppointment) => {
-        setSelectedAppointmentForSession(appointment);
-        setShowSessionForm(true);
+        console.log('🚀 Iniciando sessão para appointment:', appointment.id);
         setSelectedAppointment(null); // Fecha o modal
-    }, []);
+        navigate(`/atendimento/${appointment.id}`);
+    }, [navigate]);
 
     const handleBackToAgenda = useCallback(() => {
         setShowSessionForm(false);
@@ -456,9 +456,9 @@ export default function AgendaPage() {
     };
 
     return (
-        <div className="flex flex-col h-full bg-slate-50/50" data-testid="agenda-page">
+        <main className="flex flex-col h-full bg-slate-50/50" data-testid="agenda-page" role="main">
             {/* Compact Professional Header */}
-            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
+            <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
                 <div className="px-4 py-3">
                     <div className="flex items-center justify-between">
                         <div className="flex-1 flex flex-col gap-2 min-w-0">
@@ -552,7 +552,7 @@ export default function AgendaPage() {
                         onViewChange={setCurrentView}
                     />
                 </div>
-            </div>
+            </header>
 
             {/* Main content area - professional styling */}
             <div className="flex-1 overflow-auto bg-white">
@@ -623,6 +623,6 @@ export default function AgendaPage() {
                 patients={patients}
                 therapists={therapists}
             />
-        </div>
+        </main>
     );
 }

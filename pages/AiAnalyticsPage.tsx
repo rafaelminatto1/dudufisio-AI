@@ -5,7 +5,7 @@
  * insights cl�nicos e m�tricas inteligentes da cl�nica.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import PageHeader from '../components/PageHeader';
 import PermissionGuard, { IfPermission } from '../components/auth/PermissionGuard';
 import { useData } from '../contexts/AppContext';
@@ -83,11 +83,8 @@ const AiAnalyticsPage: React.FC = () => {
   const [isGeneratingInsights, setIsGeneratingInsights] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string>('');
 
-  useEffect(() => {
-    loadAIAnalytics();
-  }, []);
-
-  const loadAIAnalytics = async () => {
+  // 🚀 Função de carregamento memoizada
+  const loadAIAnalytics = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -105,7 +102,11 @@ const AiAnalyticsPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadAIAnalytics();
+  }, [loadAIAnalytics]);
 
   const generatePredictions = async (): Promise<void> => {
     const mockPredictions: AIPrediction[] = [
@@ -376,7 +377,8 @@ const AiAnalyticsPage: React.FC = () => {
     setOperationalInsights(mockOperational);
   };
 
-  const refreshAIAnalytics = async () => {
+  // 🚀 Handler de refresh memoizado
+  const refreshAIAnalytics = useCallback(async () => {
     setIsGeneratingInsights(true);
     try {
       // Simular chamada para IA
@@ -385,16 +387,17 @@ const AiAnalyticsPage: React.FC = () => {
     } finally {
       setIsGeneratingInsights(false);
     }
-  };
+  }, [loadAIAnalytics]);
 
-  const getConfidenceColor = (confidence: number): string => {
+  // 🚀 Helper functions memoizadas (usadas em loops .map())
+  const getConfidenceColor = useCallback((confidence: number): string => {
     if (confidence >= 90) return 'text-green-600 bg-green-50';
     if (confidence >= 80) return 'text-blue-600 bg-blue-50';
     if (confidence >= 70) return 'text-yellow-600 bg-yellow-50';
     return 'text-red-600 bg-red-50';
-  };
+  }, []);
 
-  const getRiskColor = (risk: string): string => {
+  const getRiskColor = useCallback((risk: string): string => {
     switch (risk) {
       case 'critical': return 'text-red-600 bg-red-100';
       case 'high': return 'text-orange-600 bg-orange-100';
@@ -402,9 +405,9 @@ const AiAnalyticsPage: React.FC = () => {
       case 'low': return 'text-green-600 bg-green-100';
       default: return 'text-gray-600 bg-gray-100';
     }
-  };
+  }, []);
 
-  const getTrendIcon = (trend: string) => {
+  const getTrendIcon = useCallback((trend: string) => {
     switch (trend) {
       case 'up':
       case 'positive':
@@ -417,7 +420,7 @@ const AiAnalyticsPage: React.FC = () => {
       default:
         return <div className="w-4 h-4 rounded-full bg-gray-400" />;
     }
-  };
+  }, []);
 
   if (isLoading) {
     return (
@@ -540,7 +543,7 @@ const AiAnalyticsPage: React.FC = () => {
               </div>
               <div className="p-6">
                 <div className="space-y-4">
-                  {predictions.slice(0, 3).map((prediction) => (
+                  {predictions.slice(0, 3).map((prediction: any) => (
                     <div key={prediction.id} className="border border-gray-200 rounded-lg p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -676,7 +679,7 @@ const AiAnalyticsPage: React.FC = () => {
               </div>
               <div className="p-6">
                 <div className="space-y-6">
-                  {predictions.map((prediction) => (
+                  {predictions.map((prediction: any) => (
                     <div key={prediction.id} className="border border-gray-200 rounded-lg p-6">
                       <div className="flex items-start gap-4">
                         <div className="p-3 bg-sky-100 rounded-lg">
@@ -766,7 +769,7 @@ const AiAnalyticsPage: React.FC = () => {
               </div>
               <div className="p-6">
                 <div className="grid gap-6">
-                  {patientInsights.map((insight) => (
+                  {patientInsights.map((insight: any) => (
                     <div key={insight.patientId} className="border border-gray-200 rounded-lg p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>

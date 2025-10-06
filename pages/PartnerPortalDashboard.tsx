@@ -1,13 +1,14 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import {
     LayoutGrid, Users, Activity, DollarSign, LogOut, Stethoscope
 } from 'lucide-react';
+import { createLazyComponent } from '../lib/lazyLoading';
 
-// Lazy load partner portal pages
-const EducatorDashboardPage = lazy(() => import('./partner-portal/EducatorDashboardPage'));
-const ClientListPage = lazy(() => import('./partner-portal/ClientListPage'));
-const PartnerExerciseLibraryPage = lazy(() => import('./partner-portal/PartnerExerciseLibraryPage'));
-const FinancialsPage = lazy(() => import('./partner-portal/FinancialsPage'));
+// ✅ Lazy load partner portal pages usando createLazyComponent centralizado
+const EducatorDashboardPage = createLazyComponent(() => import('./partner-portal/EducatorDashboardPage'));
+const ClientListPage = createLazyComponent(() => import('./partner-portal/ClientListPage'));
+const PartnerExerciseLibraryPage = createLazyComponent(() => import('./partner-portal/PartnerExerciseLibraryPage'));
+const FinancialsPage = createLazyComponent(() => import('./partner-portal/FinancialsPage'));
 
 // Loading component
 const PageLoader = () => (
@@ -111,7 +112,7 @@ const PartnerPortalDashboard: React.FC<PartnerPortalDashboardProps> = ({ user, o
                             <h3 className="px-3 py-2 text-xs font-semibold uppercase text-slate-400 tracking-wider">
                                 Principal
                             </h3>
-                            {menuItems.map((item) => (
+                            {menuItems.map((item: any) => (
                                 <NavLink key={item.id} item={item} />
                             ))}
                         </div>

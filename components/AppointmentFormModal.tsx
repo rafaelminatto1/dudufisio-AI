@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { X, Save, Calendar, Clock } from 'lucide-react';
-import { Appointment, Patient, AppointmentStatus, AppointmentType, Therapist, PatientSummary, RecurrenceRule } from '../types';
+import type { Appointment, Patient, Therapist, PatientSummary, RecurrenceRule } from '../types';
+import { AppointmentStatus, AppointmentType } from '../types';
 import { recurrenceTemplateService } from '../services/scheduling/recurrenceTemplateService';
 import { waitlistService } from '../services/scheduling/waitlistService';
 import { blockService } from '../services/scheduling/blockService';
-import { RecurrenceTemplate, WaitlistEntry, ScheduleBlock } from '../types';
+import type { RecurrenceTemplate, WaitlistEntry, ScheduleBlock } from '../types';
 import { useToast } from '../contexts/ToastContext';
 import { PatientSearchInput } from './agenda/PatientSearchInput';
 import { format } from 'date-fns';

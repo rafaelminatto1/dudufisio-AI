@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useMemo, useState, useEffect, useCallback, memo } from 'react';
 import PageHeader from '../components/PageHeader';
 import {
   Users, Calendar, Clock, Target, TrendingUp,
@@ -34,15 +34,15 @@ interface TherapistMetrics {
   criticalAlerts: number;
 }
 
-// Componente de Métrica Profissional
-const MetricCard: React.FC<{
+// 🚀 Componente de Métrica Profissional Memoizado
+const MetricCard = memo<{
   title: string;
   value: string | number;
   subtitle?: string;
   icon: React.ComponentType<any>;
   trend?: { value: number; positive: boolean };
   alert?: boolean;
-}> = ({ title, value, subtitle, icon: Icon, trend, alert }) => (
+}>(({ title, value, subtitle, icon: Icon, trend, alert }) => (
   <div className={`bg-white rounded-xl shadow-sm border p-6 transition-all hover:shadow-md ${alert ? 'border-orange-200 bg-orange-50' : 'border-slate-200'}`}>
     <div className="flex items-center justify-between">
       <div className="flex-1">
@@ -66,15 +66,16 @@ const MetricCard: React.FC<{
       )}
     </div>
   </div>
-);
+));
+MetricCard.displayName = 'MetricCard';
 
-// Componente de Progresso de Paciente
-const PatientProgressCard: React.FC<{
+// 🚀 Componente de Progresso de Paciente Memoizado
+const PatientProgressCard = memo<{
   patient: Patient;
   progress: number;
   nextSession: string;
   status: 'on-track' | 'needs-attention' | 'excellent';
-}> = ({ patient, progress, nextSession, status }) => {
+}>(({ patient, progress, nextSession, status }) => {
   const statusConfig = {
     'excellent': { color: 'text-green-600', bg: 'bg-green-100', label: 'Excelente' },
     'on-track': { color: 'text-sky-600', bg: 'bg-sky-100', label: 'No Cronograma' },
@@ -121,7 +122,8 @@ const PatientProgressCard: React.FC<{
       </div>
     </div>
   );
-};
+});
+PatientProgressCard.displayName = 'PatientProgressCard';
 
 const TherapistDashboard: React.FC = () => {
   const { therapists, user } = useData();

@@ -1059,7 +1059,7 @@ export interface Notification {
   message: string;
   isRead: boolean;
   createdAt: Date;
-  type: 'task_assigned' | 'announcement' | 'appointment_reminder' | 'exercise_reminder';
+  type: 'task_assigned' | 'announcement' | 'appointment_reminder' | 'exercise_reminder' | 'alert' | 'push_fallback';
 }
 
 export interface RecentActivity {
@@ -1586,7 +1586,39 @@ export enum ItemStatus {
   Active = 'Active',
   Maintenance = 'Maintenance',
   Retired = 'Retired',
-  Inactive = 'Inactive'
+  Inactive = 'Inactive',
+  OutOfStock = 'OutOfStock',
+  Discontinued = 'Discontinued'
+}
+
+// Tipos que estavam faltando
+export enum MovementType {
+  IN = 'IN',
+  OUT = 'OUT',
+  TRANSFER = 'TRANSFER',
+  ADJUSTMENT = 'ADJUSTMENT',
+  RETURN = 'RETURN'
+}
+
+export interface CommunicationLog {
+  id: string;
+  patientId: string;
+  type: 'email' | 'sms' | 'call' | 'whatsapp';
+  content: string;
+  sentAt: string;
+  status: 'sent' | 'delivered' | 'failed';
+  userId: string;
+}
+
+export interface PainPoint {
+  id: string;
+  patientId: string;
+  bodyRegion: string;
+  bodySide: 'front' | 'back' | 'left' | 'right';
+  painLevel: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface InventoryItem {
@@ -2847,21 +2879,33 @@ export type AuditAction =
   // Patient Management
   | 'CREATE_PATIENT' | 'UPDATE_PATIENT' | 'DELETE_PATIENT' | 'VIEW_PATIENT_RECORD'
   // Appointment Management
-  | 'CREATE_APPOINTMENT' | 'UPDATE_APPOINTMENT' | 'CANCEL_APPOINTMENT' | 'RESCHEDULE_APPOINTMENT'
+  | 'CREATE_APPOINTMENT' | 'UPDATE_APPOINTMENT' | 'CANCEL_APPOINTMENT' | 'RESCHEDULE_APPOINTMENT' | 'DELETE_APPOINTMENT'
   // Treatment Management
   | 'CREATE_TREATMENT' | 'UPDATE_TREATMENT' | 'COMPLETE_TREATMENT' | 'CANCEL_TREATMENT'
   // Financial Operations
   | 'CREATE_INVOICE' | 'PROCESS_PAYMENT' | 'REFUND_PAYMENT' | 'UPDATE_PAYMENT_STATUS'
+  | 'CREATE_TRANSACTION' | 'UPDATE_TRANSACTION' | 'DELETE_TRANSACTION'
   // Medical Records
   | 'CREATE' | 'UPDATE' | 'DELETE' | 'VIEW' | 'SIGN' | 'ARCHIVE' | 'RESTORE' | 'EXPORT'
   // System Operations
   | 'SYSTEM_BACKUP' | 'SYSTEM_RESTORE' | 'DATA_EXPORT' | 'DATA_IMPORT'
+  // Backup Operations
+  | 'BACKUP_CREATED' | 'BACKUP_FAILED' | 'BACKUP_RESTORED' | 'BACKUP_RESTORE_FAILED'
+  | 'BACKUP_CONFIG_UPDATE' | 'BACKUP_MONITOR_CONFIG_UPDATE'
+  | 'BACKUP_ALERT_CREATED' | 'BACKUP_ALERT_RESOLVED' | 'BACKUP_ALERT_RESOLVED_MANUAL' | 'BACKUP_ALERT_ACTION_EXECUTED'
   // Settings and Preferences
   | 'UPDATE_NOTIFICATION_PREFERENCES' | 'UPDATE_USER_SETTINGS'
+  // Notification Operations
+  | 'SUBSCRIBE_PUSH_NOTIFICATIONS' | 'SEND_TEMPLATED_NOTIFICATION'
   // Video Call Operations
   | 'VIDEOCALL_CONFIG_UPDATE' | 'VIDEOCALL_SESSION_CREATED' | 'VIDEOCALL_SESSION_JOINED' | 'VIDEOCALL_SESSION_LEFT' | 'VIDEOCALL_SESSION_ENDED' | 'VIDEOCALL_RECORDING_STARTED' | 'VIDEOCALL_RECORDING_COMPLETED';
 
-export type ResourceType = 'user' | 'appointment' | 'patient' | 'treatment' | 'transaction' | 'settings' | 'videocall-config' | 'videocall-session' | 'videocall-recording';
+export type ResourceType =
+  | 'user' | 'appointment' | 'patient' | 'treatment' | 'transaction' | 'settings'
+  | 'videocall-config' | 'videocall-session' | 'videocall-recording'
+  | 'backup' | 'backup-config' | 'backup-alert' | 'notification'
+  | 'backup-monitor' | 'supply' | 'supplier' | 'task' | 'session' | 'exercise'
+  | 'body-point' | 'communication-log' | 'pain-point' | 'analytics-event';
 
 export interface AuditLog {
   id: string;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, User, FileText } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
@@ -20,62 +20,64 @@ const SessionViewPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadSessionData = async () => {
-      console.log('SessionViewPage: Carregando dados da sessão, sessionId:', sessionId);
-      
-      if (!sessionId) {
-        console.log('SessionViewPage: ID da sessão não fornecido, redirecionando para agenda');
-        showToast('ID da sessão não fornecido', 'error');
+  // 🚀 Função de carregamento memoizada
+  const loadSessionData = useCallback(async () => {
+    console.log('SessionViewPage: Carregando dados da sessão, sessionId:', sessionId);
+
+    if (!sessionId) {
+      console.log('SessionViewPage: ID da sessão não fornecido, redirecionando para agenda');
+      showToast('ID da sessão não fornecido', 'error');
+      navigate('/agenda');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      console.log('SessionViewPage: Buscando sessão com ID:', sessionId);
+
+          // Carregar dados da sessão
+          // Converter sessionId numérico para formato esperado (note1, note2, etc.)
+          const formattedSessionId = sessionId.startsWith('note') ? sessionId : `note${sessionId}`;
+          console.log('SessionViewPage: ID formatado:', formattedSessionId);
+
+          const sessionData = await getSoapNoteById(formattedSessionId);
+          console.log('SessionViewPage: Dados da sessão encontrados:', sessionData);
+
+      if (!sessionData) {
+        console.log('SessionViewPage: Sessão não encontrada, redirecionando para agenda');
+        showToast('Sessão não encontrada', 'error');
         navigate('/agenda');
         return;
       }
+      setSession(sessionData);
 
-      try {
-        setIsLoading(true);
-        console.log('SessionViewPage: Buscando sessão com ID:', sessionId);
-        
-            // Carregar dados da sessão
-            // Converter sessionId numérico para formato esperado (note1, note2, etc.)
-            const formattedSessionId = sessionId.startsWith('note') ? sessionId : `note${sessionId}`;
-            console.log('SessionViewPage: ID formatado:', formattedSessionId);
-            
-            const sessionData = await getSoapNoteById(formattedSessionId);
-            console.log('SessionViewPage: Dados da sessão encontrados:', sessionData);
-        
-        if (!sessionData) {
-          console.log('SessionViewPage: Sessão não encontrada, redirecionando para agenda');
-          showToast('Sessão não encontrada', 'error');
-          navigate('/agenda');
-          return;
-        }
-        setSession(sessionData);
+      // Carregar dados do paciente
+      console.log('SessionViewPage: Buscando dados do paciente:', sessionData.patientId);
+      const patientData = await getPatientById(sessionData.patientId);
+      console.log('SessionViewPage: Dados do paciente encontrados:', patientData);
+      setPatient(patientData || null);
 
-        // Carregar dados do paciente
-        console.log('SessionViewPage: Buscando dados do paciente:', sessionData.patientId);
-        const patientData = await getPatientById(sessionData.patientId);
-        console.log('SessionViewPage: Dados do paciente encontrados:', patientData);
-        setPatient(patientData || null);
-
-      } catch (error) {
-        console.error('SessionViewPage: Erro ao carregar dados da sessão:', error);
-        showToast('Erro ao carregar dados da sessão', 'error');
-        navigate('/agenda');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadSessionData();
+    } catch (error) {
+      console.error('SessionViewPage: Erro ao carregar dados da sessão:', error);
+      showToast('Erro ao carregar dados da sessão', 'error');
+      navigate('/agenda');
+    } finally {
+      setIsLoading(false);
+    }
   }, [sessionId, navigate, showToast]);
 
-  const formatDate = (dateString: string) => {
+  useEffect(() => {
+    loadSessionData();
+  }, [loadSessionData]);
+
+  // 🚀 Helper function memoizada
+  const formatDate = useCallback((dateString: string) => {
     try {
       return new Date(dateString).toLocaleDateString('pt-BR');
     } catch {
       return dateString;
     }
-  };
+  });
 
   if (isLoading) {
     return (

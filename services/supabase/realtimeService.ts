@@ -1,6 +1,6 @@
 import { supabase } from '../../lib/supabase';
 import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import { Database } from '../../types/supabase';
+import type { Database } from '../../types/supabase';
 import { SupabaseRealtimePayload } from '@supabase/supabase-js/dist/main/types';
 
 export type RealtimeEvent = 'INSERT' | 'UPDATE' | 'DELETE';

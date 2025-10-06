@@ -27,7 +27,7 @@ export const useSupabaseAuth = () => {
           const profile = await authService.getUserProfile(user.id);
           setAuthState({
             user,
-            profile: profile as UserProfile,
+            profile: profile as unknown as UserProfile,
             loading: false,
             error: null,
           });
@@ -57,7 +57,7 @@ export const useSupabaseAuth = () => {
         const profile = await authService.getUserProfile(session.user.id);
         setAuthState({
           user: session.user,
-          profile: profile as UserProfile,
+          profile: profile as unknown as UserProfile,
           loading: false,
           error: null,
         });
@@ -108,7 +108,7 @@ export const useSupabaseAuth = () => {
       const { user, profile } = await authService.signUp(data);
       setAuthState({
         user,
-        profile: profile as UserProfile,
+        profile: profile as unknown as UserProfile,
         loading: false,
         error: null,
       });

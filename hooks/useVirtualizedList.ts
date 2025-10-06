@@ -174,7 +174,7 @@ export const useDebouncedSearch = <T>(
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   
   useEffect(() => {
     if (timeoutRef.current) {
@@ -228,7 +228,7 @@ export const useInfiniteScroll = ({
   threshold = 100
 }: InfiniteScrollOptions) => {
   const [shouldLoadMore, setShouldLoadMore] = useState(false);
-  const observerRef = useRef<IntersectionObserver>();
+  const observerRef = useRef<IntersectionObserver | undefined>(undefined);
   const loadingRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {

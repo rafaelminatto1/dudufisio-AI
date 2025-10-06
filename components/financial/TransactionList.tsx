@@ -1,6 +1,7 @@
 // components/financial/TransactionList.tsx
 import React from 'react';
-import { FinancialTransaction, TransactionType } from '../../types';
+import type { FinancialTransaction } from '../../types';
+import { TransactionType } from '../../types';
 import { PlusCircle, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 
 interface TransactionListProps {

@@ -5,7 +5,7 @@
  * análises de outcomes, comparações de tratamentos e insights baseados em evidências.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, Cell, PieChart, Pie, AreaChart, Area, ScatterChart,
@@ -91,11 +91,8 @@ const ClinicalAnalyticsPage: React.FC = () => {
   const [outcomeMetrics, setOutcomeMetrics] = useState<OutcomeMetrics[]>([]);
   const [isLoadingEnhanced, setIsLoadingEnhanced] = useState(true);
 
-  useEffect(() => {
-    loadEnhancedClinicalData();
-  }, [timeRange]);
-
-  const loadEnhancedClinicalData = async () => {
+  // 🚀 Função de carregamento memoizada
+  const loadEnhancedClinicalData = useCallback(async () => {
     try {
       setIsLoadingEnhanced(true);
 
@@ -111,7 +108,11 @@ const ClinicalAnalyticsPage: React.FC = () => {
     } finally {
       setIsLoadingEnhanced(false);
     }
-  };
+  }, [timeRange]);
+
+  useEffect(() => {
+    loadEnhancedClinicalData();
+  }, [loadEnhancedClinicalData]);
 
   const loadClinicalMetrics = async (): Promise<void> => {
     const metrics: ClinicalMetric[] = [
@@ -427,7 +428,7 @@ const ClinicalAnalyticsPage: React.FC = () => {
               Alertas Clínicos
             </h3>
             <div className="space-y-3">
-              {clinicalAlerts.map((alert) => (
+              {clinicalAlerts.map((alert: any) => (
                 <div key={alert.id} className={`border rounded-lg p-3 ${getSeverityColor(alert.severity)}`}>
                   <div className="flex items-start gap-3">
                     {getAlertIcon(alert.type)}
@@ -452,7 +453,7 @@ const ClinicalAnalyticsPage: React.FC = () => {
 
         {/* Key Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {clinicalMetrics.map((metric) => (
+          {clinicalMetrics.map((metric: any) => (
             <div key={metric.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className={`p-3 rounded-lg ${
@@ -647,7 +648,7 @@ const ClinicalAnalyticsPage: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-900">Comparação com Benchmarks</h3>
                 </div>
                 <div className="p-6 space-y-4">
-                  {clinicalMetrics.slice(0, 4).map((metric) => (
+                  {clinicalMetrics.slice(0, 4).map((metric: any) => (
                     <div key={metric.id}>
                       <div className="flex justify-between text-sm mb-1">
                         <span>{metric.name}</span>
@@ -681,7 +682,7 @@ const ClinicalAnalyticsPage: React.FC = () => {
               </div>
               <div className="p-6">
                 <div className="space-y-6">
-                  {treatmentOutcomes.map((protocol) => (
+                  {treatmentOutcomes.map((protocol: any) => (
                     <div key={protocol.protocolId} className="border border-gray-200 rounded-lg p-6">
                       <div className="flex items-center justify-between mb-4">
                         <div>

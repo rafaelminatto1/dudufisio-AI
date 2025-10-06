@@ -34,7 +34,7 @@ export interface PaymentIntent {
   description: string;
   customerId: string;
   appointmentId?: string;
-  status: 'pending' | 'processing' | 'succeeded' | 'failed' | 'canceled';
+  status: 'pending' | 'processing' | 'succeeded' | 'failed' | 'canceled' | 'completed' | 'cancelled' | 'authorized' | 'captured' | 'refunded';
   paymentMethodId?: string;
   providerTransactionId?: string;
   metadata?: Record<string, any>;
@@ -92,7 +92,7 @@ export interface CardPayment {
   description: string;
   cardToken: string;
   installments: number;
-  status: 'pending' | 'authorized' | 'captured' | 'failed' | 'refunded';
+  status: 'pending' | 'authorized' | 'captured' | 'failed' | 'refunded' | 'processing' | 'completed' | 'cancelled';
 }
 
 class PaymentService {

@@ -91,6 +91,13 @@ export const mockPatients: Patient[] = [
         description: 'Dor ao subir escadas, bem na frente do joelho.',
         date: '2024-07-28T10:00:00Z',
         bodyPart: 'front',
+        patientId: 'patient_1',
+        bodyRegion: 'knee',
+        bodySide: 'front',
+        painLevel: 7,
+        notes: 'Dor ao subir escadas, bem na frente do joelho.',
+        createdAt: '2024-07-28T10:00:00Z',
+        updatedAt: '2024-07-28T10:00:00Z',
       },
       {
         id: 'pp2',
@@ -101,6 +108,13 @@ export const mockPatients: Patient[] = [
         description: 'Cansaço no ombro esquerdo no final do dia.',
         date: '2024-07-25T18:00:00Z',
         bodyPart: 'back',
+        patientId: 'patient_1',
+        bodyRegion: 'shoulder',
+        bodySide: 'left',
+        painLevel: 4,
+        notes: 'Cansaço no ombro esquerdo no final do dia.',
+        createdAt: '2024-07-25T18:00:00Z',
+        updatedAt: '2024-07-25T18:00:00Z',
       }
     ]
   },

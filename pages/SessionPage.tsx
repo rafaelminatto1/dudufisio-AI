@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { X, Save, User, Clock, FileText, Plus, History, Activity } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { useData } from '../contexts/AppContext';
@@ -24,48 +24,50 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
     const { therapists } = useData();
     const { showToast } = useToast();
 
-    useEffect(() => {
-        const loadSessionData = async () => {
-            setIsLoading(true);
-            try {
-                // Buscar dados do agendamento
-                const appointments = await appointmentService.getAppointments();
-                const foundAppointment = appointments.find(a => a.id === appointmentId);
+    // 🚀 Função de carregamento memoizada
+    const loadSessionData = useCallback(async () => {
+        setIsLoading(true);
+        try {
+            // Buscar dados do agendamento
+            const appointments = await appointmentService.getAppointments();
+            const foundAppointment = appointments.find(a => a.id === appointmentId);
 
-                if (!foundAppointment) {
-                    showToast('Agendamento não encontrado', 'error');
-                    onClose();
-                    return;
-                }
-
-                setAppointment(foundAppointment as EnrichedAppointment);
-
-                // Buscar dados do paciente
-                const patientData = await patientService.getPatientById(foundAppointment.patientId);
-                if (!patientData) {
-                    showToast('Paciente não encontrado', 'error');
-                    onClose();
-                    return;
-                }
-                setPatient(patientData);
-
-                // Buscar histórico de sessões
-                const notes = await soapNoteService.getNotesByPatientId(foundAppointment.patientId);
-                setPatientNotes(notes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-
-            } catch (error) {
-                console.error('Erro ao carregar dados da sessão:', error);
-                showToast('Erro ao carregar dados da sessão', 'error');
+            if (!foundAppointment) {
+                showToast('Agendamento não encontrado', 'error');
                 onClose();
-            } finally {
-                setIsLoading(false);
+                return;
             }
-        };
 
-        loadSessionData();
+            setAppointment(foundAppointment as EnrichedAppointment);
+
+            // Buscar dados do paciente
+            const patientData = await patientService.getPatientById(foundAppointment.patientId);
+            if (!patientData) {
+                showToast('Paciente não encontrado', 'error');
+                onClose();
+                return;
+            }
+            setPatient(patientData);
+
+            // Buscar histórico de sessões
+            const notes = await soapNoteService.getNotesByPatientId(foundAppointment.patientId);
+            setPatientNotes(notes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+
+        } catch (error) {
+            console.error('Erro ao carregar dados da sessão:', error);
+            showToast('Erro ao carregar dados da sessão', 'error');
+            onClose();
+        } finally {
+            setIsLoading(false);
+        }
     }, [appointmentId, onClose, showToast]);
 
-    const handleSaveNote = async (newNoteData: Omit<SoapNote, 'id' | 'patientId' | 'therapist'>) => {
+    useEffect(() => {
+        loadSessionData();
+    }, [loadSessionData]);
+
+    // 🚀 Handler memoizado
+    const handleSaveNote = useCallback(async (newNoteData: Omit<SoapNote, 'id' | 'patientId' | 'therapist'>) => {
         if (!patient) return;
 
         try {
@@ -80,9 +82,13 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
         } catch (error) {
             showToast('Erro ao salvar anotação da sessão', 'error');
         }
-    };
+    }, [patient, loadSessionData, showToast]);
 
-    const therapist = therapists.find(t => t.id === appointment?.therapistId);
+    // 🚀 Valor memoizado
+    const therapist = useMemo(
+        () => therapists.find(t => t.id === appointment?.therapistId),
+        [therapists, appointment?.therapistId]
+    );
 
     if (isLoading) {
         return (
@@ -96,7 +102,8 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
         return null;
     }
 
-    const TabButton: React.FC<{ id: string; icon: React.ElementType; label: string }> = ({ id, icon: Icon, label }) => (
+    // 🚀 Componente TabButton memoizado
+    const TabButton = memo<{ id: string; icon: React.ElementType; label: string }>(({ id, icon: Icon, label }) => (
         <button
             onClick={() => setActiveTab(id as any)}
             className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
@@ -108,7 +115,8 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
             <Icon className="w-4 h-4 mr-2" />
             {label}
         </button>
-    );
+    ));
+    TabButton.displayName = 'TabButton';
 
     return (
         <>

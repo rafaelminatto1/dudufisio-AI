@@ -1,72 +1,71 @@
-import React, { lazy, Suspense, useState } from 'react';
+import React, { Suspense, useState, useCallback, useMemo } from 'react';
 import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Calendar, Users, Activity, BarChart3, Download, RefreshCw, Star } from 'lucide-react';
 import Layout from '../components/Layout';
+import { LazyPages, LazyComponents, createLazyComponent } from '../lib/lazyLoading';
 
-// Lazy load all pages for better performance
-const AgendaPage = lazy(() => import('./AgendaPage'));
-const PatientListPage = lazy(() => import('./PatientListPage'));
-const PatientDetailPage = lazy(() => import('./PatientDetailPage'));
-const SessionPage = lazy(() => import('./SessionPage'));
-const SessionFormPage = lazy(() => import('./SessionFormPage'));
-const SessionViewPage = lazy(() => import('./SessionViewPage'));
-const AtendimentoPage = lazy(() => import('./AtendimentoPage'));
-const FinancialDashboardPage = lazy(() => import('./FinancialDashboardPage'));
-const AdminDashboardPage = lazy(() => import('./AdminDashboardPage'));
-const ExerciseLibraryPage = lazy(() => import('./ExerciseLibraryPage'));
-const ReportsPage = lazy(() => import('./ReportsPage'));
-const SpecialtyAssessmentsPage = lazy(() => import('./SpecialtyAssessmentsPage'));
-const AcompanhamentoPage = lazy(() => import('./AcompanhamentoPage'));
-const TreatmentPage = lazy(() => import('./TreatmentPage'));
-const IntegrationsTestPage = lazy(() => import('./IntegrationsTestPage'));
-const BIIntegrationTestPage = lazy(() => import('./BIIntegrationTestPage'));
-const MentoriaPage = lazy(() => import('./MentoriaPageNew'));
-const ProtocolsPage = lazy(() => import('./ProtocolsPage'));
-const TeleconsultaPage = lazy(() => import('./TeleconsultaPage'));
-const AdvancedReportsPage = lazy(() => import('./AdvancedReportsPage'));
-const InventoryPage = lazy(() => import('./InventoryPage'));
+// ✅ IMPORTANTE: Todos os lazy imports agora vêm de LazyPages/LazyComponents centralizados
+// Isso evita múltiplas instâncias do React e erros "Cannot read properties of null"
+const AgendaPage = LazyPages.AgendaPage;
+const PatientListPage = LazyPages.PatientListPage;
+const PatientDetailPage = LazyPages.PatientDetailPage;
+const SessionFormPage = LazyPages.SessionFormPage;
+const SessionViewPage = LazyPages.SessionViewPage;
+const FinancialDashboardPage = LazyPages.FinancialDashboardPage;
+const AdminDashboardPage = LazyPages.AdminDashboardPage;
+const ReportsPage = LazyPages.ReportsPage;
+const AiAnalyticsPage = LazyPages.AiAnalyticsPage;
+const InventoryPage = LazyPages.InventoryPage;
+const UserManagementPage = LazyPages.UserManagementPage;
+const DashboardPage = LazyPages.DashboardPage;
+const TherapistDashboard = LazyPages.TherapistDashboard;
 
-// Additional pages that were missing from sidebar
-const DashboardPage = lazy(() => import('./DashboardPage'));
-const SimpleDashboard = lazy(() => import('./SimpleDashboard'));
-const TherapistDashboard = lazy(() => import('./TherapistDashboard'));
-const PartnerDashboard = lazy(() => import('./PartnerDashboard'));
-const SessionEvolutionPage = lazy(() => import('./SessionEvolutionPage'));
-const EventDetailPage = lazy(() => import('./EventDetailPage'));
-const EventsListPage = lazy(() => import('./EventsListPage'));
-const MaterialDetailPage = lazy(() => import('./MaterialDetailPage'));
-const MedicalReportPage = lazy(() => import('./MedicalReportPage'));
-const EvaluationReportPage = lazy(() => import('./EvaluationReportPage'));
-const ClinicalLibraryPage = lazy(() => import('./ClinicalLibraryPage'));
-const InventoryDashboardPage = lazy(() => import('./InventoryDashboardPage'));
-const NotificationCenterPage = lazy(() => import('./NotificationCenterPage'));
-const SubscriptionPage = lazy(() => import('./SubscriptionPage'));
-const LegalPage = lazy(() => import('./LegalPage'));
-const KnowledgeBasePage = lazy(() => import('./KnowledgeBasePage'));
-const WhatsAppPage = lazy(() => import('./WhatsAppPage'));
-const InactivePatientEmailPage = lazy(() => import('./InactivePatientEmailPage'));
-const HepGeneratorPage = lazy(() => import('./HepGeneratorPage'));
-const AgendaSettingsPage = lazy(() => import('./AgendaSettingsPage'));
-const AuditLogPage = lazy(() => import('./AuditLogPage'));
-const BackupManagementPage = lazy(() => import('./BackupManagementPage'));
-const MentoriaPageOld = lazy(() => import('./MentoriaPage'));
-const UserManagementPage = lazy(() => import('./UserManagementPage'));
-const GroupsPage = lazy(() => import('./GroupsPage'));
-const KanbanPage = lazy(() => import('./KanbanPage'));
-const RiskAnalysisPage = lazy(() => import('./RiskAnalysisPage'));
-const AiAnalyticsPage = lazy(() => import('./AiAnalyticsPage'));
-const ClinicalAnalyticsPage = lazy(() => import('./ClinicalAnalyticsPage'));
-const SettingsPage = lazy(() => import('./SettingsPage'));
-const PartnershipPage = lazy(() => import('./PartnershipPage'));
+// Páginas que não estão no LazyPages ainda - usando createLazyComponent
+const ExerciseLibraryPage = createLazyComponent(() => import('./ExerciseLibraryPage'));
+const SessionPage = createLazyComponent(() => import('./SessionPage'));
+const AtendimentoPage = createLazyComponent(() => import('./AtendimentoPageNew'));
+const AtendimentoPageDemo = createLazyComponent(() => import('./AtendimentoPageDemo'));
+const SpecialtyAssessmentsPage = createLazyComponent(() => import('./SpecialtyAssessmentsPage'));
+const AcompanhamentoPage = createLazyComponent(() => import('./AcompanhamentoPage'));
+const TreatmentPage = createLazyComponent(() => import('./TreatmentPage'));
+const IntegrationsTestPage = createLazyComponent(() => import('./IntegrationsTestPage'));
+const BIIntegrationTestPage = createLazyComponent(() => import('./BIIntegrationTestPage'));
+const MentoriaPage = createLazyComponent(() => import('./MentoriaPageNew'));
+const ProtocolsPage = createLazyComponent(() => import('./ProtocolsPage'));
+const TeleconsultaPage = createLazyComponent(() => import('./TeleconsultaPage'));
+const AdvancedReportsPage = createLazyComponent(() => import('./AdvancedReportsPage'));
+const SimpleDashboard = createLazyComponent(() => import('./SimpleDashboard'));
+const PartnerDashboard = createLazyComponent(() => import('./PartnerDashboard'));
+const SessionEvolutionPage = createLazyComponent(() => import('./SessionEvolutionPage'));
+const EventDetailPage = createLazyComponent(() => import('./EventDetailPage'));
+const EventsListPage = createLazyComponent(() => import('./EventsListPage'));
+const MaterialDetailPage = createLazyComponent(() => import('./MaterialDetailPage'));
+const MedicalReportPage = createLazyComponent(() => import('./MedicalReportPage'));
+const EvaluationReportPage = createLazyComponent(() => import('./EvaluationReportPage'));
+const ClinicalLibraryPage = createLazyComponent(() => import('./ClinicalLibraryPage'));
+const InventoryDashboardPage = createLazyComponent(() => import('./InventoryDashboardPage'));
+const NotificationCenterPage = createLazyComponent(() => import('./NotificationCenterPage'));
+const SubscriptionPage = createLazyComponent(() => import('./SubscriptionPage'));
+const LegalPage = createLazyComponent(() => import('./LegalPage'));
+const KnowledgeBasePage = createLazyComponent(() => import('./KnowledgeBasePage'));
+const WhatsAppPage = createLazyComponent(() => import('./WhatsAppPage'));
+const InactivePatientEmailPage = createLazyComponent(() => import('./InactivePatientEmailPage'));
+const HepGeneratorPage = createLazyComponent(() => import('./HepGeneratorPage'));
+const AgendaSettingsPage = createLazyComponent(() => import('./AgendaSettingsPage'));
+const AuditLogPage = createLazyComponent(() => import('./AuditLogPage'));
+const BackupManagementPage = createLazyComponent(() => import('./BackupManagementPage'));
+const MentoriaPageOld = createLazyComponent(() => import('./MentoriaPage'));
+const GroupsPage = createLazyComponent(() => import('./GroupsPage'));
+const KanbanPage = createLazyComponent(() => import('./KanbanPage'));
+const RiskAnalysisPage = createLazyComponent(() => import('./RiskAnalysisPage'));
+const ClinicalAnalyticsPage = createLazyComponent(() => import('./ClinicalAnalyticsPage'));
+const SettingsPage = createLazyComponent(() => import('./SettingsPage'));
+const PartnershipPage = createLazyComponent(() => import('./PartnershipPage'));
 
-// Consolidated components
-const ConsolidatedReportsDashboard = lazy(() => import('../components/reports/ConsolidatedReportsDashboard'));
-const ConsolidatedAITools = lazy(() => import('../components/ai-tools/ConsolidatedAITools'));
-const PerformanceDashboard = lazy(() => import('../components/admin/PerformanceDashboard'));
-import {
-    Calendar, Users, Activity, BarChart3,
-    Download, RefreshCw,
-    Star
-} from 'lucide-react';
+// Componentes consolidados
+const ConsolidatedReportsDashboard = LazyComponents.ConsolidatedReportsDashboard;
+const ConsolidatedAITools = LazyComponents.ConsolidatedAITools;
+const PerformanceDashboard = createLazyComponent(() => import('../components/admin/PerformanceDashboard'));
 
 // Loading component for lazy pages
 const PageLoader = () => (
@@ -92,16 +91,19 @@ const StatCard = React.memo(({ icon: Icon, title, value, change, changeType }: a
         </div>
     </div>
 ));
+StatCard.displayName = 'StatCard';
 
-const DashboardContent = () => {
+// 🚀 DashboardContent memoizado
+const DashboardContent = React.memo(() => {
     const [timeframe, setTimeframe] = useState('today');
 
-    const stats = [
+    // 🚀 Stats memoizados
+    const stats = useMemo(() => [
         { icon: Calendar, title: 'Consultas Hoje', value: '12', change: '+2 vs ontem', changeType: 'positive' },
         { icon: Users, title: 'Pacientes Ativos', value: '156', change: '+8 esta semana', changeType: 'positive' },
         { icon: Activity, title: 'Sessões Concluídas', value: '8', change: '67% da meta', changeType: 'neutral' },
         { icon: BarChart3, title: 'Taxa de Sucesso', value: '94%', change: '+3% vs mês passado', changeType: 'positive' }
-    ];
+    ], []);
 
     const todayAppointments = [
         { patient: 'Ana Silva', treatment: 'Fisioterapia - Joelho', time: '09:00', status: 'confirmed' },
@@ -257,14 +259,22 @@ const DashboardContent = () => {
             </div>
         </div>
     );
-};
+});
+DashboardContent.displayName = 'DashboardContent';
 
 interface CompleteDashboardProps {
     user: any;
     onLogout: () => void;
 }
 
-const LazyElement = (Component: React.LazyExoticComponent<React.ComponentType<any>>) => (
+const LazyElement = (Component: React.LazyExoticComponent<React.ComponentType<any>> | React.ComponentType<any>) => (
+    <Suspense fallback={<PageLoader />}>
+        <Component />
+    </Suspense>
+);
+
+// Alternative wrapper for router components
+const RouterElement = (Component: React.LazyExoticComponent<React.ComponentType<any>> | React.ComponentType<any>) => (
     <Suspense fallback={<PageLoader />}>
         <Component />
     </Suspense>
@@ -313,7 +323,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/dashboard-page" element={LazyElement(DashboardPage)} />
                 
                 {/* Main Navigation */}
-                <Route path="/agenda" element={LazyElement(AgendaPage)} />
+                <Route path="/agenda" element={<AgendaPage />} />
                 <Route path="/patients" element={LazyElement(PatientListPage)} />
                 <Route path="/patients/:id" element={LazyElement(PatientDetailPage)} />
                 <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
@@ -326,6 +336,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/sessions/:appointmentId/form" element={<SessionRoute mode="form" />} />
                 <Route path="/session-view/:sessionId" element={LazyElement(SessionViewPage)} />
                 <Route path="/atendimento/:appointmentId" element={LazyElement(AtendimentoPage)} />
+                <Route path="/atendimento-demo" element={LazyElement(AtendimentoPageDemo)} />
                 <Route path="/teleconsulta/:appointmentId" element={LazyElement(TeleconsultaPage)} />
                 <Route path="/treatments" element={LazyElement(TreatmentPage)} />
                 

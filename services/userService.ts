@@ -1,49 +1,23 @@
 // services/userService.ts
 import { supabase } from '../lib/supabase';
+import type { Database } from '../types/database';
 
-export interface UserProfile {
-  id: string;
-  email: string;
-  full_name: string;
-  role: 'admin' | 'therapist' | 'patient' | 'educator_fisico' | 'manager' | 'receptionist';
-  permissions: string[];
-  profile_settings: {
-    avatar_url?: string;
-    phone?: string;
-    specialties?: string[];
-    license_number?: string;
-    department?: string;
-    working_hours?: {
-      start: string;
-      end: string;
-      days: number[];
-    };
-    notification_preferences?: {
-      email: boolean;
-      sms: boolean;
-      push: boolean;
-    };
-  };
-  is_active: boolean;
-  last_login_at?: string;
-  created_at: string;
-  updated_at: string;
-}
+export type UserProfile = Database['public']['Tables']['users']['Row'];
 
 export interface CreateUserRequest {
   email: string;
   full_name: string;
-  role: UserProfile['role'];
-  permissions?: string[];
-  profile_settings?: UserProfile['profile_settings'];
+  role: string;
+  permissions?: any;
+  profile_settings?: any;
   password?: string;
 }
 
 export interface UpdateUserRequest {
   full_name?: string;
-  role?: UserProfile['role'];
-  permissions?: string[];
-  profile_settings?: UserProfile['profile_settings'];
+  role?: string;
+  permissions?: any;
+  profile_settings?: any;
   is_active?: boolean;
 }
 
@@ -259,7 +233,7 @@ class UserService {
     try {
       // Buscar horários de trabalho do terapeuta
       const therapist = await this.getUserById(therapistId);
-      if (!therapist?.profile_settings?.working_hours) {
+      if (!therapist?.profile_settings || !(therapist.profile_settings as any)?.working_hours) {
         return [];
       }
 
@@ -283,7 +257,7 @@ class UserService {
       if (blocksError) throw blocksError;
 
       // Calcular horários disponíveis
-      const workingHours = therapist.profile_settings.working_hours;
+      const workingHours = (therapist.profile_settings as any).working_hours;
       const dayOfWeek = new Date(date).getDay();
 
       if (!workingHours.days.includes(dayOfWeek)) {

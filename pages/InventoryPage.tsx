@@ -183,7 +183,7 @@ const InventoryPage: React.FC = () => {
           <div className="p-6">
             {lowStockItems.length > 0 ? (
               <div className="space-y-3">
-                {lowStockItems.slice(0, 5).map((item) => (
+                {lowStockItems.slice(0, 5).map((item: any) => (
                   <div key={item.id} className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-slate-900">{item.name}</p>
@@ -214,7 +214,7 @@ const InventoryPage: React.FC = () => {
           <div className="p-6">
             {expiringItems.length > 0 ? (
               <div className="space-y-3">
-                {expiringItems.slice(0, 5).map((item) => (
+                {expiringItems.slice(0, 5).map((item: any) => (
                   <div key={item.id} className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-slate-900">{item.name}</p>
@@ -258,7 +258,7 @@ const InventoryPage: React.FC = () => {
             className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Todas as categorias</option>
-            {categories.map((category) => (
+            {categories.map((category: any) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -289,7 +289,7 @@ const InventoryPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredItems.map((item) => {
+              {filteredItems.map((item: any) => {
                 const category = categories.find(c => c.id === item.categoryId);
                 const isLowStock = item.currentStock <= item.minStock;
                 const isExpiring = item.expiryDate && new Date(item.expiryDate) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);

@@ -1,46 +1,12 @@
 // services/paymentService.ts
 import { supabase } from '../lib/supabase';
+import type { Database } from '../types/database';
 
-export interface Payment {
-  id: string;
-  patient_id: string;
-  appointment_id?: string;
-  amount: number;
-  currency: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'refunded';
-  payment_method: string;
-  payment_method_details: {
-    type: 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer' | 'cash';
-    provider?: string;
-    last_four?: string;
-    brand?: string;
-    installments?: number;
-  };
-  gateway_transaction_id?: string;
-  gateway_provider: 'stripe' | 'mercadopago' | 'pagseguro' | 'pix' | 'manual';
-  description: string;
-  due_date?: string;
-  paid_at?: string;
-  processing_fee?: number;
-  net_amount?: number;
-  metadata: Record<string, any>;
-  created_at: string;
-  updated_at: string;
-}
+type Payment = Database['public']['Tables']['payments']['Row'];
+type PaymentInsert = Database['public']['Tables']['payments']['Insert'];
+type PaymentUpdate = Database['public']['Tables']['payments']['Update'];
 
-export interface PaymentMethod {
-  id: string;
-  clinic_id?: string;
-  name: string;
-  type: 'credit_card' | 'debit_card' | 'pix' | 'bank_transfer' | 'cash';
-  provider?: string;
-  is_active: boolean;
-  processing_fee_percentage: number;
-  processing_fee_fixed: number;
-  settings: Record<string, any>;
-  created_at: string;
-  updated_at: string;
-}
+type PaymentMethod = Database['public']['Tables']['payment_methods']['Row'];
 
 export interface Subscription {
   id: string;
@@ -59,20 +25,7 @@ export interface Subscription {
   updated_at: string;
 }
 
-export interface FinancialTransaction {
-  id: string;
-  type: 'income' | 'expense';
-  category: string;
-  amount: number;
-  description: string;
-  payment_id?: string;
-  date: string;
-  account: string;
-  tags: string[];
-  metadata: Record<string, any>;
-  created_by?: string;
-  created_at: string;
-}
+type FinancialTransaction = Database['public']['Tables']['financial_transactions']['Row'];
 
 export interface CreatePaymentRequest {
   patient_id: string;
@@ -215,9 +168,9 @@ class PaymentService {
           net_amount: payment.amount - (gatewayResponse.processing_fee || 0),
           paid_at: gatewayResponse.status === 'completed' ? new Date().toISOString() : null,
           metadata: {
-            ...payment.metadata,
+            ...(payment.metadata as Record<string, any> || {}),
             gateway_response: gatewayResponse,
-          },
+          } as any,
           updated_at: new Date().toISOString(),
         })
         .eq('id', request.payment_id)
@@ -233,10 +186,8 @@ class PaymentService {
           category: 'Pagamento de Consulta',
           amount: data.net_amount || payment.amount,
           description: `Pagamento recebido - ${payment.description}`,
-          payment_id: payment.id,
-          date: new Date().toISOString(),
-          account: 'Conta Principal',
-          tags: ['pagamento', 'consulta'],
+          reference_id: payment.id,
+          reference_type: 'payment',
           metadata: { patient_id: payment.patient_id },
         });
       }
@@ -299,13 +250,13 @@ class PaymentService {
         .update({
           status: 'refunded',
           metadata: {
-            ...payment.metadata,
+            ...(payment.metadata as Record<string, any> || {}),
             refund: {
               amount: refundAmount,
               date: new Date().toISOString(),
               reason: 'Estorno solicitado',
             },
-          },
+          } as any,
           updated_at: new Date().toISOString(),
         })
         .eq('id', paymentId)
@@ -316,14 +267,12 @@ class PaymentService {
 
       // Criar transação de estorno
       await this.createFinancialTransaction({
-        type: 'expense',
+        type: 'refund',
         category: 'Estorno',
         amount: refundAmount,
         description: `Estorno de pagamento - ${payment.description}`,
-        payment_id: paymentId,
-        date: new Date().toISOString(),
-        account: 'Conta Principal',
-        tags: ['estorno', 'reembolso'],
+        reference_id: paymentId,
+        reference_type: 'payment',
         metadata: { patient_id: payment.patient_id },
       });
 
@@ -335,12 +284,22 @@ class PaymentService {
   }
 
   // Financial Transactions
-  async createFinancialTransaction(transactionData: Omit<FinancialTransaction, 'id' | 'created_at'>): Promise<FinancialTransaction> {
+  async createFinancialTransaction(transactionData: {
+    clinic_id?: string;
+    type: 'income' | 'expense' | 'transfer' | 'refund';
+    category: string;
+    amount: number;
+    description?: string;
+    reference_id?: string;
+    reference_type?: string;
+    metadata?: Record<string, any>;
+  }): Promise<FinancialTransaction> {
     try {
       const { data, error } = await supabase
         .from('financial_transactions')
         .insert([{
           ...transactionData,
+          currency: 'BRL',
         }])
         .select()
         .single();
@@ -358,8 +317,8 @@ class PaymentService {
       const { data, error } = await supabase
         .from('financial_transactions')
         .select('type, amount, category')
-        .gte('date', period.start)
-        .lte('date', period.end);
+        .gte('created_at', period.start)
+        .lte('created_at', period.end);
 
       if (error) throw error;
 
@@ -396,6 +355,7 @@ class PaymentService {
       {
         id: '1',
         patient_id: 'patient-1',
+        appointment_id: 'appointment-1',
         amount: 150.00,
         currency: 'BRL',
         status: 'completed',
@@ -410,6 +370,7 @@ class PaymentService {
         gateway_provider: 'stripe',
         gateway_transaction_id: 'stripe_ch_1234567890',
         description: 'Consulta Fisioterapia - Dr. Silva',
+        due_date: new Date().toISOString(),
         paid_at: new Date().toISOString(),
         processing_fee: 4.65,
         net_amount: 145.35,
@@ -420,6 +381,7 @@ class PaymentService {
       {
         id: '2',
         patient_id: 'patient-2',
+        appointment_id: 'appointment-2',
         amount: 200.00,
         currency: 'BRL',
         status: 'pending',
@@ -428,8 +390,10 @@ class PaymentService {
           type: 'pix',
         },
         gateway_provider: 'pix',
+        gateway_transaction_id: null,
         description: 'Sessão de RPG - Dr. Santos',
         due_date: new Date(Date.now() + 86400000).toISOString(),
+        paid_at: null,
         processing_fee: 0,
         net_amount: 200.00,
         metadata: {},
@@ -443,6 +407,7 @@ class PaymentService {
     return [
       {
         id: '1',
+        clinic_id: 'clinic-1',
         name: 'Cartão de Crédito - Stripe',
         type: 'credit_card',
         provider: 'stripe',
@@ -455,8 +420,10 @@ class PaymentService {
       },
       {
         id: '2',
+        clinic_id: 'clinic-1',
         name: 'PIX',
         type: 'pix',
+        provider: 'pix',
         is_active: true,
         processing_fee_percentage: 0,
         processing_fee_fixed: 0,
@@ -466,8 +433,10 @@ class PaymentService {
       },
       {
         id: '3',
+        clinic_id: 'clinic-1',
         name: 'Dinheiro',
         type: 'cash',
+        provider: 'manual',
         is_active: true,
         processing_fee_percentage: 0,
         processing_fee_fixed: 0,

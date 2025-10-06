@@ -1,19 +1,20 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, Suspense } from 'react';
 import {
     Home, Calendar, Dumbbell, FileText, TrendingUp, Gift,
     Target, Award, Settings, LogOut, Users
 } from 'lucide-react';
+import { createLazyComponent } from '../lib/lazyLoading';
 
-// Lazy load patient portal pages
-const PatientDashboardPage = lazy(() => import('./patient-portal/PatientDashboardPage'));
-const MyAppointmentsPage = lazy(() => import('./patient-portal/MyAppointmentsPage'));
-const MyExercisesPage = lazy(() => import('./patient-portal/MyExercisesPage'));
-const DocumentsPage = lazy(() => import('./patient-portal/DocumentsPage'));
-const PatientProgressPage = lazy(() => import('./patient-portal/PatientProgressPage'));
-const MyVouchersPage = lazy(() => import('./patient-portal/MyVouchersPage'));
-const VoucherStorePage = lazy(() => import('./patient-portal/VoucherStorePage'));
-const GamificationPage = lazy(() => import('./patient-portal/GamificationPage'));
-const PatientPainDiaryPage = lazy(() => import('./patient-portal/PatientPainDiaryPage'));
+// ✅ Lazy load patient portal pages usando createLazyComponent centralizado
+const PatientDashboardPage = createLazyComponent(() => import('./patient-portal/PatientDashboardPage'));
+const MyAppointmentsPage = createLazyComponent(() => import('./patient-portal/MyAppointmentsPage'));
+const MyExercisesPage = createLazyComponent(() => import('./patient-portal/MyExercisesPage'));
+const DocumentsPage = createLazyComponent(() => import('./patient-portal/DocumentsPage'));
+const PatientProgressPage = createLazyComponent(() => import('./patient-portal/PatientProgressPage'));
+const MyVouchersPage = createLazyComponent(() => import('./patient-portal/MyVouchersPage'));
+const VoucherStorePage = createLazyComponent(() => import('./patient-portal/VoucherStorePage'));
+const GamificationPage = createLazyComponent(() => import('./patient-portal/GamificationPage'));
+const PatientPainDiaryPage = createLazyComponent(() => import('./patient-portal/PatientPainDiaryPage'));
 
 // Loading component
 const PageLoader = () => (
@@ -152,7 +153,7 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
                             <h3 className="px-3 py-2 text-xs font-semibold uppercase text-slate-400 tracking-wider">
                                 Principal
                             </h3>
-                            {groupItems(menuItems, 'main').map((item) => (
+                            {groupItems(menuItems, 'main').map((item: any) => (
                                 <NavLink key={item.id} item={item} />
                             ))}
                         </div>
@@ -162,7 +163,7 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
                             <h3 className="px-3 py-2 text-xs font-semibold uppercase text-slate-400 tracking-wider">
                                 Saúde
                             </h3>
-                            {groupItems(menuItems, 'health').map((item) => (
+                            {groupItems(menuItems, 'health').map((item: any) => (
                                 <NavLink key={item.id} item={item} />
                             ))}
                         </div>
@@ -172,7 +173,7 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
                             <h3 className="px-3 py-2 text-xs font-semibold uppercase text-slate-400 tracking-wider">
                                 Loja
                             </h3>
-                            {groupItems(menuItems, 'store').map((item) => (
+                            {groupItems(menuItems, 'store').map((item: any) => (
                                 <NavLink key={item.id} item={item} />
                             ))}
                         </div>
@@ -182,7 +183,7 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
                             <h3 className="px-3 py-2 text-xs font-semibold uppercase text-slate-400 tracking-wider">
                                 Diversão
                             </h3>
-                            {groupItems(menuItems, 'fun').map((item) => (
+                            {groupItems(menuItems, 'fun').map((item: any) => (
                                 <NavLink key={item.id} item={item} />
                             ))}
                         </div>

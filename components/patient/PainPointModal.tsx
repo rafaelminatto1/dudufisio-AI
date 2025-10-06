@@ -28,7 +28,18 @@ const PainPointModal: React.FC<PainPointModalProps> = ({ isOpen, onClose, onSave
     if (!isOpen) return null;
 
     const handleSave = () => {
-        onSave({ intensity, type, description });
+        onSave({ 
+            intensity, 
+            type, 
+            description,
+            patientId: point.patientId || '',
+            bodyRegion: point.bodyRegion || '',
+            bodySide: point.bodySide || 'front',
+            painLevel: intensity,
+            notes: description,
+            createdAt: point.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        });
     };
 
     return (

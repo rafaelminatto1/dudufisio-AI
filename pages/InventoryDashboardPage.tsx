@@ -1,5 +1,5 @@
 // pages/InventoryDashboardPage.tsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import PageHeader from '../components/PageHeader';
 import { InventoryItem, InventoryMetrics, Supplier, InventoryCategory, MovementType } from '../types';
 import * as inventoryService from '../services/inventoryService';
@@ -10,7 +10,9 @@ import ItemCard from '../components/inventory/ItemCard';
 import StockMovementModal from '../components/inventory/StockMovementModal';
 import ItemFormModal from '../components/inventory/ItemFormModal';
 
-const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode }> = ({ title, value, icon }) => (
+// 🚀 Componente memoizado para StatCard
+const StatCard = memo<{ title: string; value: string | number; icon: React.ReactNode }>(
+  ({ title, value, icon }) => (
     <div className="bg-white p-6 rounded-2xl shadow-sm">
         <div className="flex items-center">
             <div className="bg-sky-100 text-sky-600 p-3 rounded-full mr-4">{icon}</div>
@@ -20,7 +22,9 @@ const StatCard: React.FC<{ title: string; value: string | number; icon: React.Re
             </div>
         </div>
     </div>
+  )
 );
+StatCard.displayName = 'StatCard';
 
 const InventoryDashboardPage: React.FC = () => {
     const [items, setItems] = useState<InventoryItem[]>([]);
@@ -84,8 +88,16 @@ const InventoryDashboardPage: React.FC = () => {
         }
     };
 
-    const criticalItems = items.filter(item => metrics?.criticalAlerts.some(alert => alert.itemId === item.id));
-    const otherItems = items.filter(item => !metrics?.criticalAlerts.some(alert => alert.itemId === item.id));
+    // 🚀 Memoização de filtros pesados
+    const criticalItems = useMemo(
+        () => items.filter(item => metrics?.criticalAlerts.some(alert => alert.itemId === item.id)),
+        [items, metrics?.criticalAlerts]
+    );
+
+    const otherItems = useMemo(
+        () => items.filter(item => !metrics?.criticalAlerts.some(alert => alert.itemId === item.id)),
+        [items, metrics?.criticalAlerts]
+    );
 
     if (isLoading) {
         return <Skeleton className="h-screen w-full" />;

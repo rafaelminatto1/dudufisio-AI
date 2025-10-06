@@ -1,10 +1,74 @@
-import React from 'react';
-import { User, LogOut, Calendar, Users, Activity, BarChart3 } from 'lucide-react';
+import React, { memo, useCallback } from 'react';
+import { User, LogOut, Calendar, Users, Activity, BarChart3, LucideIcon } from 'lucide-react';
 
 interface SimpleDashboardProps {
   user: any;
   onLogout: () => void;
 }
+
+// 🚀 Componente memoizado para StatCard
+interface StatCardProps {
+  icon: LucideIcon;
+  iconBgColor: string;
+  iconColor: string;
+  label: string;
+  value: string | number;
+}
+
+const StatCard = memo<StatCardProps>(({ icon: Icon, iconBgColor, iconColor, label, value }) => (
+  <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+    <div className="flex items-center">
+      <div className={`p-2 ${iconBgColor} rounded-lg`}>
+        <Icon className={`w-6 h-6 ${iconColor}`} />
+      </div>
+      <div className="ml-4">
+        <p className="text-sm font-medium text-slate-600">{label}</p>
+        <p className="text-2xl font-bold text-slate-900">{value}</p>
+      </div>
+    </div>
+  </div>
+));
+StatCard.displayName = 'StatCard';
+
+// 🚀 Componente memoizado para AppointmentItem
+interface AppointmentItemProps {
+  patientName: string;
+  service: string;
+  time: string;
+}
+
+const AppointmentItem = memo<AppointmentItemProps>(({ patientName, service, time }) => (
+  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+    <div>
+      <p className="font-medium text-slate-900">{patientName}</p>
+      <p className="text-sm text-slate-600">{service}</p>
+    </div>
+    <span className="text-sm text-sky-600 font-medium">{time}</span>
+  </div>
+));
+AppointmentItem.displayName = 'AppointmentItem';
+
+// 🚀 Componente memoizado para ActionButton
+interface ActionButtonProps {
+  icon: LucideIcon;
+  label: string;
+  bgColor: string;
+  borderColor: string;
+  hoverColor: string;
+  textColor: string;
+  onClick?: () => void;
+}
+
+const ActionButton = memo<ActionButtonProps>(({ icon: Icon, label, bgColor, borderColor, hoverColor, textColor, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`p-4 ${bgColor} border ${borderColor} rounded-lg ${hoverColor} transition-colors`}
+  >
+    <Icon className={`w-6 h-6 ${textColor} mx-auto mb-2`} />
+    <p className={`text-sm font-medium ${textColor}`}>{label}</p>
+  </button>
+));
+ActionButton.displayName = 'ActionButton';
 
 const SimpleDashboard: React.FC<SimpleDashboardProps> = ({ user, onLogout }) => {
   return (
@@ -52,53 +116,34 @@ const SimpleDashboard: React.FC<SimpleDashboardProps> = ({ user, onLogout }) => 
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Calendar className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Consultas Hoje</p>
-                <p className="text-2xl font-bold text-slate-900">12</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Users className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Pacientes Ativos</p>
-                <p className="text-2xl font-bold text-slate-900">156</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Activity className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Sessões Concluídas</p>
-                <p className="text-2xl font-bold text-slate-900">8</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <BarChart3 className="w-6 h-6 text-orange-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-slate-600">Taxa de Sucesso</p>
-                <p className="text-2xl font-bold text-slate-900">94%</p>
-              </div>
-            </div>
-          </div>
+          <StatCard
+            icon={Calendar}
+            iconBgColor="bg-blue-100"
+            iconColor="text-blue-600"
+            label="Consultas Hoje"
+            value={12}
+          />
+          <StatCard
+            icon={Users}
+            iconBgColor="bg-green-100"
+            iconColor="text-green-600"
+            label="Pacientes Ativos"
+            value={156}
+          />
+          <StatCard
+            icon={Activity}
+            iconBgColor="bg-purple-100"
+            iconColor="text-purple-600"
+            label="Sessões Concluídas"
+            value={8}
+          />
+          <StatCard
+            icon={BarChart3}
+            iconBgColor="bg-orange-100"
+            iconColor="text-orange-600"
+            label="Taxa de Sucesso"
+            value="94%"
+          />
         </div>
 
         {/* Quick Actions */}
@@ -108,27 +153,21 @@ const SimpleDashboard: React.FC<SimpleDashboardProps> = ({ user, onLogout }) => 
               Próximas Consultas
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <div>
-                  <p className="font-medium text-slate-900">Ana Silva</p>
-                  <p className="text-sm text-slate-600">Fisioterapia - Joelho</p>
-                </div>
-                <span className="text-sm text-sky-600 font-medium">09:00</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <div>
-                  <p className="font-medium text-slate-900">Carlos Santos</p>
-                  <p className="text-sm text-slate-600">Reabilitação - Ombro</p>
-                </div>
-                <span className="text-sm text-sky-600 font-medium">10:30</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                <div>
-                  <p className="font-medium text-slate-900">Maria Oliveira</p>
-                  <p className="text-sm text-slate-600">Avaliação Inicial</p>
-                </div>
-                <span className="text-sm text-sky-600 font-medium">14:00</span>
-              </div>
+              <AppointmentItem
+                patientName="Ana Silva"
+                service="Fisioterapia - Joelho"
+                time="09:00"
+              />
+              <AppointmentItem
+                patientName="Carlos Santos"
+                service="Reabilitação - Ombro"
+                time="10:30"
+              />
+              <AppointmentItem
+                patientName="Maria Oliveira"
+                service="Avaliação Inicial"
+                time="14:00"
+              />
             </div>
           </div>
 
@@ -137,22 +176,38 @@ const SimpleDashboard: React.FC<SimpleDashboardProps> = ({ user, onLogout }) => 
               Ações Rápidas
             </h3>
             <div className="grid grid-cols-2 gap-3">
-              <button className="p-4 bg-sky-50 border border-sky-200 rounded-lg hover:bg-sky-100 transition-colors">
-                <Calendar className="w-6 h-6 text-sky-600 mx-auto mb-2" />
-                <p className="text-sm font-medium text-sky-700">Nova Consulta</p>
-              </button>
-              <button className="p-4 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors">
-                <Users className="w-6 h-6 text-green-600 mx-auto mb-2" />
-                <p className="text-sm font-medium text-green-700">Novo Paciente</p>
-              </button>
-              <button className="p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors">
-                <Activity className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-                <p className="text-sm font-medium text-purple-700">Registrar Sessão</p>
-              </button>
-              <button className="p-4 bg-orange-50 border border-orange-200 rounded-lg hover:bg-orange-100 transition-colors">
-                <BarChart3 className="w-6 h-6 text-orange-600 mx-auto mb-2" />
-                <p className="text-sm font-medium text-orange-700">Relatórios</p>
-              </button>
+              <ActionButton
+                icon={Calendar}
+                label="Nova Consulta"
+                bgColor="bg-sky-50"
+                borderColor="border-sky-200"
+                hoverColor="hover:bg-sky-100"
+                textColor="text-sky-600"
+              />
+              <ActionButton
+                icon={Users}
+                label="Novo Paciente"
+                bgColor="bg-green-50"
+                borderColor="border-green-200"
+                hoverColor="hover:bg-green-100"
+                textColor="text-green-600"
+              />
+              <ActionButton
+                icon={Activity}
+                label="Registrar Sessão"
+                bgColor="bg-purple-50"
+                borderColor="border-purple-200"
+                hoverColor="hover:bg-purple-100"
+                textColor="text-purple-600"
+              />
+              <ActionButton
+                icon={BarChart3}
+                label="Relatórios"
+                bgColor="bg-orange-50"
+                borderColor="border-orange-200"
+                hoverColor="hover:bg-orange-100"
+                textColor="text-orange-600"
+              />
             </div>
           </div>
         </div>

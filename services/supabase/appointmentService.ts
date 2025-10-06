@@ -36,10 +36,10 @@ function mapAppointmentToDomain(data: Appointment): any {
     therapist_id: data.therapist_id,
     scheduled_at: data.scheduled_at,
     appointment_date: data.scheduled_at ? new Date(data.scheduled_at).toISOString().split('T')[0] : undefined,
-    start_time: data.scheduled_at ? new Date(data.scheduled_at).toTimeString().slice(0, 5) : undefined,
+    start_time: data.start_time || (data.scheduled_at ? new Date(data.scheduled_at).toTimeString().slice(0, 5) : undefined),
     duration_minutes: 60, // Default duration
     status: data.status as any,
-    appointment_type: undefined, // Not in Supabase schema
+    appointment_type: data.appointment_type,
     cancellation_reason: data.cancellation_reason,
     created_at: data.created_at || new Date().toISOString(),
     updated_at: data.updated_at,
@@ -48,13 +48,15 @@ function mapAppointmentToDomain(data: Appointment): any {
     recurrence_rule: data.recurrence_rule,
     recurrence_template_id: data.recurrence_template_id,
     series_id: data.series_id,
-    value: data.value
+    value: data.value,
+    end_time: data.end_time,
+    price: data.value, // Map value to price for compatibility
+    notes: undefined, // Will be added to metadata if needed
   };
 }
 
 // Import missing types
 import type { ConflictInfo } from '../../types/appointment';
-import type { SupabaseRealtimePayload } from '@supabase/supabase-js';
 
 export interface AppointmentFilters {
   therapistId?: string;
@@ -500,7 +502,7 @@ class AppointmentService {
   }
 
   // Subscribe to appointment changes
-  subscribeToAppointmentChanges(callback: (payload: SupabaseRealtimePayload<Database['public']['Tables']['appointments']['Row']>) => void) {
+  subscribeToAppointmentChanges(callback: (payload: any) => void) {
     return subscribeToTable('appointments', callback);
   }
 

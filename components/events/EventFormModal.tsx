@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
-import { Event, EventType, EventStatus } from '../../types';
+import type { Event } from '../../types';
+import { EventType, EventStatus } from '../../types';
 
 interface EventFormModalProps {
   isOpen: boolean;

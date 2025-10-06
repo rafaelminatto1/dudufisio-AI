@@ -338,7 +338,7 @@ const PartnerDashboard: React.FC = () => {
               </button>
             </div>
             <div className="grid gap-4">
-              {mockReferrals.map((referral) => (
+              {mockReferrals.map((referral: any) => (
                 <ReferralCard
                   key={referral.id}
                   referral={referral}

@@ -3,7 +3,7 @@
 
 // pages/MedicalReportPage.tsx
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 // FIX: Use namespace import for react-router-dom to fix module resolution issues.
 import * as ReactRouterDOM from 'react-router-dom';
 import { Patient, MedicalReport } from '../types';
@@ -64,8 +64,9 @@ const MedicalReportPage: React.FC = () => {
     useEffect(() => {
         loadData();
     }, [loadData]);
-    
-    const handleGenerate = async () => {
+
+    // 🚀 Handler memoizado para geração de relatório
+    const handleGenerate = useCallback(async () => {
         if (!patientId || !recipientDoctor.trim() || !recipientCrm.trim()) {
             showToast('Por favor, informe o médico e CRM de destino.', 'error');
             return;
@@ -83,9 +84,10 @@ const MedicalReportPage: React.FC = () => {
         } finally {
             setIsGenerating(false);
         }
-    };
-    
-    const handleSave = async (isFinalizing = false) => {
+    }, [patientId, recipientDoctor, recipientCrm, showToast, navigate]);
+
+    // 🚀 Handler memoizado para salvar relatório
+    const handleSave = useCallback(async (isFinalizing = false) => {
         if (!report) return;
         setIsSaving(true);
         try {
@@ -111,7 +113,7 @@ const MedicalReportPage: React.FC = () => {
         } finally {
             setIsSaving(false);
         }
-    };
+    }, [report, content, recipientDoctor, recipientCrm, showToast, navigate, loadData]);
 
 
     // Handle loading state
@@ -124,8 +126,16 @@ const MedicalReportPage: React.FC = () => {
         return null;
     }
 
-    const pageTitle = report ? report.title : `Novo Relatório para ${patient.name}`;
-    const backLink = report ? `/patients/${report.patientId}` : `/patients/${patientId}`;
+    // 🚀 Valores computados memoizados
+    const pageTitle = useMemo(
+        () => report ? report.title : `Novo Relatório para ${patient.name}`,
+        [report, patient.name]
+    );
+
+    const backLink = useMemo(
+        () => report ? `/patients/${report.patientId}` : `/patients/${patientId}`,
+        [report, patientId]
+    );
 
     return (
         <div className="space-y-6">

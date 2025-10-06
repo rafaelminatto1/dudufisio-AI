@@ -6,6 +6,24 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
+// Helper type for profile_settings
+interface ProfileSettings {
+  phone?: string;
+  license_number?: string;
+  department?: string;
+  specialties?: string[];
+  working_hours?: {
+    start: string;
+    end: string;
+    days: number[];
+  };
+  notification_preferences?: {
+    email?: boolean;
+    sms?: boolean;
+    push?: boolean;
+  };
+}
+
 interface UserFormModalProps {
   user?: UserProfile;
   onClose: () => void;
@@ -15,26 +33,30 @@ interface UserFormModalProps {
 const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSubmit }) => {
   const isEditing = !!user;
 
+  // Type-safe access to profile_settings
+  const profileSettings = (user?.profile_settings as ProfileSettings) || {};
+  const permissions = (user?.permissions as string[]) || [];
+
   const [formData, setFormData] = useState({
     email: user?.email || '',
     full_name: user?.full_name || '',
     role: user?.role || 'therapist',
     password: '',
     confirmPassword: '',
-    phone: user?.profile_settings?.phone || '',
-    license_number: user?.profile_settings?.license_number || '',
-    department: user?.profile_settings?.department || '',
-    specialties: user?.profile_settings?.specialties?.join(', ') || '',
+    phone: profileSettings.phone || '',
+    license_number: profileSettings.license_number || '',
+    department: profileSettings.department || '',
+    specialties: profileSettings.specialties?.join(', ') || '',
     working_hours: {
-      start: user?.profile_settings?.working_hours?.start || '08:00',
-      end: user?.profile_settings?.working_hours?.end || '18:00',
-      days: user?.profile_settings?.working_hours?.days || [1, 2, 3, 4, 5],
+      start: profileSettings.working_hours?.start || '08:00',
+      end: profileSettings.working_hours?.end || '18:00',
+      days: profileSettings.working_hours?.days || [1, 2, 3, 4, 5],
     },
-    permissions: user?.permissions || [],
+    permissions: permissions,
     notification_preferences: {
-      email: user?.profile_settings?.notification_preferences?.email ?? true,
-      sms: user?.profile_settings?.notification_preferences?.sms ?? false,
-      push: user?.profile_settings?.notification_preferences?.push ?? true,
+      email: profileSettings.notification_preferences?.email ?? true,
+      sms: profileSettings.notification_preferences?.sms ?? false,
+      push: profileSettings.notification_preferences?.push ?? true,
     },
   });
 
@@ -103,13 +125,13 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSubmit }
       const submitData = {
         email: formData.email,
         full_name: formData.full_name,
-        role: formData.role as UserProfile['role'],
+        role: formData.role || 'therapist',
         permissions: formData.permissions,
         profile_settings: {
           phone: formData.phone || undefined,
           license_number: formData.license_number || undefined,
           department: formData.department || undefined,
-          specialties: formData.specialties ? formData.specialties.split(',').map(s => s.trim()).filter(Boolean) : undefined,
+          specialties: formData.specialties ? formData.specialties.split(',').map((s: string) => s.trim()).filter(Boolean) : undefined,
           working_hours: formData.working_hours,
           notification_preferences: formData.notification_preferences,
         },

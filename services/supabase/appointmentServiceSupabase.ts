@@ -14,14 +14,14 @@ class SupabaseAppointmentService {
       patientName: '', // Will be populated by join queries
       patientAvatarUrl: '', // Will be populated by join queries
       therapistId: row.therapist_id,
-      startTime: new Date(row.start_time),
-      endTime: new Date(row.end_time),
+      startTime: new Date(row.start_time || row.scheduled_at),
+      endTime: new Date(row.end_time || row.scheduled_at),
       title: `${row.appointment_type} - ${row.patient_id.substring(0, 8)}`, // Generate title from type
       type: row.appointment_type as AppointmentType,
       status: (row.status || 'Agendado') as AppointmentStatus,
-      value: row.price || 0,
+      value: row.value || 0,
       paymentStatus: 'pending' as const,
-      observations: row.notes || undefined,
+      observations: undefined, // notes field doesn't exist in current schema
       sessionNumber: undefined,
       totalSessions: undefined,
     };
@@ -31,16 +31,13 @@ class SupabaseAppointmentService {
     return {
       patient_id: appointment.patientId,
       therapist_id: appointment.therapistId,
-      appointment_date: appointment.startTime.toISOString().split('T')[0],
-      start_time: appointment.startTime.toISOString().split('T')[1]?.slice(0, 8) || '00:00:00',
-      end_time: appointment.endTime.toISOString().split('T')[1]?.slice(0, 8) || '00:00:00',
+      scheduled_at: appointment.startTime.toISOString(),
+      start_time: appointment.startTime.toISOString(),
+      end_time: appointment.endTime.toISOString(),
       appointment_type: appointment.type,
       status: appointment.status || 'Agendado',
-      price: appointment.value || null,
-      notes: appointment.observations || null,
-      chief_complaint: null,
-      is_online: false,
-      room: null,
+      value: appointment.value || null,
+      metadata: appointment.observations ? { notes: appointment.observations } : null,
     };
   }
 
@@ -50,16 +47,18 @@ class SupabaseAppointmentService {
     if (appointment.patientId) update.patient_id = appointment.patientId;
     if (appointment.therapistId) update.therapist_id = appointment.therapistId;
     if (appointment.startTime) {
-      update.appointment_date = appointment.startTime.toISOString().split('T')[0];
-      update.start_time = appointment.startTime.toISOString().split('T')[1]?.slice(0, 8) || '00:00:00';
+      update.scheduled_at = appointment.startTime.toISOString();
+      update.start_time = appointment.startTime.toISOString();
     }
     if (appointment.endTime) {
-      update.end_time = appointment.endTime.toISOString().split('T')[1]?.slice(0, 8) || '00:00:00';
+      update.end_time = appointment.endTime.toISOString();
     }
     if (appointment.status) update.status = appointment.status;
     if (appointment.type) update.appointment_type = appointment.type;
-    if (appointment.value !== undefined) update.price = appointment.value;
-    if (appointment.observations !== undefined) update.notes = appointment.observations || null;
+    if (appointment.value !== undefined) update.value = appointment.value;
+    if (appointment.observations !== undefined) {
+      update.metadata = { notes: appointment.observations };
+    }
 
     update.updated_at = new Date().toISOString();
 
@@ -188,8 +187,8 @@ class SupabaseAppointmentService {
       // Check for conflicts before creating
       const conflicts = await this.checkConflicts(
         appointmentData.therapistId,
-        appointmentData.startTime,
-        appointmentData.endTime
+        appointmentData.startTime.toISOString(),
+        appointmentData.endTime.toISOString()
       );
 
       if (conflicts.length > 0) {
@@ -223,7 +222,7 @@ class SupabaseAppointmentService {
         const startTime = updates.startTime ?? current.startTime;
         const endTime = updates.endTime ?? current.endTime;
 
-        const conflicts = await this.checkConflicts(therapistId, startTime, endTime, id);
+        const conflicts = await this.checkConflicts(therapistId, startTime.toISOString(), endTime.toISOString(), id);
         if (conflicts.length > 0) {
           throw new Error('Conflito de horário detectado. Já existe um agendamento neste horário.');
         }

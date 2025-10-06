@@ -9,7 +9,8 @@ import {
 } from 'lucide-react';
 import { PatientSearchInput } from './PatientSearchInput';
 import { cn } from '../../lib/utils';
-import { Patient, PatientSummary, Appointment, AppointmentType, AppointmentStatus } from '../../types';
+import type { Patient, PatientSummary, Appointment } from '../../types';
+import { AppointmentType, AppointmentStatus } from '../../types';
 import * as appointmentService from '../../services/appointmentService';
 import { useToast } from '../../contexts/ToastContext';
 

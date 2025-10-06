@@ -3,16 +3,14 @@
   "type": "frontend",
   "scope": "codebase",
   "localEndpoint": "http://localhost:5175",
-  "loginUser": "admin@dudufisio.com",
-  "loginPassword": "demo123456",
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "",
+    "additionalInstruction": "Teste todas as páginas principais do sistema, verifique erros no console do navegador e valide funcionalidades críticas como autenticação, navegação, formulários e dashboards.",
     "envs": {
       "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
     }
   },
-  "proxy": "http://2db87c2e-29de-474e-9b2a-122ea2271696:n4nKVNakPtERHYugtfVMBF3NL5VpsGR2@tun.testsprite.com:8080"
+  "proxy": "http://18b608e0-0c3c-4d56-9cb4-29ca28dfcad7:hDDheR4ojjMlGu8Ql4MpDbiyzxrzCG83@tun.testsprite.com:8080"
 }

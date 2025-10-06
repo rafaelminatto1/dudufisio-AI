@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import AppRoutes from './AppRoutes';
+import { registerServiceWorker } from './lib/serviceWorkerRegistration';
 
 console.log('🚀 Starting React application...');
 
@@ -18,6 +19,21 @@ if (!rootElement) {
       </React.StrictMode>
     );
     console.log('🎉 React application rendered successfully!');
+
+    // Registrar service worker para offline cache
+    registerServiceWorker({
+      onSuccess: () => {
+        console.log('✅ Service worker registered successfully - App ready for offline use');
+      },
+      onUpdate: (registration) => {
+        console.log('🔄 New service worker version available');
+        // Notificação de atualização será mostrada automaticamente
+      },
+      onError: (error) => {
+        console.error('❌ Service worker registration failed:', error);
+      },
+    });
+
   } catch (error) {
     console.error('💥 Error rendering React app:', error);
     rootElement.innerHTML = `

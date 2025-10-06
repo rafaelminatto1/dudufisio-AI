@@ -10,7 +10,7 @@ interface Notification {
   message: string;
   isRead: boolean;
   createdAt: Date;
-  type: 'task_assigned' | 'announcement' | 'appointment_reminder' | 'exercise_reminder';
+  type: 'task_assigned' | 'announcement' | 'appointment_reminder' | 'exercise_reminder' | 'alert' | 'push_fallback';
 }
 import { mockNotifications, mockAppointments, mockUsers, mockPatients } from '../data/mockData';
 import * as treatmentService from './treatmentService';

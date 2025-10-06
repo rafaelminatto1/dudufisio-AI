@@ -120,7 +120,7 @@ const KnowledgeBasePage: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-slate-200">
-                            {filteredEntries.map((entry) => (
+                            {filteredEntries.map((entry: any) => (
                                 <KnowledgeRow key={entry.id} entry={entry} onEdit={handleOpenModal} />
                             ))}
                         </tbody>

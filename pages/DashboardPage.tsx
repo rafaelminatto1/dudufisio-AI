@@ -17,6 +17,7 @@ import { useOptimizedPatients, useOptimizedAppointments } from '../hooks/useOpti
 import { eventService } from '../services/eventService';
 import { useComponentPerformance } from '../hooks/usePerformanceMetrics';
 import OptimizedLoader from '../components/ui/OptimizedLoader';
+import { useMemoWithTTL, usePerformanceMonitor } from '../lib/performanceOptimization';
 
 const isToday = (someDate: Date) => {
     const today = new Date();
@@ -28,6 +29,7 @@ const isToday = (someDate: Date) => {
 const DashboardPage: React.FC = () => {
     // 🚀 Monitoramento de performance
     useComponentPerformance('DashboardPage');
+    usePerformanceMonitor('DashboardPage');
 
     // 📊 Hooks otimizados para dados
     const { therapists, isLoading: isTherapistsLoading } = useData();
@@ -61,8 +63,8 @@ const DashboardPage: React.FC = () => {
 
     const isLoading = isTherapistsLoading || isPatientsLoading || isAppointmentsLoading;
     
-    // 📊 Dados enriquecidos com memoização
-    const enrichedTodaysAppointments = useMemo(() => {
+    // 📊 Dados enriquecidos com memoização otimizada
+    const enrichedTodaysAppointments = useMemoWithTTL(() => {
         if (!appointments || !patients) return [];
         
         const todays = appointments.filter(app => isToday(new Date(app.startTime)));
@@ -82,7 +84,7 @@ const DashboardPage: React.FC = () => {
                 patientMedicalAlerts: patient?.medicalAlerts,
             } as EnrichedAppointment;
         });
-    }, [appointments, patients, therapists]);
+    }, [appointments, patients, therapists], 15000); // Cache por 15 segundos
 
     const { stats } = useDashboardStats({ 
         patients: patients || [], 
@@ -99,11 +101,13 @@ const DashboardPage: React.FC = () => {
     }
 
     return (
-        <div className="space-y-8">
-            <PageHeader
-                title="Dashboard Administrativo"
-                subtitle="Visão 360° do negócio com métricas financeiras, operacionais e clínicas."
-            />
+        <main className="space-y-8" role="main">
+            <header>
+                <PageHeader
+                    title="Dashboard Administrativo"
+                    subtitle="Visão 360° do negócio com métricas financeiras, operacionais e clínicas."
+                />
+            </header>
 
             <div className="space-y-8">
                 <KPICards stats={stats} isLoading={isLoading} />
@@ -137,7 +141,7 @@ const DashboardPage: React.FC = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     );
 };
 

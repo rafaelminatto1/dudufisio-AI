@@ -397,7 +397,7 @@ export async function exemploWebhookWhatsApp() {
                   from: '5511999999999',
                   id: 'message_123',
                   timestamp: '1640995200',
-                  type: 'text',
+                  type: 'text' as const,
                   text: {
                     body: 'Olá, gostaria de agendar uma consulta'
                   }

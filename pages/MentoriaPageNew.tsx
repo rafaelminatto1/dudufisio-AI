@@ -314,7 +314,7 @@ const MentoriaPage: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                        {interns.slice(0, 5).map((intern) => (
+                        {interns.slice(0, 5).map((intern: any) => (
                             <div key={intern.id} className="flex items-center space-x-4">
                                 <img 
                                     src={intern.avatarUrl} 

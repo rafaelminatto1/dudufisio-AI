@@ -152,7 +152,7 @@ export class FirebaseV1Adapter {
       }
 
       const tokenData = await response.json();
-      this.accessToken = tokenData.access_token || '';
+      this.accessToken = tokenData.access_token ?? '';
 
       // Token expira em 1 hora, renovar 5 minutos antes
       this.tokenExpiry = new Date(Date.now() + (tokenData.expires_in - 300) * 1000);

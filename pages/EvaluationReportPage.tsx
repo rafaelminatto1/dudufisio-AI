@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo, memo } from 'react';
 import { Loader, Sparkles, Clipboard, Check, ChevronDown, FileText, User, Calendar } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -37,10 +37,10 @@ const initialFormData: EvaluationFormData = {
     objetivos_paciente: '',
 };
 
-// Componente de seção colapsável
-const AccordionSection: React.FC<{ title: string; isOpen: boolean; onToggle: () => void; children: React.ReactNode }> = ({ title, isOpen, onToggle, children }) => (
+// 🚀 Componente de seção colapsável memoizado
+const AccordionSection = memo<{ title: string; isOpen: boolean; onToggle: () => void; children: React.ReactNode }>(({ title, isOpen, onToggle, children }) => (
     <Card className="mb-4">
-        <CardHeader 
+        <CardHeader
             className="cursor-pointer hover:bg-slate-50 transition-colors"
             onClick={onToggle}
         >
@@ -55,7 +55,8 @@ const AccordionSection: React.FC<{ title: string; isOpen: boolean; onToggle: () 
             </CardContent>
         )}
     </Card>
-);
+));
+AccordionSection.displayName = 'AccordionSection';
 
 const EvaluationReportPage: React.FC = () => {
     const [formData, setFormData] = useState<EvaluationFormData>(initialFormData);
@@ -64,23 +65,24 @@ const EvaluationReportPage: React.FC = () => {
     const [report, setReport] = useState<string>('');
     const [copied, setCopied] = useState(false);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    // 🚀 Handlers memoizados
+    const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
-    };
-    
-    const handleToggleSection = (section: keyof typeof openSections) => {
-        setOpenSections(prev => ({...prev, [section]: !prev[section]}));
-    };
+    }, []);
 
-    const handleSubmit = async () => {
+    const handleToggleSection = useCallback((section: keyof typeof openSections) => {
+        setOpenSections(prev => ({...prev, [section]: !prev[section]}));
+    }, []);
+
+    const handleSubmit = useCallback(async () => {
         if (!formData.queixa_principal.trim()) {
             alert('A "Queixa Principal" é obrigatória.');
             return;
         }
         setIsLoading(true);
         setReport('');
-        
+
         // Simular geração de relatório
         setTimeout(() => {
             const mockReport = `# LAUDO DE AVALIAÇÃO FISIOTERAPÊUTICA
@@ -135,17 +137,21 @@ Paciente orientado sobre o quadro clínico e importância da adesão ao tratamen
             setReport(mockReport);
             setIsLoading(false);
         }, 2000);
-    };
+    }, [formData]);
 
-    const handleCopy = () => {
+    const handleCopy = useCallback(() => {
         if (!report) return;
         navigator.clipboard.writeText(report);
         setCopied(true);
         alert('Laudo copiado para a área de transferência!');
         setTimeout(() => setCopied(false), 2000);
-    };
-    
-    const isSubmitDisabled = isLoading || !formData.queixa_principal.trim();
+    }, [report]);
+
+    // 🚀 Valor computado memoizado
+    const isSubmitDisabled = useMemo(
+        () => isLoading || !formData.queixa_principal.trim(),
+        [isLoading, formData.queixa_principal]
+    );
 
     return (
         <div className="min-h-screen bg-slate-50 py-8">

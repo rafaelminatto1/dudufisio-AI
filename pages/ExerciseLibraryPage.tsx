@@ -1,5 +1,5 @@
 // pages/ExerciseLibraryPage.tsx
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, memo, useCallback } from 'react';
 import { Plus, Search, ChevronDown, Edit, Copy, Trash2, Filter, X } from 'lucide-react';
 import { useExercises } from '../hooks/useExercises';
 import PageHeader from '../components/PageHeader';
@@ -9,8 +9,11 @@ import ExerciseFormModal from '../components/ExerciseFormModal';
 import { Skeleton } from '../components/ui/skeleton';
 import GroupFormModal from '../components/GroupFormModal';
 import VideoPlayerModal from '../components/VideoPlayerModal';
+import { useDebouncedValue } from '../lib/performanceOptimization';
 
-const FilterCheckbox: React.FC<{ id: string; label: string; checked: boolean; onChange: (checked: boolean) => void; }> = ({ id, label, checked, onChange }) => (
+// Memoizado para evitar re-renders desnecessários
+const FilterCheckbox = memo<{ id: string; label: string; checked: boolean; onChange: (checked: boolean) => void; }>(
+  ({ id, label, checked, onChange }) => (
     <div className="flex items-center">
         <input
             id={id}
@@ -23,7 +26,9 @@ const FilterCheckbox: React.FC<{ id: string; label: string; checked: boolean; on
             {label}
         </label>
     </div>
+  )
 );
+FilterCheckbox.displayName = 'FilterCheckbox';
 
 const ExerciseLibraryPage: React.FC = () => {
   const { exercises, categories, isLoading, addExercise, updateExercise, deleteExercise, addCategory, updateCategory, copyCategory, deleteCategory, uniqueBodyParts, uniqueEquipment } = useExercises();
@@ -32,6 +37,9 @@ const ExerciseLibraryPage: React.FC = () => {
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [maxDifficulty, setMaxDifficulty] = useState<number>(5);
+
+  // 🚀 Debounce do search para melhorar performance
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
 
   const [isExerciseModalOpen, setIsExerciseModalOpen] = useState(false);
   const [exerciseToEdit, setExerciseToEdit] = useState<Exercise | undefined>();
@@ -49,33 +57,37 @@ const ExerciseLibraryPage: React.FC = () => {
     }
   }, [isLoading, categories, openCategories.length]);
 
-  const handleBodyPartChange = (part: string, isChecked: boolean) => {
+  // 🚀 Callbacks memoizados para evitar re-renders
+  const handleBodyPartChange = useCallback((part: string, isChecked: boolean) => {
     setSelectedBodyParts(prev => isChecked ? [...prev, part] : prev.filter(p => p !== part));
-  };
-  const handleEquipmentChange = (equip: string, isChecked: boolean) => {
+  }, []);
+
+  const handleEquipmentChange = useCallback((equip: string, isChecked: boolean) => {
     setSelectedEquipment(prev => isChecked ? [...prev, equip] : prev.filter(e => e !== equip));
-  };
-  
-  const resetFilters = () => {
+  }, []);
+
+  const resetFilters = useCallback(() => {
     setSearchTerm('');
     setSelectedBodyParts([]);
     setSelectedEquipment([]);
     setMaxDifficulty(5);
-  };
+  }, []);
+
   const areFiltersActive = searchTerm || selectedBodyParts.length > 0 || selectedEquipment.length > 0 || maxDifficulty < 5;
 
+  // 🚀 Usa debouncedSearchTerm ao invés de searchTerm direto
   const filteredExercises = useMemo(() => {
     return exercises.filter(ex => {
-      const searchMatch = searchTerm === '' ||
-        ex.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ex.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const searchMatch = debouncedSearchTerm === '' ||
+        ex.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
+        ex.category.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
       const bodyPartMatch = selectedBodyParts.length === 0 || selectedBodyParts.some(p => ex.bodyParts.includes(p));
       const equipmentMatch = selectedEquipment.length === 0 || selectedEquipment.some(e => ex.equipment.includes(e));
       const difficultyMatch = ex.difficulty <= maxDifficulty;
-      
+
       return searchMatch && bodyPartMatch && equipmentMatch && difficultyMatch;
     });
-  }, [exercises, searchTerm, selectedBodyParts, selectedEquipment, maxDifficulty]);
+  }, [exercises, debouncedSearchTerm, selectedBodyParts, selectedEquipment, maxDifficulty]);
 
   const handleOpenExerciseModal = (exercise?: Exercise, category?: string) => {
     setExerciseToEdit(exercise);

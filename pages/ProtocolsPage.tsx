@@ -314,7 +314,7 @@ const ProtocolsPage: React.FC = () => {
                         }
                         return true;
                     })
-                    .map((protocol) => {
+                    .map((protocol: any) => {
                         const IconComponent = getCategoryIcon(protocol.category);
                         
                         return (
@@ -398,7 +398,7 @@ const ProtocolsPage: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {prescriptions.map((prescription) => {
+                {prescriptions.map((prescription: any) => {
                     const protocol = protocols.find(p => p.id === prescription.protocolId);
                     if (!protocol) return null;
 
@@ -478,7 +478,7 @@ const ProtocolsPage: React.FC = () => {
 
             {analytics.length > 0 && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {analytics.map((analytic) => {
+                    {analytics.map((analytic: any) => {
                         const protocol = protocols.find(p => p.id === analytic.protocolId);
                         if (!protocol) return null;
 
@@ -525,7 +525,7 @@ const ProtocolsPage: React.FC = () => {
                                         <div>
                                             <div className="text-sm font-medium mb-2">Tendência Mensal:</div>
                                             <div className="space-y-1">
-                                                {analytic.monthlyTrends.slice(-3).map((trend) => (
+                                                {analytic.monthlyTrends.slice(-3).map((trend: any) => (
                                                     <div key={trend.month} className="flex justify-between text-xs">
                                                         <span>{trend.month}</span>
                                                         <span>{trend.prescriptions} prescrições</span>
@@ -590,7 +590,7 @@ const ProtocolsPage: React.FC = () => {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
-                            {libraryStats?.recentlyUpdated.slice(0, 5).map((protocol) => (
+                            {libraryStats?.recentlyUpdated.slice(0, 5).map((protocol: any) => (
                                 <div key={protocol.id} className="flex items-center justify-between">
                                     <div>
                                         <div className="text-sm font-medium">{protocol.name}</div>
@@ -613,7 +613,7 @@ const ProtocolsPage: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {assessmentTools.map((tool) => (
+                        {assessmentTools.map((tool: any) => (
                             <div key={tool.id} className="border rounded-lg p-4">
                                 <div className="flex items-center justify-between mb-2">
                                     <h4 className="font-medium">{tool.name}</h4>

@@ -1,6 +1,7 @@
 // hooks/useAppointments.ts
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Appointment, EnrichedAppointment, Patient, Therapist, AppointmentTypeColors } from '../types';
+import type { Appointment, EnrichedAppointment, Patient, Therapist } from '../types';
+import { AppointmentTypeColors } from '../types';
 import * as appointmentService from '../services/appointmentService';
 import { useData } from '../contexts/AppContext';
 import { eventService } from '../services/eventService';

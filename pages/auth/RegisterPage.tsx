@@ -230,7 +230,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onBack }) => {
                     <SelectValue placeholder="Selecione seu tipo de usuário" />
                   </SelectTrigger>
                   <SelectContent>
-                    {roleOptions.map((option) => (
+                    {roleOptions.map((option: any) => (
                       <SelectItem key={option.value} value={option.value}>
                         <div>
                           <div className="font-medium">{option.label}</div>

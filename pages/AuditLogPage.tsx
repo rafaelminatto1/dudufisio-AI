@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { Calendar as CalendarIcon, User as UserIcon, Type as TypeIcon } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { AuditLogEntry } from '../types';
@@ -7,6 +7,7 @@ import { useAuditLogs } from '../hooks/useAuditLogs';
 import Pagination from '../components/ui/Pagination';
 import { Skeleton } from '../components/ui/skeleton';
 
+// 🚀 Helper function para badge
 const getActionBadge = (action: string) => {
     const lowerAction = action.toLowerCase();
     if (lowerAction.includes('create') || lowerAction.includes('assign')) return 'bg-sky-100 text-sky-800';
@@ -19,7 +20,8 @@ const getActionBadge = (action: string) => {
     return 'bg-slate-100 text-slate-800';
 };
 
-const LogRow: React.FC<{ log: AuditLogEntry }> = ({ log }) => (
+// 🚀 Componente LogRow memoizado
+const LogRow = memo<{ log: AuditLogEntry }>(({ log }) => (
     <tr className="border-b border-slate-200">
         <td className="p-4 whitespace-nowrap text-sm text-slate-500 font-mono">
             {log.timestamp.toLocaleString('pt-BR')}
@@ -34,7 +36,8 @@ const LogRow: React.FC<{ log: AuditLogEntry }> = ({ log }) => (
         </td>
         <td className="p-4 text-sm text-slate-600 max-w-md truncate" title={log.details}>{log.details}</td>
     </tr>
-);
+));
+LogRow.displayName = 'LogRow';
 
 const AuditLogPage: React.FC = () => {
     const [filters, setFilters] = useState({ date: '', user: '', action: 'All' });
@@ -47,10 +50,11 @@ const AuditLogPage: React.FC = () => {
         logsPerPage: LOGS_PER_PAGE,
     });
     
-    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    // 🚀 Handler memoizado
+    const handleFilterChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFilters(prev => ({ ...prev, [e.target.name]: e.target.value }));
         setCurrentPage(1); // Reset to first page on filter change
-    };
+    }, []);
 
     const renderContent = () => {
         if (isLoading) {
