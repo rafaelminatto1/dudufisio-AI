@@ -157,7 +157,7 @@ export const updateBodyPoint = async (id: string, pointData: Partial<BodyPoint>)
         ...mockBodyPoints[index],
         ...pointData,
         id, // Garantir que o ID não mude
-        created_at: mockBodyPoints[index].created_at // Manter data original
+        createdAt: mockBodyPoints[index].createdAt // Manter data original
     };
 
     mockBodyPoints[index] = updatedPoint;
@@ -193,11 +193,11 @@ export const getBodyPointsByDateRange = async (
 
     return mockBodyPoints
         .filter(point => {
-            if (point.patient_id !== patientId) return false;
-            const pointDate = new Date(point.created_at);
+            if (point.patientId !== patientId) return false;
+            const pointDate = new Date(point.createdAt);
             return pointDate >= start && pointDate <= end;
         })
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
 
 /**
@@ -210,8 +210,8 @@ export const getBodyPointsBySide = async (
     await delay(250);
 
     return mockBodyPoints
-        .filter(point => point.patient_id === patientId && point.body_side === side)
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        .filter(point => point.patientId === patientId && point.bodySide === side)
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
 
 /**
@@ -226,11 +226,11 @@ export const getBodyPointsByPainLevel = async (
 
     return mockBodyPoints
         .filter(point =>
-            point.patient_id === patientId &&
-            point.pain_level >= minLevel &&
-            point.pain_level <= maxLevel
+            point.patientId === patientId &&
+            point.painLevel >= minLevel &&
+            point.painLevel <= maxLevel
         )
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
 
 /**
@@ -245,27 +245,27 @@ export const getBodyMapStatistics = async (patientId: string): Promise<{
 }> => {
     await delay(400);
 
-    const patientPoints = mockBodyPoints.filter(point => point.patient_id === patientId);
+    const patientPoints = mockBodyPoints.filter(point => point.patientId === patientId);
 
     const totalPoints = patientPoints.length;
     const averagePainLevel = totalPoints > 0
-        ? Math.round((patientPoints.reduce((sum, p) => sum + p.pain_level, 0) / totalPoints) * 10) / 10
+        ? Math.round((patientPoints.reduce((sum, p) => sum + p.painLevel, 0) / totalPoints) * 10) / 10
         : 0;
 
     const pointsByPainLevel = {
-        'leve': patientPoints.filter(p => p.pain_level <= 3).length,
-        'moderada': patientPoints.filter(p => p.pain_level > 3 && p.pain_level <= 6).length,
-        'intensa': patientPoints.filter(p => p.pain_level > 6 && p.pain_level <= 8).length,
-        'severa': patientPoints.filter(p => p.pain_level > 8).length
+        'leve': patientPoints.filter(p => p.painLevel <= 3).length,
+        'moderada': patientPoints.filter(p => p.painLevel > 3 && p.painLevel <= 6).length,
+        'intensa': patientPoints.filter(p => p.painLevel > 6 && p.painLevel <= 8).length,
+        'severa': patientPoints.filter(p => p.painLevel > 8).length
     };
 
     const pointsBySide = {
-        'front': patientPoints.filter(p => p.body_side === 'front').length,
-        'back': patientPoints.filter(p => p.body_side === 'back').length
+        'front': patientPoints.filter(p => p.bodySide === 'front').length,
+        'back': patientPoints.filter(p => p.bodySide === 'back').length
     };
 
     const recentPoints = patientPoints
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 5);
 
     return {
@@ -391,14 +391,14 @@ export const getBodyPointsByPatientId = async (patientId: string): Promise<BodyP
     const { data, error } = await supabase
         .from('body_points')
         .select('*')
-        .eq('patient_id', patientId)
-        .order('created_at', { ascending: false });
+        .eq('patientId', patientId)
+        .order('createdAt', { ascending: false });
 
     if (error) throw error;
     return data || [];
 };
 
-export const addBodyPoint = async (pointData: Omit<BodyPoint, 'id' | 'created_at'>): Promise<BodyPoint> => {
+export const addBodyPoint = async (pointData: Omit<BodyPoint, 'id' | 'createdAt'>): Promise<BodyPoint> => {
     const { data, error } = await supabase
         .from('body_points')
         .insert(pointData)

@@ -80,7 +80,7 @@ export interface PatientAttachment {
 export interface CommunicationLog {
   id: string;
   date: string; // ISO String
-  type: 'WhatsApp' | 'Ligação' | 'Email' | 'Outro';
+  type: 'email' | 'sms' | 'call' | 'whatsapp';
   notes: string;
   actor: string; // who made the contact, e.g., 'Dr. Roberto'
 }
@@ -1592,12 +1592,17 @@ export enum ItemStatus {
 }
 
 // Tipos que estavam faltando
-export enum MovementType {
-  IN = 'IN',
-  OUT = 'OUT',
-  TRANSFER = 'TRANSFER',
-  ADJUSTMENT = 'ADJUSTMENT',
-  RETURN = 'RETURN'
+export interface ScheduledAlert {
+  id: string;
+  ruleId: string;
+  supplyId?: string;
+  scheduledFor: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
+  attempts: number;
+  maxAttempts: number;
+  lastAttemptAt?: string;
+  errorMessage?: string;
+  createdAt: string;
 }
 
 export interface CommunicationLog {

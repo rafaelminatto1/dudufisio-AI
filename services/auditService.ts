@@ -68,7 +68,8 @@ class AuditService {
     observability.audit.info('audit.log.created', {
       action: logEntry.action,
       user: logEntry.user,
-      resourceType: logEntry.resourceType,
+      action: logEntry.action,
+      details: logEntry.details,
       timestamp: logEntry.timestamp
     });
 

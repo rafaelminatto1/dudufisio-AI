@@ -144,16 +144,16 @@ class AuthService {
         id: data.id,
         email: data.email,
         full_name: data.full_name,
-        phone: data.phone ?? undefined,
+        // phone: data.phone ?? undefined, // Campo não existe no schema atual
         role: data.role,
-        specialization: data.specialization ?? undefined,
-        professional_id: data.professional_id ?? undefined,
-        active: data.active,
+        // specialization: data.specialization ?? undefined, // Campo não existe no schema atual
+        // professional_id: data.professional_id ?? undefined, // Campo não existe no schema atual
+        is_active: data.is_active,
         created_at: data.created_at,
         updated_at: data.updated_at,
         // Backward compatibility aliases
         fullName: data.full_name,
-        professionalId: data.professional_id ?? undefined,
+        // professionalId: data.professional_id ?? undefined, // Campo não existe no schema atual
         createdAt: data.created_at,
         updatedAt: data.updated_at,
       };
@@ -185,16 +185,16 @@ class AuthService {
         id: data.id,
         email: data.email,
         full_name: data.full_name,
-        phone: data.phone ?? undefined,
+        // phone: data.phone ?? undefined, // Campo não existe no schema atual
         role: data.role,
-        specialization: data.specialization ?? undefined,
-        professional_id: data.professional_id ?? undefined,
-        active: data.active,
+        // specialization: data.specialization ?? undefined, // Campo não existe no schema atual
+        // professional_id: data.professional_id ?? undefined, // Campo não existe no schema atual
+        is_active: data.is_active,
         created_at: data.created_at,
         updated_at: data.updated_at,
         // Backward compatibility aliases
         fullName: data.full_name,
-        professionalId: data.professional_id ?? undefined,
+        // professionalId: data.professional_id ?? undefined, // Campo não existe no schema atual
         createdAt: data.created_at,
         updatedAt: data.updated_at,
       };
@@ -340,11 +340,11 @@ class AuthService {
         id: data.id,
         email: data.email,
         fullName: data.full_name,
-        phone: data.phone ?? undefined,
+        // phone: data.phone ?? undefined, // Campo não existe no schema atual
         role: data.role,
-        specialization: data.specialization ?? undefined,
-        professionalId: data.professional_id ?? undefined,
-        active: data.active,
+        // specialization: data.specialization ?? undefined, // Campo não existe no schema atual
+        // professionalId: data.professional_id ?? undefined, // Campo não existe no schema atual
+        is_active: data.is_active,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
       };

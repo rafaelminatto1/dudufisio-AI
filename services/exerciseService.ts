@@ -110,7 +110,23 @@ class ExerciseService {
         .order('name');
 
       if (error) throw error;
-      return data || [];
+      return (data || []).map(exercise => ({
+        ...exercise,
+        description: exercise.description || '',
+        benefits: exercise.benefits || [],
+        contraindications: exercise.contraindications || [],
+        instructions: exercise.instructions || [],
+        equipment: exercise.equipment || [],
+        difficulty_level: exercise.difficulty_level || 'beginner',
+        duration: exercise.duration || 0,
+        repetitions: exercise.repetitions || 0,
+        sets: exercise.sets || 0,
+        rest_time: exercise.rest_time || 0,
+        video_url: exercise.video_url || '',
+        image_urls: exercise.image_urls || [],
+        created_at: exercise.created_at || new Date().toISOString(),
+        updated_at: exercise.updated_at || new Date().toISOString()
+      }));
     } catch (error) {
       console.error('Erro ao buscar exercícios:', error);
       throw error;

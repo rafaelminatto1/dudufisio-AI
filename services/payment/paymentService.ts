@@ -163,8 +163,8 @@ class PaymentService {
       pix_bcb: ['pixKey', 'merchantName'],
     };
 
-    const required = requiredKeys[provider.id] || [];
-    return required.every(key => provider.config[key]);
+    const required = requiredKeys[provider.id as keyof typeof requiredKeys] || [];
+    return required.every((key: string) => provider.config[key]);
   }
 
   // PIX Payments
@@ -257,7 +257,7 @@ class PaymentService {
         description: data.description,
         cardToken: data.cardToken,
         installments: data.installments,
-        status: paymentResult.status,
+        status: paymentResult.status as 'pending' | 'cancelled' | 'completed' | 'failed' | 'processing' | 'canceled' | 'refunded' | 'succeeded' | 'authorized' | 'captured',
       };
 
       // Salvar no banco de dados
@@ -268,7 +268,7 @@ class PaymentService {
         description: data.description,
         customerId: data.customerId,
         appointmentId: data.appointmentId,
-        status: paymentResult.status,
+        status: paymentResult.status as 'pending' | 'cancelled' | 'completed' | 'failed' | 'processing' | 'refunded' | 'authorized' | 'captured',
         providerTransactionId: paymentResult.providerTransactionId,
         metadata: {
           type: 'card',

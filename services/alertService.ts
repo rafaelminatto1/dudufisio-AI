@@ -18,18 +18,7 @@ export {
   resolveAlert
 } from './suppliesService';
 
-export interface ScheduledAlert {
-  id: string;
-  ruleId: string;
-  supplyId?: string;
-  scheduledFor: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
-  attempts: number;
-  maxAttempts: number;
-  lastAttemptAt?: string;
-  errorMessage?: string;
-  createdAt: string;
-}
+// ScheduledAlert interface moved to types.ts
 
 export interface AlertCheckResult {
   checkType: string;
@@ -403,14 +392,39 @@ export const getScheduledAlerts = async (status?: string): Promise<ScheduledAler
 
 export const createScheduledAlert = async (alertData: Omit<ScheduledAlert, 'id' | 'createdAt'>): Promise<ScheduledAlert> => {
   try {
+    // Mapear campos para o formato do banco
+    const dbData = {
+      rule_id: alertData.ruleId,
+      supply_id: alertData.supplyId,
+      scheduled_for: alertData.scheduledFor,
+      status: alertData.status,
+      attempts: alertData.attempts,
+      max_attempts: alertData.maxAttempts,
+      last_attempt_at: alertData.lastAttemptAt,
+      error_message: alertData.errorMessage
+    };
+
     const { data, error } = await supabase
       .from('scheduled_alerts')
-      .insert([alertData])
-      .select<'*', ScheduledAlert>('*')
+      .insert([dbData])
+      .select('*')
       .single();
 
     if (error) throw error;
-    return data as ScheduledAlert;
+    
+    // Mapear resposta para o tipo ScheduledAlert
+    return {
+      id: data.id,
+      ruleId: data.rule_id,
+      supplyId: data.supply_id,
+      scheduledFor: data.scheduled_for,
+      status: data.status,
+      attempts: data.attempts,
+      maxAttempts: data.max_attempts,
+      lastAttemptAt: data.last_attempt_at,
+      errorMessage: data.error_message,
+      createdAt: data.created_at
+    } as ScheduledAlert;
   } catch (error) {
     console.error('Erro ao criar alerta agendado:', error);
     throw error;
@@ -524,8 +538,7 @@ export const escalateAlert = async (alertId: string, reason: string): Promise<vo
     if (alert) {
       await createNotification({
         userId: (await supabase.auth.getUser()).data.user?.id || '',
-        title: 'Alerta Escalado',
-        message: `Alerta escalado: ${alert.message}`,
+        message: `Alerta Escalado: ${alert.message}`,
         type: 'alert',
         priority: 'critical',
         channel: 'in_app',

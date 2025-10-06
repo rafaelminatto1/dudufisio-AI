@@ -157,7 +157,7 @@ export class FirebaseV1Adapter {
       // Token expira em 1 hora, renovar 5 minutos antes
       this.tokenExpiry = new Date(Date.now() + (tokenData.expires_in - 300) * 1000);
 
-      return this.accessToken;
+      return this.accessToken ?? '';
 
     } catch (error) {
       console.error('Failed to get Firebase access token:', error);

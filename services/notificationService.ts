@@ -178,7 +178,7 @@ class EnhancedNotificationService {
     try {
       const subscription = await this.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: this.urlB64ToUint8Array(this.vapidKey)
+        applicationServerKey: this.urlB64ToUint8Array(this.vapidKey) as ArrayBuffer
       });
 
       this.subscriptions.set(userId, subscription);
@@ -232,7 +232,7 @@ class EnhancedNotificationService {
           data: config.data,
           silent: config.silent,
           requireInteraction: config.requireInteraction,
-          renotify: config.renotify,
+          // renotify: config.renotify, // Propriedade não existe no tipo NotificationOptions
           tag: config.tag,
           timestamp: config.timestamp || Date.now()
         });
@@ -353,11 +353,7 @@ class EnhancedNotificationService {
   private async sendEmailNotification(userId: string, subject: string, body: string): Promise<void> {
     const user = mockUsers.find(u => u.id === userId);
     if (user?.email) {
-      await sendEmail({
-        to: user.email,
-        subject,
-        body
-      });
+      await sendEmail(user.email, subject, body);
     }
   }
 
@@ -608,11 +604,11 @@ export const notifySchedulingAlert = async (alert: SchedulingAlert) => {
   toast(message, { type: 'info', autoClose: 8000 });
 
   if (alert.alertType === 'patient_no_show_warning') {
-    await sendEmail({
-      to: 'recepcao@fisioflow.com',
-      subject: 'Paciente com múltiplas faltas',
-      body: JSON.stringify(alert.payload, null, 2)
-    });
+    await sendEmail(
+      'recepcao@fisioflow.com',
+      'Paciente com múltiplas faltas',
+      JSON.stringify(alert.payload, null, 2)
+    );
   }
 
   if (alert.alertType === 'open_slot') {

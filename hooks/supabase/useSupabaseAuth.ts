@@ -160,7 +160,7 @@ export const useSupabaseAuth = () => {
       const updatedProfile = await authService.updateProfile(authState.user.id, updates);
       setAuthState(prev => ({
         ...prev,
-        profile: updatedProfile as UserProfile,
+        profile: updatedProfile as unknown as UserProfile,
         loading: false,
         error: null,
       }));
