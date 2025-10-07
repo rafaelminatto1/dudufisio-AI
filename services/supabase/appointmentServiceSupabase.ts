@@ -10,13 +10,13 @@ class SupabaseAppointmentService {
   private mapRowToAppointment(row: AppointmentRow): Appointment {
     return {
       id: row.id,
-      patientId: row.patient_id,
+      patientId: row.patient_id || '',
       patientName: '', // Will be populated by join queries
       patientAvatarUrl: '', // Will be populated by join queries
-      therapistId: row.therapist_id,
+      therapistId: row.therapist_id || '',
       startTime: new Date(row.start_time || row.scheduled_at),
       endTime: new Date(row.end_time || row.scheduled_at),
-      title: `${row.appointment_type} - ${row.patient_id.substring(0, 8)}`, // Generate title from type
+      title: `${row.appointment_type} - ${row.patient_id?.substring(0, 8) || 'Unknown'}`, // Generate title from type
       type: row.appointment_type as AppointmentType,
       status: (row.status || 'Agendado') as AppointmentStatus,
       value: row.value || 0,

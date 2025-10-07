@@ -471,7 +471,7 @@ export class Encounter {
       display?: string;
     };
   }> {
-    return this.data.participant || [];
+    return (this.data.participant as any) || [];
   }
 
   /**
@@ -496,7 +496,7 @@ export class Encounter {
       display?: string;
     }>;
   }> {
-    return this.data.reasonCode || [];
+    return (this.data.reasonCode as any) || [];
   }
 
   /**
@@ -516,7 +516,7 @@ export class Encounter {
     };
     rank?: number;
   }> {
-    return this.data.diagnosis || [];
+    return (this.data.diagnosis as any) || [];
   }
 
   /**
@@ -529,7 +529,7 @@ export class Encounter {
       display?: string;
     }>;
   }> {
-    return this.data.type || [];
+    return (this.data.type as any) || [];
   }
 
   /**

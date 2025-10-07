@@ -110,7 +110,7 @@ class ExerciseService {
         .order('name');
 
       if (error) throw error;
-      return (data || []).map(exercise => ({
+      return (data || []).map((exercise: any) => ({
         ...exercise,
         description: exercise.description || '',
         benefits: exercise.benefits || [],
@@ -219,7 +219,7 @@ class ExerciseService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as any;
     } catch (error) {
       console.error('Erro ao criar exercício:', error);
       throw error;
@@ -239,7 +239,7 @@ class ExerciseService {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as any;
     } catch (error) {
       console.error('Erro ao atualizar exercício:', error);
       throw error;

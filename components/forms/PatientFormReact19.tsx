@@ -52,7 +52,7 @@ export function PatientFormReact19({ isOpen, onClose, onSuccess }: PatientFormRe
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    startTransition(async () => {
+    startTransition(() => {
       const formDataObj = new FormData();
       
       // Adicionar todos os campos ao FormData
@@ -60,42 +60,42 @@ export function PatientFormReact19({ isOpen, onClose, onSuccess }: PatientFormRe
         formDataObj.append(key, String(value));
       });
 
-      const result = await createPatientAction(formDataObj);
-      
-      if (result.success) {
-        onSuccess?.(result.patient);
-        onClose();
-        // Reset form
-        setFormData({
-          name: '',
-          cpf: '',
-          email: '',
-          phone: '',
-          birthDate: '',
-          gender: '',
-          street: '',
-          number: '',
-          complement: '',
-          neighborhood: '',
-          city: '',
-          state: '',
-          zipCode: '',
-          emergencyContactName: '',
-          emergencyContactPhone: '',
-          emergencyContactRelationship: '',
-          allergies: '',
-          medications: '',
-          medicalConditions: '',
-          surgeries: '',
-          consentGiven: false,
-          whatsappConsent: 'opt-out'
-        });
-        setStep(1);
-      } else {
-        // Handle error - in a real app, you'd show a toast or error message
-        console.error('Erro ao criar paciente:', result.error);
-        alert(result.error);
-      }
+      createPatientAction(formDataObj).then((result) => {
+        if (result.success) {
+          onSuccess?.(result.patient);
+          onClose();
+          // Reset form
+          setFormData({
+            name: '',
+            cpf: '',
+            email: '',
+            phone: '',
+            birthDate: '',
+            gender: '',
+            street: '',
+            number: '',
+            complement: '',
+            neighborhood: '',
+            city: '',
+            state: '',
+            zipCode: '',
+            emergencyContactName: '',
+            emergencyContactPhone: '',
+            emergencyContactRelationship: '',
+            allergies: '',
+            medications: '',
+            medicalConditions: '',
+            surgeries: '',
+            consentGiven: false,
+            whatsappConsent: 'opt-out'
+          });
+          setStep(1);
+        } else {
+          // Handle error - in a real app, you'd show a toast or error message
+          console.error('Erro ao criar paciente:', result.error);
+          alert(result.error);
+        }
+      });
     });
   };
 

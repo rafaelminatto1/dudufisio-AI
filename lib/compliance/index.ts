@@ -9,9 +9,11 @@
  */
 
 // Services
-export { LGPDComplianceService } from './LGPDComplianceService';
-export { COFFITOComplianceService } from './COFFITOComplianceService';
-export { ComplianceManager } from './ComplianceManager';
+import { LGPDComplianceService } from './LGPDComplianceService';
+import { COFFITOComplianceService } from './COFFITOComplianceService';
+import { ComplianceManager } from './ComplianceManager';
+
+export { LGPDComplianceService, COFFITOComplianceService, ComplianceManager };
 
 // Types
 export type {

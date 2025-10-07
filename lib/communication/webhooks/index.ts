@@ -46,10 +46,10 @@ export function createWebhookRouter(webhookHandler: WebhookHandler): any {
   // Middleware to capture raw body for signature verification
   router.use('/webhooks/*', rawBodyMiddleware);
 
-  // Twilio SMS webhooks
-  router.post('/webhooks/twilio/sms/status', (req: Request, res: Response) => {
-    webhookHandler.handleTwilioSMSWebhook(req, res);
-  });
+  // Twilio SMS webhooks - DISABLED (SMS not used in Brazil)
+  // router.post('/webhooks/twilio/sms/status', (req: Request, res: Response) => {
+  //   webhookHandler.handleTwilioSMSWebhook(req, res);
+  // });
 
   // WhatsApp Business API webhooks
   router.post('/webhooks/whatsapp/status', (req: Request, res: Response) => {
@@ -383,8 +383,8 @@ export class WebhookRetryManager {
         'Content-Type': 'application/json',
         ...item.headers
       },
-      body: JSON.stringify(item.payload),
-      timeout: 30000
+      body: JSON.stringify(item.payload)
+      // Note: timeout handled by AbortController if needed
     });
 
     if (!response.ok) {

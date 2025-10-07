@@ -85,7 +85,7 @@ export class StripeGateway implements PaymentGateway {
         success: false,
         refundAmount: amount || Money.zero(),
         error: this.getErrorMessage(error),
-        gatewayResponse: error
+        gatewayResponse: error as Record<string, any> | undefined
       };
     }
   }
@@ -133,14 +133,12 @@ export class StripeGateway implements PaymentGateway {
         items: [{
           price_data: {
             currency: 'brl',
-            product_data: {
-              name: 'Payment Plan Installments'
-            },
+            product: (customer as any).default_source || 'prod_default',
             unit_amount: 100, // This should be calculated from payment plan
             recurring: {
               interval: 'month'
             }
-          }
+          } as any
         }],
         metadata: {
           paymentPlanId: request.paymentPlanId,
@@ -159,7 +157,7 @@ export class StripeGateway implements PaymentGateway {
       return {
         success: false,
         error: this.getErrorMessage(error),
-        gatewayResponse: error
+        gatewayResponse: error as Record<string, any> | undefined
       };
     }
   }

@@ -150,9 +150,8 @@ class SupabaseAuthService {
         role: 'admin' as Role,
         avatarUrl: '',
         phone: undefined,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
+        createdAt: new Date().toISOString()
+      } as any,
       'therapist@dudufisio.com': {
         id: 'mock-therapist-1',
         email: 'therapist@dudufisio.com',
@@ -160,9 +159,8 @@ class SupabaseAuthService {
         role: 'therapist' as Role,
         avatarUrl: '',
         phone: undefined,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
+        createdAt: new Date().toISOString()
+      } as any,
       'patient@dudufisio.com': {
         id: 'mock-patient-1',
         email: 'patient@dudufisio.com',
@@ -170,9 +168,8 @@ class SupabaseAuthService {
         role: 'patient' as Role,
         avatarUrl: '',
         phone: undefined,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      },
+        createdAt: new Date().toISOString()
+      } as any,
       'educator@dudufisio.com': {
         id: 'mock-educator-1',
         email: 'educator@dudufisio.com',

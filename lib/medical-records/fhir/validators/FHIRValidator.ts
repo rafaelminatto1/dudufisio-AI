@@ -114,7 +114,7 @@ export class FHIRValidator {
                 message: err.message,
                 severity: 'error',
                 code: 'SCHEMA_VALIDATION_ERROR',
-                details: `Expected: ${err.expected}, Received: ${err.received}`
+                details: `Validation error: ${err.message}`
               });
             });
           }

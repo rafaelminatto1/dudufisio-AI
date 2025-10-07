@@ -1,10 +1,7 @@
 // services/reportsService.ts
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database';
-
-type ConsumptionAnalytics = Database['public']['Tables']['supply_consumption_analytics']['Row'];
-type TaskCostAnalytics = Database['public']['Tables']['task_cost_analytics']['Row'];
-type SupplierPerformanceAnalytics = Database['public']['Tables']['supplier_performance_analytics']['Row'];
+import type { StockValuationReport } from '../types';
 
 // ============================================================================
 // TIPOS PARA RELATÓRIOS E ANALYTICS
@@ -153,15 +150,16 @@ export const getConsumptionAnalytics = async (filters?: ReportFilters): Promise<
     }
 
     if (filters?.supplierId) {
-      query = query.eq('supplier_name', 
-        (await supabase.from('suppliers').select('name').eq('id', filters.supplierId).single()).data?.name
-      );
+      const supplierData = await supabase.from('suppliers').select('name').eq('id', filters.supplierId).single();
+      if (supplierData.data?.name) {
+        query = query.eq('supplier_name', supplierData.data.name);
+      }
     }
 
     const { data, error } = await query.order('total_consumed_30d', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data as any) || [];
   } catch (error) {
     console.error('Erro ao buscar analytics de consumo:', error);
     throw error;
@@ -178,7 +176,7 @@ export const getConsumptionReport = async (filters: ReportFilters): Promise<Cons
       .lte('created_at', filters.endDate || new Date().toISOString());
 
     if (error) throw error;
-    return data || [];
+    return (data as any) || [];
   } catch (error) {
     console.error('Erro ao gerar relatório de consumo:', error);
     throw error;
@@ -218,7 +216,7 @@ export const getTaskCostAnalytics = async (filters?: ReportFilters): Promise<Tas
     const { data, error } = await query.order('task_date', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data as any) || [];
   } catch (error) {
     console.error('Erro ao buscar analytics de custos:', error);
     throw error;
@@ -246,7 +244,7 @@ export const getSupplierPerformanceAnalytics = async (): Promise<SupplierPerform
       .order('performance_rating', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data as any) || [];
   } catch (error) {
     console.error('Erro ao buscar analytics de fornecedores:', error);
     throw error;
@@ -266,7 +264,7 @@ export const getSupplierPerformanceReport = async (supplierId?: string): Promise
     const { data, error } = await query.order('on_time_delivery_rate', { ascending: false });
 
     if (error) throw error;
-    return data || [];
+    return (data as any) || [];
   } catch (error) {
     console.error('Erro ao gerar relatório de performance de fornecedores:', error);
     throw error;
@@ -364,7 +362,7 @@ export const getPerformanceMetrics = async (period?: {
     const { data, error } = await query;
 
     if (error) throw error;
-    return data || [];
+    return (data as any) || [];
   } catch (error) {
     console.error('Erro ao buscar métricas de performance:', error);
     throw error;
@@ -400,7 +398,7 @@ export const getScheduledReports = async (): Promise<ScheduledReport[]> => {
       .order('next_run');
 
     if (error) throw error;
-    return data || [];
+    return (data as any) || [];
   } catch (error) {
     console.error('Erro ao buscar relatórios agendados:', error);
     throw error;
@@ -411,15 +409,15 @@ export const createScheduledReport = async (reportData: Omit<ScheduledReport, 'i
   try {
     const { data, error } = await supabase
       .from('scheduled_reports')
-      .insert([{
+      .insert({
         ...reportData,
         created_by: (await supabase.auth.getUser()).data.user?.id
-      }])
+      } as any)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return data as any;
   } catch (error) {
     console.error('Erro ao criar relatório agendado:', error);
     throw error;
@@ -439,7 +437,7 @@ export const updateScheduledReport = async (id: string, reportData: Partial<Sche
       .single();
 
     if (error) throw error;
-    return data;
+    return data as any;
   } catch (error) {
     console.error('Erro ao atualizar relatório agendado:', error);
     throw error;
@@ -473,7 +471,7 @@ export const getReportHistory = async (limit: number = 50): Promise<ReportHistor
       .limit(limit);
 
     if (error) throw error;
-    return data || [];
+    return (data as any) || [];
   } catch (error) {
     console.error('Erro ao buscar histórico de relatórios:', error);
     throw error;
@@ -484,15 +482,15 @@ export const createReportHistory = async (historyData: Omit<ReportHistory, 'id' 
   try {
     const { data, error } = await supabase
       .from('report_history')
-      .insert([{
+      .insert({
         ...historyData,
         generated_by: (await supabase.auth.getUser()).data.user?.id
-      }])
+      } as any)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return data as any;
   } catch (error) {
     console.error('Erro ao criar histórico de relatório:', error);
     throw error;

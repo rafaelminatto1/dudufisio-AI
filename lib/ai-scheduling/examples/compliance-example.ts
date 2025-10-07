@@ -379,7 +379,8 @@ export async function exemploGestaoAlertas() {
       description: 'Paciente possui consentimento expirado que requer renovação',
       affectedEntities: ['patient_123'],
       requiredActions: ['Renovar consentimento LGPD'],
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias
+      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 dias
+      isResolved: false
     });
     
     console.log('✅ Alerta criado:', alert.id);

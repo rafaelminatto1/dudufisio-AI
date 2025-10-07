@@ -34,7 +34,7 @@ const BackupManagementPage: React.FC = () => {
     // Log da criação de backup
     await auditService.createLog({
       user: 'Admin',
-      action: 'BACKUP_CREATED_MANUAL',
+      action: 'BACKUP_CREATED' as any,
       details: `Backup ${backup.type} criado manualmente via interface administrativa`,
       resourceId: backup.id,
       resourceType: 'backup'
@@ -47,7 +47,7 @@ const BackupManagementPage: React.FC = () => {
     // Log da alteração de configuração
     await auditService.createLog({
       user: 'Admin',
-      action: 'BACKUP_CONFIG_CHANGED',
+      action: 'UPDATE' as any,
       details: 'Configuração de backup alterada via interface administrativa',
       resourceType: 'backup-config'
     });

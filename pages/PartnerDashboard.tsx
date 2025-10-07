@@ -175,9 +175,9 @@ const PartnerDashboard: React.FC = () => {
   useEffect(() => {
     auditService.createLog({
       user: user?.name || 'Partner User',
-      action: 'VIEW_PARTNER_DASHBOARD',
+      action: 'VIEW_PARTNER_DASHBOARD' as any,
       details: 'Acessou dashboard de parceiro',
-      resourceType: 'dashboard'
+      resourceType: undefined
     });
   }, [user]);
 
@@ -229,10 +229,10 @@ const PartnerDashboard: React.FC = () => {
   const handleViewReferralDetails = async (referral: PartnerReferral) => {
     await auditService.createLog({
       user: user?.name || 'Partner User',
-      action: 'VIEW_REFERRAL_DETAILS',
+      action: 'VIEW_REFERRAL_DETAILS' as any,
       details: `Visualizou detalhes da referência: ${referral.patientName}`,
       resourceId: referral.id,
-      resourceType: 'referral'
+      resourceType: undefined
     });
     // Implementar modal de detalhes
     console.log('Viewing referral details:', referral);
@@ -241,9 +241,9 @@ const PartnerDashboard: React.FC = () => {
   const handleContactClinic = async () => {
     await auditService.createLog({
       user: user?.name || 'Partner User',
-      action: 'CONTACT_CLINIC',
+      action: 'CONTACT_CLINIC' as any,
       details: 'Iniciou contato com a clínica',
-      resourceType: 'communication'
+      resourceType: undefined
     });
   };
 

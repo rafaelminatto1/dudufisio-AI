@@ -367,7 +367,7 @@ export const subscriptions = {
       ['appointments'],
       (table, payload) => {
         // Filter for patient's data
-        if (table === 'appointments' && payload.new?.patient_id === patientId) {
+        if (table === 'appointments' && (payload.new as any)?.patient_id === patientId) {
           callback(payload);
         }
       }

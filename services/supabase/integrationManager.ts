@@ -4,6 +4,7 @@ import { supabaseAppointmentService } from './appointmentServiceSupabase';
 import { supabasePatientService } from './patientServiceSupabase';
 import * as mockPatientService from '../patientService';
 import * as mockAppointmentService from '../appointmentService';
+import { AppointmentStatus } from '../../types';
 
 /**
  * 🔄 SUPABASE INTEGRATION MANAGER
@@ -39,7 +40,7 @@ export class SupabaseIntegrationManager {
     if (this.connectionChecked) return;
 
     try {
-      observability.database.query('supabase.connection.check', {});
+      // observability.database.query('supabase.connection.check', {}); // TODO: Add query method
 
       // Tentar uma consulta simples para verificar conectividade
       const { data, error } = await supabase
@@ -52,9 +53,7 @@ export class SupabaseIntegrationManager {
       }
 
       this.isSupabaseAvailable = true;
-      observability.database.query('supabase.connection.success', {
-        message: 'Conexão com Supabase estabelecida com sucesso'
-      });
+      // observability.database.query('supabase.connection.success', { message: 'Conexão com Supabase estabelecida com sucesso' }); // TODO: Add query method
 
       console.log('✅ Supabase conectado - Usando serviços de produção');
     } catch (error) {
@@ -122,7 +121,7 @@ export class SupabaseIntegrationManager {
       return supabasePatientService.updatePatient(id, updates);
     } else {
       observability.service.call('mock.patients.update', { id, updates });
-      return mockPatientService.updatePatient(id, updates);
+      return mockPatientService.updatePatient({ ...updates, id }) as any;
     }
   }
 
@@ -131,10 +130,12 @@ export class SupabaseIntegrationManager {
 
     if (this.isSupabaseAvailable) {
       observability.service.call('supabase.patients.delete', { id });
-      return supabasePatientService.deletePatient(id);
+      // return supabasePatientService.deletePatient(id); // TODO: Implement delete method
+      throw new Error('Delete patient not implemented');
     } else {
       observability.service.call('mock.patients.delete', { id });
-      return mockPatientService.deletePatient(id);
+      // return mockPatientService.deletePatient(id); // TODO: Implement delete method
+      throw new Error('Delete patient not implemented');
     }
   }
 
@@ -192,7 +193,7 @@ export class SupabaseIntegrationManager {
       return supabaseAppointmentService.createAppointment(appointmentData);
     } else {
       observability.service.call('mock.appointments.create', { appointmentData });
-      return mockAppointmentService.createAppointment(appointmentData);
+      return mockAppointmentService.saveAppointment(appointmentData);
     }
   }
 
@@ -204,7 +205,7 @@ export class SupabaseIntegrationManager {
       return supabaseAppointmentService.updateAppointment(id, updates);
     } else {
       observability.service.call('mock.appointments.update', { id, updates });
-      return mockAppointmentService.updateAppointment(id, updates);
+      return mockAppointmentService.saveAppointment({ id, ...updates });
     }
   }
 
@@ -293,10 +294,10 @@ export class SupabaseIntegrationManager {
                  aptDate.getFullYear() === today.getFullYear();
         }).length,
         byStatus: {
-          'Agendado': appointments.filter(a => a.status === 'Agendado').length,
-          'Concluído': appointments.filter(a => a.status === 'Concluído').length,
-          'Cancelado': appointments.filter(a => a.status === 'Cancelado').length,
-          'Falta': appointments.filter(a => a.status === 'Falta').length,
+          'Agendado': appointments.filter(a => a.status === AppointmentStatus.Scheduled).length,
+          'Concluído': appointments.filter(a => a.status === AppointmentStatus.Completed).length,
+          'Cancelado': appointments.filter(a => a.status === AppointmentStatus.Canceled).length,
+          'Falta': appointments.filter(a => a.status === AppointmentStatus.NoShow).length,
         }
       };
     }

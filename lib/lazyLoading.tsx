@@ -33,7 +33,7 @@ export function createLazyComponent<T extends ComponentType<any>>(
       }}
     >
       <Suspense fallback={fallback || <OptimizedLoader variant="skeleton" />}>
-        <LazyComponent {...props} ref={ref} />
+        <LazyComponent {...(props as any)} ref={ref} />
       </Suspense>
     </ErrorBoundary>
   ));
@@ -92,7 +92,7 @@ export const LazyComponents = {
   
   // Componentes Médicos
   BodyMapContainer: createLazyComponent(() => import('../components/medical/body-map/BodyMapContainer')),
-  MedicalRecordsSystem: createLazyComponent(() => import('../components/medical-records/MedicalRecordsSystem')),
+  MedicalRecordsSystem: createLazyComponent(() => import('../components/medical-records/MedicalRecordsSystem').then(m => ({ default: m.default || m as any }))),
   MedicalRecordsDashboard: createLazyComponent(() => import('../components/medical-records/MedicalRecordsDashboard')),
   
   // Componentes de IA
@@ -117,7 +117,7 @@ export function usePreload() {
 
   const preloadPage = React.useCallback((pageName: keyof typeof LazyPages) => {
     const component = LazyPages[pageName];
-    if (component) {
+    if (component && typeof component !== 'undefined') {
       // Preload do componente lazy
       preload(() => import(/* @vite-ignore */ `../pages/${pageName}`), `page-${pageName}`);
     }

@@ -260,3 +260,15 @@ export function canRequestDataDeletion(role: UserRoleType): boolean {
 export function requiresConsentForDataProcessing(role: UserRoleType): boolean {
   return role === 'paciente'; // Patients need explicit consent
 }
+
+// Permission type for fine-grained access control
+export type Permission = 
+  | 'manage_users'
+  | 'reports:delete'
+  | 'analytics:read'
+  | 'analytics:admin'
+  | 'analytics:export'
+  | 'system:admin'
+  | 'system:admin:advanced'
+  | 'clinical_analytics:read'
+  | 'clinical_analytics:export';

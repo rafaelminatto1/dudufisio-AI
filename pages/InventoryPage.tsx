@@ -192,7 +192,7 @@ const InventoryPage: React.FC = () => {
                       </p>
                     </div>
                     <button
-                      onClick={() => openMovementModal(item, 'IN')}
+                      onClick={() => openMovementModal(item, MovementType.In as any)}
                       className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
                     >
                       Repor
@@ -334,14 +334,14 @@ const InventoryPage: React.FC = () => {
                     <td className="p-4">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => openMovementModal(item, 'IN')}
+                          onClick={() => openMovementModal(item, MovementType.In as any)}
                           className="p-1 text-green-600 hover:bg-green-100 rounded"
                           title="Entrada de estoque"
                         >
                           <Upload className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => openMovementModal(item, 'OUT')}
+                          onClick={() => openMovementModal(item, MovementType.Out as any)}
                           className="p-1 text-red-600 hover:bg-red-100 rounded"
                           title="Saída de estoque"
                         >
@@ -492,7 +492,7 @@ const InventoryPage: React.FC = () => {
           setSelectedItem(undefined);
         }}
         onSave={handleAddMovement}
-        item={selectedItem}
+        item={selectedItem || null}
         movementType={movementType}
       />
     </div>

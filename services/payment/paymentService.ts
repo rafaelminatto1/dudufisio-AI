@@ -448,7 +448,7 @@ class PaymentService {
 
       if (error) throw error;
 
-      return (data || []).map(row => ({
+      return (data || []).map((row: any) => ({
         id: row.id,
         userId: row.user_id,
         type: row.type,
@@ -475,7 +475,7 @@ class PaymentService {
 
       if (error) throw error;
 
-      return (data || []).map(row => ({
+      return (data || []).map((row: any) => ({
         id: row.id,
         amount: row.amount,
         currency: row.currency,
@@ -506,7 +506,7 @@ class PaymentService {
 
       if (fetchError) throw fetchError;
 
-      const refundAmount = amount || payment.amount;
+      const refundAmount = amount || (payment as any).amount;
 
       // Processar estorno no provedor
       // Implementar lógica específica por provedor
@@ -518,7 +518,7 @@ class PaymentService {
           status: 'refunded',
           updated_at: new Date().toISOString(),
           metadata: {
-            ...payment.metadata,
+            ...(payment as any).metadata,
             refund: {
               amount: refundAmount,
               processedAt: new Date().toISOString(),

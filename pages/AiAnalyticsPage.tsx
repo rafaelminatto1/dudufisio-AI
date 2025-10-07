@@ -9,7 +9,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import PageHeader from '../components/PageHeader';
 import PermissionGuard, { IfPermission } from '../components/auth/PermissionGuard';
 import { useData } from '../contexts/AppContext';
-import { geminiService } from '../services/geminiService';
+// import { geminiService } from '../services/geminiService'; // TODO: Fix export
 import {
   Brain, TrendingUp, Users, Calendar, Activity, AlertTriangle,
   Eye, Target, Zap, BarChart3, PieChart, LineChart,
@@ -740,7 +740,7 @@ const AiAnalyticsPage: React.FC = () => {
                                 Recomenda��es de A��o:
                               </h5>
                               <ul className="space-y-1">
-                                {prediction.recommendations.map((rec, index) => (
+                                {prediction.recommendations.map((rec: any, index: number) => (
                                   <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
                                     <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                                     {rec}
@@ -859,7 +859,7 @@ const AiAnalyticsPage: React.FC = () => {
                           Recomenda��es Personalizadas:
                         </h5>
                         <div className="space-y-2">
-                          {insight.recommendations.map((rec, index) => (
+                          {insight.recommendations.map((rec: any, index: number) => (
                             <div key={index} className="flex items-start gap-2">
                               <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                               <span className="text-sm text-gray-700">{rec}</span>

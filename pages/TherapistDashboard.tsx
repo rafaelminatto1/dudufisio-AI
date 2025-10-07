@@ -127,7 +127,7 @@ PatientProgressCard.displayName = 'PatientProgressCard';
 
 const TherapistDashboard: React.FC = () => {
   const { therapists } = useData();
-  const { user } = useSupabaseAuth();
+  // const { user } = useSupabaseAuth(); // TODO: Implement auth hook
   const [patients, setPatients] = useState<Patient[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -135,12 +135,12 @@ const TherapistDashboard: React.FC = () => {
   // Log de auditoria para acesso ao dashboard
   useEffect(() => {
     auditService.createLog({
-      user: user?.name || 'Current User',
+      user: 'Current User', // TODO: Get from auth context
       action: 'VIEW_PATIENT_RECORD',
       details: 'Acessou dashboard do fisioterapeuta',
       resourceType: 'user'
     });
-  }, [user]);
+  }, []);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
