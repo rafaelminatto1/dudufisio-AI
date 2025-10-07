@@ -7,7 +7,7 @@ import {
   TreatmentProgress,
   PatientPortalSession
 } from '../../types/checkin';
-import { Appointment, Exercise, Message } from '../../types';
+import { Appointment, Exercise, Message, AppointmentType, AppointmentStatus, MessageContent } from '../../types';
 
 interface AppointmentService {
   getUpcoming(patientId: PatientId, days: number): Promise<Appointment[]>;
@@ -91,13 +91,20 @@ class MockAppointmentService implements AppointmentService {
       appointments.push({
         id: `apt-${i}`,
         patientId,
+        patientName: 'Patient',
+        patientAvatarUrl: '',
         therapistId: 'therapist-1',
-        scheduledTime: appointmentDate,
+        startTime: appointmentDate,
+        endTime: new Date(appointmentDate.getTime() + 60 * 60 * 1000),
+        scheduledTime: appointmentDate.toISOString(),
         duration: 60,
-        type: i === 1 ? 'initial_evaluation' : 'therapy_session',
-        status: 'scheduled',
+        title: i === 1 ? 'Avaliação' : 'Sessão',
+        type: i === 1 ? AppointmentType.Evaluation : AppointmentType.Session,
+        status: AppointmentStatus.Scheduled,
+        value: 150,
+        paymentStatus: 'pending' as const,
         notes: `Upcoming ${i === 1 ? 'evaluation' : 'therapy'} session`
-      });
+      } as Appointment);
     }
 
     return appointments;
@@ -114,13 +121,20 @@ class MockAppointmentService implements AppointmentService {
       appointments.push({
         id: `apt-history-${i}`,
         patientId,
+        patientName: 'Patient',
+        patientAvatarUrl: '',
         therapistId: 'therapist-1',
-        scheduledTime: appointmentDate,
+        startTime: appointmentDate,
+        endTime: new Date(appointmentDate.getTime() + 60 * 60 * 1000),
+        scheduledTime: appointmentDate.toISOString(),
         duration: 60,
-        type: 'therapy_session',
-        status: 'completed',
+        title: 'Sessão',
+        type: AppointmentType.Session,
+        status: AppointmentStatus.Completed,
+        value: 150,
+        paymentStatus: 'paid' as const,
         notes: `Completed therapy session ${i}`
-      });
+      } as Appointment);
     }
 
     return appointments;
@@ -188,7 +202,7 @@ class MockProgressService implements ProgressService {
         painLevel: Math.max(1, 8 - Math.floor(i / 2)),
         mobilityScore: Math.min(100, 40 + i * 7),
         functionalScore: Math.min(100, 35 + i * 8),
-        goals: [],
+        goals: [] as { description: string; achieved: boolean; }[],
         notes: `Progress update ${i + 1}`
       });
     }
@@ -204,35 +218,42 @@ class MockExerciseService implements ExerciseService {
         id: 'ex-1',
         name: 'Shoulder Stretch',
         description: 'Gentle shoulder stretching to improve range of motion',
-        instructions: 'Hold for 30 seconds, repeat 3 times',
-        frequency: 'daily',
+        instructions: ['Hold for 30 seconds, repeat 3 times'],
         sets: 3,
         reps: 10,
         duration: 30,
-        difficulty: 'easy'
-      },
+        difficulty: 1 as 1 | 2 | 3 | 4 | 5,
+        category: 'stretching',
+        bodyParts: ['shoulder'],
+        equipment: [],
+        media: []
+      } as any,
       {
         id: 'ex-2',
         name: 'Core Strengthening',
         description: 'Plank exercise for core stability',
-        instructions: 'Hold plank position, maintain straight line from head to feet',
-        frequency: 'daily',
+        instructions: ['Hold plank position, maintain straight line from head to feet'],
         sets: 3,
         reps: 1,
-        duration: 45,
-        difficulty: 'medium'
-      },
+        difficulty: 3 as 1 | 2 | 3 | 4 | 5,
+        category: 'strengthening',
+        bodyParts: ['core'],
+        equipment: [],
+        media: []
+      } as any,
       {
         id: 'ex-3',
         name: 'Balance Training',
         description: 'Single leg stance for balance improvement',
-        instructions: 'Stand on one leg, hold for specified duration',
-        frequency: '3x per week',
+        instructions: ['Stand on one leg, hold for specified duration'],
         sets: 3,
         reps: 1,
-        duration: 60,
-        difficulty: 'medium'
-      }
+        difficulty: 3 as 1 | 2 | 3 | 4 | 5,
+        category: 'balance',
+        bodyParts: ['leg'],
+        equipment: [],
+        media: []
+      } as any
     ];
   }
 
@@ -254,7 +275,7 @@ class MockExerciseService implements ExerciseService {
               sets: 3,
               reps: 10,
               duration: 30 + Math.random() * 30,
-              difficulty: Math.floor(Math.random() * 5) + 1
+              difficulty: (Math.floor(Math.random() * 5) + 1) as 1 | 2 | 3 | 4 | 5
             }
           });
         }
@@ -272,20 +293,26 @@ class MockMessageService implements MessageService {
         id: 'msg-1',
         from: 'Dr. Silva',
         subject: 'Exercise Progress Review',
-        content: 'Great job on your consistency with the exercises. Let\'s increase intensity next week.',
-        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-        read: false,
-        type: 'therapist_message'
-      },
+        content: {
+          subject: 'Exercise Progress Review',
+          body: 'Great job on your consistency with the exercises. Let\'s increase intensity next week.',
+          variables: {}
+        } as MessageContent,
+        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        read: false
+      } as any,
       {
         id: 'msg-2',
         from: 'FisioFlow System',
         subject: 'Appointment Reminder',
-        content: 'You have an appointment scheduled for tomorrow at 2:00 PM.',
-        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-        read: false,
-        type: 'system_reminder'
-      }
+        content: {
+          subject: 'Appointment Reminder',
+          body: 'You have an appointment scheduled for tomorrow at 2:00 PM.',
+          variables: {}
+        } as MessageContent,
+        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        read: false
+      } as any
     ];
   }
 
@@ -296,11 +323,14 @@ class MockMessageService implements MessageService {
         id: 'msg-3',
         from: 'Reception',
         subject: 'Payment Confirmation',
-        content: 'Your payment for the last session has been processed.',
-        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-        read: true,
-        type: 'administrative'
-      }
+        content: {
+          subject: 'Payment Confirmation',
+          body: 'Your payment for the last session has been processed.',
+          variables: {}
+        } as MessageContent,
+        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        read: true
+      } as any
     ];
 
     return [...unread, ...read];

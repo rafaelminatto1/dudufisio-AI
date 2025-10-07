@@ -1,6 +1,6 @@
 // Resend Email Service Integration
 import { Resend } from 'resend';
-import { Message, DeliveryResult, Recipient } from '../../../types';
+import { Message, DeliveryResult, Recipient, CommunicationChannel } from '../../../types';
 
 export interface ResendConfig {
   apiKey: string;
@@ -51,7 +51,7 @@ export class ResendService {
     const startTime = Date.now();
 
     try {
-      const emailData = {
+      const emailData: any = {
         from: options.from || `${this.config.fromName} <${this.config.fromEmail}>`,
         to: Array.isArray(options.to) ? options.to : [options.to],
         subject: options.subject,
@@ -69,10 +69,10 @@ export class ResendService {
       return {
         success: true,
         messageId: response.data?.id || 'unknown',
-        channel: 'email',
+        channel: CommunicationChannel.Email,
         deliveredAt: new Date(),
         cost: 0.0001, // Resend free tier cost
-        duration,
+        retryable: false,
         metadata: {
           provider: 'resend',
           response: response.data,
@@ -84,10 +84,10 @@ export class ResendService {
       return {
         success: false,
         messageId: 'failed',
-        channel: 'email',
-        deliveredAt: null,
+        channel: CommunicationChannel.Email,
+        deliveredAt: undefined,
         cost: 0,
-        duration,
+        retryable: true,
         error: error instanceof Error ? error.message : 'Unknown error',
         metadata: {
           provider: 'resend',
@@ -107,9 +107,10 @@ export class ResendService {
       return {
         success: false,
         messageId: message.id,
-        channel: 'email',
-        deliveredAt: null,
+        channel: CommunicationChannel.Email,
+        deliveredAt: undefined,
         cost: 0,
+        retryable: false,
         error: 'No email address provided',
       };
     }
@@ -119,7 +120,7 @@ export class ResendService {
       subject: message.content.subject || 'Mensagem do DuduFisio',
       html: message.content.body,
       text: message.content.text,
-      replyTo: message.replyTo,
+      replyTo: message.from,
     });
   }
 

@@ -268,7 +268,7 @@ class AdvancedAnalyticsService {
         .eq('user_id', userId)
         .gte('timestamp', startDate.toISOString())
         .lte('timestamp', endDate.toISOString())
-        .order('timestamp', { ascending: true });
+        .order('timestamp', { ascending: true }) as any;
 
       if (error) throw error;
 

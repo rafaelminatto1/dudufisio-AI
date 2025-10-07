@@ -87,19 +87,20 @@ export class ClinicalTemplateEngine {
     schema: TemplateSchema,
     createdBy: TherapistId
   ): Promise<ClinicalTemplate> {
-    const template = new ClinicalTemplate(
-      this.generateTemplateId(),
+    const template: ClinicalTemplate = {
+      id: this.generateTemplateId(),
       name,
       type,
       specialty,
       schema,
-      {},
-      [],
-      true,
-      1,
-      new Date(),
-      createdBy
-    );
+      templateSchema: schema,
+      defaultValues: {},
+      validationRules: [],
+      active: true,
+      version: 1,
+      createdAt: new Date(),
+      createdBy: createdBy
+    };
 
     await this.repository.saveTemplate(template);
     this.templates.set(`${type}_${specialty}`, template);
@@ -120,19 +121,20 @@ export class ClinicalTemplateEngine {
       throw new TemplateNotFoundError(`Template not found: ${templateId}`);
     }
 
-    const updatedTemplate = new ClinicalTemplate(
-      existingTemplate.id,
-      updates.name || existingTemplate.name,
-      updates.type || existingTemplate.type,
-      updates.specialty || existingTemplate.specialty,
-      updates.schema || existingTemplate.schema,
-      updates.defaultValues || existingTemplate.defaultValues,
-      updates.validationRules || existingTemplate.validationRules,
-      updates.active !== undefined ? updates.active : existingTemplate.active,
-      existingTemplate.version + 1,
-      existingTemplate.createdAt,
-      existingTemplate.createdBy
-    );
+    const updatedTemplate: ClinicalTemplate = {
+      id: existingTemplate.id,
+      name: updates.name || existingTemplate.name,
+      type: updates.type || existingTemplate.type,
+      specialty: updates.specialty || existingTemplate.specialty,
+      schema: updates.schema || existingTemplate.schema,
+      templateSchema: updates.schema || existingTemplate.schema,
+      defaultValues: updates.defaultValues || existingTemplate.defaultValues,
+      validationRules: updates.validationRules || existingTemplate.validationRules,
+      active: updates.active !== undefined ? updates.active : existingTemplate.active,
+      version: existingTemplate.version + 1,
+      createdAt: existingTemplate.createdAt,
+      createdBy: existingTemplate.createdBy
+    };
 
     await this.repository.saveTemplate(updatedTemplate);
     this.templates.set(`${updatedTemplate.type}_${updatedTemplate.specialty}`, updatedTemplate);
@@ -288,14 +290,14 @@ export class ClinicalTemplateEngine {
 
     switch (rule.type) {
       case 'min':
-        if (typeof value === 'string' && value.length < rule.value) {
+        if (typeof value === 'string' && value.length < (rule.value as number)) {
           violations.push(new ValidationViolation(
             'MIN_LENGTH',
             rule.message,
             'medium',
             fieldId
           ));
-        } else if (typeof value === 'number' && value < rule.value) {
+        } else if (typeof value === 'number' && value < (rule.value as number)) {
           violations.push(new ValidationViolation(
             'MIN_VALUE',
             rule.message,
@@ -306,14 +308,14 @@ export class ClinicalTemplateEngine {
         break;
 
       case 'max':
-        if (typeof value === 'string' && value.length > rule.value) {
+        if (typeof value === 'string' && value.length > (rule.value as number)) {
           violations.push(new ValidationViolation(
             'MAX_LENGTH',
             rule.message,
             'medium',
             fieldId
           ));
-        } else if (typeof value === 'number' && value > rule.value) {
+        } else if (typeof value === 'number' && value > (rule.value as number)) {
           violations.push(new ValidationViolation(
             'MAX_VALUE',
             rule.message,
@@ -324,7 +326,7 @@ export class ClinicalTemplateEngine {
         break;
 
       case 'pattern':
-        if (typeof value === 'string' && !new RegExp(rule.value).test(value)) {
+        if (typeof value === 'string' && !new RegExp(rule.value as string).test(value)) {
           violations.push(new ValidationViolation(
             'PATTERN_MISMATCH',
             rule.message,

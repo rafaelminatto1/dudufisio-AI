@@ -356,7 +356,8 @@ export class ComplianceManager {
           description: 'Sistema detectou violações de conformidade LGPD',
           affectedEntities: ['sistema'],
           requiredActions: ['Revisar políticas de privacidade', 'Atualizar consentimentos'],
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 dias
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 dias
+          isResolved: false
         }));
       }
       
@@ -370,7 +371,8 @@ export class ComplianceManager {
           description: 'Sistema detectou violações de conformidade COFFITO',
           affectedEntities: ['terapeutas'],
           requiredActions: ['Revisar documentação clínica', 'Implementar supervisão'],
-          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          isResolved: false
         }));
       }
       

@@ -67,7 +67,7 @@ export class COFFITOValidator {
     } catch (error) {
       violations.push(new ComplianceViolation(
         'COFFITO_VALIDATION_ERROR',
-        `Validation error: ${error.message}`,
+        `Validation error: ${error instanceof Error ? error.message : String(error)}`,
         'critical'
       ));
       return new ValidationResult(false, violations);
@@ -137,7 +137,7 @@ export class COFFITOValidator {
     } catch (error) {
       violations.push(new ComplianceViolation(
         'COFFITO_006',
-        `Error validating COFFITO registration: ${error.message}`,
+        `Error validating COFFITO registration: ${error instanceof Error ? error.message : String(error)}`,
         'critical',
         'createdBy'
       ));
@@ -152,7 +152,8 @@ export class COFFITOValidator {
     const violations: ComplianceViolation[] = [];
 
     const content = document.content;
-    const documentSpecialty = content.metadata.specialty;
+    const metadata = content.metadata as any;
+    const documentSpecialty = metadata.specialty;
 
     try {
       const therapist = await this.therapistRegistry.getTherapist(document.createdBy);
@@ -191,7 +192,7 @@ export class COFFITOValidator {
     } catch (error) {
       violations.push(new ComplianceViolation(
         'COFFITO_009',
-        `Error validating specialty: ${error.message}`,
+        `Error validating specialty: ${error instanceof Error ? error.message : String(error)}`,
         'medium',
         'metadata.specialty'
       ));
@@ -382,7 +383,7 @@ export class COFFITOValidator {
   private async validateClinicalEvolution(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
 
-    if (document.type === DocumentType.SESSION_EVOLUTION) {
+    if (document.type === DocumentType.EVOLUTION) {
       const content = document.content;
       const data = content.data as Record<string, any>;
 
@@ -522,14 +523,14 @@ export class COFFITOValidator {
 
     const validationResult = await this.validateClinicalDocument(document);
     
-    return new COFFITOComplianceReport({
+    return new COFFITOComplianceReport(
       documentId,
-      documentType: document.type,
+      document.type,
       validationResult,
-      complianceScore: this.calculateComplianceScore(validationResult.violations),
-      recommendations: this.generateRecommendations(validationResult.violations),
-      generatedAt: new Date()
-    });
+      this.calculateComplianceScore(validationResult.violations),
+      this.generateRecommendations(validationResult.violations),
+      new Date()
+    );
   }
 
   /**

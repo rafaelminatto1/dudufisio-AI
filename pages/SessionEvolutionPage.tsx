@@ -9,8 +9,7 @@ import { useToast } from '../contexts/ToastContext';
 import { Skeleton } from '../components/ui/skeleton';
 import MarkdownRenderer from '../components/ui/MarkdownRenderer';
 
-const initialFormData: SessionEvolutionFormData = {
-    nome_paciente: '',
+const initialFormData: Partial<SessionEvolutionFormData> = {
     numero_sessao: '',
     relato_paciente: '',
     escala_dor_hoje: '',
@@ -40,7 +39,7 @@ const FormTextarea = memo<{label: string, name: keyof SessionEvolutionFormData, 
 FormTextarea.displayName = 'FormTextarea';
 
 const SessionEvolutionPage: React.FC = () => {
-    const [formData, setFormData] = useState<SessionEvolutionFormData>(initialFormData);
+    const [formData, setFormData] = useState<any>(initialFormData);
     const [patients, setPatients] = useState<Patient[]>([]);
     const [selectedPatientId, setSelectedPatientId] = useState<string>('');
     
@@ -68,7 +67,7 @@ const SessionEvolutionPage: React.FC = () => {
                 const notes = await soapNoteService.getNotesByPatientId(patient.id);
                 const sessionNumber = (notes.length + 1).toString();
 
-                setFormData(prev => ({
+                setFormData((prev: any) => ({
                     ...initialFormData,
                     nome_paciente: patient.name,
                     numero_sessao: sessionNumber,
@@ -86,7 +85,7 @@ const SessionEvolutionPage: React.FC = () => {
 
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev: any) => ({ ...prev, [name]: value }));
     }, []);
 
     const handleSubmit = useCallback(async () => {

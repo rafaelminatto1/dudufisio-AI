@@ -22,13 +22,13 @@ class SupabasePatientService {
     const status = 'active'; // Default status
 
     const mapStatus = (): PatientStatus => {
-      switch (status) {
-        case 'inactive':
-          return PatientStatus.Inactive;
-        case 'discharged':
-          return PatientStatus.Discharged;
-        default:
-          return PatientStatus.Active;
+      const statusLower = status.toLowerCase();
+      if (statusLower.includes('inactive')) {
+        return PatientStatus.Inactive;
+      } else if (statusLower.includes('discharged')) {
+        return PatientStatus.Discharged;
+      } else {
+        return PatientStatus.Active;
       }
     };
 
@@ -212,9 +212,10 @@ class SupabasePatientService {
     try {
       const insertData = this.mapPatientToInsert({
         ...patientData,
-        lastVisit: patientData.lastVisit ?? new Date().toISOString(),
-        registrationDate: patientData.registrationDate ?? new Date().toISOString(),
-      });
+        lastVisit: new Date().toISOString(),
+        registrationDate: new Date().toISOString(),
+        id: ''
+      } as any);
 
       const { data, error } = await supabase
         .from('patients')

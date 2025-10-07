@@ -66,7 +66,7 @@ export class LGPDComplianceValidator {
     } catch (error) {
       violations.push(new ComplianceViolation(
         'LGPD_VALIDATION_ERROR',
-        `Validation error: ${error.message}`,
+        `Validation error: ${error instanceof Error ? error.message : String(error)}`,
         'critical'
       ));
       return new ValidationResult(false, violations);
@@ -157,7 +157,7 @@ export class LGPDComplianceValidator {
     } catch (error) {
       violations.push(new ComplianceViolation(
         'LGPD_008',
-        `Error validating consent: ${error.message}`,
+        `Error validating consent: ${error instanceof Error ? error.message : String(error)}`,
         'critical',
         'consent'
       ));
@@ -171,9 +171,10 @@ export class LGPDComplianceValidator {
   private async validateDataPurpose(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
     const content = document.content;
+    const metadata = content.metadata as any;
 
     // Verificar se finalidade está definida
-    if (!content.metadata.purpose) {
+    if (!metadata.purpose) {
       violations.push(new ComplianceViolation(
         'LGPD_009',
         'Data processing purpose must be defined',
@@ -191,7 +192,7 @@ export class LGPDComplianceValidator {
       'legal_obligation'
     ];
 
-    if (content.metadata.purpose && !legitimatePurposes.includes(content.metadata.purpose)) {
+    if (metadata.purpose && !legitimatePurposes.includes(metadata.purpose)) {
       violations.push(new ComplianceViolation(
         'LGPD_010',
         'Data processing purpose must be legitimate',
@@ -201,7 +202,7 @@ export class LGPDComplianceValidator {
     }
 
     // Verificar se finalidade é específica
-    if (content.metadata.purpose && content.metadata.purpose === 'general') {
+    if (metadata.purpose && metadata.purpose === 'general') {
       violations.push(new ComplianceViolation(
         'LGPD_011',
         'Data processing purpose must be specific',
@@ -269,10 +270,11 @@ export class LGPDComplianceValidator {
   private async validateDataSecurity(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
     const content = document.content;
+    const metadata = content.metadata as any;
 
     // Verificar se dados sensíveis estão criptografados
     if (this.containsSensitiveData(content.data)) {
-      if (!content.metadata.encryptionLevel || content.metadata.encryptionLevel !== 'high') {
+      if (!metadata.encryptionLevel || metadata.encryptionLevel !== 'high') {
         violations.push(new ComplianceViolation(
           'LGPD_016',
           'Sensitive data must be encrypted',
@@ -283,7 +285,7 @@ export class LGPDComplianceValidator {
     }
 
     // Verificar se há controle de acesso
-    if (!content.metadata.accessControl) {
+    if (!metadata.accessControl) {
       violations.push(new ComplianceViolation(
         'LGPD_017',
         'Access control must be implemented',
@@ -293,7 +295,7 @@ export class LGPDComplianceValidator {
     }
 
     // Verificar se há auditoria
-    if (!content.metadata.auditTrail) {
+    if (!metadata.auditTrail) {
       violations.push(new ComplianceViolation(
         'LGPD_018',
         'Audit trail must be maintained',
@@ -303,7 +305,7 @@ export class LGPDComplianceValidator {
     }
 
     // Verificar se há backup seguro
-    if (!content.metadata.backupPolicy) {
+    if (!metadata.backupPolicy) {
       violations.push(new ComplianceViolation(
         'LGPD_019',
         'Backup policy must be defined',
@@ -321,9 +323,10 @@ export class LGPDComplianceValidator {
   private async validateDataRetention(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
     const content = document.content;
+    const metadata = content.metadata as any;
 
     // Verificar se política de retenção está definida
-    if (!content.metadata.retentionPolicy) {
+    if (!metadata.retentionPolicy) {
       violations.push(new ComplianceViolation(
         'LGPD_020',
         'Data retention policy must be defined',
@@ -333,8 +336,8 @@ export class LGPDComplianceValidator {
     }
 
     // Verificar se prazo de retenção é adequado
-    if (content.metadata.retentionPolicy) {
-      const retentionPeriod = content.metadata.retentionPolicy.retentionPeriod;
+    if (metadata.retentionPolicy) {
+      const retentionPeriod = metadata.retentionPolicy.retentionPeriod;
       
       // Verificar se não excede 5 anos para dados de saúde
       if (retentionPeriod > 5) {
@@ -366,9 +369,10 @@ export class LGPDComplianceValidator {
   private async validateDataSubjectRights(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
     const content = document.content;
+    const metadata = content.metadata as any;
 
     // Verificar se há procedimento para acesso
-    if (!content.metadata.accessProcedure) {
+    if (!metadata.accessProcedure) {
       violations.push(new ComplianceViolation(
         'LGPD_023',
         'Data subject access procedure must be defined',
@@ -378,7 +382,7 @@ export class LGPDComplianceValidator {
     }
 
     // Verificar se há procedimento para retificação
-    if (!content.metadata.rectificationProcedure) {
+    if (!metadata.rectificationProcedure) {
       violations.push(new ComplianceViolation(
         'LGPD_024',
         'Data rectification procedure must be defined',
@@ -388,7 +392,7 @@ export class LGPDComplianceValidator {
     }
 
     // Verificar se há procedimento para exclusão
-    if (!content.metadata.deletionProcedure) {
+    if (!metadata.deletionProcedure) {
       violations.push(new ComplianceViolation(
         'LGPD_025',
         'Data deletion procedure must be defined',
@@ -398,7 +402,7 @@ export class LGPDComplianceValidator {
     }
 
     // Verificar se há procedimento para portabilidade
-    if (!content.metadata.portabilityProcedure) {
+    if (!metadata.portabilityProcedure) {
       violations.push(new ComplianceViolation(
         'LGPD_026',
         'Data portability procedure must be defined',
@@ -416,10 +420,11 @@ export class LGPDComplianceValidator {
   private async validateDataTransfer(document: ClinicalDocument): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
     const content = document.content;
+    const metadata = content.metadata as any;
 
     // Verificar se há transferência internacional
-    if (content.metadata.internationalTransfer) {
-      if (!content.metadata.adequacyDecision) {
+    if (metadata.internationalTransfer) {
+      if (!metadata.adequacyDecision) {
         violations.push(new ComplianceViolation(
           'LGPD_027',
           'Adequacy decision required for international transfer',
@@ -428,7 +433,7 @@ export class LGPDComplianceValidator {
         ));
       }
 
-      if (!content.metadata.safeguards) {
+      if (!metadata.safeguards) {
         violations.push(new ComplianceViolation(
           'LGPD_028',
           'Appropriate safeguards required for international transfer',
@@ -439,8 +444,8 @@ export class LGPDComplianceValidator {
     }
 
     // Verificar se há compartilhamento com terceiros
-    if (content.metadata.thirdPartySharing) {
-      if (!content.metadata.thirdPartyAgreements) {
+    if (metadata.thirdPartySharing) {
+      if (!metadata.thirdPartyAgreements) {
         violations.push(new ComplianceViolation(
           'LGPD_029',
           'Third-party data sharing agreements required',
@@ -461,9 +466,9 @@ export class LGPDComplianceValidator {
     switch (documentType) {
       case DocumentType.INITIAL_ASSESSMENT:
         return this.hasRequiredAssessmentData(data);
-      case DocumentType.SESSION_EVOLUTION:
+      case DocumentType.EVOLUTION:
         return this.hasRequiredEvolutionData(data);
-      case DocumentType.TREATMENT_PLAN:
+      case DocumentType.PRESCRIPTION:
         return this.hasRequiredTreatmentData(data);
       default:
         return true;
@@ -540,9 +545,9 @@ export class LGPDComplianceValidator {
     switch (documentType) {
       case DocumentType.INITIAL_ASSESSMENT:
         return ['patientId', 'chiefComplaint', 'medicalHistory', 'physicalExam', 'diagnosis'];
-      case DocumentType.SESSION_EVOLUTION:
+      case DocumentType.EVOLUTION:
         return ['patientId', 'sessionId', 'subjectiveAssessment', 'objectiveFindings', 'patientResponse'];
-      case DocumentType.TREATMENT_PLAN:
+      case DocumentType.PRESCRIPTION:
         return ['patientId', 'goals', 'interventions', 'frequency', 'duration'];
       default:
         return ['patientId'];
@@ -556,9 +561,9 @@ export class LGPDComplianceValidator {
     switch (documentType) {
       case DocumentType.INITIAL_ASSESSMENT:
         return ['sessionId', 'nextSessionPlan'];
-      case DocumentType.SESSION_EVOLUTION:
+      case DocumentType.EVOLUTION:
         return ['chiefComplaint', 'medicalHistory'];
-      case DocumentType.TREATMENT_PLAN:
+      case DocumentType.PRESCRIPTION:
         return ['sessionId', 'subjectiveAssessment'];
       default:
         return [];
@@ -617,14 +622,14 @@ export class LGPDComplianceValidator {
 
     const validationResult = await this.validateClinicalDocument(document);
     
-    return new LGPDComplianceReport({
+    return new LGPDComplianceReport(
       documentId,
-      documentType: document.type,
+      document.type,
       validationResult,
-      complianceScore: this.calculateComplianceScore(validationResult.violations),
-      recommendations: this.generateRecommendations(validationResult.violations),
-      generatedAt: new Date()
-    });
+      this.calculateComplianceScore(validationResult.violations),
+      this.generateRecommendations(validationResult.violations),
+      new Date()
+    );
   }
 
   /**

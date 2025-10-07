@@ -13,11 +13,11 @@ import {
   FileText, TrendingUp, BarChart3, PieChart, LineChart, Users, Calendar,
   Download, RefreshCw, Filter, Search, Plus, Eye, Trash2, Clock,
   AlertTriangle, CheckCircle, Target, Zap, Brain, Activity, Shield,
-  DollarSign, Settings, Export, Mail, Globe, FileSpreadsheet,
+  DollarSign, Settings, Mail, Globe, FileSpreadsheet,
   BookOpen, Award, Heart, Lightbulb, Star, ArrowUpRight, ArrowDownRight,
   Gauge, Layers, Database, Bot, Sparkles, Archive, ChevronRight
 } from 'lucide-react';
-import { AreaChart, Area, BarChart, Bar, LineChart as RechartsLineChart, Line, PieChart as RechartsPieChart, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { AreaChart, Area, BarChart, Bar, LineChart as RechartsLineChart, Line, PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
 interface ReportGenerationModal {
   isOpen: boolean;

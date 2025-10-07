@@ -10,8 +10,7 @@ import * as patientService from '../services/patientService';
 import * as whatsappService from '../services/whatsappService';
 
 
-const initialFormData: HepFormData = {
-    nome_paciente: '',
+const initialFormData: Partial<HepFormData> = {
     diagnostico_paciente: '',
     objetivo_hep: '',
     lista_exercicios: '',
@@ -38,7 +37,7 @@ const FormTextarea: React.FC<{label: string, name: keyof HepFormData, value: str
 );
 
 const HepGeneratorPage: React.FC = () => {
-    const [formData, setFormData] = useState<HepFormData>(initialFormData);
+    const [formData, setFormData] = useState<any>(initialFormData);
     const [patients, setPatients] = useState<Patient[]>([]);
     const [selectedPatientId, setSelectedPatientId] = useState<string>('');
     
@@ -61,7 +60,7 @@ const HepGeneratorPage: React.FC = () => {
         if (selectedPatientId) {
             const patient = patients.find(p => p.id === selectedPatientId);
             if (patient) {
-                setFormData(prev => ({
+                setFormData((prev: any) => ({
                     ...prev,
                     nome_paciente: patient.name,
                     diagnostico_paciente: patient.conditions?.[0]?.name || 'Lombalgia mecânica',
@@ -75,7 +74,7 @@ const HepGeneratorPage: React.FC = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev: any) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async () => {

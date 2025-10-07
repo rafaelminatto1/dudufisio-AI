@@ -113,7 +113,7 @@ export class PagarmeGateway implements PaymentGateway {
         success: false,
         refundAmount: amount || Money.zero(),
         error: this.getErrorMessage(error),
-        gatewayResponse: error
+        gatewayResponse: error as Record<string, any> | undefined
       };
     }
   }
@@ -171,7 +171,7 @@ export class PagarmeGateway implements PaymentGateway {
       return {
         success: false,
         error: this.getErrorMessage(error),
-        gatewayResponse: error
+        gatewayResponse: error as Record<string, any> | undefined
       };
     }
   }

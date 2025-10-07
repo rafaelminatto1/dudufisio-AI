@@ -189,7 +189,7 @@ const TeleconsultaPage: React.FC = () => {
         // Iniciar compartilhamento
         const stream = await navigator.mediaDevices.getDisplayMedia({
           video: {
-            cursor: 'motion' as any
+            // cursor: 'motion' as any // Not supported in MediaTrackConstraints
           },
           audio: true
         });

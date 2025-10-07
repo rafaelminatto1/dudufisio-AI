@@ -293,7 +293,7 @@ export class DigitalCertificate {
       return this.forge.util.bytesToHex(signature);
     } catch (error) {
       throw new SignatureError(
-        `Failed to sign: ${error.message}`,
+        `Failed to sign: ${error instanceof Error ? error.message : String(error)}`,
         'signature'
       );
     }
@@ -348,7 +348,7 @@ export class TimestampService {
       };
     } catch (error) {
       throw new SignatureError(
-        `Failed to get timestamp: ${error.message}`,
+        `Failed to get timestamp: ${error instanceof Error ? error.message : String(error)}`,
         'timestamp'
       );
     }

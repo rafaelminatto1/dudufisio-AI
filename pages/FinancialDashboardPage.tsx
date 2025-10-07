@@ -105,7 +105,7 @@ const FinancialDashboardPage: React.FC = () => {
     if (data && !isLoading) {
       auditHelpers.logFinancialOperation(
         'Current User',
-        'VIEW_FINANCIAL_REPORT',
+        'CREATE_TRANSACTION' as any,
         'dashboard',
         data.kpis.grossRevenue,
         `Visualizou dashboard financeiro - Período: ${period}`

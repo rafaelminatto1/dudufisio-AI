@@ -592,7 +592,7 @@ export class WebhookHandler {
         await this.repository.recordDeliveryAttempt({
           messageId: message.id,
           channel: processor.channel,
-          attemptNumber: (message.deliveryAttempts || 0) + 1,
+          attemptNumber: (message.retryCount || 0) + 1,
           success: newStatus === 'delivered',
           statusCode: webhookData.metadata.code || '200',
           responseMessage: webhookData.metadata.response || 'Webhook status update',
@@ -617,7 +617,7 @@ export class WebhookHandler {
       });
 
       // Update analytics
-      await this.updateAnalytics(processor.channel, message.type, newStatus);
+      await this.updateAnalytics(processor.channel, message.type || 'unknown', newStatus);
 
       this.logger.debug('Message status updated from webhook', {
         messageId: message.id,

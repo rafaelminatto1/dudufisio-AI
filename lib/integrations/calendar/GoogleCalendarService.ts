@@ -110,8 +110,8 @@ export class GoogleCalendarService extends CalendarService {
     CalendarFeature.AVAILABILITY
   ];
 
-  private auth: GoogleAuth;
-  private calendar: GoogleCalendarAPI;
+  private auth!: GoogleAuth;
+  private calendar!: GoogleCalendarAPI;
   private calendarId: string;
 
   constructor(config: GoogleCalendarConfig) {

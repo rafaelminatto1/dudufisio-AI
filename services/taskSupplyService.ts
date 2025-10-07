@@ -134,9 +134,7 @@ export const getTaskSuppliesUsed = async (taskId: string): Promise<TaskSupplyUse
 
 export const createTaskSupplyUsed = async (supplyData: CreateTaskSupplyUsedData): Promise<TaskSupplyUsed> => {
   try {
-    const { data, error } = await supabase
-      .from('task_supplies_used')
-      // DISABLED: Complex type mapping issues with task_supplies_used table
+    // DISABLED: Complex type mapping issues with task_supplies_used table
     console.warn('Task supply usage creation temporarily disabled due to type mapping issues');
     throw new Error('Task supply usage creation temporarily disabled');
   } catch (error) {
@@ -193,9 +191,7 @@ export const createTaskTypeSupplyTemplate = async (templateData: {
   notes?: string;
 }): Promise<TaskTypeSupplyTemplate> => {
   try {
-    const { data, error } = await supabase
-      .from('task_type_supply_templates')
-      // DISABLED: Complex type mapping issues with task_type_supply_templates table
+    // DISABLED: Complex type mapping issues with task_type_supply_templates table
     console.warn('Task type supply template creation temporarily disabled due to type mapping issues');
     throw new Error('Task type supply template creation temporarily disabled');
   } catch (error) {
@@ -242,7 +238,7 @@ export const getTaskCost = async (taskId: string): Promise<TaskCost | undefined>
       .single();
 
     if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
-    return data ?? undefined;
+    return (data as any) ?? undefined;
   } catch (error) {
     console.error('Erro ao buscar custo da tarefa:', error);
     throw error;
@@ -273,7 +269,7 @@ export const calculateTaskCost = async (taskId: string): Promise<TaskCost> => {
       .single();
 
     if (costError) throw costError;
-    return costData;
+    return costData as any;
   } catch (error) {
     console.error('Erro ao calcular custo da tarefa:', error);
     throw error;
@@ -298,14 +294,14 @@ export const validateSupplyAvailability = async (supplyId: string, quantity: num
 
     if (error) throw error;
 
-    const available = supply.current_stock >= quantity;
+    const available = (supply.current_stock ?? 0) >= quantity;
     const message = available 
       ? 'Insumo disponível'
-      : `Estoque insuficiente. Disponível: ${supply.current_stock} unidades`;
+      : `Estoque insuficiente. Disponível: ${supply.current_stock ?? 0} unidades`;
 
     return {
       available,
-      currentStock: supply.current_stock,
+      currentStock: supply.current_stock ?? 0,
       message
     };
   } catch (error) {

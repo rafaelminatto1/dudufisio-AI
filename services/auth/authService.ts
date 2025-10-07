@@ -152,7 +152,7 @@ class AuthService {
         created_at: data.created_at,
         updated_at: data.updated_at,
         // Backward compatibility aliases
-        fullName: data.full_name,
+        fullName: data.full_name || undefined,
         // professionalId: data.professional_id ?? undefined, // Campo não existe no schema atual
         createdAt: data.created_at,
         updatedAt: data.updated_at,
@@ -193,7 +193,7 @@ class AuthService {
         created_at: data.created_at,
         updated_at: data.updated_at,
         // Backward compatibility aliases
-        fullName: data.full_name,
+        fullName: data.full_name || undefined,
         // professionalId: data.professional_id ?? undefined, // Campo não existe no schema atual
         createdAt: data.created_at,
         updatedAt: data.updated_at,
@@ -339,7 +339,7 @@ class AuthService {
       return {
         id: data.id,
         email: data.email,
-        fullName: data.full_name,
+        fullName: data.full_name || undefined,
         // phone: data.phone ?? undefined, // Campo não existe no schema atual
         role: data.role || '',
         // specialization: data.specialization ?? undefined, // Campo não existe no schema atual

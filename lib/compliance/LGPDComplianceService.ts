@@ -391,7 +391,7 @@ export class LGPDComplianceService {
       }
       
       // Buscar agendamentos
-      const appointments = []; // Implementar busca real
+      const appointments: any[] = []; // Implementar busca real
       
       // Buscar consentimentos
       const consents = Array.from(this.consents.values()).filter(c => c.patientId === patientId);
@@ -740,7 +740,7 @@ export class LGPDComplianceService {
         internationalTransfers: ['Não realizamos transferências internacionais'],
         securityMeasures: ['Criptografia', 'Controle de acesso', 'Auditoria'],
         cookies: ['Cookies essenciais', 'Cookies de análise'],
-        updates: 'Esta política pode ser atualizada periodicamente'
+        updates: ['Esta política pode ser atualizada periodicamente']
       },
       isActive: true,
       createdAt: new Date(),

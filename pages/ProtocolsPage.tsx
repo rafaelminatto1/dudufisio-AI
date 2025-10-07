@@ -42,6 +42,7 @@ import {
     Target,
     BarChart3,
     FileText,
+    X,
     Lightbulb,
     CheckCircle,
     AlertCircle,
@@ -354,7 +355,7 @@ const ProtocolsPage: React.FC = () => {
                                         </div>
 
                                         <div className="flex flex-wrap gap-1">
-                                            {protocol.tags.slice(0, 3).map(tag => (
+                                            {protocol.tags.slice(0, 3).map((tag: any) => (
                                                 <Badge key={tag} variant="secondary" className="text-xs">
                                                     {tag}
                                                 </Badge>
@@ -434,7 +435,7 @@ const ProtocolsPage: React.FC = () => {
                                         <div className="text-sm">
                                             <strong>Resultados:</strong>
                                             <ul className="mt-1 space-y-1">
-                                                {prescription.outcomes.slice(0, 2).map((outcome, index) => (
+                                                {prescription.outcomes.slice(0, 2).map((outcome: any, index: number) => (
                                                     <li key={index} className="flex items-center">
                                                         {outcome.clinicallySignificant ? (
                                                             <CheckCircle className="w-3 h-3 text-green-500 mr-1" />

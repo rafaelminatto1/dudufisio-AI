@@ -206,12 +206,13 @@ class PerformanceMonitor {
     this.metrics.set(metric.name, metric);
     
     // Log para observabilidade
-    if (observability && typeof observability.trackPerformance === 'function') {
-      observability.trackPerformance(metric.name, metric.value, {
-        rating: metric.rating,
-        ...metric.context
-      });
-    }
+    // TODO: Add trackPerformance method to observability
+    // if (observability && typeof observability.trackPerformance === 'function') {
+    //   observability.trackPerformance(metric.name, metric.value, {
+    //     rating: metric.rating,
+    //     ...metric.context
+    //   });
+    // }
 
     // Dispara evento customizado
     if (typeof window !== 'undefined') {
@@ -251,9 +252,10 @@ class PerformanceMonitor {
       this.navigationMetrics.shift();
     }
 
-    if (observability && typeof observability.trackNavigation === 'function') {
-      observability.trackNavigation(from, to, duration);
-    }
+    // TODO: Add trackNavigation method to observability
+    // if (observability && typeof observability.trackNavigation === 'function') {
+    //   observability.trackNavigation(from, to, duration);
+    // }
   }
 
   /**

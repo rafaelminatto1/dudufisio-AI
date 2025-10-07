@@ -143,6 +143,19 @@ export interface AlertPatient extends Patient {
     alertType: PatientAlertType;
 }
 
+export interface ScheduledAlert {
+  id: string;
+  ruleId: string | null;
+  supplyId: string | null;
+  scheduledFor: string;
+  status: string | null;
+  attempts: number | null;
+  maxAttempts: number | null;
+  lastAttemptAt: string | null;
+  errorMessage: string | null;
+  createdAt: string | null;
+}
+
 export interface PatientSummary {
   id: string;
   name: string;
@@ -1592,19 +1605,6 @@ export enum ItemStatus {
 }
 
 // Tipos que estavam faltando
-export interface ScheduledAlert {
-  id: string;
-  ruleId: string;
-  supplyId?: string;
-  scheduledFor: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
-  attempts: number;
-  maxAttempts: number;
-  lastAttemptAt?: string;
-  errorMessage?: string;
-  createdAt: string;
-}
-
 export interface CommunicationLog {
   id: string;
   patientId: string;

@@ -221,10 +221,10 @@ export class ClinicalReportGenerator {
 
     // Calcular melhorias
     const improvements = {
-      painLevel: initialMeasures.painLevel - finalMeasures.painLevel,
-      functionalTests: finalMeasures.functionalTests - initialMeasures.functionalTests,
-      rangeOfMotion: finalMeasures.rangeOfMotion - initialMeasures.rangeOfMotion,
-      muscleStrength: finalMeasures.muscleStrength - initialMeasures.muscleStrength
+      painLevel: (initialMeasures.painLevel as any) - (finalMeasures.painLevel as any),
+      functionalTests: (finalMeasures.functionalTests as any) - (initialMeasures.functionalTests as any),
+      rangeOfMotion: (finalMeasures.rangeOfMotion as any) - (initialMeasures.rangeOfMotion as any),
+      muscleStrength: (finalMeasures.muscleStrength as any) - (initialMeasures.muscleStrength as any)
     };
 
     // Contar metas alcançadas
@@ -375,9 +375,9 @@ export class ClinicalReportGenerator {
     
     outcomes.push({
       name: 'Amplitude de Movimento',
-      initialScore: initialROM,
-      finalScore: finalROM,
-      improvement: finalROM - initialROM,
+      initialScore: initialROM as any,
+      finalScore: finalROM as any,
+      improvement: (finalROM as any) - (initialROM as any),
       unit: 'graus'
     });
 
@@ -387,9 +387,9 @@ export class ClinicalReportGenerator {
     
     outcomes.push({
       name: 'Força Muscular',
-      initialScore: initialStrength,
-      finalScore: finalStrength,
-      improvement: finalStrength - initialStrength,
+      initialScore: initialStrength as any,
+      finalScore: finalStrength as any,
+      improvement: (finalStrength as any) - (initialStrength as any),
       unit: 'escala 0-5'
     });
 

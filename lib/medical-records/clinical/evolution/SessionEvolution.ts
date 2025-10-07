@@ -31,7 +31,7 @@ export class SessionEvolution {
     public readonly exercisesPerformed: Exercise[],
     public readonly equipmentUsed: string[],
     public readonly patientResponse: string,
-    public readonly adverseReactions?: string,
+    public readonly adverseReactions: string | undefined,
     public readonly nextSessionPlan: string,
     public readonly homeExercises: Exercise[],
     public readonly recommendations: string,
@@ -236,8 +236,8 @@ export class SessionEvolution {
    * Atualiza o nível de dor
    */
   updatePainLevel(before: number, after: number): SessionEvolution {
-    this.validatePainLevel(before);
-    this.validatePainLevel(after);
+    SessionEvolution.validatePainLevel(before);
+    SessionEvolution.validatePainLevel(after);
 
     return new SessionEvolution(
       this.id,
@@ -593,8 +593,8 @@ export class SessionEvolution {
       );
     }
 
-    this.validatePainLevel(this.painLevelBefore);
-    this.validatePainLevel(this.painLevelAfter);
+    SessionEvolution.validatePainLevel(this.painLevelBefore);
+    SessionEvolution.validatePainLevel(this.painLevelAfter);
   }
 
   /**

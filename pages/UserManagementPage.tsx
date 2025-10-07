@@ -165,11 +165,11 @@ const UserManagementPage: React.FC = () => {
         </div>
       </div>
 
-      {user.profile_settings?.specialties && user.profile_settings.specialties.length > 0 && (
+        {(user.profile_settings as any)?.specialties && (user.profile_settings as any).specialties.length > 0 && (
         <div className="mt-3">
           <p className="text-sm text-gray-600">Especialidades:</p>
           <div className="flex flex-wrap gap-1 mt-1">
-            {user.profile_settings.specialties.map((specialty, index) => (
+            {((user.profile_settings as any).specialties || []).map((specialty: any, index: number) => (
               <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
                 {specialty}
               </span>

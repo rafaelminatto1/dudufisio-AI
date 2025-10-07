@@ -236,13 +236,12 @@ export class WhatsAppChannel extends BaseChannel {
       if (message.content.attachments && message.content.attachments.length > 0) {
         // Send with media
         const attachment = message.content.attachments[0];
-        const media = MessageMedia.fromFilePath(attachment.url || attachment.path);
+        const media = await MessageMedia.fromFilePath(attachment.url || attachment.path || '');
 
-        if (attachment.filename) {
-          media.filename = attachment.filename;
-        }
-
-        sentMessage = await this.webClient.sendMessage(phoneNumber, media, {
+        // Note: filename property is set internally by MessageMedia
+        // Send media message
+        sentMessage = await this.webClient.sendMessage(phoneNumber, content.body, {
+          media,
           caption: content.body
         });
       } else {

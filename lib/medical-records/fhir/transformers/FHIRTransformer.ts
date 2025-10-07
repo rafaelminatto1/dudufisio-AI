@@ -183,17 +183,17 @@ export class FHIRTransformer {
   }): FHIRDiagnosticReport {
     const getDocumentCode = (type: DocumentType): { code: string; display: string } => {
       switch (type) {
-        case 'initial_assessment':
+        case DocumentType.INITIAL_ASSESSMENT:
           return { code: '11450-4', display: 'Problem list Reported' };
-        case 'session_evolution':
+        case DocumentType.EVOLUTION:
           return { code: '11502-2', display: 'Laboratory report' };
-        case 'treatment_plan':
+        case DocumentType.PRESCRIPTION:
           return { code: '18776-5', display: 'Plan of care note' };
-        case 'discharge_summary':
+        case DocumentType.DISCHARGE_SUMMARY:
           return { code: '18842-5', display: 'Discharge summary' };
-        case 'referral_letter':
+        case DocumentType.REFERRAL_LETTER:
           return { code: '11488-4', display: 'Consult note' };
-        case 'progress_report':
+        case DocumentType.PROGRESS_REPORT:
           return { code: '11506-3', display: 'Progress note' };
         default:
           return { code: '11450-4', display: 'Problem list Reported' };
@@ -287,15 +287,16 @@ export class FHIRTransformer {
    * Generate conclusion from document content
    */
   private static generateConclusion(content: DocumentContent, type: DocumentType): string {
+    const data = content.data as any;
     switch (type) {
-      case 'initial_assessment':
-        return `Initial assessment completed. Chief complaint: ${content.chiefComplaint || 'Not specified'}. Diagnosis: ${content.diagnosis || 'Pending'}.`;
-      case 'session_evolution':
-        return `Session evolution recorded. Techniques applied: ${content.techniquesApplied?.join(', ') || 'Not specified'}. Patient response: ${content.patientResponse || 'Not documented'}.`;
-      case 'treatment_plan':
-        return `Treatment plan established. Interventions: ${content.interventions?.join(', ') || 'Not specified'}. Duration: ${content.duration || 'Not specified'}.`;
-      case 'discharge_summary':
-        return `Discharge summary. Treatment completed. Final recommendations: ${content.finalRecommendations || 'Not specified'}.`;
+      case DocumentType.INITIAL_ASSESSMENT:
+        return `Initial assessment completed. Chief complaint: ${data?.chiefComplaint || 'Not specified'}. Diagnosis: ${data?.diagnosis || 'Pending'}.`;
+      case DocumentType.EVOLUTION:
+        return `Session evolution recorded. Techniques applied: ${data?.techniquesApplied?.join(', ') || 'Not specified'}. Patient response: ${data?.patientResponse || 'Not documented'}.`;
+      case DocumentType.PRESCRIPTION:
+        return `Treatment plan established. Interventions: ${data?.interventions?.join(', ') || 'Not specified'}. Duration: ${data?.duration || 'Not specified'}.`;
+      case DocumentType.DISCHARGE_SUMMARY:
+        return `Discharge summary. Treatment completed. Final recommendations: ${data?.finalRecommendations || 'Not specified'}.`;
       default:
         return `Clinical document of type ${type} completed.`;
     }

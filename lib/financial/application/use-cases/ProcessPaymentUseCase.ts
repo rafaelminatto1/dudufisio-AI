@@ -183,7 +183,7 @@ export class ProcessPaymentUseCase {
 
       return {
         success: true,
-        transaction,
+        transaction: transaction ?? undefined,
         paymentPlan: updatedPaymentPlan!,
         gatewayTransactionId: paymentResult.transactionId
       };

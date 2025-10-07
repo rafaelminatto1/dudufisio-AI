@@ -25,8 +25,9 @@ export type Permission =
   | 'treatments:prescribe' | 'treatments:modify'
 
   // Reports & Analytics
-  | 'reports:read' | 'reports:write' | 'reports:export'
-  | 'analytics:view' | 'analytics:admin'
+  | 'reports:read' | 'reports:write' | 'reports:export' | 'reports:delete'
+  | 'analytics:view' | 'analytics:admin' | 'analytics:read' | 'analytics:export'
+  | 'clinical_analytics:read' | 'clinical_analytics:export'
 
   // Financial
   | 'financial:read' | 'financial:write' | 'financial:export'
@@ -35,10 +36,14 @@ export type Permission =
   // System Administration
   | 'admin:users' | 'admin:settings' | 'admin:audit'
   | 'admin:integrations' | 'admin:backup'
+  | 'system:admin' | 'system:admin:advanced'
 
   // Exercise & Materials
   | 'exercises:read' | 'exercises:write' | 'exercises:delete'
   | 'materials:read' | 'materials:write'
+  
+  // User Management
+  | 'manage_users'
 
   // AI Features
   | 'ai:generate_reports' | 'ai:risk_analysis' | 'ai:recommendations'

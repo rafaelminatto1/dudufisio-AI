@@ -15,6 +15,8 @@ export { GoogleCalendarService } from './GoogleCalendarService';
 import { CalendarFactory } from './CalendarFactory';
 import { ICSService } from './ICSService';
 import { GoogleCalendarService } from './GoogleCalendarService';
+import { CalendarQueue } from './CalendarQueue';
+import { calendarMonitor } from './CalendarMonitor';
 
 // Register all available providers
 CalendarFactory.register('ics', ICSService);

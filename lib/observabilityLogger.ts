@@ -37,7 +37,7 @@ export const observability = {
   security: createLogger('security'),
   database: createLogger('database'),
   application: createLogger('application'),
-  communication: createLogger('communication'),
+  communication: createLogger('application'), // Using 'application' category
   audit: createLogger('security'),
   service: {
     ...createLogger('application'),
