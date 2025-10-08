@@ -13,6 +13,11 @@
       "use": "@vercel/node"
     }
   ],
+  "functions": {
+    "api/whatsapp.js": {
+      "maxDuration": 30
+    }
+  },
   "routes": [
     {
       "src": "/api/(.*)",

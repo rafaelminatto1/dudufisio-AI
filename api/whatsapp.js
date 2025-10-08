@@ -1,16 +1,9 @@
 /**
  * WhatsApp Webhook API Endpoint
  * DuduFisio-AI - Meta WhatsApp Business API Integration
+ * Vercel Function
  */
 
-/**
- * Webhook do WhatsApp Business API (Meta)
- * 
- * Este endpoint recebe:
- * 1. Verificação do webhook (GET) - Meta
- * 2. Mensagens recebidas (POST)
- * 3. Status de mensagens (POST)
- */
 export default async function handler(req, res) {
   // Configurar CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
