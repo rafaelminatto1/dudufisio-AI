@@ -1,114 +1,66 @@
-// Test setup file for Jest
-import { jest } from '@jest/globals';
+/**
+ * Vitest Setup File
+ * Configuração global para todos os testes
+ */
 
-// Mock crypto.randomUUID for consistent testing
-Object.defineProperty(global, 'crypto', {
-  value: {
-    randomUUID: jest.fn(() => 'test-uuid-123'),
-  },
+import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
+import { afterEach, vi } from 'vitest';
+
+// Cleanup após cada teste
+afterEach(() => {
+  cleanup();
 });
 
-// Mock fetch for API calls in tests
-global.fetch = jest.fn();
+// Mock do Supabase client
+vi.mock('../lib/supabase', () => ({
+  supabase: {
+    from: vi.fn(() => ({
+      select: vi.fn(() => Promise.resolve({ data: [], error: null })),
+      insert: vi.fn(() => Promise.resolve({ data: {}, error: null })),
+      update: vi.fn(() => Promise.resolve({ data: {}, error: null })),
+      delete: vi.fn(() => Promise.resolve({ error: null })),
+      eq: vi.fn(function() { return this; }),
+      single: vi.fn(() => Promise.resolve({ data: {}, error: null })),
+      order: vi.fn(function() { return this; }),
+      limit: vi.fn(function() { return this; }),
+    })),
+    auth: {
+      getUser: vi.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+      signIn: vi.fn(() => Promise.resolve({ data: {}, error: null })),
+      signOut: vi.fn(() => Promise.resolve({ error: null })),
+    },
+    channel: vi.fn(() => ({
+      on: vi.fn(function() { return this; }),
+      subscribe: vi.fn(() => Promise.resolve({ status: 'SUBSCRIBED' })),
+      unsubscribe: vi.fn(),
+    })),
+  },
+}));
 
-// Mock Date.now for consistent date testing
-const mockDateNow = jest.fn(() => new Date('2024-01-01T00:00:00Z').getTime());
-global.Date.now = mockDateNow;
+// Mock do React Router
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(() => vi.fn()),
+  useParams: vi.fn(() => ({})),
+  useLocation: vi.fn(() => ({ pathname: '/' })),
+  Link: vi.fn(({ children }) => children),
+  BrowserRouter: vi.fn(({ children }) => children),
+}));
 
-// Setup console methods for testing
+// Mock do toast
+vi.mock('react-toastify', () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+    warning: vi.fn(),
+  },
+  ToastContainer: vi.fn(() => null),
+}));
+
+// Suprimir console.error em testes (opcional)
 global.console = {
   ...console,
-  log: jest.fn(),
-  error: jest.fn(),
-  warn: jest.fn(),
-  info: jest.fn(),
+  error: vi.fn(),
+  warn: vi.fn(),
 };
-
-// Mock environment variables
-process.env.NODE_ENV = 'test';
-process.env.STRIPE_RETURN_URL = 'https://test.com/payment/return';
-
-// Setup Jest matchers for custom assertions
-expect.extend({
-  toBeValidMoney(received, expectedAmount: number, expectedCurrency: string = 'BRL') {
-    const pass = received && 
-                 typeof received.toNumber === 'function' &&
-                 typeof received.toString === 'function' &&
-                 received.toNumber() === expectedAmount &&
-                 received.toString().includes(expectedCurrency);
-
-    if (pass) {
-      return {
-        message: () => `expected ${received} not to be valid money with ${expectedAmount} ${expectedCurrency}`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected ${received} to be valid money with ${expectedAmount} ${expectedCurrency}`,
-        pass: false,
-      };
-    }
-  },
-
-  toBeValidTransaction(received) {
-    const pass = received &&
-                 typeof received.getId === 'function' &&
-                 typeof received.getPatientId === 'function' &&
-                 typeof received.getAmount === 'function' &&
-                 typeof received.getStatus === 'function';
-
-    if (pass) {
-      return {
-        message: () => `expected ${received} not to be a valid transaction`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected ${received} to be a valid transaction`,
-        pass: false,
-      };
-    }
-  },
-
-  toBeValidPackage(received) {
-    const pass = received &&
-                 typeof received.getId === 'function' &&
-                 typeof received.getPatientId === 'function' &&
-                 typeof received.getTotalSessions === 'function' &&
-                 typeof received.getUsedSessions === 'function' &&
-                 typeof received.getRemainingSessions === 'function';
-
-    if (pass) {
-      return {
-        message: () => `expected ${received} not to be a valid package`,
-        pass: true,
-      };
-    } else {
-      return {
-        message: () => `expected ${received} to be a valid package`,
-        pass: false,
-      };
-    }
-  }
-});
-
-// Extend Jest matchers type definitions
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toBeValidMoney(expectedAmount: number, expectedCurrency?: string): R;
-      toBeValidTransaction(): R;
-      toBeValidPackage(): R;
-    }
-  }
-}
-
-// Clean up after each test
-afterEach(() => {
-  jest.clearAllMocks();
-});
-
-// Reset modules after each test to ensure clean state
-afterEach(() => {
-  jest.resetModules();
-});
