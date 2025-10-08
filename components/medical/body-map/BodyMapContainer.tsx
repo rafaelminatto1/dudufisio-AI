@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Calendar, TrendingUp, BarChart3 } from 'lucide-react';
 import { BodyPoint, BodyMapState, BodyMapAnalytics, Patient } from '../../../types';
 import { useBodyMapPro } from '../../../hooks/useBodyMapPro';
-import { useToast } from '../../../contexts/ToastContext';
+import { useToast } from '@/contexts/ToastContext';
 import BodyMapSVG from './BodyMapSVG';
 import PainPointModal from './PainPointModal';
 import BodyMapTimeline from './BodyMapTimeline';

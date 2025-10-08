@@ -174,3 +174,4 @@ export const LoadMonitoringChart: React.FC<LoadMonitoringChartProps> = ({ data }
 export default LoadMonitoringChart;
 
 
+

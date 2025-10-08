@@ -23,7 +23,7 @@ import {
   Volume2,
   VolumeX
 } from 'lucide-react';
-import { useToast } from '../../../contexts/ToastContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface Message {
   id: string;

@@ -24,7 +24,7 @@ import {
   XCircle
 } from 'lucide-react';
 import { geminiService } from '../../../services/geminiService';
-import { useToast } from '../../../contexts/ToastContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface RiskAnalysisModalProps {
   isOpen: boolean;

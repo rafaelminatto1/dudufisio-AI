@@ -79,3 +79,4 @@ export const InjuryHistoryCard: React.FC<InjuryHistoryCardProps> = ({ injuries }
 export default InjuryHistoryCard;
 
 
+

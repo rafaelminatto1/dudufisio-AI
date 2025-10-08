@@ -28,7 +28,7 @@ import {
   CheckCircle,
   Info
 } from 'lucide-react';
-import { useToast } from '../../../contexts/ToastContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface AISettingsModalProps {
   isOpen: boolean;

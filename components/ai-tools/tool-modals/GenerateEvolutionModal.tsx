@@ -20,7 +20,7 @@ import {
   Brain
 } from 'lucide-react';
 import { geminiService } from '../../../services/geminiService';
-import { useToast } from '../../../contexts/ToastContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface GenerateEvolutionModalProps {
   isOpen: boolean;

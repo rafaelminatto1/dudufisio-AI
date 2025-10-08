@@ -25,7 +25,7 @@ import {
   LineChart,
   Calculator
 } from 'lucide-react';
-import { useToast } from '../../../contexts/ToastContext';
+import { useToast } from '@/contexts/ToastContext';
 
 interface EconomicAIModalProps {
   isOpen: boolean;
