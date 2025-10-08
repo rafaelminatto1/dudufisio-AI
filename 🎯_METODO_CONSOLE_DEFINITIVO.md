@@ -140,3 +140,4 @@ https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo/sql/new
 
 **🎉 Boa execução! 🎉**
 
+

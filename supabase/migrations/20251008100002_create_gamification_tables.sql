@@ -321,3 +321,4 @@ GRANT SELECT ON patient_points_balance TO authenticated;
 -- FIM DA MIGRATION
 -- =====================================================
 
+

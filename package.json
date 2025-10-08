@@ -27,7 +27,10 @@
     "deps:check": "npm outdated",
     "deps:update": "npm update",
     "bundle:analyze": "npm run build && firefox dist/stats.html",
-    "bundle:size": "npm run build && du -sh dist && du -sh dist/assets/*.js | sort -hr | head -20"
+    "bundle:size": "npm run build && du -sh dist && du -sh dist/assets/*.js | sort -hr | head -20",
+    "activity:setup": "node scripts/setup-activity-integration.js",
+    "activity:migrate": "npx supabase db push",
+    "activity:test": "node scripts/test-activity-integration.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
