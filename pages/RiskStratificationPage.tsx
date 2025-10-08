@@ -13,9 +13,11 @@ import {
 import { RiskAssessmentDashboard } from '../components/clinical/RiskAssessmentDashboard';
 import { RiskDetailModal } from '../components/clinical/RiskDetailModal';
 import { riskStratificationService } from '../services/clinical/riskStratificationService';
+import { riskStratificationServiceSupabase } from '../services/clinical/riskStratificationServiceSupabase';
 import { RiskAssessment, RiskProfile, RiskType } from '../types/riskTypes';
 import { Patient } from '../types';
 import { toast } from 'react-toastify';
+import { supabase } from '../lib/supabase';
 
 export const RiskStratificationPage: React.FC = () => {
   const { patientId } = useParams<{ patientId: string }>();
@@ -38,42 +40,67 @@ export const RiskStratificationPage: React.FC = () => {
     try {
       setLoading(true);
       
-      // Mock patient data - em produção viria do banco
-      const mockPatient: Patient = {
-        id: patientId || '1',
-        name: 'João Silva',
-        cpf: '123.456.789-00',
-        birthDate: '1950-05-15',
-        phone: '(11) 98765-4321',
-        email: 'joao.silva@email.com',
+      if (!patientId) {
+        toast.error('ID do paciente não fornecido');
+        setLoading(false);
+        return;
+      }
+
+      // Buscar dados do paciente do Supabase
+      const { data: patientData, error: patientError } = await supabase
+        .from('patients')
+        .select('*')
+        .eq('id', patientId)
+        .single();
+
+      if (patientError) {
+        console.error('Erro ao buscar paciente:', patientError);
+        toast.error('Erro ao carregar dados do paciente');
+        setLoading(false);
+        return;
+      }
+
+      // Mapear dados do paciente
+      const mappedPatient: Patient = {
+        id: patientData.id,
+        name: patientData.full_name,
+        cpf: patientData.cpf,
+        birthDate: patientData.birth_date,
+        phone: patientData.phone,
+        email: patientData.email,
         emergencyContact: {
-          name: 'Maria Silva',
-          phone: '(11) 98765-1234'
+          name: patientData.emergency_contact_name || '',
+          phone: patientData.emergency_contact_phone || ''
         },
         address: {
-          street: 'Rua das Flores, 123',
-          city: 'São Paulo',
-          state: 'SP',
-          zip: '01234-567'
+          street: `${patientData.address_street}, ${patientData.address_number}`,
+          city: patientData.address_city || '',
+          state: patientData.address_state || '',
+          zip: patientData.address_zip_code || ''
         },
-        status: 'Active' as any,
-        lastVisit: '2025-10-05',
-        registrationDate: '2024-01-15',
-        avatarUrl: 'https://i.pravatar.cc/150?u=joao',
+        status: patientData.status as any,
+        lastVisit: new Date().toISOString().split('T')[0],
+        registrationDate: new Date(patientData.created_at).toISOString().split('T')[0],
+        avatarUrl: `https://i.pravatar.cc/150?u=${patientData.id}`,
         consentGiven: true,
         whatsappConsent: 'opt-in',
-        conditions: [
-          { name: 'Osteoartrite de joelho', date: '2024-01-15' },
-          { name: 'Hipertensão', date: '2020-03-10' }
-        ],
-        medicalAlerts: 'Histórico de quedas recentes'
+        conditions: [],
+        medicalAlerts: patientData.observations || ''
       };
 
-      setPatient(mockPatient);
+      setPatient(mappedPatient);
 
-      // Buscar perfil de risco
-      const profile = await riskStratificationService.getPatientRiskProfile(mockPatient);
-      setRiskProfile(profile);
+      // Buscar perfil de risco do Supabase
+      const profile = await riskStratificationServiceSupabase.getPatientRiskProfile(patientId);
+      
+      // Se não existir perfil, criar um com mock para demonstração
+      if (!profile) {
+        console.log('Perfil de risco não encontrado, usando serviço mock para gerar dados');
+        const mockProfile = await riskStratificationService.getPatientRiskProfile(mappedPatient);
+        setRiskProfile(mockProfile);
+      } else {
+        setRiskProfile(profile);
+      }
     } catch (error) {
       console.error('Erro ao carregar perfil de risco:', error);
       toast.error('Erro ao carregar perfil de risco');
@@ -83,13 +110,22 @@ export const RiskStratificationPage: React.FC = () => {
   };
 
   const handleRefresh = async () => {
-    if (!patient) return;
+    if (!patient || !patientId) return;
     
     setRefreshing(true);
     try {
-      const profile = await riskStratificationService.getPatientRiskProfile(patient);
-      setRiskProfile(profile);
-      toast.success('Perfil de risco atualizado com sucesso');
+      // Tentar buscar do Supabase primeiro
+      const profile = await riskStratificationServiceSupabase.getPatientRiskProfile(patientId);
+      
+      if (profile) {
+        setRiskProfile(profile);
+        toast.success('Perfil de risco atualizado com sucesso');
+      } else {
+        // Gerar nova avaliação se não existir
+        const newProfile = await riskStratificationService.getPatientRiskProfile(patient);
+        setRiskProfile(newProfile);
+        toast.success('Nova avaliação de risco gerada');
+      }
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
       toast.error('Erro ao atualizar perfil de risco');

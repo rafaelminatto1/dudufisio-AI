@@ -65,6 +65,7 @@ const GroupsPage = createLazyComponent(() => import('./GroupsPage'));
 import KanbanPage from './KanbanPage';
 const RiskAnalysisPage = createLazyComponent(() => import('./RiskAnalysisPage'));
 const RiskStratificationPage = createLazyComponent(() => import('./RiskStratificationPage'));
+const SportsRehabilitationPage = createLazyComponent(() => import('./SportsRehabilitationPage'));
 const ClinicalAnalyticsPage = createLazyComponent(() => import('./ClinicalAnalyticsPage'));
 const SettingsPage = createLazyComponent(() => import('./SettingsPage'));
 const PartnershipPage = createLazyComponent(() => import('./PartnershipPage'));
@@ -369,6 +370,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/hep-generator" element={LazyElement(HepGeneratorPage)} />
                 <Route path="/risk-analysis" element={LazyElement(RiskAnalysisPage)} />
                 <Route path="/risk-stratification/:patientId" element={LazyElement(RiskStratificationPage)} />
+                <Route path="/sports-rehab/:patientId" element={LazyElement(SportsRehabilitationPage)} />
                 <Route path="/ia-economica" element={LazyElement(AiAnalyticsPage)} />
                 
                 {/* Management */}
