@@ -55,6 +55,10 @@ export const PartnerPortalDashboard = createLazyComponent(
   () => import('../pages/PartnerPortalDashboard')
 );
 
+export const WhatsAppManagementPage = createLazyComponent(
+  () => import('../pages/WhatsAppManagementPage')
+);
+
 /**
  * Lazy loading para páginas principais
  */
