@@ -3,7 +3,6 @@
  * DuduFisio-AI - Meta WhatsApp Business API Integration
  */
 
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { getWhatsAppService } from '@/services/whatsapp/WhatsAppService';
 
 /**
@@ -14,10 +13,7 @@ import { getWhatsAppService } from '@/services/whatsapp/WhatsAppService';
  * 2. Mensagens recebidas (POST)
  * 3. Status de mensagens (POST)
  */
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: any, res: any) {
   // GET - Verificação do webhook
   if (req.method === 'GET') {
     return handleWebhookVerification(req, res);
@@ -37,10 +33,7 @@ export default async function handler(
  * Verificação do webhook (GET)
  * Meta faz isso ao configurar o webhook
  */
-function handleWebhookVerification(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+function handleWebhookVerification(req: any, res: any) {
   // Token de verificação que você configurou no Meta
   const verifyToken = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || 'mu/NQ2Z92+[g';
   
@@ -72,10 +65,7 @@ function handleWebhookVerification(
 /**
  * Processar mensagens recebidas (POST)
  */
-async function handleIncomingWebhook(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handleIncomingWebhook(req: any, res: any) {
   try {
     // Log para debug
     console.log('📨 Webhook recebido:', JSON.stringify(req.body, null, 2));
