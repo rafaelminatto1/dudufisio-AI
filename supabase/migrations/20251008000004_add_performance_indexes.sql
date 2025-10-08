@@ -25,14 +25,16 @@ CREATE INDEX IF NOT EXISTS idx_appointments_clinic_date
   WHERE clinic_id_fk IS NOT NULL;
 
 -- Appointments pendentes de confirmação
-CREATE INDEX IF NOT EXISTS idx_appointments_pending_confirmation
-  ON appointments(scheduled_at)
-  WHERE status = 'scheduled' AND scheduled_at > NOW();
+-- Removido índice com NOW() pois não é IMMUTABLE
+-- CREATE INDEX IF NOT EXISTS idx_appointments_pending_confirmation
+--   ON appointments(scheduled_at)
+--   WHERE status = 'scheduled' AND scheduled_at > NOW();
 
 -- Appointments do dia por status
-CREATE INDEX IF NOT EXISTS idx_appointments_today_status
-  ON appointments(status, scheduled_at)
-  WHERE scheduled_at::date = CURRENT_DATE;
+-- Removido índice com CURRENT_DATE pois não é IMMUTABLE
+-- CREATE INDEX IF NOT EXISTS idx_appointments_today_status
+--   ON appointments(status, scheduled_at)
+--   WHERE scheduled_at::date = CURRENT_DATE;
 
 -- ============================================================================
 -- CLINICAL_DOCUMENTS - Queries de prontuário
@@ -157,9 +159,10 @@ CREATE INDEX IF NOT EXISTS idx_audit_trail_document_action
   ON audit_trail(document_id, action, performed_at DESC);
 
 -- Audit trail recente (últimos 30 dias)
-CREATE INDEX IF NOT EXISTS idx_audit_trail_recent
-  ON audit_trail(performed_at DESC)
-  WHERE performed_at > NOW() - INTERVAL '30 days';
+-- Removido índice com NOW() pois não é IMMUTABLE
+-- CREATE INDEX IF NOT EXISTS idx_audit_trail_recent
+--   ON audit_trail(performed_at DESC)
+--   WHERE performed_at > NOW() - INTERVAL '30 days';
 
 -- Digital signatures por verificação
 CREATE INDEX IF NOT EXISTS idx_signatures_verification
