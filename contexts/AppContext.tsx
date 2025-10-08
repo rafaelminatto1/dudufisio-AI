@@ -83,7 +83,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       safeLog('Therapists loaded successfully', { count: (therapistsResult.data || []).length });
     } else {
       setTherapists([]);
-      errors.push(`Terapeutas: ${therapistsResult.error.message}`);
+      errors.push(`Terapeutas: ${therapistsResult.error?.message || 'Erro desconhecido'}`);
     }
 
     // Handle patients
@@ -92,7 +92,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       safeLog('Patients loaded successfully', { count: (patientsResult.data || []).length });
     } else {
       setPatients([]);
-      errors.push(`Pacientes: ${patientsResult.error.message}`);
+      errors.push(`Pacientes: ${patientsResult.error?.message || 'Erro desconhecido'}`);
     }
 
     // Handle appointments
@@ -101,7 +101,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       safeLog('Appointments loaded successfully', { count: (appointmentsResult.data || []).length });
     } else {
       setAppointments([]);
-      errors.push(`Agendamentos: ${appointmentsResult.error.message}`);
+      errors.push(`Agendamentos: ${appointmentsResult.error?.message || 'Erro desconhecido'}`);
     }
 
     // Set combined error if any failed

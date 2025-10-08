@@ -4,6 +4,8 @@ import {
     Target, Award, Settings, LogOut, Users
 } from 'lucide-react';
 import { createLazyComponent } from '../lib/lazyLoading';
+import ErrorBoundary from '../components/ErrorBoundary';
+import { PageSkeleton } from '../components/ui/PageSkeleton';
 
 // ✅ Lazy load patient portal pages usando createLazyComponent centralizado
 const PatientDashboardPage = createLazyComponent(() => import('./patient-portal/PatientDashboardPage'));
@@ -17,11 +19,7 @@ const GamificationPage = createLazyComponent(() => import('./patient-portal/Gami
 const PatientPainDiaryPage = createLazyComponent(() => import('./patient-portal/PatientPainDiaryPage'));
 
 // Loading component
-const PageLoader = () => (
-    <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600"></div>
-    </div>
-);
+const PageLoader = () => <PageSkeleton />;
 
 interface PatientPortalDashboardProps {
     user: any;
@@ -134,6 +132,7 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
     const groupItems = (items: any[], group: string) => items.filter(item => item.group === group);
 
     return (
+        <ErrorBoundary>
         <div className="flex h-screen bg-gradient-to-br from-teal-50 to-blue-50">
             {/* Sidebar */}
             <div className="w-64 bg-white border-r border-slate-200 shadow-sm">
@@ -220,6 +219,7 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
                 </main>
             </div>
         </div>
+        </ErrorBoundary>
     );
 };
 

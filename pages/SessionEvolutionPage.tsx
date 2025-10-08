@@ -8,6 +8,7 @@ import { Loader, Sparkles, Clipboard, Check } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { Skeleton } from '../components/ui/skeleton';
 import MarkdownRenderer from '../components/ui/MarkdownRenderer';
+import TiptapEditor from '../components/ui/TiptapEditor';
 
 const initialFormData: Partial<SessionEvolutionFormData> = {
     numero_sessao: '',
@@ -29,11 +30,16 @@ const FormInput = memo<{label: string, name: keyof SessionEvolutionFormData, val
 ));
 FormInput.displayName = 'FormInput';
 
-const FormTextarea = memo<{label: string, name: keyof SessionEvolutionFormData, value: string, onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void, placeholder: string, rows?: number}>(
+const FormTextarea = memo<{label: string, name: keyof SessionEvolutionFormData, value: string, onChange: (value: string) => void, placeholder: string, rows?: number}>(
     ({label, name, value, onChange, placeholder, rows=2}) => (
     <div className="sm:col-span-2">
         <label htmlFor={name} className="block text-sm font-medium text-slate-700">{label}</label>
-        <textarea name={name} id={name} value={value} onChange={onChange} placeholder={placeholder} rows={rows} className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
+        <TiptapEditor
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            minHeight={`${rows * 20}px`}
+        />
     </div>
 ));
 FormTextarea.displayName = 'FormTextarea';
@@ -85,6 +91,10 @@ const SessionEvolutionPage: React.FC = () => {
 
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        setFormData((prev: any) => ({ ...prev, [name]: value }));
+    }, []);
+
+    const handleRichTextChange = useCallback((name: keyof SessionEvolutionFormData, value: string) => {
         setFormData((prev: any) => ({ ...prev, [name]: value }));
     }, []);
 
@@ -148,12 +158,12 @@ const SessionEvolutionPage: React.FC = () => {
                     </div>
                     <hr />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <FormTextarea label="Relato do Paciente*" name="relato_paciente" value={formData.relato_paciente} onChange={handleInputChange} placeholder="Paciente relata..."/>
+                        <FormTextarea label="Relato do Paciente*" name="relato_paciente" value={formData.relato_paciente} onChange={(value) => handleRichTextChange('relato_paciente', value)} placeholder="Paciente relata..."/>
                         <FormInput label="Escala de Dor (EVA 0-10)" name="escala_dor_hoje" value={formData.escala_dor_hoje} onChange={handleInputChange} placeholder="Ex: 4"/>
-                        <FormTextarea label="Dados Objetivos" name="dados_objetivos" value={formData.dados_objetivos} onChange={handleInputChange} placeholder="Goniometria, testes, etc..."/>
-                        <FormTextarea label="Intervenções Realizadas" name="intervencoes" value={formData.intervencoes} onChange={handleInputChange} placeholder="Cinesioterapia, TENS, etc..."/>
-                        <FormTextarea label="Análise do Fisioterapeuta" name="analise_fisio" value={formData.analise_fisio} onChange={handleInputChange} placeholder="Paciente evoluindo bem..."/>
-                        <FormTextarea label="Próximos Passos" name="proximos_passos" value={formData.proximos_passos} onChange={handleInputChange} placeholder="Progredir com exercícios..."/>
+                        <FormTextarea label="Dados Objetivos" name="dados_objetivos" value={formData.dados_objetivos} onChange={(value) => handleRichTextChange('dados_objetivos', value)} placeholder="Goniometria, testes, etc..."/>
+                        <FormTextarea label="Intervenções Realizadas" name="intervencoes" value={formData.intervencoes} onChange={(value) => handleRichTextChange('intervencoes', value)} placeholder="Cinesioterapia, TENS, etc..."/>
+                        <FormTextarea label="Análise do Fisioterapeuta" name="analise_fisio" value={formData.analise_fisio} onChange={(value) => handleRichTextChange('analise_fisio', value)} placeholder="Paciente evoluindo bem..."/>
+                        <FormTextarea label="Próximos Passos" name="proximos_passos" value={formData.proximos_passos} onChange={(value) => handleRichTextChange('proximos_passos', value)} placeholder="Progredir com exercícios..."/>
                     </div>
                      <button 
                         onClick={handleSubmit}

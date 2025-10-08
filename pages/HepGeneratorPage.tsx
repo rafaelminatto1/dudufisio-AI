@@ -6,6 +6,7 @@ import { Loader, Sparkles, Clipboard, Check, MessageSquare } from 'lucide-react'
 import { useToast } from '../contexts/ToastContext';
 import { Skeleton } from '../components/ui/skeleton';
 import MarkdownRenderer from '../components/ui/MarkdownRenderer';
+import TiptapEditor from '../components/ui/TiptapEditor';
 import * as patientService from '../services/patientService';
 import * as whatsappService from '../services/whatsappService';
 
@@ -28,11 +29,16 @@ const FormInput: React.FC<{label: string, name: keyof HepFormData, value: string
     </div>
 );
 
-const FormTextarea: React.FC<{label: string, name: keyof HepFormData, value: string, onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void, placeholder: string, rows?: number}> = 
+const FormTextarea: React.FC<{label: string, name: keyof HepFormData, value: string, onChange: (value: string) => void, placeholder: string, rows?: number}> = 
     ({label, name, value, onChange, placeholder, rows=2}) => (
     <div className="sm:col-span-2">
         <label htmlFor={name} className="block text-sm font-medium text-slate-700">{label}</label>
-        <textarea name={name} id={name} value={value} onChange={onChange} placeholder={placeholder} rows={rows} className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
+        <TiptapEditor
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            minHeight={`${rows * 20}px`}
+        />
     </div>
 );
 
@@ -74,6 +80,10 @@ const HepGeneratorPage: React.FC = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        setFormData((prev: any) => ({ ...prev, [name]: value }));
+    };
+
+    const handleRichTextChange = (name: keyof HepFormData, value: string) => {
         setFormData((prev: any) => ({ ...prev, [name]: value }));
     };
 
@@ -152,8 +162,8 @@ const HepGeneratorPage: React.FC = () => {
                     </div>
 
                     <FormInput label="Diagnóstico do Paciente" name="diagnostico_paciente" value={formData.diagnostico_paciente} onChange={handleInputChange} placeholder="Ex: Tendinopatia do supraespinhal"/>
-                    <FormTextarea label="Objetivo Principal do Plano*" name="objetivo_hep" value={formData.objetivo_hep} onChange={handleInputChange} placeholder="Ex: Fortalecer o manguito rotador e melhorar a ADM"/>
-                    <FormTextarea label="Lista de Exercícios (separados por vírgula)*" name="lista_exercicios" value={formData.lista_exercicios} onChange={handleInputChange} placeholder="Ex: Ponte de glúteos, Perdigueiro, Prancha frontal"/>
+                    <FormTextarea label="Objetivo Principal do Plano*" name="objetivo_hep" value={formData.objetivo_hep} onChange={(value) => handleRichTextChange('objetivo_hep', value)} placeholder="Ex: Fortalecer o manguito rotador e melhorar a ADM"/>
+                    <FormTextarea label="Lista de Exercícios (separados por vírgula)*" name="lista_exercicios" value={formData.lista_exercicios} onChange={(value) => handleRichTextChange('lista_exercicios', value)} placeholder="Ex: Ponte de glúteos, Perdigueiro, Prancha frontal"/>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <FormInput label="Séries" name="series" value={formData.series} onChange={handleInputChange} placeholder="Ex: 3"/>
@@ -161,7 +171,7 @@ const HepGeneratorPage: React.FC = () => {
                         <FormInput label="Frequência" name="frequencia" value={formData.frequencia} onChange={handleInputChange} placeholder="Ex: 3x por semana"/>
                     </div>
                     
-                    <FormTextarea label="Observações e Contraindicações" name="observacoes" value={formData.observacoes} onChange={handleInputChange} placeholder="Ex: Evitar movimentos bruscos, não prender a respiração"/>
+                    <FormTextarea label="Observações e Contraindicações" name="observacoes" value={formData.observacoes} onChange={(value) => handleRichTextChange('observacoes', value)} placeholder="Ex: Evitar movimentos bruscos, não prender a respiração"/>
 
                      <button 
                         onClick={handleSubmit}

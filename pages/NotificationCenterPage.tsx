@@ -7,6 +7,7 @@ import * as notificationService from '../services/notificationService';
 import { useToast } from '../contexts/ToastContext';
 import { Bell, Send, CheckCheck, Loader, MessageSquare, Inbox, CalendarClock, ClipboardList, Megaphone, Dumbbell } from 'lucide-react';
 import { Skeleton } from '../components/ui/skeleton';
+import TiptapEditor from '../components/ui/TiptapEditor';
 
 // A simple time ago function for display
 const timeAgo = (date: Date): string => {
@@ -79,12 +80,10 @@ const BroadcastForm: React.FC<{ onSent: () => void }> = ({ onSent }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
                 <label htmlFor="broadcast-message" className="block text-sm font-medium text-slate-700">Mensagem</label>
-                <textarea
-                    id="broadcast-message"
-                    rows={4}
+                <TiptapEditor
                     value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                    onChange={setMessage}
+                    minHeight="120px"
                     placeholder="Digite seu comunicado aqui..."
                 />
             </div>

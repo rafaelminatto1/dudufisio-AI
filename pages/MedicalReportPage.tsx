@@ -12,7 +12,7 @@ import * as reportService from '../services/reportService';
 import PageHeader from '../components/PageHeader';
 import PageLoader from '../components/ui/PageLoader';
 import InfoCard from '../components/ui/InfoCard';
-import RichTextEditor from '../components/ui/RichTextEditor';
+import TiptapEditor from '../components/ui/TiptapEditor';
 import { useToast } from '../contexts/ToastContext';
 import { User, Sparkles, Save, FileCheck, ChevronLeft, Loader, FileText } from 'lucide-react';
 
@@ -67,8 +67,8 @@ const MedicalReportPage: React.FC = () => {
 
     // 🚀 Handler memoizado para geração de relatório
     const handleGenerate = useCallback(async () => {
-        if (!patientId || !recipientDoctor.trim() || !recipientCrm.trim()) {
-            showToast('Por favor, informe o médico e CRM de destino.', 'error');
+        if (!patientId) {
+            showToast('ID do paciente não encontrado.', 'error');
             return;
         }
         setIsGenerating(true);
@@ -77,8 +77,7 @@ const MedicalReportPage: React.FC = () => {
             setReport(newReport);
             setContent(newReport.content);
             showToast('Relatório gerado com sucesso!', 'success');
-            // Navigate to the edit URL to establish the report ID in the URL
-            navigate(`/medical-report/edit/${newReport.id}`, { replace: true });
+            // Stay on the same page, just update the state
         } catch (error) {
             showToast('Falha ao gerar relatório com IA.', 'error');
         } finally {
@@ -101,9 +100,24 @@ const MedicalReportPage: React.FC = () => {
             await reportService.updateReport(report.id, updatedData);
             showToast(isFinalizing ? 'Relatório finalizado!' : 'Rascunho salvo!', 'success');
             if (isFinalizing) {
-                // In a real app, this would trigger a PDF generation and download
+                // Simulate PDF generation
                 showToast('Gerando PDF... (funcionalidade simulada)', 'info');
-                navigate(`/patients/${report.patientId}`);
+                
+                // Simulate PDF download
+                setTimeout(() => {
+                    const element = document.createElement('a');
+                    const file = new Blob([content], { type: 'text/html' });
+                    element.href = URL.createObjectURL(file);
+                    element.download = `relatorio-${patient?.name?.replace(/\s+/g, '-').toLowerCase() || 'paciente'}-${new Date().toISOString().split('T')[0]}.html`;
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+                    URL.revokeObjectURL(element.href);
+                    
+                    showToast('PDF gerado e baixado com sucesso!', 'success');
+                }, 2000);
+                
+                // Don't navigate away - stay on the page
             } else {
                 // Refresh data
                 await loadData();
@@ -115,6 +129,16 @@ const MedicalReportPage: React.FC = () => {
         }
     }, [report, content, recipientDoctor, recipientCrm, showToast, navigate, loadData]);
 
+    // 🚀 Valores computados memoizados - MOVIDOS PARA ANTES DOS RETURNS CONDICIONAIS
+    const pageTitle = useMemo(
+        () => report ? report.title : `Novo Relatório para ${patient?.name || 'Paciente'}`,
+        [report, patient?.name]
+    );
+
+    const backLink = useMemo(
+        () => report ? `/patients/${report.patientId}` : `/patients/${patientId}`,
+        [report, patientId]
+    );
 
     // Handle loading state
     if (isLoading) {
@@ -125,17 +149,6 @@ const MedicalReportPage: React.FC = () => {
     if (!patient) {
         return null;
     }
-
-    // 🚀 Valores computados memoizados
-    const pageTitle = useMemo(
-        () => report ? report.title : `Novo Relatório para ${patient.name}`,
-        [report, patient.name]
-    );
-
-    const backLink = useMemo(
-        () => report ? `/patients/${report.patientId}` : `/patients/${patientId}`,
-        [report, patientId]
-    );
 
     return (
         <div className="space-y-6">
@@ -154,12 +167,12 @@ const MedicalReportPage: React.FC = () => {
                                 <p className="font-semibold">{patient.name}</p>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700">Médico Destinatário*</label>
-                                <input type="text" value={recipientDoctor} onChange={e => setRecipientDoctor(e.target.value)} className="mt-1 w-full p-2 border border-slate-300 rounded-lg" />
+                                <label className="block text-sm font-medium text-slate-700">Médico Destinatário (opcional)</label>
+                                <input type="text" value={recipientDoctor} onChange={e => setRecipientDoctor(e.target.value)} placeholder="Nome do médico destinatário" className="mt-1 w-full p-2 border border-slate-300 rounded-lg" />
                             </div>
                              <div>
-                                <label className="block text-sm font-medium text-slate-700">CRM do Destinatário*</label>
-                                <input type="text" value={recipientCrm} onChange={e => setRecipientCrm(e.target.value)} className="mt-1 w-full p-2 border border-slate-300 rounded-lg" />
+                                <label className="block text-sm font-medium text-slate-700">CRM do Destinatário (opcional)</label>
+                                <input type="text" value={recipientCrm} onChange={e => setRecipientCrm(e.target.value)} placeholder="CRM do médico destinatário" className="mt-1 w-full p-2 border border-slate-300 rounded-lg" />
                             </div>
                         </div>
                     </InfoCard>
@@ -191,13 +204,18 @@ const MedicalReportPage: React.FC = () => {
                             <Loader className="w-12 h-12 text-teal-500 animate-spin"/>
                             <p className="mt-4 text-slate-600">A IA está analisando os dados do paciente e gerando o relatório...</p>
                         </div>
-                    ) : report ? (
-                        <RichTextEditor value={content} onChange={setContent} rows={25} />
-                    ) : (
+                           ) : report ? (
+                               <TiptapEditor 
+                                   value={content} 
+                                   onChange={setContent} 
+                                   minHeight="600px"
+                                   placeholder="O relatório gerado pela IA aparecerá aqui. Você pode editá-lo conforme necessário."
+                               />
+                           ) : (
                         <div className="flex flex-col items-center justify-center h-full text-center text-slate-500">
                              <FileText className="w-16 h-16 text-slate-300 mb-4" />
                              <p className="font-semibold">O relatório gerado pela IA aparecerá aqui.</p>
-                             <p className="text-sm mt-1">Preencha os dados do destinatário e clique em "Gerar Relatório com IA".</p>
+                             <p className="text-sm mt-1">Clique em "Gerar Relatório com IA" para criar o laudo. Os dados do médico destinatário são opcionais.</p>
                         </div>
                     )}
                 </div>

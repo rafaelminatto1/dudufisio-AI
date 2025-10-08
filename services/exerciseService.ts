@@ -1,7 +1,8 @@
 // services/exerciseService.ts
 import { supabase } from '../lib/supabase';
+import { Exercise } from '../types';
 
-export interface Exercise {
+export interface ExerciseServiceExercise {
   id: string;
   name: string;
   description: string;
@@ -271,52 +272,52 @@ class ExerciseService {
         name: 'Flexão de Braço',
         description: 'Exercício para fortalecimento dos músculos do peitoral, tríceps e deltoides.',
         category: 'Fortalecimento',
-        muscle_groups: ['Peitoral', 'Tríceps', 'Deltoides'],
+        bodyParts: ['Peitoral', 'Tríceps', 'Deltoides'],
+        difficulty: 2,
         equipment: ['Corpo'],
-        difficulty_level: 'intermediate',
-        duration_minutes: 5,
-        repetitions: 15,
-        sets: 3,
         instructions: [
           'Deite-se de bruços no chão',
           'Coloque as mãos no chão na largura dos ombros',
           'Mantenha o corpo reto',
           'Empurre o corpo para cima'
         ],
-        precautions: ['Não arquear as costas', 'Manter o core contraído'],
-        benefits: ['Fortalece peitoral', 'Melhora estabilidade do core'],
-        video_url: '',
-        image_urls: [],
-        tags: ['fortalecimento', 'casa', 'básico'],
-        is_active: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        media: {
+          videoUrl: 'https://www.youtube.com/watch?v=IODxDxX7oi4',
+          thumbnailUrl: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+          duration: 300
+        },
+        contraindications: ['Não arquear as costas', 'Manter o core contraído'],
+        indications: ['Fortalece peitoral', 'Melhora estabilidade do core'],
+        modifications: {
+          easier: 'Apoiar os joelhos no chão',
+          harder: 'Adicionar elevação dos pés'
+        }
       },
       {
         id: '2',
         name: 'Agachamento',
         description: 'Exercício fundamental para fortalecimento dos membros inferiores.',
         category: 'Fortalecimento',
-        muscle_groups: ['Quadríceps', 'Glúteos', 'Isquiotibiais'],
+        bodyParts: ['Quadríceps', 'Glúteos', 'Isquiotibiais'],
+        difficulty: 1,
         equipment: ['Corpo'],
-        difficulty_level: 'beginner',
-        duration_minutes: 5,
-        repetitions: 20,
-        sets: 3,
         instructions: [
           'Fique em pé com os pés na largura dos quadris',
           'Flexione os joelhos como se fosse sentar',
           'Mantenha as costas retas',
           'Retorne à posição inicial'
         ],
-        precautions: ['Não deixar os joelhos ultrapassarem os pés', 'Manter o peso nos calcanhares'],
-        benefits: ['Fortalece pernas', 'Melhora equilíbrio', 'Funcional'],
-        video_url: '',
-        image_urls: [],
-        tags: ['fortalecimento', 'pernas', 'funcional'],
-        is_active: true,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        media: {
+          videoUrl: 'https://www.youtube.com/watch?v=YaXPRqUwItQ',
+          thumbnailUrl: 'https://images.pexels.com/photos/6456272/pexels-photo-6456272.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
+          duration: 300
+        },
+        contraindications: ['Não deixar os joelhos ultrapassarem os pés', 'Manter o peso nos calcanhares'],
+        indications: ['Fortalece pernas', 'Melhora equilíbrio', 'Funcional'],
+        modifications: {
+          easier: 'Usar apoio para sentar',
+          harder: 'Adicionar salto no final'
+        }
       }
     ];
   }

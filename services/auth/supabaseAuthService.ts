@@ -121,7 +121,7 @@ class SupabaseAuthService {
       id: 'mock-user-1',
       email: 'admin@dudufisio.com',
       name: 'Administrador',
-      role: 'admin' as Role,
+      role: Role.Admin,
       avatarUrl: '',
       phone: undefined,
       createdAt: new Date().toISOString()
@@ -147,34 +147,34 @@ class SupabaseAuthService {
         id: 'mock-admin-1',
         email: 'admin@dudufisio.com',
         name: 'Administrador',
-        role: 'admin' as Role,
+        role: Role.Admin,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
-      } as any,
+      },
       'therapist@dudufisio.com': {
         id: 'mock-therapist-1',
         email: 'therapist@dudufisio.com',
         name: 'Fisioterapeuta',
-        role: 'therapist' as Role,
+        role: Role.Therapist,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
-      } as any,
+      },
       'patient@dudufisio.com': {
         id: 'mock-patient-1',
         email: 'patient@dudufisio.com',
         name: 'Paciente',
-        role: 'patient' as Role,
+        role: Role.Patient,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
-      } as any,
+      },
       'educator@dudufisio.com': {
         id: 'mock-educator-1',
         email: 'educator@dudufisio.com',
         name: 'Educador Físico',
-        role: 'educator' as Role,
+        role: Role.EducadorFisico,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString(),
@@ -187,8 +187,16 @@ class SupabaseAuthService {
       throw new Error('Credenciais inválidas');
     }
 
-    // Update state with mock user
-    this.updateState({ user, session: null, loading: false });
+    // Create mock session
+    const mockSession = {
+      access_token: 'mock-access-token',
+      refresh_token: 'mock-refresh-token',
+      expires_at: Date.now() + 3600000, // 1 hour
+      user: user
+    };
+
+    // Update state with mock user and session
+    this.updateState({ user, session: mockSession, loading: false });
     return user;
   }
 

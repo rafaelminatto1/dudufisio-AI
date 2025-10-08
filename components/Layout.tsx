@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Breadcrumbs from './Breadcrumbs';
+import SkipToContent from './ui/SkipToContent';
 
 interface LayoutProps {
   user: any;
@@ -71,6 +72,8 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
 
     return (
         <div className="flex h-screen bg-slate-50">
+            <SkipToContent />
+            
             {/* Sidebar */}
             <Sidebar />
 
@@ -86,6 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
                             <button
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                                aria-label="Fechar menu"
                             >
                                 <X className="w-5 h-5 text-slate-600" />
                             </button>
@@ -107,6 +111,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
                         <button
                             onClick={() => setIsMobileMenuOpen(true)}
                             className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                            aria-label="Abrir menu de navegação"
                         >
                             <Menu className="w-5 h-5 text-slate-600" />
                         </button>
@@ -114,12 +119,16 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
                             Fisio<span className="text-sky-500">Flow</span>
                         </h1>
                         <div className="flex items-center space-x-2">
-                            <button className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+                            <button 
+                                className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                                aria-label="Notificações"
+                            >
                                 <Bell className="w-5 h-5 text-slate-600" />
                             </button>
                             <button
                                 onClick={onLogout}
                                 className="p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                                aria-label="Sair do sistema"
                             >
                                 <LogOut className="w-5 h-5 text-slate-600" />
                             </button>
@@ -128,7 +137,13 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
                 </div>
 
                 {/* Content */}
-                <main className="flex-1 overflow-y-auto bg-slate-50">
+                <main 
+                    id="main-content"
+                    className="flex-1 overflow-y-auto bg-slate-50" 
+                    data-testid="main-content"
+                    role="main"
+                    aria-label="Conteúdo principal"
+                >
                     <div className="p-6">
                         <Breadcrumbs />
                     {children}

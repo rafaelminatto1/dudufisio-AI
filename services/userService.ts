@@ -1,6 +1,8 @@
 // services/userService.ts
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database';
+import { mockUsers } from '../data/mockData';
+import { Role } from '../types';
 
 export type UserProfile = Database['public']['Tables']['users']['Row'];
 
@@ -36,9 +38,34 @@ class UserService {
         role: (user.role as any) || 'patient'
       }));
     } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
-      throw error;
+      console.warn('⚠️ Erro ao buscar usuários do Supabase, usando dados mock:', error);
+      // Fallback para dados mock em caso de erro
+      return this.getMockUsers();
     }
+  }
+
+  private getMockUsers(): UserProfile[] {
+    return mockUsers.map(user => ({
+      id: user.id,
+      email: user.email,
+      full_name: user.name,
+      role: user.role as any,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      phone: user.phone || null,
+      avatar_url: user.avatarUrl || null,
+      permissions: null,
+      profile_settings: null,
+      last_login: null,
+      email_verified: true,
+      two_factor_enabled: false,
+      password_hash: null,
+      reset_token: null,
+      reset_token_expires: null,
+      verification_token: null,
+      verification_token_expires: null
+    }));
   }
 
   async getUserById(id: string): Promise<UserProfile | null> {

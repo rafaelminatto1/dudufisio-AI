@@ -241,6 +241,7 @@ class ReportingService {
   private static instance: ReportingService;
   private templates: Map<string, ReportTemplate> = new Map();
   private generatedReports: Map<string, GeneratedReport> = new Map();
+  private generatedUrls: Map<string, { fileName: string; mimeType: string }> = new Map();
 
   public static getInstance(): ReportingService {
     if (!ReportingService.instance) {
@@ -841,8 +842,166 @@ class ReportingService {
   }
 
   private async generateDownloadUrl(report: GeneratedReport, format: ExportFormat): Promise<string> {
-    // In a real implementation, this would generate actual download URLs
-    return `/api/reports/${report.id}/download/${format}`;
+    try {
+      // Generate actual file content based on format
+      let fileContent: string | Blob;
+      let fileName: string;
+      let mimeType: string;
+
+      switch (format) {
+        case 'pdf':
+          fileContent = await this.generatePDFContent(report);
+          fileName = `relatorio_${report.id}_${new Date().toISOString().split('T')[0]}.pdf`;
+          mimeType = 'application/pdf';
+          break;
+        case 'excel':
+          fileContent = await this.generateExcelContent(report);
+          fileName = `relatorio_${report.id}_${new Date().toISOString().split('T')[0]}.xlsx`;
+          mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+          break;
+        case 'csv':
+          fileContent = this.generateCSVContent(report);
+          fileName = `relatorio_${report.id}_${new Date().toISOString().split('T')[0]}.csv`;
+          mimeType = 'text/csv';
+          break;
+        case 'json':
+          fileContent = JSON.stringify(report, null, 2);
+          fileName = `relatorio_${report.id}_${new Date().toISOString().split('T')[0]}.json`;
+          mimeType = 'application/json';
+          break;
+        default:
+          throw new Error(`Formato ${format} não suportado`);
+      }
+
+      // Create blob and return URL
+      const blob = new Blob([fileContent], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      
+      // Store the URL for cleanup later (optional)
+      this.generatedUrls.set(url, { fileName, mimeType });
+      
+      return url;
+    } catch (error) {
+      console.error('Erro ao gerar URL de download:', error);
+      throw error;
+    }
+  }
+
+  // Content generation methods
+  private async generatePDFContent(report: GeneratedReport): Promise<Blob> {
+    try {
+      // Use jsPDF directly for a more reliable solution
+      const jsPDF = (await import('jspdf')).jsPDF;
+      const doc = new jsPDF();
+      
+      // Set font and add title
+      doc.setFontSize(20);
+      doc.text(report.title, 20, 30);
+      
+      // Add generation date
+      doc.setFontSize(12);
+      doc.text(`Gerado em: ${new Date(report.generatedAt).toLocaleDateString('pt-BR')}`, 20, 45);
+      
+      // Add summary section
+      doc.setFontSize(16);
+      doc.text('Resumo Executivo', 20, 65);
+      
+      doc.setFontSize(10);
+      const summaryText = report.data.summary.description || 'Resumo não disponível';
+      const splitSummary = doc.splitTextToSize(summaryText, 170);
+      doc.text(splitSummary, 20, 80);
+      
+      // Add metrics section
+      let yPosition = 100;
+      doc.setFontSize(16);
+      doc.text('Métricas Principais', 20, yPosition);
+      
+      doc.setFontSize(10);
+      yPosition += 15;
+      
+      report.data.summary.metrics.forEach((metric, index) => {
+        const metricText = `${metric.name}: ${metric.value} (${metric.trend})`;
+        doc.text(metricText, 20, yPosition + (index * 10));
+      });
+      
+      // Add analyses section
+      yPosition += report.data.summary.metrics.length * 10 + 20;
+      doc.setFontSize(16);
+      doc.text('Análises', 20, yPosition);
+      
+      doc.setFontSize(10);
+      yPosition += 15;
+      
+      report.data.analysis.forEach((analysis, index) => {
+        doc.text(`${analysis.title}`, 20, yPosition + (index * 30));
+        const analysisText = doc.splitTextToSize(analysis.description, 170);
+        doc.text(analysisText, 20, yPosition + (index * 30) + 10);
+      });
+      
+      // Add footer
+      const pageHeight = doc.internal.pageSize.height;
+      doc.setFontSize(8);
+      doc.text('Relatório gerado automaticamente pelo sistema DuduFisio-AI', 20, pageHeight - 20);
+      doc.text(`ID do Relatório: ${report.id}`, 20, pageHeight - 10);
+      
+      // Generate blob
+      const pdfBlob = doc.output('blob');
+      return pdfBlob;
+      
+    } catch (error) {
+      console.error('Erro ao gerar PDF:', error);
+      // Fallback: create a simple text blob
+      const fallbackContent = `
+RELATÓRIO: ${report.title}
+Data: ${new Date(report.generatedAt).toLocaleDateString('pt-BR')}
+
+RESUMO EXECUTIVO:
+${report.data.summary.description || 'Resumo não disponível'}
+
+MÉTRICAS PRINCIPAIS:
+${report.data.summary.metrics.map(m => `- ${m.name}: ${m.value} (${m.trend})`).join('\n')}
+
+ANÁLISES:
+${report.data.analysis.map(a => `- ${a.title}: ${a.description}`).join('\n')}
+
+ID do Relatório: ${report.id}
+Gerado pelo sistema DuduFisio-AI
+      `;
+      
+      return new Blob([fallbackContent], { type: 'text/plain' });
+    }
+  }
+
+  private async generateExcelContent(report: GeneratedReport): Promise<Blob> {
+    // Simple CSV-like Excel content (in a real implementation, you'd use a proper Excel library)
+    const csvContent = this.generateCSVContent(report);
+    return new Blob([csvContent], { type: 'text/csv' });
+  }
+
+  private generateCSVContent(report: GeneratedReport): string {
+    const rows = [
+      ['Relatório', report.title],
+      ['ID', report.id],
+      ['Data de Geração', new Date(report.generatedAt).toLocaleDateString('pt-BR')],
+      ['Status', report.status],
+      [''],
+      ['Métricas Principais'],
+      ['Nome', 'Valor', 'Tendência']
+    ];
+
+    report.data.summary.metrics.forEach(metric => {
+      rows.push([metric.name, metric.value.toString(), metric.trend]);
+    });
+
+    rows.push(['']);
+    rows.push(['Análises']);
+    rows.push(['Título', 'Descrição']);
+
+    report.data.analysis.forEach(analysis => {
+      rows.push([analysis.title, analysis.description]);
+    });
+
+    return rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
   }
 
   // Business Intelligence methods

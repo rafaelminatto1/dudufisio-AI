@@ -1,17 +1,20 @@
 import React, { Suspense, useState, useCallback, useMemo } from 'react';
 import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
-import { Calendar, Users, Activity, BarChart3, Download, RefreshCw, Star } from 'lucide-react';
+import { Calendar, Users, Activity, BarChart3, Download, RefreshCw, Star, FileText } from 'lucide-react';
 import Layout from '../components/Layout';
+import ErrorBoundary from '../components/ErrorBoundary';
+import { PageSkeleton, DashboardSkeleton } from '../components/ui/PageSkeleton';
 import { LazyPages, LazyComponents, createLazyComponent } from '../lib/lazyLoading';
 
 // ✅ IMPORTANTE: Todos os lazy imports agora vêm de LazyPages/LazyComponents centralizados
 // Isso evita múltiplas instâncias do React e erros "Cannot read properties of null"
-const AgendaPage = createLazyComponent(() => import('./AgendaPage'));
+import AgendaPage from './AgendaPage';
 const PatientListPage = createLazyComponent(() => import('./PatientListPage'));
 const PatientDetailPage = createLazyComponent(() => import('./PatientDetailPage'));
 const SessionFormPage = LazyPages.SessionFormPage;
 const SessionViewPage = LazyPages.SessionViewPage;
-const FinancialDashboardPage = LazyPages.FinancialDashboardPage;
+const FinancialPage = LazyPages.FinancialPage;
+const FinancialDashboardPage = LazyPages.FinancialDashboardPage; // Alias para compatibilidade
 const AdminDashboardPage = createLazyComponent(() => import('./AdminDashboardPage'));
 const ReportsPage = LazyPages.ReportsPage;
 const AiAnalyticsPage = LazyPages.AiAnalyticsPage;
@@ -40,11 +43,14 @@ const SessionEvolutionPage = createLazyComponent(() => import('./SessionEvolutio
 const EventDetailPage = createLazyComponent(() => import('./EventDetailPage'));
 const EventsListPage = createLazyComponent(() => import('./EventsListPage'));
 const MaterialDetailPage = createLazyComponent(() => import('./MaterialDetailPage'));
+const MaterialsPage = createLazyComponent(() => import('./MaterialsPage'));
+const GerarLaudoPage = createLazyComponent(() => import('./GerarLaudoPage'));
 const MedicalReportPage = createLazyComponent(() => import('./MedicalReportPage'));
 const EvaluationReportPage = createLazyComponent(() => import('./EvaluationReportPage'));
 const ClinicalLibraryPage = createLazyComponent(() => import('./ClinicalLibraryPage'));
 const InventoryDashboardPage = createLazyComponent(() => import('./InventoryDashboardPage'));
 const NotificationCenterPage = createLazyComponent(() => import('./NotificationCenterPage'));
+const NotFoundPage = LazyPages.NotFoundPage;
 const SubscriptionPage = createLazyComponent(() => import('./SubscriptionPage'));
 const LegalPage = createLazyComponent(() => import('./LegalPage'));
 const KnowledgeBasePage = createLazyComponent(() => import('./KnowledgeBasePage'));
@@ -58,9 +64,11 @@ const MentoriaPageOld = createLazyComponent(() => import('./MentoriaPage'));
 const GroupsPage = createLazyComponent(() => import('./GroupsPage'));
 import KanbanPage from './KanbanPage';
 const RiskAnalysisPage = createLazyComponent(() => import('./RiskAnalysisPage'));
+const RiskStratificationPage = createLazyComponent(() => import('./RiskStratificationPage'));
 const ClinicalAnalyticsPage = createLazyComponent(() => import('./ClinicalAnalyticsPage'));
 const SettingsPage = createLazyComponent(() => import('./SettingsPage'));
 const PartnershipPage = createLazyComponent(() => import('./PartnershipPage'));
+const AiSettingsPage = createLazyComponent(() => import('./AiSettingsPage'));
 
 // Componentes consolidados
 const ConsolidatedReportsDashboard = LazyComponents.ConsolidatedReportsDashboard;
@@ -68,11 +76,7 @@ const ConsolidatedAITools = LazyComponents.ConsolidatedAITools;
 const PerformanceDashboard = createLazyComponent(() => import('../components/admin/PerformanceDashboard'));
 
 // Loading component for lazy pages
-const PageLoader = () => (
-    <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-600"></div>
-    </div>
-);
+const PageLoader = () => <PageSkeleton />;
 
 // StatCard component for dashboard - memoized for performance
 const StatCard = React.memo(({ icon: Icon, title, value, change, changeType }: any) => (
@@ -133,6 +137,7 @@ const DashboardContent = React.memo(() => {
                         value={timeframe}
                         onChange={(e) => setTimeframe(e.target.value)}
                         className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                        aria-label="Selecionar período de tempo"
                     >
                         <option value="today">Hoje</option>
                         <option value="week">Esta Semana</option>
@@ -158,7 +163,11 @@ const DashboardContent = React.memo(() => {
                 <div className="xl:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 p-6">
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-semibold text-slate-900">Receita Mensal</h3>
-                        <button className="text-slate-400 hover:text-slate-600">
+                        <button 
+                            className="text-slate-400 hover:text-slate-600"
+                            title="Baixar relatório de receita"
+                            aria-label="Baixar relatório de receita"
+                        >
                             <Download className="w-5 h-5" />
                         </button>
                     </div>
@@ -309,8 +318,9 @@ const SessionRoute: React.FC<{ mode?: 'view' | 'form' }> = ({ mode = 'view' }) =
 
 const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout }) => {
     return (
-        <Layout user={user} onLogout={onLogout}>
-            <Routes>
+        <ErrorBoundary>
+            <Layout user={user} onLogout={onLogout}>
+                <Routes>
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<DashboardContent />} />
                 
@@ -323,7 +333,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/dashboard-page" element={LazyElement(DashboardPage)} />
                 
                 {/* Main Navigation */}
-                <Route path="/agenda" element={LazyElement(AgendaPage)} />
+                <Route path="/agenda" element={<AgendaPage />} />
                 <Route path="/patients" element={LazyElement(PatientListPage)} />
                 <Route path="/patients/:id" element={LazyElement(PatientDetailPage)} />
                 <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
@@ -353,23 +363,21 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 
                 {/* AI Tools */}
                 <Route path="/ai-tools/consolidated" element={LazyElement(ConsolidatedAITools)} />
-                <Route path="/gerar-laudo" element={LazyElement(MedicalReportPage)} />
+                <Route path="/gerar-laudo" element={LazyElement(GerarLaudoPage)} />
+                <Route path="/medical-report/new/:patientId" element={LazyElement(MedicalReportPage)} />
                 <Route path="/gerar-evolucao" element={LazyElement(SessionEvolutionPage)} />
-                <Route path="/gerar-hep" element={LazyElement(HepGeneratorPage)} />
                 <Route path="/hep-generator" element={LazyElement(HepGeneratorPage)} />
-                <Route path="/analise-risco" element={LazyElement(RiskAnalysisPage)} />
                 <Route path="/risk-analysis" element={LazyElement(RiskAnalysisPage)} />
+                <Route path="/risk-stratification/:patientId" element={LazyElement(RiskStratificationPage)} />
+                <Route path="/ia-economica" element={LazyElement(AiAnalyticsPage)} />
                 
                 {/* Management */}
-                <Route path="/users" element={LazyElement(UserManagementPage)} />
                 <Route path="/user-management" element={LazyElement(UserManagementPage)} />
                 <Route path="/groups" element={LazyElement(GroupsPage)} />
-                <Route path="/exercises" element={<ExerciseLibraryPage />} />
                 <Route path="/exercise-library" element={<ExerciseLibraryPage />} />
-                <Route path="/materials" element={<MaterialDetailPage />} />
+                <Route path="/materials" element={<MaterialsPage />} />
                 <Route path="/clinical-library" element={<ClinicalLibraryPage />} />
                 <Route path="/material-detail" element={LazyElement(MaterialDetailPage)} />
-                <Route path="/protocolos" element={LazyElement(ProtocolsPage)} />
                 <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
                 <Route path="/specialty-assessments" element={LazyElement(SpecialtyAssessmentsPage)} />
                 <Route path="/evaluations" element={LazyElement(SpecialtyAssessmentsPage)} />
@@ -377,7 +385,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 {/* Inventory */}
                 <Route path="/inventory" element={LazyElement(InventoryPage)} />
                 <Route path="/estoque" element={LazyElement(InventoryPage)} />
-                <Route path="/inventory-dashboard" element={LazyElement(InventoryDashboardPage)} />
+                <Route path="/inventory-dashboard" element={<Navigate to="/inventory" replace />} />
                 
                 {/* Events */}
                 <Route path="/events" element={LazyElement(EventsListPage)} />
@@ -400,10 +408,10 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/integrations" element={LazyElement(IntegrationsTestPage)} />
                 <Route path="/integrations-test" element={LazyElement(IntegrationsTestPage)} />
                 <Route path="/bi-integration-test" element={LazyElement(BIIntegrationTestPage)} />
+                <Route path="/ai-settings" element={LazyElement(AiSettingsPage)} />
                 <Route path="/audit-log" element={LazyElement(AuditLogPage)} />
                 <Route path="/audit-log-page" element={LazyElement(AuditLogPage)} />
                 <Route path="/partnerships" element={LazyElement(PartnershipPage)} />
-                <Route path="/partnership-page" element={LazyElement(PartnershipPage)} />
                 <Route path="/subscriptions" element={LazyElement(SubscriptionPage)} />
                 <Route path="/legal" element={LazyElement(LegalPage)} />
                 <Route path="/settings" element={LazyElement(SettingsPage)} />
@@ -413,9 +421,11 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/admin" element={LazyElement(AdminDashboardPage)} />
                 <Route path="/financial" element={LazyElement(FinancialDashboardPage)} />
                 
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                {/* 404 - Catch all unknown routes */}
+                <Route path="*" element={LazyElement(NotFoundPage)} />
             </Routes>
         </Layout>
+        </ErrorBoundary>
     );
 };
 

@@ -66,9 +66,12 @@ export const LazyPages = {
   TherapistDashboard: createLazyComponent(() => import('../pages/TherapistDashboard')),
   ReportsPage: createLazyComponent(() => import('../pages/ReportsPage')),
   AiAnalyticsPage: createLazyComponent(() => import('../pages/AiAnalyticsPage')),
-  FinancialDashboardPage: createLazyComponent(() => import('../pages/FinancialDashboardPage')),
+  FinancialPage: createLazyComponent(() => import('../pages/FinancialPage')),
+  FinancialDashboardPage: createLazyComponent(() => import('../pages/FinancialPage')), // Alias para compatibilidade
   InventoryPage: createLazyComponent(() => import('../pages/InventoryPage')),
   UserManagementPage: createLazyComponent(() => import('../pages/UserManagementPage')),
+  NotFoundPage: createLazyComponent(() => import('../pages/NotFoundPage')),
+  ErrorPage: createLazyComponent(() => import('../pages/ErrorPage')),
   AdminDashboardPage: createLazyComponent(() => import('../pages/AdminDashboardPage')),
   CompleteDashboard: CompleteDashboard,
   SessionFormPage: createLazyComponent(() => import('../pages/SessionFormPage')),

@@ -79,8 +79,32 @@ const AdvancedReportsPage: React.FC = () => {
 
   const handleExportReport = async (reportId: string, format: string) => {
     try {
+      if (format === 'pdf') {
+        // Use the simple PDF service for PDF generation
+        const report = reports.find(r => r.id === reportId);
+        if (report) {
+          const { SimplePDFService } = await import('../services/simplePdfService');
+          await SimplePDFService.generateReportPDF(report);
+          return;
+        }
+      }
+      
+      // For other formats, use the original method
       const downloadUrl = await exportReport(reportId, format);
-      window.open(downloadUrl, '_blank');
+      
+      // Create a temporary link element for download
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `relatorio_${reportId}_${new Date().toISOString().split('T')[0]}.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the URL after a delay
+      setTimeout(() => {
+        URL.revokeObjectURL(downloadUrl);
+      }, 1000);
+      
     } catch (error) {
       console.error('Erro ao exportar relatório:', error);
     }

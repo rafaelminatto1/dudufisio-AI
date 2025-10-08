@@ -9,6 +9,11 @@ export interface MaterialDetails extends Material {
     category: MaterialCategory;
 }
 
+export const getMaterialCategories = async (): Promise<MaterialCategory[]> => {
+    await delay(100);
+    return [...mockMaterialCategories];
+};
+
 export const getMaterialById = async (id: string): Promise<MaterialDetails | undefined> => {
     await delay(100);
     for (const category of mockMaterialCategories) {

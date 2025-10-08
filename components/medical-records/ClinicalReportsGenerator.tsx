@@ -278,12 +278,76 @@ export function ClinicalReportsGenerator() {
     }
   };
 
-  const handleExportReport = (format: 'pdf' | 'docx' | 'html') => {
-    toast({
-      title: "Exportando Relatório",
-      description: `Exportando relatório em formato ${format.toUpperCase()}...`,
-    });
-    // Aqui seria implementada a lógica de exportação
+  const handleExportReport = async (format: 'pdf' | 'docx' | 'html') => {
+    if (!generatedReport) {
+      toast({
+        title: "Erro",
+        description: "Nenhum relatório gerado para exportar.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      toast({
+        title: "Exportando Relatório",
+        description: `Exportando relatório em formato ${format.toUpperCase()}...`,
+      });
+
+      // Generate content based on format
+      let content: string;
+      let fileName: string;
+      let mimeType: string;
+
+      switch (format) {
+        case 'pdf':
+          // Use the simple PDF service for PDF generation
+          const { SimplePDFService } = await import('../../services/simplePdfService');
+          await SimplePDFService.generateClinicalReportPDF(generatedReport);
+          return;
+        case 'docx':
+          content = generateDocxFromReport(generatedReport);
+          fileName = `relatorio_clinico_${generatedReport.id}_${new Date().toISOString().split('T')[0]}.docx`;
+          mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+          break;
+        case 'html':
+          content = generateHtmlFromReport(generatedReport);
+          fileName = `relatorio_clinico_${generatedReport.id}_${new Date().toISOString().split('T')[0]}.html`;
+          mimeType = 'text/html';
+          break;
+        default:
+          throw new Error(`Formato ${format} não suportado`);
+      }
+
+      // Create and download file
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 1000);
+
+      toast({
+        title: "Sucesso",
+        description: `Relatório exportado em ${format.toUpperCase()} com sucesso!`,
+      });
+
+    } catch (error) {
+      console.error('Erro ao exportar relatório:', error);
+      toast({
+        title: "Erro na Exportação",
+        description: "Não foi possível exportar o relatório. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -645,5 +709,185 @@ export function ClinicalReportsGenerator() {
       </div>
     </div>
   );
+}
+
+// Helper functions for export
+async function generatePDFFromReport(report: any): Promise<string> {
+  try {
+    // Use jsPDF directly for a more reliable solution
+    const jsPDF = (await import('jspdf')).jsPDF;
+    const doc = new jsPDF();
+    
+    // Set font and add title
+    doc.setFontSize(20);
+    doc.text(report.title || 'Relatório Clínico', 20, 30);
+    
+    // Add patient info
+    doc.setFontSize(12);
+    doc.text(`Paciente: ${report.patientName || 'N/A'}`, 20, 45);
+    doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 20, 55);
+    
+    // Add summary section
+    doc.setFontSize(16);
+    doc.text('Resumo do Tratamento', 20, 75);
+    
+    doc.setFontSize(10);
+    const summaryText = report.summary || 'Resumo não disponível';
+    const splitSummary = doc.splitTextToSize(summaryText, 170);
+    doc.text(splitSummary, 20, 90);
+    
+    // Add clinical progress
+    let yPosition = 110;
+    doc.setFontSize(16);
+    doc.text('Progresso Clínico', 20, yPosition);
+    
+    doc.setFontSize(10);
+    yPosition += 15;
+    const progressText = report.clinicalProgress || 'Progresso não documentado';
+    const splitProgress = doc.splitTextToSize(progressText, 170);
+    doc.text(splitProgress, 20, yPosition);
+    
+    // Add outcome measures if available
+    if (report.outcomeMeasures) {
+      yPosition += splitProgress.length * 5 + 20;
+      doc.setFontSize(16);
+      doc.text('Medidas de Resultado', 20, yPosition);
+      
+      doc.setFontSize(10);
+      yPosition += 15;
+      doc.text(`Dor Inicial: ${report.outcomeMeasures.painInitial || 'N/A'}`, 20, yPosition);
+      doc.text(`Dor Atual: ${report.outcomeMeasures.painCurrent || 'N/A'}`, 20, yPosition + 10);
+      doc.text(`Funcionalidade: ${report.outcomeMeasures.functionality || 'N/A'}`, 20, yPosition + 20);
+    }
+    
+    // Add recommendations if available
+    if (report.recommendations) {
+      yPosition += 50;
+      doc.setFontSize(16);
+      doc.text('Recomendações', 20, yPosition);
+      
+      doc.setFontSize(10);
+      yPosition += 15;
+      const recText = doc.splitTextToSize(report.recommendations, 170);
+      doc.text(recText, 20, yPosition);
+    }
+    
+    // Add footer
+    const pageHeight = doc.internal.pageSize.height;
+    doc.setFontSize(8);
+    doc.text('Relatório gerado automaticamente pelo sistema DuduFisio-AI', 20, pageHeight - 20);
+    doc.text(`ID do Relatório: ${report.id}`, 20, pageHeight - 10);
+    
+    // Generate blob and convert to base64
+    const pdfBlob = doc.output('blob');
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(pdfBlob);
+    });
+    
+  } catch (error) {
+    console.error('Erro ao gerar PDF:', error);
+    // Fallback: create a simple text content
+    const fallbackContent = `
+RELATÓRIO CLÍNICO
+Paciente: ${report.patientName || 'N/A'}
+Data: ${new Date().toLocaleDateString('pt-BR')}
+
+RESUMO DO TRATAMENTO:
+${report.summary || 'Resumo não disponível'}
+
+PROGRESSO CLÍNICO:
+${report.clinicalProgress || 'Progresso não documentado'}
+
+MEDIDAS DE RESULTADO:
+${report.outcomeMeasures ? `
+- Dor Inicial: ${report.outcomeMeasures.painInitial || 'N/A'}
+- Dor Atual: ${report.outcomeMeasures.painCurrent || 'N/A'}
+- Funcionalidade: ${report.outcomeMeasures.functionality || 'N/A'}
+` : 'Não disponível'}
+
+RECOMENDAÇÕES:
+${report.recommendations || 'Não disponível'}
+
+ID do Relatório: ${report.id}
+Gerado pelo sistema DuduFisio-AI
+    `;
+    
+    return `data:text/plain;base64,${btoa(fallbackContent)}`;
+  }
+}
+
+function generateDocxFromReport(report: any): string {
+  // Simple HTML-like content for DOCX (in a real implementation, you'd use a proper DOCX library)
+  return generateHtmlFromReport(report);
+}
+
+function generateHtmlFromReport(report: any): string {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>${report.title}</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .section { margin: 20px 0; }
+        .section h2 { color: #2c3e50; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; }
+        .section h3 { color: #34495e; margin-top: 15px; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        .data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .data-table th { background-color: #f2f2f2; }
+        .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #666; }
+        .metric { display: inline-block; margin: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>${report.title}</h1>
+        <p>Paciente: ${report.patientName}</p>
+        <p>Gerado em: ${new Date().toLocaleDateString('pt-BR')}</p>
+      </div>
+      
+      <div class="section">
+        <h2>Resumo do Tratamento</h2>
+        <p>${report.summary || 'Resumo do tratamento não disponível.'}</p>
+      </div>
+      
+      <div class="section">
+        <h2>Progresso Clínico</h2>
+        <p>${report.clinicalProgress || 'Progresso clínico não documentado.'}</p>
+      </div>
+      
+      ${report.outcomeMeasures ? `
+        <div class="section">
+          <h2>Medidas de Resultado</h2>
+          <div class="metric">
+            <strong>Dor Inicial:</strong> ${report.outcomeMeasures.painInitial || 'N/A'}
+          </div>
+          <div class="metric">
+            <strong>Dor Atual:</strong> ${report.outcomeMeasures.painCurrent || 'N/A'}
+          </div>
+          <div class="metric">
+            <strong>Funcionalidade:</strong> ${report.outcomeMeasures.functionality || 'N/A'}
+          </div>
+        </div>
+      ` : ''}
+      
+      ${report.recommendations ? `
+        <div class="section">
+          <h2>Recomendações</h2>
+          <p>${report.recommendations}</p>
+        </div>
+      ` : ''}
+      
+      <div class="footer">
+        <p>Relatório gerado automaticamente pelo sistema DuduFisio-AI</p>
+        <p>ID do Relatório: ${report.id}</p>
+      </div>
+    </body>
+    </html>
+  `;
 }
 

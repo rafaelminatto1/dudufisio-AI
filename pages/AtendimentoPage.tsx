@@ -18,7 +18,7 @@ import PageLoader from '../components/ui/PageLoader';
 import InfoCard from '../components/ui/InfoCard';
 import PainScale from '../components/PainScale';
 import { aiOrchestratorService } from '../services/ai/aiOrchestratorService';
-import RichTextEditor from '../components/ui/RichTextEditor';
+import TiptapEditor from '../components/ui/TiptapEditor';
 
 interface PainPoint {
     part: string;
@@ -278,6 +278,8 @@ const AtendimentoPage: React.FC = () => {
                                                     value={metricResults[metric.id] ?? ''}
                                                     onChange={e => handleMetricChange(metric.id, e.target.value)}
                                                     className="mt-1 w-full p-2 pr-10 border border-slate-300 rounded-lg"
+                                                    aria-label={`Valor para ${metric.name}`}
+                                                    placeholder="0"
                                                 />
                                                 <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-500">{metric.unit}</span>
                                             </div>
@@ -291,11 +293,11 @@ const AtendimentoPage: React.FC = () => {
                         
                         <div>
                             <label className="text-sm font-semibold text-sky-700">S (Subjetivo)</label>
-                            <RichTextEditor value={subjective} onChange={setSubjective} rows={2} placeholder="Relato do paciente..."/>
+                            <TiptapEditor value={subjective} onChange={setSubjective} minHeight="80px" placeholder="Relato do paciente..."/>
                         </div>
                         <div>
                             <label className="text-sm font-semibold text-sky-700">O (Objetivo)</label>
-                            <RichTextEditor value={objective} onChange={setObjective} rows={2} placeholder="Achados, testes, medidas..."/>
+                            <TiptapEditor value={objective} onChange={setObjective} minHeight="80px" placeholder="Achados, testes, medidas..."/>
                         </div>
                         <div className="flex justify-end">
                              <button onClick={handleGenerateSuggestion} disabled={isAiLoading || (!subjective.trim() && !objective.trim())} className="px-4 py-2 text-sm font-medium text-sky-600 bg-sky-50 border border-sky-200 rounded-lg hover:bg-sky-100 flex items-center disabled:bg-slate-100 disabled:text-slate-400">
@@ -305,11 +307,11 @@ const AtendimentoPage: React.FC = () => {
                         </div>
                          <div>
                             <label className="text-sm font-semibold text-sky-700">A (Avaliação)</label>
-                            <RichTextEditor value={assessment} onChange={setAssessment} rows={2} placeholder="Diagnóstico cinesiofuncional da sessão..."/>
+                            <TiptapEditor value={assessment} onChange={setAssessment} minHeight="80px" placeholder="Diagnóstico cinesiofuncional da sessão..."/>
                         </div>
                          <div>
                             <label className="text-sm font-semibold text-sky-700">P (Plano)</label>
-                            <RichTextEditor value={plan} onChange={setPlanState} rows={2} placeholder="Condutas para a próxima sessão, orientações..."/>
+                            <TiptapEditor value={plan} onChange={setPlanState} minHeight="80px" placeholder="Condutas para a próxima sessão, orientações..."/>
                         </div>
                     </div>
                 </div>

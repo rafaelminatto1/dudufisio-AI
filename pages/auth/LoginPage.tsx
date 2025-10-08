@@ -137,6 +137,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                     placeholder="seu@email.com"
                     className="pl-10"
                     autoComplete="email"
+                    data-testid="login-email"
                     required
                   />
                 </div>
@@ -157,6 +158,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                     placeholder="••••••••"
                     className="pl-10 pr-10"
                     autoComplete="current-password"
+                    data-testid="login-password"
                     required
                   />
                   <button
@@ -173,6 +175,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                 type="submit"
                 className="w-full"
                 disabled={isLoading || loading}
+                data-testid="login-submit"
               >
                 {isLoading || loading ? (
                   <>

@@ -3,6 +3,8 @@ import {
     LayoutGrid, Users, Activity, DollarSign, LogOut, Stethoscope
 } from 'lucide-react';
 import { createLazyComponent } from '../lib/lazyLoading';
+import ErrorBoundary from '../components/ErrorBoundary';
+import { PageSkeleton } from '../components/ui/PageSkeleton';
 
 // ✅ Lazy load partner portal pages usando createLazyComponent centralizado
 const EducatorDashboardPage = createLazyComponent(() => import('./partner-portal/EducatorDashboardPage'));
@@ -11,11 +13,7 @@ const PartnerExerciseLibraryPage = createLazyComponent(() => import('./partner-p
 const FinancialsPage = createLazyComponent(() => import('./partner-portal/FinancialsPage'));
 
 // Loading component
-const PageLoader = () => (
-    <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-    </div>
-);
+const PageLoader = () => <PageSkeleton />;
 
 interface PartnerPortalDashboardProps {
     user: any;
@@ -91,6 +89,7 @@ const PartnerPortalDashboard: React.FC<PartnerPortalDashboardProps> = ({ user, o
     );
 
     return (
+        <ErrorBoundary>
         <div className="flex h-screen bg-gradient-to-br from-indigo-50 to-purple-50">
             {/* Sidebar */}
             <div className="w-64 bg-white border-r border-slate-200 shadow-sm">
@@ -149,6 +148,7 @@ const PartnerPortalDashboard: React.FC<PartnerPortalDashboardProps> = ({ user, o
                 </main>
             </div>
         </div>
+        </ErrorBoundary>
     );
 };
 
