@@ -95,3 +95,4 @@ export const AthleteQuickStats: React.FC<AthleteQuickStatsProps> = ({
 
 export default AthleteQuickStats;
 
+

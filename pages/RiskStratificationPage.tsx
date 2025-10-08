@@ -198,6 +198,8 @@ export const RiskStratificationPage: React.FC = () => {
               <button
                 onClick={() => navigate(-1)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
+                aria-label="Voltar"
+                title="Voltar"
               >
                 <ArrowLeft className="w-5 h-5 text-gray-600" />
               </button>

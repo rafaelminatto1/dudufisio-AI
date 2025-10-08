@@ -1,16 +1,16 @@
 /**
  * WhatsApp Webhook API Endpoint
- * Activity Fisioterapia Integration - Fase 2
+ * DuduFisio-AI - Meta WhatsApp Business API Integration
  */
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getWhatsAppService } from '@/services/whatsapp/WhatsAppService';
 
 /**
- * Webhook do WhatsApp Business API (Twilio)
+ * Webhook do WhatsApp Business API (Meta)
  * 
  * Este endpoint recebe:
- * 1. Verificação do webhook (GET) - Meta/Twilio
+ * 1. Verificação do webhook (GET) - Meta
  * 2. Mensagens recebidas (POST)
  * 3. Status de mensagens (POST)
  */
@@ -35,17 +35,25 @@ export default async function handler(
 
 /**
  * Verificação do webhook (GET)
- * Meta/Twilio fazem isso ao configurar o webhook
+ * Meta faz isso ao configurar o webhook
  */
 function handleWebhookVerification(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'dudufisio_verify_token';
+  // Token de verificação que você configurou no Meta
+  const verifyToken = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || 'mu/NQ2Z92+[g';
   
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
+
+  console.log('🔍 Verificação do webhook:', {
+    mode,
+    token,
+    expectedToken: verifyToken,
+    challenge
+  });
 
   // Verificar se é uma solicitação de verificação
   if (mode === 'subscribe' && token === verifyToken) {
@@ -53,7 +61,11 @@ function handleWebhookVerification(
     return res.status(200).send(challenge);
   }
 
-  console.error('❌ Falha na verificação do webhook');
+  console.error('❌ Falha na verificação do webhook:', {
+    mode,
+    token,
+    expectedToken: verifyToken
+  });
   return res.status(403).json({ error: 'Forbidden' });
 }
 
@@ -68,40 +80,37 @@ async function handleIncomingWebhook(
     // Log para debug
     console.log('📨 Webhook recebido:', JSON.stringify(req.body, null, 2));
 
-    // Twilio envia no formato application/x-www-form-urlencoded
+    // Meta envia no formato JSON
     const webhookData = req.body;
 
-    // Extrair informações da mensagem Twilio
-    const messageData = {
-      from: webhookData.From?.replace('whatsapp:', '') || '',
-      to: webhookData.To?.replace('whatsapp:', '') || '',
-      body: webhookData.Body || '',
-      timestamp: new Date().toISOString(),
-      id: webhookData.MessageSid || webhookData.SmsMessageSid || '',
-      type: webhookData.MessageType || 'text',
-      status: webhookData.SmsStatus || webhookData.MessageStatus,
-    };
-
-    // Se é atualização de status de mensagem
-    if (messageData.status && !messageData.body) {
-      await handleMessageStatus(messageData);
-      return res.status(200).json({ success: true, type: 'status_update' });
+    // Verificar se é um webhook do Meta
+    if (webhookData.object === 'whatsapp_business_account') {
+      // Processar entrada do webhook
+      for (const entry of webhookData.entry || []) {
+        for (const change of entry.changes || []) {
+          if (change.field === 'messages') {
+            for (const value of change.value || []) {
+              // Processar mensagens recebidas
+              for (const message of value.messages || []) {
+                await handleMetaMessage(message, value.metadata);
+              }
+              
+              // Processar status de mensagens
+              for (const status of value.statuses || []) {
+                await handleMetaStatus(status);
+              }
+            }
+          }
+        }
+      }
     }
 
-    // Se é mensagem recebida
-    if (messageData.body && messageData.from) {
-      await handleIncomingMessage(messageData);
-      return res.status(200).json({ success: true, type: 'message_received' });
-    }
-
-    // Webhook desconhecido
-    console.warn('⚠️  Webhook desconhecido:', webhookData);
-    return res.status(200).json({ success: true, type: 'unknown' });
+    return res.status(200).json({ success: true });
 
   } catch (error) {
     console.error('❌ Erro ao processar webhook:', error);
     
-    // Sempre retornar 200 para não fazer Twilio retentar
+    // Sempre retornar 200 para não fazer Meta retentar
     return res.status(200).json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown error' 
@@ -110,12 +119,11 @@ async function handleIncomingWebhook(
 }
 
 /**
- * Processar mensagem recebida
+ * Processar mensagem recebida do Meta
  */
-async function handleIncomingMessage(messageData: any) {
+async function handleMetaMessage(message: any, metadata: any) {
   try {
     // Obter clinic_id (você pode ter lógica específica aqui)
-    // Por enquanto, usar o primeiro ou padrão
     const clinicId = process.env.DEFAULT_CLINIC_ID || '';
 
     if (!clinicId) {
@@ -125,19 +133,19 @@ async function handleIncomingMessage(messageData: any) {
 
     const whatsappService = getWhatsAppService();
     
-    await whatsappService.processIncomingMessage(
-      {
-        from: messageData.from,
-        to: messageData.to,
-        body: messageData.body,
-        timestamp: messageData.timestamp,
-        id: messageData.id,
-        type: messageData.type,
-      },
-      clinicId
-    );
+    // Extrair dados da mensagem do Meta
+    const messageData = {
+      from: message.from,
+      to: metadata.phone_number_id,
+      body: message.text?.body || message.type,
+      timestamp: new Date(parseInt(message.timestamp) * 1000).toISOString(),
+      id: message.id,
+      type: message.type,
+    };
 
-    console.log('✅ Mensagem processada:', messageData.from);
+    await whatsappService.processIncomingMessage(messageData, clinicId);
+
+    console.log('✅ Mensagem processada:', message.from);
   } catch (error) {
     console.error('❌ Erro ao processar mensagem:', error);
     throw error;
@@ -145,19 +153,19 @@ async function handleIncomingMessage(messageData: any) {
 }
 
 /**
- * Processar atualização de status
+ * Processar status de mensagem do Meta
  */
-async function handleMessageStatus(statusData: any) {
+async function handleMetaStatus(status: any) {
   try {
     const whatsappService = getWhatsAppService();
     
     await whatsappService.processMessageStatus({
-      id: statusData.id,
-      status: statusData.status,
-      timestamp: statusData.timestamp,
+      id: status.id,
+      status: status.status,
+      timestamp: new Date(parseInt(status.timestamp) * 1000).toISOString(),
     });
 
-    console.log('✅ Status atualizado:', statusData.id, statusData.status);
+    console.log('✅ Status atualizado:', status.id, status.status);
   } catch (error) {
     console.error('❌ Erro ao processar status:', error);
     throw error;

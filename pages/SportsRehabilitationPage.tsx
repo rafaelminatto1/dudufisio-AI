@@ -196,6 +196,8 @@ export const SportsRehabilitationPage: React.FC = () => {
             <button
               onClick={() => navigate(-1)}
               className="p-2 hover:bg-white/10 rounded-lg transition"
+              aria-label="Voltar"
+              title="Voltar"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
