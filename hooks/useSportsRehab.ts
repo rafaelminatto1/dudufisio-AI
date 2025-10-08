@@ -1,215 +1,160 @@
 /**
- * React Query Hooks para Sports Rehabilitation
- * Hooks otimizados com cache e optimistic updates
+ * Custom Hook for Sports Rehabilitation
+ * Hook personalizado para gerenciar reabilitação esportiva
  */
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import { sportsRehabServiceSupabase } from '../services/sports/sportsRehabServiceSupabase';
-import type { 
-  AthleteProfile, 
-  PerformanceMetric, 
+import {
+  AthleteProfile,
+  PerformanceMetric,
   LoadMonitoring,
-  RehabProgression 
+  RehabProgression,
+  SportTrainingSession,
 } from '../types/sportsRehabTypes';
 import { toast } from 'react-toastify';
 
-// Query Keys
-export const sportsKeys = {
-  all: ['sports-rehab'] as const,
-  profiles: () => [...sportsKeys.all, 'profile'] as const,
-  profile: (patientId: string) => [...sportsKeys.profiles(), patientId] as const,
-  metrics: (athleteId: string) => [...sportsKeys.all, 'metrics', athleteId] as const,
-  loads: (athleteId: string) => [...sportsKeys.all, 'loads', athleteId] as const,
-  progression: (athleteId: string) => [...sportsKeys.all, 'progression', athleteId] as const,
-  sessions: (athleteId: string) => [...sportsKeys.all, 'sessions', athleteId] as const,
-  rts: (athleteId: string) => [...sportsKeys.all, 'rts', athleteId] as const,
+interface UseSportsRehabOptions {
+  patientId: string;
+  autoLoad?: boolean;
+}
+
+export const useSportsRehab = ({ patientId, autoLoad = true }: UseSportsRehabOptions) => {
+  const [loading, setLoading] = useState(false);
+  const [athleteProfile, setAthleteProfile] = useState<AthleteProfile | null>(null);
+  const [metrics, setMetrics] = useState<PerformanceMetric[]>([]);
+  const [loads, setLoads] = useState<LoadMonitoring[]>([]);
+  const [progression, setProgression] = useState<RehabProgression | null>(null);
+  const [sessions, setSessions] = useState<SportTrainingSession[]>([]);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Carregar dados
+  const loadData = useCallback(async () => {
+    if (!patientId) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Buscar perfil
+      const profile = await sportsRehabServiceSupabase.getAthleteProfile(patientId);
+      setAthleteProfile(profile);
+
+      if (profile) {
+        // Buscar dados relacionados
+        const [performanceMetrics, loadData, prog, trainingSessions] = await Promise.all([
+          sportsRehabServiceSupabase.getPerformanceMetrics(profile.id),
+          sportsRehabServiceSupabase.getLoadMonitoring(profile.id, 12),
+          sportsRehabServiceSupabase.getRehabProgression(profile.id),
+          sportsRehabServiceSupabase.getTrainingSessions(profile.id, 20),
+        ]);
+
+        setMetrics(performanceMetrics);
+        setLoads(loadData);
+        setProgression(prog);
+        setSessions(trainingSessions);
+      }
+    } catch (err) {
+      setError(err as Error);
+      console.error('Erro ao carregar dados de reabilitação:', err);
+      toast.error('Erro ao carregar dados');
+    } finally {
+      setLoading(false);
+    }
+  }, [patientId]);
+
+  // Salvar perfil de atleta
+  const saveProfile = useCallback(async (
+    profile: Omit<AthleteProfile, 'id' | 'createdAt' | 'updatedAt'>
+  ) => {
+    try {
+      setLoading(true);
+      const saved = await sportsRehabServiceSupabase.upsertAthleteProfile(profile);
+      setAthleteProfile(saved);
+      toast.success('Perfil de atleta salvo!');
+      return saved;
+    } catch (err) {
+      setError(err as Error);
+      console.error('Erro ao salvar perfil:', err);
+      toast.error('Erro ao salvar perfil');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Salvar métrica
+  const saveMetric = useCallback(async (
+    metric: Omit<PerformanceMetric, 'id' | 'createdAt'>
+  ) => {
+    try {
+      const saved = await sportsRehabServiceSupabase.savePerformanceMetric(metric);
+      toast.success('Métrica registrada!');
+      await loadData();
+      return saved;
+    } catch (err) {
+      console.error('Erro ao salvar métrica:', err);
+      toast.error('Erro ao salvar métrica');
+      throw err;
+    }
+  }, [loadData]);
+
+  // Salvar sessão de treinamento
+  const saveSession = useCallback(async (
+    session: Omit<SportTrainingSession, 'id' | 'createdAt'>
+  ) => {
+    try {
+      const saved = await sportsRehabServiceSupabase.saveTrainingSession(session);
+      toast.success('Sessão registrada!');
+      await loadData();
+      return saved;
+    } catch (err) {
+      console.error('Erro ao salvar sessão:', err);
+      toast.error('Erro ao salvar sessão');
+      throw err;
+    }
+  }, [loadData]);
+
+  // Calcular estatísticas
+  const getStatistics = useCallback(() => {
+    if (!athleteProfile) return null;
+
+    return {
+      totalSessions: sessions.length,
+      averagePainLevel: sessions.length > 0
+        ? sessions.reduce((sum, s) => sum + (s.painLevel || 0), 0) / sessions.length
+        : 0,
+      averageExertion: sessions.length > 0
+        ? sessions.reduce((sum, s) => sum + (s.perceivedExertion || 0), 0) / sessions.length
+        : 0,
+      currentPhase: progression?.currentPhase,
+      overallProgress: progression?.overallProgress || 0,
+      latestACWR: loads[0]?.acwr || 0,
+      recentMetrics: metrics.slice(0, 5),
+    };
+  }, [athleteProfile, sessions, progression, loads, metrics]);
+
+  // Auto-load
+  useEffect(() => {
+    if (autoLoad) {
+      loadData();
+    }
+  }, [autoLoad, loadData]);
+
+  return {
+    loading,
+    athleteProfile,
+    metrics,
+    loads,
+    progression,
+    sessions,
+    error,
+    loadData,
+    saveProfile,
+    saveMetric,
+    saveSession,
+    getStatistics,
+  };
 };
 
-/**
- * Hook para buscar perfil do atleta
- */
-export function useAthleteProfile(patientId: string | undefined) {
-  return useQuery({
-    queryKey: sportsKeys.profile(patientId!),
-    queryFn: () => sportsRehabServiceSupabase.getAthleteProfile(patientId!),
-    enabled: !!patientId,
-    staleTime: 5 * 60 * 1000,
-  });
-}
-
-/**
- * Hook para buscar métricas de performance
- */
-export function usePerformanceMetrics(athleteId: string | undefined) {
-  return useQuery({
-    queryKey: sportsKeys.metrics(athleteId!),
-    queryFn: () => sportsRehabServiceSupabase.getPerformanceMetrics(athleteId!),
-    enabled: !!athleteId,
-    staleTime: 3 * 60 * 1000,
-  });
-}
-
-/**
- * Hook para buscar monitoramento de carga
- */
-export function useLoadMonitoring(athleteId: string | undefined, weeks: number = 8) {
-  return useQuery({
-    queryKey: [...sportsKeys.loads(athleteId!), weeks],
-    queryFn: () => sportsRehabServiceSupabase.getLoadMonitoring(athleteId!, weeks),
-    enabled: !!athleteId,
-    staleTime: 10 * 60 * 1000, // 10 minutos - dados menos voláteis
-  });
-}
-
-/**
- * Hook para buscar progressão de reabilitação
- */
-export function useRehabProgression(athleteId: string | undefined) {
-  return useQuery({
-    queryKey: sportsKeys.progression(athleteId!),
-    queryFn: () => sportsRehabServiceSupabase.getRehabProgression(athleteId!),
-    enabled: !!athleteId,
-    staleTime: 5 * 60 * 1000,
-  });
-}
-
-/**
- * Hook para buscar sessões de treino
- */
-export function useTrainingSessions(athleteId: string | undefined, limit: number = 10) {
-  return useQuery({
-    queryKey: [...sportsKeys.sessions(athleteId!), limit],
-    queryFn: () => sportsRehabServiceSupabase.getTrainingSessions(athleteId!, limit),
-    enabled: !!athleteId,
-    staleTime: 2 * 60 * 1000,
-  });
-}
-
-/**
- * Hook para criar/atualizar perfil de atleta
- */
-export function useUpsertAthleteProfile() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: Partial<AthleteProfile>) =>
-      sportsRehabServiceSupabase.upsertAthleteProfile(data),
-
-    onSuccess: (data) => {
-      if (data.patientId) {
-        queryClient.invalidateQueries({ queryKey: sportsKeys.profile(data.patientId) });
-      }
-      toast.success('Perfil de atleta salvo com sucesso!');
-    },
-
-    onError: (err) => {
-      toast.error('Erro ao salvar perfil de atleta');
-      console.error(err);
-    },
-  });
-}
-
-/**
- * Hook para adicionar métrica de performance
- */
-export function useAddPerformanceMetric() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: Partial<PerformanceMetric>) =>
-      sportsRehabServiceSupabase.addPerformanceMetric(data),
-
-    onMutate: async (newMetric) => {
-      const athleteId = newMetric.athlete_id;
-      if (!athleteId) return;
-
-      await queryClient.cancelQueries({ queryKey: sportsKeys.metrics(athleteId) });
-
-      const previousMetrics = queryClient.getQueryData(sportsKeys.metrics(athleteId));
-
-      // Optimistic update
-      queryClient.setQueryData(
-        sportsKeys.metrics(athleteId),
-        (old: PerformanceMetric[] = []) => [
-          ...old,
-          { ...newMetric, id: 'temp-' + Date.now() } as PerformanceMetric,
-        ]
-      );
-
-      return { previousMetrics, athleteId };
-    },
-
-    onError: (err, newMetric, context) => {
-      if (context?.previousMetrics && context?.athleteId) {
-        queryClient.setQueryData(
-          sportsKeys.metrics(context.athleteId),
-          context.previousMetrics
-        );
-      }
-      toast.error('Erro ao adicionar métrica');
-      console.error(err);
-    },
-
-    onSuccess: (data, variables) => {
-      if (variables.athlete_id) {
-        queryClient.invalidateQueries({ 
-          queryKey: sportsKeys.metrics(variables.athlete_id) 
-        });
-      }
-      toast.success('Métrica adicionada com sucesso!');
-    },
-  });
-}
-
-/**
- * Hook para adicionar sessão de treino
- */
-export function useAddTrainingSession() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: any) =>
-      sportsRehabServiceSupabase.addTrainingSession(data),
-
-    onSuccess: (data, variables) => {
-      if (variables.athlete_id) {
-        queryClient.invalidateQueries({ 
-          queryKey: sportsKeys.sessions(variables.athlete_id) 
-        });
-        queryClient.invalidateQueries({ 
-          queryKey: sportsKeys.loads(variables.athlete_id) 
-        });
-      }
-      toast.success('Sessão de treino registrada!');
-    },
-
-    onError: (err) => {
-      toast.error('Erro ao registrar sessão');
-      console.error(err);
-    },
-  });
-}
-
-/**
- * Hook para atualizar progressão
- */
-export function useUpdateProgression() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ athleteId, data }: { athleteId: string; data: Partial<RehabProgression> }) =>
-      sportsRehabServiceSupabase.updateProgression(athleteId, data),
-
-    onSuccess: (data, { athleteId }) => {
-      queryClient.invalidateQueries({ queryKey: sportsKeys.progression(athleteId) });
-      toast.success('Progressão atualizada!');
-    },
-
-    onError: (err) => {
-      toast.error('Erro ao atualizar progressão');
-      console.error(err);
-    },
-  });
-}
-
-
+export default useSportsRehab;
