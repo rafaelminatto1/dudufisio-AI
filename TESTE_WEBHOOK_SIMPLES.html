@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste WhatsApp Webhook</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #25D366;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        button {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #128C7E;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Teste WhatsApp Webhook</h1>
+        
+        <div class="info">
+            <h3>📋 Informações do Webhook:</h3>
+            <p><strong>URL:</strong> <code>https://moocafisio.com.br/api/whatsapp</code></p>
+            <p><strong>Token:</strong> <code>mu/NQ2Z92+[g</code></p>
+        </div>
+
+        <h3>🧪 Teste de Verificação:</h3>
+        <button onclick="testWebhook()">Testar Webhook</button>
+        
+        <div id="result"></div>
+
+        <h3>📝 Comandos para Testar:</h3>
+        <pre id="commands">
+# Teste de verificação
+curl "https://moocafisio.com.br/api/whatsapp?hub.mode=subscribe&hub.challenge=TESTE123&hub.verify_token=mu/NQ2Z92+[g"
+
+# Deve retornar: TESTE123
+        </pre>
+
+        <h3>🔧 Soluções Alternativas:</h3>
+        <div class="info">
+            <h4>1. Usar ngrok:</h4>
+            <pre>npm run dev
+ngrok http 3000
+# Use a URL do ngrok no Meta</pre>
+
+            <h4>2. Deploy em Railway:</h4>
+            <pre>npm install -g @railway/cli
+railway login
+railway init
+railway up</pre>
+
+            <h4>3. Deploy em Render:</h4>
+            <pre># Conectar repositório GitHub
+# Deploy automático</pre>
+        </div>
+    </div>
+
+    <script>
+        async function testWebhook() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>🔄 Testando webhook...</p>';
+
+            try {
+                const url = 'https://moocafisio.com.br/api/whatsapp?hub.mode=subscribe&hub.challenge=TESTE123&hub.verify_token=mu/NQ2Z92+[g';
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+
+                if (response.ok) {
+                    const text = await response.text();
+                    if (text === 'TESTE123') {
+                        resultDiv.innerHTML = '<p class="success">✅ Webhook funcionando corretamente!</p>';
+                    } else {
+                        resultDiv.innerHTML = `<p class="error">❌ Resposta inesperada: ${text}</p>`;
+                    }
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Erro HTTP: ${response.status}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">❌ Erro de conexão: ${error.message}</p>`;
+            }
+        }
+
+        // Teste automático ao carregar a página
+        window.onload = function() {
+            setTimeout(testWebhook, 1000);
+        };
+    </script>
+</body>
+</html>

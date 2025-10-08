@@ -263,3 +263,4 @@ const ConfigItem: React.FC<ConfigItemProps> = ({ label, value, status, note }) =
 export default WhatsAppConfigStatus;
 
 
+

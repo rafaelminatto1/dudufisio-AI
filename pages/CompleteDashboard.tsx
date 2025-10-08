@@ -66,6 +66,10 @@ import KanbanPage from './KanbanPage';
 const RiskAnalysisPage = createLazyComponent(() => import('./RiskAnalysisPage'));
 const RiskStratificationPage = createLazyComponent(() => import('./RiskStratificationPage'));
 const SportsRehabilitationPage = createLazyComponent(() => import('./SportsRehabilitationPage'));
+const PopulationHealthDashboardPage = createLazyComponent(() => import('./PopulationHealthDashboardPage'));
+const FamilyPortalPage = createLazyComponent(() => import('./FamilyPortalPage'));
+const QualityAssuranceDashboardPage = createLazyComponent(() => import('./QualityAssuranceDashboardPage'));
+const PredictiveAnalyticsPage = createLazyComponent(() => import('./PredictiveAnalyticsPage'));
 const ClinicalAnalyticsPage = createLazyComponent(() => import('./ClinicalAnalyticsPage'));
 const SettingsPage = createLazyComponent(() => import('./SettingsPage'));
 const PartnershipPage = createLazyComponent(() => import('./PartnershipPage'));
@@ -371,6 +375,10 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/risk-analysis" element={LazyElement(RiskAnalysisPage)} />
                 <Route path="/risk-stratification/:patientId" element={LazyElement(RiskStratificationPage)} />
                 <Route path="/sports-rehab/:patientId" element={LazyElement(SportsRehabilitationPage)} />
+                <Route path="/population-health" element={LazyElement(PopulationHealthDashboardPage)} />
+                <Route path="/family-portal/:patientId" element={LazyElement(FamilyPortalPage)} />
+                <Route path="/quality-assurance" element={LazyElement(QualityAssuranceDashboardPage)} />
+                <Route path="/predictive-analytics/:patientId" element={LazyElement(PredictiveAnalyticsPage)} />
                 <Route path="/ia-economica" element={LazyElement(AiAnalyticsPage)} />
                 
                 {/* Management */}
