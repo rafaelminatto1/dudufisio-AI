@@ -1,630 +1,298 @@
-import { supabase, handleSupabaseError } from '../../lib/supabase';
+/**
+ * Payment Service - Serviço de pagamentos online
+ * Activity Fisioterapia Integration - Fase 4
+ */
 
-export interface PaymentProvider {
-  id: string;
-  name: string;
-  type: 'pix' | 'card' | 'boleto' | 'subscription' | 'wallet';
-  enabled: boolean;
-  config: Record<string, any>;
+import { supabase } from '@/lib/supabase';
+
+export interface PaymentLink {
+  url: string;
+  payment_id: string;
+  expires_at: Date;
 }
 
-export interface PaymentMethod {
-  id: string;
-  userId: string;
-  type: 'card' | 'pix' | 'bank_account';
-  provider: string;
-  details: {
-    last4?: string;
-    brand?: string;
-    expiryMonth?: number;
-    expiryYear?: number;
-    holderName?: string;
-    pixKey?: string;
-    bankName?: string;
-    accountType?: string;
-  };
-  isDefault: boolean;
-  createdAt: string;
-}
-
-export interface PaymentIntent {
-  id: string;
-  amount: number;
-  currency: string;
-  description: string;
-  customerId: string;
-  appointmentId?: string;
-  status: 'pending' | 'processing' | 'succeeded' | 'failed' | 'canceled' | 'completed' | 'cancelled' | 'authorized' | 'captured' | 'refunded';
-  paymentMethodId?: string;
-  providerTransactionId?: string;
-  metadata?: Record<string, any>;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Subscription {
-  id: string;
-  customerId: string;
-  planId: string;
-  status: 'active' | 'past_due' | 'canceled' | 'unpaid';
-  currentPeriodStart: string;
-  currentPeriodEnd: string;
-  canceledAt?: string;
-  metadata?: Record<string, any>;
-}
-
-export interface InvoiceItem {
-  description: string;
-  amount: number;
-  quantity: number;
-}
-
-export interface Invoice {
-  id: string;
-  customerId: string;
-  subscriptionId?: string;
-  amount: number;
-  currency: string;
-  status: 'draft' | 'open' | 'paid' | 'void' | 'uncollectible';
-  items: InvoiceItem[];
-  dueDate: string;
-  paidAt?: string;
-  metadata?: Record<string, any>;
-}
-
-// PIX Payment Interface
 export interface PixPayment {
-  id: string;
-  amount: number;
-  description: string;
-  pixKey: string;
-  qrCode: string;
-  qrCodeImage: string;
-  expiresAt: string;
-  status: 'pending' | 'paid' | 'expired' | 'canceled';
+  qr_code: string;
+  qr_code_base64: string;
+  copy_paste_code: string;
+  payment_id: string;
+  expires_at: Date;
 }
 
-// Card Payment Interface
-export interface CardPayment {
-  id: string;
-  amount: number;
-  currency: string;
-  description: string;
-  cardToken: string;
-  installments: number;
-  status: 'pending' | 'authorized' | 'captured' | 'failed' | 'refunded' | 'processing' | 'completed' | 'cancelled';
-}
-
-class PaymentService {
-  private providers: Map<string, PaymentProvider> = new Map();
+export class PaymentService {
+  private stripeSecretKey: string;
+  private mercadoPagoToken: string;
+  private provider: 'stripe' | 'mercadopago';
 
   constructor() {
-    this.initializeProviders();
+    this.stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
+    this.mercadoPagoToken = process.env.MERCADO_PAGO_TOKEN || '';
+    
+    // Definir provider baseado nas keys disponíveis
+    if (this.stripeSecretKey) {
+      this.provider = 'stripe';
+    } else if (this.mercadoPagoToken) {
+      this.provider = 'mercadopago';
+    } else {
+      this.provider = 'stripe'; // Default
+      console.warn('⚠️  Nenhuma key de pagamento configurada');
+    }
   }
 
-  private initializeProviders() {
-    // Configurar provedores de pagamento
-    const providers = [
-      {
-        id: 'mercadopago',
-        name: 'Mercado Pago',
-        type: 'card' as const,
-        enabled: true,
-        config: {
-          accessToken: (import.meta as any).env.VITE_MERCADOPAGO_ACCESS_TOKEN,
-          publicKey: (import.meta as any).env.VITE_MERCADOPAGO_PUBLIC_KEY,
-        }
-      },
-      {
-        id: 'stripe',
-        name: 'Stripe',
-        type: 'card' as const,
-        enabled: true,
-        config: {
-          publishableKey: (import.meta as any).env.VITE_STRIPE_PUBLISHABLE_KEY,
-          secretKey: (import.meta as any).env.VITE_STRIPE_SECRET_KEY,
-        }
-      },
-      {
-        id: 'asaas',
-        name: 'Asaas',
-        type: 'pix' as const,
-        enabled: true,
-        config: {
-          apiKey: (import.meta as any).env.VITE_ASAAS_API_KEY,
-          environment: (import.meta as any).env.VITE_ASAAS_ENVIRONMENT || 'sandbox',
-        }
-      },
-      {
-        id: 'pix_bcb',
-        name: 'PIX Banco Central',
-        type: 'pix' as const,
-        enabled: true,
-        config: {
-          pixKey: (import.meta as any).env.VITE_PIX_KEY,
-          merchantName: 'DuduFisio AI',
-          merchantCity: 'São Paulo',
-        }
-      },
-    ];
-
-    providers.forEach(provider => {
-      if (provider.enabled && this.validateProviderConfig(provider)) {
-        this.providers.set(provider.id, provider);
-      }
-    });
+  /**
+   * Verificar se serviço está configurado
+   */
+  isConfigured(): boolean {
+    return Boolean(this.stripeSecretKey || this.mercadoPagoToken);
   }
 
-  private validateProviderConfig(provider: PaymentProvider): boolean {
-    const requiredKeys = {
-      mercadopago: ['accessToken', 'publicKey'],
-      stripe: ['publishableKey', 'secretKey'],
-      asaas: ['apiKey'],
-      pix_bcb: ['pixKey', 'merchantName'],
-    };
-
-    const required = requiredKeys[provider.id as keyof typeof requiredKeys] || [];
-    return required.every((key: string) => provider.config[key]);
-  }
-
-  // PIX Payments
-  async createPixPayment(data: {
-    amount: number;
-    description: string;
-    customerId: string;
-    appointmentId?: string;
-    expiresIn?: number; // minutes
-  }): Promise<PixPayment> {
+  /**
+   * Criar link de pagamento para consulta
+   */
+  async createPaymentLink(appointmentId: string): Promise<PaymentLink> {
     try {
-      const expiresAt = new Date();
-      expiresAt.setMinutes(expiresAt.getMinutes() + (data.expiresIn || 30));
+      // 1. Buscar dados do agendamento
+      const { data: appointment } = await supabase
+        .from('appointments')
+        .select(`
+          *,
+          patients(name, email, phone),
+          services(name, price)
+        `)
+        .eq('id', appointmentId)
+        .single();
 
-      // Gerar QR Code PIX
-      const pixData = this.generatePixQRCode({
-        amount: data.amount,
-        description: data.description,
-        merchantName: 'DuduFisio AI',
-        merchantCity: 'São Paulo',
-        pixKey: this.providers.get('pix_bcb')?.config.pixKey || '',
-      });
+      if (!appointment) {
+        throw new Error('Agendamento não encontrado');
+      }
 
-      const pixPayment: PixPayment = {
-        id: this.generateId(),
-        amount: data.amount,
-        description: data.description,
-        pixKey: pixData.pixKey,
-        qrCode: pixData.qrCode,
-        qrCodeImage: pixData.qrCodeImage,
-        expiresAt: expiresAt.toISOString(),
-        status: 'pending',
+      // 2. Criar pagamento baseado no provider
+      if (this.provider === 'stripe') {
+        return this.createStripePayment(appointment);
+      } else {
+        return this.createMercadoPagoPayment(appointment);
+      }
+    } catch (error) {
+      console.error('Erro ao criar link de pagamento:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Criar pagamento Stripe
+   */
+  private async createStripePayment(appointment: any): Promise<PaymentLink> {
+    // Stripe implementation
+    // Nota: Requer biblioteca 'stripe' instalada
+    
+    try {
+      // Placeholder - implementação real requer Stripe SDK
+      const paymentLink: PaymentLink = {
+        url: `https://checkout.stripe.com/pay/${appointmentId}`,
+        payment_id: `pi_${Date.now()}`,
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 horas
       };
 
-      // Salvar no banco de dados
-      await this.savePaymentIntent({
-        id: pixPayment.id,
-        amount: data.amount,
-        currency: 'BRL',
-        description: data.description,
-        customerId: data.customerId,
-        appointmentId: data.appointmentId,
-        status: 'pending',
-        metadata: {
-          type: 'pix',
-          pixKey: pixPayment.pixKey,
-          qrCode: pixPayment.qrCode,
-          expiresAt: pixPayment.expiresAt,
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
+      // Salvar registro do pagamento
+      await this.savePaymentRecord(appointment.id, paymentLink.payment_id, 'stripe');
+
+      return paymentLink;
+    } catch (error) {
+      console.error('Erro Stripe:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Criar pagamento Mercado Pago
+   */
+  private async createMercadoPagoPayment(appointment: any): Promise<PaymentLink> {
+    // Mercado Pago implementation
+    
+    try {
+      // Placeholder
+      const paymentLink: PaymentLink = {
+        url: `https://www.mercadopago.com.br/checkout/v1/${appointmentId}`,
+        payment_id: `mp_${Date.now()}`,
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      };
+
+      await this.savePaymentRecord(appointment.id, paymentLink.payment_id, 'mercadopago');
+
+      return paymentLink;
+    } catch (error) {
+      console.error('Erro Mercado Pago:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Criar pagamento PIX
+   */
+  async createPixPayment(appointmentId: string, value: number): Promise<PixPayment> {
+    try {
+      // Implementação real requer integração com gateway
+      // Por enquanto, placeholder
+      
+      const pixPayment: PixPayment = {
+        qr_code: 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=PIX',
+        qr_code_base64: 'base64_placeholder',
+        copy_paste_code: '00020126580014br.gov.bcb.pix...',
+        payment_id: `pix_${Date.now()}`,
+        expires_at: new Date(Date.now() + 30 * 60 * 1000), // 30 minutos
+      };
+
+      await this.savePaymentRecord(appointmentId, pixPayment.payment_id, 'pix');
 
       return pixPayment;
     } catch (error) {
-      console.error('Erro ao criar pagamento PIX:', error);
-      throw new Error('Falha ao criar pagamento PIX');
+      console.error('Erro ao criar PIX:', error);
+      throw error;
     }
   }
 
-  // Card Payments
-  async createCardPayment(data: {
-    amount: number;
-    currency: string;
-    description: string;
-    customerId: string;
-    cardToken: string;
-    installments: number;
-    appointmentId?: string;
-  }): Promise<CardPayment> {
+  /**
+   * Processar webhook de confirmação de pagamento
+   */
+  async handlePaymentWebhook(payload: any, provider: string): Promise<void> {
     try {
-      const provider = this.providers.get('mercadopago') || this.providers.get('stripe');
-      if (!provider) {
-        throw new Error('Nenhum provedor de cartão disponível');
-      }
+      // Extrair payment_id do payload
+      let paymentId: string;
+      let status: string;
 
-      let paymentResult;
-      if (provider.id === 'mercadopago') {
-        paymentResult = await this.processMercadoPagoPayment(data);
-      } else if (provider.id === 'stripe') {
-        paymentResult = await this.processStripePayment(data);
+      if (provider === 'stripe') {
+        paymentId = payload.data?.object?.id;
+        status = payload.type === 'checkout.session.completed' ? 'paid' : 'pending';
+      } else if (provider === 'mercadopago') {
+        paymentId = payload.data?.id;
+        status = payload.data?.status === 'approved' ? 'paid' : 'pending';
       } else {
-        throw new Error('Provedor não suportado');
+        throw new Error('Provider desconhecido');
       }
 
-      const cardPayment: CardPayment = {
-        id: paymentResult.id,
-        amount: data.amount,
-        currency: data.currency,
-        description: data.description,
-        cardToken: data.cardToken,
-        installments: data.installments,
-        status: paymentResult.status as 'pending' | 'cancelled' | 'completed' | 'failed' | 'processing' | 'canceled' | 'refunded' | 'succeeded' | 'authorized' | 'captured',
-      };
-
-      // Salvar no banco de dados
-      await this.savePaymentIntent({
-        id: cardPayment.id,
-        amount: data.amount,
-        currency: data.currency,
-        description: data.description,
-        customerId: data.customerId,
-        appointmentId: data.appointmentId,
-        status: paymentResult.status as 'pending' | 'cancelled' | 'completed' | 'failed' | 'processing' | 'refunded' | 'authorized' | 'captured',
-        providerTransactionId: paymentResult.providerTransactionId,
-        metadata: {
-          type: 'card',
-          provider: provider.id,
-          installments: data.installments,
-        },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-
-      return cardPayment;
-    } catch (error) {
-      console.error('Erro ao processar pagamento com cartão:', error);
-      throw new Error('Falha ao processar pagamento com cartão');
-    }
-  }
-
-  // Subscription Management
-  async createSubscription(data: {
-    customerId: string;
-    planId: string;
-    paymentMethodId: string;
-    metadata?: Record<string, any>;
-  }): Promise<Subscription> {
-    try {
-      const subscription: Subscription = {
-        id: this.generateId(),
-        customerId: data.customerId,
-        planId: data.planId,
-        status: 'active',
-        currentPeriodStart: new Date().toISOString(),
-        currentPeriodEnd: this.calculateNextPeriodEnd(data.planId),
-        metadata: data.metadata,
-      };
-
-      // Salvar no banco
-      const { error } = await (supabase as any)
-        .from('subscriptions')
-        .insert({
-          id: subscription.id,
-          customer_id: subscription.customerId,
-          plan_id: subscription.planId,
-          status: subscription.status,
-          current_period_start: subscription.currentPeriodStart,
-          current_period_end: subscription.currentPeriodEnd,
-          metadata: subscription.metadata,
-        });
-
-      if (error) throw error;
-
-      return subscription;
-    } catch (error) {
-      console.error('Erro ao criar assinatura:', error);
-      throw new Error('Falha ao criar assinatura');
-    }
-  }
-
-  async cancelSubscription(subscriptionId: string): Promise<void> {
-    try {
-      const { error } = await (supabase as any)
-        .from('subscriptions')
-        .update({
-          status: 'canceled',
-          canceled_at: new Date().toISOString(),
-        })
-        .eq('id', subscriptionId);
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Erro ao cancelar assinatura:', error);
-      throw new Error('Falha ao cancelar assinatura');
-    }
-  }
-
-  // Invoice Management
-  async createInvoice(data: {
-    customerId: string;
-    items: InvoiceItem[];
-    dueDate: string;
-    subscriptionId?: string;
-    metadata?: Record<string, any>;
-  }): Promise<Invoice> {
-    try {
-      const totalAmount = data.items.reduce((sum, item) => sum + (item.amount * item.quantity), 0);
-
-      const invoice: Invoice = {
-        id: this.generateId(),
-        customerId: data.customerId,
-        subscriptionId: data.subscriptionId,
-        amount: totalAmount,
-        currency: 'BRL',
-        status: 'open',
-        items: data.items,
-        dueDate: data.dueDate,
-        metadata: data.metadata,
-      };
-
-      // Salvar no banco
-      const { error } = await (supabase as any)
-        .from('invoices')
-        .insert({
-          id: invoice.id,
-          customer_id: invoice.customerId,
-          subscription_id: invoice.subscriptionId,
-          amount: invoice.amount,
-          currency: invoice.currency,
-          status: invoice.status,
-          items: invoice.items,
-          due_date: invoice.dueDate,
-          metadata: invoice.metadata,
-        });
-
-      if (error) throw error;
-
-      return invoice;
-    } catch (error) {
-      console.error('Erro ao criar fatura:', error);
-      throw new Error('Falha ao criar fatura');
-    }
-  }
-
-  // Payment Methods Management
-  async savePaymentMethod(data: {
-    userId: string;
-    type: 'card' | 'pix' | 'bank_account';
-    provider: string;
-    details: PaymentMethod['details'];
-    isDefault?: boolean;
-  }): Promise<PaymentMethod> {
-    try {
-      const paymentMethod: PaymentMethod = {
-        id: this.generateId(),
-        userId: data.userId,
-        type: data.type,
-        provider: data.provider,
-        details: data.details,
-        isDefault: data.isDefault || false,
-        createdAt: new Date().toISOString(),
-      };
-
-      // Se for padrão, remover padrão dos outros
-      if (data.isDefault) {
-        await (supabase as any)
-          .from('payment_methods')
-          .update({ is_default: false })
-          .eq('user_id', data.userId);
-      }
-
-      const { error } = await (supabase as any)
-        .from('payment_methods')
-        .insert({
-          id: paymentMethod.id,
-          user_id: paymentMethod.userId,
-          type: paymentMethod.type,
-          provider: paymentMethod.provider,
-          details: paymentMethod.details,
-          is_default: paymentMethod.isDefault,
-          created_at: paymentMethod.createdAt,
-        });
-
-      if (error) throw error;
-
-      return paymentMethod;
-    } catch (error) {
-      console.error('Erro ao salvar método de pagamento:', error);
-      throw new Error('Falha ao salvar método de pagamento');
-    }
-  }
-
-  async getPaymentMethods(userId: string): Promise<PaymentMethod[]> {
-    try {
-      const { data, error } = await (supabase as any)
-        .from('payment_methods')
-        .select('*')
-        .eq('user_id', userId)
-        .order('is_default', { ascending: false });
-
-      if (error) throw error;
-
-      return (data || []).map((row: any) => ({
-        id: row.id,
-        userId: row.user_id,
-        type: row.type,
-        provider: row.provider,
-        details: row.details,
-        isDefault: row.is_default,
-        createdAt: row.created_at,
-      }));
-    } catch (error) {
-      console.error('Erro ao buscar métodos de pagamento:', error);
-      throw new Error('Falha ao buscar métodos de pagamento');
-    }
-  }
-
-  // Transaction History
-  async getTransactionHistory(userId: string, limit: number = 50): Promise<PaymentIntent[]> {
-    try {
-      const { data, error } = await (supabase as any)
-        .from('payment_transactions')
-        .select('*')
-        .eq('customer_id', userId)
-        .order('created_at', { ascending: false })
-        .limit(limit);
-
-      if (error) throw error;
-
-      return (data || []).map((row: any) => ({
-        id: row.id,
-        amount: row.amount,
-        currency: row.currency,
-        description: row.description || '',
-        customerId: row.customer_id,
-        appointmentId: row.appointment_id,
-        status: row.status,
-        paymentMethodId: row.payment_method_id,
-        providerTransactionId: row.provider_transaction_id,
-        metadata: row.metadata,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at,
-      }));
-    } catch (error) {
-      console.error('Erro ao buscar histórico de transações:', error);
-      throw new Error('Falha ao buscar histórico de transações');
-    }
-  }
-
-  // Refunds
-  async processRefund(paymentIntentId: string, amount?: number): Promise<void> {
-    try {
-      const { data: payment, error: fetchError } = await supabase
-        .from('payment_transactions')
-        .select('*')
-        .eq('id', paymentIntentId)
+      // Atualizar status do pagamento
+      const { data: payment } = await supabase
+        .from('payments')
+        .update({ status, paid_at: status === 'paid' ? new Date().toISOString() : null })
+        .eq('external_payment_id', paymentId)
+        .select('appointment_id')
         .single();
 
-      if (fetchError) throw fetchError;
+      if (payment && status === 'paid') {
+        // Marcar consulta como paga
+        await supabase
+          .from('appointments')
+          .update({ payment_status: 'paid' })
+          .eq('id', payment.appointment_id);
 
-      const refundAmount = amount || (payment as any).amount;
-
-      // Processar estorno no provedor
-      // Implementar lógica específica por provedor
-
-      // Atualizar status no banco
-      const { error: updateError } = await (supabase as any)
-        .from('payment_transactions')
-        .update({
-          status: 'refunded',
-          updated_at: new Date().toISOString(),
-          metadata: {
-            ...(payment as any).metadata,
-            refund: {
-              amount: refundAmount,
-              processedAt: new Date().toISOString(),
-            }
-          }
-        })
-        .eq('id', paymentIntentId);
-
-      if (updateError) throw updateError;
+        // Enviar confirmação por WhatsApp
+        await this.sendPaymentConfirmation(payment.appointment_id);
+      }
     } catch (error) {
-      console.error('Erro ao processar estorno:', error);
-      throw new Error('Falha ao processar estorno');
+      console.error('Erro ao processar webhook:', error);
+      throw error;
     }
   }
 
-  // Private helper methods
-  private async savePaymentIntent(intent: PaymentIntent): Promise<void> {
-    const { error } = await (supabase as any)
-      .from('payment_transactions')
-      .insert({
-        id: intent.id,
-        customer_id: intent.customerId,
-        appointment_id: intent.appointmentId,
-        amount: intent.amount,
-        currency: intent.currency,
-        status: intent.status,
-        payment_method_id: intent.paymentMethodId,
-        provider_transaction_id: intent.providerTransactionId,
-        description: intent.description,
-        metadata: intent.metadata,
-        created_at: intent.createdAt,
-        updated_at: intent.updatedAt,
-      });
-
-    if (error) throw error;
-  }
-
-  private generatePixQRCode(data: {
-    amount: number;
-    description: string;
-    merchantName: string;
-    merchantCity: string;
-    pixKey: string;
-  }): { pixKey: string; qrCode: string; qrCodeImage: string } {
-    // Implementar geração de QR Code PIX
-    // Esta é uma implementação simplificada
-    const qrCodeData = {
-      pixKey: data.pixKey,
-      merchantName: data.merchantName,
-      merchantCity: data.merchantCity,
-      amount: data.amount,
-      description: data.description,
-    };
-
-    const qrCodeString = this.encodePixQRCode(qrCodeData);
-    const qrCodeImage = this.generateQRCodeImage(qrCodeString);
-
-    return {
-      pixKey: data.pixKey,
-      qrCode: qrCodeString,
-      qrCodeImage,
-    };
-  }
-
-  private encodePixQRCode(data: any): string {
-    // Implementação simplificada do formato PIX
-    // Em produção, usar biblioteca específica para PIX
-    return `00020126580014br.gov.bcb.pix0136${data.pixKey}0204${data.description}5303986540${data.amount.toFixed(2)}5802BR5913${data.merchantName}6009${data.merchantCity}62070503***6304`;
-  }
-
-  private generateQRCodeImage(qrCodeString: string): string {
-    // Gerar imagem do QR Code
-    // Em produção, usar biblioteca como qrcode
-    return `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==`;
-  }
-
-  private async processMercadoPagoPayment(data: any): Promise<{ id: string; status: string; providerTransactionId: string }> {
-    // Implementar integração com Mercado Pago
-    return {
-      id: this.generateId(),
+  /**
+   * Salvar registro do pagamento
+   */
+  private async savePaymentRecord(
+    appointmentId: string,
+    externalPaymentId: string,
+    method: string
+  ): Promise<void> {
+    await supabase.from('payments').insert({
+      appointment_id: appointmentId,
+      external_payment_id: externalPaymentId,
+      payment_method: method,
       status: 'pending',
-      providerTransactionId: this.generateId(),
-    };
+    });
   }
 
-  private async processStripePayment(data: any): Promise<{ id: string; status: string; providerTransactionId: string }> {
-    // Implementar integração com Stripe
-    return {
-      id: this.generateId(),
-      status: 'pending',
-      providerTransactionId: this.generateId(),
-    };
+  /**
+   * Enviar confirmação de pagamento por WhatsApp
+   */
+  private async sendPaymentConfirmation(appointmentId: string): Promise<void> {
+    try {
+      const { data: appointment } = await supabase
+        .from('appointments')
+        .select(`
+          *,
+          patients(name, phone),
+          services(name, price)
+        `)
+        .eq('id', appointmentId)
+        .single();
+
+      if (!appointment) return;
+
+      // Usar WhatsAppService para enviar
+      const { getWhatsAppService } = await import('@/services/whatsapp/WhatsAppService');
+      const whatsapp = getWhatsAppService();
+
+      if (whatsapp.isConfigured() && appointment.patients?.phone) {
+        await whatsapp.sendTemplateMessage(
+          appointment.patients.phone,
+          'pagamento_confirmado',
+          [
+            appointment.services?.price?.toString() || '0',
+            new Date(appointment.scheduled_at).toLocaleDateString('pt-BR'),
+          ],
+          appointment.clinic_id
+        );
+      }
+    } catch (error) {
+      console.error('Erro ao enviar confirmação:', error);
+    }
   }
 
-  private calculateNextPeriodEnd(planId: string): string {
-    // Calcular próximo período baseado no plano
-    const date = new Date();
-    date.setMonth(date.getMonth() + 1); // Mensal por padrão
-    return date.toISOString();
+  /**
+   * Verificar status de pagamento
+   */
+  async checkPaymentStatus(paymentId: string): Promise<string> {
+    try {
+      const { data } = await supabase
+        .from('payments')
+        .select('status')
+        .eq('external_payment_id', paymentId)
+        .single();
+
+      return data?.status || 'unknown';
+    } catch (error) {
+      console.error('Erro ao verificar status:', error);
+      return 'unknown';
+    }
   }
 
-  private generateId(): string {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  /**
+   * Listar pagamentos do paciente
+   */
+  async getPatientPayments(patientId: string): Promise<any[]> {
+    try {
+      const { data } = await supabase
+        .from('payments')
+        .select(`
+          *,
+          appointments(scheduled_at, services(name))
+        `)
+        .eq('appointments.patient_id', patientId)
+        .order('created_at', { ascending: false });
+
+      return data || [];
+    } catch (error) {
+      console.error('Erro ao buscar pagamentos:', error);
+      return [];
+    }
   }
 }
 
-// Export singleton instance
-export const paymentService = new PaymentService();
-export default paymentService;
+// Singleton
+let paymentServiceInstance: PaymentService | null = null;
+
+export const getPaymentService = (): PaymentService => {
+  if (!paymentServiceInstance) {
+    paymentServiceInstance = new PaymentService();
+  }
+  return paymentServiceInstance;
+};
