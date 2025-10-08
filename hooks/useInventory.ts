@@ -362,14 +362,44 @@ export function useInventoryMetrics() {
 export function useInventoryAlerts() {
   const { alerts, metrics, isLoading, error, loadMetrics } = useInventory();
 
-  const unreadAlertsCount = alerts.filter(alert => !alert.severity || alert.severity === 'critical').length;
+  // Simular alertas com propriedade isRead
+  const alertsWithReadStatus = alerts.map(alert => ({
+    ...alert,
+    isRead: Math.random() > 0.3 // Simular alguns lidos e outros não
+  }));
+
+  const unreadAlertsCount = alertsWithReadStatus.filter(alert => !alert.isRead).length;
+
+  const markAsRead = (alertId: string) => {
+    // Em produção, isso seria uma chamada para a API
+    console.log('Marking alert as read:', alertId);
+  };
+
+  const markAllAsRead = () => {
+    // Em produção, isso seria uma chamada para a API
+    console.log('Marking all alerts as read');
+  };
+
+  const dismissAlert = (alertId: string) => {
+    // Em produção, isso seria uma chamada para a API
+    console.log('Dismissing alert:', alertId);
+  };
+
+  const exportAlerts = () => {
+    // Em produção, isso exportaria os alertas para CSV/PDF
+    console.log('Exporting alerts');
+  };
 
   return {
-    alerts,
+    alerts: alertsWithReadStatus,
     unreadAlertsCount,
     isLoading,
     error,
-    refresh: loadMetrics
+    refresh: loadMetrics,
+    markAsRead,
+    markAllAsRead,
+    dismissAlert,
+    exportAlerts
   };
 }
 

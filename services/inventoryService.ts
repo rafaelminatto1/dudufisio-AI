@@ -152,6 +152,46 @@ export const getDashboardMetrics = async (): Promise<InventoryMetrics> => {
         }
     }
 
+    // Adicionar alertas adicionais para demonstração
+    criticalAlerts.push(
+        {
+            id: 'alert-consumption-1',
+            type: InventoryAlertType.HighConsumption,
+            itemId: 'item-1',
+            itemName: 'Gaze Estéril 10x10',
+            message: 'Alto consumo detectado: 150% acima da média mensal',
+            severity: 'medium',
+            createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 horas atrás
+        },
+        {
+            id: 'alert-order-1',
+            type: InventoryAlertType.OverdueOrder,
+            itemId: 'item-3',
+            itemName: 'Seringa 10ml',
+            message: 'Pedido em atraso há 5 dias. Verificar com fornecedor.',
+            severity: 'high',
+            createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 dia atrás
+        },
+        {
+            id: 'alert-turnover-1',
+            type: InventoryAlertType.LowTurnover,
+            itemId: 'item-4',
+            itemName: 'Termômetro Digital',
+            message: 'Baixa rotatividade: estoque parado há 45 dias',
+            severity: 'low',
+            createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 horas atrás
+        },
+        {
+            id: 'alert-price-1',
+            type: InventoryAlertType.PriceChange,
+            itemId: 'item-2',
+            itemName: 'Álcool 70%',
+            message: 'Preço do fornecedor aumentou 15%. Revisar orçamento.',
+            severity: 'medium',
+            createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 horas atrás
+        }
+    );
+
     return {
         totalItems: items.length,
         lowStockItems: lowStockCount,

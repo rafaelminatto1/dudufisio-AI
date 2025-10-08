@@ -1696,8 +1696,9 @@ export interface InventoryAlert {
     itemId: string;
     itemName: string;
     message: string;
-    severity: 'high' | 'critical';
+    severity: 'low' | 'medium' | 'high' | 'critical';
     createdAt: string; // ISO String
+    isRead?: boolean;
 }
 
 export interface InventoryMetrics {

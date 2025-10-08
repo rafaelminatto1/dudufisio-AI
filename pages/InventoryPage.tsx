@@ -19,6 +19,7 @@ import { useInventory, useInventoryMetrics, useInventoryAlerts, useLowStockItems
 import { InventoryItem, MovementType } from '../types';
 import ItemFormModal from '../components/inventory/ItemFormModal';
 import StockMovementModal from '../components/inventory/StockMovementModal';
+import AlertsTab from '../components/inventory/AlertsTab';
 
 const InventoryPage: React.FC = () => {
   const {
@@ -38,7 +39,15 @@ const InventoryPage: React.FC = () => {
   } = useInventory();
 
   const { metrics } = useInventoryMetrics();
-  const { alerts, unreadAlertsCount } = useInventoryAlerts();
+  const { 
+    alerts, 
+    unreadAlertsCount, 
+    markAsRead, 
+    markAllAsRead, 
+    dismissAlert, 
+    exportAlerts,
+    refresh: refreshAlerts 
+  } = useInventoryAlerts();
   const { lowStockItems } = useLowStockItems();
   const { expiringItems } = useExpiringItems();
 
@@ -256,6 +265,8 @@ const InventoryPage: React.FC = () => {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Filtrar por categoria"
+            title="Filtrar por categoria"
           >
             <option value="">Todas as categorias</option>
             {categories.map((category: any) => (
@@ -455,10 +466,16 @@ const InventoryPage: React.FC = () => {
         </div>
       )}
       {activeTab === 'alerts' && (
-        <div className="text-center py-12">
-          <AlertTriangle className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-          <p className="text-slate-500">Central de alertas será implementada em breve</p>
-        </div>
+        <AlertsTab
+          alerts={alerts}
+          unreadAlertsCount={unreadAlertsCount}
+          isLoading={isLoading}
+          onRefresh={refreshAlerts}
+          onMarkAsRead={markAsRead}
+          onMarkAllAsRead={markAllAsRead}
+          onDismissAlert={dismissAlert}
+          onExportAlerts={exportAlerts}
+        />
       )}
 
       {/* Loading Overlay */}
