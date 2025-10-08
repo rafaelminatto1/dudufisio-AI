@@ -19,10 +19,10 @@ CREATE INDEX IF NOT EXISTS idx_appointments_therapist_date
 CREATE INDEX IF NOT EXISTS idx_appointments_patient_date 
   ON appointments(patient_id, scheduled_at DESC);
 
--- Busca de appointments por clínica e data
-CREATE INDEX IF NOT EXISTS idx_appointments_clinic_date 
-  ON appointments(clinic_id_fk, scheduled_at DESC) 
-  WHERE clinic_id_fk IS NOT NULL;
+-- Busca de appointments por clínica e data (se coluna existir)
+-- CREATE INDEX IF NOT EXISTS idx_appointments_clinic_date 
+--   ON appointments(clinic_id_fk, scheduled_at DESC) 
+--   WHERE clinic_id_fk IS NOT NULL;
 
 -- Appointments pendentes de confirmação
 -- Removido índice com NOW() pois não é IMMUTABLE
@@ -41,9 +41,9 @@ CREATE INDEX IF NOT EXISTS idx_appointments_clinic_date
 -- ============================================================================
 
 -- Documentos por paciente e data de criação
-CREATE INDEX IF NOT EXISTS idx_clinical_docs_patient_created 
-  ON clinical_documents(patient_id, created_at DESC)
-  WHERE status != 'deleted';
+-- CREATE INDEX IF NOT EXISTS idx_clinical_docs_patient_created 
+--   ON clinical_documents(patient_id, created_at DESC)
+--   WHERE status != 'deleted';
 
 -- Documentos por terapeuta e tipo
 CREATE INDEX IF NOT EXISTS idx_clinical_docs_therapist_type 
@@ -65,19 +65,19 @@ CREATE INDEX IF NOT EXISTS idx_clinical_docs_specialty
 -- ============================================================================
 
 -- Pacientes por clínica e criação
-CREATE INDEX IF NOT EXISTS idx_patients_clinic_created
-  ON patients(clinic_id, created_at DESC)
-  WHERE deleted_at IS NULL;
+-- CREATE INDEX IF NOT EXISTS idx_patients_clinic_created
+--   ON patients(clinic_id, created_at DESC)
+--   WHERE deleted_at IS NULL;
 
 -- Busca de pacientes por nome (text search)
-CREATE INDEX IF NOT EXISTS idx_patients_name_search
-  ON patients USING gin(to_tsvector('portuguese', name))
-  WHERE deleted_at IS NULL;
+-- CREATE INDEX IF NOT EXISTS idx_patients_name_search
+--   ON patients USING gin(to_tsvector('portuguese', name))
+--   WHERE deleted_at IS NULL;
 
 -- Pacientes por email
 CREATE INDEX IF NOT EXISTS idx_patients_email_lookup
   ON patients(email)
-  WHERE email IS NOT NULL AND deleted_at IS NULL;
+  WHERE email IS NOT NULL;
 
 -- ============================================================================
 -- EXERCISES & PRESCRIPTIONS - Queries de exercícios
