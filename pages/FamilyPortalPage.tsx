@@ -205,9 +205,9 @@ export const FamilyPortalPage: React.FC = () => {
                           report.painLevelChange === 0 ? 'bg-blue-100 text-blue-700' :
                           'bg-orange-100 text-orange-700'
                         }`}>
-                          {report.painLevelChange < 0 ? '↓ Dor reduzida' :
-                           report.painLevelChange === 0 ? '→ Estável' :
-                           '↑ Dor aumentada'}
+                          {report.painLevelChange < 0 ? 'Dor reduzida' :
+                           report.painLevelChange === 0 ? 'Estável' :
+                           'Dor aumentada'}
                         </span>
                       </div>
                       <p className="text-sm text-gray-700">{report.summary}</p>
@@ -225,7 +225,7 @@ export const FamilyPortalPage: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
+        )}
 
         {/* Info Banner */}
         <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
