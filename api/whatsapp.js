@@ -114,8 +114,19 @@ async function handleIncomingWebhook(req, res) {
  */
 async function handleMetaMessage(message, metadata) {
   try {
-    console.log('✅ Mensagem processada:', message.from, message.text?.body);
-    // Aqui você pode integrar com o seu sistema de mensagens
+    console.log('✅ Mensagem recebida:', message.from, message.text?.body);
+    
+    // Importar serviço WhatsApp
+    const { getMetaWhatsAppService } = require('../services/whatsapp/MetaWhatsAppService');
+    const whatsappService = getMetaWhatsAppService();
+    
+    // Obter clinic_id (pode vir do metadata ou configuração)
+    const clinicId = process.env.DEFAULT_CLINIC_ID || '1';
+    
+    // Processar mensagem
+    await whatsappService.processIncomingMessage(message, metadata, clinicId);
+    
+    console.log('✅ Mensagem processada com sucesso');
   } catch (error) {
     console.error('❌ Erro ao processar mensagem:', error);
   }
@@ -126,8 +137,16 @@ async function handleMetaMessage(message, metadata) {
  */
 async function handleMetaStatus(status) {
   try {
-    console.log('✅ Status atualizado:', status.id, status.status);
-    // Aqui você pode atualizar o status no seu sistema
+    console.log('✅ Status recebido:', status.id, status.status);
+    
+    // Importar serviço WhatsApp
+    const { getMetaWhatsAppService } = require('../services/whatsapp/MetaWhatsAppService');
+    const whatsappService = getMetaWhatsAppService();
+    
+    // Processar status
+    await whatsappService.processMessageStatus(status);
+    
+    console.log('✅ Status atualizado com sucesso');
   } catch (error) {
     console.error('❌ Erro ao processar status:', error);
   }
