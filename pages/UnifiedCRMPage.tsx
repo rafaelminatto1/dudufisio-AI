@@ -12,6 +12,7 @@ import { MessageSquare, Trello, BarChart3, Zap, Phone, Mail, Users, TrendingUp }
 import UnifiedInbox from '../components/crm/UnifiedInbox';
 import LeadsKanban from '../components/crm/LeadsKanban';
 import CRMAnalytics from '../components/crm/CRMAnalytics';
+import AutomationManager from '../components/crm/AutomationManager';
 
 export default function UnifiedCRMPage() {
   const [activeTab, setActiveTab] = useState('inbox');
@@ -136,74 +137,7 @@ export default function UnifiedCRMPage() {
 
         {/* Automations Tab */}
         <TabsContent value="automations" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="w-5 h-5 text-yellow-600" />
-                Automações de Follow-up
-              </CardTitle>
-              <CardDescription>
-                Configure regras automáticas para follow-up de leads
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Automation Rules */}
-                <Card className="border-l-4 border-l-green-500">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold text-gray-900">Lead novo sem resposta há 24h</h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Envia mensagem de follow-up automática
-                        </p>
-                      </div>
-                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
-                        Ativa
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-l-4 border-l-green-500">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold text-gray-900">Lead qualificado há 3 dias</h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Envia proposta de agendamento
-                        </p>
-                      </div>
-                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
-                        Ativa
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-l-4 border-l-gray-300">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="font-semibold text-gray-400">Lead inativo há 7 dias</h3>
-                        <p className="text-sm text-gray-400 mt-1">
-                          Marca como "cold" e envia pesquisa de interesse
-                        </p>
-                      </div>
-                      <Badge variant="outline" className="bg-gray-50 text-gray-500">
-                        Inativa
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Button className="w-full mt-4">
-                  <Zap className="w-4 h-4 mr-2" />
-                  Criar Nova Automação
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <AutomationManager />
         </TabsContent>
       </Tabs>
     </div>
