@@ -249,3 +249,4 @@ COMMENT ON TABLE fhir_resources IS 'Cache de recursos FHIR (HL7)';
 
 
 
+
