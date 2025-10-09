@@ -37,7 +37,6 @@ const TreatmentPage = createLazyComponent(() => import('./TreatmentPage'));
 const IntegrationsTestPage = createLazyComponent(() => import('./IntegrationsTestPage'));
 const BIIntegrationTestPage = createLazyComponent(() => import('./BIIntegrationTestPage'));
 const MentoriaPage = createLazyComponent(() => import('./MentoriaPageNew'));
-const ProtocolsPage = createLazyComponent(() => import('./ProtocolsPage'));
 const TeleconsultaPage = createLazyComponent(() => import('./TeleconsultaPage'));
 const AdvancedReportsPage = createLazyComponent(() => import('./AdvancedReportsPage'));
 const SimpleDashboard = createLazyComponent(() => import('./SimpleDashboard'));

@@ -1,325 +1,163 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
+/**
+ * Hook para Otimizações de Performance
+ * Implementa memoization, lazy loading e virtualização
+ */
 
-// 🚀 Hook para Otimização de Performance
-// Implementa técnicas avançadas de otimização
+import { useCallback, useMemo, useRef, useEffect } from 'react';
 
-interface PerformanceOptimizationOptions {
-  enableIntersectionObserver?: boolean;
-  enableResizeObserver?: boolean;
-  enableIdleCallback?: boolean;
-  throttleScroll?: number;
-  throttleResize?: number;
+/**
+ * Hook para debounce otimizado
+ */
+export const useOptimizedDebounce = <T extends (...args: any[]) => any>(
+  callback: T,
+  delay: number
+): T => {
+  const timeoutRef = useRef<NodeJS.Timeout>();
+  const callbackRef = useRef(callback);
+
+  useEffect(() => {
+    callbackRef.current = callback;
+  }, [callback]);
+
+  return useCallback(
+    ((...args) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        callbackRef.current(...args);
+      }, delay);
+    }) as T,
+    [delay]
+  );
+};
+
+/**
+ * Hook para virtualização de lista
+ */
+export const useVirtualList = <T,>(
+  items: T[],
+  itemHeight: number,
+  containerHeight: number
+) => {
+  const scrollPositionRef = useRef(0);
+
+  const visibleItems = useMemo(() => {
+    const startIndex = Math.floor(scrollPositionRef.current / itemHeight);
+    const endIndex = Math.ceil((scrollPositionRef.current + containerHeight) / itemHeight);
+    
+    return {
+      startIndex: Math.max(0, startIndex - 5), // Buffer
+      endIndex: Math.min(items.length, endIndex + 5),
+      items: items.slice(
+        Math.max(0, startIndex - 5),
+        Math.min(items.length, endIndex + 5)
+      ),
+    };
+  }, [items, itemHeight, containerHeight, scrollPositionRef.current]);
+
+  const handleScroll = useCallback((scrollTop: number) => {
+    scrollPositionRef.current = scrollTop;
+  }, []);
+
+  return {
+    visibleItems,
+    handleScroll,
+    totalHeight: items.length * itemHeight,
+  };
+};
+
+/**
+ * Hook para memoização inteligente de objetos
+ */
+export const useDeepMemo = <T,>(factory: () => T, deps: any[]): T => {
+  const ref = useRef<{ value: T; deps: any[] }>();
+
+  if (!ref.current || !depsEqual(ref.current.deps, deps)) {
+    ref.current = {
+      value: factory(),
+      deps,
+    };
+  }
+
+  return ref.current.value;
+};
+
+/**
+ * Comparar dependências profundamente
+ */
+function depsEqual(a: any[], b: any[]): boolean {
+  if (a.length !== b.length) return false;
+  
+  for (let i = 0; i < a.length; i++) {
+    if (!Object.is(a[i], b[i])) {
+      return false;
+    }
+  }
+  
+  return true;
 }
 
-// 🎯 Hook para Intersection Observer
-export const useIntersectionObserver = (
-  callback: (entries: IntersectionObserverEntry[]) => void,
-  options: IntersectionObserverInit = {}
-) => {
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const elementRef = useRef<HTMLElement | null>(null);
-
-  const observe = useCallback((element: HTMLElement) => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    observerRef.current = new IntersectionObserver(callback, {
-      threshold: 0.1,
-      rootMargin: '50px',
-      ...options
-    });
-
-    observerRef.current.observe(element);
-    elementRef.current = element;
-  }, [callback, options]);
-
-  const unobserve = useCallback(() => {
-    if (observerRef.current && elementRef.current) {
-      observerRef.current.unobserve(elementRef.current);
-    }
-  }, []);
-
-  const disconnect = useCallback(() => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-  }, []);
+/**
+ * Hook para lazy loading de imagens
+ */
+export const useLazyImage = (src: string) => {
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [error, setError] = useState(false);
+  const imgRef = useRef<HTMLImageElement>();
 
   useEffect(() => {
-    return () => {
-      disconnect();
-    };
-  }, [disconnect]);
-
-  return { observe, unobserve, disconnect };
-};
-
-// 🎯 Hook para Resize Observer
-export const useResizeObserver = (
-  callback: (entries: ResizeObserverEntry[]) => void,
-  options: ResizeObserverOptions = {}
-) => {
-  const observerRef = useRef<ResizeObserver | null>(null);
-  const elementRef = useRef<HTMLElement | null>(null);
-
-  const observe = useCallback((element: HTMLElement) => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    observerRef.current = new ResizeObserver(callback);
-    observerRef.current.observe(element, options);
-    elementRef.current = element;
-  }, [callback, options]);
-
-  const unobserve = useCallback(() => {
-    if (observerRef.current && elementRef.current) {
-      observerRef.current.unobserve(elementRef.current);
-    }
-  }, []);
-
-  const disconnect = useCallback(() => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      disconnect();
-    };
-  }, [disconnect]);
-
-  return { observe, unobserve, disconnect };
-};
-
-// 🎯 Hook para Idle Callback
-export const useIdleCallback = () => {
-  const [isIdle, setIsIdle] = useState(true);
-  const idleRef = useRef<number | null>(null);
-
-  const scheduleIdleCallback = useCallback((callback: () => void) => {
-    if ('requestIdleCallback' in window) {
-      idleRef.current = window.requestIdleCallback(callback, { timeout: 5000 });
-    } else {
-      // Fallback para browsers que não suportam requestIdleCallback
-      setTimeout(callback, 0);
-    }
-  }, []);
-
-  const cancelIdleCallback = useCallback(() => {
-    if (idleRef.current && 'cancelIdleCallback' in window) {
-      window.cancelIdleCallback(idleRef.current);
-    }
-  }, []);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsIdle(document.visibilityState === 'hidden');
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      cancelIdleCallback();
-    };
-  }, [cancelIdleCallback]);
-
-  return {
-    isIdle,
-    scheduleIdleCallback,
-    cancelIdleCallback
-  };
-};
-
-// 🎯 Hook para Throttled Scroll
-export const useThrottledScroll = (callback: (scrollTop: number) => void, delay = 100) => {
-  const lastCallRef = useRef<number>(0);
-
-  const handleScroll = useCallback((event: Event) => {
-    const now = Date.now();
-    if (now - lastCallRef.current >= delay) {
-      lastCallRef.current = now;
-      const target = event.target as HTMLElement;
-      callback(target.scrollTop);
-    }
-  }, [callback, delay]);
-
-  return handleScroll;
-};
-
-// 🎯 Hook para Throttled Resize
-export const useThrottledResize = (callback: (width: number, height: number) => void, delay = 100) => {
-  const lastCallRef = useRef<number>(0);
-
-  const handleResize = useCallback(() => {
-    const now = Date.now();
-    if (now - lastCallRef.current >= delay) {
-      lastCallRef.current = now;
-      callback(window.innerWidth, window.innerHeight);
-    }
-  }, [callback, delay]);
-
-  return handleResize;
-};
-
-// 🎯 Hook Principal de Otimização
-export const usePerformanceOptimization = (
-  options: PerformanceOptimizationOptions = {}
-) => {
-  const {
-    enableIntersectionObserver = true,
-    enableResizeObserver = true,
-    enableIdleCallback = true,
-    throttleScroll = 100,
-    throttleResize = 100
-  } = options;
-
-  const intersectionObserver = useIntersectionObserver(
-    useCallback((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Elemento visível - pode carregar conteúdo pesado
-          entry.target.classList.add('visible');
-        } else {
-          // Elemento não visível - pode pausar animações
-          entry.target.classList.remove('visible');
-        }
-      });
-    }, []),
-    { threshold: 0.1, rootMargin: '50px' }
-  );
-
-  const resizeObserver = useResizeObserver(
-    useCallback((entries) => {
-      entries.forEach(entry => {
-        const { width, height } = entry.contentRect;
-        // Otimizar layout baseado no tamanho
-        if (width < 768) {
-          entry.target.classList.add('mobile-layout');
-        } else {
-          entry.target.classList.remove('mobile-layout');
-        }
-      });
-    }, []),
-    { box: 'content-box' }
-  );
-
-  const idleCallback = useIdleCallback();
-
-  const throttledScroll = useThrottledScroll(
-    useCallback((scrollTop) => {
-      // Otimizar baseado na posição do scroll
-      if (scrollTop > 100) {
-        document.body.classList.add('scrolled');
-      } else {
-        document.body.classList.remove('scrolled');
-      }
-    }, []),
-    throttleScroll
-  );
-
-  const throttledResize = useThrottledResize(
-    useCallback((width, height) => {
-      // Otimizar baseado no tamanho da tela
-      if (width < 768) {
-        document.body.classList.add('mobile');
-      } else {
-        document.body.classList.remove('mobile');
-      }
-    }, []),
-    throttleResize
-  );
-
-  // 🎯 Hook para Lazy Loading de Imagens
-  const useLazyImage = (src: string, placeholder?: string) => {
-    const [imageSrc, setImageSrc] = useState(placeholder || '');
-    const [isLoaded, setIsLoaded] = useState(false);
-    const imgRef = useRef<HTMLImageElement>(null);
-
-  useEffect(() => {
-      if (!enableIntersectionObserver) {
-        setImageSrc(src);
-        return;
-      }
-
-      const img = imgRef.current;
-      if (!img) return;
-
-      const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-        entries.forEach(entry => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setImageSrc(src);
-            setIsLoaded(true);
+            const img = new Image();
+            img.src = src;
+            img.onload = () => setImageSrc(src);
+            img.onerror = () => setError(true);
+            imgRef.current = img;
+            observer.disconnect();
           }
         });
-      };
+      },
+      { threshold: 0.1 }
+    );
 
-      const observer = new IntersectionObserver(handleIntersection, {
-        threshold: 0.1
+    return () => observer.disconnect();
+  }, [src]);
+
+  return { imageSrc, error };
+};
+
+/**
+ * Hook para batch updates
+ */
+export const useBatchUpdates = <T,>(initialState: T[]) => {
+  const [items, setItems] = useState(initialState);
+  const pendingUpdates = useRef<Array<(items: T[]) => T[]>>([]);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  const addUpdate = useCallback((updater: (items: T[]) => T[]) => {
+    pendingUpdates.current.push(updater);
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setItems((current) => {
+        let result = current;
+        pendingUpdates.current.forEach((update) => {
+          result = update(result);
+        });
+        pendingUpdates.current = [];
+        return result;
       });
-
-      observer.observe(img);
-
-      return () => {
-        observer.disconnect();
-      };
-    }, [src, enableIntersectionObserver]);
-
-    return { imgRef, imageSrc, isLoaded };
-  };
-
-  // 🎯 Hook para Preload de Recursos
-  const useResourcePreloader = () => {
-    const preloadedResources = useRef<Set<string>>(new Set());
-
-    const preloadResource = useCallback((url: string, type: 'image' | 'script' | 'style' = 'image') => {
-      if (preloadedResources.current.has(url)) return;
-
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.href = url;
-
-      switch (type) {
-        case 'image':
-          link.as = 'image';
-          break;
-        case 'script':
-          link.as = 'script';
-          break;
-        case 'style':
-          link.as = 'style';
-          break;
-      }
-
-      document.head.appendChild(link);
-      preloadedResources.current.add(url);
+    }, 50);
   }, []);
 
-    const preloadCriticalResources = useCallback(() => {
-      // Preload recursos críticos
-      const criticalImages = [
-        '/icons/logo.svg',
-        '/icons/stethoscope.svg'
-      ];
-
-      criticalImages.forEach(url => preloadResource(url, 'image'));
-    }, [preloadResource]);
-
-    return {
-      preloadResource,
-      preloadCriticalResources
-    };
-  };
-
-  return {
-    intersectionObserver,
-    resizeObserver,
-    idleCallback,
-    throttledScroll,
-    throttledResize,
-    useLazyImage,
-    useResourcePreloader
-  };
+  return { items, addUpdate };
 };
+
+import { useState } from 'react';
