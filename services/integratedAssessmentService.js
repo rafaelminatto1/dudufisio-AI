@@ -1,5 +1,5 @@
 import { integratedProtocolsService } from './integratedProtocolsService';
-import { getAssessments } from '../scripts/integrate-clinical-content-to-db';
+import { getAssessments } from '../lib/clinical-content-loader';
 import { AssessmentsService } from './clinicalContentService';
 // Regras de recomendação predefinidas
 const RECOMMENDATION_RULES = [

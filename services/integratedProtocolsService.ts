@@ -1,7 +1,7 @@
 // services/integratedProtocolsService.ts
 import { Protocol, ProtocolCategory, EvidenceLevel } from '../types';
 import { getProtocols as getSystemProtocols, saveProtocol } from './protocolsService';
-import { getClinicalProtocols } from '../scripts/integrate-clinical-content-to-db';
+import { getClinicalProtocols } from '../lib/clinical-content-loader';
 import { exerciseProtocolService } from './exerciseProtocolService';
 
 // Função para converter protocolo clínico para formato do sistema

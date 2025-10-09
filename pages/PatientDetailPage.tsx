@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { clinicalContentService } from '../services/clinicalContentService';
 import type { ClinicalProtocol } from '../types/clinicalContent';
+import { ExerciseAssignmentSection } from '../components/patient/ExerciseAssignmentSection';
 
 const PatientDetailPage: React.FC = () => {
   const [assignedProtocols, setAssignedProtocols] = useState<ClinicalProtocol[]>([]);
@@ -233,6 +234,11 @@ const PatientDetailPage: React.FC = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Seção de Exercícios Atribuídos - NOVA FUNCIONALIDADE */}
+        <div className="mt-8">
+          <ExerciseAssignmentSection patientId={patient.id} />
+        </div>
       </div>
     </div>
     );

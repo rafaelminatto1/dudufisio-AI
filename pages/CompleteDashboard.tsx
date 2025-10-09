@@ -52,6 +52,20 @@ const GerarLaudoPage = createLazyComponent(() => import('./GerarLaudoPage'));
 // Páginas de Exercícios - Sistema Completo
 const ExercisesPage = createLazyComponent(() => import('./ExercisesPage'));
 const ExerciseEditPage = createLazyComponent(() => import('./ExerciseEditPage'));
+
+// Páginas de Protocolos - Sistema de Protocolos
+const ProtocolsPage = createLazyComponent(() => import('./ProtocolsPage'));
+const ProtocolEditPage = createLazyComponent(() => import('./ProtocolEditPage'));
+
+// Páginas de Atribuições e Tracking
+const AssignmentsPage = createLazyComponent(() => import('./AssignmentsPage'));
+const SessionTrackingPage = createLazyComponent(() => import('./SessionTrackingPage'));
+const ProgressDashboardPage = createLazyComponent(() => import('./ProgressDashboardPage'));
+
+// Páginas de Templates e Analytics
+const TemplatesPage = createLazyComponent(() => import('./TemplatesPage'));
+const TemplateEditPage = createLazyComponent(() => import('./TemplateEditPage'));
+const ExerciseAnalyticsPage = createLazyComponent(() => import('./ExerciseAnalyticsPage'));
 const MedicalReportPage = createLazyComponent(() => import('./MedicalReportPage'));
 const EvaluationReportPage = createLazyComponent(() => import('./EvaluationReportPage'));
 const ClinicalLibraryPage = createLazyComponent(() => import('./ClinicalLibraryPage'));
@@ -452,6 +466,23 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/exercises/new" element={LazyElement(ExerciseEditPage)} />
                 <Route path="/exercises/:id" element={LazyElement(ExerciseEditPage)} />
                 <Route path="/exercises/:id/view" element={LazyElement(ExerciseEditPage)} />
+
+                {/* Protocol Management Routes - Sistema de Protocolos */}
+                <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
+                <Route path="/protocols/new" element={LazyElement(ProtocolEditPage)} />
+                <Route path="/protocols/:id" element={LazyElement(ProtocolEditPage)} />
+                <Route path="/protocols/:id/view" element={LazyElement(ProtocolEditPage)} />
+
+                {/* Assignment Management Routes - Atribuições */}
+                <Route path="/assignments" element={LazyElement(AssignmentsPage)} />
+                <Route path="/session-tracking" element={LazyElement(SessionTrackingPage)} />
+                <Route path="/progress-dashboard" element={LazyElement(ProgressDashboardPage)} />
+
+                {/* Templates and Analytics */}
+                <Route path="/templates" element={LazyElement(TemplatesPage)} />
+                <Route path="/templates/new" element={LazyElement(TemplateEditPage)} />
+                <Route path="/templates/:id" element={LazyElement(TemplateEditPage)} />
+                <Route path="/exercise-analytics" element={LazyElement(ExerciseAnalyticsPage)} />
 
                 {/* Legacy Routes */}
                 <Route path="/admin" element={LazyElement(AdminDashboardPage)} />

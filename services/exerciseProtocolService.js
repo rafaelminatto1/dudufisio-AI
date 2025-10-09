@@ -1,5 +1,5 @@
 // services/exerciseProtocolService.ts
-import { getClinicalProtocols, getExercises } from '../scripts/integrate-clinical-content-to-db';
+import { getClinicalProtocols, getExercises } from '../lib/clinical-content-loader';
 export class ExerciseProtocolService {
     constructor() {
         this.links = [];

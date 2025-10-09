@@ -1,7 +1,7 @@
 // services/integratedExerciseService.ts
 import React from 'react';
 import { exerciseService } from './exerciseService';
-import { getExercises } from '../scripts/integrate-clinical-content-to-db';
+import { getExercises } from '../lib/clinical-content-loader';
 import { exerciseProtocolService } from './exerciseProtocolService';
 // Função para converter exercícios do sistema clínico para o formato do sistema
 function convertClinicalExerciseToSystemFormat(clinicalExercise) {

@@ -2,7 +2,7 @@
 import { Protocol, ProtocolCategory } from '../types';
 import { SpecializedAssessment, ScoringCriteria } from '../types/clinicalContent';
 import { integratedProtocolsService } from './integratedProtocolsService';
-import { getAssessments } from '../scripts/integrate-clinical-content-to-db';
+import { getAssessments } from '../lib/clinical-content-loader';
 import { AssessmentsService } from './clinicalContentService';
 
 // Interface para resultado de avaliação

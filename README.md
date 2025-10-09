@@ -1,8 +1,27 @@
 # DuduFisio-AI 🏥
 
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-61dafb?logo=react)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.3-646cff?logo=vite)](https://vitejs.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-Latest-3ecf8e?logo=supabase)](https://supabase.com/)
+[![License](https://img.shields.io/badge/License-Proprietary-red)]()
+[![Code Quality](https://img.shields.io/badge/Code%20Quality-A+-brightgreen)]()
+
 Sistema completo de gestão para clínicas de fisioterapia com inteligência artificial integrada.
 
 > **⚠️ POLÍTICA ANTI-CONVÊNIOS**: Este sistema trabalha EXCLUSIVAMENTE com pacientes particulares e NUNCA processará integrações com planos de saúde. Esta é uma regra fundamental do negócio que NÃO pode ser alterada.
+
+---
+
+## 📖 Documentação
+
+A documentação completa do projeto está organizada nos seguintes arquivos:
+
+- **[DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)** - Guia completo para desenvolvedores
+- **[AI_CONTEXT.md](./AI_CONTEXT.md)** - Guia para LLMs e assistentes de IA
+- **[BUSINESS_RULES.md](./BUSINESS_RULES.md)** - Regras de negócio e validações
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Documentação de APIs e integrações
+- **[CLAUDE.md](./CLAUDE.md)** - Instruções específicas para Claude AI
 
 ---
 
@@ -419,11 +438,23 @@ Se tiver erro relacionado a `scripts/`, eles foram excluídos do build via `vite
 
 ## 📚 Documentação Adicional
 
-- **[CLAUDE.md](CLAUDE.md)** - Instruções para Claude Code AI
+### Para Usuários Finais
 - **[docs/GUIA_USUARIO_FISIOTERAPEUTA.md](docs/GUIA_USUARIO_FISIOTERAPEUTA.md)** - Guia para fisioterapeutas
 - **[docs/GUIA_USUARIO_PACIENTE.md](docs/GUIA_USUARIO_PACIENTE.md)** - Guia para pacientes
 - **[docs/GUIA_USUARIO_ADMIN.md](docs/GUIA_USUARIO_ADMIN.md)** - Guia para administradores
 - **[docs/GUIA_USUARIO_EDUCADOR.md](docs/GUIA_USUARIO_EDUCADOR.md)** - Guia para educadores físicos
+
+### Para Desenvolvedores
+- **[DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)** - Guia técnico completo
+- **[API_DOCUMENTATION.md](./API_DOCUMENTATION.md)** - Documentação de APIs
+- **[BUSINESS_RULES.md](./BUSINESS_RULES.md)** - Regras de negócio
+- **[testsprite_tests/](./testsprite_tests/)** - Suíte de testes (25 casos de teste)
+
+### Para IAs e LLMs
+- **[AI_CONTEXT.md](./AI_CONTEXT.md)** - Contexto para assistentes de IA
+- **[CLAUDE.md](./CLAUDE.md)** - Instruções específicas para Claude
+
+### Histórico
 - **[.archive_docs/](.archive_docs/)** - Documentação histórica arquivada
 
 ---

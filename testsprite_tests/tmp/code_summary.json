@@ -1,243 +1,298 @@
 {
   "tech_stack": [
     "TypeScript",
-    "React 18/19",
-    "Next.js 14",
-    "Vite",
+    "JavaScript",
+    "React 19",
+    "Vite 6",
+    "React Router DOM 7",
     "Supabase",
     "PostgreSQL",
-    "Tailwind CSS",
-    "shadcn/ui",
+    "TailwindCSS",
+    "Shadcn/ui",
     "Radix UI",
-    "React Router DOM",
-    "Playwright",
-    "ESLint",
-    "Husky"
+    "Google Gemini AI",
+    "Zod",
+    "React Hook Form",
+    "Recharts",
+    "Framer Motion",
+    "Vitest",
+    "Playwright"
   ],
   "features": [
     {
-      "name": "Sistema de Autenticação",
-      "description": "Sistema completo de autenticação com Supabase, 2FA, roles e permissões",
-      "files": [
-        "contexts/SupabaseAuthContext.tsx",
-        "pages/auth/LoginPage.tsx",
-        "pages/auth/TwoFactorSetupPage.tsx",
-        "pages/auth/RegisterPage.tsx",
-        "components/auth/AuthProvider.tsx",
-        "components/auth/PermissionGuard.tsx",
-        "components/RoleGuard.tsx"
-      ]
-    },
-    {
-      "name": "Dashboard Principal",
-      "description": "Dashboard completo com métricas, gráficos e navegação baseada em roles",
-      "files": [
-        "pages/CompleteDashboard.tsx",
-        "pages/TherapistDashboard.tsx",
-        "pages/AdminDashboardPage.tsx",
-        "pages/PatientPortalDashboard.tsx",
-        "pages/PartnerPortalDashboard.tsx",
-        "components/dashboard/MetricCard.tsx",
-        "components/dashboard/DashboardFilters.tsx"
-      ]
-    },
-    {
-      "name": "Sistema de Agenda",
-      "description": "Sistema avançado de agendamento com múltiplas visualizações e funcionalidades",
-      "files": [
-        "pages/AgendaPage.tsx",
-        "components/agenda/EnhancedAgendaPage.tsx",
-        "components/agenda/WeeklyView.tsx",
-        "components/agenda/DailyView.tsx",
-        "components/agenda/MonthlyView.tsx",
-        "components/agenda/BookingModal.tsx",
-        "components/agenda/AppointmentDetailPopover.tsx"
-      ]
-    },
-    {
-      "name": "Gestão de Pacientes",
-      "description": "Sistema completo de gestão de pacientes com histórico clínico",
+      "name": "Patient Management",
+      "description": "CRUD completo de pacientes com validação, formulários em abas, histórico médico e documentos",
       "files": [
         "pages/PatientListPage.tsx",
         "pages/PatientDetailPage.tsx",
-        "components/PatientFormModal.tsx",
-        "components/PatientTooltip.tsx",
-        "components/ClinicalHistoryTimeline.tsx",
-        "components/pacientes/PatientCard.tsx"
+        "pages/patients/new.tsx",
+        "components/pacientes/PatientForm.tsx",
+        "components/pacientes/PatientTabs.tsx",
+        "contexts/PatientContext.tsx",
+        "services/patientService.ts"
       ]
     },
     {
-      "name": "Sistema de Exercícios",
-      "description": "Biblioteca de exercícios com IA para prescrição inteligente",
+      "name": "Appointment Scheduling",
+      "description": "Sistema de agendamento com calendário semanal, conflitos, recorrências e múltiplos terapeutas",
       "files": [
-        "pages/ExerciseLibraryPage.tsx",
-        "components/ExerciseCard.tsx",
-        "components/ExerciseFormModal.tsx",
-        "hooks/useExercises.ts",
-        "lib/ai-prescription/RecommendationEngine.ts"
+        "pages/AgendaPage.tsx",
+        "components/agenda/AgendaCalendar.tsx",
+        "components/agenda/AppointmentModal.tsx",
+        "services/schedulingService.ts",
+        "services/appointmentService.ts"
       ]
     },
     {
-      "name": "Sistema de Prontuário Eletrônico",
-      "description": "Prontuário médico completo com padrões HL7 FHIR e compliance",
+      "name": "Exercise Library",
+      "description": "Biblioteca de exercícios com vídeos, filtros avançados, grupos e níveis de dificuldade",
       "files": [
-        "components/medical-records/MedicalRecordsSystem.tsx",
-        "components/medical-records/MedicalRecordsDashboard.tsx",
-        "components/medical-records/ClinicalTemplatesManager.tsx",
-        "components/medical-records/DigitalSignatureManager.tsx",
-        "lib/medical-records/ClinicalDocument.ts",
-        "lib/medical-records/DigitalSignatureService.ts"
+        "pages/ExercisesPage.tsx",
+        "pages/ExerciseEditPage.tsx",
+        "components/exercises/ExerciseColumns.tsx",
+        "components/exercises/ExerciseForm.tsx",
+        "contexts/ExerciseContext.tsx",
+        "services/exerciseService.ts",
+        "data/mockExerciseLibrary.ts"
       ]
     },
     {
-      "name": "Sistema de Atendimento",
-      "description": "Sistema completo de atendimento clínico com evolução e protocolos",
+      "name": "Protocol Management",
+      "description": "Protocolos de tratamento com exercícios, intensidades e durações personalizadas",
       "files": [
-        "pages/AtendimentoPage.tsx",
-        "pages/SessionPage.tsx",
-        "pages/SessionEvolutionPage.tsx",
-        "components/NewSoapNoteModal.tsx",
-        "components/session/SessionForm.tsx",
-        "components/session/SessionEvolution.tsx"
+        "pages/ProtocolsPage.tsx",
+        "pages/ProtocolEditPage.tsx",
+        "components/protocols/ProtocolColumns.tsx",
+        "data/mockProtocolsData.ts"
       ]
     },
     {
-      "name": "Mapa Corporal Interativo",
-      "description": "Mapa corporal para registro de pontos de dor e avaliação",
+      "name": "Exercise Assignments",
+      "description": "Atribuição de exercícios e protocolos para pacientes com tracking de progresso",
       "files": [
-        "components/BodyMap.tsx",
-        "components/InteractiveBodyMap.tsx",
-        "components/BodyPointModal.tsx",
-        "components/PainScale.tsx",
-        "components/PainEvolutionChart.tsx"
+        "pages/AssignmentsPage.tsx",
+        "components/assignments/AssignExerciseModal.tsx"
       ]
     },
     {
-      "name": "Sistema de Relatórios",
-      "description": "Sistema avançado de relatórios clínicos e financeiros",
+      "name": "Progress Tracking",
+      "description": "Acompanhamento de progresso de pacientes com sessões e métricas",
       "files": [
-        "pages/ReportsPage.tsx",
-        "pages/AdvancedReportsPage.tsx",
-        "pages/ClinicalAnalyticsPage.tsx",
-        "components/reports/ReportGenerator.tsx",
-        "components/reports/ClinicalReportsGenerator.tsx",
-        "components/analytics/ClinicalAnalyticsDashboard.tsx"
+        "pages/SessionTrackingPage.tsx",
+        "pages/ProgressDashboardPage.tsx",
+        "pages/AcompanhamentoPage.tsx",
+        "components/progress/ProgressChart.tsx"
       ]
     },
     {
-      "name": "Sistema de IA",
-      "description": "Integração com IA para sugestões e análise inteligente",
+      "name": "Clinical Documentation (SOAP)",
+      "description": "Notas SOAP com auto-save, avaliações funcionais e documentação clínica",
       "files": [
-        "components/ai/GroqChat.tsx",
-        "components/ai/XAIChat.tsx",
-        "components/AiAssistant.tsx",
-        "components/acompanhamento/AiSuggestionModal.tsx",
-        "lib/ai-scheduling/SmartSchedulingEngine.ts"
+        "pages/SoapNotesPage.tsx",
+        "components/soap/SoapNoteForm.tsx",
+        "components/atendimento/AnamnesisForm.tsx",
+        "components/atendimento/FunctionalAssessment.tsx",
+        "services/soapService.ts"
       ]
     },
     {
-      "name": "Portal do Paciente",
-      "description": "Portal dedicado para pacientes com exercícios e acompanhamento",
+      "name": "Body Map Pain Assessment",
+      "description": "Mapa corporal interativo para marcação de pontos de dor",
       "files": [
-        "pages/patient-portal/PatientDashboardPage.tsx",
-        "pages/patient-portal/MyExercisesPage.tsx",
-        "pages/patient-portal/MyAppointmentsPage.tsx",
-        "pages/patient-portal/PatientProgressPage.tsx",
-        "components/patient-portal/PatientExerciseCard.tsx"
+        "components/atendimento/BodyMapPain.tsx",
+        "components/atendimento/InteractiveBodyMap.tsx"
       ]
     },
     {
-      "name": "Sistema de Teleconsulta",
-      "description": "Sistema de teleconsulta integrado com videochamadas",
+      "name": "AI-Powered Features",
+      "description": "Integração com Google Gemini AI para laudos, sugestões de tratamento e análise clínica",
       "files": [
-        "pages/TeleconsultaPage.tsx",
-        "components/teleconsulta/VideoCallInterface.tsx",
-        "components/teleconsulta/TeleconsultaModal.tsx",
-        "components/teleconsulta/PatientVideoInterface.tsx"
+        "services/geminiService.ts",
+        "services/ai/geminiIntegration.ts",
+        "services/ai/aiService.ts"
       ]
     },
     {
-      "name": "Sistema Financeiro",
-      "description": "Gestão financeira completa com métricas e relatórios",
+      "name": "Financial Management",
+      "description": "Gestão financeira com faturamento, pagamentos, relatórios e analytics",
       "files": [
         "pages/FinancialDashboardPage.tsx",
-        "pages/FinancialPage.tsx",
-        "components/financial/FinancialMetricsCards.tsx",
-        "components/financial/RevenueEvolutionChart.tsx",
-        "components/financial/PaymentTracking.tsx"
+        "pages/FinancialReportsPage.tsx",
+        "components/financial/RevenueChart.tsx",
+        "components/financial/TransactionList.tsx",
+        "services/financialService.ts"
       ]
     },
     {
-      "name": "Sistema de Inventário",
-      "description": "Gestão de equipamentos e materiais da clínica",
+      "name": "Reports and Analytics",
+      "description": "Relatórios completos (financeiro, pacientes, clínico) com exportação PDF/CSV",
       "files": [
-        "pages/InventoryDashboardPage.tsx",
+        "pages/ReportsPage.tsx",
+        "pages/ExerciseAnalyticsPage.tsx",
+        "components/analytics/AnalyticsCards.tsx",
+        "components/reports/ReportGenerator.tsx",
+        "services/reportService.ts",
+        "services/exportService.ts"
+      ]
+    },
+    {
+      "name": "Dashboard and Metrics",
+      "description": "Dashboard administrativo com métricas, KPIs, gráficos e visão geral",
+      "files": [
+        "pages/DashboardPage.tsx",
+        "pages/CompleteDashboard.tsx",
+        "components/dashboard/MetricsCards.tsx",
+        "components/dashboard/ActivityFeed.tsx"
+      ]
+    },
+    {
+      "name": "Authentication and Authorization",
+      "description": "Sistema de autenticação multi-role (admin, therapist, patient, educator) com Supabase",
+      "files": [
+        "pages/LoginPage.tsx",
+        "contexts/AuthContext.tsx",
+        "contexts/SupabaseAuthContext.tsx",
+        "services/authService.ts",
+        "lib/guards/AuthGuard.tsx"
+      ]
+    },
+    {
+      "name": "Patient Portal",
+      "description": "Portal dedicado para pacientes acessarem exercícios, agendamentos e comunicação",
+      "files": [
+        "pages/patient-portal/PatientPortalDashboard.tsx",
+        "pages/patient-portal/PatientExercises.tsx",
+        "pages/patient-portal/PatientCommunication.tsx"
+      ]
+    },
+    {
+      "name": "Partner Portal",
+      "description": "Portal para educadores físicos e parceiros externos",
+      "files": [
+        "pages/partner-portal/PartnerDashboard.tsx",
+        "pages/partner-portal/PartnerProfile.tsx"
+      ]
+    },
+    {
+      "name": "WhatsApp Integration",
+      "description": "Integração com WhatsApp para notificações, lembretes e comunicação com pacientes",
+      "files": [
+        "services/whatsappService.ts",
+        "api/webhooks/whatsapp.ts",
+        "scripts/whatsapp-daily-notifications.js",
+        "webhook-server.js"
+      ]
+    },
+    {
+      "name": "Inventory Management",
+      "description": "Gestão de estoque de equipamentos e materiais com alertas de baixo estoque",
+      "files": [
         "pages/InventoryPage.tsx",
-        "components/inventory/InventoryDashboard.tsx",
-        "components/inventory/EquipmentTracker.tsx",
-        "components/inventory/SupplyManager.tsx"
+        "components/inventory/InventoryList.tsx",
+        "services/inventoryService.ts"
       ]
     },
     {
-      "name": "Sistema de Backup",
-      "description": "Sistema automatizado de backup e recuperação de dados",
+      "name": "Task Management (Kanban)",
+      "description": "Sistema Kanban para gerenciamento de tarefas da equipe",
       "files": [
-        "pages/BackupManagementPage.tsx",
-        "components/backup/BackupDashboard.tsx",
-        "services/backupService.ts",
-        "lib/backupManager.ts"
+        "pages/KanbanPage.tsx",
+        "components/kanban/KanbanBoard.tsx"
       ]
     },
     {
-      "name": "Sistema de Auditoria",
-      "description": "Auditoria completa de ações e acessos do sistema",
+      "name": "Notification System",
+      "description": "Sistema de notificações automáticas e lembretes",
       "files": [
-        "pages/AuditLogPage.tsx",
-        "components/audit/AuditNotification.tsx",
-        "services/auditService.ts",
-        "lib/auditLogger.ts"
-      ]
-    },
-    {
-      "name": "Sistema de Notificações",
-      "description": "Sistema de notificações em tempo real",
-      "files": [
-        "components/NotificationBell.tsx",
-        "components/alerts/AlertCenter.tsx",
-        "components/alerts/NotificationSettings.tsx",
+        "services/notificationService.ts",
+        "components/notifications/NotificationCenter.tsx",
         "contexts/ToastContext.tsx"
       ]
     },
     {
-      "name": "Sistema de Integração",
-      "description": "Integrações com serviços externos e APIs",
+      "name": "Audit and Logging",
+      "description": "Sistema de auditoria completo para LGPD com logs de ações e estatísticas",
       "files": [
-        "pages/IntegrationsTestPage.tsx",
-        "pages/BIIntegrationTestPage.tsx",
-        "services/emailService.ts",
-        "services/whatsappService.ts",
-        "services/stripeService.ts"
+        "services/auditService.ts",
+        "services/loggingService.ts"
       ]
     },
     {
-      "name": "Sistema de Performance",
-      "description": "Otimizações de performance e lazy loading",
+      "name": "Supabase Integration",
+      "description": "Integração completa com Supabase (database, auth, storage, real-time)",
       "files": [
-        "lib/lazyLoading.ts",
-        "lib/advancedLazyLoading.ts",
-        "lib/performanceOptimizations.ts",
-        "lib/serviceWorkerManager.ts",
-        "components/LazyImage.tsx"
+        "lib/supabase.ts",
+        "services/supabase/supabaseClient.ts",
+        "services/database/databaseService.ts",
+        "supabase/migrations/*.sql"
       ]
     },
     {
-      "name": "Sistema de Configurações",
-      "description": "Configurações globais e personalização do sistema",
+      "name": "UI Component Library",
+      "description": "Biblioteca de componentes reutilizáveis baseada em Shadcn/ui e Radix UI",
       "files": [
-        "pages/SettingsPage.tsx",
-        "pages/AgendaSettingsPage.tsx",
-        "components/settings/SettingsPanel.tsx",
-        "contexts/AppContext.tsx"
+        "components/ui/button.tsx",
+        "components/ui/dialog.tsx",
+        "components/ui/form.tsx",
+        "components/ui/input.tsx",
+        "components/ui/select.tsx",
+        "components/ui/table.tsx",
+        "components/ui/tabs.tsx",
+        "components/ui/toast.tsx"
+      ]
+    },
+    {
+      "name": "Form Validation",
+      "description": "Validações centralizadas com Zod e React Hook Form",
+      "files": [
+        "lib/validators/index.ts",
+        "schemas/patientSchema.ts",
+        "schemas/appointmentSchema.ts"
+      ]
+    },
+    {
+      "name": "Utilities and Helpers",
+      "description": "Funções utilitárias, helpers e hooks customizados",
+      "files": [
+        "utils/debounce.ts",
+        "utils/exerciseToasts.ts",
+        "hooks/useDebounce.ts",
+        "hooks/useAuth.ts",
+        "hooks/usePatients.ts",
+        "lib/utils.ts"
+      ]
+    },
+    {
+      "name": "Clinical Materials Library",
+      "description": "Biblioteca de materiais clínicos, protocolos e conteúdo educacional",
+      "files": [
+        "pages/ClinicalMaterialsPage.tsx",
+        "data/mockClinicalMaterials.ts",
+        "materiais_clinicos/*.md"
+      ]
+    },
+    {
+      "name": "Specialty Assessments",
+      "description": "Avaliações especializadas por área (ortopedia, neurologia, etc.)",
+      "files": [
+        "pages/SpecialtyAssessmentsPage.tsx",
+        "data/mockSpecialtyAssessments.ts"
+      ]
+    },
+    {
+      "name": "Mentoring System",
+      "description": "Sistema de mentoria e conteúdo educacional para profissionais",
+      "files": [
+        "pages/MentoriaPage.tsx",
+        "data/mockMentoriaData.ts"
+      ]
+    },
+    {
+      "name": "Subscription Management",
+      "description": "Gestão de assinaturas e planos",
+      "files": [
+        "pages/SubscriptionPage.tsx",
+        "data/mockSubscriptionData.ts"
       ]
     }
   ]
