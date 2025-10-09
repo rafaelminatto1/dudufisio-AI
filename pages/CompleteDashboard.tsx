@@ -75,6 +75,7 @@ const EnhancedAssessmentsPage = createLazyComponent(() => import('./EnhancedAsse
 const FreeVideoGeneratorReal = createLazyComponent(() => import('./FreeVideoGeneratorReal'));
 const InventoryDashboardPage = createLazyComponent(() => import('./InventoryDashboardPage'));
 const NotificationCenterPage = createLazyComponent(() => import('./NotificationCenterPage'));
+const UnifiedCRMPage = createLazyComponent(() => import('./UnifiedCRMPage'));
 const NotFoundPage = LazyPages.NotFoundPage;
 const SubscriptionPage = createLazyComponent(() => import('./SubscriptionPage'));
 const LegalPage = createLazyComponent(() => import('./LegalPage'));
@@ -435,8 +436,9 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/events-list" element={LazyElement(EventsListPage)} />
                 <Route path="/event-detail" element={LazyElement(EventDetailPage)} />
                 
-                {/* Communication */}
+                {/* Communication & CRM */}
                 <Route path="/whatsapp" element={LazyElement(WhatsAppPage)} />
+                <Route path="/crm" element={LazyElement(UnifiedCRMPage)} />
                 <Route path="/email-inativos" element={LazyElement(InactivePatientEmailPage)} />
                 <Route path="/inactive-patient-email" element={LazyElement(InactivePatientEmailPage)} />
                 

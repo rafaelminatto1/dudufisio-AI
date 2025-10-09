@@ -1,6 +1,5 @@
 /**
- * Lead Detail Panel - Painel lateral com detalhes completos do lead
- * Activity Fisioterapia Integration - Fase 1
+ * 📝 Lead Detail Panel - Painel lateral com detalhes completos do lead
  */
 
 import React, { useEffect, useState } from 'react';
@@ -16,49 +15,74 @@ import {
   AlertCircle,
   CheckCircle2,
   Send,
+  Sparkles
 } from 'lucide-react';
-import { Lead, LeadStatus } from '@/types/crm';
-import { LeadService } from '@/services/api/crm/leadService';
-import { InteractionService } from '@/services/api/crm/interactionService';
-import type { LeadInteraction } from '@/types/crm';
+import { leadService } from '../../services/crm/leadService';
+import { whatsappCrmService } from '../../services/crm/whatsappCrmService';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Badge } from '../ui/badge';
+import { ScrollArea } from '../ui/scroll-area';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { formatDistanceToNow } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface LeadDetailPanelProps {
-  lead: Lead;
+  leadId: string;
+  isOpen: boolean;
   onClose: () => void;
-  onUpdate: () => void;
+  onLeadUpdated: () => void;
 }
 
 export const LeadDetailPanel: React.FC<LeadDetailPanelProps> = ({
-  lead,
+  leadId,
+  isOpen,
   onClose,
-  onUpdate,
+  onLeadUpdated,
 }) => {
-  const [interactions, setInteractions] = useState<LeadInteraction[]>([]);
+  const [lead, setLead] = useState<any>(null);
+  const [interactions, setInteractions] = useState<any[]>([]);
   const [newNote, setNewNote] = useState('');
-  const [newTag, setNewTag] = useState('');
+  const [whatsappMessage, setWhatsappMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<LeadStatus>(lead.status);
+  const [selectedStatus, setSelectedStatus] = useState('');
 
   useEffect(() => {
-    loadInteractions();
-  }, [lead.id]);
+    if (isOpen && leadId) {
+      loadLead();
+      loadInteractions();
+    }
+  }, [leadId, isOpen]);
+
+  const loadLead = async () => {
+    try {
+      const data = await leadService.getLeadById(leadId);
+      setLead(data);
+      setSelectedStatus(data.status);
+    } catch (err) {
+      console.error('Erro ao carregar lead:', err);
+    }
+  };
 
   const loadInteractions = async () => {
     try {
-      const data = await InteractionService.getLeadInteractions(lead.id, 20);
+      const data = await leadService.getLeadInteractions(leadId);
       setInteractions(data);
     } catch (err) {
       console.error('Erro ao carregar interações:', err);
     }
   };
 
-  const handleStatusChange = async () => {
-    if (selectedStatus === lead.status) return;
+  const handleStatusChange = async (newStatus: string) => {
+    if (newStatus === lead.status) return;
 
     try {
       setLoading(true);
-      await LeadService.updateLead(lead.id, { status: selectedStatus });
-      onUpdate();
+      await leadService.updateLead(leadId, { status: newStatus });
+      await loadLead();
+      onLeadUpdated();
     } catch (err) {
       console.error('Erro ao atualizar status:', err);
     } finally {
@@ -71,9 +95,13 @@ export const LeadDetailPanel: React.FC<LeadDetailPanelProps> = ({
 
     try {
       setLoading(true);
-      await LeadService.addNote(lead.id, newNote);
+      await leadService.addInteraction(leadId, {
+        type: 'note',
+        direction: 'outbound',
+        content: newNote
+      });
       setNewNote('');
-      onUpdate();
+      await loadInteractions();
     } catch (err) {
       console.error('Erro ao adicionar nota:', err);
     } finally {
@@ -81,16 +109,20 @@ export const LeadDetailPanel: React.FC<LeadDetailPanelProps> = ({
     }
   };
 
-  const handleAddTag = async () => {
-    if (!newTag.trim()) return;
+  const handleSendWhatsApp = async () => {
+    if (!whatsappMessage.trim() || !lead?.phone) return;
 
     try {
       setLoading(true);
-      await LeadService.addTag(lead.id, newTag);
-      setNewTag('');
-      onUpdate();
+      await whatsappCrmService.sendMessage({
+        to: lead.phone,
+        message: whatsappMessage,
+        lead_id: leadId
+      });
+      setWhatsappMessage('');
+      await loadInteractions();
     } catch (err) {
-      console.error('Erro ao adicionar tag:', err);
+      console.error('Erro ao enviar mensagem:', err);
     } finally {
       setLoading(false);
     }
@@ -101,9 +133,10 @@ export const LeadDetailPanel: React.FC<LeadDetailPanelProps> = ({
 
     try {
       setLoading(true);
-      await LeadService.convertLeadToPatient(lead.id);
+      await leadService.convertToPatient(leadId);
       alert('Lead convertido com sucesso!');
-      onUpdate();
+      onLeadUpdated();
+      onClose();
     } catch (err) {
       console.error('Erro ao converter lead:', err);
       alert('Erro ao converter lead');
@@ -112,230 +145,231 @@ export const LeadDetailPanel: React.FC<LeadDetailPanelProps> = ({
     }
   };
 
-  const urgencyColors = {
-    urgente: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-    alta: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-    media: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-    baixa: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400',
+  const getEngagementColor = (level: string) => {
+    switch (level) {
+      case 'hot':
+        return 'bg-red-100 text-red-700 border-red-300';
+      case 'warm':
+        return 'bg-yellow-100 text-yellow-700 border-yellow-300';
+      case 'cold':
+        return 'bg-blue-100 text-blue-700 border-blue-300';
+      default:
+        return 'bg-gray-100 text-gray-700 border-gray-300';
+    }
   };
 
+  if (!isOpen || !lead) return null;
+
   return (
-    <div className="fixed inset-y-0 right-0 w-full md:w-[600px] bg-white dark:bg-gray-800 shadow-2xl z-50 overflow-y-auto">
+    <div className="fixed inset-y-0 right-0 w-full md:w-[600px] bg-white shadow-2xl z-50 overflow-y-auto">
       {/* Header */}
-      <div className="sticky top-0 bg-white dark:bg-gray-800 border-b dark:border-gray-700 p-6 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {lead.name}
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+      <div className="sticky top-0 bg-white border-b p-6 flex items-center justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {lead.name}
+            </h2>
+            <Badge variant="outline" className={getEngagementColor(lead.engagement_level)}>
+              {lead.engagement_level}
+            </Badge>
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              Score: {lead.lead_score}
+            </Badge>
+          </div>
+          <p className="text-sm text-gray-500">
             Lead desde {new Date(lead.created_at).toLocaleDateString('pt-BR')}
           </p>
         </div>
-        <button
-          onClick={onClose}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-        >
+        <Button variant="ghost" size="icon" onClick={onClose}>
           <X className="w-6 h-6" />
-        </button>
+        </Button>
       </div>
 
-      <div className="p-6 space-y-6">
-        {/* Informações de Contato */}
-        <section>
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-            Contato
-          </h3>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-              <Phone className="w-4 h-4" />
-              <span>{lead.phone}</span>
-            </div>
-            {lead.email && (
-              <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                <Mail className="w-4 h-4" />
-                <span>{lead.email}</span>
+      <ScrollArea className="h-[calc(100vh-100px)]">
+        <div className="p-6 space-y-6">
+          {/* Contact Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Informações de Contato</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-gray-500" />
+                <span>{lead.phone}</span>
               </div>
-            )}
-          </div>
-        </section>
-
-        {/* Status e Urgência */}
-        <section>
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-            Status e Urgência
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Status
-              </label>
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value as LeadStatus)}
-                onBlur={handleStatusChange}
-                className="w-full px-3 py-2 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              >
-                <option value="novo">Novo</option>
-                <option value="contatado">Contatado</option>
-                <option value="qualificado">Qualificado</option>
-                <option value="agendado">Agendado</option>
-                <option value="convertido">Convertido</option>
-                <option value="perdido">Perdido</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Urgência
-              </label>
-              <span
-                className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium ${
-                  urgencyColors[lead.urgency_level as keyof typeof urgencyColors]
-                }`}
-              >
-                <AlertCircle className="w-4 h-4 mr-1" />
-                {lead.urgency_level}
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {/* Informações Clínicas */}
-        {lead.pain_description && (
-          <section>
-            <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-              Informações Clínicas
-            </h3>
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg space-y-2">
-              {lead.pain_location && (
-                <p>
-                  <span className="font-medium">Local da dor:</span> {lead.pain_location}
-                </p>
-              )}
-              {lead.pain_duration && (
-                <p>
-                  <span className="font-medium">Duração:</span> {lead.pain_duration}
-                </p>
-              )}
-              {lead.sport_activity && (
-                <p>
-                  <span className="font-medium">Atividade:</span> {lead.sport_activity}
-                </p>
-              )}
-              <p className="pt-2">
-                <span className="font-medium">Descrição:</span>
-                <br />
-                {lead.pain_description}
-              </p>
-            </div>
-          </section>
-        )}
-
-        {/* Tags */}
-        <section>
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Tags</h3>
-          <div className="flex flex-wrap gap-2 mb-3">
-            {lead.tags?.map((tag, idx) => (
-              <span
-                key={idx}
-                className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
-              placeholder="Nova tag..."
-              className="flex-1 px-3 py-2 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
-            />
-            <button
-              onClick={handleAddTag}
-              disabled={loading || !newTag.trim()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-            >
-              <Tag className="w-4 h-4" />
-            </button>
-          </div>
-        </section>
-
-        {/* Timeline de Interações */}
-        <section>
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-            Histórico ({interactions.length})
-          </h3>
-          <div className="space-y-3 max-h-[400px] overflow-y-auto">
-            {interactions.map((interaction) => (
-              <div
-                key={interaction.id}
-                className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
-                    {interaction.interaction_type}
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {new Date(interaction.created_at).toLocaleString('pt-BR')}
-                  </span>
+              {lead.email && (
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-gray-500" />
+                  <span>{lead.email}</span>
                 </div>
-                {interaction.message_content && (
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    {interaction.message_content}
-                  </p>
-                )}
-                {interaction.detected_intent && (
-                  <span className="inline-block mt-2 px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 text-xs rounded">
-                    {interaction.detected_intent}
-                  </span>
-                )}
+              )}
+              <div className="flex items-center gap-2">
+                <Tag className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-600">Fonte: {lead.source}</span>
               </div>
-            ))}
-          </div>
-        </section>
+            </CardContent>
+          </Card>
 
-        {/* Adicionar Nota */}
-        <section>
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
-            Adicionar Nota
-          </h3>
-          <div className="space-y-3">
-            <textarea
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              placeholder="Digite sua nota..."
-              rows={3}
-              className="w-full px-3 py-2 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 resize-none"
-            />
-            <button
-              onClick={handleAddNote}
-              disabled={loading || !newNote.trim()}
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              <Send className="w-4 h-4" />
-              Adicionar Nota
-            </button>
-          </div>
-        </section>
+          {/* Status Management */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Status & Engajamento</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status do Lead
+                </label>
+                <Select value={selectedStatus} onValueChange={handleStatusChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">Novo</SelectItem>
+                    <SelectItem value="contacted">Contato Inicial</SelectItem>
+                    <SelectItem value="qualified">Qualificado</SelectItem>
+                    <SelectItem value="proposal_sent">Proposta Enviada</SelectItem>
+                    <SelectItem value="negotiation">Negociação</SelectItem>
+                    <SelectItem value="won">Convertido</SelectItem>
+                    <SelectItem value="lost">Perdido</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-sm text-gray-600">Interações</p>
+                  <p className="text-2xl font-bold">{lead.total_interactions}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Último contato</p>
+                  <p className="text-sm font-semibold">
+                    {lead.last_contact_at ? formatDistanceToNow(new Date(lead.last_contact_at), {
+                      addSuffix: true,
+                      locale: ptBR
+                    }) : 'Nunca'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Ações */}
-        <section>
-          <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Ações</h3>
-          <div className="flex gap-3">
-            <button
-              onClick={handleConvert}
-              disabled={loading || lead.status === 'convertido'}
-              className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              <CheckCircle2 className="w-5 h-5" />
-              Converter em Paciente
-            </button>
-          </div>
-        </section>
-      </div>
+          {/* Interested In */}
+          {lead.interested_in && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Interesse</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700">{lead.interested_in}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* WhatsApp Message */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <MessageSquare className="w-5 h-5" />
+                Enviar mensagem via WhatsApp
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Textarea
+                placeholder="Digite sua mensagem..."
+                value={whatsappMessage}
+                onChange={(e) => setWhatsappMessage(e.target.value)}
+                rows={3}
+              />
+              <Button
+                onClick={handleSendWhatsApp}
+                disabled={loading || !whatsappMessage.trim()}
+                className="w-full"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Enviar via WhatsApp
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Interactions Timeline */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Histórico de Interações</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {interactions.length === 0 ? (
+                <p className="text-center text-gray-500 py-4">Nenhuma interação registrada</p>
+              ) : (
+                <div className="space-y-3">
+                  {interactions.map((interaction) => (
+                    <div
+                      key={interaction.id}
+                      className="bg-gray-50 p-3 rounded-lg"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge variant="outline">{interaction.type}</Badge>
+                        <span className="text-xs text-gray-500">
+                          {formatDistanceToNow(new Date(interaction.created_at), {
+                            addSuffix: true,
+                            locale: ptBR
+                          })}
+                        </span>
+                      </div>
+                      {interaction.content && (
+                        <p className="text-sm text-gray-700">{interaction.content}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Add Note */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Adicionar Nota</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Textarea
+                placeholder="Digite sua nota..."
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                rows={3}
+              />
+              <Button
+                onClick={handleAddNote}
+                disabled={loading || !newNote.trim()}
+                className="w-full"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Adicionar Nota
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Ações</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Button
+                onClick={handleConvert}
+                disabled={loading || lead.status === 'won'}
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Converter em Paciente
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </ScrollArea>
     </div>
   );
 };
+
+export default LeadDetailPanel;
 
