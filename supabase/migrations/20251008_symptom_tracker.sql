@@ -320,3 +320,4 @@ COMMENT ON TABLE symptom_patterns IS 'Padrões de sintomas identificados';
 -- =====================================================
 
 
+

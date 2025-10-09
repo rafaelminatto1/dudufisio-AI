@@ -1,0 +1,2456 @@
+{
+  "protocols": [
+    {
+      "id": "proto-esp-001",
+      "title": "Protocolo de Prevenção de Lesões em Atletas",
+      "specialty": "esportiva",
+      "description": "Programa preventivo abrangente para redução de risco de lesões em atletas de alto rendimento",
+      "summary": "Protocolointegrado focando em fortalecimento muscular, propriocepção e flexibilidade específica para cada modalidade esportiva.",
+      "objectives": [
+        "Reduzir incidência de lesões musculoesqueléticas em 40-60%",
+        "Melhorar propriocepção e controle neuromuscular",
+        "Otimizar padrões de movimento e biomecânica",
+        "Aumentar resistência muscular específica do esporte"
+      ],
+      "indications": [
+        "Atletas em período de pré-temporada",
+        "Retorno ao esporte após lesão prévia",
+        "Histórico de lesões recorrentes",
+        "Desequilíbrios musculares identificados"
+      ],
+      "contraindications": [
+        "Lesão aguda não tratada",
+        "Dor intensa durante exercícios",
+        "Inflamação articular ativa",
+        "Instabilidade articular não avaliada"
+      ],
+      "phases": [
+        {
+          "id": "fase-1",
+          "name": "Avaliação e Baseline",
+          "order": 1,
+          "duration": "1-2 semanas",
+          "goals": [
+            "Avaliar padrões de movimento",
+            "Identificar desequilíbrios",
+            "Estabelecer baseline de força e flexibilidade"
+          ],
+          "activities": [
+            "Avaliação funcional esportiva",
+            "Testes de força muscular",
+            "Análise de movimento",
+            "Avaliação de flexibilidade"
+          ],
+          "precautions": [
+            "Não forçar amplitude de movimento dolorosa",
+            "Respeitar limitações individuais"
+          ],
+          "progressionCriteria": [
+            "Avaliação completa realizada",
+            "Programa individualizado estabelecido"
+          ]
+        },
+        {
+          "id": "fase-2",
+          "name": "Fortalecimento Progressivo",
+          "order": 2,
+          "duration": "4-6 semanas",
+          "goals": [
+            "Fortalecer grupos musculares chave",
+            "Corrigir desequilíbrios identificados",
+            "Melhorar resistência muscular"
+          ],
+          "activities": [
+            "Exercícios de fortalecimento progressivo",
+            "Treino de estabilização do core",
+            "Exercícios específicos do esporte",
+            "Trabalho de resistência muscular"
+          ],
+          "precautions": [
+            "Progressão gradual de carga",
+            "Monitorar sinais de sobrecarga",
+            "Técnica correta antes de aumentar carga"
+          ],
+          "progressionCriteria": [
+            "Aumento de 20-30% na força muscular",
+            "Execução correta dos exercícios",
+            "Ausência de dor ou desconforto significativo"
+          ]
+        },
+        {
+          "id": "fase-3",
+          "name": "Propriocepção e Controle",
+          "order": 3,
+          "duration": "3-4 semanas",
+          "goals": [
+            "Melhorar propriocepção articular",
+            "Aprimorar controle neuromuscular",
+            "Desenvolver reações de proteção"
+          ],
+          "activities": [
+            "Exercícios em superfícies instáveis",
+            "Treino de equilíbrio dinâmico",
+            "Exercícios pliométricos iniciais",
+            "Trabalho de agilidade"
+          ],
+          "precautions": [
+            "Supervisão próxima durante exercícios de alto risco",
+            "Progressão gradual de complexidade"
+          ],
+          "progressionCriteria": [
+            "Equilíbrio unipodal > 30 segundos",
+            "Execução adequada de exercícios dinâmicos",
+            "Confiança do atleta aumentada"
+          ]
+        },
+        {
+          "id": "fase-4",
+          "name": "Integração Esportiva",
+          "order": 4,
+          "duration": "2-3 semanas",
+          "goals": [
+            "Integrar ganhos ao gesto esportivo",
+            "Simular situações de jogo",
+            "Preparar para retorno completo"
+          ],
+          "activities": [
+            "Exercícios específicos do esporte em alta intensidade",
+            "Simulação de situações de jogo",
+            "Treino de reação e tomada de decisão",
+            "Progressão para prática em equipe"
+          ],
+          "precautions": [
+            "Monitorar carga de treino",
+            "Avaliar fadiga e recuperação",
+            "Comunicação com comissão técnica"
+          ],
+          "progressionCriteria": [
+            "Participação completa em treinos",
+            "Ausência de sintomas",
+            "Testes funcionais dentro da normalidade"
+          ]
+        }
+      ],
+      "duration": "10-15 semanas",
+      "frequency": "3-5x por semana",
+      "evidenceLevel": "A",
+      "references": [
+        "van Mechelen W, et al. Incidence, Severity, Aetiology and Prevention of Sports Injuries. Sports Med. 1992;14(2):82-99.",
+        "Myer GD, et al. Neuromuscular training techniques to target deficits before return to sport. J Strength Cond Res. 2014;28(9):2518-2527.",
+        "Soligard T, et al. Comprehensive warm-up programme to prevent injuries in young female footballers. BMJ. 2008;337:a2469."
+      ],
+      "images": [],
+      "tags": [
+        "prevenção",
+        "atletas",
+        "fortalecimento",
+        "propriocepção",
+        "performance"
+      ],
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "proto-esp-002",
+      "title": "Protocolo de Reabilitação de Lesão de LCA",
+      "specialty": "esportiva",
+      "description": "Protocolo completo para reabilitação pós-reconstrução de ligamento cruzado anterior",
+      "summary": "Programa baseado em fases progressivas focando em restauração de amplitude, força, propriocepção e retorno ao esporte.",
+      "objectives": [
+        "Restaurar amplitude de movimento completa",
+        "Recuperar força muscular simétrica",
+        "Restaurar propriocepção e controle neuromuscular",
+        "Retorno seguro ao esporte em 9-12 meses"
+      ],
+      "indications": [
+        "Pós-operatório de reconstrução de LCA",
+        "Lesão de LCA tratada conservadoramente (casos selecionados)",
+        "Atletas e não-atletas"
+      ],
+      "contraindications": [
+        "Infecção ativa no local cirúrgico",
+        "Derrame articular significativo",
+        "Dor intensa não controlada",
+        "Instabilidade não avaliada pelo cirurgião"
+      ],
+      "phases": [
+        {
+          "id": "lca-fase-1",
+          "name": "Fase Aguda (0-2 semanas)",
+          "order": 1,
+          "duration": "2 semanas",
+          "goals": [
+            "Controlar dor e edema",
+            "Proteger enxerto",
+            "Iniciar mobilização precoce",
+            "Prevenir atrofia muscular"
+          ],
+          "activities": [
+            "Crioterapia e elevação",
+            "Mobilização patelar",
+            "Exercícios isométricos de quadríceps",
+            "Mobilização ativa-assistida de tornozelo",
+            "Deambulação com muletas e carga parcial"
+          ],
+          "precautions": [
+            "Evitar hiperextensão do joelho",
+            "Controlar edema rigidamente",
+            "Não forçar amplitude de movimento"
+          ],
+          "progressionCriteria": [
+            "Controle de edema adequado",
+            "Extensão passiva completa",
+            "Flexão ativa de 90°",
+            "Ativação adequada do quadríceps"
+          ]
+        },
+        {
+          "id": "lca-fase-2",
+          "name": "Fase Inicial de Reabilitação (2-6 semanas)",
+          "order": 2,
+          "duration": "4 semanas",
+          "goals": [
+            "Restaurar amplitude de movimento completa",
+            "Melhorar força do quadríceps",
+            "Normalizar padrão de marcha",
+            "Iniciar propriocepção"
+          ],
+          "activities": [
+            "Mobilização ativa completa",
+            "Fortalecimento progressivo em cadeia fechada",
+            "Mini-agachamentos e leg press",
+            "Exercícios de equilíbrio",
+            "Bicicleta ergométrica",
+            "Hidroterapia"
+          ],
+          "precautions": [
+            "Evitar cadeia aberta para quadríceps até 6 semanas",
+            "Não forçar flexão completa precocemente",
+            "Monitorar derrame articular"
+          ],
+          "progressionCriteria": [
+            "Amplitude de movimento completa",
+            "Marcha normalizada sem claudicação",
+            "Subir e descer escadas com segurança",
+            "Equilíbrio unipodal > 10 segundos"
+          ]
+        },
+        {
+          "id": "lca-fase-3",
+          "name": "Fase Intermediária (6-12 semanas)",
+          "order": 3,
+          "duration": "6 semanas",
+          "goals": [
+            "Progressão de força muscular",
+            "Melhorar controle neuromuscular",
+            "Iniciar atividades de baixo impacto",
+            "Preparar para atividades esportivas"
+          ],
+          "activities": [
+            "Fortalecimento progressivo em cadeia aberta e fechada",
+            "Exercícios funcionais (lunges, step-ups)",
+            "Treinamento proprioceptivo avançado",
+            "Início de corrida em linha reta",
+            "Exercícios de agilidade sem mudança de direção"
+          ],
+          "precautions": [
+            "Evitar pivoteamento precoce",
+            "Progressão gradual de impacto",
+            "Monitorar resposta ao exercício"
+          ],
+          "progressionCriteria": [
+            "Força de quadríceps > 70% do membro contralateral",
+            "Hop test unilateral > 60% do contralateral",
+            "Corrida em linha reta sem claudicação",
+            "Ausência de derrame articular pós-exercício"
+          ]
+        },
+        {
+          "id": "lca-fase-4",
+          "name": "Fase Avançada (3-6 meses)",
+          "order": 4,
+          "duration": "12 semanas",
+          "goals": [
+            "Alcançar força simétrica",
+            "Retomar atividades esportivas progressivamente",
+            "Desenvolver confiança psicológica",
+            "Preparar para retorno ao esporte"
+          ],
+          "activities": [
+            "Fortalecimento de alta intensidade",
+            "Exercícios pliométricos progressivos",
+            "Treino de agilidade com mudança de direção",
+            "Simulação de gestos esportivos",
+            "Progressão de corrida para sprints"
+          ],
+          "precautions": [
+            "Evitar sobrecarga excessiva",
+            "Monitorar fadiga e recuperação",
+            "Atenção a compensações biomecânicas"
+          ],
+          "progressionCriteria": [
+            "Força > 85% simétrica",
+            "Hop tests > 85% simétricos",
+            "Capacidade de realizar gestos esportivos específicos",
+            "Confiança do atleta restaurada"
+          ]
+        },
+        {
+          "id": "lca-fase-5",
+          "name": "Retorno ao Esporte (6-12 meses)",
+          "order": 5,
+          "duration": "24 semanas",
+          "goals": [
+            "Retorno completo ao esporte",
+            "Manter força e propriocepção",
+            "Prevenir relesões",
+            "Monitorar performance"
+          ],
+          "activities": [
+            "Participação completa em treinos",
+            "Progressão para jogos/competições",
+            "Manutenção de programa preventivo",
+            "Monitoramento contínuo"
+          ],
+          "precautions": [
+            "Avaliação criteriosa antes do retorno",
+            "Manter programa preventivo",
+            "Atenção a fadiga e recuperação"
+          ],
+          "progressionCriteria": [
+            "Força > 90% simétrica",
+            "Todos os hop tests > 90%",
+            "Aprovação do cirurgião",
+            "Prontidão psicológica confirmada"
+          ]
+        }
+      ],
+      "duration": "9-12 meses",
+      "frequency": "4-5x por semana nas fases iniciais, 3-4x nas fases avançadas",
+      "evidenceLevel": "A",
+      "references": [
+        "Adams D, et al. Current Concepts for Anterior Cruciate Ligament Reconstruction. J Orthop Sports Phys Ther. 2012;42(3):208-220.",
+        "Ardern CL, et al. Return to sport following anterior cruciate ligament reconstruction surgery. Br J Sports Med. 2011;45(7):596-606.",
+        "van Melick N, et al. Evidence-based clinical practice update: practice guidelines for anterior cruciate ligament rehabilitation. Br J Sports Med. 2016;50(24):1506-1515."
+      ],
+      "images": [],
+      "tags": [
+        "LCA",
+        "joelho",
+        "pós-operatório",
+        "retorno ao esporte",
+        "reabilitação"
+      ],
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "proto-pos-001",
+      "title": "Protocolo de Reabilitação Pós-Artroplastia Total de Joelho",
+      "specialty": "pos-operatoria",
+      "description": "Programa abrangente de reabilitação para pacientes submetidos a artroplastia total de joelho",
+      "summary": "Protocolo estruturado focando em recuperação de amplitude de movimento, força muscular e independência funcional.",
+      "objectives": [
+        "Recuperar amplitude de movimento funcional (0-120°)",
+        "Restaurar força muscular dos membros inferiores",
+        "Alcançar independência na marcha e AVDs",
+        "Controlar dor e edema",
+        "Prevenir complicações pós-operatórias"
+      ],
+      "indications": [
+        "Pós-operatório de artroplastia total de joelho",
+        "Todas as faixas etárias",
+        "Prótese cimentada ou não-cimentada"
+      ],
+      "contraindications": [
+        "Infecção pós-operatória",
+        "Instabilidade da prótese",
+        "Fraturaperiprotética",
+        "Trombose venosa profunda não tratada"
+      ],
+      "phases": [
+        {
+          "id": "atj-fase-1",
+          "name": "Fase Hospitalar (0-3 dias)",
+          "order": 1,
+          "duration": "3 dias",
+          "goals": [
+            "Controlar dor e edema",
+            "Iniciar mobilização precoce",
+            "Prevenir complicações respiratórias e circulatórias",
+            "Treinar transferências seguras"
+          ],
+          "activities": [
+            "Exercícios respiratórios",
+            "Mobilização ativa de tornozelo",
+            "Isométricos de quadríceps e glúteos",
+            "Flexão ativa-assistida do joelho",
+            "Treino de transferências",
+            "Deambulação precoce com andador"
+          ],
+          "precautions": [
+            "Controle rigoroso de dor",
+            "Monitorar sinais vitais",
+            "Cuidados com ferida operatória",
+            "Prevenção de queda"
+          ],
+          "progressionCriteria": [
+            "Dor controlada",
+            "Deambulação independente com dispositivo auxiliar",
+            "Flexão ativa de 60°",
+            "Extensão passiva completa"
+          ]
+        },
+        {
+          "id": "atj-fase-2",
+          "name": "Fase Domiciliar Precoce (1-6 semanas)",
+          "order": 2,
+          "duration": "5 semanas",
+          "goals": [
+            "Progressão de amplitude de movimento",
+            "Fortalecimento muscular progressivo",
+            "Independência na marcha em ambientes variados",
+            "Retorno a AVDs básicas"
+          ],
+          "activities": [
+            "Mobilização ativa-assistida e ativa progressiva",
+            "Fortalecimento em cadeia aberta e fechada",
+            "Treino de marcha com redução de dispositivos auxiliares",
+            "Subir e descer escadas",
+            "Exercícios funcionais",
+            "Cicloergômetro"
+          ],
+          "precautions": [
+            "Evitar hiperflexão forçada",
+            "Progressão gradual de carga",
+            "Atenção a edema residual"
+          ],
+          "progressionCriteria": [
+            "Amplitude de movimento: 0-100°",
+            "Marcha independente sem dispositivo em casa",
+            "Subir e descer escadas com corrimão",
+            "Independência em AVDs básicas"
+          ]
+        },
+        {
+          "id": "atj-fase-3",
+          "name": "Fase de Recuperação Funcional (6-12 semanas)",
+          "order": 3,
+          "duration": "6 semanas",
+          "goals": [
+            "Alcançar amplitude funcional completa",
+            "Melhorar força e resistência muscular",
+            "Retornar a atividades da comunidade",
+            "Normalizar padrão de marcha"
+          ],
+          "activities": [
+            "Mobilização ativa completa",
+            "Fortalecimento progressivo de alta repetição",
+            "Exercícios funcionais avançados",
+            "Treino de equilíbrio",
+            "Caminhadas em diferentes terrenos",
+            "Retorno a atividades de lazer"
+          ],
+          "precautions": [
+            "Evitar atividades de alto impacto",
+            "Monitorar sinais de sobrecarga",
+            "Respeitar limites de dor"
+          ],
+          "progressionCriteria": [
+            "Amplitude de movimento: 0-120° ou mais",
+            "Força de quadríceps > 70% do contralateral",
+            "Marcha normalizada",
+            "Independência completa em AVDs"
+          ]
+        },
+        {
+          "id": "atj-fase-4",
+          "name": "Fase de Manutenção (3+ meses)",
+          "order": 4,
+          "duration": "Ongoing",
+          "goals": [
+            "Manter ganhos obtidos",
+            "Otimizar função e qualidade de vida",
+            "Prevenir complicações tardias",
+            "Promover estilo de vida ativo"
+          ],
+          "activities": [
+            "Programa de exercícios domiciliares",
+            "Atividades físicas de baixo impacto",
+            "Caminhadas regulares",
+            "Exercícios aquáticos",
+            "Programa de fortalecimento de manutenção"
+          ],
+          "precautions": [
+            "Evitar esportes de contato",
+            "Monitorar sinais de desgaste da prótese",
+            "Manter peso corporal adequado"
+          ],
+          "progressionCriteria": [
+            "Satisfação do paciente",
+            "Função mantida ou melhorada",
+            "Aderência ao programa de exercícios"
+          ]
+        }
+      ],
+      "duration": "12+ semanas com manutenção contínua",
+      "frequency": "2-3x por dia nas primeiras semanas, depois 3-5x por semana",
+      "evidenceLevel": "A",
+      "references": [
+        "Artz N, et al. Effectiveness of physiotherapy exercise following total knee replacement. BMC Musculoskelet Disord. 2015;16:15.",
+        "Pozzi F, et al. Physical exercise after knee arthroplasty. Knee Surg Sports Traumatol Arthrosc. 2013;21(3):564-579.",
+        "Meier W, et al. Total knee arthroplasty: muscle impairments, functional limitations, and recommended rehabilitation approaches. J Orthop Sports Phys Ther. 2008;38(5):246-256."
+      ],
+      "images": [],
+      "tags": [
+        "prótese",
+        "joelho",
+        "pós-operatório",
+        "idosos",
+        "artrose"
+      ],
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "proto-pos-002",
+      "title": "Protocolo de Reabilitação Pós-Reparo do Manguito Rotador",
+      "specialty": "pos-operatoria",
+      "description": "Programa criterioso de reabilitação pós-cirúrgica do manguito rotador com progressão baseada na cicatrização tecidual",
+      "summary": "Protocolo dividido em fases respeitando tempo de cicatrização, focando em mobilidade, força e retorno à função.",
+      "objectives": [
+        "Proteger reparo cirúrgico durante cicatrização",
+        "Restaurar amplitude de movimento completa",
+        "Recuperar força do manguito rotador",
+        "Retornar às atividades funcionais e ocupacionais"
+      ],
+      "indications": [
+        "Pós-operatório de reparo do manguito rotador",
+        "Reparo de ruptura parcial ou completa",
+        "Diferentes técnicas cirúrgicas (aberta, artroscópica)"
+      ],
+      "contraindications": [
+        "Infecção pós-operatória",
+        "Falha do reparo (re-ruptura)",
+        "Dor não controlada",
+        "Rigidez articular capsular significativa"
+      ],
+      "phases": [
+        {
+          "id": "mr-fase-1",
+          "name": "Fase de Proteção Máxima (0-6 semanas)",
+          "order": 1,
+          "duration": "6 semanas",
+          "goals": [
+            "Proteger reparo cirúrgico",
+            "Controlar dor e inflamação",
+            "Prevenir rigidez articular",
+            "Manter função de mão, punho e cotovelo"
+          ],
+          "activities": [
+            "Uso contínuo de tipoia/órtese",
+            "Exercícios pendulares suaves",
+            "Mobilização passiva cautelosa",
+            "Exercícios ativos de cotovelo, punho e mão",
+            "Isométricos submáximos (após 3-4 semanas)",
+            "Crioterapia"
+          ],
+          "precautions": [
+            "SEM elevação ativa do braço",
+            "SEM rotação externa ativa",
+            "Manter tipoia conforme orientação cirúrgica",
+            "Mobilização passiva gentil e controlada"
+          ],
+          "progressionCriteria": [
+            "6 semanas de pós-operatório",
+            "Dor controlada",
+            "Mobilidade passiva: flexão 90°, abdução 70°, rotação externa 30°",
+            "Ausência de complicações"
+          ]
+        },
+        {
+          "id": "mr-fase-2",
+          "name": "Fase de Proteção Moderada (6-12 semanas)",
+          "order": 2,
+          "duration": "6 semanas",
+          "goals": [
+            "Progressão de amplitude de movimento",
+            "Início de fortalecimento leve",
+            "Melhorar controle escapular",
+            "Preparar para ativação do manguito"
+          ],
+          "activities": [
+            "Descontinuar tipoia progressivamente",
+            "Mobilização ativa-assistida progressiva",
+            "Início de elevação ativa assistida",
+            "Fortalecimento escapular",
+            "Isométricos de manguito rotador",
+            "Exercícios de propriocepção",
+            "Mobilização em água (se disponível)"
+          ],
+          "precautions": [
+            "Evitar movimentos balísticos",
+            "Progressão gradual de amplitude",
+            "Monitorar sinais de sobrecarga",
+            "Respeitar dor como guia"
+          ],
+          "progressionCriteria": [
+            "Amplitude ativa próxima à passiva",
+            "Elevação ativa de 120°",
+            "Rotação externa ativa de 45°",
+            "Controle escapular adequado"
+          ]
+        },
+        {
+          "id": "mr-fase-3",
+          "name": "Fase de Fortalecimento Progressivo (12-18 semanas)",
+          "order": 3,
+          "duration": "6 semanas",
+          "goals": [
+            "Progressão de força do manguito rotador",
+            "Restaurar amplitude completa",
+            "Melhorar resistência muscular",
+            "Iniciar atividades funcionais"
+          ],
+          "activities": [
+            "Mobilização ativa completa",
+            "Fortalecimento progressivo com resistência elástica",
+            "Exercícios de cadeia cinética",
+            "Fortalecimento excêntrico",
+            "Exercícios funcionais progressivos",
+            "Treino de atividades do dia a dia"
+          ],
+          "precautions": [
+            "Evitar cargas pesadas precocemente",
+            "Progressão gradual de resistência",
+            "Monitorar fadiga muscular",
+            "Atenção a compensações"
+          ],
+          "progressionCriteria": [
+            "Amplitude de movimento completa",
+            "Força do manguito > 60% do contralateral",
+            "Capacidade de realizar AVDs sem dor",
+            "Ausência de impacto secundário"
+          ]
+        },
+        {
+          "id": "mr-fase-4",
+          "name": "Fase de Retorno à Função (4-6+ meses)",
+          "order": 4,
+          "duration": "8+ semanas",
+          "goals": [
+            "Alcançar força funcional completa",
+            "Retornar a atividades ocupacionais e esportivas",
+            "Prevenir reincidência",
+            "Otimizar função"
+          ],
+          "activities": [
+            "Fortalecimento de alta carga progressivo",
+            "Exercícios específicos para trabalho/esporte",
+            "Treino de resistência muscular",
+            "Atividades pliométricas (se apropriado)",
+            "Simulação de atividades reais",
+            "Programa de manutenção"
+          ],
+          "precautions": [
+            "Evitar sobrecarga excessiva",
+            "Respeitar processo de remodelação tecidual",
+            "Manter equilíbrio muscular"
+          ],
+          "progressionCriteria": [
+            "Força > 85% simétrica",
+            "Testes funcionais normalizados",
+            "Retorno às atividades desejadas",
+            "Satisfação do paciente"
+          ]
+        }
+      ],
+      "duration": "6+ meses",
+      "frequency": "2-3x por semana com programa domiciliar diário",
+      "evidenceLevel": "A",
+      "references": [
+        "Thigpen CA, et al. The American Society of Shoulder and Elbow Therapists' consensus statement on rehabilitation following arthroscopic rotator cuff repair. J Shoulder Elbow Surg. 2016;25(4):521-535.",
+        "Düzgün İ, et al. Effect of slow vs fast speed resistance training on shoulder muscle strength and function. J Sports Med Phys Fitness. 2019;59(12):1963-1968.",
+        "Gallagher BP, et al. Early versus delayed rehabilitation following arthroscopic rotator cuff repair. J Shoulder Elbow Surg. 2015;24(6):928-933."
+      ],
+      "images": [],
+      "tags": [
+        "ombro",
+        "manguito rotador",
+        "pós-operatório",
+        "reabilitação"
+      ],
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "proto-gero-001",
+      "title": "Programa de Prevenção de Quedas em Idosos",
+      "specialty": "geriatrica",
+      "description": "Programa multifacetado para redução do risco de quedas em população idosa",
+      "summary": "Intervenção abrangente focando em equilíbrio, força, marcha e educação para prevenir quedas e manter independência.",
+      "objectives": [
+        "Reduzir risco de quedas em 30-50%",
+        "Melhorar equilíbrio estático e dinâmico",
+        "Aumentar força muscular dos membros inferiores",
+        "Otimizar padrão de marcha",
+        "Promover autoconfiança e independência"
+      ],
+      "indications": [
+        "Idosos com histórico de quedas",
+        "Déficit de equilíbrio identificado",
+        "Medo de cair (síndrome pós-queda)",
+        "Sarcopenia e fraqueza muscular",
+        "Alterações de marcha"
+      ],
+      "contraindications": [
+        "Condições cardiovasculares instáveis",
+        "Vertigem aguda não investigada",
+        "Déficits cognitivos severos sem supervisão",
+        "Dor intensa limitante"
+      ],
+      "phases": [
+        {
+          "id": "prev-quedas-1",
+          "name": "Avaliação e Identificação de Riscos",
+          "order": 1,
+          "duration": "1-2 semanas",
+          "goals": [
+            "Identificar fatores de risco intrínsecos e extrínsecos",
+            "Avaliar função física e equilíbrio",
+            "Estabelecer baseline funcional",
+            "Educar sobre prevenção"
+          ],
+          "activities": [
+            "Avaliação geriátrica funcional",
+            "Teste de Equilíbrio de Berg",
+            "Timed Up and Go Test",
+            "Teste de marcha de 10 metros",
+            "Avaliação de força muscular",
+            "Avaliação ambiental (checklist domiciliar)",
+            "Educação sobre riscos de queda"
+          ],
+          "precautions": [
+            "Supervisão próxima durante testes",
+            "Ambiente seguro para avaliação",
+            "Respeitar limitações individuais"
+          ],
+          "progressionCriteria": [
+            "Avaliação completa realizada",
+            "Fatores de risco identificados",
+            "Plano individualizado estabelecido",
+            "Paciente/família educados"
+          ]
+        },
+        {
+          "id": "prev-quedas-2",
+          "name": "Fase de Fortalecimento",
+          "order": 2,
+          "duration": "4-6 semanas",
+          "goals": [
+            "Aumentar força dos membros inferiores",
+            "Melhorar resistência muscular",
+            "Fortalecer musculatura do core",
+            "Melhorar funcionalidade"
+          ],
+          "activities": [
+            "Exercícios de sentar e levantar",
+            "Fortalecimento de quadríceps e glúteos",
+            "Exercícios de panturrilha (elevação)",
+            "Treino de ponte (ponte glútea)",
+            "Exercícios funcionais (agachamentos adaptados)",
+            "Uso de resistência progressiva"
+          ],
+          "precautions": [
+            "Supervisão adequada",
+            "Progressão gradual de carga",
+            "Monitorar pressão arterial",
+            "Atenção a sinais de fadiga"
+          ],
+          "progressionCriteria": [
+            "Aumento de 20-30% na força muscular",
+            "Capacidade de levantar de cadeira sem apoio de braços",
+            "Melhora no teste de sentar e levantar em 30 segundos",
+            "Ausência de dor ou desconforto excessivo"
+          ]
+        },
+        {
+          "id": "prev-quedas-3",
+          "name": "Fase de Treinamento de Equilíbrio",
+          "order": 3,
+          "duration": "4-6 semanas",
+          "goals": [
+            "Melhorar equilíbrio estático e dinâmico",
+            "Aprimorar reações de proteção",
+            "Desenvolver estratégias de equilíbrio",
+            "Aumentar confiança"
+          ],
+          "activities": [
+            "Exercícios de equilíbrio unipodal progressivos",
+            "Treino de equilíbrio em superfícies variadas",
+            "Exercícios com base de suporte reduzida",
+            "Treino de alcance multidirecional",
+            "Exercícios de dupla tarefa",
+            "Tai Chi adaptado ou exercícios de Otago"
+          ],
+          "precautions": [
+            "Garantir ambiente seguro com suporte disponível",
+            "Supervisão constante",
+            "Progressão individualizada",
+            "Evitar fadiga excessiva"
+          ],
+          "progressionCriteria": [
+            "Equilíbrio unipodal > 10 segundos",
+            "Melhora de 10+ pontos na Escala de Berg",
+            "Capacidade de realizar tarefas em pé com segurança",
+            "Aumento da autoconfiança relatado"
+          ]
+        },
+        {
+          "id": "prev-quedas-4",
+          "name": "Fase de Treino de Marcha e Mobilidade",
+          "order": 4,
+          "duration": "3-4 semanas",
+          "goals": [
+            "Otimizar padrão de marcha",
+            "Melhorar velocidade e cadência",
+            "Treinar marcha em diferentes ambientes",
+            "Promover mobilidade comunitária"
+          ],
+          "activities": [
+            "Treino de marcha com diferentes velocidades",
+            "Caminhada em diferentes superfícies",
+            "Treino de obstáculos",
+            "Subir e descer degraus/rampas",
+            "Treino de mudança de direção",
+            "Caminhadas em ambientes externos"
+          ],
+          "precautions": [
+            "Iniciar em ambiente controlado",
+            "Progressão gradual para ambientes desafiadores",
+            "Uso de dispositivo auxiliar se necessário",
+            "Supervisão conforme nível de risco"
+          ],
+          "progressionCriteria": [
+            "Velocidade de marcha > 0.8 m/s",
+            "TUG < 12 segundos",
+            "Capacidade de caminhar em ambiente comunitário",
+            "Confiança melhorada"
+          ]
+        },
+        {
+          "id": "prev-quedas-5",
+          "name": "Fase de Manutenção e Prevenção Contínua",
+          "order": 5,
+          "duration": "Ongoing",
+          "goals": [
+            "Manter ganhos obtidos",
+            "Prevenir declínio funcional",
+            "Promover atividade física regular",
+            "Monitorar riscos continuamente"
+          ],
+          "activities": [
+            "Programa de exercícios domiciliares",
+            "Participação em grupos comunitários",
+            "Atividades físicas regulares (caminhadas, hidroginástica)",
+            "Reavaliações periódicas",
+            "Reforço educacional"
+          ],
+          "precautions": [
+            "Monitorar mudanças no estado de saúde",
+            "Adaptar programa conforme necessário",
+            "Manter comunicação com equipe de saúde"
+          ],
+          "progressionCriteria": [
+            "Aderência ao programa de exercícios",
+            "Função mantida ou melhorada",
+            "Redução de quedas documentada",
+            "Qualidade de vida preservada"
+          ]
+        }
+      ],
+      "duration": "12-16 semanas de intervenção intensiva + manutenção contínua",
+      "frequency": "2-3x por semana supervisionado + exercícios domiciliares diários",
+      "evidenceLevel": "A",
+      "references": [
+        "Sherrington C, et al. Exercise for preventing falls in older people living in the community. Cochrane Database Syst Rev. 2019;1(1):CD012424.",
+        "Gillespie LD, et al. Interventions for preventing falls in older people living in the community. Cochrane Database Syst Rev. 2012;9:CD007146.",
+        "Thomas S, et al. Exercise for type 2 diabetes mellitus. Cochrane Database Syst Rev. 2006;3:CD002968."
+      ],
+      "images": [],
+      "tags": [
+        "idosos",
+        "quedas",
+        "equilíbrio",
+        "prevenção",
+        "independência"
+      ],
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "proto-gero-002",
+      "title": "Protocolo de Manutenção de Autonomia e Qualidade de Vida no Envelhecimento",
+      "specialty": "geriatrica",
+      "description": "Programa holístico para promover envelhecimento ativo e manter independência funcional",
+      "summary": "Intervenção multicomponente focando em função física, cognição, socialização e qualidade de vida.",
+      "objectives": [
+        "Manter ou melhorar capacidade funcional",
+        "Prevenir declínio cognitivo",
+        "Promover saúde cardiovascular e metabólica",
+        "Aumentar participação social",
+        "Melhorar qualidade de vida"
+      ],
+      "indications": [
+        "Idosos independentes ou semi-dependentes",
+        "Prevenção de fragilidade",
+        "Pós-hospitalização",
+        "Condições crônicas controladas"
+      ],
+      "contraindications": [
+        "Condições médicas agudas não estabilizadas",
+        "Contraindicações médicas ao exercício",
+        "Déficits cognitivos severos sem supervisão adequada"
+      ],
+      "phases": [
+        {
+          "id": "autonomia-1",
+          "name": "Avaliação Geriátrica Abrangente",
+          "order": 1,
+          "duration": "1-2 semanas",
+          "goals": [
+            "Avaliar função física, cognitiva e social",
+            "Identificar necessidades individuais",
+            "Estabelecer metas realistas",
+            "Educar paciente e família"
+          ],
+          "activities": [
+            "Avaliação funcional (AVDs e AIVDs)",
+            "Avaliação de força e mobilidade",
+            "Screening cognitivo",
+            "Avaliação de qualidade de vida",
+            "Avaliação nutricional",
+            "Avaliação de suporte social"
+          ],
+          "precautions": [
+            "Abordagem sensível e respeitosa",
+            "Considerar fadiga",
+            "Ambiente confortável"
+          ],
+          "progressionCriteria": [
+            "Avaliação completa",
+            "Metas estabelecidas",
+            "Plano individualizado criado"
+          ]
+        },
+        {
+          "id": "autonomia-2",
+          "name": "Fase de Intervenção Multicomponente",
+          "order": 2,
+          "duration": "8-12 semanas",
+          "goals": [
+            "Melhorar função física global",
+            "Estimular função cognitiva",
+            "Promover atividade social",
+            "Educar sobre envelhecimento saudável"
+          ],
+          "activities": [
+            "Exercícios de fortalecimento multiarticular",
+            "Treino de equilíbrio",
+            "Exercícios aeróbicos de baixo impacto",
+            "Atividades cognitivo-motoras",
+            "Exercícios em grupo",
+            "Educação em saúde",
+            "Atividades recreativas"
+          ],
+          "precautions": [
+            "Monitorar sinais vitais",
+            "Adaptar intensidade individualmente",
+            "Garantir hidratação adequada",
+            "Ambiente social positivo"
+          ],
+          "progressionCriteria": [
+            "Melhora na função física",
+            "Engajamento nas atividades",
+            "Participação social aumentada",
+            "Satisfação do paciente"
+          ]
+        },
+        {
+          "id": "autonomia-3",
+          "name": "Fase de Manutenção e Promoção de Saúde",
+          "order": 3,
+          "duration": "Ongoing",
+          "goals": [
+            "Manter ganhos obtidos",
+            "Promover estilo de vida ativo",
+            "Prevenir declínio funcional",
+            "Otimizar qualidade de vida"
+          ],
+          "activities": [
+            "Programa de exercícios de manutenção",
+            "Atividades comunitárias",
+            "Grupos de socialização",
+            "Atividades de lazer",
+            "Monitoramento periódico"
+          ],
+          "precautions": [
+            "Adaptações conforme mudanças de saúde",
+            "Suporte contínuo",
+            "Comunicação com equipe multiprofissional"
+          ],
+          "progressionCriteria": [
+            "Aderência ao programa",
+            "Função mantida",
+            "Qualidade de vida preservada ou melhorada",
+            "Engajamento social mantido"
+          ]
+        }
+      ],
+      "duration": "12+ semanas com manutenção contínua",
+      "frequency": "2-3x por semana + atividades diárias",
+      "evidenceLevel": "B",
+      "references": [
+        "Stuck AE, et al. Comprehensive geriatric assessment: a meta-analysis of controlled trials. Lancet. 1993;342(8878):1032-1036.",
+        "Theou O, et al. What do we know about frailty in the acute care setting? A scoping review. BMC Geriatr. 2018;18(1):139.",
+        "Bauman A, et al. Updating the evidence for physical activity. Lancet. 2016;388(10051):1311-1324."
+      ],
+      "images": [],
+      "tags": [
+        "idosos",
+        "autonomia",
+        "qualidade de vida",
+        "envelhecimento ativo",
+        "prevenção"
+      ],
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "ex-esp-001",
+      "name": "Agachamento Unipodal",
+      "alias": [
+        "Single Leg Squat",
+        "Agachamento em Uma Perna"
+      ],
+      "specialty": [
+        "esportiva",
+        "pos-operatoria",
+        "ortopedica"
+      ],
+      "category": "fortalecimento",
+      "bodyParts": [
+        "quadril",
+        "joelho",
+        "tornozelo",
+        "core"
+      ],
+      "description": "Exercício funcional de fortalecimento que trabalha estabilidade e controle neuromuscular do membro inferior.",
+      "objectives": [
+        "Fortalecer quadríceps, glúteos e estabilizadores do quadril",
+        "Melhorar controle neuromuscular",
+        "Desenvolver estabilidade dinâmica",
+        "Prevenir lesões de joelho"
+      ],
+      "instructions": [
+        {
+          "order": 1,
+          "text": "Fique em pé em uma perna, com a outra perna ligeiramente flexionada para trás ou à frente"
+        },
+        {
+          "order": 2,
+          "text": "Mantenha o tronco ereto e os braços estendidos à frente para equilíbrio"
+        },
+        {
+          "order": 3,
+          "text": "Flexione lentamente o joelho de apoio, descendo o quadril como se fosse sentar"
+        },
+        {
+          "order": 4,
+          "text": "Mantenha o joelho alinhado com o segundo dedo do pé (evite valgo)"
+        },
+        {
+          "order": 5,
+          "text": "Desça até 60-90° de flexão de joelho ou conforme tolerado"
+        },
+        {
+          "order": 6,
+          "text": "Retorne à posição inicial de forma controlada"
+        },
+        {
+          "order": 7,
+          "text": "Repita o movimento pelo número prescrito de repetições"
+        }
+      ],
+      "difficulty": "avancado",
+      "duration": "10-15 repetições",
+      "sets": 3,
+      "repetitions": "10-15 cada perna",
+      "restPeriod": "60-90 segundos entre séries",
+      "equipment": [
+        "nenhum",
+        "espelho para feedback visual"
+      ],
+      "variations": [
+        {
+          "id": "var-1",
+          "name": "Agachamento Unipodal com Apoio",
+          "description": "Segurar em barra ou parede para assistência",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Usar apoio leve para equilíbrio",
+            "Reduzir amplitude de movimento"
+          ]
+        },
+        {
+          "id": "var-2",
+          "name": "Agachamento Unipodal com Superfície Instável",
+          "description": "Realizar sobre disco proprioceptivo ou bosu",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Adicionar superfície instável",
+            "Aumentar desafio proprioceptivo"
+          ]
+        },
+        {
+          "id": "var-3",
+          "name": "Agachamento Unipodal com Sobrecarga",
+          "description": "Segurar peso ou kettlebell",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Adicionar carga externa",
+            "Progredir apenas com técnica perfeita"
+          ]
+        }
+      ],
+      "contraindications": [
+        "Lesão aguda de joelho não reabilitada",
+        "Instabilidade articular significativa",
+        "Dor aguda no joelho durante execução"
+      ],
+      "precautions": [
+        "Garantir boa estabilidade unipodal antes de progredir",
+        "Monitorar alinhamento do joelho rigorosamente",
+        "Evitar em fases precoces de reabilitação de LCA"
+      ],
+      "benefits": [
+        "Fortalecimento funcional do membro inferior",
+        "Melhora de equilíbrio e propriocepção",
+        "Prevenção de lesões de joelho",
+        "Preparação para atividades esportivas"
+      ],
+      "commonMistakes": [
+        "Valgo dinâmico de joelho (joelho cai para dentro)",
+        "Inclinação excessiva do tronco à frente",
+        "Perda de controle do quadril contralateral",
+        "Rotação do tronco",
+        "Velocidade excessiva de execução"
+      ],
+      "images": [],
+      "videos": [],
+      "tags": [
+        "joelho",
+        "quadril",
+        "equilíbrio",
+        "funcional",
+        "prevenção"
+      ],
+      "musclesWorked": [
+        "Quadríceps",
+        "Glúteo Máximo",
+        "Glúteo Médio",
+        "Isquiotibiais",
+        "Core"
+      ],
+      "movementPattern": "Agachamento unilateral",
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "ex-esp-002",
+      "name": "Nordic Hamstring",
+      "alias": [
+        "Nordic Curl",
+        "Exercício Nórdico de Isquiotibiais"
+      ],
+      "specialty": [
+        "esportiva"
+      ],
+      "category": "fortalecimento",
+      "bodyParts": [
+        "joelho"
+      ],
+      "description": "Exercício excêntrico de alta intensidade para fortalecimento dos isquiotibiais, altamente eficaz na prevenção de lesões.",
+      "objectives": [
+        "Fortalecer isquiotibiais de forma excêntrica",
+        "Prevenir lesões de isquiotibiais",
+        "Melhorar capacidade de desaceleração",
+        "Aumentar torque excêntrico"
+      ],
+      "instructions": [
+        {
+          "order": 1,
+          "text": "Ajoelhe-se no solo com um parceiro ou fixação segurando seus tornozelos"
+        },
+        {
+          "order": 2,
+          "text": "Mantenha o corpo reto dos joelhos aos ombros (evite flexão de quadril)"
+        },
+        {
+          "order": 3,
+          "text": "Cruze os braços sobre o peito ou mantenha-os ao lado do corpo"
+        },
+        {
+          "order": 4,
+          "text": "Lentamente, deixe seu corpo cair para frente de forma controlada"
+        },
+        {
+          "order": 5,
+          "text": "Resista à queda usando a força dos isquiotibiais"
+        },
+        {
+          "order": 6,
+          "text": "Quando não conseguir mais resistir, apoie as mãos no chão suavemente"
+        },
+        {
+          "order": 7,
+          "text": "Use os braços para impulsionar de volta à posição inicial"
+        },
+        {
+          "order": 8,
+          "text": "Use os isquiotibiais para completar o movimento de volta"
+        }
+      ],
+      "difficulty": "avancado",
+      "duration": "6-12 repetições",
+      "sets": 3,
+      "repetitions": "6-12 repetições",
+      "restPeriod": "2-3 minutos entre séries",
+      "equipment": [
+        "colchonete",
+        "parceiro ou fixação de tornozelos"
+      ],
+      "variations": [
+        {
+          "id": "var-1",
+          "name": "Nordic Assistido com Elástico",
+          "description": "Usar elástico fixado à frente para assistência",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Banda elástica para assistência",
+            "Reduzir amplitude inicialmente"
+          ]
+        },
+        {
+          "id": "var-2",
+          "name": "Nordic em Rampa Inclinada",
+          "description": "Realizar com tronco apoiado em rampa para reduzir dificuldade",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Usar rampa ou banco inclinado",
+            "Progressão gradual para plano"
+          ]
+        },
+        {
+          "id": "var-3",
+          "name": "Nordic com Pausa Excêntrica",
+          "description": "Adicionar pausas durante a fase excêntrica",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Pausas de 2-3 segundos em diferentes ângulos",
+            "Maior tempo sob tensão"
+          ]
+        }
+      ],
+      "contraindications": [
+        "Lesão aguda de isquiotibiais",
+        "Tendinopatia proximal dos isquiotibiais não tratada",
+        "Dor lombar aguda",
+        "Lesão de ligamento cruzado posterior"
+      ],
+      "precautions": [
+        "Progressão gradual essencial (começar com assistência)",
+        "Esperar dor muscular intensa (DMIT) após sessões iniciais",
+        "Não realizar antes de jogos/competições na fase inicial",
+        "Aquecimento adequado obrigatório"
+      ],
+      "benefits": [
+        "Redução de até 51% no risco de lesão de isquiotibiais",
+        "Aumento significativo de força excêntrica",
+        "Melhora da relação isquio:quadríceps",
+        "Adaptação neural e hipertrofia muscular"
+      ],
+      "commonMistakes": [
+        "Flexionar quadril durante o exercício",
+        "Cair muito rapidamente (perder controle excêntrico)",
+        "Não usar os isquiotibiais para retornar",
+        "Amplitude muito grande antes de estar preparado",
+        "Frequência excessiva (overtraining)"
+      ],
+      "images": [],
+      "videos": [],
+      "tags": [
+        "isquiotibiais",
+        "excêntrico",
+        "prevenção",
+        "performance",
+        "atletas"
+      ],
+      "musclesWorked": [
+        "Isquiotibiais (Bíceps Femoral, Semitendinoso, Semimembranoso)",
+        "Glúteo Máximo",
+        "Gastrocnêmio"
+      ],
+      "movementPattern": "Extensão de joelho excêntrica",
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "ex-pos-001",
+      "name": "Deslizamento de Calcanhar",
+      "alias": [
+        "Heel Slide",
+        "Mobilização Ativa de Joelho"
+      ],
+      "specialty": [
+        "pos-operatoria",
+        "ortopedica"
+      ],
+      "category": "mobilidade",
+      "bodyParts": [
+        "joelho"
+      ],
+      "description": "Exercício suave para recuperação de amplitude de movimento de flexão do joelho no pós-operatório.",
+      "objectives": [
+        "Recuperar flexão do joelho",
+        "Prevenir rigidez articular",
+        "Mobilizar cicatriz cirúrgica",
+        "Manter função articular"
+      ],
+      "instructions": [
+        {
+          "order": 1,
+          "text": "Deite-se de costas com as pernas estendidas"
+        },
+        {
+          "order": 2,
+          "text": "Deslize lentamente o calcanhar em direção ao glúteo"
+        },
+        {
+          "order": 3,
+          "text": "Flexione o joelho o máximo possível sem dor excessiva"
+        },
+        {
+          "order": 4,
+          "text": "Mantenha o calcanhar em contato com a superfície"
+        },
+        {
+          "order": 5,
+          "text": "Segure por 2-5 segundos no final da amplitude"
+        },
+        {
+          "order": 6,
+          "text": "Retorne lentamente à posição inicial"
+        },
+        {
+          "order": 7,
+          "text": "Repita de forma suave e controlada"
+        }
+      ],
+      "difficulty": "iniciante",
+      "duration": "10-15 repetições",
+      "sets": 3,
+      "repetitions": "10-15 repetições",
+      "restPeriod": "30-60 segundos",
+      "equipment": [
+        "colchonete ou maca",
+        "opcionalmente uma toalha sob o calcanhar para facilitar"
+      ],
+      "variations": [
+        {
+          "id": "var-1",
+          "name": "Deslizamento Assistido com Mãos",
+          "description": "Usar as mãos para assistir e puxar suavemente a coxa",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Assistência manual",
+            "Maior controle do movimento"
+          ]
+        },
+        {
+          "id": "var-2",
+          "name": "Deslizamento com Toalha",
+          "description": "Colocar toalha ou lençol sob o calcanhar para facilitar o deslize",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Superfície de deslize facilitada",
+            "Menor atrito"
+          ]
+        },
+        {
+          "id": "var-3",
+          "name": "Deslizamento com Sustentação",
+          "description": "Segurar por períodos mais longos no fim da amplitude",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Sustentação de 5-10 segundos",
+            "Componente de alongamento"
+          ]
+        }
+      ],
+      "contraindications": [
+        "Dor intensa durante o movimento",
+        "Derrame articular significativo",
+        "Instabilidade articular aguda",
+        "Contraindicação médica específica"
+      ],
+      "precautions": [
+        "Não forçar além da dor tolerável",
+        "Progressão gradual de amplitude",
+        "Observar sinais de derrame articular",
+        "Comunicar qualquer aumento significativo de dor"
+      ],
+      "benefits": [
+        "Recuperação precoce de mobilidade",
+        "Prevenção de aderências e rigidez",
+        "Exercício seguro para fase aguda",
+        "Fácil realização domiciliar"
+      ],
+      "commonMistakes": [
+        "Forçar amplitude excessivamente",
+        "Movimento muito rápido",
+        "Levantar o calcanhar da superfície",
+        "Tensionar musculatura desnecessariamente"
+      ],
+      "images": [],
+      "videos": [],
+      "tags": [
+        "joelho",
+        "mobilidade",
+        "pós-operatório",
+        "ADM",
+        "precoce"
+      ],
+      "musclesWorked": [
+        "Isquiotibiais (contração concêntrica leve)",
+        "Mobilização articular"
+      ],
+      "movementPattern": "Flexão de joelho ativa",
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "ex-pos-002",
+      "name": "Elevação do Braço com Bastão",
+      "alias": [
+        "Wand Exercise",
+        "Elevação Assistida com Bastão"
+      ],
+      "specialty": [
+        "pos-operatoria",
+        "ortopedica"
+      ],
+      "category": "mobilidade",
+      "bodyParts": [
+        "ombro"
+      ],
+      "description": "Exercício para recuperação de amplitude de movimento de elevação do ombro usando assistência do braço não operado.",
+      "objectives": [
+        "Recuperar elevação do ombro",
+        "Mobilizar articulação glenoumeral e escapulotorácica",
+        "Prevenir capsulite adesiva",
+        "Progressão de mobilidade passiva para ativa-assistida"
+      ],
+      "instructions": [
+        {
+          "order": 1,
+          "text": "Sente-se ou fique em pé segurando um bastão com ambas as mãos"
+        },
+        {
+          "order": 2,
+          "text": "Posicione as mãos com largura aproximada dos ombros"
+        },
+        {
+          "order": 3,
+          "text": "Mantenha os cotovelos estendidos"
+        },
+        {
+          "order": 4,
+          "text": "Use o braço saudável para empurrar o bastão para cima"
+        },
+        {
+          "order": 5,
+          "text": "Eleve o bastão acima da cabeça conforme tolerado"
+        },
+        {
+          "order": 6,
+          "text": "Mantenha por 2-5 segundos na amplitude máxima"
+        },
+        {
+          "order": 7,
+          "text": "Retorne lentamente à posição inicial"
+        }
+      ],
+      "difficulty": "iniciante",
+      "duration": "10-15 repetições",
+      "sets": 3,
+      "repetitions": "10-15 repetições",
+      "restPeriod": "30-60 segundos",
+      "equipment": [
+        "bastão, cabo de vassoura ou toalha enrolada"
+      ],
+      "variations": [
+        {
+          "id": "var-1",
+          "name": "Elevação Supina com Bastão",
+          "description": "Realizar deitado de costas para facilitar o movimento",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Posição supina",
+            "Assistência da gravidade"
+          ]
+        },
+        {
+          "id": "var-2",
+          "name": "Elevação em Pé com Sustentação",
+          "description": "Segurar por períodos mais longos na amplitude máxima",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Sustentação prolongada",
+            "Componente de alongamento"
+          ]
+        },
+        {
+          "id": "var-3",
+          "name": "Rotação Externa com Bastão",
+          "description": "Usar bastão para trabalhar rotação externa",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Movimento de rotação",
+            "Diferentes planos de movimento"
+          ]
+        }
+      ],
+      "contraindications": [
+        "Dor intensa durante movimento",
+        "Fase de proteção máxima (primeiras semanas pós-cirurgia)",
+        "Instabilidade não controlada",
+        "Infecção ativa"
+      ],
+      "precautions": [
+        "Respeitar fases de cicatrização",
+        "Não forçar amplitude contra dor significativa",
+        "Manter controle do braço operado",
+        "Evitar movimentos bruscos"
+      ],
+      "benefits": [
+        "Recuperação gradual de mobilidade",
+        "Controle da assistência facilmente ajustável",
+        "Seguro para fases precoces",
+        "Fácil execução domiciliar"
+      ],
+      "commonMistakes": [
+        "Forçar elevação precocemente",
+        "Usar força excessiva do braço saudável",
+        "Elevar ombros (enccolhimento)",
+        "Compensação com inclinação lateral do tronco"
+      ],
+      "images": [],
+      "videos": [],
+      "tags": [
+        "ombro",
+        "mobilidade",
+        "pós-operatório",
+        "assistido",
+        "ADM"
+      ],
+      "musclesWorked": [
+        "Mobilização articular",
+        "Ativação suave dos elevadores do ombro"
+      ],
+      "movementPattern": "Elevação de ombro ativa-assistida",
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "ex-gero-001",
+      "name": "Sentar e Levantar de Cadeira",
+      "alias": [
+        "Sit to Stand",
+        "Levantar da Cadeira"
+      ],
+      "specialty": [
+        "geriatrica",
+        "ortopedica"
+      ],
+      "category": "fortalecimento",
+      "bodyParts": [
+        "quadril",
+        "joelho",
+        "tornozelo"
+      ],
+      "description": "Exercício funcional fundamental para manutenção de independência, fortalece membros inferiores e treina transferência.",
+      "objectives": [
+        "Fortalecer quadríceps e glúteos",
+        "Melhorar capacidade funcional",
+        "Prevenir dependência para transferências",
+        "Avaliar força dos membros inferiores"
+      ],
+      "instructions": [
+        {
+          "order": 1,
+          "text": "Sente-se em uma cadeira firme com os pés apoiados no chão"
+        },
+        {
+          "order": 2,
+          "text": "Posicione os pés na largura dos ombros"
+        },
+        {
+          "order": 3,
+          "text": "Cruze os braços sobre o peito ou mantenha-os estendidos à frente"
+        },
+        {
+          "order": 4,
+          "text": "Incline o tronco ligeiramente à frente"
+        },
+        {
+          "order": 5,
+          "text": "Levante-se usando a força das pernas"
+        },
+        {
+          "order": 6,
+          "text": "Estenda completamente joelhos e quadris"
+        },
+        {
+          "order": 7,
+          "text": "Sente-se novamente de forma controlada"
+        },
+        {
+          "order": 8,
+          "text": "Toque suavemente o assento e repita"
+        }
+      ],
+      "difficulty": "iniciante",
+      "duration": "30 segundos (teste) ou 10-15 repetições",
+      "sets": 3,
+      "repetitions": "10-15 repetições ou máximo em 30 segundos",
+      "restPeriod": "60 segundos",
+      "equipment": [
+        "cadeira firme sem braços"
+      ],
+      "variations": [
+        {
+          "id": "var-1",
+          "name": "Sentar e Levantar com Apoio de Braços",
+          "description": "Usar os braços da cadeira para assistência",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Usar apoio dos braços",
+            "Cadeira mais alta"
+          ]
+        },
+        {
+          "id": "var-2",
+          "name": "Sentar e Levantar de Cadeira Alta",
+          "description": "Usar cadeira mais alta ou com almofada",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Aumentar altura do assento",
+            "Menor amplitude de movimento"
+          ]
+        },
+        {
+          "id": "var-3",
+          "name": "Sentar e Levantar com Peso",
+          "description": "Segurar peso ou colete com carga",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Adicionar carga externa",
+            "Maior resistência"
+          ]
+        },
+        {
+          "id": "var-4",
+          "name": "Sentar e Levantar Unipodal",
+          "description": "Realizar com apoio principal em uma perna",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Apoio assimétrico",
+            "Maior desafio de força"
+          ]
+        }
+      ],
+      "contraindications": [
+        "Instabilidade articular severa de joelho ou quadril",
+        "Dor intensa ao realizar o movimento",
+        "Período pós-operatório imediato com restrição de carga",
+        "Risco alto de queda sem supervisão"
+      ],
+      "precautions": [
+        "Supervisão próxima em pacientes de alto risco",
+        "Garantir que a cadeira seja firme e segura",
+        "Ambiente sem obstáculos",
+        "Progressão gradual"
+      ],
+      "benefits": [
+        "Melhora da independência funcional",
+        "Prevenção de quedas",
+        "Fortalecimento funcional",
+        "Fácil realização em casa",
+        "Teste funcional validado (teste de 30 segundos)"
+      ],
+      "commonMistakes": [
+        "Usar impulso excessivo com o tronco",
+        "Não estender completamente joelhos e quadris",
+        "Deixar-se cair no assento",
+        "Posicionamento inadequado dos pés",
+        "Velocidade excessiva comprometendo controle"
+      ],
+      "images": [],
+      "videos": [],
+      "tags": [
+        "funcional",
+        "idosos",
+        "força",
+        "independência",
+        "AVD"
+      ],
+      "musclesWorked": [
+        "Quadríceps",
+        "Glúteo Máximo",
+        "Isquiotibiais",
+        "Core"
+      ],
+      "movementPattern": "Agachamento funcional",
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "ex-gero-002",
+      "name": "Marcha Tandem",
+      "alias": [
+        "Tandem Walking",
+        "Caminhada em Linha"
+      ],
+      "specialty": [
+        "geriatrica",
+        "neurologica"
+      ],
+      "category": "equilibrio",
+      "bodyParts": [
+        "corpo-inteiro"
+      ],
+      "description": "Exercício de equilíbrio dinâmico onde o idoso caminha colocando um pé diretamente na frente do outro.",
+      "objectives": [
+        "Melhorar equilíbrio dinâmico",
+        "Aprimorar controle postural",
+        "Desenvolver confiança na marcha",
+        "Prevenir quedas"
+      ],
+      "instructions": [
+        {
+          "order": 1,
+          "text": "Posicione-se próximo a uma parede ou barra para segurança"
+        },
+        {
+          "order": 2,
+          "text": "Coloque um pé diretamente na frente do outro, tocando calcanhar com dedos"
+        },
+        {
+          "order": 3,
+          "text": "Olhe para frente (não para os pés)"
+        },
+        {
+          "order": 4,
+          "text": "Dê um passo colocando o pé traseiro na frente, novamente tocando calcanhar com dedos"
+        },
+        {
+          "order": 5,
+          "text": "Continue por 3-5 metros ou 10-15 passos"
+        },
+        {
+          "order": 6,
+          "text": "Mantenha controle e equilíbrio durante toda a caminhada"
+        },
+        {
+          "order": 7,
+          "text": "Vire e retorne ou caminhe de volta normalmente"
+        }
+      ],
+      "difficulty": "intermediario",
+      "duration": "3-5 metros ou 10-15 passos",
+      "sets": 3,
+      "repetitions": "3-5 passagens",
+      "restPeriod": "30-60 segundos",
+      "equipment": [
+        "espaço para caminhada",
+        "barra ou parede para segurança"
+      ],
+      "variations": [
+        {
+          "id": "var-1",
+          "name": "Tandem com Apoio Leve",
+          "description": "Caminhar ao lado de barra com apoio leve de uma mão",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Apoio contínuo disponível",
+            "Maior segurança"
+          ]
+        },
+        {
+          "id": "var-2",
+          "name": "Semi-Tandem",
+          "description": "Pés parcialmente alinhados (não totalmente tandem)",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Base de suporte levemente maior",
+            "Progressão para tandem completo"
+          ]
+        },
+        {
+          "id": "var-3",
+          "name": "Tandem com Obstáculos",
+          "description": "Adicionar pequenos obstáculos para ultrapassar",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Desafio adicional",
+            "Maior complexidade"
+          ]
+        },
+        {
+          "id": "var-4",
+          "name": "Tandem com Olhos Fechados",
+          "description": "Realizar com olhos fechados (apenas com supervisão)",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Eliminação de input visual",
+            "Apenas para avançados"
+          ]
+        }
+      ],
+      "contraindications": [
+        "Vertigem severa não controlada",
+        "Déficit visual significativo",
+        "Risco muito alto de queda sem supervisão adequada",
+        "Déficits cognitivos que impeçam compreensão"
+      ],
+      "precautions": [
+        "Supervisão próxima essencial",
+        "Garantir apoio disponível",
+        "Ambiente seguro sem obstáculos",
+        "Progredir gradualmente"
+      ],
+      "benefits": [
+        "Melhora significativa de equilíbrio",
+        "Redução do risco de quedas",
+        "Aumento da confiança na marcha",
+        "Desafio progressivo apropriado"
+      ],
+      "commonMistakes": [
+        "Olhar para os pés (perder referência visual frontal)",
+        "Caminhar muito rápido perdendo controle",
+        "Base muito larga (não tandem real)",
+        "Tensão excessiva comprometendo fluidez"
+      ],
+      "images": [],
+      "videos": [],
+      "tags": [
+        "equilíbrio",
+        "marcha",
+        "idosos",
+        "prevenção quedas",
+        "dinâmico"
+      ],
+      "musclesWorked": [
+        "Estabilizadores de tornozelo",
+        "Core",
+        "Glúteo Médio"
+      ],
+      "movementPattern": "Marcha com base reduzida",
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    },
+    {
+      "id": "ex-gero-003",
+      "name": "Elevação de Panturrilha",
+      "alias": [
+        "Calf Raise",
+        "Elevação dos Calcanhares"
+      ],
+      "specialty": [
+        "geriatrica",
+        "ortopedica",
+        "esportiva"
+      ],
+      "category": "fortalecimento",
+      "bodyParts": [
+        "tornozelo"
+      ],
+      "description": "Exercício para fortalecimento da musculatura da panturrilha, importante para marcha e prevenção de quedas.",
+      "objectives": [
+        "Fortalecer tríceps sural (gastrocnêmio e sóleo)",
+        "Melhorar propulsão na marcha",
+        "Prevenir quedas melhorando força de tornozelo",
+        "Melhorar circulação dos membros inferiores"
+      ],
+      "instructions": [
+        {
+          "order": 1,
+          "text": "Fique em pé próximo a uma parede ou barra para apoio"
+        },
+        {
+          "order": 2,
+          "text": "Posicione os pés na largura dos ombros"
+        },
+        {
+          "order": 3,
+          "text": "Apoie levemente as mãos para equilíbrio"
+        },
+        {
+          "order": 4,
+          "text": "Eleve os calcanhares subindo na ponta dos pés"
+        },
+        {
+          "order": 5,
+          "text": "Suba o máximo possível mantendo o controle"
+        },
+        {
+          "order": 6,
+          "text": "Segure por 1-2 segundos no topo"
+        },
+        {
+          "order": 7,
+          "text": "Abaixe lentamente até os calcanhares tocarem o chão"
+        },
+        {
+          "order": 8,
+          "text": "Repita de forma controlada"
+        }
+      ],
+      "difficulty": "iniciante",
+      "duration": "10-20 repetições",
+      "sets": 3,
+      "repetitions": "10-20 repetições",
+      "restPeriod": "30-60 segundos",
+      "equipment": [
+        "parede ou barra para apoio",
+        "opcionalmente step ou degrau"
+      ],
+      "variations": [
+        {
+          "id": "var-1",
+          "name": "Elevação Sentado (Sóleo)",
+          "description": "Realizar sentado com peso sobre os joelhos para focar no sóleo",
+          "difficultyModifier": "easier",
+          "modifications": [
+            "Posição sentada",
+            "Isolamento do sóleo"
+          ]
+        },
+        {
+          "id": "var-2",
+          "name": "Elevação Unipodal",
+          "description": "Realizar com apoio em apenas uma perna",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Suporte unilateral",
+            "Dobrar força necessária"
+          ]
+        },
+        {
+          "id": "var-3",
+          "name": "Elevação em Step",
+          "description": "Realizar com antepé em degrau para maior amplitude",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Maior amplitude de movimento",
+            "Alongamento adicional"
+          ]
+        },
+        {
+          "id": "var-4",
+          "name": "Elevação com Peso",
+          "description": "Segurar peso ou usar colete com carga",
+          "difficultyModifier": "harder",
+          "modifications": [
+            "Adicionar carga externa",
+            "Progressão de resistência"
+          ]
+        }
+      ],
+      "contraindications": [
+        "Lesão aguda de tornozelo",
+        "Tendinopatia aguda de Aquiles",
+        "Dor intensa na panturrilha",
+        "Trombose venosa profunda"
+      ],
+      "precautions": [
+        "Apoio adequado para equilíbrio",
+        "Progressão gradual de dificuldade",
+        "Atenção a cãibras",
+        "Aquecimento adequado"
+      ],
+      "benefits": [
+        "Fortalecimento essencial para marcha",
+        "Melhora da propulsão",
+        "Prevenção de quedas",
+        "Melhora circulatória",
+        "Fácil realização domiciliar"
+      ],
+      "commonMistakes": [
+        "Usar braços para impulsionar",
+        "Não elevar completamente",
+        "Descer muito rápido (perder controle excêntrico)",
+        "Inclinar o tronco à frente",
+        "Não manter joelhos estendidos (para gastrocnêmio)"
+      ],
+      "images": [],
+      "videos": [],
+      "tags": [
+        "panturrilha",
+        "tornozelo",
+        "força",
+        "marcha",
+        "funcional"
+      ],
+      "musclesWorked": [
+        "Gastrocnêmio",
+        "Sóleo",
+        "Tibial Posterior"
+      ],
+      "movementPattern": "Flexão plantar de tornozelo",
+      "createdAt": "2025-10-09T01:40:21.452Z",
+      "updatedAt": "2025-10-09T01:40:21.452Z"
+    }
+  ],
+  "assessments": [
+    {
+      "id": "aval-esp-001",
+      "title": "Avaliação Funcional Esportiva",
+      "specialty": "esportiva",
+      "description": "Avaliação abrangente da capacidade funcional de atletas incluindo força, potência, agilidade e controle neuromuscular.",
+      "purpose": "Identificar déficits funcionais, assimetrias e fatores de risco para lesões em atletas.",
+      "targetPopulation": "Atletas de diversas modalidades, amadores e profissionais",
+      "duration": "45-60 minutos",
+      "materials": [
+        "Dinamômetro portátil",
+        "Fita métrica",
+        "Cronômetro",
+        "Cones de marcação",
+        "Superfície plana e segura",
+        "Câmera para gravação (opcional)",
+        "Formulário de avaliação"
+      ],
+      "procedures": [
+        {
+          "id": "proc-1",
+          "order": 1,
+          "step": "Anamnese Esportiva",
+          "instruction": "Coletar histórico de lesões, modalidade praticada, volume de treino e objetivos.",
+          "expectedOutcome": "Compreensão do contexto esportivo e fatores de risco individuais",
+          "commonErrors": [
+            "Não investigar histórico completo de lesões",
+            "Não considerar demandas específicas do esporte"
+          ]
+        },
+        {
+          "id": "proc-2",
+          "order": 2,
+          "step": "Avaliação de Força Muscular",
+          "instruction": "Testar força isométrica de grupos musculares chave (quadríceps, isquiotibiais, glúteos, abdutores de quadril).",
+          "expectedOutcome": "Valores de força em kg ou N, identificação de assimetrias >10%",
+          "commonErrors": [
+            "Não padronizar posição de teste",
+            "Não comparar bilateral mente"
+          ]
+        },
+        {
+          "id": "proc-3",
+          "order": 3,
+          "step": "Hop Tests",
+          "instruction": "Realizar single hop, triple hop, crossover hop e 6-meter timed hop para cada perna.",
+          "expectedOutcome": "Distância percorrida e índice de simetria entre membros",
+          "commonErrors": [
+            "Não garantir técnica adequada",
+            "Não considerar estratégias compensatórias"
+          ]
+        },
+        {
+          "id": "proc-4",
+          "order": 4,
+          "step": "Testes de Agilidade",
+          "instruction": "Aplicar teste de mudança de direção (Illinois Agility Test ou T-Test).",
+          "expectedOutcome": "Tempo de execução, comparação com normativas",
+          "commonErrors": [
+            "Não familiarizar o atleta previamente",
+            "Condições de teste não padronizadas"
+          ]
+        },
+        {
+          "id": "proc-5",
+          "order": 5,
+          "step": "Avaliação de Movimento",
+          "instruction": "Observar padrões de movimento em agachamento, aterrissagem e mudança de direção.",
+          "expectedOutcome": "Identificação de compensações, valgo dinâmico, assimetrias",
+          "commonErrors": [
+            "Não observar de múltiplos ângulos",
+            "Focar apenas em uma articulação"
+          ]
+        }
+      ],
+      "scoringCriteria": [
+        {
+          "parameter": "Força Isométrica",
+          "unit": "kg ou N",
+          "normalRange": "Assimetria < 10%",
+          "measurement": "Dinamometria"
+        },
+        {
+          "parameter": "Single Hop Distance",
+          "unit": "cm",
+          "normalRange": "LSI > 90%",
+          "measurement": "Fita métrica"
+        },
+        {
+          "parameter": "Triple Hop Distance",
+          "unit": "cm",
+          "normalRange": "LSI > 90%",
+          "measurement": "Fita métrica"
+        },
+        {
+          "parameter": "Illinois Agility",
+          "unit": "segundos",
+          "normalRange": "<15.2s (homens), <17.0s (mulheres)",
+          "measurement": "Cronômetro"
+        }
+      ],
+      "interpretationGuide": [
+        {
+          "range": "LSI > 90% em todos hop tests",
+          "interpretation": "Simetria adequada, baixo risco de lesão",
+          "recommendations": [
+            "Manter programa preventivo",
+            "Progressão para atividades esportivas"
+          ]
+        },
+        {
+          "range": "LSI 80-90% em qualquer hop test",
+          "interpretation": "Assimetria leve, risco moderado",
+          "recommendations": [
+            "Fortalecimento específico do membro deficitário",
+            "Treino proprioceptivo",
+            "Reavaliação em 4-6 semanas"
+          ]
+        },
+        {
+          "range": "LSI < 80% em qualquer hop test",
+          "interpretation": "Assimetria significativa, risco elevado de lesão",
+          "recommendations": [
+            "Programa intensivo de reabilitação",
+            "Não liberar para retorno ao esporte",
+            "Investigar causas da assimetria"
+          ]
+        }
+      ],
+      "references": [
+        "Gustavsson A, et al. A test battery for evaluating hop performance in patients with an ACL injury. Knee Surg Sports Traumatol Arthrosc. 2006;14(8):778-788.",
+        "Raya MA, et al. Comparison of three agility tests with male servicemembers. J Rehabil Res Dev. 2013;50(4):603-612."
+      ],
+      "images": [],
+      "tags": [
+        "avaliação",
+        "esportiva",
+        "hop test",
+        "força",
+        "funcional"
+      ],
+      "createdAt": "2025-10-09T01:40:21.453Z",
+      "updatedAt": "2025-10-09T01:40:21.453Z"
+    },
+    {
+      "id": "aval-gero-001",
+      "title": "Avaliação Geriátrica de Risco de Quedas",
+      "specialty": "geriatrica",
+      "description": "Avaliação multifatorial do risco de quedas em idosos incluindo equilíbrio, marcha, força e fatores ambientais.",
+      "purpose": "Identificar idosos em risco de quedas e determinar intervenções apropriadas.",
+      "targetPopulation": "Idosos comunitários ou institucionalizados com 60 anos ou mais",
+      "duration": "30-40 minutos",
+      "materials": [
+        "Escala de Equilíbrio de Berg (formulário)",
+        "Cronômetro",
+        "Cadeira sem braços (altura padrão 43cm)",
+        "Fita métrica",
+        "Cone ou marcador",
+        "Checklist de avaliação ambiental"
+      ],
+      "procedures": [
+        {
+          "id": "proc-1",
+          "order": 1,
+          "step": "Histórico de Quedas",
+          "instruction": "Perguntar sobre quedas nos últimos 12 meses, circunstâncias, consequências e medo de cair.",
+          "expectedOutcome": "Número de quedas, contexto, lesões resultantes, nível de medo",
+          "commonErrors": [
+            "Não investigar \"quase-quedas\"",
+            "Não avaliar impacto psicológico"
+          ]
+        },
+        {
+          "id": "proc-2",
+          "order": 2,
+          "step": "Escala de Equilíbrio de Berg",
+          "instruction": "Aplicar os 14 itens da escala, pontuando 0-4 para cada item.",
+          "expectedOutcome": "Pontuação total de 0-56 pontos",
+          "commonErrors": [
+            "Não padronizar instruções",
+            "Não garantir segurança durante testes"
+          ]
+        },
+        {
+          "id": "proc-3",
+          "order": 3,
+          "step": "Timed Up and Go (TUG)",
+          "instruction": "Paciente levanta de cadeira, caminha 3 metros, retorna e senta. Cronometrar.",
+          "expectedOutcome": "Tempo em segundos",
+          "commonErrors": [
+            "Não permitir familiarização",
+            "Não observar qualidade do movimento"
+          ]
+        },
+        {
+          "id": "proc-4",
+          "order": 4,
+          "step": "Teste de Sentar e Levantar 30 Segundos",
+          "instruction": "Contar quantas vezes o paciente consegue sentar e levantar completamente em 30 segundos.",
+          "expectedOutcome": "Número de repetições",
+          "commonErrors": [
+            "Não verificar se extensão completa foi alcançada",
+            "Permitir uso de braços quando não deve"
+          ]
+        },
+        {
+          "id": "proc-5",
+          "order": 5,
+          "step": "Avaliação Ambiental",
+          "instruction": "Usar checklist para avaliar riscos ambientais no domicílio (tapetes, iluminação, banheiro, etc).",
+          "expectedOutcome": "Lista de riscos ambientais identificados",
+          "commonErrors": [
+            "Não visitar domicílio (quando possível)",
+            "Não considerar rotinas específicas do idoso"
+          ]
+        }
+      ],
+      "scoringCriteria": [
+        {
+          "parameter": "Berg Balance Scale",
+          "unit": "pontos",
+          "normalRange": "> 45 pontos",
+          "measurement": "Escala de 0-56"
+        },
+        {
+          "parameter": "Timed Up and Go",
+          "unit": "segundos",
+          "normalRange": "< 12 segundos",
+          "measurement": "Cronômetro"
+        },
+        {
+          "parameter": "Sentar e Levantar 30s",
+          "unit": "repetições",
+          "normalRange": "> 12 repetições (60-69 anos), > 11 (70-79), > 10 (80-89)",
+          "measurement": "Contagem"
+        }
+      ],
+      "interpretationGuide": [
+        {
+          "range": "Berg > 45, TUG < 12s, SL30s acima da média",
+          "interpretation": "Baixo risco de quedas",
+          "recommendations": [
+            "Manutenção de atividade física regular",
+            "Orientações preventivas",
+            "Reavaliação anual"
+          ]
+        },
+        {
+          "range": "Berg 40-45, TUG 12-20s, SL30s na média",
+          "interpretation": "Risco moderado de quedas",
+          "recommendations": [
+            "Programa de exercícios para equilíbrio e força",
+            "Modificações ambientais",
+            "Reavaliação em 3-6 meses"
+          ]
+        },
+        {
+          "range": "Berg < 40, TUG > 20s, SL30s abaixo da média",
+          "interpretation": "Alto risco de quedas",
+          "recommendations": [
+            "Intervenção imediata",
+            "Supervisão aumentada",
+            "Dispositivo auxiliar se necessário",
+            "Reavaliação mensal"
+          ]
+        }
+      ],
+      "references": [
+        "Berg K, et al. Measuring balance in the elderly. Can J Public Health. 1992;83 Suppl 2:S7-11.",
+        "Podsiadlo D, Richardson S. The timed \"Up & Go\": a test of basic functional mobility. J Am Geriatr Soc. 1991;39(2):142-148.",
+        "Rikli RE, Jones CJ. Senior Fitness Test Manual. 2nd ed. Human Kinetics; 2013."
+      ],
+      "images": [],
+      "tags": [
+        "avaliação",
+        "geriatria",
+        "quedas",
+        "equilíbrio",
+        "Berg"
+      ],
+      "createdAt": "2025-10-09T01:40:21.453Z",
+      "updatedAt": "2025-10-09T01:40:21.453Z"
+    }
+  ],
+  "materials": [
+    {
+      "id": "mat-001",
+      "type": "guideline",
+      "title": "Guideline de Reabilitação Pós-Cirúrgica de LCA",
+      "specialty": "esportiva",
+      "description": "Guia prático baseado em evidências para reabilitação de atletas após reconstrução de LCA.",
+      "category": "professional-use",
+      "content": "\n# Guideline de Reabilitação Pós-Cirúrgica de LCA\n\n## Princípios Fundamentais\n\n1. **Progressão baseada em critérios**, não em tempo\n2. **Respeitar cicatrização tecidual**\n3. **Controle de carga progressivo**\n4. **Avaliação contínua de resposta**\n\n## Fases da Reabilitação\n\n### Fase 1: Aguda (0-2 semanas)\n**Objetivos:**\n- Controlar dor e edema\n- ADM: 0-90° de flexão\n- Ativação de quadríceps\n\n**Critérios de Progressão:**\n- Extensão completa\n- Flexão ≥ 90°\n- Contração ativa de quadríceps visível\n\n### Fase 2: Inicial (2-6 semanas)\n**Objetivos:**\n- ADM completa\n- Marcha normalizada\n- Força inicial\n\n**Critérios de Progressão:**\n- ADM completa\n- Marcha sem claudicação\n- Subir/descer escadas\n\n### Fase 3: Intermediária (6-12 semanas)\n**Objetivos:**\n- Força > 70% contralateral\n- Início de corrida\n\n**Critérios de Progressão:**\n- Força 70%\n- Sem derrame articular\n- Hop test > 60%\n\n### Fase 4: Avançada (3-6 meses)\n**Objetivos:**\n- Força > 85%\n- Retorno a atividades esportivas\n\n**Critérios de Progressão:**\n- Força > 85%\n- Hop tests > 85%\n- Confiança psicológica\n\n### Fase 5: Retorno ao Esporte (6-12 meses)\n**Objetivos:**\n- Performance normalizada\n- Prevenção de relesão\n\n**Critérios de Liberação:**\n- Força > 90%\n- Todos hop tests > 90%\n- Aprovação do cirurgião\n- Prontidão psicológica\n\n## Red Flags\n\n- Derrame articular persistente\n- Dor significativa não controlada\n- Perda súbita de ADM\n- Instabilidade sintomática\n- Falha em progredir\n\n## Comunicação com Cirurgião\n\nComunicar imediatamente:\n- Suspeita de re-ruptura\n- Infecção\n- Rigidez articular severa\n- Falha em atingir marcos esperados\n",
+      "downloadable": true,
+      "printable": true,
+      "thumbnailUrl": "",
+      "images": [],
+      "tags": [
+        "LCA",
+        "guideline",
+        "reabilitação",
+        "protocolo",
+        "joelho"
+      ],
+      "language": "pt-BR",
+      "version": "1.0",
+      "lastReviewed": "2025-10-09T01:40:21.453Z",
+      "createdAt": "2025-10-09T01:40:21.453Z",
+      "updatedAt": "2025-10-09T01:40:21.453Z"
+    },
+    {
+      "id": "mat-002",
+      "type": "form",
+      "title": "Formulário de Avaliação Inicial de Fisioterapia",
+      "specialty": "ortopedica",
+      "description": "Formulário padronizado para avaliação inicial de pacientes ortopédicos.",
+      "category": "evaluation",
+      "content": "\n# FORMULÁRIO DE AVALIAÇÃO INICIAL - FISIOTERAPIA\n\n## Dados do Paciente\n- Nome: ____________________\n- Data de Nascimento: ____/____/____\n- Profissão: ____________________\n- Atividades Esportivas: ____________________\n\n## Queixa Principal\nDescreva com suas palavras: ____________________\n\n## História da Doença Atual\n- Início dos sintomas: ____________________\n- Mecanismo de lesão: ____________________\n- Tratamentos prévios: ____________________\n- Exames realizados: ____________________\n\n## Dor\n- Localização: ____________________\n- Intensidade (0-10): ____\n- Característica: ( ) latejante ( ) aguda ( ) queimação ( ) outra: ____\n- Fatores de melhora: ____________________\n- Fatores de piora: ____________________\n\n## História Médica\n- Cirurgias prévias: ____________________\n- Condições de saúde: ____________________\n- Medicamentos em uso: ____________________\n- Alergias: ____________________\n\n## Exame Físico\n### Inspeção\n- Postura: ____________________\n- Marcha: ____________________\n- Alterações visíveis: ____________________\n\n### Palpação\n- Pontos dolorosos: ____________________\n- Edema: ( ) Sim ( ) Não Local: ____\n- Temperatura: ( ) Normal ( ) Aumentada\n\n### Amplitude de Movimento\n[Tabela para registro de ADM]\n\n### Força Muscular\n[Tabela para registro de força 0-5]\n\n### Testes Especiais\n____________________\n\n## Diagnóstico Fisioterapêutico\n____________________\n\n## Objetivos do Tratamento\nCurto prazo: ____________________\nLongo prazo: ____________________\n\n## Plano de Tratamento\nFrequência: ____ x/semana\nDuração estimada: ____ semanas\nCondutas: ____________________\n\n____________________\nAssinatura do Fisioterapeuta\nCREFITO: ____\n",
+      "downloadable": true,
+      "printable": true,
+      "thumbnailUrl": "",
+      "images": [],
+      "tags": [
+        "formulário",
+        "avaliação",
+        "documentação",
+        "prontuário"
+      ],
+      "language": "pt-BR",
+      "version": "1.0",
+      "lastReviewed": "2025-10-09T01:40:21.453Z",
+      "createdAt": "2025-10-09T01:40:21.453Z",
+      "updatedAt": "2025-10-09T01:40:21.453Z"
+    },
+    {
+      "id": "mat-003",
+      "type": "infographic",
+      "title": "Orientações para Prevenção de Quedas em Idosos",
+      "specialty": "geriatrica",
+      "description": "Material educativo visual para pacientes e familiares sobre prevenção de quedas.",
+      "category": "patient-education",
+      "content": "\n# PREVENÇÃO DE QUEDAS - GUIA PARA IDOSOS E FAMILIARES\n\n## 🏠 NO AMBIENTE DOMÉSTICO\n\n### ILUMINAÇÃO\n✓ Mantenha interruptores acessíveis\n✓ Use luz noturna no quarto e banheiro\n✓ Ilumine bem corredores e escadas\n\n### PISOS\n✓ Remova tapetes soltos\n✓ Fixe bem tapetes que permanecerem\n✓ Limpe imediatamente líquidos derramados\n✓ Evite encerar pisos\n\n### BANHEIRO\n✓ Instale barras de apoio no box e vaso\n✓ Use tapete antiderrapante no box\n✓ Prefira bancos para banho se necessário\n\n### ESCADAS\n✓ Instale corrimãos dos dois lados\n✓ Ilumine adequadamente\n✓ Sinalize primeiro e último degrau\n\n### ORGANIZAÇÃO\n✓ Mantenha objetos de uso frequente ao alcance\n✓ Evite fios soltos no chão\n✓ Organize móveis permitindo passagem livre\n\n## 👟 CALÇADOS E VESTUÁRIO\n✓ Use sapatos fechados, baixos e antiderrapantes\n✓ Evite chinelos e sapatos muito largos\n✓ Prefira roupas que não arrastem no chão\n\n## 💊 MEDICAMENTOS\n✓ Revise medicações com seu médico regularmente\n✓ Atenção a medicamentos que causam tontura\n✓ Tome cuidado ao levantar (hipotensão postural)\n\n## 🏋️ EXERCÍCIO E SAÚDE\n✓ Pratique exercícios para força e equilíbrio\n✓ Realize check-ups regulares\n✓ Use óculos conforme prescrição\n✓ Mantenha alimentação adequada\n\n## 🚨 QUANDO PROCURAR AJUDA\n- Se teve quedas recentemente\n- Se sente medo de cair\n- Se sente tontura ou desequilíbrio\n- Se tem dificuldade para caminhar\n\n## 📞 CONTATOS DE EMERGÊNCIA\nFisioterapia: ____________________\nMédico: ____________________\nFamiliar: ____________________\n\n---\n**Lembre-se: A maioria das quedas pode ser prevenida!**\n",
+      "downloadable": true,
+      "printable": true,
+      "thumbnailUrl": "",
+      "images": [],
+      "tags": [
+        "educação",
+        "paciente",
+        "quedas",
+        "idosos",
+        "prevenção"
+      ],
+      "language": "pt-BR",
+      "version": "1.0",
+      "lastReviewed": "2025-10-09T01:40:21.453Z",
+      "createdAt": "2025-10-09T01:40:21.453Z",
+      "updatedAt": "2025-10-09T01:40:21.453Z"
+    }
+  ],
+  "library": [
+    {
+      "id": "lib-001",
+      "type": "guideline",
+      "title": "Diretrizes para Retorno ao Esporte Após Lesão de LCA",
+      "specialty": "esportiva",
+      "abstract": "Revisão sistemática das melhores práticas e critérios baseados em evidência para liberação de atletas após reconstrução de LCA.",
+      "fullContent": "\n# Diretrizes para Retorno ao Esporte Após Lesão de LCA\n\n## Introdução\nA decisão de retorno ao esporte após reconstrução de LCA é complexa e multifatorial. Este documento compila as evidências científicas mais atualizadas para guiar essa decisão crítica.\n\n## Critérios Baseados em Tempo\nEmbora o tempo mínimo de 9-12 meses seja frequentemente citado, a literatura atual sugere que:\n- Menos de 6 meses: risco significativamente aumentado de re-ruptura\n- 9-12 meses: janela mais segura para retorno\n- Além de 12 meses: pode indicar dificuldades na reabilitação\n\n## Critérios Funcionais\n\n### Força Muscular\n- **Quadríceps:** > 90% do membro contralateral\n- **Isquiotibiais:** > 90% do membro contralateral\n- **Relação I:Q:** 0.6-1.0 (dependendo da velocidade de teste)\n\n### Testes de Salto (Hop Tests)\nTodos devem apresentar Limb Symmetry Index (LSI) > 90%:\n- Single hop for distance\n- Triple hop for distance\n- Crossover hop for distance\n- 6-meter timed hop\n\n### Avaliação Qualitativa\n- Landing Error Scoring System (LESS)\n- Análise de movimento durante aterrissagem\n- Ausência de valgo dinâmico excessivo\n\n### Testes de Agilidade e Mudança de Direção\n- T-Test ou Illinois Agility Test\n- Comparação com valores normativos e pré-lesão\n\n## Critérios Psicológicos\n- ACL-Return to Sport after Injury (ACL-RSI) scale\n- Pontuação mínima de 56 pontos (de 100) sugerida\n- Avaliação de confiança do atleta\n\n## Critérios Clínicos\n- Ausência de derrame articular\n- Ausência de dor significativa\n- Amplitude de movimento completa e simétrica\n- Ausência de sinais de instabilidade\n\n## Comunicação Médica\n- Aprovação do cirurgião ortopédico\n- Consenso da equipe multidisciplinar\n\n## Progressão para Retorno\n1. Participação em treinos técnico-táticos (sem contato)\n2. Progressão para treinos com contato limitado\n3. Treinos completos com a equipe\n4. Participação em jogos/competições com tempo limitado\n5. Retorno completo\n\n## Monitoramento Pós-Retorno\n- Avaliações periódicas nos primeiros 3-6 meses\n- Manutenção de programa preventivo\n- Atenção a sinais de sobrecarga\n\n## Considerações Especiais\n\n### Esportes de Alto Risco\nEsportes com pivoteamento, saltos e contato físico requerem:\n- Maior rigor nos critérios\n- Preparação psicológica adicional\n- Progressão mais gradual\n\n### População Jovem\n- Adolescentes: maior taxa de re-ruptura\n- Consideração de fatores maturacionais\n- Educação de atletas, pais e treinadores\n\n## Conclusão\nO retorno ao esporte deve ser baseado em múltiplos critérios objetivos e não apenas no tempo. A decisão deve ser compartilhada entre atleta, fisioterapeuta, médico e comissão técnica.\n\n## Referências\n[Lista completa de referências científicas...]\n",
+      "authors": [
+        "Dr. Eduardo Silva",
+        "Ft. Mariana Costa"
+      ],
+      "journal": "Revista Brasileira de Fisioterapia Esportiva",
+      "year": 2024,
+      "keywords": [
+        "LCA",
+        "retorno ao esporte",
+        "critérios",
+        "reabilitação",
+        "atletas"
+      ],
+      "references": [
+        "Grindem H, et al. Simple decision rules can reduce reinjury risk by 84% after ACL reconstruction. Br J Sports Med. 2016;50(13):804-808.",
+        "Kyritsis P, et al. Likelihood of ACL graft rupture: not meeting six clinical discharge criteria. Br J Sports Med. 2016;50(15):946-951."
+      ],
+      "relatedProtocols": [
+        "proto-esp-002"
+      ],
+      "images": [],
+      "accessLevel": "team",
+      "downloads": 0,
+      "views": 0,
+      "createdAt": "2025-10-09T01:40:21.453Z",
+      "updatedAt": "2025-10-09T01:40:21.453Z"
+    }
+  ],
+  "educational": [
+    {
+      "id": "edu-001",
+      "type": "guide",
+      "title": "Guia do Paciente: O que Esperar da Fisioterapia Após Cirurgia de Joelho",
+      "specialty": "pos-operatoria",
+      "description": "Guia completo para pacientes entenderem o processo de reabilitação pós-cirúrgica de joelho.",
+      "content": "\n# O que Esperar da Fisioterapia Após Cirurgia de Joelho\n\n## Primeiros Dias Após a Cirurgia\n\nNos primeiros dias, é normal sentir:\n- Dor no local da cirurgia\n- Inchaço (edema) ao redor do joelho\n- Dificuldade para movimentar o joelho\n- Necessidade de usar muletas\n\n**O que fazer:**\n- Aplicar gelo conforme orientado\n- Manter a perna elevada\n- Tomar medicação para dor conforme prescrição\n- Realizar exercícios leves orientados\n\n## Primeiras Semanas\n\nNesta fase, você vai:\n- Começar a fisioterapia (geralmente 3-5x por semana)\n- Trabalhar para recuperar movimento do joelho\n- Fortalecer a musculatura levemente\n- Aprender a caminhar adequadamente\n\n**Seu papel é fundamental:**\n- Comparecer a todas as sessões\n- Fazer exercícios em casa conforme orientado\n- Comunicar qualquer dor ou problema\n\n## Meses Seguintes\n\nCom o tempo, você vai:\n- Recuperar força muscular progressivamente\n- Voltar a caminhar normalmente\n- Retomar atividades do dia a dia\n- Progressivamente retornar a atividades físicas\n\n## Quanto Tempo Vai Levar?\n\nO tempo varia conforme:\n- Tipo de cirurgia realizada\n- Sua condição física prévia\n- Seu empenho na reabilitação\n- Possíveis complicações\n\n**Média de tempo:**\n- Caminhada normal: 4-8 semanas\n- Atividades diárias: 8-12 semanas\n- Atividades esportivas leves: 3-6 meses\n- Retorno ao esporte: 9-12 meses (ou mais)\n\n## Sinais de Alerta\n\nProcure seu médico/fisioterapeuta se:\n- Dor intensa que não melhora\n- Inchaço que aumenta significativamente\n- Vermelhidão ou calor excessivo\n- Febre\n- Dificuldade inesperada de movimento\n\n## Dicas para Sucesso\n\n1. **Seja paciente:** Recuperação leva tempo\n2. **Seja consistente:** Faça seus exercícios diariamente\n3. **Comunique:** Fale sobre dúvidas e preocupações\n4. **Confie no processo:** Siga as orientações profissionais\n5. **Celebre progresso:** Pequenas vitórias importam\n\n## Perguntas Frequentes\n\n**Quando posso voltar a dirigir?**\nGeralmente após 4-6 semanas, com aprovação médica.\n\n**Quando posso voltar a trabalhar?**\nDepende do tipo de trabalho. Trabalho sedentário: 2-4 semanas. Trabalho físico: pode levar meses.\n\n**Vou sentir dor para sempre?**\nNão. A maioria dos pacientes tem redução significativa ou eliminação da dor.\n\n**Posso voltar a praticar esportes?**\nSim, mas isso leva tempo e requer liberação profissional.\n\n---\n\n**Lembre-se: Você é parte fundamental da sua recuperação!**\n",
+      "targetAudience": "patient",
+      "images": [],
+      "readTime": "8 min",
+      "tags": [
+        "educação",
+        "paciente",
+        "joelho",
+        "pós-operatório",
+        "reabilitação"
+      ],
+      "relatedContent": [],
+      "createdAt": "2025-10-09T01:40:21.453Z",
+      "updatedAt": "2025-10-09T01:40:21.453Z"
+    }
+  ],
+  "metadata": {
+    "generatedAt": "2025-10-09T01:40:21.462Z",
+    "totalProtocols": 6,
+    "totalExercises": 7,
+    "totalAssessments": 2,
+    "totalMaterials": 3,
+    "totalLibraryItems": 1,
+    "totalEducational": 1
+  }
+}

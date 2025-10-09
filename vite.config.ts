@@ -96,6 +96,10 @@ export default defineConfig({
         if (id.includes('react') && !id.startsWith('./') && !id.startsWith('../')) {
           return false;
         }
+        // Exclui scripts de build
+        if (id.includes('/scripts/') || id.includes('\\scripts\\')) {
+          return true;
+        }
         return false;
       },
       output: {

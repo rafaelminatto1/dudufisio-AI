@@ -248,3 +248,4 @@ class MentalHealthServiceSupabase {
 export const mentalHealthServiceSupabase = new MentalHealthServiceSupabase();
 
 
+

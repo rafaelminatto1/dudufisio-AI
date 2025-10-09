@@ -40,7 +40,7 @@ const GroupCard: React.FC<GroupCardProps> = ({ group, therapist, onEdit }) => {
             <div className="p-4 bg-slate-50 rounded-b-2xl border-t border-slate-200">
                 <div className="flex -space-x-2 overflow-hidden">
                     {group.members.slice(0, 5).map(member => (
-                        <img key={member.patientId} className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src={member.avatarUrl} alt={member.patientName} title={member.patientName} />
+                        <img key={member.patientId} className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src={member.avatarUrl || `https://i.pravatar.cc/150?u=${member.patientId}`} alt={member.patientName} title={member.patientName} />
                     ))}
                     {group.members.length > 5 && (
                         <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-slate-600 ring-2 ring-white">

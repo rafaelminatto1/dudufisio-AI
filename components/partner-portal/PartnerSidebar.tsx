@@ -55,7 +55,7 @@ const PartnerSidebar: React.FC = () => {
       {user && (
          <div className="p-3 border-t border-slate-200">
             <div className="p-2 rounded-lg bg-slate-100 flex items-center">
-                <img src={user.avatarUrl} alt={user.name} className="w-10 h-10 rounded-full" />
+                <img src={user.avatarUrl || `https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} className="w-10 h-10 rounded-full" />
                 <div className="ml-3 flex-1 overflow-hidden">
                     <p className="text-sm font-semibold text-slate-700 truncate">{user.name}</p>
                     <p className="text-xs text-slate-500">{user.role}</p>

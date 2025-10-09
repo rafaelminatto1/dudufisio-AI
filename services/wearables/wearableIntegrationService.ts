@@ -342,3 +342,4 @@ class WearableIntegrationService {
 export const wearableIntegrationService = new WearableIntegrationService();
 
 
+

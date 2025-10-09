@@ -37,7 +37,7 @@ const InternsTable: React.FC<InternsTableProps> = ({ interns, onAdd, onEdit }) =
                             <tr key={intern.id} onClick={() => onEdit(intern)} className="hover:bg-slate-50 cursor-pointer">
                                 <td className="p-3 whitespace-nowrap">
                                     <div className="flex items-center">
-                                        <img className="h-8 w-8 rounded-full object-cover" src={intern.avatarUrl} alt={intern.name} />
+                                        <img className="h-8 w-8 rounded-full object-cover" src={intern.avatarUrl || `https://i.pravatar.cc/150?u=${intern.id}`} alt={intern.name} />
                                         <div className="ml-3">
                                             <div className="text-sm font-medium text-slate-900">{intern.name}</div>
                                             <div className="text-sm text-slate-500">{intern.institution}</div>

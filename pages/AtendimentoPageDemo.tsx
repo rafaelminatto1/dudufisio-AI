@@ -43,6 +43,10 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Separator } from '../components/ui/separator';
+import SurgeryManager from '../components/atendimento/SurgeryManager';
+import PatientGoalsManager from '../components/atendimento/PatientGoalsManager';
+import BodyMapPain from '../components/atendimento/BodyMapPain';
+import { Surgery, PatientGoal, PainPoint } from '../types';
 
 const AtendimentoPageDemo: React.FC = () => {
     // Mock data
@@ -92,6 +96,86 @@ const AtendimentoPageDemo: React.FC = () => {
     const [sessionDuration, setSessionDuration] = useState(0);
     const [isRecording, setIsRecording] = useState(false);
     const [isVideoEnabled, setIsVideoEnabled] = useState(false);
+    
+    // New data states
+    const [surgeries, setSurgeries] = useState<Surgery[]>([
+        {
+            id: '1',
+            name: 'Artroscopia do joelho direito',
+            date: '2023-06-15',
+            description: 'Reparo do menisco medial',
+            surgeon: 'Dr. João Silva',
+            hospital: 'Hospital São Paulo',
+            recoveryTime: 90,
+            createdAt: '2023-06-15T10:00:00Z',
+            updatedAt: '2023-06-15T10:00:00Z'
+        },
+        {
+            id: '2',
+            name: 'Cirurgia de hérnia inguinal',
+            date: '2022-03-10',
+            description: 'Reparo laparoscópico',
+            surgeon: 'Dr. Maria Santos',
+            hospital: 'Clínica Médica Central',
+            recoveryTime: 30,
+            createdAt: '2022-03-10T14:30:00Z',
+            updatedAt: '2022-03-10T14:30:00Z'
+        }
+    ]);
+    
+    const [goals, setGoals] = useState<PatientGoal[]>([
+        {
+            id: '1',
+            patientId: 'patient-1',
+            title: 'Correr maratona',
+            description: 'Completar uma maratona com pace de 4:30/km',
+            targetDate: '2024-12-15',
+            targetValue: 'pace 4:30/km',
+            currentProgress: 65,
+            status: 'active',
+            category: 'performance',
+            priority: 'high',
+            createdAt: '2024-01-15T09:00:00Z',
+            updatedAt: '2024-01-15T09:00:00Z'
+        },
+        {
+            id: '2',
+            patientId: 'patient-1',
+            title: 'Recuperação completa do joelho',
+            description: 'Retornar à atividade física sem limitações',
+            targetDate: '2024-03-15',
+            targetValue: '100% de mobilidade',
+            currentProgress: 80,
+            status: 'active',
+            category: 'recovery',
+            priority: 'high',
+            createdAt: '2024-01-15T09:00:00Z',
+            updatedAt: '2024-01-15T09:00:00Z'
+        }
+    ]);
+    
+    const [painPoints, setPainPoints] = useState<PainPoint[]>([
+        {
+            id: '1',
+            x: 45,
+            y: 60,
+            intensity: 7,
+            type: 'aguda',
+            description: 'Dor aguda no joelho direito durante flexão',
+            bodyPart: 'front',
+            muscle: 'Joelho'
+        },
+        {
+            id: '2',
+            x: 50,
+            y: 40,
+            intensity: 4,
+            type: 'latejante',
+            description: 'Dor latejante na região lombar',
+            bodyPart: 'back',
+            muscle: 'Lombar'
+        }
+    ]);
 
     // Session duration timer
     useEffect(() => {
@@ -159,6 +243,81 @@ const AtendimentoPageDemo: React.FC = () => {
             setIsFinishing(false);
             console.log('✅ Sessão finalizada!');
         }, 1000);
+    };
+
+    // Surgery CRUD functions
+    const handleAddSurgery = (surgery: Omit<Surgery, 'id' | 'createdAt' | 'updatedAt'>) => {
+        const newSurgery: Surgery = {
+            ...surgery,
+            id: Date.now().toString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        setSurgeries(prev => [...prev, newSurgery]);
+        console.log('🏥 Cirurgia adicionada:', newSurgery);
+    };
+
+    const handleUpdateSurgery = (id: string, updates: Partial<Surgery>) => {
+        setSurgeries(prev => prev.map(surgery => 
+            surgery.id === id 
+                ? { ...surgery, ...updates, updatedAt: new Date().toISOString() }
+                : surgery
+        ));
+        console.log('🏥 Cirurgia atualizada:', id, updates);
+    };
+
+    const handleDeleteSurgery = (id: string) => {
+        setSurgeries(prev => prev.filter(surgery => surgery.id !== id));
+        console.log('🏥 Cirurgia removida:', id);
+    };
+
+    // Goals CRUD functions
+    const handleAddGoal = (goal: Omit<PatientGoal, 'id' | 'createdAt' | 'updatedAt'>) => {
+        const newGoal: PatientGoal = {
+            ...goal,
+            id: Date.now().toString(),
+            patientId: 'patient-1',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        setGoals(prev => [...prev, newGoal]);
+        console.log('🎯 Objetivo adicionado:', newGoal);
+    };
+
+    const handleUpdateGoal = (id: string, updates: Partial<PatientGoal>) => {
+        setGoals(prev => prev.map(goal => 
+            goal.id === id 
+                ? { ...goal, ...updates, updatedAt: new Date().toISOString() }
+                : goal
+        ));
+        console.log('🎯 Objetivo atualizado:', id, updates);
+    };
+
+    const handleDeleteGoal = (id: string) => {
+        setGoals(prev => prev.filter(goal => goal.id !== id));
+        console.log('🎯 Objetivo removido:', id);
+    };
+
+    // Pain Points CRUD functions
+    const handleAddPainPoint = (point: Omit<PainPoint, 'id'>) => {
+        const newPoint: PainPoint = {
+            ...point,
+            id: Date.now().toString()
+        };
+        setPainPoints(prev => [...prev, newPoint]);
+        console.log('🩹 Ponto de dor adicionado:', newPoint);
+    };
+
+    const handleUpdatePainPoint = (id: string, updates: Partial<PainPoint>) => {
+        setPainPoints(prev => prev.map(point => 
+            point.id === id ? { ...point, ...updates } : point
+        ));
+        console.log('🩹 Ponto de dor atualizado:', id, updates);
+    };
+
+    const handleDeletePainPoint = (id: string) => {
+        setPainPoints(prev => prev.filter(point => point.id !== id));
+        console.log('🩹 Ponto de dor removido:', id);
     };
 
     return (
@@ -391,11 +550,27 @@ const AtendimentoPageDemo: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className="flex items-center space-x-2">
-                                                <Button variant="outline" size="sm" className="text-green-600 border-green-200 hover:bg-green-50">
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm" 
+                                                    className="text-green-600 border-green-200 hover:bg-green-50"
+                                                    onClick={() => {
+                                                        console.log('🔄 Repetindo sessão #3...');
+                                                        // Here you would duplicate the session
+                                                    }}
+                                                >
                                                     <Repeat className="h-4 w-4 mr-1" />
                                                     Repetir
                                                 </Button>
-                                                <Button variant="outline" size="sm" className="text-purple-600 border-purple-200 hover:bg-purple-50">
+                                                <Button 
+                                                    variant="outline" 
+                                                    size="sm" 
+                                                    className="text-purple-600 border-purple-200 hover:bg-purple-50"
+                                                    onClick={() => {
+                                                        console.log('👁️ Visualizando sessão #3...');
+                                                        // Here you would open session details
+                                                    }}
+                                                >
                                                     <Eye className="h-4 w-4 mr-1" />
                                                     Ver
                                                 </Button>
@@ -405,6 +580,30 @@ const AtendimentoPageDemo: React.FC = () => {
                                 </div>
                             </CardContent>
                         </Card>
+
+                        {/* Surgery History */}
+                        <SurgeryManager
+                            surgeries={surgeries}
+                            onAddSurgery={handleAddSurgery}
+                            onUpdateSurgery={handleUpdateSurgery}
+                            onDeleteSurgery={handleDeleteSurgery}
+                        />
+
+                        {/* Patient Goals */}
+                        <PatientGoalsManager
+                            goals={goals}
+                            onAddGoal={handleAddGoal}
+                            onUpdateGoal={handleUpdateGoal}
+                            onDeleteGoal={handleDeleteGoal}
+                        />
+
+                        {/* Body Map Pain */}
+                        <BodyMapPain
+                            painPoints={painPoints}
+                            onAddPainPoint={handleAddPainPoint}
+                            onUpdatePainPoint={handleUpdatePainPoint}
+                            onDeletePainPoint={handleDeletePainPoint}
+                        />
 
                         {/* SOAP Notes */}
                         <Card>
@@ -542,19 +741,65 @@ const AtendimentoPageDemo: React.FC = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-3">
-                                <Button variant="outline" className="w-full justify-start">
+                                <Button 
+                                    variant="outline" 
+                                    className="w-full justify-start"
+                                    onClick={() => {
+                                        const input = document.createElement('input');
+                                        input.type = 'file';
+                                        input.accept = 'image/*';
+                                        input.onchange = (e) => {
+                                            const file = (e.target as HTMLInputElement).files?.[0];
+                                            if (file) {
+                                                console.log('📸 Foto adicionada:', file.name);
+                                                // Here you would handle file upload
+                                            }
+                                        };
+                                        input.click();
+                                    }}
+                                >
                                     <Camera className="h-4 w-4 mr-2" />
                                     Adicionar Foto
                                 </Button>
-                                <Button variant="outline" className="w-full justify-start">
+                                <Button 
+                                    variant="outline" 
+                                    className="w-full justify-start"
+                                    onClick={() => {
+                                        const input = document.createElement('input');
+                                        input.type = 'file';
+                                        input.accept = '.pdf,.doc,.docx,.jpg,.png';
+                                        input.onchange = (e) => {
+                                            const file = (e.target as HTMLInputElement).files?.[0];
+                                            if (file) {
+                                                console.log('📄 Documento anexado:', file.name);
+                                                // Here you would handle file upload
+                                            }
+                                        };
+                                        input.click();
+                                    }}
+                                >
                                     <FileText className="h-4 w-4 mr-2" />
                                     Anexar Documento
                                 </Button>
-                                <Button variant="outline" className="w-full justify-start">
+                                <Button 
+                                    variant="outline" 
+                                    className="w-full justify-start"
+                                    onClick={() => {
+                                        console.log('📊 Abrindo relatórios...');
+                                        // Here you would navigate to reports page
+                                    }}
+                                >
                                     <BarChart3 className="h-4 w-4 mr-2" />
                                     Ver Relatórios
                                 </Button>
-                                <Button variant="outline" className="w-full justify-start">
+                                <Button 
+                                    variant="outline" 
+                                    className="w-full justify-start"
+                                    onClick={() => {
+                                        console.log('📚 Abrindo histórico completo...');
+                                        // Here you would navigate to patient history
+                                    }}
+                                >
                                     <BookOpen className="h-4 w-4 mr-2" />
                                     Histórico Completo
                                 </Button>

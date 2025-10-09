@@ -245,3 +245,4 @@ class GeriatricServiceSupabase {
 export const geriatricServiceSupabase = new GeriatricServiceSupabase();
 
 
+

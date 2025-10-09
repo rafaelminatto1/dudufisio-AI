@@ -9,22 +9,25 @@ import { LazyPages, LazyComponents, createLazyComponent } from '../lib/lazyLoadi
 // ✅ IMPORTANTE: Todos os lazy imports agora vêm de LazyPages/LazyComponents centralizados
 // Isso evita múltiplas instâncias do React e erros "Cannot read properties of null"
 import AgendaPage from './AgendaPage';
-const PatientListPage = createLazyComponent(() => import('./PatientListPage'));
-const PatientDetailPage = createLazyComponent(() => import('./PatientDetailPage'));
+const PatientListPage = LazyPages.PatientListPage; // ✅ FIX: Usar LazyPages centralizado
+const PatientDetailPage = LazyPages.PatientDetailPage; // ✅ FIX: Usar LazyPages centralizado
+const PatientEditPage = createLazyComponent(() => import('./PatientEditPage'));
 const SessionFormPage = LazyPages.SessionFormPage;
 const SessionViewPage = LazyPages.SessionViewPage;
 const FinancialPage = LazyPages.FinancialPage;
 const FinancialDashboardPage = LazyPages.FinancialDashboardPage; // Alias para compatibilidade
-const AdminDashboardPage = createLazyComponent(() => import('./AdminDashboardPage'));
+const AdminDashboardPage = LazyPages.AdminDashboardPage; // ✅ FIX: Usar LazyPages centralizado
 const ReportsPage = LazyPages.ReportsPage;
 const AiAnalyticsPage = LazyPages.AiAnalyticsPage;
 const InventoryPage = LazyPages.InventoryPage;
 const UserManagementPage = LazyPages.UserManagementPage;
 const DashboardPage = LazyPages.DashboardPage;
-const TherapistDashboard = createLazyComponent(() => import('./TherapistDashboard'));
+const TherapistDashboard = LazyPages.TherapistDashboard; // ✅ FIX: Usar LazyPages centralizado
 
 // Páginas que não estão no LazyPages ainda - usando createLazyComponent
 const ExerciseLibraryPage = createLazyComponent(() => import('./ExerciseLibraryPage'));
+const EnhancedExerciseLibraryPage = createLazyComponent(() => import('./EnhancedExerciseLibraryPage'));
+const ExerciseLibraryTestPage = createLazyComponent(() => import('./ExerciseLibraryTestPage'));
 const SessionPage = createLazyComponent(() => import('./SessionPage'));
 const AtendimentoPage = createLazyComponent(() => import('./AtendimentoPageNew'));
 const AtendimentoPageDemo = createLazyComponent(() => import('./AtendimentoPageDemo'));
@@ -48,6 +51,24 @@ const GerarLaudoPage = createLazyComponent(() => import('./GerarLaudoPage'));
 const MedicalReportPage = createLazyComponent(() => import('./MedicalReportPage'));
 const EvaluationReportPage = createLazyComponent(() => import('./EvaluationReportPage'));
 const ClinicalLibraryPage = createLazyComponent(() => import('./ClinicalLibraryPage'));
+const ClinicalContentPage = createLazyComponent(() => import('./ClinicalContentPage'));
+const EnhancedProtocolsPage = createLazyComponent(() => import('./EnhancedProtocolsPage'));
+const EnhancedAssessmentsPage = createLazyComponent(() => import('./EnhancedAssessmentsPage'));
+const ImageGenerationDemoPage = createLazyComponent(() => import('./ImageGenerationDemoPage'));
+const VideoGenerationPage = createLazyComponent(() => import('./VideoGenerationPage'));
+const VideoGenerationPageOptimized = createLazyComponent(() => import('./VideoGenerationPageOptimized'));
+const VideoLibraryCompletePage = createLazyComponent(() => import('./VideoLibraryCompletePage'));
+const SoraDirectGenerationPage = createLazyComponent(() => import('./SoraDirectGenerationPage'));
+const FreeVideoGeneratorPage = createLazyComponent(() => import('./FreeVideoGeneratorPage'));
+const FreeVideoGeneratorPageImproved = createLazyComponent(() => import('./FreeVideoGeneratorPageImproved'));
+const FreeVideoGeneratorSimple = createLazyComponent(() => import('./FreeVideoGeneratorSimple'));
+const FreeVideoGeneratorIntegrated = createLazyComponent(() => import('./FreeVideoGeneratorIntegrated'));
+const FreeVideoGeneratorFixed = createLazyComponent(() => import('./FreeVideoGeneratorFixed'));
+const FreeVideoGeneratorReal = createLazyComponent(() => import('./FreeVideoGeneratorReal'));
+const FreeVideoGeneratorEnhanced = createLazyComponent(() => import('./FreeVideoGeneratorEnhanced'));
+const FreeVideoGeneratorPersonalized = createLazyComponent(() => import('./FreeVideoGeneratorPersonalized'));
+const VideoManagementDashboard = createLazyComponent(() => import('./VideoManagementDashboard'));
+const FreeVideoGeneratorFinal = createLazyComponent(() => import('./FreeVideoGeneratorFinal'));
 const InventoryDashboardPage = createLazyComponent(() => import('./InventoryDashboardPage'));
 const NotificationCenterPage = createLazyComponent(() => import('./NotificationCenterPage'));
 const NotFoundPage = LazyPages.NotFoundPage;
@@ -340,7 +361,9 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 {/* Main Navigation */}
                 <Route path="/agenda" element={<AgendaPage />} />
                 <Route path="/patients" element={LazyElement(PatientListPage)} />
-                <Route path="/patients/:id" element={LazyElement(PatientDetailPage)} />
+                <Route path="/patients/new" element={LazyElement(PatientEditPage)} />
+                <Route path="/patients/:id" element={LazyElement(PatientEditPage)} />
+                <Route path="/patients/:id/view" element={LazyElement(PatientDetailPage)} />
                 <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
                 <Route path="/notifications" element={LazyElement(NotificationCenterPage)} />
                 <Route path="/tasks" element={<KanbanPage />} />
@@ -384,9 +407,25 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 {/* Management */}
                 <Route path="/user-management" element={LazyElement(UserManagementPage)} />
                 <Route path="/groups" element={LazyElement(GroupsPage)} />
-                <Route path="/exercise-library" element={<ExerciseLibraryPage />} />
+                <Route path="/exercise-library" element={<EnhancedExerciseLibraryPage />} />
+                <Route path="/exercise-library-test" element={<ExerciseLibraryTestPage />} />
                 <Route path="/materials" element={<MaterialsPage />} />
                 <Route path="/clinical-library" element={<ClinicalLibraryPage />} />
+                <Route path="/clinical-content" element={<ClinicalContentPage />} />
+            <Route path="/enhanced-protocols" element={<EnhancedProtocolsPage />} />
+            <Route path="/enhanced-assessments" element={<EnhancedAssessmentsPage />} />
+            <Route path="/image-generation" element={<ImageGenerationDemoPage />} />
+            <Route path="/video-generation" element={<VideoGenerationPageOptimized />} />
+            <Route path="/video-generation-legacy" element={<VideoGenerationPage />} />
+            <Route path="/video-library-complete" element={<VideoLibraryCompletePage />} />
+            <Route path="/sora-direct" element={<SoraDirectGenerationPage />} />
+            <Route path="/free-video-generator" element={<FreeVideoGeneratorReal />} />
+            <Route path="/video-generator-enhanced" element={<FreeVideoGeneratorEnhanced />} />
+            <Route path="/video-generator-integrated" element={<FreeVideoGeneratorIntegrated />} />
+            <Route path="/video-generator-personalized" element={<FreeVideoGeneratorPersonalized />} />
+            <Route path="/video-management" element={<VideoManagementDashboard />} />
+            <Route path="/video-generator-final" element={<FreeVideoGeneratorFinal />} />
+            <Route path="/free-video-generator-legacy" element={<FreeVideoGeneratorPage />} />
                 <Route path="/material-detail" element={LazyElement(MaterialDetailPage)} />
                 <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
                 <Route path="/specialty-assessments" element={LazyElement(SpecialtyAssessmentsPage)} />

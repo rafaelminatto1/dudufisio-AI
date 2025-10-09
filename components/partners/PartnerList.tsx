@@ -36,7 +36,7 @@ const PartnerList: React.FC<PartnerListProps> = ({ partners, onAdd, onEdit }) =>
                             <tr key={partner.id} className="hover:bg-slate-50">
                                 <td className="p-3 whitespace-nowrap">
                                     <div className="flex items-center">
-                                        <img className="h-8 w-8 rounded-full object-cover" src={partner.avatarUrl} alt={partner.name} />
+                                        <img className="h-8 w-8 rounded-full object-cover" src={partner.avatarUrl || `https://i.pravatar.cc/150?u=${partner.id}`} alt={partner.name} />
                                         <div className="ml-3">
                                             <div className="text-sm font-medium text-slate-900">{partner.name}</div>
                                             <div className="text-sm text-slate-500">{partner.type}</div>

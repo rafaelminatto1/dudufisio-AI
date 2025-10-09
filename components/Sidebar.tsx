@@ -10,7 +10,7 @@ import {
     SlidersHorizontal, Bell, MessageSquare, Handshake, Package, Ticket, Activity,
     Users2, BookMarked, FileText, TrendingUp, Database, Settings, Monitor, 
     HardDrive, Wrench, CreditCard, Eye, FileCheck, Search, Target, 
-    FileSpreadsheet, Zap, Globe, UserCheck, Archive, FileSearch
+    FileSpreadsheet, Zap, Globe, UserCheck, Archive, FileSearch, Film
 } from 'lucide-react';
 import { useApp } from "../contexts/AppContext";
 import { useNotifications } from '../hooks/useNotifications';
@@ -106,6 +106,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
             { to: '/teleconsulta', icon: Activity, label: 'Teleconsulta' },
             { to: '/exercises', icon: Dumbbell, label: 'Exercícios' },
             { to: '/exercise-library', icon: Library, label: 'Biblioteca de Exercícios' },
+            { to: '/video-generator-final', icon: Film, label: 'Gerador de Vídeos' },
             { to: '/protocols', icon: FileText, label: 'Protocolos Clínicos' },
             { to: '/specialty-assessments', icon: Search, label: 'Avaliações Especializadas' },
             { to: '/clinical-library', icon: Archive, label: 'Biblioteca Clínica' },
@@ -128,8 +129,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
             { to: '/ia-economica', icon: AreaChart, label: 'IA Econômica' },
           ],
           managementNav: [
-            { to: '/user-management', icon: Users2, label: 'Usuários/Terapeutas' },
-            { to: '/user-management', icon: UserCheck, label: 'Gestão de Usuários' },
+            { to: '/user-management', icon: Users2, label: 'Gestão de Usuários' },
             { to: '/groups', icon: Users2, label: 'Grupos' },
             { to: '/inventory', icon: Package, label: 'Estoque/Insumos' },
             { to: '/inventory-dashboard', icon: Monitor, label: 'Dashboard de Estoque' },
@@ -171,6 +171,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
             { to: '/teleconsulta', icon: Activity, label: 'Teleconsulta' },
             { to: '/exercises', icon: Dumbbell, label: 'Exercícios' },
             { to: '/exercise-library', icon: Library, label: 'Biblioteca de Exercícios' },
+            { to: '/video-generator-final', icon: Film, label: 'Gerador de Vídeos' },
             { to: '/protocols', icon: FileText, label: 'Protocolos' },
             { to: '/specialty-assessments', icon: Search, label: 'Avaliações Especializadas' },
             { to: '/clinical-library', icon: Archive, label: 'Biblioteca Clínica' },
@@ -394,7 +395,7 @@ const Sidebar: React.FC = () => {
                 {/* User Profile Section */}
                 <Link to="/settings" title="Ver perfil e configurações" className="flex items-center w-full mb-2">
                     <div className="relative">
-                        <img src={user.avatarUrl} alt={user.name} className="w-9 h-9 rounded-full shrink-0 border-2 border-white shadow-sm" />
+                        <img src={user.avatarUrl || `https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} className="w-9 h-9 rounded-full shrink-0 border-2 border-white shadow-sm" />
                         <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
                           user.role === Role.Admin ? 'bg-red-500' :
                           user.role === Role.Therapist ? 'bg-blue-500' :

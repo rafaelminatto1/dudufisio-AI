@@ -717,3 +717,4 @@ Um sistema de fisioterapia **completo, otimizado, testado e documentado**, pront
 **#FisoFlow #Performance #BestPractices #Context7 #ProductionReady**
 
 
+

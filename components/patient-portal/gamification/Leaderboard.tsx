@@ -30,7 +30,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ entries, highlightPatientId }
                 <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${entry.position === 1 ? 'bg-amber-100 text-amber-700' : 'bg-white text-slate-600'}`}>
                   {entry.position}
                 </span>
-                <img src={entry.avatarUrl} alt={entry.patientName} className="w-8 h-8 rounded-full object-cover" />
+                <img src={entry.avatarUrl || `https://i.pravatar.cc/150?u=${entry.patientId}`} alt={entry.patientName} className="w-8 h-8 rounded-full object-cover" />
                 <div>
                   <p className="font-medium text-slate-800">{entry.patientName}</p>
                   <p className="text-xs text-slate-500">Nível {entry.level} • Streak {entry.streak}d</p>

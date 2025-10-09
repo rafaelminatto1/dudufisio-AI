@@ -59,7 +59,7 @@ const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, 
             <div className="p-4 flex-grow">
                 <div className="flex items-start justify-between cursor-pointer" onClick={() => navigate(`/patients/${patient.id}`)}>
                     <div className="flex items-center">
-                        <img src={patient.avatarUrl} alt={patient.name} className="w-12 h-12 rounded-full" />
+                        <img src={patient.avatarUrl || `https://i.pravatar.cc/150?u=${patient.id}`} alt={patient.name} className="w-12 h-12 rounded-full" />
                         <div className="ml-3">
                             <h3 className="font-bold text-slate-800">{patient.name}</h3>
                             <p className="text-xs text-slate-500">{patient.phone}</p>

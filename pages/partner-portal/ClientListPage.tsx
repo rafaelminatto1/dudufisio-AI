@@ -18,7 +18,7 @@ const ClientRow: React.FC<{ client: PartnershipClient }> = ({ client }) => {
         >
             <td className="p-4 whitespace-nowrap">
                 <div className="flex items-center">
-                    <img className="h-10 w-10 rounded-full object-cover" src={client.patient.avatarUrl} alt={client.patient.name} />
+                    <img className="h-10 w-10 rounded-full object-cover" src={client.patient.avatarUrl || `https://i.pravatar.cc/150?u=${client.patient.id}`} alt={client.patient.name} />
                     <div className="ml-4">
                         <div className="text-sm font-medium text-slate-900">{client.patient.name}</div>
                         <div className="text-sm text-slate-500">{client.patient.email}</div>

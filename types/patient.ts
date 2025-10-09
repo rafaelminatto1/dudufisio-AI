@@ -1,184 +1,278 @@
-import { z } from 'zod';
+// types/patient.ts - Interface completa para pacientes
 
-// Enums for Patient
-export const MaritalStatus = {
-  SINGLE: 'single',
-  MARRIED: 'married',
-  DIVORCED: 'divorced',
-  WIDOWED: 'widowed'
-} as const;
+export type PatientStatus = 'Active' | 'Inactive' | 'Discharged' | 'Suspended';
+export type Gender = 'male' | 'female' | 'other' | 'prefer_not_to_say';
+export type BloodType = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+export type MaritalStatus = 'single' | 'married' | 'divorced' | 'widowed' | 'other';
+export type InsuranceType = 'none' | 'private' | 'public' | 'both';
 
-export type MaritalStatusType = typeof MaritalStatus[keyof typeof MaritalStatus];
+export interface Address {
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
 
-// Base Patient interface
+export interface EmergencyContact {
+  name: string;
+  relationship: string;
+  phone: string;
+  phone2?: string;
+  email?: string;
+}
+
+export interface Insurance {
+  type: InsuranceType;
+  provider?: string;
+  planName?: string;
+  policyNumber?: string;
+  validUntil?: string;
+  coveragePercentage?: number;
+}
+
+export interface MedicalHistory {
+  allergies: string[];
+  chronicDiseases: string[];
+  previousSurgeries: string[];
+  currentMedications: string[];
+  familyHistory: string[];
+  smokingStatus: 'never' | 'former' | 'current';
+  alcoholConsumption: 'never' | 'occasional' | 'moderate' | 'heavy';
+  physicalActivityLevel: 'sedentary' | 'light' | 'moderate' | 'intense';
+  observations?: string;
+}
+
+export interface Condition {
+  id: string;
+  name: string;
+  diagnosisDate: string;
+  severity: 'low' | 'moderate' | 'high';
+  status: 'active' | 'resolved' | 'chronic';
+  description?: string;
+  treatmentPlan?: string;
+}
+
+export interface SessionProgress {
+  currentSession: number;
+  totalPlannedSessions: number;
+  completedSessions: number;
+  canceledSessions: number;
+  noShowSessions: number;
+  firstSessionDate: string;
+  lastSessionDate?: string;
+  weeksInTreatment: number;
+  daysInTreatment: number;
+  averageSessionsPerWeek: number;
+  adherenceRate: number; // Porcentagem de presença
+  nextScheduledSession?: string;
+}
+
+export interface TreatmentMetrics {
+  painLevel: {
+    initial: number; // 0-10
+    current: number; // 0-10
+    improvement: number; // Porcentagem
+  };
+  mobility: {
+    initial: number; // 0-100%
+    current: number; // 0-100%
+    improvement: number; // Porcentagem
+  };
+  functionality: {
+    initial: number; // 0-100%
+    current: number; // 0-100%
+    improvement: number; // Porcentagem
+  };
+  satisfaction: number; // 0-10
+  goals: string[];
+  goalsAchieved: number;
+}
+
+export interface FinancialInfo {
+  totalSpent: number;
+  totalPending: number;
+  totalPaid: number;
+  averageSessionCost: number;
+  lastPaymentDate?: string;
+  paymentMethod: 'cash' | 'credit_card' | 'debit_card' | 'insurance' | 'pix' | 'other';
+  hasOutstandingBalance: boolean;
+  outstandingBalance: number;
+}
+
 export interface Patient {
+  // Identificação Básica
   id: string;
-  user_id?: string | null;
-
-  // Required fields
-  full_name: string;
-  cpf: string;
-  birth_date: string; // ISO date string
+  code: string; // Código único do paciente (ex: PAC-0001)
+  name: string;
+  email: string;
   phone: string;
-  email?: string | null;
-
-  // Optional fields
-  address?: string | null;
-  profession?: string | null;
-  marital_status?: MaritalStatusType | null;
-  emergency_contact_name?: string | null;
-  emergency_contact_phone?: string | null;
-  photo_url?: string | null;
-  general_notes?: string | null;
-
-  // System fields
-  active: boolean;
-  created_at: string;
-  updated_at: string;
-  created_by: string;
-}
-
-// Request/Response types
-export interface CreatePatientRequest {
-  full_name: string;
+  phone2?: string;
   cpf: string;
-  birth_date: string;
+  rg?: string;
+  birthDate: string;
+  age: number;
+  gender: Gender;
+  maritalStatus: MaritalStatus;
+  occupation?: string;
+  avatarUrl?: string;
+  
+  // Endereço
+  address: Address;
+  
+  // Contato de Emergência
+  emergencyContact: EmergencyContact;
+  
+  // Informações de Saúde
+  bloodType?: BloodType;
+  height?: number; // cm
+  weight?: number; // kg
+  bmi?: number;
+  medicalHistory: MedicalHistory;
+  
+  // Condições e Tratamento
+  conditions: Condition[];
+  mainDiagnosis?: string;
+  referringDoctor?: string;
+  referringDoctorCRM?: string;
+  
+  // Status e Datas
+  status: PatientStatus;
+  registrationDate: string;
+  firstAppointmentDate?: string;
+  lastAppointmentDate?: string;
+  dischargeDate?: string;
+  dischargeReason?: string;
+  
+  // Progresso das Sessões
+  sessionProgress: SessionProgress;
+  
+  // Métricas de Tratamento
+  treatmentMetrics: TreatmentMetrics;
+  
+  // Informações Financeiras
+  insurance: Insurance;
+  financialInfo: FinancialInfo;
+  
+  // Observações e Notas
+  observations?: string;
+  internalNotes?: string;
+  
+  // Preferências
+  preferredTherapist?: string;
+  preferredDaysOfWeek?: string[];
+  preferredTimeSlots?: string[];
+  communicationPreference?: 'email' | 'phone' | 'whatsapp' | 'sms';
+  
+  // Documentos
+  hasConsentForm: boolean;
+  hasDataPrivacyConsent: boolean;
+  documents?: {
+    id: string;
+    name: string;
+    type: string;
+    url: string;
+    uploadDate: string;
+  }[];
+  
+  // Metadata
+  createdBy: string;
+  createdAt: string;
+  updatedBy?: string;
+  updatedAt?: string;
+  tags?: string[];
+}
+
+export interface PatientFormData {
+  // Dados Pessoais
+  name: string;
+  email: string;
   phone: string;
-  email?: string;
-  address?: string;
-  profession?: string;
-  marital_status?: MaritalStatusType;
-  emergency_contact_name?: string;
-  emergency_contact_phone?: string;
-  general_notes?: string;
+  phone2?: string;
+  cpf: string;
+  rg?: string;
+  birthDate: string;
+  gender: Gender;
+  maritalStatus: MaritalStatus;
+  occupation?: string;
+  
+  // Endereço
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  
+  // Contato de Emergência
+  emergencyName: string;
+  emergencyRelationship: string;
+  emergencyPhone: string;
+  emergencyPhone2?: string;
+  emergencyEmail?: string;
+  
+  // Informações de Saúde
+  bloodType?: BloodType;
+  height?: number;
+  weight?: number;
+  allergies?: string;
+  chronicDiseases?: string;
+  currentMedications?: string;
+  previousSurgeries?: string;
+  familyHistory?: string;
+  smokingStatus: 'never' | 'former' | 'current';
+  alcoholConsumption: 'never' | 'occasional' | 'moderate' | 'heavy';
+  physicalActivityLevel: 'sedentary' | 'light' | 'moderate' | 'intense';
+  
+  // Diagnóstico e Encaminhamento
+  mainDiagnosis?: string;
+  conditions?: string;
+  referringDoctor?: string;
+  referringDoctorCRM?: string;
+  
+  // Plano de Tratamento
+  totalPlannedSessions?: number;
+  preferredDaysOfWeek?: string[];
+  preferredTimeSlots?: string[];
+  
+  // Convênio
+  insuranceType: InsuranceType;
+  insuranceProvider?: string;
+  insurancePlanName?: string;
+  insurancePolicyNumber?: string;
+  insuranceValidUntil?: string;
+  
+  // Status e Observações
+  status: PatientStatus;
+  observations?: string;
+  internalNotes?: string;
+  
+  // Consentimentos
+  hasConsentForm: boolean;
+  hasDataPrivacyConsent: boolean;
 }
 
-export interface UpdatePatientRequest {
-  full_name?: string;
-  phone?: string;
-  email?: string;
-  address?: string;
-  profession?: string;
-  marital_status?: MaritalStatusType;
-  emergency_contact_name?: string;
-  emergency_contact_phone?: string;
-  general_notes?: string;
-}
-
-export interface PatientDetails extends Patient {
-  appointments_count: number;
-  last_appointment?: string | null;
-  next_appointment?: string | null;
-}
-
-export interface PatientSummary {
+export interface PatientListItem {
   id: string;
-  full_name: string;
+  code: string;
+  name: string;
+  email: string;
   phone: string;
-}
-
-// Validation schemas using Zod
-export const createPatientSchema = z.object({
-  full_name: z
-    .string()
-    .min(2, 'Nome deve ter pelo menos 2 caracteres')
-    .max(200, 'Nome deve ter no máximo 200 caracteres')
-    .regex(/^[A-Za-zÀ-ÿ\s]+$/, 'Nome deve conter apenas letras e espaços'),
-
-  cpf: z
-    .string()
-    .length(11, 'CPF deve ter 11 dígitos')
-    .regex(/^\d{11}$/, 'CPF deve conter apenas números')
-    .refine(validateCPF, 'CPF inválido'),
-
-  birth_date: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar no formato YYYY-MM-DD')
-    .refine(date => new Date(date) < new Date(), 'Data de nascimento deve ser no passado'),
-
-  phone: z
-    .string()
-    .regex(/^\+55\s?\d{2}\s?\d{4,5}-?\d{4}$/, 'Telefone deve estar no formato brasileiro (+55 XX XXXXX-XXXX)'),
-
-  email: z
-    .string()
-    .email('Email inválido')
-    .optional()
-    .or(z.literal('')),
-
-  address: z.string().max(500, 'Endereço deve ter no máximo 500 caracteres').optional(),
-  profession: z.string().max(100, 'Profissão deve ter no máximo 100 caracteres').optional(),
-  marital_status: z.enum(['single', 'married', 'divorced', 'widowed']).optional(),
-  emergency_contact_name: z.string().max(200, 'Nome do contato deve ter no máximo 200 caracteres').optional(),
-  emergency_contact_phone: z
-    .string()
-    .regex(/^\+55\s?\d{2}\s?\d{4,5}-?\d{4}$/, 'Telefone de emergência deve estar no formato brasileiro')
-    .optional()
-    .or(z.literal('')),
-  general_notes: z.string().optional()
-});
-
-export const updatePatientSchema = createPatientSchema.partial().omit({
-  cpf: true,
-  birth_date: true
-});
-
-// CPF validation function
-function validateCPF(cpf: string): boolean {
-  // Remove any non-digit characters
-  const digits = cpf.replace(/\D/g, '');
-
-  // Check length
-  if (digits.length !== 11) return false;
-
-  // Check for same digits (invalid CPFs like 111.111.111-11)
-  if (/^(\d)\1{10}$/.test(digits)) return false;
-
-  // Calculate verification digits
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += parseInt(digits[i] || '0') * (10 - i);
-  }
-
-  let remainder = sum % 11;
-  const firstDigit = remainder < 2 ? 0 : 11 - remainder;
-
-  if (parseInt(digits[9] || '0') !== firstDigit) return false;
-
-  sum = 0;
-  for (let i = 0; i < 10; i++) {
-    sum += parseInt(digits[i] || '0') * (11 - i);
-  }
-
-  remainder = sum % 11;
-  const secondDigit = remainder < 2 ? 0 : 11 - remainder;
-
-  return parseInt(digits[10] || '0') === secondDigit;
-}
-
-// Helper functions
-export function formatCPF(cpf: string): string {
-  const digits = cpf.replace(/\D/g, '');
-  return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-}
-
-export function formatPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, '');
-  if (digits.length === 13 && digits.startsWith('55')) {
-    return `+55 ${digits.slice(2, 4)} ${digits.slice(4, 9)}-${digits.slice(9)}`;
-  }
-  return phone;
-}
-
-export function getPatientAge(birthDate: string): number {
-  const today = new Date();
-  const birth = new Date(birthDate);
-  let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-
-  return age;
+  cpf: string;
+  status: PatientStatus;
+  avatarUrl?: string;
+  age: number;
+  conditions: string[];
+  currentSession: number;
+  totalSessions: number;
+  weeksInTreatment: number;
+  lastAppointmentDate?: string;
+  nextScheduledSession?: string;
+  adherenceRate: number;
+  painImprovement: number;
+  hasOutstandingBalance: boolean;
 }

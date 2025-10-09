@@ -47,15 +47,38 @@ export enum PatientStatus {
 }
 
 export interface Surgery {
+  id: string;
   name: string;
   date: string; // YYYY-MM-DD
   description?: string;
+  surgeon?: string;
+  hospital?: string;
+  complications?: string;
+  recoveryTime?: number; // in days
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Condition {
   name: string;
   date: string; // YYYY-MM-DD
   description?: string;
+}
+
+export interface PatientGoal {
+  id: string;
+  patientId: string;
+  title: string;
+  description: string;
+  targetDate: string; // YYYY-MM-DD
+  targetValue?: string; // e.g., "pace 4:30/km"
+  currentProgress?: number; // 0-100
+  status: 'active' | 'completed' | 'paused' | 'cancelled';
+  category: 'performance' | 'recovery' | 'fitness' | 'lifestyle' | 'medical';
+  priority: 'low' | 'medium' | 'high';
+  createdAt: string;
+  updatedAt: string;
+  completedAt?: string;
 }
 
 export interface TrackedMetric {
