@@ -1,0 +1,176 @@
+// services/inventoryService.ts
+import { MovementType, ItemStatus, InventoryAlertType } from '../types';
+import { mockInventoryItems, mockSuppliers, mockInventoryCategories, mockStockMovements, mockUsers } from '../data/mockData';
+const items = [...mockInventoryItems];
+const suppliers = [...mockSuppliers];
+const categories = [...mockInventoryCategories];
+const movements = [...mockStockMovements];
+const delay = (ms) => new Promise(res => setTimeout(res, ms));
+export const getItems = async () => {
+    await delay(300);
+    return [...items];
+};
+export const getSuppliers = async () => {
+    await delay(100);
+    return [...suppliers];
+};
+export const getCategories = async () => {
+    await delay(100);
+    return [...categories];
+};
+export const saveItem = async (itemData) => {
+    await delay(400);
+    if (itemData.id) {
+        // Update
+        const index = items.findIndex(i => i.id === itemData.id);
+        if (index > -1) {
+            const existingItem = items[index];
+            if (!existingItem) {
+                throw new Error("Item not found");
+            }
+            const updatedItem = {
+                ...existingItem,
+                ...itemData,
+                id: existingItem.id, // Ensure id is preserved
+            };
+            items[index] = updatedItem;
+            return updatedItem;
+        }
+        throw new Error("Item not found");
+    }
+    else {
+        // Create
+        const newItem = {
+            ...itemData,
+            id: `item-${Date.now()}`,
+        };
+        items.unshift(newItem);
+        return newItem;
+    }
+};
+export const addStockMovement = async (itemId, movementType, quantity, reason) => {
+    await delay(500);
+    const itemIndex = items.findIndex(i => i.id === itemId);
+    if (itemIndex === -1)
+        throw new Error("Item not found");
+    const item = items[itemIndex];
+    if (!item)
+        throw new Error("Item not found");
+    const previousStock = item.currentStock;
+    let newStock = previousStock;
+    if (movementType === MovementType.In) {
+        newStock += quantity;
+    }
+    else if (movementType === MovementType.Out) {
+        newStock -= quantity;
+        if (newStock < 0)
+            throw new Error("Stock cannot be negative.");
+    }
+    item.currentStock = newStock;
+    if (newStock === 0) {
+        item.status = ItemStatus.OutOfStock;
+    }
+    else {
+        item.status = ItemStatus.Active;
+    }
+    const newMovement = {
+        id: `mov-${Date.now()}`,
+        itemId,
+        movementType,
+        quantity,
+        reason,
+        userId: mockUsers[0]?.id || 'unknown-user', // Mock user
+        createdAt: new Date().toISOString(),
+    };
+    movements.unshift(newMovement);
+    return item;
+};
+const getDaysUntil = (dateString) => {
+    const expiryDate = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diffTime = expiryDate.getTime() - today.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+};
+export const getDashboardMetrics = async () => {
+    await delay(500);
+    let totalValue = 0;
+    let lowStockCount = 0;
+    let expiringSoonCount = 0;
+    const criticalAlerts = [];
+    for (const item of items) {
+        if (item.unitCost) {
+            totalValue += item.currentStock * item.unitCost;
+        }
+        if (item.currentStock <= item.minStock && item.status !== ItemStatus.Discontinued) {
+            lowStockCount++;
+            criticalAlerts.push({
+                id: `alert-low-${item.id}`,
+                type: item.currentStock === 0 ? InventoryAlertType.OutOfStock : InventoryAlertType.LowStock,
+                itemId: item.id,
+                itemName: item.name,
+                message: item.currentStock === 0 ? 'Item sem estoque!' : `Estoque baixo: ${item.currentStock}/${item.minStock}`,
+                severity: item.currentStock === 0 ? 'critical' : 'high',
+                createdAt: new Date().toISOString(),
+            });
+        }
+        if (item.expiryDate) {
+            const daysUntilExpiry = getDaysUntil(item.expiryDate);
+            if (daysUntilExpiry <= 30) {
+                expiringSoonCount++;
+                if (daysUntilExpiry <= 7) {
+                    criticalAlerts.push({
+                        id: `alert-exp-${item.id}`,
+                        type: daysUntilExpiry < 0 ? InventoryAlertType.Expired : InventoryAlertType.Expiring,
+                        itemId: item.id,
+                        itemName: item.name,
+                        message: daysUntilExpiry < 0 ? 'Vencido!' : `Vence em ${daysUntilExpiry} dias.`,
+                        severity: daysUntilExpiry < 0 ? 'critical' : 'high',
+                        createdAt: new Date().toISOString(),
+                    });
+                }
+            }
+        }
+    }
+    // Adicionar alertas adicionais para demonstração
+    criticalAlerts.push({
+        id: 'alert-consumption-1',
+        type: InventoryAlertType.HighConsumption,
+        itemId: 'item-1',
+        itemName: 'Gaze Estéril 10x10',
+        message: 'Alto consumo detectado: 150% acima da média mensal',
+        severity: 'medium',
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 horas atrás
+    }, {
+        id: 'alert-order-1',
+        type: InventoryAlertType.OverdueOrder,
+        itemId: 'item-3',
+        itemName: 'Seringa 10ml',
+        message: 'Pedido em atraso há 5 dias. Verificar com fornecedor.',
+        severity: 'high',
+        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 dia atrás
+    }, {
+        id: 'alert-turnover-1',
+        type: InventoryAlertType.LowTurnover,
+        itemId: 'item-4',
+        itemName: 'Termômetro Digital',
+        message: 'Baixa rotatividade: estoque parado há 45 dias',
+        severity: 'low',
+        createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), // 3 horas atrás
+    }, {
+        id: 'alert-price-1',
+        type: InventoryAlertType.PriceChange,
+        itemId: 'item-2',
+        itemName: 'Álcool 70%',
+        message: 'Preço do fornecedor aumentou 15%. Revisar orçamento.',
+        severity: 'medium',
+        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 horas atrás
+    });
+    return {
+        totalItems: items.length,
+        lowStockItems: lowStockCount,
+        expiringSoon: expiringSoonCount,
+        totalValue,
+        criticalAlerts: criticalAlerts.sort((a, b) => (b.severity === 'critical' ? 1 : -1)), // Prioritize critical
+    };
+};

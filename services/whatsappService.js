@@ -1,0 +1,79 @@
+import * as whatsappLogService from './whatsappLogService';
+import { observability } from '../lib/observabilityLogger';
+const delay = (ms) => new Promise(res => setTimeout(res, ms));
+/**
+ * Simulates sending a WhatsApp message with a queue and fallback.
+ */
+export const sendMessage = async (patient, content, type) => {
+    if (patient.whatsappConsent !== 'opt-in') {
+        observability.communication.warn('whatsapp.message.blocked', {
+            patientId: patient.id,
+            patientName: patient.name,
+            reason: 'opt-out status'
+        });
+        return { success: false, fallbackInitiated: false };
+    }
+    const message = {
+        id: `wapp_${Date.now()}`,
+        patientId: patient.id,
+        patientName: patient.name,
+        phone: patient.phone,
+        type,
+        content,
+        status: 'sending', // Start as 'sending' to simulate queue
+        createdAt: new Date(),
+    };
+    await whatsappLogService.addLog(message);
+    // Simulate queue and network delay
+    await delay(1500 + Math.random() * 1000);
+    const didFail = Math.random() < 0.1; // 10% failure rate for simulation
+    if (didFail) {
+        await whatsappLogService.updateLog(message.id, { status: 'failed' });
+        observability.communication.warn('whatsapp.message.failed', {
+            patientId: patient.id,
+            patientName: patient.name,
+            messageId: message.id,
+            fallbackInitiated: true
+        });
+        // In a real app, you would trigger the SMS service here.
+        return { success: false, fallbackInitiated: true };
+    }
+    await whatsappLogService.updateLog(message.id, { status: 'sent' });
+    await delay(500);
+    await whatsappLogService.updateLog(message.id, { status: 'delivered' });
+    observability.communication.info('whatsapp.message.sent', {
+        patientId: patient.id,
+        patientName: patient.name,
+        messageId: message.id,
+        messageType: type
+    });
+    // Simulate 'read' status after a while
+    setTimeout(() => {
+        whatsappLogService.updateLog(message.id, { status: 'read' });
+    }, 5000 + Math.random() * 3000);
+    return { success: true, fallbackInitiated: false };
+};
+/**
+ * Sends a templated appointment confirmation message.
+ */
+export const sendAppointmentConfirmation = async (appointment, patient) => {
+    const date = appointment.startTime.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+    const time = appointment.startTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const content = `Olá, ${patient.name.split(' ')[0] || patient.name}! 👋 Sua consulta de ${appointment.type} foi confirmada para ${date} às ${time}. Mal podemos esperar para te ver! - Equipe FisioFlow`;
+    return await sendMessage(patient, content, 'confirmation');
+};
+/**
+ * Sends a templated appointment reminder message.
+ */
+export const sendAppointmentReminder = async (appointment, patient, _hoursBefore) => {
+    const time = appointment.startTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const content = `Lembrete FisioFlow: Sua consulta é hoje às ${time}. Por favor, chegue com alguns minutos de antecedência. Até já!`;
+    return await sendMessage(patient, content, 'reminder');
+};
+/**
+ * Sends the Home Exercise Plan (HEP) to the patient.
+ */
+export const sendHep = async (patient, hepContent) => {
+    const content = `Olá, ${patient.name.split(' ')[0] || patient.name}! Seu fisioterapeuta enviou seu plano de exercícios. Acesse pelo portal ou veja o resumo:\n\n${hepContent}`;
+    return await sendMessage(patient, content, 'hep');
+};

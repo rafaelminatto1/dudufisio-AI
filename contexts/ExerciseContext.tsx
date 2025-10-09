@@ -607,26 +607,45 @@ export const ExerciseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       usageCount: 0
     });
 
+    // Toast e auditoria para duplicação
+    exerciseToasts.duplicateSuccess(duplicated.name);
+    logExerciseDuplicate(id, duplicated.id, duplicated.name);
+
     return duplicated;
   }, [getExercise, createExercise]);
 
   const exportExercises = useCallback(async (ids: string[]): Promise<void> => {
-    const exercisesToExport = exercises.filter(ex => ids.includes(ex.id));
-    const exportData = {
-      exercises: exercisesToExport,
-      exportDate: new Date(),
-      version: '1.0'
-    };
+    try {
+      const exercisesToExport = exercises.filter(ex => ids.includes(ex.id));
+      const exportData = {
+        exercises: exercisesToExport,
+        exportDate: new Date(),
+        version: '1.0'
+      };
 
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `exercises-export-${Date.now()}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `exercises-export-${Date.now()}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
 
-    console.log('✅ Exercícios exportados:', ids.length);
+      // Toast de sucesso
+      exerciseToasts.exportSuccess(ids.length);
+      
+      // Auditoria
+      auditService.log({
+        action: 'export',
+        entityType: 'exercise',
+        entityId: 'multiple',
+        entityName: `${ids.length} exercício(s)`,
+        metadata: { count: ids.length }
+      });
+    } catch (err: any) {
+      exerciseToasts.exportError(err?.message || 'Erro desconhecido');
+      throw err;
+    }
   }, [exercises]);
 
   const importExercises = useCallback(async (data: any): Promise<void> => {
@@ -642,10 +661,23 @@ export const ExerciseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       setExercises(prev => [...prev, ...newExercises]);
       setIsLoading(false);
-      console.log('✅ Exercícios importados:', newExercises.length);
-    } catch (err) {
-      setError('Erro ao importar exercícios');
+      
+      // Toast de sucesso
+      exerciseToasts.importSuccess(newExercises.length);
+      
+      // Auditoria
+      auditService.log({
+        action: 'import',
+        entityType: 'exercise',
+        entityId: 'multiple',
+        entityName: `${newExercises.length} exercício(s)`,
+        metadata: { count: newExercises.length }
+      });
+    } catch (err: any) {
+      const errorMessage = err?.message || 'Erro desconhecido';
+      setError(errorMessage);
       setIsLoading(false);
+      exerciseToasts.importError(errorMessage);
       throw err;
     }
   }, []);
