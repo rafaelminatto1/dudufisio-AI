@@ -120,13 +120,32 @@ export async function updateServiceWorker(registration: ServiceWorkerRegistratio
   });
 }
 
+// Variável para controlar debounce das notificações
+let updateNotificationTimeout: NodeJS.Timeout | null = null;
+let isNotificationShowing = false;
+
 /**
  * Mostrar notificação de atualização
  */
 function showUpdateNotification(registration: ServiceWorkerRegistration) {
-  // Criar toast de atualização
-  const toast = document.createElement('div');
-  toast.className = 'sw-update-toast';
+  // Debounce: se já existe uma notificação pendente, cancelar
+  if (updateNotificationTimeout) {
+    clearTimeout(updateNotificationTimeout);
+  }
+  
+  // Se já está mostrando notificação, não mostrar outra
+  if (isNotificationShowing) {
+    console.log('[SW] Notification already showing, skipping duplicate');
+    return;
+  }
+  
+  // Aguardar 1 segundo antes de mostrar (debounce)
+  updateNotificationTimeout = setTimeout(() => {
+    isNotificationShowing = true;
+    
+    // Criar toast de atualização
+    const toast = document.createElement('div');
+    toast.className = 'sw-update-toast';
   toast.innerHTML = `
     <div style="
       position: fixed;
@@ -199,25 +218,29 @@ function showUpdateNotification(registration: ServiceWorkerRegistration) {
 
   document.body.appendChild(toast);
 
-  // Botão de atualizar
-  const updateBtn = document.getElementById('sw-update-btn');
-  updateBtn?.addEventListener('click', () => {
-    updateServiceWorker(registration);
-    toast.remove();
-  });
-
-  // Botão de dispensar
-  const dismissBtn = document.getElementById('sw-dismiss-btn');
-  dismissBtn?.addEventListener('click', () => {
-    toast.remove();
-  });
-
-  // Auto-remover após 30 segundos
-  setTimeout(() => {
-    if (document.body.contains(toast)) {
+    // Botão de atualizar
+    const updateBtn = document.getElementById('sw-update-btn');
+    updateBtn?.addEventListener('click', () => {
+      updateServiceWorker(registration);
       toast.remove();
-    }
-  }, 30000);
+      isNotificationShowing = false;
+    });
+
+    // Botão de dispensar
+    const dismissBtn = document.getElementById('sw-dismiss-btn');
+    dismissBtn?.addEventListener('click', () => {
+      toast.remove();
+      isNotificationShowing = false;
+    });
+
+    // Auto-remover após 30 segundos
+    setTimeout(() => {
+      if (document.body.contains(toast)) {
+        toast.remove();
+        isNotificationShowing = false;
+      }
+    }, 30000);
+  }, 1000); // Fim do setTimeout do debounce
 }
 
 /**

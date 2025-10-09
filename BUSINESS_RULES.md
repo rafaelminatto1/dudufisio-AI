@@ -882,3 +882,4 @@ try {
 - **Opt-out:** Cancelamento de consentimento
 - **RLS:** Row Level Security (segurança em nível de linha no Supabase)
 
+

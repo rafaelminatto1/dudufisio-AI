@@ -1173,3 +1173,4 @@ if (!canProceed) {
 **Versão:** 1.0.0  
 **Mantido por:** Equipe DuduFisio-AI
 
+

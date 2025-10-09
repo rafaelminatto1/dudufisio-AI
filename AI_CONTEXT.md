@@ -789,3 +789,4 @@ Melhorias esperadas:
 
 Este documento é vivo e deve ser atualizado conforme o projeto evolui. Se você (humano ou IA) encontrar informações desatualizadas, por favor abra um PR com correções.
 
+
