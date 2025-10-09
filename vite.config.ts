@@ -14,8 +14,7 @@ export default defineConfig({
     }),
   ],
   esbuild: {
-    // Remove console logs in production
-    drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
+    // Mantém console logs para debugging
     logLevel: 'warning'
   },
   define: {
@@ -239,24 +238,7 @@ export default defineConfig({
         tryCatchDeoptimization: false,
       }
     },
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        passes: 2, // Mais agressivo
-        pure_funcs: ['console.log', 'console.info', 'console.debug'], // Remove console calls
-        pure_getters: true,
-        unsafe_arrows: true,
-        unsafe_methods: true,
-      },
-      mangle: {
-        safari10: true, // Compatibilidade Safari
-      },
-      format: {
-        comments: false, // Remove todos os comentários
-      },
-    },
+    minify: 'esbuild',
     chunkSizeWarningLimit: 500, // Mais restritivo
     cssCodeSplit: true, // Split CSS
     assetsInlineLimit: 4096, // Inline assets < 4kb
