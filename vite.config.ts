@@ -123,9 +123,10 @@ export default defineConfig({
           if (id.includes('lucide-react')) {
             return 'ui-icons';
           }
-          if (id.includes('framer-motion')) {
-            return 'ui-animation';
-          }
+          // framer-motion não deve ser separado devido a problemas de dependência circular
+          // if (id.includes('framer-motion')) {
+          //   return 'ui-animation';
+          // }
 
           // 3. Charts (só para dashboards)
           if (id.includes('recharts')) {
