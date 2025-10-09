@@ -14,6 +14,7 @@ import { AppProvider } from './contexts/AppContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { DebugProvider } from './contexts/DebugContext';
 import { PatientProvider } from './contexts/PatientContext';
+import { ExerciseProvider } from './contexts/ExerciseContext';
 import LoginPage from './pages/auth/LoginPage';
 import TwoFactorSetupPage from './pages/auth/TwoFactorSetupPage';
 import { Role } from './types';
@@ -241,7 +242,8 @@ const AppRoutes: React.FC = () => {
                     <SupabaseAuthProvider>
                         <AppProvider>
                             <PatientProvider>
-                                <PerformanceProfiler
+                                <ExerciseProvider>
+                                    <PerformanceProfiler
                                     id="AppRoutes"
                                     onRender={(id, phase, actualDuration) => {
                                         if (actualDuration > 16) {
@@ -254,7 +256,8 @@ const AppRoutes: React.FC = () => {
                                         {/* 📡 Indicador de status offline/online */}
                                         <OfflineIndicator />
                                     </ToastProvider>
-                                </PerformanceProfiler>
+                                    </PerformanceProfiler>
+                                </ExerciseProvider>
                             </PatientProvider>
                         </AppProvider>
                     </SupabaseAuthProvider>

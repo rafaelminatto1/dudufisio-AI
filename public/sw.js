@@ -9,8 +9,8 @@
  * - Notificações interativas
  */
 
-const CACHE_NAME = 'dudufisio-ai-v1.0.0';
-const API_CACHE = 'dudufisio-api-v1.0.0';
+const CACHE_NAME = 'dudufisio-ai-v1.1.0';
+const API_CACHE = 'dudufisio-api-v1.1.0';
 
 // Recursos essenciais para cache
 const ESSENTIAL_RESOURCES = [

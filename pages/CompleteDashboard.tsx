@@ -48,6 +48,10 @@ const EventsListPage = createLazyComponent(() => import('./EventsListPage'));
 const MaterialDetailPage = createLazyComponent(() => import('./MaterialDetailPage'));
 const MaterialsPage = createLazyComponent(() => import('./MaterialsPage'));
 const GerarLaudoPage = createLazyComponent(() => import('./GerarLaudoPage'));
+
+// Páginas de Exercícios - Sistema Completo
+const ExercisesPage = createLazyComponent(() => import('./ExercisesPage'));
+const ExerciseEditPage = createLazyComponent(() => import('./ExerciseEditPage'));
 const MedicalReportPage = createLazyComponent(() => import('./MedicalReportPage'));
 const EvaluationReportPage = createLazyComponent(() => import('./EvaluationReportPage'));
 const ClinicalLibraryPage = createLazyComponent(() => import('./ClinicalLibraryPage'));
@@ -443,6 +447,12 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/settings" element={LazyElement(SettingsPage)} />
                 <Route path="/settings-page" element={LazyElement(SettingsPage)} />
                 
+                {/* Exercise Management Routes - Sistema Completo de Exercícios */}
+                <Route path="/exercises" element={LazyElement(ExercisesPage)} />
+                <Route path="/exercises/new" element={LazyElement(ExerciseEditPage)} />
+                <Route path="/exercises/:id" element={LazyElement(ExerciseEditPage)} />
+                <Route path="/exercises/:id/view" element={LazyElement(ExerciseEditPage)} />
+
                 {/* Legacy Routes */}
                 <Route path="/admin" element={LazyElement(AdminDashboardPage)} />
                 <Route path="/financial" element={LazyElement(FinancialDashboardPage)} />

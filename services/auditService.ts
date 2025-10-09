@@ -1,325 +1,286 @@
-import { AuditLogEntry, AuditAction, ResourceType } from '../types';
-import { mockAuditLogs } from '../data/mockData';
-import { observability } from '../lib/observabilityLogger';
-
 /**
- * 🔍 SISTEMA DE AUDITORIA PROFISSIONAL
- *
- * Sistema centralizado de auditoria e logs para rastreamento
- * de todas as ações críticas realizadas no sistema
+ * Serviço de Auditoria
+ * Log de todas as operações no sistema de exercícios
  */
 
-// Using centralized AuditAction type from @/types
-
-export interface CreateAuditLogParams {
-  user: string;
+export interface AuditLog {
+  id: string;
+  timestamp: Date;
   action: AuditAction;
-  details: string;
-  resourceId?: string;
-  resourceType?: ResourceType;
+  entityType: EntityType;
+  entityId: string;
+  entityName: string;
+  userId: string;
+  userName: string;
+  changes?: {
+    before?: any;
+    after?: any;
+  };
   metadata?: Record<string, any>;
-  ipAddress?: string;
 }
 
+export type AuditAction = 
+  | 'create' 
+  | 'update' 
+  | 'delete' 
+  | 'view' 
+  | 'export' 
+  | 'import'
+  | 'assign'
+  | 'unassign'
+  | 'duplicate';
+
+export type EntityType = 
+  | 'exercise' 
+  | 'category' 
+  | 'protocol' 
+  | 'assignment' 
+  | 'template'
+  | 'session';
+
 class AuditService {
-  private static instance: AuditService;
-  private logs: AuditLogEntry[] = [...mockAuditLogs];
-  private listeners: Set<(log: AuditLogEntry) => void> = new Set();
+  private logs: AuditLog[] = [];
+  private readonly storageKey = 'exerciseAuditLogs';
+  private readonly maxLogs = 1000; // Manter últimos 1000 logs
 
-  private constructor() {
-    // Load existing logs from localStorage
-    this.loadLogsFromStorage();
-  }
-
-  public static getInstance(): AuditService {
-    if (!AuditService.instance) {
-      AuditService.instance = new AuditService();
-    }
-    return AuditService.instance;
+  constructor() {
+    this.loadLogs();
   }
 
   /**
-   * Cria um novo log de auditoria
+   * Carregar logs do localStorage
    */
-  public async createLog(params: CreateAuditLogParams): Promise<AuditLogEntry> {
-    const logEntry: AuditLogEntry = {
-      id: this.generateId(),
-      user: params.user,
-      action: params.action,
-      details: params.details,
+  private loadLogs(): void {
+    try {
+      const stored = localStorage.getItem(this.storageKey);
+      if (stored) {
+        this.logs = JSON.parse(stored).map((log: any) => ({
+          ...log,
+          timestamp: new Date(log.timestamp)
+        }));
+      }
+    } catch (error) {
+      console.error('Erro ao carregar logs de auditoria:', error);
+    }
+  }
+
+  /**
+   * Salvar logs no localStorage
+   */
+  private saveLogs(): void {
+    try {
+      // Manter apenas os últimos maxLogs
+      if (this.logs.length > this.maxLogs) {
+        this.logs = this.logs.slice(-this.maxLogs);
+      }
+      localStorage.setItem(this.storageKey, JSON.stringify(this.logs));
+    } catch (error) {
+      console.error('Erro ao salvar logs de auditoria:', error);
+    }
+  }
+
+  /**
+   * Registrar uma ação
+   */
+  log(params: {
+    action: AuditAction;
+    entityType: EntityType;
+    entityId: string;
+    entityName: string;
+    userId?: string;
+    userName?: string;
+    changes?: { before?: any; after?: any };
+    metadata?: Record<string, any>;
+  }): void {
+    const log: AuditLog = {
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date(),
-      ipAddress: params.ipAddress || this.getClientIP(),
-      // Additional metadata for advanced auditing
-      ...(params.resourceId && { resourceId: params.resourceId }),
-      ...(params.resourceType && { resourceType: params.resourceType }),
-      ...(params.metadata && { metadata: params.metadata })
+      userId: params.userId || 'current-user',
+      userName: params.userName || 'Usuário Atual',
+      ...params
     };
 
-    // Add to logs array
-    this.logs.unshift(logEntry);
+    this.logs.push(log);
+    this.saveLogs();
 
-    // Persist to localStorage
-    this.saveLogsToStorage();
-
-    // Notify listeners
-    this.notifyListeners(logEntry);
-
-    // Log to observability system
-    observability.audit.info('audit.log.created', {
-      action: logEntry.action,
-      user: logEntry.user,
-      details: logEntry.details,
-      timestamp: logEntry.timestamp
+    // Log no console para debug
+    console.log('🔍 Audit Log:', {
+      action: log.action,
+      entity: `${log.entityType}/${log.entityName}`,
+      user: log.userName,
+      time: log.timestamp.toLocaleTimeString()
     });
-
-    return logEntry;
   }
 
   /**
-   * Busca logs com filtros
+   * Buscar logs por critérios
    */
-  public getLogs(filters?: {
-    user?: string;
+  search(filters: {
+    entityType?: EntityType;
+    entityId?: string;
     action?: AuditAction;
-    dateFrom?: Date;
-    dateTo?: Date;
-    resourceType?: ResourceType;
-  }): AuditLogEntry[] {
-    let filteredLogs = [...this.logs];
+    userId?: string;
+    startDate?: Date;
+    endDate?: Date;
+  }): AuditLog[] {
+    let filtered = [...this.logs];
 
-    if (filters) {
-      if (filters.user) {
-        filteredLogs = filteredLogs.filter(log =>
-          log.user.toLowerCase().includes(filters.user!.toLowerCase()) ||
-          log.details.toLowerCase().includes(filters.user!.toLowerCase())
-        );
-      }
-
-      if (filters.action) {
-        filteredLogs = filteredLogs.filter(log => log.action === filters.action);
-      }
-
-      if (filters.dateFrom) {
-        filteredLogs = filteredLogs.filter(log => log.timestamp >= filters.dateFrom!);
-      }
-
-      if (filters.dateTo) {
-        filteredLogs = filteredLogs.filter(log => log.timestamp <= filters.dateTo!);
-      }
-
-      if (filters.resourceType) {
-        filteredLogs = filteredLogs.filter(log =>
-          log.resourceType === filters.resourceType
-        );
-      }
+    if (filters.entityType) {
+      filtered = filtered.filter(log => log.entityType === filters.entityType);
     }
 
-    return filteredLogs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    if (filters.entityId) {
+      filtered = filtered.filter(log => log.entityId === filters.entityId);
+    }
+
+    if (filters.action) {
+      filtered = filtered.filter(log => log.action === filters.action);
+    }
+
+    if (filters.userId) {
+      filtered = filtered.filter(log => log.userId === filters.userId);
+    }
+
+    if (filters.startDate) {
+      filtered = filtered.filter(log => log.timestamp >= filters.startDate!);
+    }
+
+    if (filters.endDate) {
+      filtered = filtered.filter(log => log.timestamp <= filters.endDate!);
+    }
+
+    return filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   /**
-   * Obtém estatísticas de auditoria
+   * Buscar histórico de uma entidade específica
    */
-  public getStats() {
-    const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const last7Days = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  getEntityHistory(entityType: EntityType, entityId: string): AuditLog[] {
+    return this.search({ entityType, entityId });
+  }
 
-    const recentLogs = this.logs.filter(log => log.timestamp >= last24Hours);
-    const weeklyLogs = this.logs.filter(log => log.timestamp >= last7Days);
+  /**
+   * Buscar ações de um usuário
+   */
+  getUserActivity(userId: string, limit?: number): AuditLog[] {
+    const logs = this.search({ userId });
+    return limit ? logs.slice(0, limit) : logs;
+  }
 
-    const actionCounts = this.logs.reduce((acc, log) => {
-      acc[log.action] = (acc[log.action] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+  /**
+   * Obter estatísticas de auditoria
+   */
+  getStats(): {
+    totalLogs: number;
+    byAction: Record<AuditAction, number>;
+    byEntityType: Record<EntityType, number>;
+    recentActivity: AuditLog[];
+  } {
+    const byAction = {} as Record<AuditAction, number>;
+    const byEntityType = {} as Record<EntityType, number>;
 
-    const userCounts = this.logs.reduce((acc, log) => {
-      acc[log.user] = (acc[log.user] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    this.logs.forEach(log => {
+      byAction[log.action] = (byAction[log.action] || 0) + 1;
+      byEntityType[log.entityType] = (byEntityType[log.entityType] || 0) + 1;
+    });
 
     return {
       totalLogs: this.logs.length,
-      last24Hours: recentLogs.length,
-      last7Days: weeklyLogs.length,
-      topActions: Object.entries(actionCounts)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 5)
-        .map(([action, count]) => ({ action, count })),
-      topUsers: Object.entries(userCounts)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 5)
-        .map(([user, count]) => ({ user, count })),
-      securityEvents: this.logs.filter(log =>
-        log.action.includes('SECURITY') ||
-        log.action.includes('FAILED') ||
-        log.action === 'AUTO_LOGOUT'
-      ).length
+      byAction,
+      byEntityType,
+      recentActivity: this.logs.slice(-10).reverse()
     };
   }
 
   /**
-   * Adiciona listener para novos logs
+   * Limpar logs antigos
    */
-  public addListener(callback: (log: AuditLogEntry) => void): void {
-    this.listeners.add(callback);
-  }
-
-  /**
-   * Remove listener
-   */
-  public removeListener(callback: (log: AuditLogEntry) => void): void {
-    this.listeners.delete(callback);
-  }
-
-  /**
-   * Limpa logs antigos (manter apenas últimos 30 dias)
-   */
-  public cleanupOldLogs(daysToKeep: number = 30): number {
-    const cutoffDate = new Date(Date.now() - daysToKeep * 24 * 60 * 60 * 1000);
-    const initialCount = this.logs.length;
+  clearOldLogs(daysToKeep: number = 30): void {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
 
     this.logs = this.logs.filter(log => log.timestamp >= cutoffDate);
-    this.saveLogsToStorage();
+    this.saveLogs();
 
-    const removedCount = initialCount - this.logs.length;
-
-    if (removedCount > 0) {
-      this.createLog({
-        user: 'System',
-        action: 'SYSTEM_BACKUP',
-        details: `Limpeza automática removeu ${removedCount} logs antigos (>${daysToKeep} dias)`
-      });
-    }
-
-    return removedCount;
+    console.log(`🗑️ Logs anteriores a ${cutoffDate.toLocaleDateString()} foram removidos`);
   }
 
-  // Private methods
-  private generateId(): string {
-    return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  /**
+   * Exportar logs para análise
+   */
+  exportLogs(): string {
+    return JSON.stringify(this.logs, null, 2);
   }
 
-  private getClientIP(): string {
-    // In a real implementation, this would get the actual client IP
-    return '127.0.0.1';
-  }
-
-  private notifyListeners(log: AuditLogEntry): void {
-    this.listeners.forEach(callback => {
-      try {
-        callback(log);
-      } catch (error) {
-        console.error('Error notifying audit log listener:', error);
-      }
-    });
-  }
-
-  private saveLogsToStorage(): void {
-    try {
-      // Keep only last 1000 logs in localStorage to prevent storage bloat
-      const logsToSave = this.logs.slice(0, 1000);
-      localStorage.setItem('auditLogs', JSON.stringify(logsToSave));
-    } catch (error) {
-      console.error('Failed to save audit logs to storage:', error);
-    }
-  }
-
-  private loadLogsFromStorage(): void {
-    try {
-      const storedLogs = localStorage.getItem('auditLogs');
-      if (storedLogs) {
-        const parsed = JSON.parse(storedLogs);
-        // Merge with mock data, avoiding duplicates
-        const existingIds = new Set(this.logs.map(log => log.id));
-        const newLogs = parsed.filter((log: AuditLogEntry) => !existingIds.has(log.id));
-
-        // Convert timestamp strings back to Date objects
-        newLogs.forEach((log: AuditLogEntry) => {
-          log.timestamp = new Date(log.timestamp);
-        });
-
-        this.logs = [...newLogs, ...this.logs];
-      }
-    } catch (error) {
-      console.error('Failed to load audit logs from storage:', error);
+  /**
+   * Limpar todos os logs (use com cuidado!)
+   */
+  clearAllLogs(): void {
+    if (confirm('Tem certeza que deseja limpar TODOS os logs de auditoria?')) {
+      this.logs = [];
+      this.saveLogs();
+      console.log('🗑️ Todos os logs de auditoria foram removidos');
     }
   }
 }
 
-// Export singleton instance
-export const auditService = AuditService.getInstance();
+// Instância singleton
+export const auditService = new AuditService();
 
-// Helper functions for common audit operations
-export const auditHelpers = {
-  /**
-   * Log de autenticação
-   */
-  logAuth: (user: string, success: boolean, details?: string) => {
-    return auditService.createLog({
-      user,
-      action: success ? 'LOGIN_SUCCESS' : 'LOGIN_ATTEMPT_FAILED',
-      details: details || (success ? 'Login realizado com sucesso' : 'Tentativa de login falhou'),
-      resourceType: 'user'
-    });
-  },
+// Funções de conveniência
+export const logExerciseCreate = (exerciseId: string, exerciseName: string) => {
+  auditService.log({
+    action: 'create',
+    entityType: 'exercise',
+    entityId: exerciseId,
+    entityName: exerciseName
+  });
+};
 
-  /**
-   * Log de operações em pacientes
-   */
-  logPatientOperation: (user: string, action: 'CREATE_PATIENT' | 'UPDATE_PATIENT' | 'DELETE_PATIENT' | 'VIEW_PATIENT_RECORD', patientId: string, patientName: string, details?: string) => {
-    const actionMap = {
-      CREATE_PATIENT: 'Criou novo paciente',
-      UPDATE_PATIENT: 'Atualizou informações do paciente',
-      DELETE_PATIENT: 'Excluiu paciente',
-      VIEW_PATIENT_RECORD: 'Visualizou prontuário do paciente'
-    };
+export const logExerciseUpdate = (exerciseId: string, exerciseName: string, before: any, after: any) => {
+  auditService.log({
+    action: 'update',
+    entityType: 'exercise',
+    entityId: exerciseId,
+    entityName: exerciseName,
+    changes: { before, after }
+  });
+};
 
-    return auditService.createLog({
-      user,
-      action,
-      details: details || `${actionMap[action]}: ${patientName} (ID: ${patientId})`,
-      resourceId: patientId,
-      resourceType: 'patient'
-    });
-  },
+export const logExerciseDelete = (exerciseId: string, exerciseName: string) => {
+  auditService.log({
+    action: 'delete',
+    entityType: 'exercise',
+    entityId: exerciseId,
+    entityName: exerciseName
+  });
+};
 
-  /**
-   * Log de operações financeiras
-   */
-  logFinancialOperation: (user: string, action: 'CREATE_TRANSACTION' | 'UPDATE_TRANSACTION' | 'DELETE_TRANSACTION', transactionId: string, amount: number, details?: string) => {
-    const actionMap = {
-      CREATE_TRANSACTION: 'Criou nova transação',
-      UPDATE_TRANSACTION: 'Atualizou transação',
-      DELETE_TRANSACTION: 'Excluiu transação'
-    };
+export const logExerciseDuplicate = (originalId: string, newId: string, exerciseName: string) => {
+  auditService.log({
+    action: 'duplicate',
+    entityType: 'exercise',
+    entityId: newId,
+    entityName: exerciseName,
+    metadata: { originalId }
+  });
+};
 
-    return auditService.createLog({
-      user,
-      action,
-      details: details || `${actionMap[action]}: R$ ${amount.toFixed(2)} (ID: ${transactionId})`,
-      resourceId: transactionId,
-      resourceType: 'transaction',
-      metadata: { amount }
-    });
-  },
+export const logProtocolCreate = (protocolId: string, protocolName: string) => {
+  auditService.log({
+    action: 'create',
+    entityType: 'protocol',
+    entityId: protocolId,
+    entityName: protocolName
+  });
+};
 
-  /**
-   * Log de operações em consultas
-   */
-  logAppointmentOperation: (user: string, action: 'CREATE_APPOINTMENT' | 'UPDATE_APPOINTMENT' | 'DELETE_APPOINTMENT' | 'RESCHEDULE_APPOINTMENT', appointmentId: string, patientName: string, details?: string) => {
-    const actionMap = {
-      CREATE_APPOINTMENT: 'Criou novo agendamento',
-      UPDATE_APPOINTMENT: 'Atualizou agendamento',
-      DELETE_APPOINTMENT: 'Excluiu agendamento',
-      RESCHEDULE_APPOINTMENT: 'Reagendou consulta'
-    };
-
-    return auditService.createLog({
-      user,
-      action,
-      details: details || `${actionMap[action]} para ${patientName} (ID: ${appointmentId})`,
-      resourceId: appointmentId,
-      resourceType: 'appointment'
-    });
-  }
+export const logAssignment = (assignmentId: string, patientName: string, exerciseName: string) => {
+  auditService.log({
+    action: 'assign',
+    entityType: 'assignment',
+    entityId: assignmentId,
+    entityName: `${exerciseName} -> ${patientName}`,
+    metadata: { patientName, exerciseName }
+  });
 };
