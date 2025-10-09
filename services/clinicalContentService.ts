@@ -8,7 +8,7 @@ import {
   EXERCISES_LIBRARY,
   SPECIALIZED_ASSESSMENTS,
   CLINICAL_MATERIALS,
-} from '../scripts/populate-clinical-content';
+} from '../data/clinicalData';
 
 import type {
   ClinicalProtocol,

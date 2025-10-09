@@ -2,7 +2,7 @@
  * Serviço de CRUD para Conteúdo Clínico
  * Gerencia protocolos, exercícios, avaliações e materiais
  */
-import { CLINICAL_PROTOCOLS, EXERCISES_LIBRARY, SPECIALIZED_ASSESSMENTS, CLINICAL_MATERIALS, } from '../scripts/populate-clinical-content';
+import { CLINICAL_PROTOCOLS, EXERCISES_LIBRARY, SPECIALIZED_ASSESSMENTS, CLINICAL_MATERIALS, } from '../data/clinicalData';
 // ===== STORAGE KEYS =====
 const STORAGE_KEYS = {
     PROTOCOLS: 'clinicalContent_protocols',
