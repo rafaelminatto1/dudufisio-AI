@@ -230,12 +230,7 @@ const AppContent: React.FC = memo(() => {
 
 // Wrapper para BrowserRouter para evitar problemas com React 19
 const RouterWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    try {
-        return <BrowserRouter>{children}</BrowserRouter>;
-    } catch (error) {
-        console.error('❌ BrowserRouter error:', error);
-        return <div>Erro ao carregar roteador. Recarregue a página.</div>;
-    }
+    return <BrowserRouter>{children}</BrowserRouter>;
 };
 
 const AppRoutes: React.FC = () => {
