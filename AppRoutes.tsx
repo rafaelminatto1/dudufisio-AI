@@ -13,6 +13,7 @@ import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthCo
 import { AppProvider } from './contexts/AppContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { DebugProvider } from './contexts/DebugContext';
+import { PatientProvider } from './contexts/PatientContext';
 import LoginPage from './pages/auth/LoginPage';
 import TwoFactorSetupPage from './pages/auth/TwoFactorSetupPage';
 import { Role } from './types';
@@ -244,20 +245,22 @@ const AppRoutes: React.FC = () => {
                 <DebugProvider>
                     <SupabaseAuthProvider>
                         <AppProvider>
-                            <PerformanceProfiler
-                                id="AppRoutes"
-                                onRender={(id, phase, actualDuration) => {
-                                    if (actualDuration > 16) {
-                                        console.warn(`⚠️ Performance issue in ${id}: ${actualDuration}ms`);
-                                    }
-                                }}
-                            >
-                                <ToastProvider>
-                                    <AppContent />
-                                    {/* 📡 Indicador de status offline/online */}
-                                    <OfflineIndicator />
-                                </ToastProvider>
-                            </PerformanceProfiler>
+                            <PatientProvider>
+                                <PerformanceProfiler
+                                    id="AppRoutes"
+                                    onRender={(id, phase, actualDuration) => {
+                                        if (actualDuration > 16) {
+                                            console.warn(`⚠️ Performance issue in ${id}: ${actualDuration}ms`);
+                                        }
+                                    }}
+                                >
+                                    <ToastProvider>
+                                        <AppContent />
+                                        {/* 📡 Indicador de status offline/online */}
+                                        <OfflineIndicator />
+                                    </ToastProvider>
+                                </PerformanceProfiler>
+                            </PatientProvider>
                         </AppProvider>
                     </SupabaseAuthProvider>
                 </DebugProvider>

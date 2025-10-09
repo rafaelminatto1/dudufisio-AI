@@ -54,21 +54,8 @@ const ClinicalLibraryPage = createLazyComponent(() => import('./ClinicalLibraryP
 const ClinicalContentPage = createLazyComponent(() => import('./ClinicalContentPage'));
 const EnhancedProtocolsPage = createLazyComponent(() => import('./EnhancedProtocolsPage'));
 const EnhancedAssessmentsPage = createLazyComponent(() => import('./EnhancedAssessmentsPage'));
-const ImageGenerationDemoPage = createLazyComponent(() => import('./ImageGenerationDemoPage'));
-const VideoGenerationPage = createLazyComponent(() => import('./VideoGenerationPage'));
-const VideoGenerationPageOptimized = createLazyComponent(() => import('./VideoGenerationPageOptimized'));
-const VideoLibraryCompletePage = createLazyComponent(() => import('./VideoLibraryCompletePage'));
-const SoraDirectGenerationPage = createLazyComponent(() => import('./SoraDirectGenerationPage'));
-const FreeVideoGeneratorPage = createLazyComponent(() => import('./FreeVideoGeneratorPage'));
-const FreeVideoGeneratorPageImproved = createLazyComponent(() => import('./FreeVideoGeneratorPageImproved'));
-const FreeVideoGeneratorSimple = createLazyComponent(() => import('./FreeVideoGeneratorSimple'));
-const FreeVideoGeneratorIntegrated = createLazyComponent(() => import('./FreeVideoGeneratorIntegrated'));
-const FreeVideoGeneratorFixed = createLazyComponent(() => import('./FreeVideoGeneratorFixed'));
+// ✅ MANTIDO: Apenas o gerador de vídeo principal
 const FreeVideoGeneratorReal = createLazyComponent(() => import('./FreeVideoGeneratorReal'));
-const FreeVideoGeneratorEnhanced = createLazyComponent(() => import('./FreeVideoGeneratorEnhanced'));
-const FreeVideoGeneratorPersonalized = createLazyComponent(() => import('./FreeVideoGeneratorPersonalized'));
-const VideoManagementDashboard = createLazyComponent(() => import('./VideoManagementDashboard'));
-const FreeVideoGeneratorFinal = createLazyComponent(() => import('./FreeVideoGeneratorFinal'));
 const InventoryDashboardPage = createLazyComponent(() => import('./InventoryDashboardPage'));
 const NotificationCenterPage = createLazyComponent(() => import('./NotificationCenterPage'));
 const NotFoundPage = LazyPages.NotFoundPage;
@@ -414,18 +401,8 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/clinical-content" element={<ClinicalContentPage />} />
             <Route path="/enhanced-protocols" element={<EnhancedProtocolsPage />} />
             <Route path="/enhanced-assessments" element={<EnhancedAssessmentsPage />} />
-            <Route path="/image-generation" element={<ImageGenerationDemoPage />} />
-            <Route path="/video-generation" element={<VideoGenerationPageOptimized />} />
-            <Route path="/video-generation-legacy" element={<VideoGenerationPage />} />
-            <Route path="/video-library-complete" element={<VideoLibraryCompletePage />} />
-            <Route path="/sora-direct" element={<SoraDirectGenerationPage />} />
+            {/* ✅ ÚNICA ROTA DE VÍDEO MANTIDA */}
             <Route path="/free-video-generator" element={<FreeVideoGeneratorReal />} />
-            <Route path="/video-generator-enhanced" element={<FreeVideoGeneratorEnhanced />} />
-            <Route path="/video-generator-integrated" element={<FreeVideoGeneratorIntegrated />} />
-            <Route path="/video-generator-personalized" element={<FreeVideoGeneratorPersonalized />} />
-            <Route path="/video-management" element={<VideoManagementDashboard />} />
-            <Route path="/video-generator-final" element={<FreeVideoGeneratorFinal />} />
-            <Route path="/free-video-generator-legacy" element={<FreeVideoGeneratorPage />} />
                 <Route path="/material-detail" element={LazyElement(MaterialDetailPage)} />
                 <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
                 <Route path="/specialty-assessments" element={LazyElement(SpecialtyAssessmentsPage)} />

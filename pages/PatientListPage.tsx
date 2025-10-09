@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { DataTable } from '../components/ui/data-table';
 import { columns, Patient } from '../components/patients/PatientColumns';
+import { usePatient } from '../contexts/PatientContext';
 
-// Dados mock para demonstração
+// Dados mock para demonstração (compatível com PatientColumns)
 const mockPatients: Patient[] = [
   {
     id: '1',
@@ -64,11 +65,20 @@ const mockPatients: Patient[] = [
 
 const PatientListPage: React.FC = () => {
   const navigate = useNavigate();
-  const [patients, setPatients] = useState<Patient[]>(mockPatients);
+  const { patients, getAllPatients, deletePatient } = usePatient();
+  
+  // Carregar pacientes quando o componente montar
+  useEffect(() => {
+    getAllPatients();
+  }, [getAllPatients]);
 
-  const handleDeletePatient = (patientId: string) => {
+  const handleDeletePatient = async (patientId: string) => {
     if (confirm('Tem certeza que deseja excluir este paciente?')) {
-      setPatients(prev => prev.filter(p => p.id !== patientId));
+      try {
+        await deletePatient(patientId);
+      } catch (error) {
+        console.error('Erro ao excluir paciente:', error);
+      }
     }
   };
 

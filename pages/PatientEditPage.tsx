@@ -545,14 +545,16 @@ const PatientEditPage: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {mockPatient.sessionProgress.currentSession}/{mockPatient.sessionProgress.totalPlannedSessions}
+                  {currentPatient.sessionTracking?.completedSessions || 0}/{currentPatient.sessionTracking?.totalSessions || 0}
                 </div>
                 <Progress 
-                  value={(mockPatient.sessionProgress.currentSession / mockPatient.sessionProgress.totalPlannedSessions) * 100} 
+                  value={currentPatient.sessionTracking?.totalSessions ? 
+                    ((currentPatient.sessionTracking.completedSessions || 0) / currentPatient.sessionTracking.totalSessions) * 100 : 0
+                  } 
                   className="mt-2"
                 />
                 <p className="text-xs text-slate-600 mt-2">
-                  {mockPatient.sessionProgress.weeksInTreatment} semanas de tratamento
+                  {Math.floor(((currentPatient.sessionTracking?.completedSessions || 0) / 3))} semanas de tratamento
                 </p>
               </CardContent>
             </Card>
@@ -651,7 +653,29 @@ const PatientEditPage: React.FC = () => {
                 </TabsTrigger>
               </TabsList>
 
-              {/* Continua no próximo arquivo devido ao tamanho... */}
+              <TabsContent value="personal" className="space-y-6">
+                <PersonalDataForm form={form} />
+              </TabsContent>
+
+              <TabsContent value="address" className="space-y-6">
+                <AddressForm form={form} />
+              </TabsContent>
+
+              <TabsContent value="emergency" className="space-y-6">
+                <EmergencyContactForm form={form} />
+              </TabsContent>
+
+              <TabsContent value="health" className="space-y-6">
+                <HealthForm form={form} />
+              </TabsContent>
+
+              <TabsContent value="treatment" className="space-y-6">
+                <TreatmentForm form={form} />
+              </TabsContent>
+
+              <TabsContent value="notes" className="space-y-6">
+                <ObservationsForm form={form} />
+              </TabsContent>
             </Tabs>
           </form>
         </Form>
