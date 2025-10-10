@@ -285,6 +285,21 @@ export const logAssignment = (assignmentId: string, patientName: string, exercis
   });
 };
 
+export const logFinancialOperation = (operationId: string, operationType: string, amount: number, description?: string) => {
+  auditService.log({
+    action: 'financial_operation',
+    entityType: 'financial' as EntityType,
+    entityId: operationId,
+    entityName: `${operationType} - R$ ${amount.toFixed(2)}`,
+    metadata: { 
+      operationType, 
+      amount,
+      description,
+      timestamp: new Date().toISOString()
+    }
+  });
+};
+
 // Export auditHelpers para compatibilidade
 export const auditHelpers = {
   logExerciseCreate,
@@ -293,5 +308,6 @@ export const auditHelpers = {
   logExerciseDuplicate,
   logProtocolCreate,
   logAssignment,
+  logFinancialOperation,
   auditService
 };
