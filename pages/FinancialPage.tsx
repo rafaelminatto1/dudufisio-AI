@@ -27,7 +27,7 @@ import TransactionList from '../components/financial/TransactionList';
 import * as financialService from '../services/financialService';
 import { RoleGuard } from '../components/RoleGuard';
 import { Role } from '../types';
-// import { auditHelpers } from '../services/auditService'; // TODO: Re-enable when auditHelpers is available
+import { auditHelpers } from '../services/auditService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import PermissionGuard, { IfPermission } from '../components/auth/PermissionGuard';
 
