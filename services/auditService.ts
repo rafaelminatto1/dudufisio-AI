@@ -285,15 +285,18 @@ export const logAssignment = (assignmentId: string, patientName: string, exercis
   });
 };
 
-export const logFinancialOperation = (operationId: string, operationType: string, amount: number, description?: string) => {
+export const logFinancialOperation = (operationId: string, operationType: string, amount: number | string, description?: string) => {
+  const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+  const safeAmount = isNaN(numAmount) ? 0 : numAmount;
+  
   auditService.log({
     action: 'financial_operation',
     entityType: 'financial' as EntityType,
     entityId: operationId,
-    entityName: `${operationType} - R$ ${amount.toFixed(2)}`,
+    entityName: `${operationType} - R$ ${safeAmount.toFixed(2)}`,
     metadata: { 
       operationType, 
-      amount,
+      amount: safeAmount,
       description,
       timestamp: new Date().toISOString()
     }
