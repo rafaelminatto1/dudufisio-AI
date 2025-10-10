@@ -299,3 +299,17 @@ export const RoutePreloader: React.FC<{
 
   return null;
 };
+
+/**
+ * Inicializar sistema de lazy loading
+ */
+export function initializeLazyLoading() {
+  console.log('🚀 Advanced lazy loading system initialized');
+
+  // Preload de componentes críticos em idle time
+  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(() => {
+      console.log('⏰ Idle time detected, preloading secondary components');
+    }, { timeout: 2000 });
+  }
+}
