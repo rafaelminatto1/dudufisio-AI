@@ -7,7 +7,8 @@
  * Baseado em BUSINESS_RULES.md e API_DOCUMENTATION.md
  */
 
-import { toast } from '@/hooks/use-toast';
+// Importar toast do react-toastify ao invés de hooks
+import { toast } from 'react-toastify';
 
 // =============================================================================
 // TIPOS DE ERRO
@@ -210,15 +211,16 @@ export function handleError(
   // Exibe toast com feedback ao usuário
   if (showToast) {
     const message = customMessage || appError.message;
+    const title = getErrorTitle(appError);
     
-    // Define variante do toast baseado no tipo de erro
-    const variant = appError.statusCode >= 500 ? 'destructive' : 'default';
-    
-    toast({
-      title: getErrorTitle(appError),
-      description: message,
-      variant,
-    });
+    // Define tipo do toast baseado no statusCode
+    if (appError.statusCode >= 500) {
+      toast.error(`${title}: ${message}`);
+    } else if (appError.statusCode >= 400) {
+      toast.warning(`${title}: ${message}`);
+    } else {
+      toast.info(`${title}: ${message}`);
+    }
   }
   
   // Re-lança erro se solicitado
@@ -310,68 +312,12 @@ export function withEventErrorHandler<T extends (...args: any[]) => void>(
  *   <App />
  * </ErrorBoundary>
  * ```
+ * 
+ * NOTA: ErrorBoundary foi movido para lib/components/ErrorBoundary.tsx
  */
-import React, { Component, ErrorInfo } from 'react';
 
-interface ErrorBoundaryProps {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
-}
-
-interface ErrorBoundaryState {
-  hasError: boolean;
-  error: Error | null;
-}
-
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-  
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
-  }
-  
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log erro
-    console.error('ErrorBoundary caught:', error, errorInfo);
-    
-    // Callback customizado
-    this.props.onError?.(error, errorInfo);
-    
-    // Trata erro
-    handleError(error, {
-      showToast: true,
-      logToConsole: true,
-      rethrow: false,
-    });
-  }
-  
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback || (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-          <div className="text-center p-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Algo deu errado</h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Ocorreu um erro inesperado. Por favor, recarregue a página.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-primary text-white rounded-md hover:bg-primary/90"
-            >
-              Recarregar Página
-            </button>
-          </div>
-        </div>
-      );
-    }
-    
-    return this.props.children;
-  }
-}
+// Re-exporta ErrorBoundary do arquivo separado
+export { ErrorBoundary } from '../components/ErrorBoundary';
 
 // =============================================================================
 // EXPORTS
@@ -396,7 +342,5 @@ export default {
   withErrorHandler,
   withEventErrorHandler,
   
-  // Components
-  ErrorBoundary,
 };
 

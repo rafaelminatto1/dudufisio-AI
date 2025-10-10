@@ -6,7 +6,8 @@
       "Bash(git commit:*)",
       "Bash(powershell.exe:*)",
       "Bash(find:*)",
-      "Bash(claude mcp add:*)"
+      "Bash(claude mcp add:*)",
+      "Bash(git log:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

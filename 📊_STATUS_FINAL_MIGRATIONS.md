@@ -474,3 +474,4 @@ O CLI está com estes problemas:
 
 **Próximo passo:** Abra o Dashboard e execute as migrations! 🚀
 
+

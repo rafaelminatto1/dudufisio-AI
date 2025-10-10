@@ -120,110 +120,44 @@ export interface PainPoint {
 }
 
 export interface Patient {
-  // === IDs e Código ===
   id: string;
-  code?: string; // Código único PAC-XXXXXX (gerado pelo Supabase)
-  
-  // === Dados Pessoais ===
-  name: string; // Também aceito como 'full_name' no Supabase
+  name: string;
   cpf: string;
-  rg?: string;
-  birthDate: string; // Também aceito como 'birth_date'
-  age?: number; // Calculado automaticamente
-  gender?: 'M' | 'F' | 'male' | 'female' | 'other';
-  marital_status?: string;
-  occupation?: string;
-  
-  // === Contato ===
+  birthDate: string;
   phone: string;
-  phone2?: string; // Telefone alternativo
   email: string;
-  
-  // === Endereço ===
+  emergencyContact: {
+    name: string;
+    phone:string;
+  };
   address: {
     street: string;
     city: string;
     state: string;
     zip: string;
-    number?: string;
-    complement?: string;
-    neighborhood?: string;
   };
-  
-  // === Emergência ===
-  emergencyContact: {
-    name: string;
-    phone: string;
-  };
-  
-  // === Clínico ===
-  blood_type?: string;
-  height?: number; // em cm
-  weight?: number; // em kg
-  bmi?: number; // Calculado automaticamente
-  main_diagnosis?: string;
-  referring_doctor?: string;
-  referring_doctor_crm?: string;
+  // FIX: Use PatientStatus enum for consistency.
+  status: PatientStatus;
+  lastVisit: string;
+  registrationDate: string;
+  avatarUrl: string;
+  consentGiven: boolean;
+  whatsappConsent: 'opt-in' | 'opt-out';
   allergies?: string;
   medicalAlerts?: string;
-  medical_history?: any; // JSONB do Supabase
-  conditions?: Condition[];
   surgeries?: Surgery[];
-  
-  // === Sessões e Métricas ===
-  session_progress?: any; // JSONB
-  treatment_metrics?: any; // JSONB
-  trackedMetrics?: TrackedMetric[];
-  
-  // === Financeiro e Convênio ===
-  insurance?: any; // JSONB - substituiu insuranceType
-  insuranceType?: 'private' | 'public' | 'none'; // DEPRECATED - usar 'insurance'
-  financial_info?: any; // JSONB
-  
-  // === Preferências ===
-  preferred_days_of_week?: string[];
-  preferred_time_slots?: string[];
-  preferredLocale?: string;
-  preferredChannel?: CommunicationChannel;
-  preferredName?: string;
-  
-  // === Status e Datas ===
-  status: PatientStatus;
-  registration_date?: string; // Também aceito como 'registrationDate'
-  registrationDate: string; // DEPRECATED - usar 'registration_date'
-  first_appointment_date?: string;
-  last_appointment_date?: string; // Também aceito como 'lastVisit'
-  lastVisit: string; // DEPRECATED - usar 'last_appointment_date'
-  
-  // === Consentimento LGPD ===
-  has_consent_form?: boolean;
-  has_data_privacy_consent?: boolean; // Substituiu 'consentGiven'
-  consentGiven: boolean; // DEPRECATED - usar 'has_data_privacy_consent'
-  whatsappConsent: 'opt-in' | 'opt-out';
-  
-  // === Outros ===
-  observations?: string;
-  internal_notes?: string;
-  tags?: string[];
-  avatarUrl: string; // Também aceito como 'avatar_url'
-  
-  // === Anexos e Comunicação ===
+  conditions?: Condition[];
   attachments?: PatientAttachment[];
+  trackedMetrics?: TrackedMetric[];
   communicationLogs?: CommunicationLog[];
   painPoints?: PainPoint[];
-  
-  // === Metadata ===
-  created_by?: string;
-  created_at?: string;
-  updated_by?: string;
-  updated_at?: string;
-  deleted_at?: string | null; // Soft delete
+  preferredLocale?: string; // Added for internationalization
+  preferredChannel?: CommunicationChannel; // Added for communication preferences
+  preferredName?: string; // Preferred name for communications
+  age?: number; // Age for AI scheduling predictions
+  gender?: 'M' | 'F' | 'other'; // Gender for AI scheduling predictions
+  insuranceType?: 'private' | 'public' | 'none'; // Insurance type for AI scheduling predictions
 }
-
-// === Type Helpers para Patient ===
-export type PatientInput = Omit<Patient, 'id' | 'code' | 'age' | 'bmi' | 'created_at' | 'updated_at'>;
-export type PatientUpdate = Partial<PatientInput>;
-export type PatientSupabase = Patient; // Alias para compatibilidade
 
 export type PatientAlertType = 'abandonment' | 'highRisk' | 'attention';
 
@@ -262,22 +196,17 @@ export interface PatientSummary {
 
 export enum AppointmentStatus {
   Scheduled = 'Agendado',
-  Confirmed = 'Confirmado', // NOVO
-  InProgress = 'Em Andamento', // NOVO
   Completed = 'Realizado',
   Canceled = 'Cancelado',
-  Cancelled = 'Cancelado', // Alias para Canceled
   NoShow = 'Faltou'
 }
 
 // Mapping for AppointmentStatus to lowercase keys for UI components
 export const AppointmentStatusMap = {
   scheduled: AppointmentStatus.Scheduled,
-  confirmed: AppointmentStatus.Confirmed,
-  in_progress: AppointmentStatus.InProgress,
+  confirmed: AppointmentStatus.Scheduled, // Confirmed is a variant of scheduled
   completed: AppointmentStatus.Completed,
-  canceled: AppointmentStatus.Canceled,
-  cancelled: AppointmentStatus.Cancelled,
+  cancelled: AppointmentStatus.Canceled,
   no_show: AppointmentStatus.NoShow
 } as const
 
@@ -327,88 +256,33 @@ export interface RecurrenceTemplate {
 export type ScheduleBlockType = 'ausencia' | 'reuniao' | 'personalizado';
 
 export interface Appointment {
-  // === IDs ===
   id: string;
-  appointment_id?: string; // Alias ou FK para outras tabelas
   patientId: string;
-  patient_id?: string; // Alias Supabase
-  therapistId: string;
-  therapist_id?: string; // Alias Supabase
-  professional_id?: string; // Alias alternativo
-  user_id?: string; // ID do usuário que criou
-  
-  // === Informações do Paciente (cache) ===
   patientName: string;
-  full_name?: string; // Alias
-  patientAvatarUrl: string;
-  patientPhone?: string; // NOVO
-  phone?: string; // Alias
-  email?: string; // Email do paciente
-  
-  // === Informações do Terapeuta ===
-  therapistName?: string;
-  role?: string; // Role do terapeuta
-  specialization?: string; // Especialização
-  
-  // === Agendamento ===
+  patientAvatarUrl: string; // Added for easier access
+  therapistId: string;
+  therapistName?: string; // Added for template rendering
   startTime: Date;
   endTime: Date;
-  appointment_date?: Date; // Alias Supabase
-  scheduledTime?: string; // ISO string
-  duration?: number; // Duração em minutos
-  duration_minutes?: number; // Alias Supabase
-  
-  // === Detalhes ===
+  scheduledTime?: string; // Added for ISO string compatibility
+  duration?: number; // Added for duration in minutes
   title: string;
-  description?: string; // NOVO
   type: AppointmentType;
   status: AppointmentStatus;
-  location?: string;
-  
-  // === Financeiro ===
   value: number;
-  amount?: number; // Alias
-  price?: number; // Alias
   paymentStatus: 'paid' | 'pending';
-  payment_status?: string; // Alias
-  payment_method?: string; // Método de pagamento
-  payment_method_id?: string; // ID do método
-  provider?: string; // Provedor de pagamento
-  provider_transaction_id?: string; // ID da transação
-  transaction_type?: string; // Tipo de transação
-  customer_id?: string; // ID do cliente
-  currency?: string; // Moeda
-  
-  // === Observações ===
   observations?: string;
-  notes?: string; // NOVO
-  
-  // === Recorrência ===
+  location?: string; // Added for appointment location
   seriesId?: string;
   recurrenceRule?: RecurrenceRule;
-  recurrence_rule?: any; // Alias JSONB
   sessionNumber?: number;
   totalSessions?: number;
   recurrenceTemplateId?: string;
-  parent_appointment_id?: string; // FK para agendamento pai
-  is_recurring?: boolean; // Flag de recorrência
-  
-  // === Procedimentos ===
-  procedures_performed?: string[]; // NOVO
-  purpose_id?: string; // ID do propósito
-  
-  // === Cancelamento ===
-  cancellationReason?: string;
-  
-  // === IA e Predições ===
-  reminderSent?: boolean;
-  confirmationReceived?: boolean;
-  
-  // === Metadata ===
   metadata?: Record<string, any>;
-  created_by?: string;
-  created_at?: string;
-  updated_at?: string;
+  cancellationReason?: string;
+  reminderSent?: boolean; // For AI scheduling no-show predictions
+  confirmationReceived?: boolean; // For AI scheduling no-show predictions
+  created_by?: string; // For tracking who created the appointment
 }
 
 export interface EnrichedAppointment extends Appointment {
