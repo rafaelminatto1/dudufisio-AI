@@ -284,3 +284,14 @@ export const logAssignment = (assignmentId: string, patientName: string, exercis
     metadata: { patientName, exerciseName }
   });
 };
+
+// Export auditHelpers para compatibilidade
+export const auditHelpers = {
+  logExerciseCreate,
+  logExerciseUpdate,
+  logExerciseDelete,
+  logExerciseDuplicate,
+  logProtocolCreate,
+  logAssignment,
+  auditService
+};
