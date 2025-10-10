@@ -104,6 +104,7 @@ const getFilteredNavigation = (userRole, unreadCount) => {
                     { to: '/subscriptions', icon: CreditCard, label: 'Assinaturas' },
                 ],
                 systemNav: [
+                    { to: '/crm', icon: Target, label: 'CRM & Leads' },
                     { to: '/whatsapp', icon: MessageSquare, label: 'WhatsApp Business' },
                     { to: '/email-inativos', icon: Mail, label: 'Email para Inativos' },
                     { to: '/backup-management', icon: HardDrive, label: 'Gerenciamento de Backup' },
