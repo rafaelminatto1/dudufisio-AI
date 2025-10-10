@@ -63,7 +63,6 @@ const exerciseSchema = z.object({
   exerciseName: z.string().min(3, "Mínimo 3 caracteres"),
   prompt: z.string().min(10, "Mínimo 10 caracteres para o prompt"),
   modality: z.string(),
-  tool: z.string(),
 });
 
 type FormValues = z.infer<typeof exerciseSchema>;
@@ -72,25 +71,12 @@ type FormValues = z.infer<typeof exerciseSchema>;
 type FlowStep = 'config' | 'generating' | 'video_ready' | 'success';
 
 // Dados mock
-const TOOLS = {
-  capcut: {
-    name: 'CapCut AI',
-    description: 'Gerador de vídeo com IA integrado',
-    quality: 'HD (1080p)',
-    maxDuration: 60,
-  },
-  hyperai: {
-    name: 'Hyper AI',
-    description: 'Gerador de vídeo com IA em alta qualidade',
-    quality: '4K',
-    maxDuration: 20,
-  },
-  sora: {
-    name: 'Sora 2',
-    description: 'Gerador de vídeo premium com IA avançada',
-    quality: '4K Ultra',
-    maxDuration: 60,
-  }
+const GEMINI_VEO = {
+  id: 'gemini-veo',
+  name: 'Google Gemini Veo 2.0',
+  description: 'Geração real de vídeos usando API oficial do Google',
+  quality: 'HD (1080p)',
+  maxDuration: 10,
 };
 
 const MODALITIES = {
@@ -174,12 +160,10 @@ const FreeVideoGeneratorReal: React.FC = () => {
       exerciseName: '',
       prompt: '',
       modality: 'jiujitsu',
-      tool: 'capcut',
     },
   });
 
-  const watchTool = form.watch('tool');
-  const toolInfo = TOOLS[watchTool as keyof typeof TOOLS];
+  const toolInfo = GEMINI_VEO;
 
   // Mensagens rotativas durante a geração
   const loadingMessages = [
@@ -251,7 +235,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
       const videoUrl = URL.createObjectURL(videoBlob);
       
       // 4. Gerar thumbnail (placeholder por enquanto)
-      const seed = `${values.exerciseName.toLowerCase()}-${values.modality}-${values.tool}`;
+      const seed = `${values.exerciseName.toLowerCase()}-${values.modality}-gemini`;
       let hash = 0;
       for (let i = 0; i < seed.length; i++) {
         const char = seed.charCodeAt(i);
@@ -332,8 +316,8 @@ const FreeVideoGeneratorReal: React.FC = () => {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Gerador de Vídeos com IA Gemini Veo 2.0"
-        subtitle="Crie vídeos personalizados de exercícios usando inteligência artificial avançada"
+        title="Gerador de Vídeos Gemini Veo 2.0"
+        subtitle="Geração real de vídeos usando Google Gemini Veo 2.0 - API oficial"
       />
 
       {/* Progress Indicator */}
@@ -424,7 +408,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="modality"
@@ -449,39 +433,30 @@ const FreeVideoGeneratorReal: React.FC = () => {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="tool"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Motor de IA</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {Object.entries(TOOLS).map(([key, tool]) => (
-                              <SelectItem key={key} value={key}>
-                                {tool.name} ({tool.quality})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormDescription className="text-xs">
-                          {toolInfo.description}
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
+                  <FormItem>
+                    <FormLabel>Motor de IA</FormLabel>
+                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span className="font-medium text-blue-700 dark:text-blue-300">
+                          {toolInfo.name}
+                        </span>
+                        <span className="text-sm text-blue-600 dark:text-blue-400">
+                          ({toolInfo.quality})
+                        </span>
+                      </div>
+                      <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                        {toolInfo.description}
+                      </p>
+                    </div>
+                  </FormItem>
                 </div>
 
                 <Alert>
                   <Brain className="h-4 w-4" />
                   <AlertTitle>Como funciona a IA</AlertTitle>
                   <AlertDescription>
-                    A IA vai analisar seu exercício e modalidade para gerar um vídeo específico e personalizado. 
+                    O Google Gemini Veo 2.0 vai analisar seu exercício e modalidade para gerar um vídeo específico e personalizado. 
                     Cada combinação gera um vídeo único baseado no que você escreveu.
                   </AlertDescription>
                 </Alert>
@@ -500,7 +475,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
                   ) : (
                     <>
                       <Brain className="w-4 h-4 mr-2" />
-                      Gerar Vídeo Personalizado com IA
+                      Gerar Vídeo com Gemini Veo 2.0
                     </>
                   )}
                 </Button>
@@ -519,7 +494,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
               IA Analisando seu Exercício...
             </CardTitle>
             <CardDescription>
-              {selectedTool?.name} está criando um vídeo personalizado baseado no seu prompt
+              Google Gemini Veo 2.0 está criando um vídeo personalizado baseado no seu prompt
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -623,7 +598,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
                 <div className="text-sm text-muted-foreground">
                   <p><strong>Exercício:</strong> {pendingFormData?.exerciseName}</p>
                   <p><strong>Modalidade:</strong> {MODALITIES[pendingFormData?.modality as keyof typeof MODALITIES]}</p>
-                  <p><strong>Motor IA:</strong> {selectedTool?.name}</p>
+                  <p><strong>Motor IA:</strong> {toolInfo.name}</p>
                   <p><strong>Duração:</strong> {videoDuration}</p>
                 </div>
                 
@@ -773,7 +748,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
       {currentStep !== 'success' && (
         <Card className="bg-gradient-to-br from-purple-50 to-blue-50">
           <CardHeader>
-            <CardTitle className="text-sm">🧠 IA Personalizada</CardTitle>
+            <CardTitle className="text-sm">🤖 Google Gemini Veo 2.0</CardTitle>
           </CardHeader>
           <CardContent className="text-xs space-y-2">
             {currentStep === 'config' && (
