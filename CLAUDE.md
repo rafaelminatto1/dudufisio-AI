@@ -2,6 +2,10 @@
 
 Este arquivo fornece orientações para Claude Code (claude.ai/code) ao trabalhar com o código neste repositório do DuduFisio-AI.
 
+> **📌 IMPORTANTE:** Para contexto completo e atualizado, leia **[AI_CONTEXT.md](./AI_CONTEXT.md)** que contém guia detalhado para LLMs.
+
+> **📚 DOCUMENTAÇÃO COMPLETA:** Consulte [INDEX.md](./INDEX.md) para navegar em toda a documentação.
+
 ## Development Commands
 
 ### Build and Development

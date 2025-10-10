@@ -178,3 +178,5 @@ export const LeadsKanban = ({ clinicId, onLeadClick }) => {
         </div>))}
     </div>);
 };
+
+export default LeadsKanban;

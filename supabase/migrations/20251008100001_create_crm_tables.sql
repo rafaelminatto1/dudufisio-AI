@@ -201,10 +201,141 @@ CREATE TABLE IF NOT EXISTS message_templates (
   CONSTRAINT message_templates_whatsapp_status_check CHECK (whatsapp_template_status IN ('pending', 'approved', 'rejected', 'draft') OR whatsapp_template_status IS NULL)
 );
 
+-- Adicionar colunas faltantes se não existirem
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'deleted_at') THEN
+        ALTER TABLE message_templates ADD COLUMN deleted_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'clinic_id') THEN
+        ALTER TABLE message_templates ADD COLUMN clinic_id UUID REFERENCES clinics(id) ON DELETE CASCADE;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'description') THEN
+        ALTER TABLE message_templates ADD COLUMN description TEXT;
+    END IF;
+    
+    -- Adicionar name e category se não existirem (com valores padrão temporários)
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'name' AND column_name = 'name') THEN
+        ALTER TABLE message_templates ADD COLUMN name VARCHAR(255);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'subject') THEN
+        ALTER TABLE message_templates ADD COLUMN subject VARCHAR(255);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'body') THEN
+        ALTER TABLE message_templates ADD COLUMN body TEXT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'whatsapp_template_id') THEN
+        ALTER TABLE message_templates ADD COLUMN whatsapp_template_id VARCHAR(255);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'whatsapp_template_language') THEN
+        ALTER TABLE message_templates ADD COLUMN whatsapp_template_language VARCHAR(10) DEFAULT 'pt_BR';
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'whatsapp_template_status') THEN
+        ALTER TABLE message_templates ADD COLUMN whatsapp_template_status VARCHAR(50);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'whatsapp_template_components') THEN
+        ALTER TABLE message_templates ADD COLUMN whatsapp_template_components JSONB;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'requires_approval') THEN
+        ALTER TABLE message_templates ADD COLUMN requires_approval BOOLEAN DEFAULT FALSE;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'approved_at') THEN
+        ALTER TABLE message_templates ADD COLUMN approved_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'approved_by') THEN
+        ALTER TABLE message_templates ADD COLUMN approved_by UUID REFERENCES unified_users(id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'times_used') THEN
+        ALTER TABLE message_templates ADD COLUMN times_used INTEGER DEFAULT 0;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'last_used_at') THEN
+        ALTER TABLE message_templates ADD COLUMN last_used_at TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'conversion_rate') THEN
+        ALTER TABLE message_templates ADD COLUMN conversion_rate DECIMAL(5,2);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'avg_response_time') THEN
+        ALTER TABLE message_templates ADD COLUMN avg_response_time INTEGER;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'created_by') THEN
+        ALTER TABLE message_templates ADD COLUMN created_by UUID REFERENCES unified_users(id);
+    END IF;
+END $$;
+
 -- Índices
-CREATE INDEX idx_templates_clinic_category ON message_templates(clinic_id, category, is_active) WHERE deleted_at IS NULL;
-CREATE INDEX idx_templates_channel ON message_templates(channel, is_active) WHERE deleted_at IS NULL;
-CREATE INDEX idx_templates_whatsapp_status ON message_templates(whatsapp_template_status) WHERE whatsapp_template_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_templates_clinic_category ON message_templates(clinic_id, category, is_active) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_templates_channel ON message_templates(channel, is_active) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_templates_whatsapp_status ON message_templates(whatsapp_template_status) WHERE whatsapp_template_id IS NOT NULL;
 
 -- Comentários
 COMMENT ON TABLE message_templates IS 'Templates de mensagens para automação e uso manual';

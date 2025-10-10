@@ -3,7 +3,7 @@
  * Integrado com WhatsApp e Supabase
  */
 
-import { supabase } from '../supabase/client';
+import { supabase } from '../../lib/supabaseClient';
 
 export interface Lead {
   id: string;

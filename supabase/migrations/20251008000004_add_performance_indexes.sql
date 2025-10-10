@@ -10,14 +10,24 @@ BEGIN;
 -- APPOINTMENTS - Queries de agendamento
 -- ============================================================================
 
--- Busca de appointments por terapeuta e data
-CREATE INDEX IF NOT EXISTS idx_appointments_therapist_date 
-  ON appointments(therapist_id, scheduled_at DESC) 
-  WHERE status != 'cancelled' AND status != 'no_show';
+-- Busca de appointments por terapeuta e data (se coluna scheduled_at existir)
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'scheduled_at') THEN
+    CREATE INDEX IF NOT EXISTS idx_appointments_therapist_date 
+      ON appointments(therapist_id, scheduled_at DESC) 
+      WHERE status != 'cancelled' AND status != 'no_show';
+  END IF;
+END $$;
 
--- Busca de appointments por paciente e data
-CREATE INDEX IF NOT EXISTS idx_appointments_patient_date 
-  ON appointments(patient_id, scheduled_at DESC);
+-- Busca de appointments por paciente e data (se coluna scheduled_at existir)
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'scheduled_at') THEN
+    CREATE INDEX IF NOT EXISTS idx_appointments_patient_date 
+      ON appointments(patient_id, scheduled_at DESC);
+  END IF;
+END $$;
 
 -- Busca de appointments por clínica e data (se coluna existir)
 -- CREATE INDEX IF NOT EXISTS idx_appointments_clinic_date 
@@ -211,11 +221,19 @@ CREATE INDEX IF NOT EXISTS idx_financial_goals_active
 -- Se existir tabela de mensagens
 DO $$ 
 BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'messages') THEN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'messages' AND table_schema = 'public')
+     AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'messages' AND column_name = 'recipient_id' AND table_schema = 'public')
+     AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'messages' AND column_name = 'created_at' AND table_schema = 'public')
+     AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'messages' AND column_name = 'read_at' AND table_schema = 'public') THEN
     EXECUTE 'CREATE INDEX IF NOT EXISTS idx_messages_recipient_unread 
              ON messages(recipient_id, created_at DESC) 
              WHERE read_at IS NULL';
-    
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'messages' AND table_schema = 'public')
+     AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'messages' AND column_name = 'sender_id' AND table_schema = 'public')
+     AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'messages' AND column_name = 'recipient_id' AND table_schema = 'public')
+     AND EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'messages' AND column_name = 'created_at' AND table_schema = 'public') THEN
     EXECUTE 'CREATE INDEX IF NOT EXISTS idx_messages_conversation 
              ON messages(sender_id, recipient_id, created_at DESC)';
   END IF;
@@ -229,10 +247,15 @@ END $$;
 CREATE INDEX IF NOT EXISTS idx_clinical_docs_content_gin
   ON clinical_documents USING gin(content);
 
--- Metadata em appointments
-CREATE INDEX IF NOT EXISTS idx_appointments_metadata_gin
-  ON appointments USING gin(metadata)
-  WHERE metadata IS NOT NULL AND metadata != '{}'::jsonb;
+-- Metadata em appointments (se coluna metadata existir)
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'metadata') THEN
+    CREATE INDEX IF NOT EXISTS idx_appointments_metadata_gin
+      ON appointments USING gin(metadata)
+      WHERE metadata IS NOT NULL AND metadata != '{}'::jsonb;
+  END IF;
+END $$;
 
 -- Settings em clinics
 CREATE INDEX IF NOT EXISTS idx_clinics_settings_gin
@@ -245,12 +268,26 @@ CREATE INDEX IF NOT EXISTS idx_unified_users_permissions_gin
   WHERE permissions IS NOT NULL AND permissions != '[]'::jsonb;
 
 -- ============================================================================
--- COMENTÁRIOS
+-- COMENTÁRIOS (apenas para índices que existem)
 -- ============================================================================
 
-COMMENT ON INDEX idx_appointments_therapist_date IS 'Otimiza busca de appointments por terapeuta e data';
-COMMENT ON INDEX idx_clinical_docs_patient_created IS 'Otimiza busca de prontuário por paciente';
-COMMENT ON INDEX idx_exercise_prescriptions_patient_active IS 'Otimiza busca de prescrições ativas do paciente';
-COMMENT ON INDEX idx_audit_trail_recent IS 'Índice parcial para auditoria recente (30 dias)';
+DO $$ 
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_appointments_therapist_date') THEN
+    EXECUTE 'COMMENT ON INDEX idx_appointments_therapist_date IS ''Otimiza busca de appointments por terapeuta e data''';
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_clinical_docs_patient_created') THEN
+    EXECUTE 'COMMENT ON INDEX idx_clinical_docs_patient_created IS ''Otimiza busca de prontuário por paciente''';
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_exercise_prescriptions_patient_active') THEN
+    EXECUTE 'COMMENT ON INDEX idx_exercise_prescriptions_patient_active IS ''Otimiza busca de prescrições ativas do paciente''';
+  END IF;
+  
+  IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_audit_trail_recent') THEN
+    EXECUTE 'COMMENT ON INDEX idx_audit_trail_recent IS ''Índice parcial para auditoria recente (30 dias)''';
+  END IF;
+END $$;
 
 COMMIT;

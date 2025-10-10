@@ -6,19 +6,70 @@
 -- 1. Tabela de Templates de Mensagens
 CREATE TABLE IF NOT EXISTS message_templates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL, -- 'follow_up', 'welcome', 'reminder', 'closing'
-    subject VARCHAR(255),
-    content TEXT NOT NULL,
-    variables JSONB DEFAULT '[]'::jsonb, -- Ex: ['name', 'date', 'time']
-    channel VARCHAR(50) NOT NULL CHECK (channel IN ('whatsapp', 'email', 'sms')),
-    is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_message_templates_category ON message_templates(category);
-CREATE INDEX idx_message_templates_channel ON message_templates(channel);
+-- Adicionar colunas se não existirem
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'name') THEN
+        ALTER TABLE message_templates ADD COLUMN name VARCHAR(255) NOT NULL DEFAULT 'Sem título';
+        -- Remover default depois de adicionar
+        ALTER TABLE message_templates ALTER COLUMN name DROP DEFAULT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'category') THEN
+        ALTER TABLE message_templates ADD COLUMN category VARCHAR(100) NOT NULL DEFAULT 'follow_up';
+        ALTER TABLE message_templates ALTER COLUMN category DROP DEFAULT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'subject') THEN
+        ALTER TABLE message_templates ADD COLUMN subject VARCHAR(255);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'content') THEN
+        ALTER TABLE message_templates ADD COLUMN content TEXT NOT NULL DEFAULT '';
+        ALTER TABLE message_templates ALTER COLUMN content DROP DEFAULT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'variables') THEN
+        ALTER TABLE message_templates ADD COLUMN variables JSONB DEFAULT '[]'::jsonb;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'channel') THEN
+        ALTER TABLE message_templates ADD COLUMN channel VARCHAR(50) NOT NULL DEFAULT 'whatsapp' CHECK (channel IN ('whatsapp', 'email', 'sms'));
+        ALTER TABLE message_templates ALTER COLUMN channel DROP DEFAULT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'message_templates' 
+                   AND column_name = 'is_active') THEN
+        ALTER TABLE message_templates ADD COLUMN is_active BOOLEAN DEFAULT true;
+    END IF;
+END $$;
+
+CREATE INDEX IF NOT EXISTS idx_message_templates_category ON message_templates(category);
+CREATE INDEX IF NOT EXISTS idx_message_templates_channel ON message_templates(channel);
 
 -- 2. Tabela de Regras de Automação
 CREATE TABLE IF NOT EXISTS automation_rules (

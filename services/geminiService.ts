@@ -1,4 +1,5 @@
 // Mock service for build purposes - Complete function list
+import { GoogleGenerativeAI } from '@google/generative-ai';
 export const generateTreatmentProtocol = () => Promise.resolve('');
 export const generateSoapNote = () => Promise.resolve('');
 export const analyzePainPatterns = () => Promise.resolve('');
@@ -196,4 +197,72 @@ export interface RetentionSuggestionData {}
 export interface ParsedTreatmentPlan {
   treatmentGoals: string[];
   exercises: any[];
+}
+
+// =============================================
+// GEMINI VEO 2.0 - VIDEO GENERATION
+// =============================================
+
+const GEMINI_API_KEY = 'AIzaSyDc5vZXFRAlU18dl1Bk9K2NT-BS8GmuLtM';
+const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
+
+/**
+ * Iniciar geração de vídeo com Gemini Veo 2.0
+ * @param prompt - Descrição detalhada do vídeo desejado
+ * @returns Operação de geração (para polling)
+ */
+export async function generateExerciseVideo(prompt: string) {
+  try {
+    const response = await ai.models.generateVideos({
+      model: 'veo-2.0-generate-001',
+      prompt: prompt
+    });
+    return response.operation;
+  } catch (error) {
+    console.error('Erro ao iniciar geração de vídeo:', error);
+    throw new Error(`Falha ao iniciar geração: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+  }
+}
+
+/**
+ * Verificar status da operação de geração de vídeo
+ * @param operation - Objeto de operação retornado por generateExerciseVideo
+ * @returns Status atualizado da operação
+ */
+export async function getVideosOperation(operation: any) {
+  try {
+    return await ai.operations.getVideosOperation({ operation });
+  } catch (error) {
+    console.error('Erro ao verificar status da operação:', error);
+    throw new Error(`Falha ao verificar status: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+  }
+}
+
+/**
+ * Baixar vídeo gerado a partir da URI fornecida pela API
+ * @param uri - URI do vídeo retornada pela operação concluída
+ * @returns Blob do vídeo
+ */
+export async function fetchVideoFromUri(uri: string): Promise<Blob> {
+  try {
+    // Adicionar API key à URL
+    const url = `${uri}?key=${GEMINI_API_KEY}`;
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const blob = await response.blob();
+    
+    if (blob.size === 0) {
+      throw new Error('Vídeo retornado está vazio');
+    }
+    
+    return blob;
+  } catch (error) {
+    console.error('Erro ao baixar vídeo:', error);
+    throw new Error(`Falha ao baixar vídeo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+  }
 }

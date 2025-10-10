@@ -4,7 +4,7 @@
  */
 
 import { leadService } from './leadService';
-import { supabase } from '../supabase/client';
+import { supabase } from '../../lib/supabaseClient';
 
 export interface WhatsAppMessage {
   from: string;

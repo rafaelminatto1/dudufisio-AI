@@ -53,8 +53,9 @@ END $$;
 -- 2. Validações em appointments
 DO $$ 
 BEGIN
-  -- Scheduled_at deve ser após created_at
-  IF NOT EXISTS (
+  -- Scheduled_at deve ser após created_at (se coluna existir)
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'scheduled_at')
+     AND NOT EXISTS (
     SELECT 1 FROM information_schema.table_constraints 
     WHERE constraint_name = 'appointments_logical_scheduled_time'
   ) THEN
@@ -63,8 +64,9 @@ BEGIN
       CHECK (scheduled_at >= created_at - INTERVAL '1 day'); -- permite ajustes retroativos de 1 dia
   END IF;
 
-  -- Status válido
-  IF NOT EXISTS (
+  -- Status válido (se coluna existir)
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'status')
+     AND NOT EXISTS (
     SELECT 1 FROM information_schema.table_constraints 
     WHERE constraint_name = 'appointments_valid_status'
   ) THEN
@@ -73,8 +75,9 @@ BEGIN
       CHECK (status IN ('scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'));
   END IF;
 
-  -- Payment status válido
-  IF NOT EXISTS (
+  -- Payment status válido (se coluna existir)
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'payment_status')
+     AND NOT EXISTS (
     SELECT 1 FROM information_schema.table_constraints 
     WHERE constraint_name = 'appointments_valid_payment_status'
   ) THEN
@@ -83,8 +86,9 @@ BEGIN
       CHECK (payment_status IS NULL OR payment_status IN ('pending', 'paid', 'partial', 'refunded', 'cancelled'));
   END IF;
 
-  -- Value positivo
-  IF NOT EXISTS (
+  -- Value positivo (se coluna existir)
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'appointments' AND column_name = 'value')
+     AND NOT EXISTS (
     SELECT 1 FROM information_schema.table_constraints 
     WHERE constraint_name = 'appointments_positive_value'
   ) THEN

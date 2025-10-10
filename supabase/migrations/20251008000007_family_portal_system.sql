@@ -6,7 +6,7 @@
 
 -- Tabela de membros da família
 CREATE TABLE IF NOT EXISTS family_members (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
   full_name TEXT NOT NULL,
@@ -33,7 +33,7 @@ CREATE INDEX idx_family_members_active ON family_members(is_active);
 
 -- Tabela de log de acessos (LGPD)
 CREATE TABLE IF NOT EXISTS family_portal_access_log (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   family_member_id UUID NOT NULL REFERENCES family_members(id) ON DELETE CASCADE,
   action TEXT NOT NULL,
   resource_accessed TEXT,

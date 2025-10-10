@@ -74,21 +74,80 @@ CREATE POLICY "Therapists can update payments for their patients" ON public.paym
         )
     );
 
--- Create financial_transactions table
-CREATE TABLE IF NOT EXISTS public.financial_transactions (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    clinic_id UUID,
-    type VARCHAR(50) NOT NULL CHECK (type IN ('income', 'expense', 'transfer', 'refund')),
-    category VARCHAR(100) NOT NULL,
-    amount DECIMAL(10,2) NOT NULL,
-    currency VARCHAR(3) DEFAULT 'BRL' NOT NULL,
-    description TEXT,
-    reference_id UUID, -- Can reference payments, appointments, etc.
-    reference_type VARCHAR(50), -- 'payment', 'appointment', 'refund', etc.
-    metadata JSONB DEFAULT '{}',
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Create financial_transactions table or alter existing one
+DO $$ 
+BEGIN
+    -- Create table if it doesn't exist
+    CREATE TABLE IF NOT EXISTS public.financial_transactions (
+        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+    );
+    
+    -- Add columns if they don't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'financial_transactions' 
+                   AND column_name = 'clinic_id') THEN
+        ALTER TABLE public.financial_transactions ADD COLUMN clinic_id UUID;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'financial_transactions' 
+                   AND column_name = 'type') THEN
+        ALTER TABLE public.financial_transactions ADD COLUMN type VARCHAR(50) NOT NULL DEFAULT 'income' CHECK (type IN ('income', 'expense', 'transfer', 'refund'));
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'financial_transactions' 
+                   AND column_name = 'category') THEN
+        ALTER TABLE public.financial_transactions ADD COLUMN category VARCHAR(100) NOT NULL DEFAULT 'other';
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'financial_transactions' 
+                   AND column_name = 'amount') THEN
+        ALTER TABLE public.financial_transactions ADD COLUMN amount DECIMAL(10,2) NOT NULL DEFAULT 0;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'financial_transactions' 
+                   AND column_name = 'currency') THEN
+        ALTER TABLE public.financial_transactions ADD COLUMN currency VARCHAR(3) DEFAULT 'BRL' NOT NULL;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'financial_transactions' 
+                   AND column_name = 'description') THEN
+        ALTER TABLE public.financial_transactions ADD COLUMN description TEXT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'financial_transactions' 
+                   AND column_name = 'reference_id') THEN
+        ALTER TABLE public.financial_transactions ADD COLUMN reference_id UUID;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'financial_transactions' 
+                   AND column_name = 'reference_type') THEN
+        ALTER TABLE public.financial_transactions ADD COLUMN reference_type VARCHAR(50);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'financial_transactions' 
+                   AND column_name = 'metadata') THEN
+        ALTER TABLE public.financial_transactions ADD COLUMN metadata JSONB DEFAULT '{}';
+    END IF;
+END $$;
 
 -- Create indexes for financial_transactions
 CREATE INDEX IF NOT EXISTS idx_financial_transactions_clinic_id ON public.financial_transactions(clinic_id);
@@ -110,23 +169,94 @@ CREATE POLICY "Admins can manage all financial transactions" ON public.financial
         )
     );
 
--- Create sessions table (for teleconsulta)
-CREATE TABLE IF NOT EXISTS public.sessions (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    appointment_id UUID REFERENCES public.appointments(id) ON DELETE CASCADE,
-    therapist_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
-    patient_id UUID REFERENCES public.patients(id) ON DELETE CASCADE,
-    session_type VARCHAR(50) DEFAULT 'teleconsulta' NOT NULL,
-    status VARCHAR(20) DEFAULT 'scheduled' NOT NULL CHECK (status IN ('scheduled', 'in_progress', 'completed', 'cancelled', 'no_show')),
-    start_time TIMESTAMPTZ,
-    end_time TIMESTAMPTZ,
-    duration_minutes INTEGER,
-    notes TEXT,
-    recording_url TEXT,
-    metadata JSONB DEFAULT '{}',
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Create sessions table (for teleconsulta) or alter existing one
+DO $$ 
+BEGIN
+    -- Create table if it doesn't exist
+    CREATE TABLE IF NOT EXISTS public.sessions (
+        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+    );
+    
+    -- Add columns if they don't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'appointment_id') THEN
+        ALTER TABLE public.sessions ADD COLUMN appointment_id UUID REFERENCES public.appointments(id) ON DELETE CASCADE;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'therapist_id') THEN
+        ALTER TABLE public.sessions ADD COLUMN therapist_id UUID REFERENCES public.users(id) ON DELETE CASCADE;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'patient_id') THEN
+        ALTER TABLE public.sessions ADD COLUMN patient_id UUID REFERENCES public.patients(id) ON DELETE CASCADE;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'session_type') THEN
+        ALTER TABLE public.sessions ADD COLUMN session_type VARCHAR(50) DEFAULT 'teleconsulta' NOT NULL;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'status') THEN
+        ALTER TABLE public.sessions ADD COLUMN status VARCHAR(20) DEFAULT 'scheduled' NOT NULL CHECK (status IN ('scheduled', 'in_progress', 'completed', 'cancelled', 'no_show'));
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'start_time') THEN
+        ALTER TABLE public.sessions ADD COLUMN start_time TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'end_time') THEN
+        ALTER TABLE public.sessions ADD COLUMN end_time TIMESTAMPTZ;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'duration_minutes') THEN
+        ALTER TABLE public.sessions ADD COLUMN duration_minutes INTEGER;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'notes') THEN
+        ALTER TABLE public.sessions ADD COLUMN notes TEXT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'recording_url') THEN
+        ALTER TABLE public.sessions ADD COLUMN recording_url TEXT;
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                   WHERE table_schema = 'public' 
+                   AND table_name = 'sessions' 
+                   AND column_name = 'metadata') THEN
+        ALTER TABLE public.sessions ADD COLUMN metadata JSONB DEFAULT '{}';
+    END IF;
+END $$;
 
 -- Create indexes for sessions
 CREATE INDEX IF NOT EXISTS idx_sessions_appointment_id ON public.sessions(appointment_id);
@@ -179,14 +309,18 @@ END;
 $$ language 'plpgsql';
 
 -- Create triggers for updated_at columns
+DROP TRIGGER IF EXISTS update_payments_updated_at ON public.payments;
 CREATE TRIGGER update_payments_updated_at BEFORE UPDATE ON public.payments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_financial_transactions_updated_at ON public.financial_transactions;
 CREATE TRIGGER update_financial_transactions_updated_at BEFORE UPDATE ON public.financial_transactions
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_sessions_updated_at ON public.sessions;
 CREATE TRIGGER update_sessions_updated_at BEFORE UPDATE ON public.sessions
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_appointments_updated_at ON public.appointments;
 CREATE TRIGGER update_appointments_updated_at BEFORE UPDATE ON public.appointments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

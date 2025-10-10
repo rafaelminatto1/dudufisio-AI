@@ -3,7 +3,7 @@
 
 -- Tabela de Leads (prospects que ainda não são pacientes)
 CREATE TABLE IF NOT EXISTS leads (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- Dados básicos
   name VARCHAR(255) NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS leads (
 
 -- Tabela de Interações com Leads
 CREATE TABLE IF NOT EXISTS lead_interactions (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   lead_id UUID REFERENCES leads(id) ON DELETE CASCADE,
 
   -- Tipo de interação
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS lead_interactions (
 
 -- Tabela de Pipeline de Vendas
 CREATE TABLE IF NOT EXISTS sales_pipeline (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(255) NOT NULL,
   description TEXT,
   stages JSONB NOT NULL, -- array de stages com configs

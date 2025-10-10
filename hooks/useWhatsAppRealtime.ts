@@ -3,7 +3,7 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import { supabase } from '../services/supabase/client';
+import { supabase } from '../lib/supabaseClient';
 import { RealtimeChannel } from '@supabase/supabase-js';
 
 export interface WhatsAppMessage {

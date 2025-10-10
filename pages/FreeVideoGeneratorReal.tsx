@@ -1,9 +1,11 @@
 // pages/FreeVideoGeneratorReal.tsx
-// Sistema que gera vídeos REAIS baseados no prompt escrito
+// Sistema que gera vídeos REAIS baseados no prompt escrito usando Gemini Veo 2.0
 import React, { useState, useCallback, useEffect } from 'react';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { generateExerciseVideo, getVideosOperation, fetchVideoFromUri } from '../services/geminiService';
+import AttachVideoModal from '../components/video/AttachVideoModal';
 import {
   Film,
   Wand2,
@@ -32,6 +34,7 @@ import PageHeader from '../components/PageHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import { Textarea } from '../components/ui/textarea';
 import { Progress } from '../components/ui/progress';
 import {
   Form,
@@ -58,6 +61,7 @@ import {
 // Schema simplificado
 const exerciseSchema = z.object({
   exerciseName: z.string().min(3, "Mínimo 3 caracteres"),
+  prompt: z.string().min(10, "Mínimo 10 caracteres para o prompt"),
   modality: z.string(),
   tool: z.string(),
 });
@@ -160,11 +164,15 @@ const FreeVideoGeneratorReal: React.FC = () => {
   const [generatedThumbnailUrl, setGeneratedThumbnailUrl] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [videoDuration, setVideoDuration] = useState('');
+  const [loadingMessage, setLoadingMessage] = useState('');
+  const [showAttachModal, setShowAttachModal] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(exerciseSchema),
     defaultValues: {
       exerciseName: '',
+      prompt: '',
       modality: 'jiujitsu',
       tool: 'capcut',
     },
@@ -173,57 +181,109 @@ const FreeVideoGeneratorReal: React.FC = () => {
   const watchTool = form.watch('tool');
   const toolInfo = TOOLS[watchTool as keyof typeof TOOLS];
 
-  // Função principal de geração - VERSÃO REAL
-  const startRealGeneration = useCallback(() => {
+  // Mensagens rotativas durante a geração
+  const loadingMessages = [
+    "🧠 Aquecendo a IA...",
+    "📝 Analisando prompt...",
+    "🎬 Renderizando frames...",
+    "🎨 Aplicando física realista...",
+    "✨ Finalizando vídeo...",
+    "⏳ Processando (pode levar 2-5 minutos)...",
+    "🎥 Gerando cenas...",
+    "🌟 Quase pronto..."
+  ];
+
+  // Função principal de geração - VERSÃO REAL com Gemini Veo 2.0
+  const startRealGeneration = useCallback(async () => {
     if (isGenerating) return;
     
     setIsGenerating(true);
     setCurrentStep('generating');
     setGenerationProgress(0);
+    setGenerationError(null);
     
     const values = form.getValues();
     setPendingFormData(values);
     setSelectedTool(toolInfo);
 
-    // Gerar prompt REAL baseado no exercício
-    const realPrompt = `Cena cinematográfica em tatame profissional de artes marciais. Dois atletas vestindo kimonos (branco e azul) demonstrando ${values.exerciseName} em ${MODALITIES[values.modality as keyof typeof MODALITIES]}. Câmera fixa em ângulo frontal superior. Iluminação natural com luz lateral. Movimento em velocidade normal seguido de repetição em câmera lenta mostrando detalhes da técnica e pegadas corretas. Ambiente limpo, tatame azul profissional. HD, 30fps, 10 segundos.`;
+    // Usar prompt do usuário ou gerar um baseado no exercício se vazio
+    const userPrompt = values.prompt.trim();
+    const realPrompt = userPrompt || `Cena cinematográfica em tatame profissional de artes marciais. Dois atletas vestindo kimonos (branco e azul) demonstrando ${values.exerciseName} em ${MODALITIES[values.modality as keyof typeof MODALITIES]}. Câmera fixa em ângulo frontal superior. Iluminação natural com luz lateral. Movimento em velocidade normal seguido de repetição em câmera lenta mostrando detalhes da técnica e pegadas corretas. Ambiente limpo, tatame azul profissional. HD, 30fps, 10 segundos.`;
     setGeneratedPrompt(realPrompt);
 
-    // Simular progresso de geração com IA
-    const interval = setInterval(() => {
-      setGenerationProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          
-          // Gerar vídeo REAL baseado no prompt
-          setTimeout(() => {
-            const customVideoUrl = generateCustomVideo(values.exerciseName, values.modality, values.tool);
-            const customDuration = generateCustomDuration(values.exerciseName, values.modality);
-            
-            // Gerar thumbnail único baseado no exercício
-            const seed = `${values.exerciseName.toLowerCase()}-${values.modality}-${values.tool}`;
-            let hash = 0;
-            for (let i = 0; i < seed.length; i++) {
-              const char = seed.charCodeAt(i);
-              hash = ((hash << 5) - hash) + char;
-              hash = hash & hash;
-            }
-            const thumbnailId = Math.abs(hash) % 1000;
-            const thumbnailUrl = `https://picsum.photos/800/450?random=${thumbnailId}`;
-            
-            setGeneratedVideoUrl(customVideoUrl);
-            setGeneratedThumbnailUrl(thumbnailUrl);
-            setVideoDuration(customDuration);
-            setCurrentStep('video_ready');
-            setIsGenerating(false);
-          }, 500);
-          
-          return 100;
-        }
-        return prev + 20;
-      });
-    }, 200);
-  }, [form, toolInfo, isGenerating]);
+    try {
+      // 1. Iniciar geração com Gemini Veo 2.0
+      setLoadingMessage(loadingMessages[0]);
+      const operation = await generateExerciseVideo(realPrompt);
+      
+      // 2. Polling loop - verificar status a cada 10 segundos
+      let currentOp = operation;
+      let progressStep = 0;
+      let messageIndex = 0;
+      
+      while (!currentOp.done) {
+        // Atualizar mensagem rotativa
+        messageIndex = (messageIndex + 1) % loadingMessages.length;
+        setLoadingMessage(loadingMessages[messageIndex]);
+        
+        // Atualizar progresso (máximo 95% durante polling)
+        progressStep = Math.min(progressStep + 5, 95);
+        setGenerationProgress(progressStep);
+        
+        // Aguardar 10 segundos antes de verificar novamente
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        
+        // Verificar status da operação
+        currentOp = await getVideosOperation(currentOp);
+      }
+      
+      // 3. Operação concluída - baixar vídeo
+      setLoadingMessage('📥 Baixando vídeo gerado...');
+      setGenerationProgress(95);
+      
+      const downloadLink = currentOp.response?.downloadLink;
+      
+      if (!downloadLink) {
+        throw new Error('Link de download não encontrado na resposta');
+      }
+      
+      const videoBlob = await fetchVideoFromUri(downloadLink);
+      const videoUrl = URL.createObjectURL(videoBlob);
+      
+      // 4. Gerar thumbnail (placeholder por enquanto)
+      const seed = `${values.exerciseName.toLowerCase()}-${values.modality}-${values.tool}`;
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        const char = seed.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+      }
+      const thumbnailId = Math.abs(hash) % 1000;
+      const thumbnailUrl = `https://picsum.photos/800/450?random=${thumbnailId}`;
+      
+      // 5. Atualizar UI com vídeo gerado
+      setGeneratedVideoUrl(videoUrl);
+      setGeneratedThumbnailUrl(thumbnailUrl);
+      setVideoDuration('Gerado por IA');
+      setGenerationProgress(100);
+      setLoadingMessage('✅ Vídeo gerado com sucesso!');
+      
+      // Transição para tela de vídeo pronto
+      setTimeout(() => {
+        setCurrentStep('video_ready');
+        setIsGenerating(false);
+      }, 1000);
+      
+    } catch (error) {
+      console.error('Erro na geração do vídeo:', error);
+      setGenerationError(error instanceof Error ? error.message : 'Erro desconhecido ao gerar vídeo');
+      setIsGenerating(false);
+      setCurrentStep('config');
+      
+      // Mostrar alert ao usuário
+      alert(`Erro ao gerar vídeo: ${error instanceof Error ? error.message : 'Erro desconhecido'}. Por favor, tente novamente.`);
+    }
+  }, [form, toolInfo, isGenerating, loadingMessages]);
 
   const onSubmit = useCallback(
     async (values: FormValues) => {
@@ -242,6 +302,11 @@ const FreeVideoGeneratorReal: React.FC = () => {
   }, [startRealGeneration, isGenerating]);
 
   const handleStartNew = useCallback(() => {
+    // Limpar object URL antes de resetar
+    if (generatedVideoUrl && generatedVideoUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(generatedVideoUrl);
+    }
+    
     setCurrentStep('config');
     setGenerationProgress(0);
     setGeneratedPrompt('');
@@ -250,14 +315,25 @@ const FreeVideoGeneratorReal: React.FC = () => {
     setPendingFormData(null);
     setIsGenerating(false);
     setVideoDuration('');
+    setLoadingMessage('');
+    setGenerationError(null);
     form.reset();
-  }, [form]);
+  }, [form, generatedVideoUrl]);
+
+  // Limpar object URLs quando o componente for desmontado
+  useEffect(() => {
+    return () => {
+      if (generatedVideoUrl && generatedVideoUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(generatedVideoUrl);
+      }
+    };
+  }, [generatedVideoUrl]);
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Geração REAL de Vídeos com IA"
-        subtitle="Sistema que gera vídeos baseados no seu prompt específico!"
+        title="Gerador de Vídeos com IA Gemini Veo 2.0"
+        subtitle="Crie vídeos personalizados de exercícios usando inteligência artificial avançada"
       />
 
       {/* Progress Indicator */}
@@ -319,7 +395,29 @@ const FreeVideoGeneratorReal: React.FC = () => {
                         <Input {...field} placeholder="Ex: Posição Gato Camelo" />
                       </FormControl>
                       <FormDescription>
-                        Descreva exatamente o que você quer ver no vídeo
+                        Nome do exercício ou técnica que será demonstrada
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="prompt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prompt para Geração do Vídeo</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          {...field} 
+                          placeholder="Descreva exatamente o que você quer ver no vídeo. Ex: Dois atletas demonstrando a posição gato camelo em tatame profissional, câmera frontal, iluminação natural, movimento lento mostrando detalhes da técnica..."
+                          rows={4}
+                          className="min-h-[100px]"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Descreva detalhadamente a cena que você quer ver no vídeo gerado
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -457,10 +555,14 @@ const FreeVideoGeneratorReal: React.FC = () => {
                 <Progress value={generationProgress} className="w-64 mx-auto" />
                 <p className="text-sm font-mono text-purple-600">{generationProgress}%</p>
                 
+                {/* Mensagem rotativa */}
+                <div className="text-sm text-purple-700 font-medium animate-pulse">
+                  {loadingMessage}
+                </div>
+                
                 <div className="text-xs text-muted-foreground space-y-1">
-                  {generationProgress < 40 && <p>🧠 Analisando prompt...</p>}
-                  {generationProgress >= 40 && generationProgress < 80 && <p>🎬 Criando cenas personalizadas...</p>}
-                  {generationProgress >= 80 && <p>✨ Finalizando vídeo único...</p>}
+                  <p>⏱️ Tempo estimado: 2-5 minutos</p>
+                  <p>🎬 Gemini Veo 2.0 está criando seu vídeo personalizado...</p>
                 </div>
               </div>
             </div>
@@ -553,32 +655,48 @@ const FreeVideoGeneratorReal: React.FC = () => {
             </Alert>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4">
+              {/* Botão principal: Salvar e Anexar */}
               <Button
-                variant="outline"
                 size="lg"
-                onClick={handleRegenerateVideo}
-                disabled={isGenerating}
-                className="h-20 flex-col space-y-2"
+                onClick={() => setShowAttachModal(true)}
+                className="w-full h-20 bg-sky-600 hover:bg-sky-700 flex-col space-y-2"
               >
-                <RotateCcw className="w-6 h-6" />
+                <Plus className="w-6 h-6" />
                 <div className="text-center">
-                  <div className="font-semibold">Gerar Novo Vídeo</div>
-                  <div className="text-xs text-muted-foreground">Mesmo exercício, novo resultado</div>
+                  <div className="font-semibold">💾 Salvar e Anexar a um Exercício</div>
+                  <div className="text-xs">Adicionar à biblioteca de exercícios</div>
                 </div>
               </Button>
 
-              <Button
-                size="lg"
-                onClick={handleAcceptVideo}
-                className="h-20 bg-green-600 hover:bg-green-700 flex-col space-y-2"
-              >
-                <CheckCheck className="w-6 h-6" />
-                <div className="text-center">
-                  <div className="font-semibold">✅ Aceitar Vídeo</div>
-                  <div className="text-xs">Salvar no sistema</div>
-                </div>
-              </Button>
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleRegenerateVideo}
+                  disabled={isGenerating}
+                  className="h-16 flex-col space-y-2"
+                >
+                  <RotateCcw className="w-5 h-5" />
+                  <div className="text-center">
+                    <div className="text-sm font-semibold">Gerar Novo</div>
+                    <div className="text-xs text-muted-foreground">Mesmo exercício</div>
+                  </div>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleAcceptVideo}
+                  className="h-16 flex-col space-y-2"
+                >
+                  <CheckCheck className="w-5 h-5" />
+                  <div className="text-center">
+                    <div className="text-sm font-semibold">Continuar</div>
+                    <div className="text-xs text-muted-foreground">Sem salvar</div>
+                  </div>
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -682,6 +800,14 @@ const FreeVideoGeneratorReal: React.FC = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Modal para anexar vídeo ao exercício */}
+      <AttachVideoModal
+        isOpen={showAttachModal}
+        onClose={() => setShowAttachModal(false)}
+        videoUrl={generatedVideoUrl}
+        videoData={pendingFormData}
+      />
     </div>
   );
 };
