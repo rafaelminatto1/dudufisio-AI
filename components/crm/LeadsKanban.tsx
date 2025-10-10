@@ -38,7 +38,7 @@ const STAGES = [
   { id: 'won', label: 'Convertido', color: 'bg-green-500' }
 ];
 
-export default function LeadsKanban() {
+export function LeadsKanban() {
   const [leadsByStage, setLeadsByStage] = useState<Record<string, Lead[]>>({});
   const [loading, setLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
@@ -277,3 +277,4 @@ export default function LeadsKanban() {
   );
 }
 
+export default LeadsKanban;
