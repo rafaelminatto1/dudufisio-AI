@@ -26,6 +26,7 @@ import MonthlyView from '../components/agenda/MonthlyView';
 import ListView from '../components/agenda/ListView';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SessionFormPage from './SessionFormPage';
+import ResponsiveContainer from '../components/ui/ResponsiveContainer';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
@@ -459,18 +460,20 @@ export default function AgendaPage() {
         <main className="flex flex-col h-full bg-slate-50/50" data-testid="agenda-page" role="main">
             {/* Compact Professional Header */}
             <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
-                <div className="px-4 py-3">
-                    <div className="flex items-center justify-between">
-                        <div className="flex-1 flex flex-col gap-2 min-w-0">
-                            <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2">
-                                    <CalendarIcon className="w-4 h-4 text-blue-600" />
-                                    <h1 className="text-base font-semibold text-slate-900">Agenda</h1>
+                <ResponsiveContainer className="py-3">
+                    <div className="flex flex-col space-y-3">
+                        {/* Top Row: Title and Navigation */}
+                        <div className="flex items-center justify-between">
+                            <div className="flex-1 flex flex-col gap-2 min-w-0">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex items-center gap-2">
+                                        <CalendarIcon className="w-4 h-4 text-blue-600" />
+                                        <h1 className="text-base sm:text-lg font-semibold text-slate-900">Agenda</h1>
+                                    </div>
+                                    <div className="text-sm text-slate-600 font-medium truncate hidden sm:block">
+                                        {getViewTitle()}
+                                    </div>
                                 </div>
-                                <div className="text-sm text-slate-600 font-medium truncate hidden sm:block">
-                                    {getViewTitle()}
-                                </div>
-                            </div>
                             {highlightedPatient && (
                                 <div className="flex items-center justify-between rounded-md border border-sky-100 bg-sky-50 px-3 py-2 text-sm text-sky-700">
                                     <span>
@@ -495,63 +498,75 @@ export default function AgendaPage() {
                             />
                         </div>
 
-                        {/* Right side - Compact navigation */}
-                        <div className="flex items-center gap-2">
-                            {/* Navigation controls */}
-                            <div className="flex items-center rounded-md border border-slate-200 bg-white">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handlePrevious}
-                                    className="h-7 w-7 p-0 hover:bg-slate-50"
-                                >
-                                    <ChevronLeft className="w-3.5 h-3.5" />
-                                </Button>
-                                <div className="h-4 w-px bg-slate-200" />
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleToday}
-                                    className="h-7 px-2 text-xs font-medium hover:bg-slate-50"
-                                >
-                                    Hoje
-                                </Button>
-                                <div className="h-4 w-px bg-slate-200" />
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={handleNext}
-                                    className="h-7 w-7 p-0 hover:bg-slate-50"
-                                >
-                                    <ChevronRight className="w-3.5 h-3.5" />
-                                </Button>
-                            </div>
+                            {/* Navigation Controls */}
+                            <div className="flex items-center gap-2">
+                                <div className="flex items-center rounded-md border border-slate-200 bg-white">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={handlePrevious}
+                                        className="touch-target p-0 hover:bg-slate-50"
+                                    >
+                                        <ChevronLeft className="w-3.5 h-3.5" />
+                                    </Button>
+                                    <div className="h-4 w-px bg-slate-200" />
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={handleToday}
+                                        className="touch-target px-2 text-xs font-medium hover:bg-slate-50 hidden sm:block"
+                                    >
+                                        Hoje
+                                    </Button>
+                                    <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={handleNext}
+                                        className="touch-target p-0 hover:bg-slate-50"
+                                    >
+                                        <ChevronRight className="w-3.5 h-3.5" />
+                                    </Button>
+                                </div>
 
-                            {/* Add appointment button */}
-                            {user?.role !== Role.Patient && (
-                                <Button
-                                    onClick={() => {
-                                        setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' });
-                                        setIsFormOpen(true);
-                                    }}
-                                    size="sm"
-                                    className="h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white"
+                                {/* Add appointment button */}
+                                {user?.role !== Role.Patient && (
+                                    <Button
+                                        onClick={() => {
+                                            setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' });
+                                            setIsFormOpen(true);
+                                        }}
+                                        size="sm"
+                                        className="btn-responsive bg-blue-600 hover:bg-blue-700 text-white"
+                                    >
+                                        <Plus className="w-3.5 h-3.5 mr-1" />
+                                        <span className="hidden sm:inline">Agendar</span>
+                                        <span className="sm:hidden">Novo</span>
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Bottom Row: View Selector and Mobile Date */}
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-slate-200/60">
+                            <AgendaViewSelector
+                                currentView={currentView}
+                                onViewChange={setCurrentView}
+                            />
+                            
+                            {/* Mobile Date Display */}
+                            <div className="sm:hidden flex justify-center w-full">
+                                <button
+                                    onClick={handleToday}
+                                    className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors touch-target"
                                 >
-                                    <Plus className="w-3.5 h-3.5 mr-1" />
-                                    Agendar
-                                </Button>
-                            )}
+                                    {format(currentDate, 'dd/MM/yyyy', { locale: ptBR })}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </ResponsiveContainer>
 
-                {/* View selector - integrated and compact */}
-                <div className="px-4 pb-3">
-                    <AgendaViewSelector
-                        currentView={currentView}
-                        onViewChange={setCurrentView}
-                    />
-                </div>
             </header>
 
             {/* Main content area - professional styling */}

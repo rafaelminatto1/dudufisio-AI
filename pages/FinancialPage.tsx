@@ -7,7 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   PieChart, Pie, Cell, BarChart, Bar, AreaChart, Area
 } from 'recharts';
 import useFinancialData, { TimePeriod } from '../hooks/useFinancialData';
@@ -30,6 +30,10 @@ import { Role } from '../types';
 import { auditHelpers } from '../services/auditService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import PermissionGuard, { IfPermission } from '../components/auth/PermissionGuard';
+import ResponsiveContainer from '../components/ui/ResponsiveContainer';
+import ChartContainer from '../components/ui/ChartContainer';
+import ResponsiveGrid from '../components/ui/ResponsiveGrid';
+import ResponsiveCard from '../components/ui/ResponsiveCard';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF4560', '#775DD0'];
 
@@ -468,109 +472,113 @@ const FinancialDashboardPage: React.FC = () => {
         )}
 
         {/* Enhanced KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-green-700">Faturamento Bruto</p>
-                <p className="text-2xl font-bold text-green-900">{formatCurrency(data.kpis.grossRevenue)}</p>
-                <p className="text-xs text-green-600 flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="w-3 h-3" />
-                  +8.2% vs mês anterior
-                </p>
-              </div>
-              <div className="p-3 bg-green-500 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
+        <ResponsiveGrid 
+          cols={{ base: 1, sm: 2, lg: 5 }}
+          gap="lg"
+          className="space-responsive"
+        >
+          <MetricCard
+            title="Faturamento Bruto"
+            value={formatCurrency(data.kpis.grossRevenue)}
+            icon={<TrendingUp className="w-5 h-5 text-white" />}
+            trend={{
+              value: 8.2,
+              isPositive: true,
+              label: "+8.2% vs mês anterior"
+            }}
+            variant="success"
+            size="md"
+            className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200"
+          />
 
-          <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-6 border border-red-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-red-700">Despesas</p>
-                <p className="text-2xl font-bold text-red-900">{formatCurrency(data.kpis.totalExpenses)}</p>
-                <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
-                  <ArrowDownRight className="w-3 h-3" />
-                  -2.1% vs mês anterior
-                </p>
-              </div>
-              <div className="p-3 bg-red-500 rounded-lg">
-                <TrendingDown className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
+          <MetricCard
+            title="Despesas"
+            value={formatCurrency(data.kpis.totalExpenses)}
+            icon={<TrendingDown className="w-5 h-5 text-white" />}
+            trend={{
+              value: -2.1,
+              isPositive: true,
+              label: "-2.1% vs mês anterior"
+            }}
+            variant="error"
+            size="md"
+            className="bg-gradient-to-br from-red-50 to-red-100 border border-red-200"
+          />
 
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-blue-700">Lucro Líquido</p>
-                <p className="text-2xl font-bold text-blue-900">{formatCurrency(data.kpis.netProfit)}</p>
-                <p className="text-xs text-blue-600 flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="w-3 h-3" />
-                  +12.5% vs mês anterior
-                </p>
-              </div>
-              <div className="p-3 bg-blue-500 rounded-lg">
-                <DollarSign className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
+          <MetricCard
+            title="Lucro Líquido"
+            value={formatCurrency(data.kpis.netProfit)}
+            icon={<DollarSign className="w-5 h-5 text-white" />}
+            trend={{
+              value: 12.5,
+              isPositive: true,
+              label: "+12.5% vs mês anterior"
+            }}
+            variant="info"
+            size="md"
+            className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200"
+          />
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-purple-700">Pacientes Ativos</p>
-                <p className="text-2xl font-bold text-purple-900">{data.kpis.activePatients}</p>
-                <p className="text-xs text-purple-600 flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="w-3 h-3" />
-                  +5 novos pacientes
-                </p>
-              </div>
-              <div className="p-3 bg-purple-500 rounded-lg">
-                <Activity className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
+          <MetricCard
+            title="Pacientes Ativos"
+            value={data.kpis.activePatients.toString()}
+            icon={<Activity className="w-5 h-5 text-white" />}
+            trend={{
+              value: 5,
+              isPositive: true,
+              label: "+5 novos pacientes"
+            }}
+            variant="default"
+            size="md"
+            className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200"
+          />
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 border border-orange-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-orange-700">Ticket Médio</p>
-                <p className="text-2xl font-bold text-orange-900">{formatCurrency(data.kpis.averageTicket)}</p>
-                <p className="text-xs text-orange-600 flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="w-3 h-3" />
-                  +3.8% vs mês anterior
-                </p>
-              </div>
-              <div className="p-3 bg-orange-500 rounded-lg">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-            </div>
-          </div>
-        </div>
+          <MetricCard
+            title="Ticket Médio"
+            value={formatCurrency(data.kpis.averageTicket)}
+            icon={<Target className="w-5 h-5 text-white" />}
+            trend={{
+              value: 3.8,
+              isPositive: true,
+              label: "+3.8% vs mês anterior"
+            }}
+            variant="warning"
+            size="md"
+            className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200"
+          />
+        </ResponsiveGrid>
 
         {/* Main Content Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="payments">Pagamentos</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="goals">Metas</TabsTrigger>
-            <TabsTrigger value="predictions">Previsões</TabsTrigger>
-            <TabsTrigger value="reports">Relatórios</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-responsive">
+          <div className="tabs-responsive">
+            <TabsList className="tabs-list-responsive">
+              <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 sm:px-4">Visão Geral</TabsTrigger>
+              <TabsTrigger value="payments" className="text-xs sm:text-sm px-2 sm:px-4">Pagamentos</TabsTrigger>
+              <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 sm:px-4">Analytics</TabsTrigger>
+              <TabsTrigger value="goals" className="text-xs sm:text-sm px-2 sm:px-4">Metas</TabsTrigger>
+              <TabsTrigger value="predictions" className="text-xs sm:text-sm px-2 sm:px-4">Previsões</TabsTrigger>
+              <TabsTrigger value="reports" className="text-xs sm:text-sm px-2 sm:px-4">Relatórios</TabsTrigger>
           </TabsList>
+          </div>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <TabsContent value="overview" className="space-responsive">
+            <ResponsiveGrid 
+              cols={{ base: 1, lg: 3 }}
+              gap="lg"
+              className="space-responsive"
+            >
               {/* Cash Flow Chart */}
-              <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900">Fluxo de Caixa</h3>
-                </div>
-                <div className="p-6">
-                  <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveCard 
+                className="lg:col-span-2"
+                header={{ title: "Fluxo de Caixa" }}
+                padding="md"
+                overflow="hidden"
+              >
+                <ChartContainer 
+                  height="h-[200px] sm:h-[250px] lg:h-[300px]"
+                  className="w-full"
+                >
                     <LineChart data={data.cashFlowData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="date" fontSize={12} />
@@ -580,17 +588,19 @@ const FinancialDashboardPage: React.FC = () => {
                       <Line type="monotone" dataKey="Receita" stroke="#10b981" strokeWidth={2}/>
                       <Line type="monotone" dataKey="Despesa" stroke="#f43f5e" strokeWidth={2}/>
                     </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
+                </ChartContainer>
+              </ResponsiveCard>
 
               {/* Expense Breakdown */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900">Despesas por Categoria</h3>
-                </div>
-                <div className="p-6">
-                  <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveCard 
+                header={{ title: "Despesas por Categoria" }}
+                padding="md"
+                overflow="hidden"
+              >
+                <ChartContainer 
+                  height="h-[200px] sm:h-[250px] lg:h-[300px]"
+                  className="w-full"
+                >
                     <PieChart>
                       <Pie
                         data={data.expenseBreakdown}
@@ -609,10 +619,9 @@ const FinancialDashboardPage: React.FC = () => {
                       <Tooltip formatter={(value: number) => formatCurrency(value)}/>
                       <Legend />
                     </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
+                </ChartContainer>
+              </ResponsiveCard>
+            </ResponsiveGrid>
 
             <TransactionList
               transactions={transactions}
@@ -622,83 +631,90 @@ const FinancialDashboardPage: React.FC = () => {
           </TabsContent>
 
           {/* Payments Tab */}
-          <TabsContent value="payments" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TabsContent value="payments" className="space-responsive">
+            <ResponsiveGrid 
+              cols={{ base: 1, lg: 2 }}
+              gap="lg"
+            >
               {/* Payment Methods */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-sky-600" />
-                    Métodos de Pagamento
-                  </h3>
-                </div>
-                <div className="p-6">
+              <ResponsiveCard 
+                header={{ 
+                  title: "Métodos de Pagamento",
+                  action: <CreditCard className="w-5 h-5 text-sky-600" />
+                }}
+                padding="md"
+                overflow="visible"
+              >
                   <div className="space-y-4">
                     {paymentMethods.map((method: any) => (
-                      <div key={method.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div key={method.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border border-gray-200 rounded-lg space-y-2 sm:space-y-0">
                         <div className="flex items-center gap-3">
                           <div className="p-2 bg-sky-100 rounded-lg">
                             {method.icon}
                           </div>
                           <div>
-                            <p className="font-medium text-gray-900">{method.name}</p>
+                          <p className="font-medium text-gray-900 truncate">{method.name}</p>
                             <p className="text-sm text-gray-600">{method.transactions} transações</p>
                           </div>
                         </div>
-                        <div className="text-right">
+                      <div className="text-left sm:text-right">
                           <p className="font-semibold text-gray-900">{formatCurrency(method.amount)}</p>
                           <p className="text-sm text-gray-600">{method.percentage}%</p>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
-              </div>
+              </ResponsiveCard>
 
               {/* Recurrent Payments */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <RefreshCw className="w-5 h-5 text-green-600" />
-                    Pagamentos Recorrentes
-                  </h3>
-                </div>
-                <div className="p-6">
+              <ResponsiveCard 
+                header={{ 
+                  title: "Pagamentos Recorrentes",
+                  action: <RefreshCw className="w-5 h-5 text-green-600" />
+                }}
+                padding="md"
+                overflow="visible"
+              >
                   <div className="space-y-4">
                     {recurrentPayments.map((payment: any) => (
                       <div key={payment.id} className="border border-gray-200 rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-gray-900">{payment.patientName}</h4>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(payment.status)}`}>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 space-y-1 sm:space-y-0">
+                        <h4 className="font-medium text-gray-900 truncate">{payment.patientName}</h4>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium w-fit ${getStatusColor(payment.status)}`}>
                             {payment.status}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between text-sm text-gray-600">
-                          <span>{formatCurrency(payment.amount)} · {payment.frequency}</span>
-                          <span>Próximo: {new Date(payment.nextPayment).toLocaleDateString('pt-BR')}</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm text-gray-600 space-y-1 sm:space-y-0">
+                        <span className="truncate">{formatCurrency(payment.amount)} · {payment.frequency}</span>
+                        <span className="text-xs sm:text-sm">Próximo: {new Date(payment.nextPayment).toLocaleDateString('pt-BR')}</span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">{payment.paymentMethod}</p>
+                      <p className="text-xs text-gray-500 mt-1 truncate">{payment.paymentMethod}</p>
                       </div>
                     ))}
                   </div>
-                </div>
-              </div>
-            </div>
+              </ResponsiveCard>
+            </ResponsiveGrid>
           </TabsContent>
 
           {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TabsContent value="analytics" className="space-responsive">
+            <ResponsiveGrid 
+              cols={{ base: 1, lg: 2 }}
+              gap="lg"
+            >
               {/* Revenue Evolution */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5 text-blue-600" />
-                    Evolução da Receita
-                  </h3>
-                </div>
-                <div className="p-6">
-                  <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveCard 
+                header={{ 
+                  title: "Evolução da Receita",
+                  action: <BarChart3 className="w-5 h-5 text-blue-600" />
+                }}
+                padding="md"
+                overflow="hidden"
+              >
+                <ChartContainer 
+                  height="h-[200px] sm:h-[250px] lg:h-[300px]"
+                  className="w-full"
+                >
                     <AreaChart data={data.cashFlowData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="date" />
@@ -706,9 +722,8 @@ const FinancialDashboardPage: React.FC = () => {
                       <Tooltip formatter={(value: number) => formatCurrency(value)} />
                       <Area type="monotone" dataKey="Receita" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
                     </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
+                </ChartContainer>
+              </ResponsiveCard>
 
               {/* Payment Methods Distribution */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -730,7 +745,7 @@ const FinancialDashboardPage: React.FC = () => {
                   </ResponsiveContainer>
                 </div>
               </div>
-            </div>
+            </ResponsiveGrid>
           </TabsContent>
 
           {/* Goals Tab */}

@@ -6,6 +6,7 @@ import { Button } from '../components/ui/button';
 import { DataTable } from '../components/ui/data-table';
 import { columns, Patient } from '../components/patients/PatientColumns';
 import { usePatient } from '../contexts/PatientContext';
+import ResponsiveContainer from '../components/ui/ResponsiveContainer';
 
 // Dados mock para demonstração (compatível com PatientColumns)
 const mockPatients: Patient[] = [
@@ -96,20 +97,20 @@ const PatientListPage: React.FC = () => {
 
   return (
     <main className="min-h-screen bg-slate-50 py-8" role="main">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ResponsiveContainer>
         {/* Header */}
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-slate-900 mb-2">
+            <h1 className="heading-lg-responsive font-bold text-slate-900 mb-2">
               Lista de Pacientes
             </h1>
-            <p className="text-xl text-slate-600">
+            <p className="text-responsive text-slate-600">
               Gerencie todos os pacientes da clínica
             </p>
           </div>
           <Button 
             onClick={handleCreatePatient} 
-            className="bg-sky-500 hover:bg-sky-600"
+            className="btn-responsive bg-sky-500 hover:bg-sky-600 w-full sm:w-auto"
           >
             <Plus className="w-4 h-4 mr-2" />
             Novo Paciente
@@ -117,52 +118,54 @@ const PatientListPage: React.FC = () => {
         </header>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid-1-2-4 gap-4 mb-6">
           <Card>
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-sky-600">{patients.length}</div>
-              <div className="text-sm text-slate-600">Total de Pacientes</div>
+              <div className="text-xl sm:text-2xl font-bold text-sky-600">{patients.length}</div>
+              <div className="text-xs sm:text-sm text-slate-600">Total de Pacientes</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-xl sm:text-2xl font-bold text-green-600">
                 {patients.filter(p => p.status === 'Active').length}
               </div>
-              <div className="text-sm text-slate-600">Pacientes Ativos</div>
+              <div className="text-xs sm:text-sm text-slate-600">Pacientes Ativos</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-orange-600">
+              <div className="text-xl sm:text-2xl font-bold text-orange-600">
                 {patients.filter(p => p.status === 'Inactive').length}
               </div>
-              <div className="text-sm text-slate-600">Pacientes Inativos</div>
+              <div className="text-xs sm:text-sm text-slate-600">Pacientes Inativos</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <div className="text-2xl font-bold text-purple-600">
+              <div className="text-xl sm:text-2xl font-bold text-purple-600">
                 {patients.filter(p => p.status === 'Discharged').length}
               </div>
-              <div className="text-sm text-slate-600">Pacientes com Alta</div>
+              <div className="text-xs sm:text-sm text-slate-600">Pacientes com Alta</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Data Table */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm">
-          <DataTable 
-            columns={columns} 
-            data={patients}
-            meta={{
-              onEdit: handleEditPatient,
-              onDelete: handleDeletePatient,
-              onView: handleViewPatient
-            }}
-          />
+        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm">
+          <div className="table-responsive">
+            <DataTable 
+              columns={columns} 
+              data={patients}
+              meta={{
+                onEdit: handleEditPatient,
+                onDelete: handleDeletePatient,
+                onView: handleViewPatient
+              }}
+            />
+          </div>
         </div>
-      </div>
+      </ResponsiveContainer>
     </main>
   );
 };

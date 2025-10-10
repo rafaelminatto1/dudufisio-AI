@@ -226,21 +226,47 @@ export const preloadCriticalRoutes = () => {
 
 // 🎯 Preloading de componentes críticos
 export const preloadCriticalComponents = () => {
-  // Preload componentes críticos após carregamento inicial
-  setTimeout(() => {
-    Promise.all([
-      import('../pages/CompleteDashboard'),
-      import('../components/Sidebar'),
-      import('../components/Breadcrumbs')
-    ]).catch(() => {
-      // Silenciosamente falha no preload
+  // Usar requestIdleCallback para preload quando o browser estiver ocioso
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      console.log('🔵 [PRELOAD] Iniciando preload de componentes críticos...');
+      Promise.all([
+        import('../pages/CompleteDashboard'),
+        import('../components/Sidebar'),
+        import('../components/Breadcrumbs')
+      ])
+      .then(() => {
+        console.log('✅ [PRELOAD] Componentes críticos carregados com sucesso');
+      })
+      .catch((error) => {
+        console.error('❌ [PRELOAD] Erro ao carregar componentes críticos:', error);
+      });
     });
-  }, 3000);
+  } else {
+    // Fallback para browsers que não suportam requestIdleCallback
+    setTimeout(() => {
+      console.log('🔵 [PRELOAD] Iniciando preload de componentes críticos (fallback)...');
+      Promise.all([
+        import('../pages/CompleteDashboard'),
+        import('../components/Sidebar'),
+        import('../components/Breadcrumbs')
+      ])
+      .then(() => {
+        console.log('✅ [PRELOAD] Componentes críticos carregados com sucesso');
+      })
+      .catch((error) => {
+        console.error('❌ [PRELOAD] Erro ao carregar componentes críticos:', error);
+      });
+    }, 100); // Delay mínimo
+  }
 };
 
 // 🎯 Preloading baseado em role do usuário
 export const preloadUserRoleComponents = (userRole: string) => {
-  setTimeout(() => {
+  // Usar requestIdleCallback para preload quando o browser estiver ocioso
+  const doPreload = () => {
+    console.log(`🔵 [PRELOAD] Carregando componentes para role: ${userRole}`);
+    
     switch (userRole) {
       case 'Admin':
       case 'Therapist':
@@ -248,23 +274,48 @@ export const preloadUserRoleComponents = (userRole: string) => {
           import('../pages/AcompanhamentoPage'),
           import('../pages/GroupsPage'),
           import('../pages/NotificationCenterPage')
-        ]).catch(() => {});
+        ])
+        .then(() => {
+          console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+        })
+        .catch((error) => {
+          console.error(`❌ [PRELOAD] Erro ao carregar componentes de ${userRole}:`, error);
+        });
         break;
       case 'Patient':
         Promise.all([
           import('../pages/patient-portal/PatientDashboardPage'),
           import('../pages/patient-portal/MyAppointmentsPage'),
           import('../pages/patient-portal/MyExercisesPage')
-        ]).catch(() => {});
+        ])
+        .then(() => {
+          console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+        })
+        .catch((error) => {
+          console.error(`❌ [PRELOAD] Erro ao carregar componentes de ${userRole}:`, error);
+        });
         break;
       case 'EducadorFisico':
         Promise.all([
           import('../pages/partner-portal/EducatorDashboardPage'),
           import('../pages/partner-portal/ClientListPage')
-        ]).catch(() => {});
+        ])
+        .then(() => {
+          console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+        })
+        .catch((error) => {
+          console.error(`❌ [PRELOAD] Erro ao carregar componentes de ${userRole}:`, error);
+        });
         break;
     }
-  }, 2000);
+  };
+
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(doPreload);
+  } else {
+    // Fallback para browsers antigos com delay mínimo
+    setTimeout(doPreload, 100);
+  }
 };
 
 export default LazyPages;

@@ -3189,3 +3189,133 @@ export interface AlertHistory {
   notes?: string;
   metadata?: Record<string, any>;
 }
+
+// ============================================================================
+// PATIENT TRACKING & ASSESSMENT TYPES
+// ============================================================================
+
+export interface ClinicalCaseCategory {
+  id: string;
+  name: string;
+  specialty: 'sports' | 'post_operative' | 'orthopedic' | 'neurological' | 'cardiorespiratory' | 'other';
+  description?: string;
+  isSystemDefault: boolean;
+  createdBy?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface AssessmentTemplate {
+  id: string;
+  categoryId: string;
+  name: string;
+  fieldType: 'number' | 'range' | 'angle' | 'scale' | 'text' | 'date' | 'boolean' | 'select';
+  unit?: string;
+  minValue?: number;
+  maxValue?: number;
+  options?: { label: string; value: string }[];
+  isRequired: boolean;
+  displayOrder: number;
+  helpText?: string;
+  createdAt: string;
+}
+
+export interface SessionObservation {
+  id: string;
+  patientId: string;
+  sessionId?: string;
+  authorId: string;
+  authorName: string;
+  observationType: 'general' | 'clinical' | 'evolution' | 'assessment' | 'alert' | 'recommendation';
+  content: string;
+  timing?: 'before' | 'during' | 'after' | 'independent';
+  tags?: string[];
+  isImportant: boolean;
+  isPinned?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface PatientAssessment {
+  id: string;
+  patientId: string;
+  sessionId?: string;
+  observationId?: string;
+  templateId?: string;
+  fieldName: string;
+  fieldValue?: number;
+  fieldText?: string;
+  unit?: string;
+  assessmentTiming: 'pre_session' | 'post_session' | 'mid_session' | 'independent';
+  measuredBy: string;
+  measuredAt: string;
+  notes?: string;
+}
+
+export interface MandatoryAssessment {
+  id: string;
+  patientId: string;
+  categoryId: string;
+  templateId: string;
+  frequencyType: 'every_session' | 'weekly' | 'biweekly' | 'monthly' | 'every_n_sessions' | 'milestones';
+  frequencyValue?: number;
+  milestoneSessions?: number[];
+  assessmentTiming: ('pre_session' | 'post_session' | 'mid_session')[];
+  isActive: boolean;
+  startDate?: string;
+  endDate?: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface AssessmentChartData {
+  date: string;
+  value: number;
+  sessionNumber?: number;
+  timing?: string;
+  notes?: string;
+}
+
+// Tipos para filtros e configurações
+export interface ObservationFilters {
+  type?: SessionObservation['observationType'];
+  sessionId?: string;
+  authorId?: string;
+  tags?: string[];
+  dateFrom?: string;
+  dateTo?: string;
+  important?: boolean;
+}
+
+export interface AssessmentFilters {
+  templateId?: string;
+  fieldName?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  timing?: PatientAssessment['assessmentTiming'];
+}
+
+// Tipos para estatísticas e relatórios
+export interface AssessmentStatistics {
+  fieldName: string;
+  unit?: string;
+  count: number;
+  min: number;
+  max: number;
+  average: number;
+  latest: number;
+  percentChange: number;
+  trend: 'improving' | 'stable' | 'declining';
+}
+
+export interface EvolutionReportData {
+  patientId: string;
+  period: {
+    start: string;
+    end: string;
+  };
+  assessments: AssessmentChartData[];
+  statistics: AssessmentStatistics[];
+  observations: SessionObservation[];
+  totalSessions: number;
+}

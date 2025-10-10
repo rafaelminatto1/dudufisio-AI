@@ -18,6 +18,10 @@ import {
   Filter, Search, ChevronRight, Star, Award, Heart
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import ResponsiveContainer from '../components/ui/ResponsiveContainer';
+import ResponsiveGrid from '../components/ui/ResponsiveGrid';
+import ResponsiveCard from '../components/ui/ResponsiveCard';
+import MetricCard from '../components/MetricCard';
 
 interface AIPrediction {
   id: string;
@@ -438,7 +442,7 @@ const AiAnalyticsPage: React.FC = () => {
 
   return (
     <PermissionGuard permission="analytics:read">
-      <div className="p-6 max-w-7xl mx-auto space-y-6">
+      <ResponsiveContainer className="space-responsive">
         <div className="flex items-center justify-between">
           <PageHeader
             title="IA & Analytics"
@@ -1064,7 +1068,7 @@ const AiAnalyticsPage: React.FC = () => {
             </button>
           </div>
         </IfPermission>
-      </div>
+      </ResponsiveContainer>
     </PermissionGuard>
   );
 };

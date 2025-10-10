@@ -5,7 +5,13 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'automatic',
+      jsxImportSource: 'react',
+      babel: {
+        plugins: [],
+      },
+    }),
     visualizer({
       filename: './dist/stats.html',
       open: false,
@@ -15,7 +21,8 @@ export default defineConfig({
   ],
   esbuild: {
     // Mantém console logs para debugging
-    logLevel: 'warning'
+    logLevel: 'warning',
+    jsx: 'automatic'
   },
   define: {
     'process.env': 'import.meta.env',
@@ -84,7 +91,13 @@ export default defineConfig({
       'react-toastify'
     ],
     exclude: ['@playwright/test'],
-    force: false
+    // Otimização forçada apenas quando necessário
+    force: false,
+    esbuildOptions: {
+      jsx: 'automatic',
+      // Garante que React seja tratado como ESM
+      mainFields: ['module', 'main'],
+    }
   },
   build: {
     target: 'es2020',

@@ -6,7 +6,7 @@ import RevenueChart from '../components/dashboard/RevenueChart';
 import PatientFlowChart from '../components/dashboard/PatientFlowChart';
 import TeamProductivityChart from '../components/dashboard/TeamProductivityChart';
 import AppointmentHeatmap from '../components/dashboard/AppointmentHeatmap';
-import { Activity, Users } from 'lucide-react';
+import { Activity, Users, Calendar, DollarSign, TrendingUp, Users as UsersIcon, Clock } from 'lucide-react';
 import { useData } from "../contexts/AppContext";
 import TodaysAppointments from '../components/dashboard/glance/TodaysAppointments';
 import PendingTasks from '../components/dashboard/glance/PendingTasks';
@@ -18,6 +18,15 @@ import { eventService } from '../services/eventService';
 import { useComponentPerformance } from '../hooks/usePerformanceMetrics';
 import OptimizedLoader from '../components/ui/OptimizedLoader';
 import { useMemoWithTTL, usePerformanceMonitor } from '../lib/performanceOptimization';
+import ResponsiveContainer from '../components/ui/ResponsiveContainer';
+import ResponsiveGrid from '../components/ui/ResponsiveGrid';
+import ResponsiveCard from '../components/ui/ResponsiveCard';
+import GlassCard from '../components/ui/GlassCard';
+import StatCard from '../components/ui/StatCard';
+import FeatureCard from '../components/ui/FeatureCard';
+import AnimatedContainer from '../components/ui/AnimatedContainer';
+import ScrollReveal from '../components/ui/ScrollReveal';
+import PageTransition from '../components/ui/PageTransition';
 
 const isToday = (someDate: Date) => {
     const today = new Date();
@@ -101,47 +110,171 @@ const DashboardPage: React.FC = () => {
     }
 
     return (
-        <main className="space-y-8" role="main">
-            <header>
-                <PageHeader
-                    title="Dashboard Administrativo"
-                    subtitle="Visão 360° do negócio com métricas financeiras, operacionais e clínicas."
-                />
-            </header>
+        <PageTransition>
+            <ResponsiveContainer className="space-responsive" role="main">
+                {/* Welcome Header with Gradient Background */}
+                <AnimatedContainer animation="fadeInUp" className="mb-8">
+                    <GlassCard 
+                        variant="colored"
+                        className="p-8 text-center"
+                        hover={false}
+                    >
+                        <div className="space-y-4">
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+                                Bom dia, Dr. Eduardo! 👋
+                            </h1>
+                            <p className="text-white/90 text-lg max-w-2xl mx-auto">
+                                Aqui está um resumo completo da sua clínica hoje
+                            </p>
+                        </div>
+                    </GlassCard>
+                </AnimatedContainer>
 
-            <div className="space-y-8">
-                <KPICards stats={stats} isLoading={isLoading} />
+                {/* Quick Stats */}
+                <AnimatedContainer animation="stagger" className="mb-8">
+                    <ResponsiveGrid cols={{ base: 1, sm: 2, lg: 4 }} gap="lg">
+                        <StatCard
+                            title="Pacientes Hoje"
+                            value={enrichedTodaysAppointments.length}
+                            icon={UsersIcon}
+                            variant="primary"
+                            trend={{ value: 12, period: "vs ontem" }}
+                        />
+                        <StatCard
+                            title="Faturamento"
+                            value={`R$ ${stats.monthlyRevenue.toLocaleString()}`}
+                            icon={DollarSign}
+                            variant="success"
+                            trend={{ value: 8, period: "este mês" }}
+                        />
+                        <StatCard
+                            title="Taxa de Ocupação"
+                            value={`${Math.round(stats.occupancyRate)}%`}
+                            icon={TrendingUp}
+                            variant="warning"
+                            trend={{ value: 3, period: "vs semana passada" }}
+                        />
+                        <StatCard
+                            title="Próxima Consulta"
+                            value="14:30"
+                            icon={Clock}
+                            variant="default"
+                            subtitle="Maria Silva"
+                        />
+                    </ResponsiveGrid>
+                </AnimatedContainer>
 
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-800 mb-4">Resumo do Dia</h2>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <TodaysAppointments appointments={enrichedTodaysAppointments} />
-                        <PendingTasks />
-                        <RecentActivity />
+                {/* Quick Actions */}
+                <ScrollReveal animation="slideInLeft" className="mb-8">
+                    <div className="space-y-4">
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                            Ações Rápidas
+                        </h2>
+                        <ResponsiveGrid cols={{ base: 1, sm: 2, lg: 3 }} gap="lg">
+                            <FeatureCard
+                                icon={Calendar}
+                                title="Agendar Consulta"
+                                description="Marcar nova consulta para paciente"
+                                variant="primary"
+                                size="md"
+                            />
+                            <FeatureCard
+                                icon={Users}
+                                title="Novo Paciente"
+                                description="Cadastrar novo paciente no sistema"
+                                variant="success"
+                                size="md"
+                            />
+                            <FeatureCard
+                                icon={Activity}
+                                title="Relatório Financeiro"
+                                description="Gerar relatório de faturamento"
+                                variant="warning"
+                                size="md"
+                            />
+                        </ResponsiveGrid>
                     </div>
-                </div>
+                </ScrollReveal>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <RevenueChart appointments={appointments ?? []} />
-                    <PatientFlowChart patients={patients ?? []} />
-                </div>
+                {/* KPI Cards */}
+                <ScrollReveal animation="fadeInUp" className="mb-8">
+                    <KPICards stats={stats} isLoading={isLoading} />
+                </ScrollReveal>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm">
-                        <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-                            <Activity className="w-5 h-5 mr-2 text-teal-500" /> Mapa de Calor de Agendamentos
-                        </h3>
-                        <AppointmentHeatmap appointments={appointments ?? []} />
+                {/* Daily Summary */}
+                <ScrollReveal animation="slideInRight" className="mb-8">
+                    <div className="space-y-6">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                            Resumo do Dia
+                        </h2>
+                        <ResponsiveGrid cols={{ base: 1, lg: 3 }} gap="lg">
+                            <GlassCard variant="default">
+                                <TodaysAppointments appointments={enrichedTodaysAppointments} />
+                            </GlassCard>
+                            <GlassCard variant="default">
+                                <PendingTasks />
+                            </GlassCard>
+                            <GlassCard variant="default">
+                                <RecentActivity />
+                            </GlassCard>
+                        </ResponsiveGrid>
                     </div>
-                    <div className="bg-white p-6 rounded-2xl shadow-sm">
-                        <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-                            <Users className="w-5 h-5 mr-2 text-teal-500" /> Produtividade da Equipe
-                        </h3>
-                        <TeamProductivityChart appointments={appointments ?? []} therapists={therapists} />
-                    </div>
-                </div>
-            </div>
-        </main>
+                </ScrollReveal>
+
+                {/* Charts Section */}
+                <ScrollReveal animation="fadeInUp" className="mb-8">
+                    <ResponsiveGrid cols={{ base: 1, xl: 2 }} gap="lg">
+                        <GlassCard 
+                            header={{ 
+                                title: "Evolução da Receita",
+                                subtitle: "Últimos 30 dias"
+                            }}
+                            variant="default"
+                        >
+                            <RevenueChart appointments={appointments ?? []} />
+                        </GlassCard>
+                        <GlassCard 
+                            header={{ 
+                                title: "Fluxo de Pacientes",
+                                subtitle: "Novos vs Retornos"
+                            }}
+                            variant="default"
+                        >
+                            <PatientFlowChart patients={patients ?? []} />
+                        </GlassCard>
+                    </ResponsiveGrid>
+                </ScrollReveal>
+
+                {/* Analytics Section */}
+                <ScrollReveal animation="scaleIn" className="mb-8">
+                    <ResponsiveGrid cols={{ base: 1, lg: 3 }} gap="lg">
+                        <GlassCard 
+                            className="lg:col-span-2"
+                            header={{ 
+                                title: "Mapa de Calor de Agendamentos",
+                                subtitle: "Distribuição por horário e dia"
+                            }}
+                            variant="default"
+                            overflow="auto"
+                        >
+                            <div className="overflow-x-auto">
+                                <AppointmentHeatmap appointments={appointments ?? []} />
+                            </div>
+                        </GlassCard>
+                        
+                        <GlassCard 
+                            header={{ 
+                                title: "Produtividade da Equipe",
+                                subtitle: "Consultas por terapeuta"
+                            }}
+                            variant="default"
+                        >
+                            <TeamProductivityChart appointments={appointments ?? []} therapists={therapists} />
+                        </GlassCard>
+                    </ResponsiveGrid>
+                </ScrollReveal>
+            </ResponsiveContainer>
+        </PageTransition>
     );
 };
 

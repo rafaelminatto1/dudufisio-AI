@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, useMemo, useCallback } from 'react';
 import { User, Role } from '../types';
 import authService, {
   AuthState,
@@ -59,9 +59,11 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
     return unsubscribe;
   }, []);
 
-  const clearError = () => setError(null);
+  // 🚀 Memoizar clearError
+  const clearError = useCallback(() => setError(null), []);
 
-  const handleAuthOperation = async <T,>(
+  // 🚀 Memoizar handleAuthOperation
+  const handleAuthOperation = useCallback(async <T,>(
     operation: () => Promise<T>,
     successMessage?: string
   ): Promise<T> => {
@@ -77,28 +79,31 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
       setError(errorMessage);
       throw err;
     }
-  };
+  }, [clearError]);
 
-  const login = async (credentials: LoginCredentials): Promise<User> => {
+  // 🚀 Memoizar login
+  const login = useCallback(async (credentials: LoginCredentials): Promise<User> => {
     return handleAuthOperation(
       () => authService.login(credentials),
       'Login realizado com sucesso'
     );
-  };
+  }, [handleAuthOperation]);
 
-  const register = async (userData: RegisterData): Promise<User> => {
+  // 🚀 Memoizar register
+  const register = useCallback(async (userData: RegisterData): Promise<User> => {
     return handleAuthOperation(
       () => authService.register(userData),
       'Conta criada com sucesso'
     );
-  };
+  }, [handleAuthOperation]);
 
-  const logout = async (): Promise<void> => {
+  // 🚀 Memoizar logout
+  const logout = useCallback(async (): Promise<void> => {
     return handleAuthOperation(
       () => authService.logout(),
       'Logout realizado com sucesso'
     );
-  };
+  }, [handleAuthOperation]);
 
   const resetPassword = async (email: string): Promise<void> => {
     return handleAuthOperation(
@@ -176,7 +181,8 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
     return authService.isSessionExpired();
   };
 
-  const contextValue: AuthContextType = {
+  // 🚀 Memoizar contextValue para evitar re-renders desnecessários
+  const contextValue: AuthContextType = useMemo(() => ({
     // State
     ...authState,
     isAuthenticated: !!authState.user && !!authState.session,
@@ -200,7 +206,27 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
     getUserRole,
     refreshSession,
     isSessionExpired,
-  };
+  }), [
+    authState,
+    error,
+    clearError,
+    login,
+    register,
+    logout,
+    resetPassword,
+    updatePassword,
+    updateProfile,
+    setup2FA,
+    verify2FA,
+    get2FAFactors,
+    disable2FA,
+    loginWithGoogle,
+    loginWithGitHub,
+    hasPermission,
+    getUserRole,
+    refreshSession,
+    isSessionExpired,
+  ]);
 
   return (
     <AuthContext.Provider value={contextValue}>

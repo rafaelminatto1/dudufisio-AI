@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-do
 import { Calendar, Users, Activity, BarChart3, Download, RefreshCw, Star, FileText } from 'lucide-react';
 import Layout from '../components/Layout';
 import ErrorBoundary from '../components/ErrorBoundary';
+import { SectionErrorBoundary } from '../components/SectionErrorBoundary';
 import { PageSkeleton, DashboardSkeleton } from '../components/ui/PageSkeleton';
 import { LazyPages, LazyComponents, createLazyComponent } from '../lib/lazyLoading';
 

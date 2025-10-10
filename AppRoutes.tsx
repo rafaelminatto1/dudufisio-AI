@@ -113,39 +113,75 @@ const BIIntegrationTestPage = lazy(() => import('./pages/BIIntegrationTestPage')
 const AppContent: React.FC = memo(() => {
     const { user, isAuthenticated, loading, logout } = useSupabaseAuth();
     const [show2FASetup, setShow2FASetup] = useState(false);
+    const [loadingTimeout, setLoadingTimeout] = useState(false);
 
-    // 🚀 Inicializa Service Worker (apenas em produção) - memoizado
+    // 🚀 Inicializa Service Worker (apenas em produção, não em headless) - memoizado
     const initializeServiceWorkerCallback = useCallback(() => {
+        // Detectar modo headless
+        const isHeadless = /HeadlessChrome|PhantomJS|Puppeteer/.test(navigator.userAgent);
+        const isDev = import.meta.env.DEV;
+        
+        if (isHeadless) {
+            console.log('ℹ️  [INIT] Service Worker desabilitado (modo headless detectado)');
+            return;
+        }
+        
+        if (isDev) {
+            console.log('ℹ️  [INIT] Service Worker desabilitado (ambiente de desenvolvimento)');
+            return;
+        }
+        
         if (import.meta.env.PROD) {
+            console.log('🔵 [INIT] Inicializando Service Worker...');
             initializeServiceWorker().then((registered) => {
                 if (registered) {
-                    console.log('✅ Service Worker inicializado com sucesso');
+                    console.log('✅ [INIT] Service Worker inicializado com sucesso');
                 }
             }).catch(error => {
-                console.warn('⚠️ Service Worker initialization failed:', error);
+                console.error('❌ [INIT] Erro ao inicializar Service Worker:', error);
             });
-        } else {
-            console.log('ℹ️  Service Worker desabilitado em desenvolvimento');
         }
     }, []);
 
     useEffect(() => {
+        console.log('🔵 [INIT] Iniciando aplicação...');
         initializeServiceWorkerCallback();
     }, [initializeServiceWorkerCallback]);
 
     // 🚀 Preloading inteligente de componentes - memoizado
     const preloadComponentsCallback = useCallback(() => {
+        console.log('🔵 [INIT] Preloading componentes críticos...');
         preloadCriticalComponents();
+        
+        console.log('🔵 [INIT] Inicializando sistema de lazy loading...');
         initializeLazyLoading();
         
         if (user?.role) {
+            console.log(`🔵 [INIT] Preloading componentes para role: ${user.role}`);
             preloadUserRoleComponents(user.role);
         }
+        
+        console.log('✅ [INIT] Preloading concluído');
     }, [user?.role]);
 
     useEffect(() => {
         preloadComponentsCallback();
     }, [preloadComponentsCallback]);
+
+    // ⏱️ Timeout de segurança para loading
+    useEffect(() => {
+        if (loading) {
+            console.log('⏱️  [INIT] Iniciando timer de timeout (10s)...');
+            const timer = setTimeout(() => {
+                console.error('❌ [TIMEOUT] Carregamento excedeu tempo limite de 10 segundos');
+                setLoadingTimeout(true);
+            }, 10000);
+
+            return () => {
+                clearTimeout(timer);
+            };
+        }
+    }, [loading]);
 
     // 📊 Log estado de autenticação para debug - memoizado
     const authState = useMemo(() => ({
@@ -179,9 +215,46 @@ const AppContent: React.FC = memo(() => {
         </div>
     ), []);
 
-    // Loading state
-    if (loading) {
+    // Loading state with timeout
+    if (loading && !loadingTimeout) {
         return LoadingScreen;
+    }
+
+    // Timeout screen
+    if (loadingTimeout) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-50 to-orange-50">
+                <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8 text-center">
+                    <div className="mb-6">
+                        <svg className="w-16 h-16 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-2">Erro ao Carregar</h2>
+                    <p className="text-slate-600 mb-6">
+                        A aplicação está demorando mais que o esperado para carregar.
+                    </p>
+                    <div className="space-y-3">
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="w-full px-4 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold"
+                        >
+                            🔄 Tentar Novamente
+                        </button>
+                        <button
+                            onClick={() => {
+                                localStorage.clear();
+                                sessionStorage.clear();
+                                window.location.reload();
+                            }}
+                            className="w-full px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors text-sm"
+                        >
+                            🗑️ Limpar Cache e Recarregar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     // 2FA Setup flow
