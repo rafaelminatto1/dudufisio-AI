@@ -273,7 +273,7 @@ export class SpecialtiesService {
 
   delete(id: string): boolean {
     const specialty = this.specialties.find(s => s.id === id);
-    if (!specialty || !specialty.isCustom) return false; // Não pode deletar especialidades padrão
+    if (!specialty?.isCustom) return false; // Não pode deletar especialidades padrão
 
     const index = this.specialties.findIndex(s => s.id === id);
     if (index === -1) return false;
@@ -343,7 +343,7 @@ export class ContentTypesService {
 
   delete(id: string): boolean {
     const contentType = this.contentTypes.find(ct => ct.id === id);
-    if (!contentType || !contentType.isCustom) return false; // Não pode deletar tipos padrão
+    if (!contentType?.isCustom) return false; // Não pode deletar tipos padrão
 
     const index = this.contentTypes.findIndex(ct => ct.id === id);
     if (index === -1) return false;

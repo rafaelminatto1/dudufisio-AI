@@ -232,7 +232,7 @@ class EMRIntegrationService {
     let total = 0;
     let imported = 0;
     let failed = 0;
-    let skipped = 0;
+    const skipped = 0;
 
     const entries = resources.entry || [];
     total = entries.length;

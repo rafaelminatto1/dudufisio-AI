@@ -125,7 +125,7 @@ const createMonthly = (
     const interval = freqInterval(rule);
     const appointments: Appointment[] = [];
     const baseMonthIndex = baseStart.getFullYear() * 12 + baseStart.getMonth();
-    let current = new Date(baseStart.getFullYear(), baseStart.getMonth(), 1);
+    const current = new Date(baseStart.getFullYear(), baseStart.getMonth(), 1);
 
     while (current <= untilDate && !shouldStop(appointments.length, maxOccurrences)) {
         const currentMonthIndex = current.getFullYear() * 12 + current.getMonth();

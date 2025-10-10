@@ -743,7 +743,7 @@ class VideoCallService {
   public async stopRecording(sessionId: string): Promise<boolean> {
     try {
       const session = this.activeSessions.get(sessionId);
-      if (!session || !session.recording) {
+      if (!session?.recording) {
         return false;
       }
 
@@ -791,7 +791,7 @@ class VideoCallService {
   private async processRecording(sessionId: string, recordingId: string, blob: Blob): Promise<void> {
     try {
       const session = this.activeSessions.get(sessionId);
-      if (!session || !session.recording) {
+      if (!session?.recording) {
         return;
       }
 

@@ -311,7 +311,7 @@ Qualquer dúvida, estamos à disposição. 😊`
   async sendFollowupMessage(lead_id: string): Promise<void> {
     const lead = await leadService.getLeadById(lead_id);
 
-    if (!lead || !lead.phone) {
+    if (!lead?.phone) {
       throw new Error('Lead não encontrado ou sem telefone');
     }
 

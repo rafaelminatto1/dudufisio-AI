@@ -291,7 +291,7 @@ class SessionService {
         .map(([proc]) => proc);
 
       // Determine progress trend - DISABLED: pain data not available
-      let progressTrend: 'improving' | 'stable' | 'worsening' = 'stable';
+      const progressTrend: 'improving' | 'stable' | 'worsening' = 'stable';
       // if (painData.length >= 3) {
       //   const recentSessions = painData.slice(0, 3);
       //   const olderSessions = painData.slice(-3);

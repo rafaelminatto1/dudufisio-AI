@@ -213,7 +213,7 @@ class MLPredictionService {
     const confidence = 0.75 + (Math.random() * 0.20); // 0.75 - 0.95
     
     let outcome = 'positive';
-    let featureImportance: Record<string, number> = {};
+    const featureImportance: Record<string, number> = {};
     
     // Lógica simplificada baseada em features
     if (features.age > 65) {

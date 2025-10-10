@@ -29,12 +29,12 @@ import {
 import { mockTherapists } from '../data/mockData';
 
 // In-memory storage for development
-let interns: Intern[] = [...mockInterns];
-let cases: EducationalCase[] = [...mockEducationalCases];
-let competencies: Competency[] = [...mockCompetencies];
-let resources: EducationalResource[] = [...mockEducationalResources];
-let learningPaths: LearningPath[] = [...mockLearningPaths];
-let certifications: Certification[] = [...mockCertifications];
+const interns: Intern[] = [...mockInterns];
+const cases: EducationalCase[] = [...mockEducationalCases];
+const competencies: Competency[] = [...mockCompetencies];
+const resources: EducationalResource[] = [...mockEducationalResources];
+const learningPaths: LearningPath[] = [...mockLearningPaths];
+const certifications: Certification[] = [...mockCertifications];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -140,7 +140,7 @@ export const updateInternshipPlan = async (planId: string, updates: Partial<Inte
   await delay(400);
   
   const intern = interns.find(i => i.internshipPlan?.id === planId);
-  if (!intern || !intern.internshipPlan) {
+  if (!intern?.internshipPlan) {
     throw new Error("Internship plan not found");
   }
 

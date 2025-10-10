@@ -556,7 +556,7 @@ class BackupMonitorService {
 
   public async executeAlertAction(alertId: string, actionId: string): Promise<boolean> {
     const alert = this.alerts.find(a => a.id === alertId);
-    if (!alert || !alert.actions) {
+    if (!alert?.actions) {
       return false;
     }
 

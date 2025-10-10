@@ -104,7 +104,7 @@ class ServiceWorkerManager {
    * Força atualização imediata
    */
   async skipWaiting(): Promise<void> {
-    if (!this.registration || !this.registration.waiting) {
+    if (!this.registration?.waiting) {
       return;
     }
 
@@ -135,7 +135,7 @@ class ServiceWorkerManager {
    * Envia mensagem para o Service Worker
    */
   postMessage(message: any): void {
-    if (!this.registration || !this.registration.active) {
+    if (!this.registration?.active) {
       console.warn('Service Worker não está ativo');
       return;
     }

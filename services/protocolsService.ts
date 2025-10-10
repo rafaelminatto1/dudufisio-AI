@@ -29,12 +29,12 @@ import {
 import { generateClinicalMaterialContent } from './geminiService';
 
 // In-memory storage for development
-let protocols: Protocol[] = [...mockProtocols];
+const protocols: Protocol[] = [...mockProtocols];
 let protocolAnalytics: ProtocolAnalytics[] = [...mockProtocolAnalytics];
 let protocolPrescriptions: ProtocolPrescription[] = [...mockProtocolPrescriptions];
-let assessmentTools: AssessmentTool[] = [...mockAssessmentTools];
-let outcomeMetrics: OutcomeMetric[] = [...mockOutcomeMetrics];
-let protocolReferences: ProtocolReference[] = [...mockProtocolReferences];
+const assessmentTools: AssessmentTool[] = [...mockAssessmentTools];
+const outcomeMetrics: OutcomeMetric[] = [...mockOutcomeMetrics];
+const protocolReferences: ProtocolReference[] = [...mockProtocolReferences];
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 

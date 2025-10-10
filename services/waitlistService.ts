@@ -1,7 +1,7 @@
 import { WaitlistEntry, WaitlistStatus } from '../types';
 
 // Mock data - em produção, isso viria do banco de dados
-let waitlistData: WaitlistEntry[] = [
+const waitlistData: WaitlistEntry[] = [
   {
     id: 'wait_1',
     patientId: 'patient_123',
