@@ -46,6 +46,7 @@ export default defineConfig({
   },
   resolve: {
     dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+    extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
     alias: {
       '@': path.resolve(__dirname, '.'),
       '@/components': path.resolve(__dirname, './components'),
