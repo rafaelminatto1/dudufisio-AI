@@ -116,11 +116,15 @@ export const columns: ColumnDef<Patient>[] = [
       const conditions = row.original.conditions
       return (
         <div className="flex flex-wrap gap-1">
-          {conditions.slice(0, 2).map((condition, index) => (
-            <Badge key={index} variant="outline" className="text-xs">
-              {condition}
-            </Badge>
-          ))}
+          {conditions.slice(0, 2).map((condition, index) => {
+            // Garantir que condition seja sempre string
+            const conditionText = typeof condition === 'string' ? condition : (condition as any).name || JSON.stringify(condition);
+            return (
+              <Badge key={index} variant="outline" className="text-xs">
+                {conditionText}
+              </Badge>
+            );
+          })}
           {conditions.length > 2 && (
             <Badge variant="outline" className="text-xs">
               +{conditions.length - 2}
