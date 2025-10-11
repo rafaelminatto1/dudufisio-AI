@@ -139,6 +139,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
             { to: '/subscriptions', icon: CreditCard, label: 'Assinaturas' },
           ],
           systemNav: [
+            { to: '/crm', icon: Target, label: 'CRM & Leads' },
             { to: '/whatsapp', icon: MessageSquare, label: 'WhatsApp Business' },
             { to: '/email-inativos', icon: Mail, label: 'Email para Inativos' },
             { to: '/backup-management', icon: HardDrive, label: 'Gerenciamento de Backup' },
@@ -263,9 +264,39 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
 const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { user, logout } = useApp();
+  
+  // 🔍 DEBUG: Logs para investigar problema do sidebar
+  console.log('🔍 [SIDEBAR] Componente Sidebar renderizando...');
+  
+  let user, logout;
+  let unreadCount = 0;
+  
+  try {
+    const appContext = useApp();
+    user = appContext.user;
+    logout = appContext.logout;
+    console.log('🔍 [SIDEBAR] useApp() executado com sucesso:', { 
+      hasUser: !!user, 
+      userId: user?.id, 
+      userRole: user?.role 
+    });
+  } catch (error) {
+    console.error('❌ [SIDEBAR] Erro ao usar useApp():', error);
+    // Fallback para evitar crash
+    user = null;
+    logout = () => Promise.resolve();
+  }
+  
   const navigate = useNavigate();
-  const { unreadCount } = useNotifications(user?.id || '');
+  
+  try {
+    const notifications = useNotifications(user?.id || '');
+    unreadCount = notifications.unreadCount || 0;
+    console.log('🔍 [SIDEBAR] useNotifications() executado:', { unreadCount });
+  } catch (error) {
+    console.error('❌ [SIDEBAR] Erro ao usar useNotifications():', error);
+    unreadCount = 0;
+  }
 
   const handleLogout = () => {
     logout();
@@ -273,16 +304,32 @@ const Sidebar: React.FC = () => {
   };
 
   // Get filtered navigation based on user role - memoizado
-  const navigation = useMemo(() => 
-    user ? getFilteredNavigation(user.role, unreadCount) : {
+  const navigation = useMemo(() => {
+    console.log('🔍 [SIDEBAR] Calculando navegação:', { 
+      hasUser: !!user, 
+      userRole: user?.role 
+    });
+    
+    const nav = user ? getFilteredNavigation(user.role, unreadCount) : {
       mainNav: [],
       clinicalNav: [],
       aiToolsNav: [],
       managementNav: [],
       analyticsNav: [],
       systemNav: []
-    }, [user?.role, unreadCount]
-  );
+    };
+    
+    console.log('🔍 [SIDEBAR] Navegação calculada:', {
+      mainNavCount: nav.mainNav.length,
+      clinicalNavCount: nav.clinicalNav?.length || 0,
+      aiToolsNavCount: nav.aiToolsNav.length,
+      managementNavCount: nav.managementNav.length,
+      analyticsNavCount: nav.analyticsNav?.length || 0,
+      systemNavCount: nav.systemNav?.length || 0
+    });
+    
+    return nav;
+  }, [user?.role, unreadCount]);
 
   const getItemGroup = useCallback((to: string) => {
     if (navigation.mainNav.some((item: any) => item.to === to)) return 'Principal';
@@ -357,35 +404,46 @@ const Sidebar: React.FC = () => {
       />
       
       <nav className="flex-1 px-2 py-3 space-y-2 overflow-y-auto">
-        {navigation.mainNav.length > 0 && (
-          <NavGroup title="Principal" isCollapsed={isCollapsed}>
-            {navigation.mainNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
-          </NavGroup>
-        )}
-        {navigation.clinicalNav && navigation.clinicalNav.length > 0 && (
-          <NavGroup title="Clínico" isCollapsed={isCollapsed}>
-            {navigation.clinicalNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
-          </NavGroup>
-        )}
-        {navigation.analyticsNav && navigation.analyticsNav.length > 0 && (
-          <NavGroup title="Analytics & BI" isCollapsed={isCollapsed}>
-            {navigation.analyticsNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
-          </NavGroup>
-        )}
-        {navigation.aiToolsNav.length > 0 && (
-          <NavGroup title="Ferramentas IA" isCollapsed={isCollapsed}>
-            {navigation.aiToolsNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
-          </NavGroup>
-        )}
-        {navigation.managementNav.length > 0 && (
-          <NavGroup title="Gestão" isCollapsed={isCollapsed}>
-            {navigation.managementNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
-          </NavGroup>
-        )}
-        {navigation.systemNav && navigation.systemNav.length > 0 && (
-          <NavGroup title="Sistema" isCollapsed={isCollapsed}>
-            {navigation.systemNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
-          </NavGroup>
+        {/* 🔍 DEBUG: Mostrar estado de loading quando user não estiver carregado */}
+        {!user ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500 mb-4"></div>
+            <p className="text-sm text-slate-500">Carregando navegação...</p>
+            <p className="text-xs text-slate-400 mt-1">Aguardando dados do usuário</p>
+          </div>
+        ) : (
+          <>
+            {navigation.mainNav.length > 0 && (
+              <NavGroup title="Principal" isCollapsed={isCollapsed}>
+                {navigation.mainNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
+              </NavGroup>
+            )}
+            {navigation.clinicalNav && navigation.clinicalNav.length > 0 && (
+              <NavGroup title="Clínico" isCollapsed={isCollapsed}>
+                {navigation.clinicalNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
+              </NavGroup>
+            )}
+            {navigation.analyticsNav && navigation.analyticsNav.length > 0 && (
+              <NavGroup title="Analytics & BI" isCollapsed={isCollapsed}>
+                {navigation.analyticsNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
+              </NavGroup>
+            )}
+            {navigation.aiToolsNav.length > 0 && (
+              <NavGroup title="Ferramentas IA" isCollapsed={isCollapsed}>
+                {navigation.aiToolsNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
+              </NavGroup>
+            )}
+            {navigation.managementNav.length > 0 && (
+              <NavGroup title="Gestão" isCollapsed={isCollapsed}>
+                {navigation.managementNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
+              </NavGroup>
+            )}
+            {navigation.systemNav && navigation.systemNav.length > 0 && (
+              <NavGroup title="Sistema" isCollapsed={isCollapsed}>
+                {navigation.systemNav.map(item => <NavLinkComponent key={item.to} {...item} isCollapsed={isCollapsed} />)}
+              </NavGroup>
+            )}
+          </>
         )}
       </nav>
 
