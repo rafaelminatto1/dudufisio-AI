@@ -269,25 +269,44 @@ const AppContent: React.FC = memo(() => {
 
     // Memoizar renderDashboard para evitar re-renderizações desnecessárias
     const renderDashboard = useCallback(() => {
-        if (!user) return null;
+        console.log('🔍 [APPROUTES] renderDashboard chamado:', { 
+            hasUser: !!user, 
+            userRole: user?.role 
+        });
+        
+        if (!user) {
+            console.log('❌ [APPROUTES] renderDashboard: usuário não encontrado');
+            return null;
+        }
 
         // Route to appropriate dashboard based on user role
         switch (user.role) {
             case Role.Patient:
+                console.log('🔍 [APPROUTES] Renderizando PatientPortalDashboard');
                 return <PatientPortalDashboard user={user} onLogout={logout} />;
             case Role.EducadorFisico:
+                console.log('🔍 [APPROUTES] Renderizando PartnerPortalDashboard');
                 return <PartnerPortalDashboard user={user} onLogout={logout} />;
             case Role.Admin:
             case Role.Therapist:
             default:
+                console.log('🔍 [APPROUTES] Renderizando CompleteDashboard');
                 return <CompleteDashboard user={user} onLogout={logout} />;
         }
     }, [user, logout]);
 
     if (isAuthenticated && user) {
+        console.log('🔍 [APPROUTES] Usuário autenticado, renderizando dashboard:', {
+            userId: user.id,
+            userRole: user.role,
+            userName: user.name
+        });
+        
         return (
             <React.Suspense fallback={DashboardLoadingScreen}>
-                {renderDashboard()}
+                <Routes>
+                    <Route path="/*" element={renderDashboard()} />
+                </Routes>
             </React.Suspense>
         );
     }

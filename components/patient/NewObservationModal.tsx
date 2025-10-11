@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Save, AlertCircle } from 'lucide-react';
-import { Button } from '../ui/card';
+import { Button } from '../ui/button';
 import type { SessionObservation } from '../../types';
 import { addObservation } from '../../services/patientTrackingService';
 

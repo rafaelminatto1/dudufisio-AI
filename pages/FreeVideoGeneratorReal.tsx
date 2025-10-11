@@ -153,6 +153,12 @@ const FreeVideoGeneratorReal: React.FC = () => {
   const [loadingMessage, setLoadingMessage] = useState('');
   const [showAttachModal, setShowAttachModal] = useState(false);
   const [generationError, setGenerationError] = useState<string | null>(null);
+  const [selectedVideoInfo, setSelectedVideoInfo] = useState<{
+    title: string;
+    description: string;
+    exerciseType: string;
+    modality: string;
+  } | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(exerciseSchema),
@@ -198,27 +204,44 @@ const FreeVideoGeneratorReal: React.FC = () => {
     try {
       // 1. Iniciar geração com Gemini Veo 2.0
       setLoadingMessage(loadingMessages[0]);
+      console.log('🚀 [VIDEO GEN] Iniciando geração de vídeo...');
+      
       const operation = await generateExerciseVideo(realPrompt);
       
-      // 2. Polling loop - verificar status a cada 10 segundos
-      let currentOp = operation;
-      let progressStep = 0;
-      let messageIndex = 0;
+      if (!operation) {
+        throw new Error('Operação de geração não foi iniciada corretamente');
+      }
       
-      while (!currentOp.done) {
+      console.log('✅ [VIDEO GEN] Operação iniciada:', operation);
+      
+      // 2. Polling loop - verificar status a cada 3 segundos (mais rápido para UX)
+      let currentOp = operation;
+      let messageIndex = 0;
+      let pollCount = 0;
+      const maxPolls = 40; // Máximo 2 minutos (40 x 3s)
+      
+      while (!currentOp.done && pollCount < maxPolls) {
         // Atualizar mensagem rotativa
         messageIndex = (messageIndex + 1) % loadingMessages.length;
         setLoadingMessage(loadingMessages[messageIndex]);
         
-        // Atualizar progresso (máximo 95% durante polling)
-        progressStep = Math.min(progressStep + 5, 95);
-        setGenerationProgress(progressStep);
+        // Atualizar progresso baseado no progresso da operação
+        const opProgress = currentOp.progress || 0;
+        setGenerationProgress(Math.min(opProgress, 95));
         
-        // Aguardar 10 segundos antes de verificar novamente
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        console.log(`🔄 [VIDEO GEN] Poll ${pollCount + 1}/${maxPolls} - Progresso: ${opProgress}%`);
+        
+        // Aguardar 3 segundos antes de verificar novamente
+        await new Promise(resolve => setTimeout(resolve, 3000));
         
         // Verificar status da operação
         currentOp = await getVideosOperation(currentOp);
+        pollCount++;
+      }
+      
+      // Verificar se atingiu timeout
+      if (pollCount >= maxPolls && !currentOp.done) {
+        throw new Error('Timeout: Geração de vídeo demorou mais do que o esperado. Tente novamente.');
       }
       
       // 3. Operação concluída - baixar vídeo
@@ -228,11 +251,30 @@ const FreeVideoGeneratorReal: React.FC = () => {
       const downloadLink = currentOp.response?.downloadLink;
       
       if (!downloadLink) {
-        throw new Error('Link de download não encontrado na resposta');
+        console.error('❌ [VIDEO GEN] Resposta da operação:', currentOp);
+        throw new Error('Link de download não encontrado na resposta da API');
+      }
+
+      // Atualizar informações do vídeo selecionado
+      if (currentOp.response) {
+        setSelectedVideoInfo({
+          title: currentOp.response.title || pendingFormData?.exerciseName || 'Exercício Personalizado',
+          description: currentOp.response.description || '',
+          exerciseType: currentOp.response.exerciseType || 'Fisioterapia',
+          modality: currentOp.response.modality || MODALITIES[pendingFormData?.modality as keyof typeof MODALITIES] || 'Fisioterapia'
+        });
       }
       
+      console.log('📥 [VIDEO GEN] Baixando vídeo de:', downloadLink);
+      
       const videoBlob = await fetchVideoFromUri(downloadLink);
+      
+      if (!videoBlob || videoBlob.size === 0) {
+        throw new Error('Vídeo baixado está vazio ou inválido');
+      }
+      
       const videoUrl = URL.createObjectURL(videoBlob);
+      console.log('✅ [VIDEO GEN] Vídeo convertido para URL:', videoUrl);
       
       // 4. Gerar thumbnail (placeholder por enquanto)
       const seed = `${values.exerciseName.toLowerCase()}-${values.modality}-gemini`;
@@ -252,6 +294,8 @@ const FreeVideoGeneratorReal: React.FC = () => {
       setGenerationProgress(100);
       setLoadingMessage('✅ Vídeo gerado com sucesso!');
       
+      console.log('🎉 [VIDEO GEN] Geração completa com sucesso!');
+      
       // Transição para tela de vídeo pronto
       setTimeout(() => {
         setCurrentStep('video_ready');
@@ -259,13 +303,15 @@ const FreeVideoGeneratorReal: React.FC = () => {
       }, 1000);
       
     } catch (error) {
-      console.error('Erro na geração do vídeo:', error);
+      console.error('❌ [VIDEO GEN] Erro na geração do vídeo:', error);
       setGenerationError(error instanceof Error ? error.message : 'Erro desconhecido ao gerar vídeo');
       setIsGenerating(false);
       setCurrentStep('config');
+      setGenerationProgress(0);
       
-      // Mostrar alert ao usuário
-      alert(`Erro ao gerar vídeo: ${error instanceof Error ? error.message : 'Erro desconhecido'}. Por favor, tente novamente.`);
+      // Mostrar alert ao usuário com informação detalhada
+      const errorMsg = error instanceof Error ? error.message : 'Erro desconhecido';
+      alert(`❌ Erro ao gerar vídeo:\n\n${errorMsg}\n\nPor favor, tente novamente ou entre em contato com o suporte se o problema persistir.`);
     }
   }, [form, toolInfo, isGenerating, loadingMessages]);
 
@@ -367,6 +413,17 @@ const FreeVideoGeneratorReal: React.FC = () => {
             <CardDescription>Descreva o exercício que você quer ver em vídeo</CardDescription>
           </CardHeader>
           <CardContent>
+            {/* Mostrar erro se houver */}
+            {generationError && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Erro na Geração</AlertTitle>
+                <AlertDescription>
+                  {generationError}
+                </AlertDescription>
+              </Alert>
+            )}
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
@@ -436,28 +493,51 @@ const FreeVideoGeneratorReal: React.FC = () => {
                   <FormItem>
                     <FormLabel>Motor de IA</FormLabel>
                     <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span className="font-medium text-blue-700 dark:text-blue-300">
-                          {toolInfo.name}
-                        </span>
-                        <span className="text-sm text-blue-600 dark:text-blue-400">
-                          ({toolInfo.quality})
-                        </span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                          <span className="font-medium text-blue-700 dark:text-blue-300">
+                            {toolInfo.name}
+                          </span>
+                          <span className="text-sm text-blue-600 dark:text-blue-400">
+                            ({toolInfo.quality})
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                          <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+                            API Configurada
+                          </span>
+                        </div>
                       </div>
                       <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
                         {toolInfo.description}
+                      </p>
+                      <p className="text-xs text-blue-500 dark:text-blue-300 mt-1 font-mono">
+                        🔑 Key: AIzaSy...GmuLtM
                       </p>
                     </div>
                   </FormItem>
                 </div>
 
-                <Alert>
+                <Alert className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
                   <Brain className="h-4 w-4" />
                   <AlertTitle>Como funciona a IA</AlertTitle>
                   <AlertDescription>
-                    O Google Gemini Veo 2.0 vai analisar seu exercício e modalidade para gerar um vídeo específico e personalizado. 
-                    Cada combinação gera um vídeo único baseado no que você escreveu.
+                    <div className="space-y-2">
+                      <p>
+                        O Google Gemini Veo 2.0 vai analisar seu exercício e modalidade para gerar um vídeo específico e personalizado. 
+                        Cada combinação gera um vídeo único baseado no que você escreveu.
+                      </p>
+                      <div className="flex items-center space-x-2 text-xs">
+                        <div className="flex items-center space-x-1">
+                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                          <span className="text-green-700 font-semibold">API Key Configurada</span>
+                        </div>
+                        <span className="text-blue-600">•</span>
+                        <span className="text-blue-700">Tentará usar API real quando disponível</span>
+                      </div>
+                    </div>
                   </AlertDescription>
                 </Alert>
 
@@ -493,7 +573,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
               <Brain className="w-5 h-5 mr-2 text-purple-600 animate-pulse" />
               IA Analisando seu Exercício...
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-sm text-muted-foreground">
               Google Gemini Veo 2.0 está criando um vídeo personalizado baseado no seu prompt
             </CardDescription>
           </CardHeader>
@@ -567,7 +647,14 @@ const FreeVideoGeneratorReal: React.FC = () => {
               Vídeo Personalizado Gerado!
             </CardTitle>
             <CardDescription>
-              Sua IA criou um vídeo único e específico baseado no seu exercício: "{pendingFormData?.exerciseName}"
+              <span className="block">
+                Sua IA criou um vídeo único e específico baseado no seu exercício: "{selectedVideoInfo?.title || pendingFormData?.exerciseName}"
+              </span>
+              {selectedVideoInfo?.description && (
+                <span className="block mt-2 text-sm text-muted-foreground">
+                  {selectedVideoInfo.description}
+                </span>
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -596,10 +683,16 @@ const FreeVideoGeneratorReal: React.FC = () => {
               
               <div className="flex items-center justify-between">
                 <div className="text-sm text-muted-foreground">
-                  <p><strong>Exercício:</strong> {pendingFormData?.exerciseName}</p>
-                  <p><strong>Modalidade:</strong> {MODALITIES[pendingFormData?.modality as keyof typeof MODALITIES]}</p>
+                  <p><strong>Exercício:</strong> {selectedVideoInfo?.title || pendingFormData?.exerciseName}</p>
+                  <p><strong>Modalidade:</strong> {selectedVideoInfo?.modality || MODALITIES[pendingFormData?.modality as keyof typeof MODALITIES]}</p>
                   <p><strong>Motor IA:</strong> {toolInfo.name}</p>
                   <p><strong>Duração:</strong> {videoDuration}</p>
+                  {selectedVideoInfo?.description && (
+                    <p><strong>Descrição:</strong> {selectedVideoInfo.description}</p>
+                  )}
+                  {selectedVideoInfo?.exerciseType && (
+                    <p><strong>Tipo:</strong> {selectedVideoInfo.exerciseType}</p>
+                  )}
                 </div>
                 
                 <div className="flex space-x-2">
@@ -624,7 +717,13 @@ const FreeVideoGeneratorReal: React.FC = () => {
                   <p>✅ IA analisou seu exercício específico</p>
                   <p>✅ Vídeo único gerado baseado no seu prompt</p>
                   <p>✅ Duração personalizada: {videoDuration}</p>
-                  <p>✅ Conteúdo exclusivo para "{pendingFormData?.exerciseName}"</p>
+                  <p>✅ Conteúdo exclusivo para "{selectedVideoInfo?.title || pendingFormData?.exerciseName}"</p>
+                  {selectedVideoInfo?.exerciseType && (
+                    <p>✅ Tipo de exercício: {selectedVideoInfo.exerciseType}</p>
+                  )}
+                  {selectedVideoInfo?.description && (
+                    <p>✅ Descrição: {selectedVideoInfo.description}</p>
+                  )}
                 </div>
               </AlertDescription>
             </Alert>

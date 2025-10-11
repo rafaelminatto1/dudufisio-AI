@@ -1,0 +1,37 @@
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="300" height="200" fill="#F9FAFB" stroke="#F59E0B" stroke-width="2" rx="8"/>
+  
+  <!-- Gradient overlay -->
+  <defs>
+    <linearGradient id="grad53" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#F59E0B;stop-opacity:0.05" />
+    </linearGradient>
+  </defs>
+  <rect width="300" height="200" fill="url(#grad53)" rx="8"/>
+  
+  <!-- Main icon -->
+  <text x="150" y="80" text-anchor="middle" font-size="48" font-family="Arial, sans-serif">🦴</text>
+  
+  <!-- Exercise name -->
+  <text x="150" y="110" text-anchor="middle" font-size="14" font-weight="bold" font-family="Arial, sans-serif" fill="#1F2937">
+    Fortalecimento de Quadril
+  </text>
+  
+  <!-- Specialty badge -->
+  <rect x="50" y="130" width="200" height="20" fill="#F59E0B" rx="10"/>
+  <text x="150" y="143" text-anchor="middle" font-size="12" font-weight="bold" font-family="Arial, sans-serif" fill="white">
+    Geriátrica
+  </text>
+  
+  <!-- Difficulty level -->
+  <text x="150" y="165" text-anchor="middle" font-size="11" font-family="Arial, sans-serif" fill="#6B7280">
+    Nível 1
+  </text>
+  
+  <!-- Duration -->
+  <text x="150" y="180" text-anchor="middle" font-size="10" font-family="Arial, sans-serif" fill="#9CA3AF">
+    3:00
+  </text>
+</svg>

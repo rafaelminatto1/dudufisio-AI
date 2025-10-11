@@ -3,28 +3,33 @@
  * 
  * Cliente Supabase configurado para o projeto DuduFisio-AI
  * Singleton compartilhado por toda a aplicação
+ * 
+ * ⚠️ IMPORTANTE: Este é um projeto VITE (não Next.js)
+ * Use import.meta.env.VITE_* ao invés de process.env.NEXT_PUBLIC_*
  */
 
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/supabase';
 
-// Validar variáveis de ambiente
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Validar variáveis de ambiente (VITE syntax)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl) {
   throw new Error(
-    'NEXT_PUBLIC_SUPABASE_URL não está definida. ' +
+    'VITE_SUPABASE_URL não está definida. ' +
     'Crie o arquivo .env.local na raiz do projeto. ' +
-    'Veja env.supabase.example para referência.'
+    'Veja env.supabase.example para referência. ' +
+    '⚠️ Use VITE_SUPABASE_URL (não NEXT_PUBLIC_SUPABASE_URL)'
   );
 }
 
 if (!supabaseAnonKey) {
   throw new Error(
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY não está definida. ' +
+    'VITE_SUPABASE_ANON_KEY não está definida. ' +
     'Adicione a anon key no arquivo .env.local. ' +
-    'Pegue em: https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo/settings/api'
+    'Pegue em: https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo/settings/api ' +
+    '⚠️ Use VITE_SUPABASE_ANON_KEY (não NEXT_PUBLIC_SUPABASE_ANON_KEY)'
   );
 }
 
@@ -46,7 +51,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 });
 
 // Log de inicialização (apenas em desenvolvimento)
-if (process.env.NODE_ENV === 'development') {
+if (import.meta.env.DEV) {
   console.log('✅ Supabase Client inicializado');
   console.log('📍 URL:', supabaseUrl);
   console.log('🔑 Key:', supabaseAnonKey.substring(0, 20) + '...');

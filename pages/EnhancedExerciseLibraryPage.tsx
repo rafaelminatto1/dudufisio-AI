@@ -77,6 +77,13 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
       const allEquipment = integratedExerciseService.getEquipment();
       const stats = integratedExerciseService.getStatistics();
 
+      console.log('🔍 DEBUG - Total exercícios carregados:', allExercises.length);
+      console.log('🔍 DEBUG - Categorias:', allCategories);
+      console.log('🔍 DEBUG - Exercícios por categoria:', allCategories.map(cat => ({
+        categoria: cat,
+        quantidade: allExercises.filter(ex => ex.category === cat).length
+      })));
+
       setExercises(allExercises);
       setCategories(allCategories);
       setBodyParts(allBodyParts);

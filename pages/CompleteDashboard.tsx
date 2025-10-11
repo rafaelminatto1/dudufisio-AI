@@ -349,6 +349,12 @@ const SessionRoute: React.FC<{ mode?: 'view' | 'form' }> = ({ mode = 'view' }) =
 };
 
 const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout }) => {
+    console.log('🔍 [COMPLETE_DASHBOARD] Componente renderizando:', {
+        hasUser: !!user,
+        userId: user?.id,
+        userRole: user?.role
+    });
+    
     return (
         <ErrorBoundary>
             <Layout user={user} onLogout={onLogout}>

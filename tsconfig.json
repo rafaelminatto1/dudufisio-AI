@@ -80,6 +80,7 @@
     "contexts",
     "types",
     "lib",
+    "data",
     "design-system",
     "index.tsx",
     "App.tsx",

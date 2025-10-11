@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Download, FileText, BarChart3, LineChart as LineChartIcon, TrendingUp } from 'lucide-react';
+import { Calendar, Download, FileText, BarChart3, LineChart as LineChartIcon, TrendingUp, FileSpreadsheet, Share2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -18,19 +18,27 @@ import {
 } from 'recharts';
 import type { EvolutionReportData, AssessmentStatistics } from '../../types';
 import { generateEvolutionReport } from '../../services/patientTrackingService';
+import { 
+  exportAssessmentsToExcel,
+  exportStatisticsToExcel,
+  exportReportToPDF,
+  copyReportToClipboard
+} from '../../utils/exportUtils';
 import { format, parseISO, subMonths, subWeeks } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface EvolutionReportProps {
   patientId: string;
+  patientName?: string;
 }
 
 type ChartType = 'line' | 'bar' | 'composed';
 type PeriodType = '1week' | '1month' | '3months' | '6months' | 'all' | 'custom';
 
-export const EvolutionReport: React.FC<EvolutionReportProps> = ({ patientId }) => {
+export const EvolutionReport: React.FC<EvolutionReportProps> = ({ patientId, patientName = 'Paciente' }) => {
   const [reportData, setReportData] = useState<EvolutionReportData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
   const [period, setPeriod] = useState<PeriodType>('1month');
   const [customDates, setCustomDates] = useState({
     start: format(subMonths(new Date(), 1), 'yyyy-MM-dd'),
@@ -94,14 +102,54 @@ export const EvolutionReport: React.FC<EvolutionReportProps> = ({ patientId }) =
     }
   };
 
-  const handleExportPDF = () => {
-    // TODO: Implementar export PDF
-    alert('Export PDF será implementado');
+  const handleExportPDF = async () => {
+    if (!reportData) return;
+    
+    try {
+      setExporting(true);
+      exportReportToPDF(reportData, patientName);
+    } catch (error: any) {
+      alert(error.message || 'Erro ao exportar PDF');
+    } finally {
+      setExporting(false);
+    }
   };
 
-  const handleExportExcel = () => {
-    // TODO: Implementar export Excel
-    alert('Export Excel será implementado');
+  const handleExportExcel = async () => {
+    if (!reportData) return;
+    
+    try {
+      setExporting(true);
+      exportAssessmentsToExcel(reportData, patientName);
+    } catch (error: any) {
+      alert(error.message || 'Erro ao exportar Excel');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleExportStatistics = async () => {
+    if (!reportData) return;
+    
+    try {
+      setExporting(true);
+      exportStatisticsToExcel(reportData.statistics, patientName);
+    } catch (error: any) {
+      alert(error.message || 'Erro ao exportar estatísticas');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleCopyToClipboard = async () => {
+    if (!reportData) return;
+    
+    try {
+      await copyReportToClipboard(reportData);
+      alert('Dados copiados para a área de transferência!');
+    } catch (error: any) {
+      alert(error.message || 'Erro ao copiar dados');
+    }
   };
 
   // Agrupar dados do gráfico por métrica
@@ -198,14 +246,42 @@ export const EvolutionReport: React.FC<EvolutionReportProps> = ({ patientId }) =
               <BarChart3 className="w-5 h-5" />
               Relatório de Evolução
             </CardTitle>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={handleExportPDF}>
-                <Download className="w-4 h-4 mr-2" />
-                PDF
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleExportPDF}
+                disabled={exporting || !reportData}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                {exporting ? 'Exportando...' : 'PDF'}
               </Button>
-              <Button variant="outline" size="sm" onClick={handleExportExcel}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleExportExcel}
+                disabled={exporting || !reportData}
+              >
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Excel (Dados)
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleExportStatistics}
+                disabled={exporting || !reportData}
+              >
                 <Download className="w-4 h-4 mr-2" />
-                Excel
+                Excel (Stats)
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleCopyToClipboard}
+                disabled={exporting || !reportData}
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Copiar
               </Button>
             </div>
           </div>

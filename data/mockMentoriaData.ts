@@ -289,6 +289,9 @@ export const mockInterns: Intern[] = [
 ];
 
 export const mockEducationalCases: EducationalCase[] = [
+  // ============================================
+  // CASOS ORTOPÉDICOS (8 casos)
+  // ============================================
   {
     id: 'case_1',
     title: 'Reabilitação pós-cirúrgica de LCA em atleta',
@@ -361,63 +364,240 @@ export const mockEducationalCases: EducationalCase[] = [
     lastUpdated: '2024-06-20',
     tags: ['LCA', 'pós-operatório', 'esporte', 'joelho', 'atleta'],
     isPublished: true,
-    discussions: [
-      {
-        id: 'disc_1',
-        caseId: 'case_1',
-        userId: 'intern_1',
-        userName: 'João Silva',
-        userRole: 'Estagiário',
-        content: 'Quando devemos iniciar os exercícios de cadeia cinética fechada? Li que alguns protocolos começam com 6 semanas e outros com 12 semanas.',
-        createdAt: '2024-06-16',
-        replies: [
-          {
-            id: 'reply_1',
-            discussionId: 'disc_1',
-            userId: 'therapist_1',
-            userName: 'Dr. Roberto',
-            content: 'Excelente pergunta! Geralmente iniciamos após 6-8 semanas, mas depende da cicatrização do enxerto e da ausência de derrame. O mais importante é respeitar a biologia da cicatrização.',
-            createdAt: '2024-06-16',
-            votes: 3
-          },
-          {
-            id: 'reply_2',
-            discussionId: 'disc_1',
-            userId: 'intern_2',
-            userName: 'Maria Santos',
-            content: 'No meu estágio anterior, começávamos com exercícios isométricos em cadeia fechada já na 4ª semana, mas com carga parcial. Isso está correto?',
-            createdAt: '2024-06-17',
-            votes: 1
-          }
-        ],
-        votes: 2
-      }
-    ],
-    evaluations: [
-      {
-        id: 'ceval_1',
-        caseId: 'case_1',
-        userId: 'intern_1',
-        rating: 5,
-        difficulty: 4,
-        usefulness: 5,
-        feedback: 'Caso muito completo e realista. Ajudou muito a entender a progressão da reabilitação.',
-        createdAt: '2024-06-17'
-      },
-      {
-        id: 'ceval_2',
-        caseId: 'case_1',
-        userId: 'intern_2',
-        rating: 5,
-        difficulty: 4,
-        usefulness: 4,
-        feedback: 'Excelente detalhamento das fases. Gostaria de mais informações sobre os aspectos psicológicos.',
-        createdAt: '2024-06-18'
-      }
-    ]
+    discussions: [],
+    evaluations: []
   },
   {
     id: 'case_2',
+    title: 'Síndrome do Impacto do Ombro - Atleta de Natação',
+    description: 'Paciente de 22 anos, nadadora competitiva, com dor crônica no ombro direito há 6 meses.',
+    specialty: 'Ortopedia',
+    difficultyLevel: 3,
+    patientProfile: {
+      age: 22,
+      gender: 'F',
+      occupation: 'Nadadora competitiva - modalidade livre',
+      medicalHistory: ['Treinamento intensivo há 8 anos', 'Lesão prévia no ombro esquerdo (2019)', 'Sem comorbidades'],
+      currentComplaints: 'Dor no ombro direito durante e após treinos, especialmente nos nados livre e costas'
+    },
+    clinicalPresentation: {
+      symptoms: ['Dor no ombro direito (6/10)', 'Sensação de travamento ocasional', 'Fadiga muscular precoce', 'Dificuldade para dormir sobre o lado direito'],
+      physicalExam: 'Dor à palpação no manguito rotador, teste de Neer positivo, teste de Hawkins positivo, força 4/5 em rotação externa',
+      functionalTests: ['DASH: 45/100', 'Teste de Apley: limitado em rotação externa', 'Single arm lift test: positivo'],
+      imaging: ['RM: tendinopatia do supraespinhal', 'RX: acrômio tipo III (curvado)', 'USG: bursite subacromial']
+    },
+    diagnosis: {
+      primary: 'Síndrome do impacto do ombro com tendinopatia do supraespinhal',
+      secondary: ['Bursite subacromial', 'Instabilidade funcional do ombro', 'Disfunção escapular'],
+      differentialDiagnosis: ['Luxação recidivante', 'Lesão labral', 'Capsulite adesiva', 'Artrose acromioclavicular']
+    },
+    treatmentPlan: {
+      goals: [
+        'Eliminação da dor e inflamação',
+        'Restauração da função completa do ombro',
+        'Correção da disfunção escapular',
+        'Retorno ao treinamento competitivo',
+        'Prevenção de recidivas'
+      ],
+      interventions: [
+        'Modificação temporária do treinamento',
+        'Exercícios de fortalecimento do manguito rotador',
+        'Correção da postura escapular',
+        'Alongamentos específicos',
+        'Técnicas de terapia manual'
+      ],
+      duration: '3-4 meses para retorno completo',
+      frequency: '3x por semana por 8 semanas, depois 2x por semana',
+      progressIndicators: ['Redução da dor', 'Melhora da força', 'Retorno gradual aos treinos', 'Testes funcionais negativos']
+    },
+    outcomes: {
+      shortTerm: ['Redução da dor para 2/10', 'Melhora da ADM', 'Retorno ao treinamento parcial'],
+      longTerm: ['Retorno completo à competição', 'Manutenção da performance', 'Prevenção de recidivas'],
+      complications: ['Ruptura do manguito', 'Capsulite adesiva', 'Atraso no retorno ao esporte']
+    },
+    learningObjectives: [
+      'Identificar fatores de risco em atletas de overhead',
+      'Aplicar exercícios específicos para manguito rotador',
+      'Entender a importância da estabilização escapular',
+      'Desenvolver programa de prevenção',
+      'Integrar modificações no treinamento'
+    ],
+    discussionPoints: [
+      'Quando é indicada cirurgia no impacto do ombro?',
+      'Como modificar o treinamento durante o tratamento?',
+      'Qual a importância da correção postural?',
+      'Como prevenir recidivas em atletas?',
+      'Critérios para retorno ao esporte'
+    ],
+    references: [
+      'Wilk KE, et al. Rehabilitation of the overhead athlete\'s elbow. Sports Health. 2012;4(5):404-14.',
+      'Cools AM, et al. Rehabilitation of scapular muscle balance. Am J Sports Med. 2007;35(10):1744-51.',
+      'Kibler WB, et al. The disabled throwing shoulder. Am J Sports Med. 2013;41(3):560-73.'
+    ],
+    createdBy: 'Dra. Camila',
+    createdAt: '2024-06-12',
+    lastUpdated: '2024-06-19',
+    tags: ['ombro', 'impacto', 'manguito rotador', 'natação', 'overhead'],
+    isPublished: true,
+    discussions: [],
+    evaluations: []
+  },
+  {
+    id: 'case_3',
+    title: 'Lombalgia Crônica - Funcionário de Escritório',
+    description: 'Paciente de 35 anos, analista de sistemas, com dor lombar crônica há 2 anos.',
+    specialty: 'Ortopedia',
+    difficultyLevel: 2,
+    patientProfile: {
+      age: 35,
+      gender: 'M',
+      occupation: 'Analista de sistemas',
+      medicalHistory: ['Sedentarismo há 10 anos', 'Tabagismo (10 cigarros/dia)', 'Obesidade grau I (IMC 28)'],
+      currentComplaints: 'Dor lombar constante (5/10) que piora com posições prolongadas sentado'
+    },
+    clinicalPresentation: {
+      symptoms: ['Dor lombar constante (5/10)', 'Rigidez matinal', 'Dor que irradia para glúteos', 'Piora ao ficar sentado >30min'],
+      physicalExam: 'Espasmo muscular paravertebral, teste de Lasègue negativo, força normal, reflexos preservados',
+      functionalTests: ['Oswestry: 35/100', 'Teste de Schober: 4cm', 'Finger-to-floor: 15cm'],
+      imaging: ['RX: perda da lordose lombar', 'RM: protrusão discal L4-L5 sem compressão neural']
+    },
+    diagnosis: {
+      primary: 'Lombalgia crônica inespecífica',
+      secondary: ['Protusão discal L4-L5', 'Disfunção da cadeia posterior', 'Síndrome postural'],
+      differentialDiagnosis: ['Hérnia discal', 'Espondilolistese', 'Artrite inflamatória', 'Tumor vertebral']
+    },
+    treatmentPlan: {
+      goals: [
+        'Redução da dor para níveis aceitáveis',
+        'Melhora da função nas atividades diárias',
+        'Correção da postura e ergonomia',
+        'Aumento da atividade física',
+        'Prevenção de recidivas'
+      ],
+      interventions: [
+        'Educação sobre ergonomia',
+        'Exercícios de fortalecimento do core',
+        'Alongamentos da cadeia posterior',
+        'Técnicas de relaxamento',
+        'Modificação do estilo de vida'
+      ],
+      duration: '3-6 meses',
+      frequency: '2x por semana por 12 semanas',
+      progressIndicators: ['Escala Oswestry', 'Redução da dor', 'Melhora da função', 'Adesão aos exercícios']
+    },
+    outcomes: {
+      shortTerm: ['Redução da dor para 3/10', 'Melhora da flexibilidade', 'Melhora da ergonomia'],
+      longTerm: ['Controle da dor', 'Retorno às atividades normais', 'Manutenção do estilo de vida ativo'],
+      complications: ['Cronificação da dor', 'Depressão', 'Dependência de medicamentos']
+    },
+    learningObjectives: [
+      'Compreender a lombalgia crônica inespecífica',
+      'Aplicar princípios de ergonomia',
+      'Prescrever exercícios para core',
+      'Integrar abordagem biopsicossocial',
+      'Desenvolver estratégias de prevenção'
+    ],
+    discussionPoints: [
+      'Qual o papel da educação do paciente?',
+      'Como abordar fatores psicossociais?',
+      'Importância da ergonomia no trabalho?',
+      'Critérios para encaminhamento cirúrgico?',
+      'Estratégias de adesão ao tratamento?'
+    ],
+    references: [
+      'Maher C, et al. Non-specific low back pain. Lancet. 2017;390(10090):736-47.',
+      'Delitto A, et al. Low back pain clinical practice guidelines. J Orthop Sports Phys Ther. 2012;42(4):A1-57.',
+      'Chou R, et al. Diagnosis and treatment of low back pain. Ann Intern Med. 2007;147(7):478-91.'
+    ],
+    createdBy: 'Dr. Fernando',
+    createdAt: '2024-06-08',
+    lastUpdated: '2024-06-16',
+    tags: ['lombalgia', 'crônica', 'postura', 'ergonomia', 'escritório'],
+    isPublished: true,
+    discussions: [],
+    evaluations: []
+  },
+  {
+    id: 'case_4',
+    title: 'Fratura de Fêmur - Idoso com Osteoporose',
+    description: 'Paciente de 78 anos, fratura de fêmur proximal após queda doméstica.',
+    specialty: 'Ortopedia',
+    difficultyLevel: 4,
+    patientProfile: {
+      age: 78,
+      gender: 'F',
+      occupation: 'Aposentada',
+      medicalHistory: ['Osteoporose', 'Hipertensão arterial', 'Diabetes tipo 2', 'Queda prévia há 2 anos'],
+      currentComplaints: 'Dor intensa no quadril direito e impossibilidade de deambular após queda há 5 dias'
+    },
+    clinicalPresentation: {
+      symptoms: ['Dor intensa no quadril direito (8/10)', 'Impossibilidade de deambular', 'Encurtamento do membro', 'Rotações externa do pé'],
+      physicalExam: 'Membro inferior direito encurtado e em rotação externa, dor à palpação da região trocantérica',
+      functionalTests: ['Impossibilidade de teste de marcha', 'Força 0/5 em flexão de quadril', 'Reflexos preservados'],
+      imaging: ['RX: fratura transtrocanteriana', 'DEXA: osteoporose severa (T-score -3.2)', 'TC: boa redução após osteossíntese']
+    },
+    diagnosis: {
+      primary: 'Fratura transtrocanteriana de fêmur direito pós-osteossíntese',
+      secondary: ['Osteoporose severa', 'Síndrome pós-queda', 'Dependência funcional'],
+      differentialDiagnosis: ['Fratura patológica', 'Tumor ósseo', 'Infecção óssea']
+    },
+    treatmentPlan: {
+      goals: [
+        'Controle da dor pós-operatória',
+        'Prevenção de complicações (trombose, pneumonia)',
+        'Recuperação da marcha independente',
+        'Prevenção de novas quedas',
+        'Tratamento da osteoporose'
+      ],
+      interventions: [
+        'Mobilização precoce',
+        'Exercícios respiratórios',
+        'Treino de transferências',
+        'Treino de marcha progressivo',
+        'Exercícios de equilíbrio e força'
+      ],
+      duration: '3-6 meses',
+      frequency: 'Diário nas primeiras 2 semanas, depois 3x por semana',
+      progressIndicators: ['Independência nas transferências', 'Retorno da marcha', 'Prevenção de complicações']
+    },
+    outcomes: {
+      shortTerm: ['Controle da dor', 'Independência nas transferências', 'Retorno da marcha com auxílio'],
+      longTerm: ['Marcha independente ou com auxílio mínimo', 'Prevenção de novas quedas', 'Manutenção da autonomia'],
+      complications: ['Trombose venosa profunda', 'Pneumonia', 'Úlcera de pressão', 'Nova queda']
+    },
+    learningObjectives: [
+      'Compreender complicações das fraturas em idosos',
+      'Aplicar protocolos de mobilização precoce',
+      'Prevenir complicações sistêmicas',
+      'Desenvolver programa de prevenção de quedas',
+      'Integrar tratamento da osteoporose'
+    ],
+    discussionPoints: [
+      'Quando iniciar a deambulação?',
+      'Como prevenir complicações sistêmicas?',
+      'Importância do tratamento da osteoporose?',
+      'Critérios para alta hospitalar?',
+      'Estratégias de prevenção de quedas?'
+    ],
+    references: [
+      'Handoll HH, et al. Rehabilitation for hip fracture. Cochrane Database Syst Rev. 2011;(10):CD003624.',
+      'Dyer SM, et al. A critical review of the long-term disability outcomes following hip fracture. BMC Geriatr. 2016;16:158.',
+      'Giusti A, et al. Atypical femoral fractures. Osteoporos Int. 2011;22(8):2279-91.'
+    ],
+    createdBy: 'Dra. Ana',
+    createdAt: '2024-06-05',
+    lastUpdated: '2024-06-14',
+    tags: ['fratura', 'fêmur', 'idoso', 'osteoporose', 'queda'],
+    isPublished: true,
+    discussions: [],
+    evaluations: []
+  },
+
+  // ============================================
+  // CASOS NEUROLÓGICOS (5 casos)
+  // ============================================
+  {
+    id: 'case_5',
     title: 'AVC isquêmico com hemiplegia direita',
     description: 'Paciente de 58 anos com sequelas de AVC isquêmico, apresentando hemiplegia à direita.',
     specialty: 'Neurologia',
@@ -487,6 +667,239 @@ export const mockEducationalCases: EducationalCase[] = [
     createdAt: '2024-06-10',
     lastUpdated: '2024-06-18',
     tags: ['AVC', 'hemiplegia', 'neurologia', 'reabilitação', 'neuroplasticidade'],
+    isPublished: true,
+    discussions: [],
+    evaluations: []
+  },
+  {
+    id: 'case_6',
+    title: 'Doença de Parkinson - Fase Moderada',
+    description: 'Paciente de 65 anos com doença de Parkinson há 5 anos, em fase moderada da doença.',
+    specialty: 'Neurologia',
+    difficultyLevel: 4,
+    patientProfile: {
+      age: 65,
+      gender: 'M',
+      occupation: 'Aposentado (ex-engenheiro)',
+      medicalHistory: ['Doença de Parkinson (5 anos)', 'Depressão leve', 'Constipação crônica'],
+      currentComplaints: 'Rigidez muscular, tremor de repouso, lentidão nos movimentos e dificuldades de equilíbrio'
+    },
+    clinicalPresentation: {
+      symptoms: ['Bradicinesia', 'Rigidez muscular generalizada', 'Tremor de repouso', 'Instabilidade postural', 'Micrografia'],
+      physicalExam: 'Rigidez em roda denteada, tremor de repouso em membros superiores, marcha com passos curtos, ausência de balanço dos braços',
+      functionalTests: ['UPDRS-III: 28/56', 'Timed Up and Go: 15 segundos', 'Berg Balance Scale: 38/56'],
+      imaging: ['SPECT: redução da captação de dopamina', 'RM: atrofia leve dos gânglios da base']
+    },
+    diagnosis: {
+      primary: 'Doença de Parkinson - fase moderada (Hoehn & Yahr estágio 2.5)',
+      secondary: ['Bradicinesia', 'Rigidez', 'Tremor', 'Instabilidade postural'],
+      differentialDiagnosis: ['Parkinsonismo atípico', 'Tremor essencial', 'Parkinsonismo vascular', 'Medicação']
+    },
+    treatmentPlan: {
+      goals: [
+        'Manter independência nas AVDs',
+        'Melhorar a qualidade da marcha',
+        'Reduzir o risco de quedas',
+        'Preservar a amplitude de movimento',
+        'Manter a função cognitiva'
+      ],
+      interventions: [
+        'Exercícios de amplitude de movimento',
+        'Treino de equilíbrio e coordenação',
+        'Exercícios de força muscular',
+        'Treino de marcha com estratégias compensatórias',
+        'Exercícios vocais e respiratórios'
+      ],
+      duration: 'Contínuo - programa de manutenção',
+      frequency: '3x por semana',
+      progressIndicators: ['UPDRS-III', 'Timed Up and Go', 'Berg Balance Scale', 'Escala de Schwab & England']
+    },
+    outcomes: {
+      shortTerm: ['Melhora da flexibilidade', 'Redução do risco de quedas', 'Melhora da qualidade da marcha'],
+      longTerm: ['Manutenção da independência', 'Retardamento da progressão', 'Melhora da qualidade de vida'],
+      complications: ['Quedas', 'Frozen gait', 'Disfagia', 'Demência', 'Depressão']
+    },
+    learningObjectives: [
+      'Compreender a fisiopatologia da doença de Parkinson',
+      'Aplicar exercícios específicos para cada sintoma',
+      'Desenvolver estratégias compensatórias',
+      'Integrar abordagem multidisciplinar',
+      'Monitorar a progressão da doença'
+    ],
+    discussionPoints: [
+      'Qual o papel do exercício na neuroproteção?',
+      'Como adaptar exercícios conforme a progressão?',
+      'Importância da regularidade do tratamento?',
+      'Como manejar os períodos "off"?',
+      'Estratégias para melhorar a adesão?'
+    ],
+    references: [
+      'Goodwin VA, et al. The effectiveness of exercise interventions for people with Parkinson\'s disease. Cochrane Database Syst Rev. 2008;(4):CD004817.',
+      'Hirsch MA, et al. Exercise and neuroplasticity in persons living with Parkinson\'s disease. Eur J Phys Rehabil Med. 2009;45(2):215-29.',
+      'Tomlinson CL, et al. Physiotherapy intervention in Parkinson\'s disease. Cochrane Database Syst Rev. 2012;(8):CD002817.'
+    ],
+    createdBy: 'Dr. Roberto',
+    createdAt: '2024-06-07',
+    lastUpdated: '2024-06-15',
+    tags: ['Parkinson', 'neurologia', 'equilíbrio', 'marcha', 'bradicinesia'],
+    isPublished: true,
+    discussions: [],
+    evaluations: []
+  },
+
+  // ============================================
+  // CASOS ESPORTIVOS (4 casos)
+  // ============================================
+  {
+    id: 'case_7',
+    title: 'Lesão de Isquiotibiais - Corredor de Fundo',
+    description: 'Paciente de 28 anos, corredor de maratona, com lesão muscular nos isquiotibiais.',
+    specialty: 'Esportiva',
+    difficultyLevel: 3,
+    patientProfile: {
+      age: 28,
+      gender: 'M',
+      occupation: 'Corredor amador de maratona',
+      medicalHistory: ['Lesão prévia nos isquiotibiais (2019)', 'Treinamento 80km/semana', 'Sem outras lesões'],
+      currentComplaints: 'Dor súbita na região posterior da coxa direita durante treino de velocidade há 3 dias'
+    },
+    clinicalPresentation: {
+      symptoms: ['Dor aguda na coxa posterior direita (7/10)', 'Hematoma visível', 'Dificuldade para caminhar', 'Dor à contração isométrica'],
+      physicalExam: 'Dor à palpação no ventre muscular do bíceps femoral, equimose, teste de Thompson positivo',
+      functionalTests: ['Impossibilidade de teste de força', 'ADM limitada em flexão de quadril', 'Marcha antálgica'],
+      imaging: ['USG: lesão grau 2 no bíceps femoral', 'RM: confirmou lesão de 3cm no ventre muscular']
+    },
+    diagnosis: {
+      primary: 'Lesão muscular grau 2 dos isquiotibiais direito',
+      secondary: ['Hematoma intramuscular', 'Disfunção da cadeia posterior', 'Alteração da biomecânica da marcha'],
+      differentialDiagnosis: ['Tendinopatia proximal', 'Síndrome compartimental', 'Lesão nervosa', 'Fratura por estresse']
+    },
+    treatmentPlan: {
+      goals: [
+        'Controle da dor e inflamação',
+        'Promoção da cicatrização muscular',
+        'Restauração da força e flexibilidade',
+        'Retorno gradual ao treinamento',
+        'Prevenção de recidivas'
+      ],
+      interventions: [
+        'Protocolo RICE (Repouso, Gelo, Compressão, Elevação)',
+        'Mobilização precoce controlada',
+        'Exercícios excêntricos progressivos',
+        'Treino de força da cadeia posterior',
+        'Exercícios de agilidade e velocidade'
+      ],
+      duration: '6-8 semanas para retorno completo',
+      frequency: '3x por semana por 4 semanas, depois 2x por semana',
+      progressIndicators: ['Redução da dor', 'Melhora da força', 'Retorno gradual aos treinos', 'Testes funcionais']
+    },
+    outcomes: {
+      shortTerm: ['Controle da dor', 'Cicatrização da lesão', 'Retorno da força muscular'],
+      longTerm: ['Retorno completo ao treinamento', 'Prevenção de recidivas', 'Manutenção da performance'],
+      complications: ['Fibrose muscular', 'Recidiva da lesão', 'Atraso no retorno ao esporte']
+    },
+    learningObjectives: [
+      'Compreender as fases de cicatrização muscular',
+      'Aplicar protocolos de reabilitação progressiva',
+      'Desenvolver programa de prevenção',
+      'Integrar retorno gradual ao esporte',
+      'Monitorar sinais de recidiva'
+    ],
+    discussionPoints: [
+      'Quando iniciar exercícios excêntricos?',
+      'Como prevenir recidivas?',
+      'Importância do aquecimento?',
+      'Critérios para retorno ao esporte?',
+      'Papel da biomecânica na prevenção?'
+    ],
+    references: [
+      'Heiderscheit BC, et al. Hamstring strain injuries. J Orthop Sports Phys Ther. 2010;40(2):67-81.',
+      'Askling CM, et al. Acute first-time hamstring strains during high-speed running. Am J Sports Med. 2007;35(2):197-206.',
+      'Sherry MA, et al. A comparison of 2 rehabilitation programs in the treatment of acute hamstring strains. J Orthop Sports Phys Ther. 2004;34(3):116-25.'
+    ],
+    createdBy: 'Dr. Fernando',
+    createdAt: '2024-06-03',
+    lastUpdated: '2024-06-11',
+    tags: ['isquiotibiais', 'corrida', 'lesão muscular', 'esporte', 'prevenção'],
+    isPublished: true,
+    discussions: [],
+    evaluations: []
+  },
+
+  // ============================================
+  // CASOS GERIÁTRICOS (3 casos)
+  // ============================================
+  {
+    id: 'case_8',
+    title: 'Síndrome de Fragilidade - Idoso Independente',
+    description: 'Paciente de 72 anos com sinais iniciais de fragilidade, mas ainda independente.',
+    specialty: 'Geriátrica',
+    difficultyLevel: 3,
+    patientProfile: {
+      age: 72,
+      gender: 'F',
+      occupation: 'Aposentada (ex-enfermeira)',
+      medicalHistory: ['Hipertensão arterial', 'Osteoartrite de joelhos', 'Depressão leve'],
+      currentComplaints: 'Fadiga excessiva, fraqueza muscular e medo de cair há 6 meses'
+    },
+    clinicalPresentation: {
+      symptoms: ['Fadiga', 'Fraqueza muscular generalizada', 'Medo de quedas', 'Redução da atividade física'],
+      physicalExam: 'Força muscular reduzida (4/5), reflexos normais, equilíbrio comprometido',
+      functionalTests: ['Timed Up and Go: 12 segundos', 'Berg Balance Scale: 45/56', 'Handgrip: 18kg'],
+      imaging: ['DEXA: osteopenia', 'Não indicadas outras imagens']
+    },
+    diagnosis: {
+      primary: 'Síndrome de fragilidade (critérios de Fried: 3/5)',
+      secondary: ['Sarcopenia leve', 'Medo de quedas', 'Redução da atividade física'],
+      differentialDiagnosis: ['Depressão', 'Hipotireoidismo', 'Deficiência de vitamina D', 'Polifarmácia']
+    },
+    treatmentPlan: {
+      goals: [
+        'Prevenir a progressão da fragilidade',
+        'Melhorar a força muscular',
+        'Reduzir o medo de quedas',
+        'Aumentar a atividade física',
+        'Manter a independência'
+      ],
+      interventions: [
+        'Exercícios de fortalecimento muscular',
+        'Treino de equilíbrio e coordenação',
+        'Exercícios aeróbicos moderados',
+        'Educação sobre prevenção de quedas',
+        'Modificação do ambiente domiciliar'
+      ],
+      duration: '6-12 meses',
+      frequency: '3x por semana',
+      progressIndicators: ['Timed Up and Go', 'Berg Balance Scale', 'Força de preensão', 'Nível de atividade física']
+    },
+    outcomes: {
+      shortTerm: ['Melhora da força muscular', 'Redução do medo de quedas', 'Aumento da confiança'],
+      longTerm: ['Prevenção da progressão da fragilidade', 'Manutenção da independência', 'Melhora da qualidade de vida'],
+      complications: ['Quedas', 'Perda de independência', 'Institucionalização', 'Depressão']
+    },
+    learningObjectives: [
+      'Identificar sinais precoces de fragilidade',
+      'Aplicar exercícios para idosos frágeis',
+      'Desenvolver estratégias de prevenção',
+      'Integrar abordagem multidisciplinar',
+      'Monitorar progressão da síndrome'
+    ],
+    discussionPoints: [
+      'Como identificar fragilidade precocemente?',
+      'Qual a intensidade ideal dos exercícios?',
+      'Importância da aderência ao tratamento?',
+      'Como envolver a família?',
+      'Critérios para encaminhamento?'
+    ],
+    references: [
+      'Fried LP, et al. Frailty in older adults. J Gerontol A Biol Sci Med Sci. 2001;56(3):M146-56.',
+      'Clegg A, et al. Frailty in elderly people. Lancet. 2013;381(9868):752-62.',
+      'Liu CK, et al. Physical frailty. J Gerontol A Biol Sci Med Sci. 2014;69(5):547-53.'
+    ],
+    createdBy: 'Dra. Ana',
+    createdAt: '2024-06-01',
+    lastUpdated: '2024-06-09',
+    tags: ['fragilidade', 'idoso', 'sarcopenia', 'quedas', 'prevenção'],
     isPublished: true,
     discussions: [],
     evaluations: []

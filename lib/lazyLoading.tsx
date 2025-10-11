@@ -19,15 +19,15 @@ interface LazyComponentProps {
 
 /**
  * Wrapper para componentes lazy com fallback otimizado
- * ✅ FIX: Removido forwardRef para compatibilidade com React 19 e evitar erros de hook
+ * ✅ FIX: Tipagem correta para preservar props e evitar erros de hook
  */
 export function createLazyComponent<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
   fallback?: React.ReactNode
-) {
+): T {
   const LazyComponent = lazy(importFn);
 
-  const WrappedComponent: React.FC = (props) => (
+  const WrappedComponent = (props: any) => (
     <ErrorBoundary
       onError={(error, errorInfo) => {
         console.error('🚨 Erro no componente lazy:', error, errorInfo);
@@ -41,7 +41,7 @@ export function createLazyComponent<T extends ComponentType<any>>(
 
   WrappedComponent.displayName = `Lazy(${LazyComponent.name || 'Component'})`;
 
-  return WrappedComponent;
+  return WrappedComponent as unknown as T;
 }
 
 /**

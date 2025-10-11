@@ -44,7 +44,7 @@ export class RecommendationEngine {
   private gemini: GoogleGenerativeAI;
 
   constructor() {
-    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
     this.gemini = new GoogleGenerativeAI(apiKey);
   }
 

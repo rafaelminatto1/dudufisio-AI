@@ -13,6 +13,7 @@ import { AssessmentPanel } from '../components/patient/AssessmentPanel';
 import { MandatoryTestsConfig } from '../components/patient/MandatoryTestsConfig';
 import { MetricsDashboard } from '../components/patient/MetricsDashboard';
 import { EvolutionReport } from '../components/patient/EvolutionReport';
+import { PatientAlerts } from '../components/patient/PatientAlerts';
 
 const PatientDetailPage: React.FC = () => {
   const [assignedProtocols, setAssignedProtocols] = useState<ClinicalProtocol[]>([]);
@@ -88,6 +89,14 @@ const PatientDetailPage: React.FC = () => {
               Editar
             </Button>
           </div>
+                        </div>
+
+        {/* Alertas do Paciente */}
+        <div className="mb-6">
+          <PatientAlerts 
+            patientId={patient.id}
+            currentSessionNumber={patient.totalSessions}
+          />
                         </div>
 
         {/* Informações Básicas */}
@@ -383,7 +392,7 @@ const PatientDetailPage: React.FC = () => {
             )}
 
             {/* Seção de Exercícios Atribuídos */}
-            <ExerciseAssignmentSection patientId={patient.id} />
+          <ExerciseAssignmentSection patientId={patient.id} />
           </TabsContent>
 
           {/* Tab: Acompanhamento */}
@@ -403,7 +412,10 @@ const PatientDetailPage: React.FC = () => {
 
           {/* Tab: Relatórios */}
           <TabsContent value="reports" className="space-y-6">
-            <EvolutionReport patientId={patient.id} />
+            <EvolutionReport 
+              patientId={patient.id}
+              patientName={patient.name}
+            />
           </TabsContent>
         </Tabs>
 

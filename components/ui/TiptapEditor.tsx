@@ -60,13 +60,16 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
           keepMarks: true,
           keepAttributes: false,
         },
+        // Desabilitar extensões que serão adicionadas com configuração customizada
+        link: false,
+        strike: false, // Desabilita strike do StarterKit para evitar conflitos
       }),
       TextStyle,
       Color,
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
-      Underline,
+      Underline, // Não está no StarterKit por padrão, OK adicionar
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
