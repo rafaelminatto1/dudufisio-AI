@@ -8,23 +8,28 @@ import KnowledgeContributionModal from '../components/KnowledgeContributionModal
 
 const KnowledgeRow: React.FC<{ entry: KnowledgeBaseEntry, onEdit: (entry: KnowledgeBaseEntry) => void }> = ({ entry, onEdit }) => {
     const typeInfo = {
-        protocol: { icon: Workflow, color: 'bg-blue-100 text-blue-800' },
-        exercise: { icon: TestTube2, color: 'bg-green-100 text-green-800' },
-        technique: { icon: BrainCircuit, color: 'bg-purple-100 text-purple-800' },
-        case: { icon: BookCopy, color: 'bg-yellow-100 text-yellow-800' },
+        protocol: { icon: Workflow, color: 'bg-blue-100 text-blue-800', label: 'Protocolo' },
+        exercise: { icon: TestTube2, color: 'bg-green-100 text-green-800', label: 'Exercício' },
+        technique: { icon: BrainCircuit, color: 'bg-purple-100 text-purple-800', label: 'Técnica' },
+        case: { icon: BookCopy, color: 'bg-yellow-100 text-yellow-800', label: 'Caso Clínico' },
     };
-    const Icon = typeInfo[entry.type].icon;
+    
+    // Validação de segurança: usa 'technique' como fallback se o tipo não existir
+    const safeType = entry.type && typeInfo[entry.type] ? entry.type : 'technique';
+    const Icon = typeInfo[safeType].icon;
+    const typeLabel = typeInfo[safeType].label;
+    const typeColor = typeInfo[safeType].color;
 
     return (
         <tr className="border-b border-slate-200 hover:bg-slate-50 cursor-pointer" onClick={() => onEdit(entry)}>
             <td className="p-4 whitespace-nowrap">
                 <div className="flex items-center">
-                    <div className={`p-2 rounded-full mr-4 ${typeInfo[entry.type].color}`}>
+                    <div className={`p-2 rounded-full mr-4 ${typeColor}`}>
                         <Icon className="w-5 h-5" />
                     </div>
                     <div>
                         <div className="text-sm font-medium text-slate-900">{entry.title}</div>
-                        <div className="text-sm text-slate-500 capitalize">{entry.type}</div>
+                        <div className="text-sm text-slate-500">{typeLabel}</div>
                     </div>
                 </div>
             </td>
