@@ -718,9 +718,18 @@ const AtendimentoPageNew: React.FC = () => {
                                 
                                 <Separator />
                                 
-                                <div className="text-center text-sm text-slate-500">
-                                    Sessão em andamento
-                                </div>
+                                <Button 
+                                    onClick={handleFinishSession}
+                                    disabled={isFinishing}
+                                    className="w-full bg-green-600 hover:bg-green-700"
+                                >
+                                    {isFinishing ? (
+                                        <Loader className="h-4 w-4 mr-2 animate-spin" />
+                                    ) : (
+                                        <CheckCircle className="h-4 w-4 mr-2" />
+                                    )}
+                                    Finalizar Sessão
+                                </Button>
                             </CardContent>
                         </Card>
                     </div>
