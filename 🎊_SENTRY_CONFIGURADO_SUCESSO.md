@@ -9,11 +9,11 @@
 
 ### **Sentry DSN Configurado**
 ```
-https://00acd94c013b372a7c8c8f6d512171ab@o4510069182955520.ingest.us.sentry.io/4510069190295552
+https://d62c317fee896cf9151ac4bfdd3db3fb@o4510069182955520.ingest.us.sentry.io/4510184091877376
 ```
 
 **Organização:** o4510069182955520  
-**Projeto:** 4510069190295552  
+**Projeto:** 4510184091877376  
 **Region:** US (Sentry.io)
 
 ---
@@ -26,7 +26,7 @@ https://00acd94c013b372a7c8c8f6d512171ab@o4510069182955520.ingest.us.sentry.io/4
 import * as Sentry from '@sentry/react';
 
 Sentry.init({
-  dsn: "https://00acd94c013b372a7c8c8f6d512171ab@o4510069182955520.ingest.us.sentry.io/4510069190295552",
+  dsn: "https://d62c317fee896cf9151ac4bfdd3db3fb@o4510069182955520.ingest.us.sentry.io/4510184091877376",
   
   // Configurações
   sendDefaultPii: true,
@@ -175,7 +175,7 @@ Navegue pela aplicação e o Sentry vai automaticamente:
 
 ```
 Nome: VITE_SENTRY_DSN
-Valor: https://00acd94c013b372a7c8c8f6d512171ab@o4510069182955520.ingest.us.sentry.io/4510069190295552
+Valor: https://d62c317fee896cf9151ac4bfdd3db3fb@o4510069182955520.ingest.us.sentry.io/4510184091877376
 Ambientes: Production, Preview, Development
 ```
 

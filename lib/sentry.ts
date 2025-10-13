@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react';
 
 // Inicializar Sentry o mais cedo possível
 Sentry.init({
-  dsn: import.meta.env.VITE_SENTRY_DSN || "https://00acd94c013b372a7c8c8f6d512171ab@o4510069182955520.ingest.us.sentry.io/4510069190295552",
+  dsn: import.meta.env.VITE_SENTRY_DSN || "https://d62c317fee896cf9151ac4bfdd3db3fb@o4510069182955520.ingest.us.sentry.io/4510184091877376",
   
   // Enviar informações padrão de PII (IP address automático)
   sendDefaultPii: true,
