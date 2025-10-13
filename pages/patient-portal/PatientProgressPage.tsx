@@ -48,16 +48,20 @@ const PatientProgressPage: React.FC = () => {
 
     useEffect(() => {
         const fetchAndGenerateSummary = async () => {
-            if (!user?.patientId) {
+            // Use patientId if available, otherwise fallback to user.id
+            const patientId = user?.patientId || user?.id;
+            
+            if (!patientId) {
                 setIsLoading(false);
+                setSummary("## Bem-vindo!\n\nPara visualizar seu progresso, você precisa ter iniciado seu tratamento com sessões registradas. Agende sua primeira consulta com seu fisioterapeuta!");
                 return;
             }
 
             setIsLoading(true);
             try {
                 const [patientData, notesData] = await Promise.all([ // <-- Fetch in parallel
-                    patientService.getPatientById(user.patientId),
-                    soapNoteService.getNotesByPatientId(user.patientId)
+                    patientService.getPatientById(patientId),
+                    soapNoteService.getNotesByPatientId(patientId)
                 ]);
 
                 if (!patientData) {
@@ -96,8 +100,8 @@ const PatientProgressPage: React.FC = () => {
 
             } catch (error) {
                 console.error(error);
-                showToast("Não foi possível gerar seu resumo de progresso.", 'error');
-                setSummary("Ocorreu um erro ao buscar seus dados. Por favor, tente novamente mais tarde.");
+                // Mostrar mensagem amigável ao invés de erro
+                setSummary("## Bem-vindo ao seu acompanhamento!\n\nAinda não há dados suficientes para mostrar seu progresso.\n\n**Próximos passos:**\n- Complete sua avaliação inicial\n- Participe das sessões com seu fisioterapeuta\n- Registre sua dor no Diário da Dor\n\nEm breve você verá gráficos e estatísticas da sua evolução!");
             } finally {
                 setIsLoading(false);
             }
@@ -148,10 +152,10 @@ const PatientProgressPage: React.FC = () => {
                         <div className="text-center">
                             <h4 className="text-lg font-semibold text-slate-800">Como você se sente sobre sua evolução?</h4>
                             <div className="mt-4 flex justify-center items-center space-x-2 md:space-x-4">
-                                 <button onClick={() => handleFeedbackClick('😞')} className={`p-3 md:p-4 rounded-full transition-transform transform hover:scale-110 ${selectedFeedback === '😞' ? 'bg-red-200 ring-2 ring-red-400' : 'bg-slate-100 hover:bg-slate-200'}`}><Frown className="w-8 h-8 md:w-10 md:h-10 text-red-500" /></button>
-                                 <button onClick={() => handleFeedbackClick('😐')} className={`p-3 md:p-4 rounded-full transition-transform transform hover:scale-110 ${selectedFeedback === '😐' ? 'bg-amber-200 ring-2 ring-amber-400' : 'bg-slate-100 hover:bg-slate-200'}`}><Meh className="w-8 h-8 md:w-10 md:h-10 text-amber-500" /></button>
-                                 <button onClick={() => handleFeedbackClick('😊')} className={`p-3 md:p-4 rounded-full transition-transform transform hover:scale-110 ${selectedFeedback === '😊' ? 'bg-sky-200 ring-2 ring-sky-400' : 'bg-slate-100 hover:bg-slate-200'}`}><Smile className="w-8 h-8 md:w-10 md:h-10 text-sky-500" /></button>
-                                 <button onClick={() => handleFeedbackClick('😄')} className={`p-3 md:p-4 rounded-full transition-transform transform hover:scale-110 ${selectedFeedback === '😄' ? 'bg-green-200 ring-2 ring-green-400' : 'bg-slate-100 hover:bg-slate-200'}`}><Laugh className="w-8 h-8 md:w-10 md:h-10 text-green-500" /></button>
+                                 <button onClick={() => handleFeedbackClick('😞')} aria-label="Muito insatisfeito" title="Muito insatisfeito" className={`p-3 md:p-4 rounded-full transition-transform transform hover:scale-110 ${selectedFeedback === '😞' ? 'bg-red-200 ring-2 ring-red-400' : 'bg-slate-100 hover:bg-slate-200'}`}><Frown className="w-8 h-8 md:w-10 md:h-10 text-red-500" /></button>
+                                 <button onClick={() => handleFeedbackClick('😐')} aria-label="Insatisfeito" title="Insatisfeito" className={`p-3 md:p-4 rounded-full transition-transform transform hover:scale-110 ${selectedFeedback === '😐' ? 'bg-amber-200 ring-2 ring-amber-400' : 'bg-slate-100 hover:bg-slate-200'}`}><Meh className="w-8 h-8 md:w-10 md:h-10 text-amber-500" /></button>
+                                 <button onClick={() => handleFeedbackClick('😊')} aria-label="Satisfeito" title="Satisfeito" className={`p-3 md:p-4 rounded-full transition-transform transform hover:scale-110 ${selectedFeedback === '😊' ? 'bg-sky-200 ring-2 ring-sky-400' : 'bg-slate-100 hover:bg-slate-200'}`}><Smile className="w-8 h-8 md:w-10 md:h-10 text-sky-500" /></button>
+                                 <button onClick={() => handleFeedbackClick('😄')} aria-label="Muito satisfeito" title="Muito satisfeito" className={`p-3 md:p-4 rounded-full transition-transform transform hover:scale-110 ${selectedFeedback === '😄' ? 'bg-green-200 ring-2 ring-green-400' : 'bg-slate-100 hover:bg-slate-200'}`}><Laugh className="w-8 h-8 md:w-10 md:h-10 text-green-500" /></button>
                             </div>
                         </div>
                     </div>

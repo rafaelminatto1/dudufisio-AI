@@ -86,7 +86,10 @@ export const createExerciseColumns = (
     accessorKey: 'targetMuscles',
     header: 'Músculos Alvo',
     cell: ({ row }) => {
-      const muscles = row.original.targetMuscles;
+      const muscles = row.original.targetMuscles || row.original.muscle_groups || [];
+      if (!Array.isArray(muscles) || muscles.length === 0) {
+        return <span className="text-gray-400 text-xs">N/A</span>;
+      }
       return (
         <div className="flex flex-wrap gap-1">
           {muscles.slice(0, 2).map((muscle, index) => (
@@ -107,7 +110,7 @@ export const createExerciseColumns = (
     accessorKey: 'equipment',
     header: 'Equipamentos',
     cell: ({ row }) => {
-      const equipment = row.original.equipment;
+      const equipment = row.original.equipment || [];
       const equipmentLabels: Record<string, string> = {
         none: 'Nenhum',
         dumbbell: 'Halteres',
@@ -119,6 +122,10 @@ export const createExerciseColumns = (
         wall: 'Parede',
         other: 'Outro',
       };
+      
+      if (!Array.isArray(equipment) || equipment.length === 0) {
+        return <span className="text-gray-400 text-xs">Nenhum</span>;
+      }
       
       return (
         <div className="flex flex-wrap gap-1">

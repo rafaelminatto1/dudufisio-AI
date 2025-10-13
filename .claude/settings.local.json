@@ -13,7 +13,11 @@
       "Bash(npx tsc:*)",
       "Bash(npm ls:*)",
       "Bash(npm install)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npm run test:e2e:*)",
+      "Bash(claude mcp:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

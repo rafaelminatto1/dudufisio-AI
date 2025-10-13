@@ -79,11 +79,31 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Skip chrome-extension, webpack-internal, and other special protocols
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+    return;
+  }
+
+  // Skip Vite HMR and dev server special requests
+  if (url.pathname.includes('/@vite/') ||
+      url.pathname.includes('/@id/') ||
+      url.pathname.includes('/__vite') ||
+      url.search.includes('?v=') ||
+      url.search.includes('html-proxy') ||
+      url.search.includes('direct')) {
+    return;
+  }
+
+  // Skip WebSocket connections
+  if (request.headers.get('upgrade') === 'websocket') {
+    return;
+  }
+
   // Skip requests to external domains that might cause issues
-  if (url.hostname.includes('dummy.supabase.co') || 
+  if (url.hostname.includes('dummy.supabase.co') ||
       url.hostname.includes('mock.supabase.local') ||
       (url.hostname !== 'localhost' && url.hostname !== '127.0.0.1')) {
-    
+
     // For mock Supabase URLs, return a mock response to prevent CORS errors
     if (url.hostname.includes('mock.supabase.local') || url.hostname.includes('dummy.supabase.co')) {
       event.respondWith(new Response(JSON.stringify({
@@ -100,7 +120,7 @@ self.addEventListener('fetch', (event) => {
         }
       }));
     }
-    
+
     return; // Let the browser handle other external requests normally
   }
 
@@ -113,6 +133,15 @@ self.addEventListener('fetch', (event) => {
       } else if (ESSENTIAL_RESOURCES.includes(url.pathname)) {
         // Recursos essenciais - Cache First
         event.respondWith(cacheFirstStrategy(request));
+      } else if (url.pathname.includes('/node_modules/') ||
+                 url.pathname.includes('/src/') ||
+                 url.pathname.endsWith('.js') ||
+                 url.pathname.endsWith('.ts') ||
+                 url.pathname.endsWith('.tsx') ||
+                 url.pathname.endsWith('.jsx') ||
+                 url.pathname.endsWith('.css')) {
+        // Module files and dev resources - Network Only (no caching during development)
+        event.respondWith(fetch(request));
       } else {
         // Outros recursos - Stale While Revalidate
         event.respondWith(staleWhileRevalidateStrategy(request));
@@ -296,42 +325,67 @@ async function cacheFirstStrategy(request) {
 
 // Stale While Revalidate - Retorna cache e atualiza em background
 async function staleWhileRevalidateStrategy(request) {
-  const cachedResponse = await caches.match(request);
+  try {
+    const cachedResponse = await caches.match(request);
 
-  const fetchPromise = fetch(request).then((networkResponse) => {
-    if (networkResponse && networkResponse.ok) {
-      // Clone BEFORE any other operation to avoid "body already used" error
-      const responseToCache = networkResponse.clone();
+    // Create fetch promise with proper error handling
+    const fetchPromise = fetch(request)
+      .then((networkResponse) => {
+        // Only cache successful responses
+        if (networkResponse && networkResponse.ok && networkResponse.status < 400) {
+          // Clone BEFORE any other operation to avoid "body already used" error
+          const responseToCache = networkResponse.clone();
 
-      caches.open(CACHE_NAME).then(cache => {
-        cache.put(request, responseToCache).catch(err => {
-          console.warn('Cache put error:', err);
-        });
-      }).catch(err => {
-        console.warn('Cache open error:', err);
+          // Cache in background without blocking
+          caches.open(CACHE_NAME)
+            .then(cache => cache.put(request, responseToCache))
+            .catch(err => {
+              // Silently fail cache writes - not critical
+              if (process.env.NODE_ENV === 'development') {
+                console.warn('Cache put error:', err.message);
+              }
+            });
+        }
+        return networkResponse;
+      })
+      .catch((err) => {
+        // Network error - only log in development
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Fetch error:', err.message);
+        }
+        // Return null on error, will be handled below
+        return null;
+      });
+
+    // Se tem cache, retorna imediatamente
+    if (cachedResponse) {
+      // Atualiza em background (não bloqueia)
+      fetchPromise.catch(() => {});
+      return cachedResponse;
+    }
+
+    // Se não tem cache, aguarda a rede
+    const response = await fetchPromise;
+
+    // Se a rede também falhou, retorna erro 503
+    if (!response) {
+      return new Response('Service Unavailable', {
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: { 'Content-Type': 'text/plain' }
       });
     }
-    return networkResponse;
-  }).catch((err) => {
-    console.warn('Fetch error:', err);
-    // Return a proper Response object instead of null
-    return new Response('Network error', {
-      status: 503,
-      statusText: 'Service Unavailable',
+
+    return response;
+  } catch (error) {
+    console.error('Stale-while-revalidate strategy error:', error);
+    // Return a proper error response
+    return new Response('Internal Error', {
+      status: 500,
+      statusText: 'Internal Server Error',
       headers: { 'Content-Type': 'text/plain' }
     });
-  });
-
-  // Se tem cache, retorna imediatamente
-  if (cachedResponse) {
-    // Atualiza em background
-    fetchPromise.catch(() => {});
-    return cachedResponse;
   }
-
-  // Se não tem cache, aguarda a rede (fetchPromise sempre retorna Response agora)
-  const response = await fetchPromise;
-  return response;
 }
 
 // 🎯 HANDLERS DE NOTIFICAÇÃO

@@ -1,11 +1,15 @@
 import React, { Suspense, useState, useCallback, useMemo } from 'react';
 import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Calendar, Users, Activity, BarChart3, Download, RefreshCw, Star, FileText } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Layout from '../components/Layout';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { SectionErrorBoundary } from '../components/SectionErrorBoundary';
+import PageErrorBoundary from '../components/PageErrorBoundary';
 import { PageSkeleton, DashboardSkeleton } from '../components/ui/PageSkeleton';
 import { LazyPages, LazyComponents, createLazyComponent } from '../lib/lazyLoading';
+import { DashboardToggle } from '../components/dashboard/DashboardToggle';
+import { ModernDashboard } from '../components/dashboard/ModernDashboard';
 
 // ✅ IMPORTANTE: Todos os lazy imports agora vêm de LazyPages/LazyComponents centralizados
 // Isso evita múltiplas instâncias do React e erros "Cannot read properties of null"
@@ -203,11 +207,47 @@ const DashboardContent = React.memo(() => {
                             <Download className="w-5 h-5" />
                         </button>
                     </div>
-                    <div className="h-64 bg-slate-50 rounded-lg flex items-center justify-center">
-                        <div className="text-center">
-                            <BarChart3 className="w-12 h-12 text-slate-400 mx-auto mb-2" />
-                            <p className="text-slate-500">Gráfico de receita será exibido aqui</p>
-                        </div>
+                    <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart 
+                                data={[
+                                    { month: 'Jul', revenue: 18500 },
+                                    { month: 'Ago', revenue: 21000 },
+                                    { month: 'Set', revenue: 19500 },
+                                    { month: 'Out', revenue: 24500 },
+                                    { month: 'Nov', revenue: 23000 },
+                                    { month: 'Dez', revenue: 26500 },
+                                ]}
+                                margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                <XAxis 
+                                    dataKey="month" 
+                                    stroke="#64748b"
+                                    style={{ fontSize: '12px' }}
+                                />
+                                <YAxis 
+                                    stroke="#64748b"
+                                    style={{ fontSize: '12px' }}
+                                    tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
+                                />
+                                <Tooltip 
+                                    formatter={(value: number) => [`R$ ${value.toLocaleString('pt-BR')}`, 'Receita']}
+                                    contentStyle={{ 
+                                        backgroundColor: 'white', 
+                                        border: '1px solid #e2e8f0', 
+                                        borderRadius: '8px',
+                                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                                    }}
+                                />
+                                <Bar 
+                                    dataKey="revenue" 
+                                    fill="#10b981" 
+                                    radius={[8, 8, 0, 0]}
+                                    maxBarSize={60}
+                                />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
 
@@ -308,10 +348,12 @@ interface CompleteDashboardProps {
     onLogout: () => void;
 }
 
-const LazyElement = (Component: React.LazyExoticComponent<React.ComponentType<any>> | React.ComponentType<any>) => (
-    <Suspense fallback={<PageLoader />}>
-        <Component />
-    </Suspense>
+const LazyElement = (Component: React.LazyExoticComponent<React.ComponentType<any>> | React.ComponentType<any>, pageName?: string) => (
+    <PageErrorBoundary pageName={pageName || 'Unknown Page'}>
+        <Suspense fallback={<PageLoader />}>
+            <Component />
+        </Suspense>
+    </PageErrorBoundary>
 );
 
 // Alternative wrapper for router components
@@ -349,6 +391,9 @@ const SessionRoute: React.FC<{ mode?: 'view' | 'form' }> = ({ mode = 'view' }) =
 };
 
 const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout }) => {
+    // ✅ Estado para controlar dashboard moderno vs clássico
+    const [isModernDashboard, setIsModernDashboard] = useState(false);
+    
     console.log('🔍 [COMPLETE_DASHBOARD] Componente renderizando:', {
         hasUser: !!user,
         userId: user?.id,
@@ -358,37 +403,50 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
     return (
         <ErrorBoundary>
             <Layout user={user} onLogout={onLogout}>
+                {/* ✅ Toggle Dashboard Moderno/Clássico */}
+                <DashboardToggle onChange={setIsModernDashboard} />
+                
                 <Routes>
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<DashboardContent />} />
+                <Route path="/dashboard" element={
+                    <PageErrorBoundary pageName="Dashboard">
+                        <Suspense fallback={<DashboardSkeleton />}>
+                            {isModernDashboard ? (
+                                <ModernDashboard user={user} />
+                            ) : (
+                                <DashboardContent />
+                            )}
+                        </Suspense>
+                    </PageErrorBoundary>
+                } />
                 
                 {/* Dashboard Routes */}
-                <Route path="/admin-dashboard" element={LazyElement(AdminDashboardPage)} />
-                <Route path="/therapist-dashboard" element={LazyElement(TherapistDashboard)} />
-                <Route path="/partner-dashboard" element={LazyElement(PartnerDashboard)} />
-                <Route path="/admin/performance" element={LazyElement(PerformanceDashboard)} />
-                <Route path="/simple-dashboard" element={LazyElement(SimpleDashboard)} />
-                <Route path="/dashboard-page" element={LazyElement(DashboardPage)} />
-                
+                <Route path="/admin-dashboard" element={LazyElement(AdminDashboardPage, 'Dashboard Administrativo')} />
+                <Route path="/therapist-dashboard" element={LazyElement(TherapistDashboard, 'Dashboard Fisioterapeuta')} />
+                <Route path="/partner-dashboard" element={LazyElement(PartnerDashboard, 'Dashboard Parceiro')} />
+                <Route path="/admin/performance" element={LazyElement(PerformanceDashboard, 'Performance')} />
+                <Route path="/simple-dashboard" element={LazyElement(SimpleDashboard, 'Dashboard Simples')} />
+                <Route path="/dashboard-page" element={LazyElement(DashboardPage, 'Dashboard')} />
+
                 {/* Main Navigation */}
-                <Route path="/agenda" element={<AgendaPage />} />
-                <Route path="/patients" element={LazyElement(PatientListPage)} />
-                <Route path="/patients/new" element={LazyElement(PatientEditPage)} />
-                <Route path="/patients/:id" element={LazyElement(PatientEditPage)} />
-                <Route path="/patients/:id/view" element={LazyElement(PatientDetailPage)} />
-                <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage)} />
-                <Route path="/notifications" element={LazyElement(NotificationCenterPage)} />
-                <Route path="/tasks" element={<KanbanPage />} />
-                <Route path="/session-evolution" element={LazyElement(SessionEvolutionPage)} />
+                <Route path="/agenda" element={<PageErrorBoundary pageName="Agenda"><AgendaPage /></PageErrorBoundary>} />
+                <Route path="/patients" element={LazyElement(PatientListPage, 'Lista de Pacientes')} />
+                <Route path="/patients/new" element={LazyElement(PatientEditPage, 'Novo Paciente')} />
+                <Route path="/patients/:id" element={LazyElement(PatientEditPage, 'Editar Paciente')} />
+                <Route path="/patients/:id/view" element={LazyElement(PatientDetailPage, 'Detalhes do Paciente')} />
+                <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage, 'Acompanhamento')} />
+                <Route path="/notifications" element={LazyElement(NotificationCenterPage, 'Notificações')} />
+                <Route path="/tasks" element={<PageErrorBoundary pageName="Tarefas"><KanbanPage /></PageErrorBoundary>} />
+                <Route path="/session-evolution" element={LazyElement(SessionEvolutionPage, 'Evolução de Sessão')} />
                 
                 {/* Sessions and Treatment */}
                 <Route path="/sessions/:appointmentId" element={<SessionRoute mode="view" />} />
                 <Route path="/sessions/:appointmentId/form" element={<SessionRoute mode="form" />} />
-                <Route path="/session-view/:sessionId" element={LazyElement(SessionViewPage)} />
-                <Route path="/atendimento/:appointmentId" element={LazyElement(AtendimentoPage)} />
-                <Route path="/atendimento-demo" element={LazyElement(AtendimentoPageDemo)} />
-                <Route path="/teleconsulta/:appointmentId" element={LazyElement(TeleconsultaPage)} />
-                <Route path="/treatments" element={LazyElement(TreatmentPage)} />
+                <Route path="/session-view/:sessionId" element={LazyElement(SessionViewPage, 'Visualizar Sessão')} />
+                <Route path="/atendimento/:appointmentId" element={LazyElement(AtendimentoPage, 'Atendimento')} />
+                <Route path="/atendimento-demo" element={LazyElement(AtendimentoPageDemo, 'Demo Atendimento')} />
+                <Route path="/teleconsulta/:appointmentId" element={LazyElement(TeleconsultaPage, 'Teleconsulta')} />
+                <Route path="/treatments" element={LazyElement(TreatmentPage, 'Tratamentos')} />
                 
                 {/* Analytics & Reports */}
                 <Route path="/clinical-analytics" element={LazyElement(ClinicalAnalyticsPage)} />
@@ -429,9 +487,9 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
             {/* ✅ ÚNICA ROTA DE VÍDEO MANTIDA */}
             <Route path="/free-video-generator" element={<FreeVideoGeneratorReal />} />
                 <Route path="/material-detail" element={LazyElement(MaterialDetailPage)} />
-                <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
-                <Route path="/specialty-assessments" element={LazyElement(SpecialtyAssessmentsPage)} />
-                <Route path="/evaluations" element={LazyElement(SpecialtyAssessmentsPage)} />
+                <Route path="/protocols" element={LazyElement(ProtocolsPage, 'Protocolos Clínicos')} />
+                <Route path="/specialty-assessments" element={LazyElement(SpecialtyAssessmentsPage, 'Avaliações Especializadas')} />
+                <Route path="/evaluations" element={LazyElement(SpecialtyAssessmentsPage, 'Avaliações')} />
                 
                 {/* Inventory */}
                 <Route path="/inventory" element={LazyElement(InventoryPage)} />
@@ -470,16 +528,16 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/settings-page" element={LazyElement(SettingsPage)} />
                 
                 {/* Exercise Management Routes - Sistema Completo de Exercícios */}
-                <Route path="/exercises" element={LazyElement(ExercisesPage)} />
-                <Route path="/exercises/new" element={LazyElement(ExerciseEditPage)} />
-                <Route path="/exercises/:id" element={LazyElement(ExerciseEditPage)} />
-                <Route path="/exercises/:id/view" element={LazyElement(ExerciseEditPage)} />
+                <Route path="/exercises" element={LazyElement(ExercisesPage, 'Exercícios')} />
+                <Route path="/exercises/new" element={LazyElement(ExerciseEditPage, 'Novo Exercício')} />
+                <Route path="/exercises/:id" element={LazyElement(ExerciseEditPage, 'Editar Exercício')} />
+                <Route path="/exercises/:id/view" element={LazyElement(ExerciseEditPage, 'Visualizar Exercício')} />
 
                 {/* Protocol Management Routes - Sistema de Protocolos */}
-                <Route path="/protocols" element={LazyElement(ProtocolsPage)} />
-                <Route path="/protocols/new" element={LazyElement(ProtocolEditPage)} />
-                <Route path="/protocols/:id" element={LazyElement(ProtocolEditPage)} />
-                <Route path="/protocols/:id/view" element={LazyElement(ProtocolEditPage)} />
+                <Route path="/protocols" element={LazyElement(ProtocolsPage, 'Protocolos Clínicos')} />
+                <Route path="/protocols/new" element={LazyElement(ProtocolEditPage, 'Novo Protocolo')} />
+                <Route path="/protocols/:id" element={LazyElement(ProtocolEditPage, 'Editar Protocolo')} />
+                <Route path="/protocols/:id/view" element={LazyElement(ProtocolEditPage, 'Visualizar Protocolo')} />
 
                 {/* Assignment Management Routes - Atribuições */}
                 <Route path="/assignments" element={LazyElement(AssignmentsPage)} />

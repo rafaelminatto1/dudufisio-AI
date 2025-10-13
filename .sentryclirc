@@ -1,0 +1,7 @@
+[defaults]
+org=dudufisio
+project=dudufisio-ai
+
+[auth]
+# Token será carregado da variável de ambiente SENTRY_AUTH_TOKEN
+

@@ -2,7 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 def test_get_exercises_filtered():
-    base_url = "http://localhost:5174"
+    base_url = "http://localhost:5175"
     endpoint = "/api/exercises"
     url = base_url + endpoint
 

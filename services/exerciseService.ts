@@ -1,6 +1,7 @@
 // services/exerciseService.ts
 import { supabase } from '../lib/supabase';
 import { Exercise } from '../types';
+import { EXERCISES_LIBRARY } from '../data/exercisesLibraryData';
 
 export interface ExerciseServiceExercise {
   id: string;
@@ -264,62 +265,30 @@ class ExerciseService {
     }
   }
 
-  // Mock data for demonstration
+  // Mock data using complete professional library (55+ exercises)
   getMockExercises(): Exercise[] {
-    return [
-      {
-        id: '1',
-        name: 'Flexão de Braço',
-        description: 'Exercício para fortalecimento dos músculos do peitoral, tríceps e deltoides.',
-        category: 'Fortalecimento',
-        bodyParts: ['Peitoral', 'Tríceps', 'Deltoides'],
-        difficulty: 2,
-        equipment: ['Corpo'],
-        instructions: [
-          'Deite-se de bruços no chão',
-          'Coloque as mãos no chão na largura dos ombros',
-          'Mantenha o corpo reto',
-          'Empurre o corpo para cima'
-        ],
-        media: {
-          videoUrl: 'https://www.youtube.com/watch?v=IODxDxX7oi4',
-          thumbnailUrl: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-          duration: 300
-        },
-        contraindications: ['Não arquear as costas', 'Manter o core contraído'],
-        indications: ['Fortalece peitoral', 'Melhora estabilidade do core'],
-        modifications: {
-          easier: 'Apoiar os joelhos no chão',
-          harder: 'Adicionar elevação dos pés'
-        }
+    // Convert library exercises to system format
+    return EXERCISES_LIBRARY.map((ex: any, index) => ({
+      id: ex.id || `ex-${index + 1}`,
+      name: ex.name,
+      description: ex.description,
+      category: ex.specialty ? ex.specialty.charAt(0).toUpperCase() + ex.specialty.slice(1) : 'Geral',
+      bodyParts: ex.targetMuscles || [],
+      difficulty: ex.difficulty === 'beginner' ? 1 : ex.difficulty === 'intermediate' ? 2 : 3,
+      equipment: ex.equipment || [],
+      instructions: ex.instructions || [],
+      media: {
+        videoUrl: ex.videoUrl || '',
+        thumbnailUrl: ex.imageUrl || '',
+        duration: ex.duration || 180
       },
-      {
-        id: '2',
-        name: 'Agachamento',
-        description: 'Exercício fundamental para fortalecimento dos membros inferiores.',
-        category: 'Fortalecimento',
-        bodyParts: ['Quadríceps', 'Glúteos', 'Isquiotibiais'],
-        difficulty: 1,
-        equipment: ['Corpo'],
-        instructions: [
-          'Fique em pé com os pés na largura dos quadris',
-          'Flexione os joelhos como se fosse sentar',
-          'Mantenha as costas retas',
-          'Retorne à posição inicial'
-        ],
-        media: {
-          videoUrl: 'https://www.youtube.com/watch?v=YaXPRqUwItQ',
-          thumbnailUrl: 'https://images.pexels.com/photos/6456272/pexels-photo-6456272.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260',
-          duration: 300
-        },
-        contraindications: ['Não deixar os joelhos ultrapassarem os pés', 'Manter o peso nos calcanhares'],
-        indications: ['Fortalece pernas', 'Melhora equilíbrio', 'Funcional'],
-        modifications: {
-          easier: 'Usar apoio para sentar',
-          harder: 'Adicionar salto no final'
-        }
+      contraindications: ex.contraindications || [],
+      indications: ex.benefits || [],
+      modifications: {
+        easier: ex.variations?.find((v: any) => v.type === 'easier')?.description || '',
+        harder: ex.variations?.find((v: any) => v.type === 'harder')?.description || ''
       }
-    ];
+    })) as Exercise[];
   }
 }
 

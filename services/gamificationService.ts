@@ -174,96 +174,102 @@ const updateLeaderboard = (
 };
 
 export const getGamificationProgress = async (patientId: string): Promise<GamificationProgress> => {
-  const [appointments, patient] = await Promise.all([
-    appointmentService.getAppointmentsByPatientId(patientId),
-    patientService.getPatientById(patientId),
-  ]);
+  try {
+    const [appointments, patient] = await Promise.all([
+      appointmentService.getAppointmentsByPatientId(patientId),
+      patientService.getPatientById(patientId),
+    ]);
 
-  const base = clone(mockGamificationOverview);
+    const base = clone(mockGamificationOverview);
 
-  const painPoints = patient?.painPoints ?? [];
-  const completedSessions = appointments.filter((a) => a.status === AppointmentStatus.Completed);
+    const painPoints = patient?.painPoints ?? [];
+    const completedSessions = appointments.filter((a) => a.status === AppointmentStatus.Completed);
 
-  const sessionPoints = completedSessions.length * POINTS_CONFIG.SESSION_COMPLETED;
-  const painLogPoints = painPoints.length * POINTS_CONFIG.PAIN_LOG_ENTRY;
-  const exercisesPoints = base.pointsBreakdown.find((b) => b.id === 'exercises')?.points ?? 0;
-  const challengeBonus = base.pointsBreakdown.find((b) => b.id === 'challenges')?.points ?? 0;
+    const sessionPoints = completedSessions.length * POINTS_CONFIG.SESSION_COMPLETED;
+    const painLogPoints = painPoints.length * POINTS_CONFIG.PAIN_LOG_ENTRY;
+    const exercisesPoints = base.pointsBreakdown.find((b) => b.id === 'exercises')?.points ?? 0;
+    const challengeBonus = base.pointsBreakdown.find((b) => b.id === 'challenges')?.points ?? 0;
 
-  const pointsBreakdown: GamificationPointsBreakdown[] = [
-    { id: 'sessions', label: 'Sessões concluídas', points: sessionPoints },
-    { id: 'pain_logs', label: 'Registros de dor', points: painLogPoints },
-    { id: 'exercises', label: 'Exercícios completos', points: exercisesPoints },
-    { id: 'challenges', label: 'Bônus de desafios', points: challengeBonus },
-  ];
+    const pointsBreakdown: GamificationPointsBreakdown[] = [
+      { id: 'sessions', label: 'Sessões concluídas', points: sessionPoints },
+      { id: 'pain_logs', label: 'Registros de dor', points: painLogPoints },
+      { id: 'exercises', label: 'Exercícios completos', points: exercisesPoints },
+      { id: 'challenges', label: 'Bônus de desafios', points: challengeBonus },
+    ];
 
-  const totalPoints = pointsBreakdown.reduce((sum, item) => sum + item.points, 0);
-  const { level, xpForNextLevel, pointsTowardsLevel } = calculateLevel(totalPoints);
+    const totalPoints = pointsBreakdown.reduce((sum, item) => sum + item.points, 0);
+    const { level, xpForNextLevel, pointsTowardsLevel } = calculateLevel(totalPoints);
 
-  const streak = calculateStreak([
-    ...painPoints.map((log) => new Date(log.date)),
-    ...completedSessions.map((appt) => new Date(appt.startTime)),
-  ]);
+    const streak = calculateStreak([
+      ...painPoints.map((log) => new Date(log.date)),
+      ...completedSessions.map((appt) => new Date(appt.startTime)),
+    ]);
 
-  const achievements: Achievement[] = mockAchievements.map((achievement) =>
-    evaluateAchievement(achievement, {
+    const achievements: Achievement[] = mockAchievements.map((achievement) =>
+      evaluateAchievement(achievement, {
+        streak,
+        completedSessions: completedSessions.length,
+        level,
+        painLogs: painPoints.length,
+      })
+    );
+
+    const activeChallenges = updateChallenges(base.activeChallenges, {
       streak,
-      completedSessions: completedSessions.length,
-      level,
       painLogs: painPoints.length,
-    })
-  );
+    });
 
-  const activeChallenges = updateChallenges(base.activeChallenges, {
-    streak,
-    painLogs: painPoints.length,
-  });
+    const availableRewards = refreshRewards(base.availableRewards, totalPoints);
+    const unlockedRewards = refreshRewards(base.unlockedRewards, totalPoints);
 
-  const availableRewards = refreshRewards(base.availableRewards, totalPoints);
-  const unlockedRewards = refreshRewards(base.unlockedRewards, totalPoints);
+    const leaderboard = updateLeaderboard(
+      base.leaderboard,
+      patientId,
+      totalPoints,
+      level,
+      streak
+    );
 
-  const leaderboard = updateLeaderboard(
-    base.leaderboard,
-    patientId,
-    totalPoints,
-    level,
-    streak
-  );
+    const nextMilestone: GamificationMilestone = {
+      ...base.nextMilestone,
+      pointsRemaining: Math.max(0, base.nextMilestone.targetPoints - totalPoints),
+    };
 
-  const nextMilestone: GamificationMilestone = {
-    ...base.nextMilestone,
-    pointsRemaining: Math.max(0, base.nextMilestone.targetPoints - totalPoints),
-  };
+    const recentActivities = [
+      ...completedSessions.slice(0, 2).map((appt) => ({
+        label: 'Sessão concluída',
+        timestamp: new Date(appt.startTime),
+        points: POINTS_CONFIG.SESSION_COMPLETED,
+      })),
+      ...painPoints.slice(0, 3).map((log) => ({
+        label: 'Registro de dor adicionado',
+        timestamp: new Date(log.date),
+        points: POINTS_CONFIG.PAIN_LOG_ENTRY,
+      })),
+      ...base.recentActivities,
+    ]
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 5);
 
-  const recentActivities = [
-    ...completedSessions.slice(0, 2).map((appt) => ({
-      label: 'Sessão concluída',
-      timestamp: new Date(appt.startTime),
-      points: POINTS_CONFIG.SESSION_COMPLETED,
-    })),
-    ...painPoints.slice(0, 3).map((log) => ({
-      label: 'Registro de dor adicionado',
-      timestamp: new Date(log.date),
-      points: POINTS_CONFIG.PAIN_LOG_ENTRY,
-    })),
-    ...base.recentActivities,
-  ]
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-    .slice(0, 5);
-
-  return {
-    points: totalPoints,
-    level,
-    xpForNextLevel,
-    pointsTowardsLevel,
-    streak,
-    achievements,
-    pointsBreakdown,
-    activeChallenges,
-    completedChallenges: base.completedChallenges,
-    availableRewards,
-    unlockedRewards,
-    leaderboard,
-    nextMilestone,
-    recentActivities,
-  };
+    return {
+      points: totalPoints,
+      level,
+      xpForNextLevel,
+      pointsTowardsLevel,
+      streak,
+      achievements,
+      pointsBreakdown,
+      activeChallenges,
+      completedChallenges: base.completedChallenges,
+      availableRewards,
+      unlockedRewards,
+      leaderboard,
+      nextMilestone,
+      recentActivities,
+    };
+  } catch (error) {
+    console.error('Error loading gamification progress, using mock data:', error);
+    // Return mock data if there's any error
+    return clone(mockGamificationOverview);
+  }
 };

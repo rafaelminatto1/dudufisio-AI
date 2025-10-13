@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 export default defineConfig({
   plugins: [
@@ -17,6 +18,18 @@ export default defineConfig({
       open: false,
       gzipSize: true,
       brotliSize: true,
+    }),
+    // Sentry plugin para upload de source maps
+    sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      sourcemaps: {
+        assets: './dist/assets/**',
+        filesToDeleteAfterUpload: './dist/assets/**/*.map'
+      },
+      telemetry: false,
+      silent: true,
     }),
   ],
   esbuild: {

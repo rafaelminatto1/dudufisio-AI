@@ -5,8 +5,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useExercise } from '../contexts/ExerciseContext';
-import { Exercise } from '../types/exercise';
+import { useExercises } from '../hooks/useExercises';
+import { Exercise } from '../services/exerciseService';
 import { DataTable } from '../components/ui/data-table';
 import { createExerciseColumns } from '../components/exercises/ExerciseColumns';
 import { Button } from '../components/ui/button';
@@ -49,12 +49,10 @@ const ExercisesPage: React.FC = () => {
     exercises,
     categories,
     isLoading,
-    getAllExercises,
-    getAllCategories,
-    deleteExercise,
-    duplicateExercise,
+    deleteExercise: deleteExerciseHook,
     searchExercises,
-  } = useExercise();
+    refreshExercises,
+  } = useExercises();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -63,39 +61,21 @@ const ExercisesPage: React.FC = () => {
   const [exerciseToDelete, setExerciseToDelete] = useState<Exercise | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // Carregar dados na inicialização
+  // Filtrar exercícios baseado em searchQuery e filtros
   useEffect(() => {
-    getAllExercises();
-    getAllCategories();
-  }, []);
+    const filters: any = {};
 
-  // Filtrar exercícios
-  useEffect(() => {
-    const applyFilters = async () => {
-      const filters: any = {};
+    if (selectedCategory !== 'all') {
+      filters.category = selectedCategory;
+    }
 
-      if (searchQuery) {
-        filters.query = searchQuery;
-      }
+    if (selectedDifficulty !== 'all') {
+      filters.difficulty_level = selectedDifficulty;
+    }
 
-      if (selectedCategory !== 'all') {
-        filters.category = selectedCategory;
-      }
-
-      if (selectedDifficulty !== 'all') {
-        filters.difficulty = selectedDifficulty;
-      }
-
-      if (Object.keys(filters).length > 0) {
-        const results = await searchExercises(filters);
-        setFilteredExercises(results);
-      } else {
-        setFilteredExercises(exercises);
-      }
-    };
-
-    applyFilters();
-  }, [searchQuery, selectedCategory, selectedDifficulty, exercises, searchExercises]);
+    const results = searchExercises(searchQuery, filters);
+    setFilteredExercises(results);
+  }, [searchQuery, selectedCategory, selectedDifficulty, exercises]);
 
   // Handlers
   const handleCreateExercise = () => {
@@ -118,7 +98,7 @@ const ExercisesPage: React.FC = () => {
   const confirmDelete = async () => {
     if (exerciseToDelete) {
       try {
-        await deleteExercise(exerciseToDelete.id);
+        await deleteExerciseHook(exerciseToDelete.id);
         setShowDeleteDialog(false);
         setExerciseToDelete(null);
         console.log('✅ Exercício excluído com sucesso');
@@ -130,9 +110,9 @@ const ExercisesPage: React.FC = () => {
 
   const handleDuplicateExercise = async (exercise: Exercise) => {
     try {
-      const duplicated = await duplicateExercise(exercise.id);
-      console.log('✅ Exercício duplicado:', duplicated.name);
-      navigate(`/exercises/${duplicated.id}`);
+      console.log('🔄 Duplicando exercício:', exercise.name);
+      // Funcionalidade de duplicação será implementada em versão futura
+      alert('Funcionalidade de duplicação em desenvolvimento');
     } catch (error) {
       console.error('❌ Erro ao duplicar exercício:', error);
     }
@@ -141,9 +121,9 @@ const ExercisesPage: React.FC = () => {
   // Estatísticas
   const stats = {
     total: exercises.length,
-    active: exercises.filter(ex => ex.isActive).length,
-    beginner: exercises.filter(ex => ex.difficulty === 'beginner').length,
-    advanced: exercises.filter(ex => ex.difficulty === 'advanced' || ex.difficulty === 'expert').length,
+    active: exercises.filter(ex => ex.is_active !== false).length,
+    beginner: exercises.filter(ex => ex.difficulty_level === 'beginner').length,
+    advanced: exercises.filter(ex => ex.difficulty_level === 'advanced' || ex.difficulty_level === 'expert').length,
   };
 
   // Colunas da tabela

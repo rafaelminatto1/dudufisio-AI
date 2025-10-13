@@ -57,6 +57,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { Badge } from '../components/ui/badge';
 import { Separator } from '../components/ui/separator';
 import { Progress } from '../components/ui/progress';
+import SessionActionButtons from '../components/session/SessionActionButtons';
+import QuickActionsPanel from '../components/session/QuickActionsPanel';
 
 interface PainPoint {
     part: string;
@@ -302,45 +304,47 @@ const AtendimentoPageNew: React.FC = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
             {/* Header */}
-            <div className="bg-white border-b border-slate-200 sticky top-0 z-40">
+            <div className="bg-white border-b border-slate-200 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-16">
-                        <div className="flex items-center space-x-4">
+                    <div className="flex items-center justify-between h-16 relative">
+                        <div className="flex items-center space-x-4 flex-1 min-w-0">
                             <Button
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => navigate('/agenda')}
-                                className="flex items-center space-x-2"
+                                className="flex items-center space-x-2 flex-shrink-0"
                             >
                                 <ArrowLeft className="h-4 w-4" />
-                                <span>Voltar para Agenda</span>
+                                <span className="hidden sm:inline">Voltar para Agenda</span>
                             </Button>
-                            <Separator orientation="vertical" className="h-6" />
-                            <div className="flex items-center space-x-3">
-                                <div className="flex items-center space-x-2">
-                                    <Stethoscope className="h-5 w-5 text-blue-600" />
-                                    <h1 className="text-xl font-semibold text-slate-900">
+                            <Separator orientation="vertical" className="h-6 flex-shrink-0" />
+                            <div className="flex items-center space-x-3 min-w-0 flex-1">
+                                <div className="flex items-center space-x-2 min-w-0">
+                                    <Stethoscope className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                                    <h1 className="text-lg sm:text-xl font-semibold text-slate-900 truncate">
                                         Nova Sessão de Atendimento
                                     </h1>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-4 flex-shrink-0">
                             {/* Session Status */}
                             <div className="flex items-center space-x-2">
                                 {isSessionActive ? (
                                     <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
                                         <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                                        Sessão Ativa
+                                        <span className="hidden sm:inline">Sessão Ativa</span>
+                                        <span className="sm:hidden">Ativa</span>
                                     </Badge>
                                 ) : (
                                     <Badge variant="secondary">
                                         <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
-                                        Sessão Pausada
+                                        <span className="hidden sm:inline">Sessão Pausada</span>
+                                        <span className="sm:hidden">Pausada</span>
                                     </Badge>
                                 )}
-                                <span className="text-sm font-mono text-slate-600">
+                                <span className="text-sm font-mono text-slate-600 hidden md:inline">
                                     {formatDuration(sessionDuration)}
                                 </span>
                             </div>
@@ -350,19 +354,19 @@ const AtendimentoPageNew: React.FC = () => {
                                 {saveStatus === 'saving' && (
                                     <div className="flex items-center space-x-2 text-amber-600">
                                         <Loader className="h-4 w-4 animate-spin" />
-                                        <span className="text-sm">Salvando...</span>
+                                        <span className="text-sm hidden sm:inline">Salvando...</span>
                                     </div>
                                 )}
                                 {saveStatus === 'saved' && (
                                     <div className="flex items-center space-x-2 text-green-600">
                                         <CheckCircle2 className="h-4 w-4" />
-                                        <span className="text-sm">Salvo</span>
+                                        <span className="text-sm hidden sm:inline">Salvo</span>
                                     </div>
                                 )}
                                 {saveStatus === 'unsaved' && (
                                     <div className="flex items-center space-x-2 text-red-600">
                                         <XCircle className="h-4 w-4" />
-                                        <span className="text-sm">Não salvo</span>
+                                        <span className="text-sm hidden sm:inline">Não salvo</span>
                                     </div>
                                 )}
                             </div>
@@ -528,16 +532,15 @@ const AtendimentoPageNew: React.FC = () => {
                                                     <div className="text-sm text-slate-600">07/01/2024 - Dr. Roberto</div>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Button variant="outline" size="sm" className="text-green-600 border-green-200 hover:bg-green-50">
-                                                    <Repeat className="h-4 w-4 mr-1" />
-                                                    Repetir
-                                                </Button>
-                                                <Button variant="outline" size="sm" className="text-purple-600 border-purple-200 hover:bg-purple-50">
-                                                    <Eye className="h-4 w-4 mr-1" />
-                                                    Ver
-                                                </Button>
-                                            </div>
+                                            <SessionActionButtons
+                                                sessionId="session-3"
+                                                patientId={patient.id}
+                                                sessionNumber={3}
+                                                onSessionRepeated={(newSessionId) => {
+                                                    console.log('Nova sessão criada:', newSessionId);
+                                                    showToast('Nova sessão criada com sucesso!', 'success');
+                                                }}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -672,32 +675,18 @@ const AtendimentoPageNew: React.FC = () => {
                         </Card>
 
                         {/* Quick Actions */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center space-x-2">
-                                    <Zap className="h-5 w-5 text-yellow-600" />
-                                    <span>Ações Rápidas</span>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <Button variant="outline" className="w-full justify-start">
-                                    <Camera className="h-4 w-4 mr-2" />
-                                    Adicionar Foto
-                                </Button>
-                                <Button variant="outline" className="w-full justify-start">
-                                    <FileText className="h-4 w-4 mr-2" />
-                                    Anexar Documento
-                                </Button>
-                                <Button variant="outline" className="w-full justify-start">
-                                    <BarChart3 className="h-4 w-4 mr-2" />
-                                    Ver Relatórios
-                                </Button>
-                                <Button variant="outline" className="w-full justify-start">
-                                    <BookOpen className="h-4 w-4 mr-2" />
-                                    Histórico Completo
-                                </Button>
-                            </CardContent>
-                        </Card>
+                        <QuickActionsPanel
+                            sessionId={appointmentId || 'test-123'}
+                            patientId={patient.id}
+                            onPhotoAdded={(photo) => {
+                                console.log('Foto adicionada:', photo);
+                                showToast('Foto adicionada à sessão!', 'success');
+                            }}
+                            onDocumentAttached={(document) => {
+                                console.log('Documento anexado:', document);
+                                showToast('Documento anexado à sessão!', 'success');
+                            }}
+                        />
 
                         {/* Session Summary */}
                         <Card>
@@ -729,18 +718,9 @@ const AtendimentoPageNew: React.FC = () => {
                                 
                                 <Separator />
                                 
-                                <Button 
-                                    onClick={handleFinishSession}
-                                    disabled={isFinishing}
-                                    className="w-full bg-green-600 hover:bg-green-700"
-                                >
-                                    {isFinishing ? (
-                                        <Loader className="h-4 w-4 mr-2 animate-spin" />
-                                    ) : (
-                                        <CheckCircle className="h-4 w-4 mr-2" />
-                                    )}
-                                    Finalizar Sessão
-                                </Button>
+                                <div className="text-center text-sm text-slate-500">
+                                    Sessão em andamento
+                                </div>
                             </CardContent>
                         </Card>
                     </div>

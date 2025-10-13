@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Stethoscope,
   Loader,
@@ -23,6 +24,7 @@ interface LoginPageProps {
 
 const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
   const { login, loginWithGoogle, loginWithGitHub, error, loading, clearError } = useSupabaseAuth();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -57,6 +59,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
         email: formData.email,
         password: formData.password
       });
+      // Redirect to dashboard after successful login
+      navigate('/dashboard');
       onSuccess?.();
     } catch (err) {
       console.error('Login error:', err);

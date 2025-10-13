@@ -22,7 +22,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api/|assets/|.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|json|map)).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]

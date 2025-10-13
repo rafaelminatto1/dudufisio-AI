@@ -190,9 +190,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
             { to: '/gerar-laudo', icon: FilePlus, label: 'Gerar Laudo' },
             { to: '/gerar-evolucao', icon: FileClock, label: 'Gerar Evolução' },
             { to: '/hep-generator', icon: Dumbbell, label: 'Gerar Plano (HEP)' },
-            { to: '/hep-generator', icon: Target, label: 'Gerador HEP' },
             { to: '/risk-analysis', icon: AlertTriangle, label: 'Análise de Risco' },
-            { to: '/risk-analysis', icon: Eye, label: 'Análise de Risco (Detalhada)' },
           ],
           managementNav: [],
           systemNav: [
@@ -242,7 +240,6 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
           ],
           aiToolsNav: [
             { to: '/hep-generator', icon: Dumbbell, label: 'Gerar Plano (HEP)' },
-            { to: '/hep-generator', icon: Target, label: 'Gerador HEP' },
           ],
           managementNav: [
             { to: '/partnerships', icon: Handshake, label: 'Parcerias' },
@@ -511,4 +508,10 @@ const Sidebar: React.FC = () => {
   );
 };
 
-export default memo(Sidebar);
+// Memoização otimizada com comparação customizada
+export default memo(Sidebar, (prevProps, nextProps) => {
+    // Só re-renderizar se user.id ou user.role mudarem
+    return prevProps.user?.id === nextProps.user?.id && 
+           prevProps.user?.role === nextProps.user?.role &&
+           prevProps.isCollapsed === nextProps.isCollapsed;
+});

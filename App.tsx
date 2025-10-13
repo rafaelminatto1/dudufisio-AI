@@ -5,6 +5,9 @@ import AppRoutes from './AppRoutes';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { SkipLinks } from './components/SkipLinks';
 import { queryClient } from './lib/queryClient';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import './lib/sentry'; // Inicializar Sentry
 
 /**
  * Mantido como entry point alternativo para cenários de testes/Storybook.
@@ -22,6 +25,10 @@ const App: React.FC = () => {
         {import.meta.env.DEV && (
           <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
         )}
+        
+        {/* Vercel Analytics e Speed Insights */}
+        <Analytics />
+        <SpeedInsights />
       </QueryClientProvider>
     </ErrorBoundary>
   );

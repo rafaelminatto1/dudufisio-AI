@@ -1,6 +1,6 @@
 import requests
 
-base_url = "http://localhost:5174"
+base_url = "http://localhost:5175"
 timeout = 30
 
 def test_user_login_endpoint_should_authenticate_user_successfully():

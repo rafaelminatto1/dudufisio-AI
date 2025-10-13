@@ -26,7 +26,13 @@ export const logout = (): void => {
 export const getSession = (): User | null => {
   const userJson = sessionStorage.getItem(SESSION_KEY);
   if (userJson) {
-    return JSON.parse(userJson) as User;
+    try {
+      return JSON.parse(userJson) as User;
+    } catch (error) {
+      // JSON corrompido, limpar sessão inválida
+      sessionStorage.removeItem(SESSION_KEY);
+      return null;
+    }
   }
   return null;
 };

@@ -304,3 +304,18 @@ COMMENT ON TABLE activity_goals IS 'Metas de atividade física do paciente';
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

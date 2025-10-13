@@ -1,7 +1,7 @@
 import requests
 from requests.auth import HTTPBasicAuth
 
-BASE_URL = "http://localhost:5174"
+BASE_URL = "http://localhost:5175"
 AUTH = HTTPBasicAuth('admin@dudufisio.com', 'demo123456')
 TIMEOUT = 30
 

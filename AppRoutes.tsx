@@ -267,15 +267,15 @@ const AppContent: React.FC = memo(() => {
         );
     }
 
-    // Memoizar renderDashboard para evitar re-renderizações desnecessárias
-    const renderDashboard = useCallback(() => {
-        console.log('🔍 [APPROUTES] renderDashboard chamado:', { 
+    // Memoizar dashboard component para evitar re-renderizações desnecessárias
+    const dashboardComponent = useMemo(() => {
+        console.log('🔍 [APPROUTES] Dashboard memoizado recalculado:', { 
             hasUser: !!user, 
             userRole: user?.role 
         });
         
         if (!user) {
-            console.log('❌ [APPROUTES] renderDashboard: usuário não encontrado');
+            console.log('❌ [APPROUTES] Dashboard: usuário não encontrado');
             return null;
         }
 
@@ -305,7 +305,7 @@ const AppContent: React.FC = memo(() => {
         return (
             <React.Suspense fallback={DashboardLoadingScreen}>
                 <Routes>
-                    <Route path="/*" element={renderDashboard()} />
+                    <Route path="/*" element={dashboardComponent} />
                 </Routes>
             </React.Suspense>
         );
