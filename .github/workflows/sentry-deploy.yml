@@ -1,0 +1,81 @@
+name: 🛡️ Sentry Deploy with Source Maps
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  sentry-deploy:
+    runs-on: ubuntu-latest
+    name: 🛡️ Deploy com Sentry Source Maps
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 📥 Instalar dependências
+        run: npm ci
+
+      - name: 🔍 Verificar tipos TypeScript
+        run: npm run type-check
+
+      - name: 🧹 Verificar linting
+        run: npm run lint
+
+      - name: 🧪 Executar testes
+        run: npm run test -- --coverage --watchAll=false
+
+      - name: 🏗️ Build com Source Maps
+        run: npm run build
+        env:
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: 🛡️ Upload Source Maps para Sentry
+        run: npx @sentry/cli releases files upload-sourcemaps ./dist
+        env:
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: 🚀 Deploy para Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: ${{ github.event_name == 'pull_request' && '--prebuilt' || '--prod' }}
+          working-directory: ./
+        env:
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: 🎯 Criar Release no Sentry
+        run: |
+          npx @sentry/cli releases new ${{ github.sha }}
+          npx @sentry/cli releases set-commits ${{ github.sha }} --auto
+          npx @sentry/cli releases finalize ${{ github.sha }}
+        env:
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: 📢 Notificação de Sucesso
+        if: success()
+        run: |
+          echo "✅ Deploy com Sentry realizado com sucesso!"
+          echo "🛡️ Source Maps enviados para Sentry"
+          echo "🎯 Release criada: ${{ github.sha }}"

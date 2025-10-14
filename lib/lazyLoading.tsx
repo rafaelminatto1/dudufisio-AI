@@ -72,6 +72,7 @@ export const LazyPages = {
   AgendaPage: createLazyComponent(() => import('../pages/AgendaPage')),
   PatientListPage: createLazyComponent(() => import('../pages/PatientListPage')),
   PatientDetailPage: createLazyComponent(() => import('../pages/PatientDetailPage')),
+  BodyMapDashboardPage: createLazyComponent(() => import('../pages/BodyMapDashboardPage')),
   TherapistDashboard: createLazyComponent(() => import('../pages/TherapistDashboard')),
   ReportsPage: createLazyComponent(() => import('../pages/ReportsPage')),
   AiAnalyticsPage: createLazyComponent(() => import('../pages/AiAnalyticsPage')),

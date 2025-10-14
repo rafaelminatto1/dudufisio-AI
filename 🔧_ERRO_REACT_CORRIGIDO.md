@@ -169,3 +169,5 @@ Após a correção, você deve ver:
 **Versão React**: 19.2.0
 **Versão Vite**: 7.1.9
 
+
+

@@ -5,33 +5,35 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 export default defineConfig({
-  plugins: [
-    react({
-      jsxRuntime: 'automatic',
-      jsxImportSource: 'react',
-      babel: {
-        plugins: [],
-      },
-    }),
-    visualizer({
-      filename: './dist/stats.html',
-      open: false,
-      gzipSize: true,
-      brotliSize: true,
-    }),
-    // Sentry plugin para upload de source maps
-    sentryVitePlugin({
-      org: process.env.SENTRY_ORG,
-      project: process.env.SENTRY_PROJECT,
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      sourcemaps: {
-        assets: './dist/assets/**',
-        filesToDeleteAfterUpload: './dist/assets/**/*.map'
-      },
-      telemetry: false,
-      silent: true,
-    }),
-  ],
+  plugins: [react({
+    jsxRuntime: 'automatic',
+    jsxImportSource: 'react',
+    babel: {
+      plugins: [],
+    },
+  }), // Sentry plugin para upload de source maps
+  visualizer({
+    filename: './dist/stats.html',
+    open: false,
+    gzipSize: true,
+    brotliSize: true,
+  }), sentryVitePlugin({
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+    sourcemaps: {
+      assets: './dist/assets/**',
+      filesToDeleteAfterUpload: './dist/assets/**/*.map'
+    },
+    telemetry: false,
+    silent: true,
+  }), sentryVitePlugin({
+    org: "activity-fisioterapia",
+    project: "dudu-aiok"
+  }), sentryVitePlugin({
+    org: "activity-fisioterapia",
+    project: "dudu-aiok"
+  })],
   esbuild: {
     // Mantém console logs para debugging
     logLevel: 'warning',
@@ -121,7 +123,7 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
-    sourcemap: false,
+    sourcemap: true,
     reportCompressedSize: true,
     rollupOptions: {
       external: (id) => {

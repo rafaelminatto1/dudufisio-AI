@@ -109,6 +109,7 @@ class AppErrorBoundary extends Component<
 // Lazy load remaining components
 const IntegrationsTestPage = lazy(() => import('./pages/IntegrationsTestPage'));
 const BIIntegrationTestPage = lazy(() => import('./pages/BIIntegrationTestPage'));
+const BodyMapDashboardPage = lazy(() => import('./pages/BodyMapDashboardPage'));
 
 const AppContent: React.FC = memo(() => {
     const { user, isAuthenticated, loading, logout } = useSupabaseAuth();

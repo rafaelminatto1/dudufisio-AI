@@ -3,12 +3,14 @@ import AlertsOverview from '../components/acompanhamento/AlertsOverview';
 import AttendanceChart from '../components/acompanhamento/AttendanceChart';
 import TimelineBoard from '../components/acompanhamento/TimelineBoard';
 import QuickActionsPanel from '../components/acompanhamento/QuickActionsPanel';
+import BodyMapSummaryCard from '../components/body-map/BodyMapSummaryCard';
 import { useData, useApp } from '../contexts/AppContext';
 import { useToast } from '../contexts/ToastContext';
 import PageHeader from '../components/PageHeader';
 import { Skeleton } from '../components/ui/skeleton';
 import * as acompanhamentoService from '../services/acompanhamentoService';
 import * as patientService from '../services/patientService';
+import * as bodyMapService from '../services/bodyMapService';
 import { useNavigate } from 'react-router-dom';
 
 const AcompanhamentoPage: React.FC = () => {
@@ -22,6 +24,7 @@ const AcompanhamentoPage: React.FC = () => {
     const [timeline, setTimeline] = useState<acompanhamentoService.PatientTimelineEntry[]>([]);
     const [attendanceSeries, setAttendanceSeries] = useState<Record<string, acompanhamentoService.PatientAttendancePoint[]>>({});
     const [quickActions, setQuickActions] = useState<acompanhamentoService.QuickActionsData | null>(null);
+    const [bodyMapUpdates, setBodyMapUpdates] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -41,11 +44,39 @@ const AcompanhamentoPage: React.FC = () => {
                 setTimeline(timelineData);
                 setAttendanceSeries(attendanceData);
                 setQuickActions(quickActionsData);
+
+                // Carregar atualizações do mapa corporal
+                await loadBodyMapUpdates();
             } catch (error) {
                 console.error('Erro ao carregar dados de acompanhamento:', error);
                 showToast('Não foi possível carregar os dados do dashboard de acompanhamento.', 'error');
             } finally {
                 setLoading(false);
+            }
+        };
+
+        const loadBodyMapUpdates = async () => {
+            try {
+                // Buscar últimas sessões de cada paciente
+                const updates = await Promise.all(
+                    patients.slice(0, 5).map(async (patient) => {
+                        const cache = await bodyMapService.getBodyMapAnalyticsCache(patient.id);
+                        const latestSession = await bodyMapService.getLatestBodyMapSession(patient.id);
+
+                        if (!cache || !latestSession) return null;
+
+                        return {
+                            ...patient,
+                            lastPainLevel: cache.averagePainLevel,
+                            painTrend: cache.painTrend,
+                            lastSessionDate: latestSession.sessionDate,
+                        };
+                    })
+                );
+
+                setBodyMapUpdates(updates.filter(Boolean));
+            } catch (error) {
+                console.error('Erro ao carregar atualizações do mapa corporal:', error);
             }
         };
 
@@ -119,6 +150,11 @@ const AcompanhamentoPage: React.FC = () => {
                         </div>
                         <TimelineBoard timeline={timeline.slice(0, 10)} />
                     </div>
+
+                    {/* Card de Mapa Corporal */}
+                    {bodyMapUpdates.length > 0 && (
+                        <BodyMapSummaryCard patientsWithPainUpdates={bodyMapUpdates} />
+                    )}
 
                     <QuickActionsPanel
                         quickActions={quickActions}

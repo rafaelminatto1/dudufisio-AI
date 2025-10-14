@@ -307,6 +307,15 @@ ALTER TABLE body_map_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE body_map_pain_regions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE body_map_analytics_cache ENABLE ROW LEVEL SECURITY;
 
+-- Remover políticas existentes se houver (para idempotência)
+DROP POLICY IF EXISTS "Usuários podem ver sessões dos seus pacientes" ON body_map_sessions;
+DROP POLICY IF EXISTS "Fisioterapeutas podem criar sessões" ON body_map_sessions;
+DROP POLICY IF EXISTS "Fisioterapeutas podem atualizar sessões" ON body_map_sessions;
+DROP POLICY IF EXISTS "Usuários podem ver regiões de dor" ON body_map_pain_regions;
+DROP POLICY IF EXISTS "Fisioterapeutas podem criar regiões" ON body_map_pain_regions;
+DROP POLICY IF EXISTS "Fisioterapeutas podem atualizar regiões" ON body_map_pain_regions;
+DROP POLICY IF EXISTS "Usuários podem ver analytics" ON body_map_analytics_cache;
+
 -- Políticas para body_map_sessions
 CREATE POLICY "Usuários podem ver sessões dos seus pacientes"
   ON body_map_sessions FOR SELECT

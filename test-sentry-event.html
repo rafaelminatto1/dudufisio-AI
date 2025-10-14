@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Sentry - DuduFisio AI</title>
+    <script src="https://browser.sentry-cdn.com/7.119.0/bundle.min.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .button-group {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: #667eea;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .success { background: #10b981; color: white; }
+        .error { background: #ef4444; color: white; }
+        .warning { background: #f59e0b; color: white; }
+        .info { background: #3b82f6; color: white; }
+        #log {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid;
+            padding-left: 10px;
+        }
+        .log-success { border-color: #10b981; }
+        .log-error { border-color: #ef4444; }
+        .log-warning { border-color: #f59e0b; }
+        .log-info { border-color: #3b82f6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Teste do Sentry</h1>
+        
+        <div class="status">
+            <h2>📊 Status da Configuração</h2>
+            <p><strong>DSN:</strong> <code id="dsn-status">Verificando...</code></p>
+            <p><strong>Ambiente:</strong> <code id="env-status">Verificando...</code></p>
+            <p><strong>Status:</strong> <span id="init-status">Inicializando...</span></p>
+        </div>
+
+        <div class="button-group">
+            <button onclick="testError()" class="error">🔴 Testar Erro Simples</button>
+            <button onclick="testException()" class="error">💥 Testar Exception</button>
+            <button onclick="testMessage()" class="info">📨 Testar Mensagem</button>
+            <button onclick="testTransaction()" class="success">⚡ Testar Performance</button>
+            <button onclick="testBreadcrumbs()" class="warning">🍞 Testar Breadcrumbs</button>
+            <button onclick="clearLog()" class="warning">🧹 Limpar Log</button>
+        </div>
+
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const DSN = "https://d62c317fee896cf9151ac4bfdd3db3fb@o4510069182955520.ingest.us.sentry.io/4510184091877376";
+        
+        // Inicializar Sentry
+        Sentry.init({
+            dsn: DSN,
+            environment: "test",
+            tracesSampleRate: 1.0,
+            release: "dudufisio-ai@test",
+            beforeSend(event, hint) {
+                log(`📤 Enviando evento para Sentry: ${event.event_id}`, 'success');
+                return event;
+            },
+            debug: true
+        });
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.insertBefore(entry, logDiv.firstChild);
+        }
+
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            log('Log limpo', 'info');
+        }
+
+        // Atualizar status
+        document.getElementById('dsn-status').textContent = DSN.substring(0, 50) + '...';
+        document.getElementById('env-status').textContent = 'test';
+        document.getElementById('init-status').textContent = '✅ Inicializado';
+        log('🚀 Sentry inicializado com sucesso!', 'success');
+
+        function testError() {
+            log('🔴 Testando erro simples...', 'warning');
+            try {
+                throw new Error('Erro de teste simples do DuduFisio AI');
+            } catch (error) {
+                Sentry.captureException(error);
+                log('✅ Erro enviado! ID: ' + Sentry.lastEventId(), 'success');
+            }
+        }
+
+        function testException() {
+            log('💥 Testando exception...', 'warning');
+            try {
+                // Simular um erro real
+                const obj = null;
+                obj.propriedade.inexistente();
+            } catch (error) {
+                Sentry.captureException(error);
+                log('✅ Exception enviada! ID: ' + Sentry.lastEventId(), 'success');
+            }
+        }
+
+        function testMessage() {
+            log('📨 Enviando mensagem...', 'warning');
+            Sentry.captureMessage('Mensagem de teste do DuduFisio AI', 'info');
+            log('✅ Mensagem enviada! ID: ' + Sentry.lastEventId(), 'success');
+        }
+
+        async function testTransaction() {
+            log('⚡ Testando performance...', 'warning');
+            const transaction = Sentry.startTransaction({
+                name: 'test-transaction',
+                op: 'test'
+            });
+
+            Sentry.getCurrentHub().configureScope(scope => scope.setSpan(transaction));
+
+            // Simular operação
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            const span = transaction.startChild({
+                op: 'db.query',
+                description: 'SELECT * FROM patients'
+            });
+            await new Promise(resolve => setTimeout(resolve, 500));
+            span.finish();
+
+            transaction.finish();
+            log('✅ Transação de performance enviada!', 'success');
+        }
+
+        function testBreadcrumbs() {
+            log('🍞 Testando breadcrumbs...', 'warning');
+            
+            Sentry.addBreadcrumb({
+                category: 'auth',
+                message: 'Usuário fez login',
+                level: 'info'
+            });
+
+            Sentry.addBreadcrumb({
+                category: 'navigation',
+                message: 'Navegou para página de pacientes',
+                level: 'info'
+            });
+
+            Sentry.addBreadcrumb({
+                category: 'ui',
+                message: 'Clicou no botão de adicionar paciente',
+                level: 'info'
+            });
+
+            try {
+                throw new Error('Erro após breadcrumbs');
+            } catch (error) {
+                Sentry.captureException(error);
+                log('✅ Erro com breadcrumbs enviado! ID: ' + Sentry.lastEventId(), 'success');
+            }
+        }
+
+        // Enviar evento inicial
+        setTimeout(() => {
+            log('📤 Enviando evento inicial de teste...', 'info');
+            Sentry.captureMessage('🎉 DuduFisio AI - Sentry está funcionando!', 'info');
+            log('✅ Evento inicial enviado! ID: ' + Sentry.lastEventId(), 'success');
+            log('', 'info');
+            log('🎯 Agora você pode testar diferentes tipos de eventos usando os botões acima!', 'info');
+            log('📊 Verifique o Sentry em: https://activity-fisioterapia-rg.sentry.io', 'info');
+        }, 2000);
+    </script>
+</body>
+</html>
+
