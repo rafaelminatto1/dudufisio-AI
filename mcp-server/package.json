@@ -1,0 +1,37 @@
+{
+  "name": "dudufisio-mcp-server",
+  "version": "1.0.0",
+  "description": "Servidor MCP para DuduFisio-AI com monitoramento Sentry",
+  "type": "module",
+  "main": "dist/server.js",
+  "bin": {
+    "dudufisio-mcp": "./dist/server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsc && node dist/server.js",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "rebuild": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "physiotherapy",
+    "healthcare",
+    "sentry",
+    "monitoring"
+  ],
+  "author": "DuduFisio Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@sentry/node": "^8.47.0",
+    "@sentry/tracing": "^7.119.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.7.2"
+  }
+}
+

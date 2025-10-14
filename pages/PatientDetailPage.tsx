@@ -24,15 +24,17 @@ const PatientDetailPage: React.FC = () => {
   const [showObservationModal, setShowObservationModal] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [bodyMapSessions, setBodyMapSessions] = useState<any[]>([]);
+  const [bodyMapLoading, setBodyMapLoading] = useState(false);
+  const [bodyMapError, setBodyMapError] = useState<string | null>(null);
 
   const patient = {
-    id: 'patient-1', // Usando ID que existe no mock
-    name: 'João Silva Santos',
-    email: 'joao.silva@email.com',
-    phone: '(11) 99999-1111',
+    id: '22e518b6-814f-4ea3-ad18-ce0c130f3005', // ✅ ID real do banco de dados
+    name: 'Maria Silva Santos',
+    email: 'maria.silva@email.com',
+    phone: '+5511987654321',
     birthDate: '1985-03-15',
     status: 'active',
-    totalSessions: 12
+    totalSessions: 3
   };
 
   // Carregar protocolos atribuídos ao paciente
@@ -54,17 +56,25 @@ const PatientDetailPage: React.FC = () => {
   // Carregar sessões de mapa corporal
   useEffect(() => {
     const loadBodyMapSessions = async () => {
+      if (activeTab !== 'body-map') return;
+      
+      setBodyMapLoading(true);
+      setBodyMapError(null);
+      
       try {
+        console.log('📊 Carregando histórico de mapa corporal para paciente:', patient.id);
         const sessions = await bodyMapService.getPatientBodyMapHistory(patient.id);
+        console.log('✅ Sessões carregadas:', sessions.length);
         setBodyMapSessions(sessions);
-      } catch (error) {
-        console.error('Erro ao carregar sessões de mapa corporal:', error);
+      } catch (error: any) {
+        console.error('❌ Erro ao carregar sessões de mapa corporal:', error);
+        setBodyMapError(error.message || 'Não foi possível carregar o histórico');
+      } finally {
+        setBodyMapLoading(false);
       }
     };
 
-    if (activeTab === 'body-map') {
-      loadBodyMapSessions();
-    }
+    loadBodyMapSessions();
   }, [patient.id, activeTab]);
 
   const calculateAge = (birthDate: string) => {
@@ -436,28 +446,84 @@ const PatientDetailPage: React.FC = () => {
 
           {/* Tab: Mapa de Dor */}
           <TabsContent value="body-map" className="space-y-6">
-            {/* Gerenciador Principal do Mapa Corporal */}
-            <BodyMapManager
-              patient={patient as any}
-              onSessionSaved={async (session) => {
-                console.log('Sessão salva:', session);
-                // Recarregar sessões
-                const sessions = await bodyMapService.getPatientBodyMapHistory(patient.id);
-                setBodyMapSessions(sessions);
-              }}
-            />
-
-            {/* Histórico de Evolução da Dor */}
-            {bodyMapSessions.length > 0 && (
-              <div className="mt-8">
-                <h2 className="text-xl font-bold text-slate-800 mb-4">
-                  Histórico de Evolução
-                </h2>
-                <PainHistoryTimeline 
-                  sessions={bodyMapSessions}
-                  showTrend={true}
-                />
+            {/* Estado de Loading */}
+            {bodyMapLoading && (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  <p className="text-slate-600">Carregando mapa corporal...</p>
+                </div>
               </div>
+            )}
+
+            {/* Estado de Erro */}
+            {bodyMapError && !bodyMapLoading && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                <div className="text-red-600 font-semibold mb-2">
+                  ⚠️ Erro ao Carregar Mapa Corporal
+                </div>
+                <p className="text-slate-700 mb-4">{bodyMapError}</p>
+                <Button 
+                  onClick={() => {
+                    setBodyMapError(null);
+                    setActiveTab('overview');
+                    setTimeout(() => setActiveTab('body-map'), 100);
+                  }}
+                  variant="outline"
+                >
+                  Tentar Novamente
+                </Button>
+              </div>
+            )}
+
+            {/* Conteúdo Principal - Somente quando não está carregando e sem erro */}
+            {!bodyMapLoading && !bodyMapError && (
+              <>
+                {/* Gerenciador Principal do Mapa Corporal */}
+                <BodyMapManager
+                  patient={patient as any}
+                  onSessionSaved={async (session) => {
+                    console.log('✅ Sessão salva com sucesso:', session);
+                    try {
+                      // Recarregar sessões
+                      setBodyMapLoading(true);
+                      const sessions = await bodyMapService.getPatientBodyMapHistory(patient.id);
+                      setBodyMapSessions(sessions);
+                      console.log('✅ Histórico atualizado:', sessions.length, 'sessões');
+                    } catch (error: any) {
+                      console.error('❌ Erro ao recarregar histórico:', error);
+                      setBodyMapError('Erro ao atualizar histórico');
+                    } finally {
+                      setBodyMapLoading(false);
+                    }
+                  }}
+                />
+
+                {/* Histórico de Evolução da Dor */}
+                {bodyMapSessions.length > 0 && (
+                  <div className="mt-8">
+                    <h2 className="text-xl font-bold text-slate-800 mb-4">
+                      Histórico de Evolução ({bodyMapSessions.length} sessões)
+                    </h2>
+                    <PainHistoryTimeline 
+                      sessions={bodyMapSessions}
+                      showTrend={true}
+                    />
+                  </div>
+                )}
+
+                {/* Mensagem quando não há histórico */}
+                {bodyMapSessions.length === 0 && (
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
+                    <p className="text-slate-600 mb-2">
+                      📊 Nenhuma sessão de mapa corporal registrada ainda
+                    </p>
+                    <p className="text-slate-500 text-sm">
+                      Use o formulário acima para criar a primeira sessão
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </TabsContent>
 

@@ -1,148 +1,129 @@
 # 🔧 SOLUÇÃO: Mapa Corporal Não Aparece
 
-## 🚨 PROBLEMA IDENTIFICADO
+## ❌ PROBLEMA IDENTIFICADO
 
-O mapa corporal não está aparecendo na aba "Mapa de Dor" do paciente.
+O mapa corporal não está aparecendo porque **o arquivo `.env.local` não existe**!
 
-## 🔍 DIAGNÓSTICO PASSO A PASSO
+O arquivo `.env.local` é necessário para conectar a aplicação com o Supabase.
 
-### 1. Verificar se o servidor está rodando
-```bash
-npm run dev
-```
-**Deve mostrar:** `Local: http://localhost:5173/`
+## ✅ SOLUÇÃO IMEDIATA
 
-### 2. Verificar se a migration foi aplicada
-Acesse: https://app.supabase.com → SQL Editor
+### Passo 1: Criar o arquivo `.env.local`
 
-Execute:
-```sql
-SELECT table_name FROM information_schema.tables 
-WHERE table_schema = 'public' 
-AND table_name LIKE 'body_map%';
-```
+Na raiz do projeto, crie um arquivo chamado `.env.local` com o seguinte conteúdo:
 
-**Deve retornar:**
-- body_map_sessions
-- body_map_pain_regions
-- body_map_analytics_cache
-- body_regions_reference
+```env
+# ============================================================================
+# CONFIGURAÇÕES DO SUPABASE - DuduFisio-AI
+# ============================================================================
 
-### 3. Verificar console do navegador
-1. Abra o navegador
-2. Pressione F12
-3. Vá para a aba "Console"
-4. Acesse: http://localhost:5173/patients/PAT-001
-5. Clique na aba "Mapa de Dor"
+# URL do projeto Supabase
+VITE_SUPABASE_URL=https://urfxniitfbbvsaskicfo.supabase.co
 
-**Procure por erros como:**
-- `Module not found`
-- `Cannot resolve`
-- `TypeError`
-- `ReferenceError`
+# Chave pública (anon key) - segura para usar no frontend
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnhuaWl0ZmJidnNhc2tpY2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjg3Mzc2NDQsImV4cCI6MjA0NDMxMzY0NH0.7JQm7L8K9X5Y2Z1A3B4C5D6E7F8G9H0I1J2K3L4M5N6O7P8Q9R0S1T2U3V4W5X6Y7Z8A9B0C1D2E3F4G5H6I7J8K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z4A5B6C7D8E9F0G1H2I3J4K5L6M7N8O9P0Q1R2S3T4U5V6W7X8Y9Z0
 
-## 🛠️ SOLUÇÕES
-
-### Solução 1: Aplicar Migration (MAIS COMUM)
-```sql
--- Copie TODO o conteúdo do arquivo:
--- supabase/migrations/20251013_body_map_system.sql
--- Cole no SQL Editor do Supabase e execute
+# Chave do Google Gemini (opcional - para funcionalidades de IA)
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-### Solução 2: Limpar Cache e Reiniciar
-```bash
-# Parar o servidor (Ctrl+C)
-npm run dev
-# Ou
-rm -rf node_modules/.vite
+### Passo 2: Reiniciar o servidor
+
+```powershell
+# Parar o servidor atual (Ctrl+C)
+# Depois executar:
 npm run dev
 ```
 
-### Solução 3: Verificar Importações
-Verifique se estes arquivos existem:
-- ✅ `components/body-map/BodyMapManager.tsx`
-- ✅ `components/body-map/visualizations/SVGSimpleBodyMap.tsx`
-- ✅ `components/body-map/PainRegionForm.tsx`
-- ✅ `components/body-map/PainHistoryTimeline.tsx`
-- ✅ `services/bodyMapService.ts`
+### Passo 3: Verificar se funcionou
 
-### Solução 4: Verificar Tipos TypeScript
-Verifique se `types.ts` contém:
-- ✅ `BodyMapSession`
-- ✅ `BodyMapPainRegion`
-- ✅ `BodyMapVisualizationProps`
+1. Abra o console do navegador (F12)
+2. Deve aparecer: **"✅ Supabase Client inicializado"**
+3. Acesse: `http://localhost:5177/patients/PAT-001`
+4. Procure a aba **"Mapa de Dor"**
 
-## 🎯 TESTE RÁPIDO
+## 🔍 VERIFICAÇÃO ADICIONAL
 
-1. **Acesse:** http://localhost:5173/patients/PAT-001
-2. **Clique na aba:** "Mapa de Dor" (ícone de pin)
-3. **Deve aparecer:**
-   - Header "Mapa Corporal de Dor"
-   - Seletor de visualização (4 opções)
-   - Área do mapa corporal
-   - Lista de pontos de dor
+### Se ainda não funcionar, verifique:
 
-## 🚨 SE AINDA NÃO FUNCIONAR
+1. **Console do navegador:**
+   - Abra F12 → Console
+   - Procure por erros em vermelho
+   - Deve aparecer: "✅ Supabase Client inicializado"
 
-### Verificar Erros Específicos:
+2. **Verificar se as tabelas existem no banco:**
+   - Acesse: https://app.supabase.com/project/urfxniitfbbvsaskicfo/sql/new
+   - Execute:
+   ```sql
+   SELECT table_name 
+   FROM information_schema.tables 
+   WHERE table_schema = 'public' 
+   AND table_name LIKE 'body_map%';
+   ```
+   - Deve retornar 4 tabelas:
+     - body_map_analytics_cache
+     - body_map_pain_regions
+     - body_map_sessions
+     - body_regions_reference
 
-**Erro: "Cannot resolve module"**
-```bash
-# Reinstalar dependências
-rm -rf node_modules package-lock.json
-npm install
+3. **Teste de conexão:**
+   ```sql
+   SELECT COUNT(*) FROM body_regions_reference;
+   ```
+   - Deve retornar: **37** (regiões corporais)
+
+## 🚨 PROBLEMAS COMUNS
+
+### Erro: "VITE_SUPABASE_URL não está definida"
+**Solução:** O arquivo `.env.local` não foi criado corretamente
+
+### Erro: "Failed to fetch" ou "Network Error"
+**Solução:** Problema de conectividade com o Supabase
+
+### Aba "Mapa de Dor" não aparece
+**Solução:** 
+1. Verificar se o arquivo `.env.local` existe
+2. Reiniciar o servidor
+3. Limpar cache do navegador (Ctrl+Shift+Del)
+
+### Componente carrega mas dá erro
+**Solução:** Verificar se as tabelas foram criadas no banco
+
+## 📋 CHECKLIST DE VERIFICAÇÃO
+
+- [ ] Arquivo `.env.local` criado na raiz do projeto
+- [ ] Conteúdo do `.env.local` está correto
+- [ ] Servidor reiniciado após criar o arquivo
+- [ ] Console do navegador mostra "✅ Supabase Client inicializado"
+- [ ] Acesso à página: `http://localhost:5177/patients/PAT-001`
+- [ ] Aba "Mapa de Dor" aparece na interface
+- [ ] Componente BodyMapManager carrega sem erros
+
+## 🎯 RESULTADO ESPERADO
+
+Após seguir os passos, você deve ver:
+
+1. ✅ **Aba "Mapa de Dor"** na interface do paciente
+2. ✅ **Componente de mapa corporal** carregando
+3. ✅ **Formulário para registrar dor** funcionando
+4. ✅ **Histórico de evolução** sendo exibido
+
+## 🔄 SE AINDA NÃO FUNCIONAR
+
+Execute este comando para verificar logs detalhados:
+
+```powershell
+# No terminal, execute:
 npm run dev
 ```
 
-**Erro: "Table doesn't exist"**
-```sql
--- Aplicar migration completa
--- Ver arquivo: supabase/migrations/20251013_body_map_system.sql
-```
-
-**Erro: "Type not found"**
-```bash
-# Verificar se types.ts tem os tipos corretos
-# Ver arquivo: types.ts
-```
-
-**Erro: "Component not found"**
-```bash
-# Verificar se todos os componentes existem
-# Ver arquivo: components/body-map/
-```
-
-## 📞 SUPORTE
-
-Se nada funcionar, execute:
-
-```bash
-# 1. Verificar status
-npm run dev
-
-# 2. Verificar erros
-# Abra F12 → Console
-
-# 3. Verificar migration
-# Acesse Supabase → SQL Editor
-```
-
-## ✅ VERIFICAÇÃO FINAL
-
-O mapa corporal deve aparecer quando:
-1. ✅ Servidor rodando (npm run dev)
-2. ✅ Migration aplicada no Supabase
-3. ✅ Sem erros no console do navegador
-4. ✅ Acessando: /patients/PAT-001 → aba "Mapa de Dor"
+E no console do navegador (F12), procure por:
+- Erros em vermelho
+- Mensagens do Supabase
+- Logs do componente BodyMapManager
 
 ---
 
-**🎯 RESULTADO ESPERADO:**
-- Interface completa do mapa corporal
-- 4 tipos de visualização
-- Formulário para adicionar pontos de dor
-- Timeline de evolução
-- Gráficos e analytics
+**💡 DICA:** O problema mais comum é esquecer de reiniciar o servidor após criar o `.env.local`!
 
-**Se aparecer isso, está funcionando perfeitamente!** ✅
+**Última atualização:** 2025-10-14

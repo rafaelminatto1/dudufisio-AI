@@ -434,8 +434,9 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/agenda" element={<PageErrorBoundary pageName="Agenda"><AgendaPage /></PageErrorBoundary>} />
                 <Route path="/patients" element={LazyElement(PatientListPage, 'Lista de Pacientes')} />
                 <Route path="/patients/new" element={LazyElement(PatientEditPage, 'Novo Paciente')} />
-                <Route path="/patients/:id" element={LazyElement(PatientEditPage, 'Editar Paciente')} />
+                <Route path="/patients/:id/edit" element={LazyElement(PatientEditPage, 'Editar Paciente')} />
                 <Route path="/patients/:id/view" element={LazyElement(PatientDetailPage, 'Detalhes do Paciente')} />
+                <Route path="/patients/:id" element={LazyElement(PatientDetailPage, 'Detalhes do Paciente')} />
                 <Route path="/body-map-dashboard/:patientId" element={LazyElement(BodyMapDashboardPage, 'Dashboard Mapa Corporal')} />
                 <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage, 'Acompanhamento')} />
                 <Route path="/notifications" element={LazyElement(NotificationCenterPage, 'Notificações')} />

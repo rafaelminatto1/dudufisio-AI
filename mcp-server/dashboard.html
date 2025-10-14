@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DuduFisio-AI MCP Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #1a202c;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #48bb78;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        .card h2 {
+            color: #2d3748;
+            font-size: 18px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .metric-value {
+            color: #1a202c;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .tools-list {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tools-list h2 {
+            color: #2d3748;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .tool-item {
+            padding: 16px;
+            border-left: 4px solid #667eea;
+            background: #f7fafc;
+            margin-bottom: 12px;
+            border-radius: 4px;
+        }
+
+        .tool-name {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .tool-desc {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .link-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+
+        .link-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .link-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .link-subtitle {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .command-box {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-top: 12px;
+            overflow-x: auto;
+        }
+
+        .alert {
+            background: #fed7d7;
+            border-left: 4px solid #fc8181;
+            color: #742a2a;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .alert-warning {
+            background: #feebc8;
+            border-left-color: #f6ad55;
+            color: #7c2d12;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏥 DuduFisio-AI MCP Server</h1>
+            <p>Sistema de Gestão de Fisioterapia com Monitoramento Sentry</p>
+            <span class="status-badge">✅ Online</span>
+        </div>
+
+        <!-- Alert -->
+        <div class="alert alert-warning">
+            ⚠️ <strong>Importante:</strong> Este servidor usa dados mock para demonstração. 
+            Para produção, integre com os serviços reais do DuduFisio-AI.
+        </div>
+
+        <!-- Metrics -->
+        <div class="grid">
+            <div class="card">
+                <h2><span class="card-icon">🔧</span> Ferramentas Disponíveis</h2>
+                <div class="metric">
+                    <span class="metric-label">Total de Ferramentas</span>
+                    <span class="metric-value">13</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Gestão de Pacientes</span>
+                    <span class="metric-value">4</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Agendamentos</span>
+                    <span class="metric-value">2</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">IA & Analytics</span>
+                    <span class="metric-value">5</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Exercícios</span>
+                    <span class="metric-value">2</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><span class="card-icon">📊</span> Monitoramento Sentry</h2>
+                <div class="metric">
+                    <span class="metric-label">Performance Tracking</span>
+                    <span class="metric-value">✅</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Error Monitoring</span>
+                    <span class="metric-value">✅</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Traces Sample Rate</span>
+                    <span class="metric-value">100%</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">PII Capture</span>
+                    <span class="metric-value">Enabled</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><span class="card-icon">💾</span> Dados Mock</h2>
+                <div class="metric">
+                    <span class="metric-label">Pacientes</span>
+                    <span class="metric-value">2</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Agendamentos</span>
+                    <span class="metric-value">1</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Exercícios</span>
+                    <span class="metric-value">2</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools List -->
+        <div class="tools-list">
+            <h2>🔧 Ferramentas MCP</h2>
+            
+            <h3 style="color: #667eea; margin: 20px 0 12px 0;">📋 Gestão de Pacientes</h3>
+            <div class="tool-item">
+                <div class="tool-name">list_patients</div>
+                <div class="tool-desc">Lista todos os pacientes cadastrados no sistema com filtros opcionais</div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name">search_patient</div>
+                <div class="tool-desc">Busca pacientes por nome, CPF ou email</div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name">get_patient_details</div>
+                <div class="tool-desc">Obtém detalhes completos de um paciente específico</div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name">get_patient_history</div>
+                <div class="tool-desc">Obtém histórico de atendimentos e evolução</div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 12px 0;">📅 Agendamentos</h3>
+            <div class="tool-item">
+                <div class="tool-name">list_appointments</div>
+                <div class="tool-desc">Lista agendamentos com filtros por data, terapeuta e status</div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name">create_appointment</div>
+                <div class="tool-desc">Cria um novo agendamento para paciente</div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 12px 0;">🤖 Análises de IA</h3>
+            <div class="tool-item">
+                <div class="tool-name">analyze_patient_progress</div>
+                <div class="tool-desc">Analisa progresso do paciente usando Google Gemini</div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name">generate_soap_note</div>
+                <div class="tool-desc">Gera notas SOAP automáticas</div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name">suggest_treatment_protocol</div>
+                <div class="tool-desc">Sugere protocolos de tratamento baseado em diagnóstico</div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 12px 0;">💪 Exercícios</h3>
+            <div class="tool-item">
+                <div class="tool-name">search_exercises</div>
+                <div class="tool-desc">Busca exercícios terapêuticos na biblioteca</div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name">create_exercise_protocol</div>
+                <div class="tool-desc">Cria protocolo de exercícios personalizado</div>
+            </div>
+
+            <h3 style="color: #667eea; margin: 20px 0 12px 0;">📊 Analytics</h3>
+            <div class="tool-item">
+                <div class="tool-name">get_clinic_stats</div>
+                <div class="tool-desc">Estatísticas gerais da clínica</div>
+            </div>
+            <div class="tool-item">
+                <div class="tool-name">generate_patient_report</div>
+                <div class="tool-desc">Gera relatório completo de evolução do paciente</div>
+            </div>
+        </div>
+
+        <!-- Quick Start -->
+        <div class="card" style="margin-top: 24px;">
+            <h2>🚀 Quick Start</h2>
+            <p style="color: #718096; margin-bottom: 16px;">Comandos para iniciar o servidor:</p>
+            
+            <h3 style="font-size: 16px; margin: 16px 0 8px 0;">1. Instalar e compilar</h3>
+            <div class="command-box">
+cd mcp-server
+npm install
+npm run build
+            </div>
+
+            <h3 style="font-size: 16px; margin: 16px 0 8px 0;">2. Iniciar servidor</h3>
+            <div class="command-box">
+npm start
+            </div>
+
+            <h3 style="font-size: 16px; margin: 16px 0 8px 0;">3. Testar ferramentas</h3>
+            <div class="command-box">
+echo '{"jsonrpc":"2.0","method":"tools/list","id":1}' | node dist/server.js
+            </div>
+        </div>
+
+        <!-- Links -->
+        <div class="links">
+            <a href="https://sentry.io/orgredirect/organizations/:orgslug/insights/ai/mcp/" target="_blank" class="link-card">
+                <div class="link-icon">📊</div>
+                <div class="link-title">Sentry Dashboard</div>
+                <div class="link-subtitle">Monitoramento em tempo real</div>
+            </a>
+
+            <a href="https://docs.sentry.io/product/insights/ai/mcp/" target="_blank" class="link-card">
+                <div class="link-icon">📚</div>
+                <div class="link-title">Documentação Sentry</div>
+                <div class="link-subtitle">Guia completo MCP</div>
+            </a>
+
+            <a href="https://github.com/modelcontextprotocol/specification" target="_blank" class="link-card">
+                <div class="link-icon">🔗</div>
+                <div class="link-title">MCP Specification</div>
+                <div class="link-subtitle">Especificação oficial</div>
+            </a>
+
+            <a href="./README.md" class="link-card">
+                <div class="link-icon">📖</div>
+                <div class="link-title">README</div>
+                <div class="link-subtitle">Documentação completa</div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+

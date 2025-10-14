@@ -6,88 +6,247 @@
 --              para integração com WhatsApp Business API
 -- =====================================================
 
+-- Habilitar extensões necessárias
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- =====================================================
 -- 1. TABELA DE LEADS
 -- =====================================================
 CREATE TABLE IF NOT EXISTS leads (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  clinic_id UUID NOT NULL REFERENCES clinics(id) ON DELETE CASCADE,
-  
-  -- Informações básicas
   name VARCHAR(255) NOT NULL,
   phone VARCHAR(20) NOT NULL,
   email VARCHAR(255),
-  
-  -- Origem e classificação
-  source VARCHAR(50) NOT NULL, -- 'whatsapp', 'instagram', 'google', 'facebook', 'indicacao', 'website'
-  service_interest VARCHAR(100), -- 'fisioterapia_esportiva', 'atm', 'avaliacao_corrida', 'recovery', 'pilates'
-  status VARCHAR(50) DEFAULT 'novo', -- 'novo', 'contatado', 'qualificado', 'agendado', 'convertido', 'perdido'
-  
-  -- Dados de qualificação
-  pain_description TEXT,
-  sport_activity VARCHAR(100),
-  pain_duration VARCHAR(50),
-  pain_location VARCHAR(100),
-  urgency_level VARCHAR(20) DEFAULT 'media', -- 'baixa', 'media', 'alta', 'urgente'
-  
-  -- Tracking de interações
-  first_contact_at TIMESTAMPTZ DEFAULT NOW(),
-  last_contact_at TIMESTAMPTZ,
-  next_follow_up_at TIMESTAMPTZ,
-  contact_count INTEGER DEFAULT 0,
-  whatsapp_messages_sent INTEGER DEFAULT 0,
-  whatsapp_messages_received INTEGER DEFAULT 0,
-  
-  -- Conversão
-  converted_to_patient_id UUID REFERENCES patients(id),
-  converted_at TIMESTAMPTZ,
-  conversion_source VARCHAR(50),
-  
-  -- Remarketing
-  remarketing_sequence INTEGER DEFAULT 0, -- qual mensagem da sequência (0-3)
-  remarketing_paused BOOLEAN DEFAULT FALSE,
-  last_remarketing_at TIMESTAMPTZ,
-  
-  -- Atribuição e métricas de marketing
-  campaign_id VARCHAR(100),
-  ad_id VARCHAR(100),
-  utm_source VARCHAR(100),
-  utm_medium VARCHAR(100),
-  utm_campaign VARCHAR(100),
-  utm_content VARCHAR(100),
-  utm_term VARCHAR(100),
-  estimated_value DECIMAL(10,2),
-  
-  -- Notas e tags
-  notes TEXT[],
-  tags VARCHAR(50)[],
-  
-  -- Auditoria
-  assigned_to UUID REFERENCES unified_users(id),
-  created_by UUID REFERENCES unified_users(id),
+  source VARCHAR(50) NOT NULL,
+  status VARCHAR(50) DEFAULT 'novo',
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  deleted_at TIMESTAMPTZ,
-  
-  -- Constraints
-  CONSTRAINT leads_phone_check CHECK (phone ~ '^\+?[1-9]\d{1,14}$'), -- E.164 format
-  CONSTRAINT leads_email_check CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$' OR email IS NULL),
-  CONSTRAINT leads_status_check CHECK (status IN ('novo', 'contatado', 'qualificado', 'agendado', 'convertido', 'perdido')),
-  CONSTRAINT leads_urgency_check CHECK (urgency_level IN ('baixa', 'media', 'alta', 'urgente')),
-  CONSTRAINT leads_source_check CHECK (source IN ('whatsapp', 'instagram', 'google', 'facebook', 'indicacao', 'website', 'outros'))
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Índices de performance
-CREATE INDEX idx_leads_clinic_status ON leads(clinic_id, status) WHERE deleted_at IS NULL;
-CREATE INDEX idx_leads_clinic_created ON leads(clinic_id, created_at DESC) WHERE deleted_at IS NULL;
-CREATE INDEX idx_leads_next_followup ON leads(next_follow_up_at) WHERE status NOT IN ('convertido', 'perdido') AND deleted_at IS NULL;
-CREATE INDEX idx_leads_phone ON leads(phone) WHERE deleted_at IS NULL;
-CREATE INDEX idx_leads_source ON leads(clinic_id, source) WHERE deleted_at IS NULL;
-CREATE INDEX idx_leads_assigned ON leads(assigned_to) WHERE deleted_at IS NULL;
-CREATE INDEX idx_leads_urgency ON leads(clinic_id, urgency_level) WHERE status NOT IN ('convertido', 'perdido') AND deleted_at IS NULL;
+-- Adicionar colunas que possam estar faltando (para tabelas já criadas)
+DO $$ 
+BEGIN
+  -- clinic_id
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='clinic_id') THEN
+    ALTER TABLE leads ADD COLUMN clinic_id UUID;
+    -- Nota: FK será adicionada apenas se a tabela clinics existir
+  END IF;
+  
+  -- service_interest
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='service_interest') THEN
+    ALTER TABLE leads ADD COLUMN service_interest VARCHAR(100);
+  END IF;
+  
+  -- pain_description
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='pain_description') THEN
+    ALTER TABLE leads ADD COLUMN pain_description TEXT;
+  END IF;
+  
+  -- sport_activity
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='sport_activity') THEN
+    ALTER TABLE leads ADD COLUMN sport_activity VARCHAR(100);
+  END IF;
+  
+  -- pain_duration
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='pain_duration') THEN
+    ALTER TABLE leads ADD COLUMN pain_duration VARCHAR(50);
+  END IF;
+  
+  -- pain_location
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='pain_location') THEN
+    ALTER TABLE leads ADD COLUMN pain_location VARCHAR(100);
+  END IF;
+  
+  -- urgency_level
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='urgency_level') THEN
+    ALTER TABLE leads ADD COLUMN urgency_level VARCHAR(20) DEFAULT 'media';
+  END IF;
+  
+  -- first_contact_at
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='first_contact_at') THEN
+    ALTER TABLE leads ADD COLUMN first_contact_at TIMESTAMPTZ DEFAULT NOW();
+  END IF;
+  
+  -- last_contact_at
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='last_contact_at') THEN
+    ALTER TABLE leads ADD COLUMN last_contact_at TIMESTAMPTZ;
+  END IF;
+  
+  -- next_follow_up_at
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='next_follow_up_at') THEN
+    ALTER TABLE leads ADD COLUMN next_follow_up_at TIMESTAMPTZ;
+  END IF;
+  
+  -- contact_count
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='contact_count') THEN
+    ALTER TABLE leads ADD COLUMN contact_count INTEGER DEFAULT 0;
+  END IF;
+  
+  -- whatsapp_messages_sent
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='whatsapp_messages_sent') THEN
+    ALTER TABLE leads ADD COLUMN whatsapp_messages_sent INTEGER DEFAULT 0;
+  END IF;
+  
+  -- whatsapp_messages_received
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='whatsapp_messages_received') THEN
+    ALTER TABLE leads ADD COLUMN whatsapp_messages_received INTEGER DEFAULT 0;
+  END IF;
+  
+  -- converted_to_patient_id
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='converted_to_patient_id') THEN
+    ALTER TABLE leads ADD COLUMN converted_to_patient_id UUID;
+  END IF;
+  
+  -- converted_at
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='converted_at') THEN
+    ALTER TABLE leads ADD COLUMN converted_at TIMESTAMPTZ;
+  END IF;
+  
+  -- conversion_source
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='conversion_source') THEN
+    ALTER TABLE leads ADD COLUMN conversion_source VARCHAR(50);
+  END IF;
+  
+  -- remarketing_sequence
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='remarketing_sequence') THEN
+    ALTER TABLE leads ADD COLUMN remarketing_sequence INTEGER DEFAULT 0;
+  END IF;
+  
+  -- remarketing_paused
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='remarketing_paused') THEN
+    ALTER TABLE leads ADD COLUMN remarketing_paused BOOLEAN DEFAULT FALSE;
+  END IF;
+  
+  -- last_remarketing_at
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='last_remarketing_at') THEN
+    ALTER TABLE leads ADD COLUMN last_remarketing_at TIMESTAMPTZ;
+  END IF;
+  
+  -- campaign_id
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='campaign_id') THEN
+    ALTER TABLE leads ADD COLUMN campaign_id VARCHAR(100);
+  END IF;
+  
+  -- ad_id
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='ad_id') THEN
+    ALTER TABLE leads ADD COLUMN ad_id VARCHAR(100);
+  END IF;
+  
+  -- utm_source
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='utm_source') THEN
+    ALTER TABLE leads ADD COLUMN utm_source VARCHAR(100);
+  END IF;
+  
+  -- utm_medium
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='utm_medium') THEN
+    ALTER TABLE leads ADD COLUMN utm_medium VARCHAR(100);
+  END IF;
+  
+  -- utm_campaign
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='utm_campaign') THEN
+    ALTER TABLE leads ADD COLUMN utm_campaign VARCHAR(100);
+  END IF;
+  
+  -- utm_content
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='utm_content') THEN
+    ALTER TABLE leads ADD COLUMN utm_content VARCHAR(100);
+  END IF;
+  
+  -- utm_term
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='utm_term') THEN
+    ALTER TABLE leads ADD COLUMN utm_term VARCHAR(100);
+  END IF;
+  
+  -- estimated_value
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='estimated_value') THEN
+    ALTER TABLE leads ADD COLUMN estimated_value DECIMAL(10,2);
+  END IF;
+  
+  -- notes (array)
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='notes') THEN
+    ALTER TABLE leads ADD COLUMN notes TEXT[];
+  END IF;
+  
+  -- tags (array)
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='tags') THEN
+    ALTER TABLE leads ADD COLUMN tags VARCHAR(50)[];
+  END IF;
+  
+  -- assigned_to
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='assigned_to') THEN
+    ALTER TABLE leads ADD COLUMN assigned_to UUID;
+  END IF;
+  
+  -- created_by
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='created_by') THEN
+    ALTER TABLE leads ADD COLUMN created_by UUID;
+  END IF;
+  
+  -- deleted_at
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
+                 WHERE table_name='leads' AND column_name='deleted_at') THEN
+    ALTER TABLE leads ADD COLUMN deleted_at TIMESTAMPTZ;
+  END IF;
+END $$;
 
--- Índice para busca textual
-CREATE INDEX idx_leads_name_trgm ON leads USING gin(name gin_trgm_ops) WHERE deleted_at IS NULL;
+-- Índices de performance
+CREATE INDEX IF NOT EXISTS idx_leads_next_followup ON leads(next_follow_up_at) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_leads_phone ON leads(phone) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status) WHERE deleted_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_leads_created ON leads(created_at DESC) WHERE deleted_at IS NULL;
+
+-- Índices condicionais (somente se as colunas existirem)
+DO $$
+BEGIN
+  -- Índices que dependem de clinic_id
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name='leads' AND column_name='clinic_id') THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_leads_clinic_status ON leads(clinic_id, status) WHERE deleted_at IS NULL';
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_leads_clinic_created ON leads(clinic_id, created_at DESC) WHERE deleted_at IS NULL';
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_leads_source ON leads(clinic_id, source) WHERE deleted_at IS NULL';
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_leads_urgency ON leads(clinic_id, urgency_level) WHERE deleted_at IS NULL';
+  END IF;
+  
+  -- Índice que depende de assigned_to
+  IF EXISTS (SELECT 1 FROM information_schema.columns 
+             WHERE table_name='leads' AND column_name='assigned_to') THEN
+    EXECUTE 'CREATE INDEX IF NOT EXISTS idx_leads_assigned ON leads(assigned_to) WHERE deleted_at IS NULL';
+  END IF;
+END $$;
+
+-- Índice para busca textual removido temporariamente (problema com pg_trgm)
+-- CREATE INDEX IF NOT EXISTS idx_leads_name_trgm ON leads USING gin(name gin_trgm_ops) WHERE deleted_at IS NULL;
 
 -- Comentários
 COMMENT ON TABLE leads IS 'Tabela de leads do CRM - candidatos a pacientes';

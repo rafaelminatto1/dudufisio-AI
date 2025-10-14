@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS session_history (
     duration INTEGER DEFAULT 0, -- em minutos
     status TEXT NOT NULL DEFAULT 'completed' CHECK (status IN ('completed', 'cancelled', 'no-show')),
     notes TEXT,
-    soap_note_id UUID REFERENCES soap_notes(id) ON DELETE SET NULL,
+    soap_note_id UUID, -- Removida FK constraint temporariamente - tabela soap_notes não existe
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

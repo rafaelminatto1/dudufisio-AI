@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Mapa Corporal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste - Mapa Corporal DuduFisio-AI</h1>
+        
+        <div id="status" class="status info">
+            Clique em "Testar Conexão" para verificar se o mapa corporal está funcionando.
+        </div>
+
+        <div>
+            <button onclick="testarConexao()">🔗 Testar Conexão Supabase</button>
+            <button onclick="testarTabelas()">📊 Verificar Tabelas</button>
+            <button onclick="testarDados()">📋 Verificar Dados</button>
+            <button onclick="abrirAplicacao()">🚀 Abrir Aplicação</button>
+        </div>
+
+        <div id="resultado"></div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
+        
+        const supabaseUrl = 'https://urfxniitfbbvsaskicfo.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnhuaWl0ZmJidnNhc2tpY2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjg3Mzc2NDQsImV4cCI6MjA0NDMxMzY0NH0.7JQm7L8K9X5Y2Z1A3B4C5D6E7F8G9H0I1J2K3L4M5N6O7P8Q9R0S1T2U3V4W5X6Y7Z8A9B0C1D2E3F4G5H6I7J8K9L0M1N2O3P4Q5R6S7T8U9V0W1X2Y3Z4A5B6C7D8E9F0G1H2I3J4K5L6M7N8O9P0Q1R2S3T4U5V6W7X8Y9Z0';
+        
+        const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+        window.testarConexao = async () => {
+            const status = document.getElementById('status');
+            const resultado = document.getElementById('resultado');
+            
+            status.className = 'status info';
+            status.textContent = '🔄 Testando conexão com Supabase...';
+            resultado.innerHTML = '';
+
+            try {
+                // Testar conexão básica
+                const { data, error } = await supabase.from('patients').select('count').limit(1);
+                
+                if (error) {
+                    throw error;
+                }
+
+                status.className = 'status success';
+                status.textContent = '✅ Conexão com Supabase funcionando!';
+                
+                resultado.innerHTML = `
+                    <h3>✅ Conexão Estabelecida</h3>
+                    <p><strong>URL:</strong> ${supabaseUrl}</p>
+                    <p><strong>Status:</strong> Conectado com sucesso</p>
+                    <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+                `;
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ Erro na conexão com Supabase';
+                
+                resultado.innerHTML = `
+                    <h3>❌ Erro de Conexão</h3>
+                    <pre>${JSON.stringify(error, null, 2)}</pre>
+                `;
+            }
+        };
+
+        window.testarTabelas = async () => {
+            const status = document.getElementById('status');
+            const resultado = document.getElementById('resultado');
+            
+            status.className = 'status info';
+            status.textContent = '🔄 Verificando tabelas do mapa corporal...';
+            resultado.innerHTML = '';
+
+            try {
+                // Verificar se as tabelas existem
+                const tabelasEsperadas = [
+                    'body_map_sessions',
+                    'body_map_pain_regions', 
+                    'body_map_analytics_cache',
+                    'body_regions_reference'
+                ];
+
+                let tabelasExistentes = [];
+                let tabelasFaltando = [];
+
+                for (const tabela of tabelasEsperadas) {
+                    try {
+                        const { data, error } = await supabase.from(tabela).select('count').limit(1);
+                        if (!error) {
+                            tabelasExistentes.push(tabela);
+                        } else {
+                            tabelasFaltando.push(tabela);
+                        }
+                    } catch (e) {
+                        tabelasFaltando.push(tabela);
+                    }
+                }
+
+                if (tabelasFaltando.length === 0) {
+                    status.className = 'status success';
+                    status.textContent = '✅ Todas as tabelas do mapa corporal existem!';
+                } else {
+                    status.className = 'status warning';
+                    status.textContent = `⚠️ ${tabelasFaltando.length} tabela(s) faltando`;
+                }
+
+                resultado.innerHTML = `
+                    <h3>📊 Status das Tabelas</h3>
+                    <h4>✅ Tabelas Existentes (${tabelasExistentes.length}):</h4>
+                    <ul>
+                        ${tabelasExistentes.map(t => `<li>${t}</li>`).join('')}
+                    </ul>
+                    
+                    ${tabelasFaltando.length > 0 ? `
+                    <h4>❌ Tabelas Faltando (${tabelasFaltando.length}):</h4>
+                    <ul>
+                        ${tabelasFaltando.map(t => `<li>${t}</li>`).join('')}
+                    </ul>
+                    <div class="status warning">
+                        <strong>⚠️ Ação Necessária:</strong> Execute a migration do mapa corporal no SQL Editor do Supabase.
+                    </div>
+                    ` : ''}
+                `;
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ Erro ao verificar tabelas';
+                
+                resultado.innerHTML = `
+                    <h3>❌ Erro</h3>
+                    <pre>${JSON.stringify(error, null, 2)}</pre>
+                `;
+            }
+        };
+
+        window.testarDados = async () => {
+            const status = document.getElementById('status');
+            const resultado = document.getElementById('resultado');
+            
+            status.className = 'status info';
+            status.textContent = '🔄 Verificando dados das tabelas...';
+            resultado.innerHTML = '';
+
+            try {
+                // Verificar dados nas tabelas
+                const { data: regioes, error: errorRegioes } = await supabase
+                    .from('body_regions_reference')
+                    .select('count');
+
+                if (errorRegioes) {
+                    throw new Error('Tabela body_regions_reference não existe ou não tem dados');
+                }
+
+                const { data: sessoes } = await supabase
+                    .from('body_map_sessions')
+                    .select('count');
+
+                const { data: regioesDor } = await supabase
+                    .from('body_map_pain_regions')
+                    .select('count');
+
+                status.className = 'status success';
+                status.textContent = '✅ Dados verificados com sucesso!';
+                
+                resultado.innerHTML = `
+                    <h3>📋 Dados das Tabelas</h3>
+                    <div class="status success">
+                        <strong>✅ body_regions_reference:</strong> Tabela existe e tem dados
+                    </div>
+                    <div class="status info">
+                        <strong>📊 body_map_sessions:</strong> ${sessoes ? 'Tabela existe' : 'Sem dados ainda'}
+                    </div>
+                    <div class="status info">
+                        <strong>📍 body_map_pain_regions:</strong> ${regioesDor ? 'Tabela existe' : 'Sem dados ainda'}
+                    </div>
+                    
+                    <h4>🎯 Próximos Passos:</h4>
+                    <ol>
+                        <li>✅ Tabelas criadas com sucesso</li>
+                        <li>🔄 Reiniciar servidor da aplicação</li>
+                        <li>🌐 Acessar: <code>http://localhost:5177/patients/PAT-001</code></li>
+                        <li>👆 Clicar na aba "Mapa de Dor"</li>
+                    </ol>
+                `;
+                
+            } catch (error) {
+                status.className = 'status error';
+                status.textContent = '❌ Erro ao verificar dados';
+                
+                resultado.innerHTML = `
+                    <h3>❌ Erro</h3>
+                    <pre>${JSON.stringify(error, null, 2)}</pre>
+                    <div class="status warning">
+                        <strong>💡 Solução:</strong> Execute a migration do mapa corporal no SQL Editor do Supabase.
+                    </div>
+                `;
+            }
+        };
+
+        window.abrirAplicacao = () => {
+            const status = document.getElementById('status');
+            status.className = 'status info';
+            status.textContent = '🚀 Abrindo aplicação...';
+            
+            // Tentar abrir a aplicação
+            const urls = [
+                'http://localhost:5177/patients/PAT-001',
+                'http://localhost:5173/patients/PAT-001',
+                'http://localhost:3000/patients/PAT-001'
+            ];
+            
+            urls.forEach(url => {
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.textContent = `Abrir ${url}`;
+                link.style.display = 'block';
+                link.style.margin = '10px 0';
+                link.style.padding = '10px';
+                link.style.background = '#007bff';
+                link.style.color = 'white';
+                link.style.textDecoration = 'none';
+                link.style.borderRadius = '4px';
+                
+                document.getElementById('resultado').appendChild(link);
+            });
+        };
+
+        // Executar teste automático ao carregar
+        window.addEventListener('load', () => {
+            setTimeout(testarConexao, 1000);
+        });
+    </script>
+</body>
+</html>

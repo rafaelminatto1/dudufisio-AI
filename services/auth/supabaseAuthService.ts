@@ -116,9 +116,27 @@ class SupabaseAuthService {
   }
 
   private getMockUser(): User {
-    // Return a mock user for development
-    return {
-      id: 'mock-user-1',
+    // Tentar recuperar sessão mock do localStorage
+    const storedMockSession = localStorage.getItem('mock_session');
+    if (storedMockSession) {
+      try {
+        const parsed = JSON.parse(storedMockSession);
+        if (parsed.expiresAt > Date.now()) {
+          console.log('🔄 Restaurando sessão mock do localStorage:', parsed.user.email);
+          return parsed.user;
+        } else {
+          console.log('⏰ Sessão mock expirada, removendo do localStorage');
+          localStorage.removeItem('mock_session');
+        }
+      } catch (e) {
+        console.warn('⚠️ Erro ao recuperar sessão mock, removendo:', e);
+        localStorage.removeItem('mock_session');
+      }
+    }
+
+    // Criar novo usuário mock padrão
+    const mockUser: User = {
+      id: 'mock-admin-1',
       email: 'admin@dudufisio.com',
       name: 'Administrador',
       role: Role.Admin,
@@ -126,6 +144,16 @@ class SupabaseAuthService {
       phone: undefined,
       createdAt: new Date().toISOString()
     };
+
+    // Persistir no localStorage com expiração de 8 horas
+    const sessionData = {
+      user: mockUser,
+      expiresAt: Date.now() + (8 * 60 * 60 * 1000)
+    };
+    localStorage.setItem('mock_session', JSON.stringify(sessionData));
+    console.log('💾 Sessão mock persistida no localStorage (válida por 8h)');
+
+    return mockUser;
   }
 
   private shouldUseMockAuth(credentials: LoginCredentials): boolean {
@@ -194,6 +222,14 @@ class SupabaseAuthService {
       expires_at: Date.now() + 3600000, // 1 hour
       user: user
     };
+
+    // Persistir sessão mock no localStorage com expiração de 8 horas
+    const sessionData = {
+      user: user,
+      expiresAt: Date.now() + (8 * 60 * 60 * 1000)
+    };
+    localStorage.setItem('mock_session', JSON.stringify(sessionData));
+    console.log('💾 Sessão mock persistida após login:', user.email);
 
     // Update state with mock user and session
     this.updateState({ user, session: mockSession, loading: false });
@@ -283,6 +319,10 @@ class SupabaseAuthService {
 
   async logout(): Promise<void> {
     try {
+      // Limpar sessão mock do localStorage
+      localStorage.removeItem('mock_session');
+      console.log('🗑️ Sessão mock removida do localStorage');
+      
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (error: any) {
