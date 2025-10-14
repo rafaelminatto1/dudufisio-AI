@@ -1,413 +1,801 @@
 /**
- * Professional Body Map Service
- * Enterprise-grade service layer with optimized performance and error handling
- *
- * @author DuduFisio-AI Engineering Team
- * @version 2.0.0
+ * BODY MAP SERVICE
+ * Serviço para gerenciamento do mapa corporal de dor dos pacientes
  */
 
-import { BodyPoint, BodyMapAnalytics } from '../types';
+import { supabase } from '../lib/supabaseClient';
+import type {
+  BodyMapSession,
+  BodyMapPainRegion,
+  BodyMapAnalytics,
+  BodyMapAnalyticsCache,
+  BodyMapFilters,
+  BodyMapComparison,
+  BodyRegionReference,
+} from '../types';
 
-// Professional mock data with new interface structure
-const mockBodyPoints: BodyPoint[] = [
-    {
-        id: 'bp_1',
-        patientId: 'patient_1',
-        coordinates: { x: 0.45, y: 0.25 },
-        bodySide: 'front',
-        painLevel: 7,
-        painType: 'acute',
-        bodyRegion: 'shoulder',
-        description: 'Dor no ombro direito que piora com movimento, especialmente ao levantar o braço',
-        symptoms: ['Dor aguda', 'Limitação de movimento', 'Sensibilidade ao toque'],
-        createdAt: new Date('2024-01-15T10:30:00Z'),
-        updatedAt: new Date('2024-01-15T10:30:00Z'),
-        createdBy: 'user_1',
-        sessionId: 'session_1'
-    },
-    {
-        id: 'bp_2',
-        patientId: 'patient_1',
-        coordinates: { x: 0.55, y: 0.45 },
-        bodySide: 'front',
-        painLevel: 5,
-        painType: 'chronic',
-        bodyRegion: 'elbow',
-        description: 'Rigidez articular no cotovelo com desconforto matinal',
-        symptoms: ['Rigidez', 'Dor latejante', 'Inchaço'],
-        createdAt: new Date('2024-01-14T09:15:00Z'),
-        updatedAt: new Date('2024-01-14T09:15:00Z'),
-        createdBy: 'user_1'
-    },
-    {
-        id: 'bp_3',
-        patientId: 'patient_1',
-        coordinates: { x: 0.50, y: 0.35 },
-        bodySide: 'back',
-        painLevel: 8,
-        painType: 'constant',
-        bodyRegion: 'lumbar',
-        description: 'Dor lombar constante que irradia para as pernas, piora ao ficar sentado',
-        symptoms: ['Dor irradiada', 'Espasmo muscular', 'Formigamento', 'Fraqueza'],
-        createdAt: new Date('2024-01-13T14:20:00Z'),
-        updatedAt: new Date('2024-01-13T14:20:00Z'),
-        createdBy: 'user_1'
-    },
-    {
-        id: 'bp_4',
-        patientId: 'patient_1',
-        coordinates: { x: 0.42, y: 0.80 },
-        bodySide: 'front',
-        painLevel: 6,
-        painType: 'intermittent',
-        bodyRegion: 'knee',
-        description: 'Dor intermitente no joelho esquerdo, especialmente após atividades',
-        symptoms: ['Dor intermitente', 'Inchaço', 'Rigidez'],
-        createdAt: new Date('2024-01-12T16:45:00Z'),
-        updatedAt: new Date('2024-01-12T16:45:00Z'),
-        createdBy: 'user_1'
-    },
-    {
-        id: 'bp_5',
-        patientId: 'patient_1',
-        coordinates: { x: 0.50, y: 0.15 },
-        bodySide: 'front',
-        painLevel: 4,
-        painType: 'acute',
-        bodyRegion: 'cervical',
-        description: 'Tensão cervical após longas horas no computador',
-        symptoms: ['Tensão muscular', 'Dor de cabeça', 'Rigidez'],
-        createdAt: new Date('2024-01-11T11:30:00Z'),
-        updatedAt: new Date('2024-01-11T11:30:00Z'),
-        createdBy: 'user_1'
+// ============================================================================
+// CONSTANTES
+// ============================================================================
+
+export const PAIN_TYPES = [
+  { value: 'aguda', label: 'Aguda' },
+  { value: 'latejante', label: 'Latejante' },
+  { value: 'queimação', label: 'Queimação' },
+  { value: 'formigamento', label: 'Formigamento' },
+  { value: 'cansaço', label: 'Cansaço' },
+  { value: 'pontada', label: 'Pontada' },
+  { value: 'pressão', label: 'Pressão' },
+  { value: 'choque', label: 'Choque' },
+] as const;
+
+export const PAIN_INTENSITY_LABELS = {
+  0: 'Sem dor',
+  1: 'Muito leve',
+  2: 'Leve',
+  3: 'Leve/Moderada',
+  4: 'Moderada',
+  5: 'Moderada',
+  6: 'Moderada/Forte',
+  7: 'Forte',
+  8: 'Muito forte',
+  9: 'Quase insuportável',
+  10: 'Insuportável',
+} as const;
+
+// ============================================================================
+// CRUD - SESSÕES
+// ============================================================================
+
+/**
+ * Cria uma nova sessão de mapa corporal
+ */
+export async function createBodyMapSession(
+  data: Omit<BodyMapSession, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<BodyMapSession> {
+  try {
+    const { data: session, error } = await supabase
+      .from('body_map_sessions')
+      .insert({
+        patient_id: data.patientId,
+        session_id: data.sessionId,
+        appointment_id: data.appointmentId,
+        main_complaint_region: data.mainComplaintRegion,
+        main_complaint_description: data.mainComplaintDescription,
+        session_date: data.sessionDate.toISOString(),
+        overall_pain_level: data.overallPainLevel,
+        pain_free: data.painFree,
+        notes: data.notes,
+        created_by: data.createdBy,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return mapDatabaseSessionToModel(session);
+  } catch (error) {
+    console.error('Error creating body map session:', error);
+    throw new Error('Falha ao criar sessão de mapa corporal');
+  }
+}
+
+/**
+ * Atualiza uma sessão existente
+ */
+export async function updateBodyMapSession(
+  sessionId: string,
+  updates: Partial<Omit<BodyMapSession, 'id' | 'createdAt'>>
+): Promise<BodyMapSession> {
+  try {
+    const updateData: any = {};
+
+    if (updates.mainComplaintRegion !== undefined) {
+      updateData.main_complaint_region = updates.mainComplaintRegion;
     }
-];
-
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-
-/**
- * Professional service to fetch body points by patient ID
- * Includes caching, error handling, and performance optimizations
- */
-export const getBodyPointsByPatientId = async (patientId: string): Promise<BodyPoint[]> => {
-    await delay(300);
-
-    try {
-        return mockBodyPoints
-            .filter(point => point.patientId === patientId)
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    } catch (error) {
-        console.error('Error fetching body points:', error);
-        throw new Error('Failed to fetch body points');
+    if (updates.mainComplaintDescription !== undefined) {
+      updateData.main_complaint_description = updates.mainComplaintDescription;
     }
-};
-
-/**
- * Buscar ponto específico por ID
- */
-export const getBodyPointById = async (id: string): Promise<BodyPoint | null> => {
-    await delay(200);
-
-    const point = mockBodyPoints.find(p => p.id === id);
-    return point || null;
-};
-
-/**
- * Professional service to add a new body point
- * Includes validation, optimistic updates, and error handling
- */
-export const addBodyPoint = async (pointData: Omit<BodyPoint, 'id' | 'createdAt' | 'updatedAt'>): Promise<BodyPoint> => {
-    await delay(400);
-
-    try {
-        // Validate required fields
-        if (!pointData.patientId) throw new Error('Patient ID is required');
-        if (!pointData.coordinates) throw new Error('Coordinates are required');
-        if (pointData.painLevel < 0 || pointData.painLevel > 10) throw new Error('Pain level must be between 0-10');
-        if (!pointData.description?.trim()) throw new Error('Description is required');
-        if (!pointData.symptoms?.length) throw new Error('At least one symptom is required');
-
-        const newPoint: BodyPoint = {
-            ...pointData,
-            id: `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        };
-
-        mockBodyPoints.unshift(newPoint);
-        return newPoint;
-    } catch (error) {
-        console.error('Error adding body point:', error);
-        throw error instanceof Error ? error : new Error('Failed to add body point');
+    if (updates.sessionDate !== undefined) {
+      updateData.session_date = updates.sessionDate.toISOString();
     }
-};
-
-/**
- * Atualizar ponto existente
- */
-export const updateBodyPoint = async (id: string, pointData: Partial<BodyPoint>): Promise<BodyPoint> => {
-    await delay(400);
-
-    const index = mockBodyPoints.findIndex(p => p.id === id);
-    if (index === -1) {
-        throw new Error('Ponto não encontrado');
+    if (updates.overallPainLevel !== undefined) {
+      updateData.overall_pain_level = updates.overallPainLevel;
+    }
+    if (updates.painFree !== undefined) {
+      updateData.pain_free = updates.painFree;
+    }
+    if (updates.notes !== undefined) {
+      updateData.notes = updates.notes;
     }
 
-    const updatedPoint = {
-        ...mockBodyPoints[index],
-        ...pointData,
-        id, // Garantir que o ID não mude
-        createdAt: mockBodyPoints[index].createdAt // Manter data original
-    };
+    const { data: session, error } = await supabase
+      .from('body_map_sessions')
+      .update(updateData)
+      .eq('id', sessionId)
+      .select()
+      .single();
 
-    mockBodyPoints[index] = updatedPoint;
-    return updatedPoint;
-};
+    if (error) throw error;
+
+    return mapDatabaseSessionToModel(session);
+  } catch (error) {
+    console.error('Error updating body map session:', error);
+    throw new Error('Falha ao atualizar sessão de mapa corporal');
+  }
+}
 
 /**
- * Deletar ponto do mapa corporal
+ * Busca uma sessão específica com todas as regiões de dor
  */
-export const deleteBodyPoint = async (id: string): Promise<void> => {
-    await delay(300);
+export async function getBodyMapSession(sessionId: string): Promise<BodyMapSession | null> {
+  try {
+    const { data: session, error: sessionError } = await supabase
+      .from('body_map_sessions')
+      .select('*')
+      .eq('id', sessionId)
+      .is('deleted_at', null)
+      .single();
 
-    const index = mockBodyPoints.findIndex(p => p.id === id);
-    if (index === -1) {
-        throw new Error('Ponto não encontrado');
+    if (sessionError) throw sessionError;
+    if (!session) return null;
+
+    // Buscar regiões de dor desta sessão
+    const { data: regions, error: regionsError } = await supabase
+      .from('body_map_pain_regions')
+      .select('*')
+      .eq('body_map_session_id', sessionId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: true });
+
+    if (regionsError) throw regionsError;
+
+    const mappedSession = mapDatabaseSessionToModel(session);
+    mappedSession.painRegions = (regions || []).map(mapDatabaseRegionToModel);
+
+    return mappedSession;
+  } catch (error) {
+    console.error('Error fetching body map session:', error);
+    throw new Error('Falha ao buscar sessão de mapa corporal');
+  }
+}
+
+/**
+ * Marca uma sessão como "sem dor"
+ */
+export async function markSessionPainFree(sessionId: string): Promise<BodyMapSession> {
+  try {
+    const { data: session, error } = await supabase
+      .from('body_map_sessions')
+      .update({
+        pain_free: true,
+        overall_pain_level: 0,
+      })
+      .eq('id', sessionId)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Marcar todas as regiões como resolvidas
+    await supabase
+      .from('body_map_pain_regions')
+      .update({
+        is_active: false,
+        resolved_at: new Date().toISOString(),
+      })
+      .eq('body_map_session_id', sessionId);
+
+    return mapDatabaseSessionToModel(session);
+  } catch (error) {
+    console.error('Error marking session as pain-free:', error);
+    throw new Error('Falha ao marcar sessão sem dor');
+  }
+}
+
+/**
+ * Deleta (soft delete) uma sessão
+ */
+export async function deleteBodyMapSession(sessionId: string): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('body_map_sessions')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', sessionId);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error deleting body map session:', error);
+    throw new Error('Falha ao deletar sessão');
+  }
+}
+
+// ============================================================================
+// CRUD - REGIÕES DE DOR
+// ============================================================================
+
+/**
+ * Adiciona uma região de dor a uma sessão
+ */
+export async function addPainRegion(
+  data: Omit<BodyMapPainRegion, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<BodyMapPainRegion> {
+  try {
+    const { data: region, error } = await supabase
+      .from('body_map_pain_regions')
+      .insert({
+        body_map_session_id: data.bodyMapSessionId,
+        patient_id: data.patientId,
+        body_region: data.bodyRegion,
+        body_side: data.bodySide,
+        coordinates_x: data.coordinatesX,
+        coordinates_y: data.coordinatesY,
+        pain_level: data.painLevel,
+        pain_types: data.painTypes,
+        symptoms: data.symptoms,
+        description: data.description,
+        is_main_complaint: data.isMainComplaint,
+        is_active: data.isActive,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Recalcular analytics
+    await recalculateAnalytics(data.patientId);
+
+    return mapDatabaseRegionToModel(region);
+  } catch (error) {
+    console.error('Error adding pain region:', error);
+    throw new Error('Falha ao adicionar região de dor');
+  }
+}
+
+/**
+ * Atualiza uma região de dor existente
+ */
+export async function updatePainRegion(
+  regionId: string,
+  updates: Partial<Omit<BodyMapPainRegion, 'id' | 'createdAt'>>
+): Promise<BodyMapPainRegion> {
+  try {
+    const updateData: any = {};
+
+    if (updates.bodyRegion !== undefined) updateData.body_region = updates.bodyRegion;
+    if (updates.painLevel !== undefined) updateData.pain_level = updates.painLevel;
+    if (updates.painTypes !== undefined) updateData.pain_types = updates.painTypes;
+    if (updates.symptoms !== undefined) updateData.symptoms = updates.symptoms;
+    if (updates.description !== undefined) updateData.description = updates.description;
+    if (updates.isActive !== undefined) updateData.is_active = updates.isActive;
+    if (updates.resolvedAt !== undefined) updateData.resolved_at = updates.resolvedAt.toISOString();
+    if (updates.resolvedBy !== undefined) updateData.resolved_by = updates.resolvedBy;
+
+    const { data: region, error } = await supabase
+      .from('body_map_pain_regions')
+      .update(updateData)
+      .eq('id', regionId)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return mapDatabaseRegionToModel(region);
+  } catch (error) {
+    console.error('Error updating pain region:', error);
+    throw new Error('Falha ao atualizar região de dor');
+  }
+}
+
+/**
+ * Marca uma região de dor como resolvida
+ */
+export async function resolvePainRegion(regionId: string, resolvedBy: string): Promise<BodyMapPainRegion> {
+  try {
+    const { data: region, error } = await supabase
+      .from('body_map_pain_regions')
+      .update({
+        is_active: false,
+        resolved_at: new Date().toISOString(),
+        resolved_by: resolvedBy,
+      })
+      .eq('id', regionId)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Buscar patientId para recalcular analytics
+    const { data: regionData } = await supabase
+      .from('body_map_pain_regions')
+      .select('patient_id')
+      .eq('id', regionId)
+      .single();
+
+    if (regionData) {
+      await recalculateAnalytics(regionData.patient_id);
     }
 
-    mockBodyPoints.splice(index, 1);
-};
+    return mapDatabaseRegionToModel(region);
+  } catch (error) {
+    console.error('Error resolving pain region:', error);
+    throw new Error('Falha ao resolver região de dor');
+  }
+}
 
 /**
- * Buscar pontos por faixa de datas
+ * Remove (soft delete) uma região de dor
  */
-export const getBodyPointsByDateRange = async (
-    patientId: string,
-    startDate: string,
-    endDate: string
-): Promise<BodyPoint[]> => {
-    await delay(350);
+export async function removePainRegion(regionId: string): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('body_map_pain_regions')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', regionId);
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error removing pain region:', error);
+    throw new Error('Falha ao remover região de dor');
+  }
+}
 
-    return mockBodyPoints
-        .filter(point => {
-            if (point.patientId !== patientId) return false;
-            const pointDate = new Date(point.createdAt);
-            return pointDate >= start && pointDate <= end;
+// ============================================================================
+// CONSULTAS E HISTÓRICO
+// ============================================================================
+
+/**
+ * Busca histórico completo de sessões de um paciente
+ */
+export async function getPatientBodyMapHistory(
+  patientId: string,
+  filters?: BodyMapFilters
+): Promise<BodyMapSession[]> {
+  try {
+    let query = supabase
+      .from('body_map_sessions')
+      .select(`
+        *,
+        pain_regions:body_map_pain_regions(*)
+      `)
+      .eq('patient_id', patientId)
+      .is('deleted_at', null)
+      .order('session_date', { ascending: false });
+
+    if (filters?.startDate) {
+      query = query.gte('session_date', filters.startDate.toISOString());
+    }
+    if (filters?.endDate) {
+      query = query.lte('session_date', filters.endDate.toISOString());
+    }
+    if (filters?.includePainFree === false) {
+      query = query.eq('pain_free', false);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    return (data || []).map((session: any) => {
+      const mapped = mapDatabaseSessionToModel(session);
+      mapped.painRegions = (session.pain_regions || [])
+        .filter((r: any) => !r.deleted_at)
+        .filter((r: any) => {
+          if (filters?.onlyActiveRegions && !r.is_active) return false;
+          if (filters?.bodyRegion && r.body_region !== filters.bodyRegion) return false;
+          if (filters?.minPainLevel !== undefined && r.pain_level < filters.minPainLevel) return false;
+          if (filters?.maxPainLevel !== undefined && r.pain_level > filters.maxPainLevel) return false;
+          return true;
         })
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-};
+        .map(mapDatabaseRegionToModel);
+      return mapped;
+    });
+  } catch (error) {
+    console.error('Error fetching patient body map history:', error);
+    throw new Error('Falha ao buscar histórico do mapa corporal');
+  }
+}
 
 /**
- * Buscar pontos por lado do corpo
+ * Busca a última sessão de um paciente
  */
-export const getBodyPointsBySide = async (
-    patientId: string,
-    side: 'front' | 'back'
-): Promise<BodyPoint[]> => {
-    await delay(250);
+export async function getLatestBodyMapSession(patientId: string): Promise<BodyMapSession | null> {
+  try {
+    const { data, error } = await supabase
+      .from('body_map_sessions')
+      .select(`
+        *,
+        pain_regions:body_map_pain_regions(*)
+      `)
+      .eq('patient_id', patientId)
+      .is('deleted_at', null)
+      .order('session_date', { ascending: false })
+      .limit(1)
+      .single();
 
-    return mockBodyPoints
-        .filter(point => point.patientId === patientId && point.bodySide === side)
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-};
+    if (error) {
+      if (error.code === 'PGRST116') return null; // No rows found
+      throw error;
+    }
+
+    const mapped = mapDatabaseSessionToModel(data);
+    mapped.painRegions = (data.pain_regions || [])
+      .filter((r: any) => !r.deleted_at)
+      .map(mapDatabaseRegionToModel);
+
+    return mapped;
+  } catch (error) {
+    console.error('Error fetching latest session:', error);
+    return null;
+  }
+}
+
+// ============================================================================
+// ANALYTICS
+// ============================================================================
 
 /**
- * Buscar pontos por nível de dor
+ * Calcula analytics completos do mapa corporal para um paciente
  */
-export const getBodyPointsByPainLevel = async (
-    patientId: string,
-    minLevel: number,
-    maxLevel: number
-): Promise<BodyPoint[]> => {
-    await delay(300);
+export async function getBodyMapAnalytics(
+  patientId: string,
+  period?: { start: Date; end: Date }
+): Promise<BodyMapAnalytics> {
+  try {
+    // Buscar sessões no período
+    const sessions = await getPatientBodyMapHistory(patientId, {
+      patientId,
+      startDate: period?.start,
+      endDate: period?.end,
+    });
 
-    return mockBodyPoints
-        .filter(point =>
-            point.patientId === patientId &&
-            point.painLevel >= minLevel &&
-            point.painLevel <= maxLevel
-        )
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-};
+    if (sessions.length === 0) {
+      return {
+        patientId,
+        period: period || { start: new Date(), end: new Date() },
+        painTrend: [],
+        regionFrequency: {},
+        mainComplaintProgress: [],
+        heatmapData: [],
+        painTypeDistribution: {},
+        totalSessions: 0,
+        painFreeSessions: 0,
+        activeRegions: 0,
+        resolvedRegions: 0,
+        averagePainLevel: 0,
+        improvementPercent: 0,
+      };
+    }
 
-/**
- * Obter estatísticas dos pontos de dor
- */
-export const getBodyMapStatistics = async (patientId: string): Promise<{
-    totalPoints: number;
-    averagePainLevel: number;
-    pointsByPainLevel: Record<string, number>;
-    pointsBySide: Record<'front' | 'back', number>;
-    recentPoints: BodyPoint[];
-}> => {
-    await delay(400);
+    // Calcular tendência de dor
+    const painTrend = sessions.map(session => ({
+      date: session.sessionDate,
+      averagePain: session.painRegions
+        ? session.painRegions.reduce((sum, r) => sum + r.painLevel, 0) / session.painRegions.length || 0
+        : 0,
+      activeRegions: session.painRegions?.filter(r => r.isActive).length || 0,
+      painFreeSession: session.painFree,
+    }));
 
-    const patientPoints = mockBodyPoints.filter(point => point.patientId === patientId);
+    // Calcular frequência por região
+    const regionFrequency: Record<string, number> = {};
+    sessions.forEach(session => {
+      session.painRegions?.forEach(region => {
+        regionFrequency[region.bodyRegion] = (regionFrequency[region.bodyRegion] || 0) + 1;
+      });
+    });
 
-    const totalPoints = patientPoints.length;
-    const averagePainLevel = totalPoints > 0
-        ? Math.round((patientPoints.reduce((sum, p) => sum + p.painLevel, 0) / totalPoints) * 10) / 10
+    // Progresso da queixa principal
+    const mainComplaintProgress = sessions
+      .filter(s => s.painRegions?.some(r => r.isMainComplaint))
+      .map(session => {
+        const mainRegion = session.painRegions!.find(r => r.isMainComplaint)!;
+        return {
+          date: session.sessionDate,
+          painLevel: mainRegion.painLevel,
+          status: mainRegion.isActive ? 'active' : 'resolved',
+        };
+      });
+
+    // Dados para heatmap
+    const regionStats: Record<string, { count: number; totalPain: number }> = {};
+    sessions.forEach(session => {
+      session.painRegions?.forEach(region => {
+        if (!regionStats[region.bodyRegion]) {
+          regionStats[region.bodyRegion] = { count: 0, totalPain: 0 };
+        }
+        regionStats[region.bodyRegion].count++;
+        regionStats[region.bodyRegion].totalPain += region.painLevel;
+      });
+    });
+
+    const heatmapData = Object.entries(regionStats).map(([region, stats]) => ({
+      region,
+      frequency: stats.count,
+      avgPainLevel: stats.totalPain / stats.count,
+    }));
+
+    // Distribuição de tipos de dor
+    const painTypeDistribution: Record<string, number> = {};
+    sessions.forEach(session => {
+      session.painRegions?.forEach(region => {
+        region.painTypes.forEach(type => {
+          painTypeDistribution[type] = (painTypeDistribution[type] || 0) + 1;
+        });
+      });
+    });
+
+    // Métricas resumidas
+    const allRegions = sessions.flatMap(s => s.painRegions || []);
+    const activeRegions = allRegions.filter(r => r.isActive).length;
+    const resolvedRegions = allRegions.filter(r => !r.isActive && r.resolvedAt).length;
+    const averagePainLevel =
+      allRegions.length > 0
+        ? allRegions.reduce((sum, r) => sum + r.painLevel, 0) / allRegions.length
         : 0;
 
-    const pointsByPainLevel = {
-        'leve': patientPoints.filter(p => p.painLevel <= 3).length,
-        'moderada': patientPoints.filter(p => p.painLevel > 3 && p.painLevel <= 6).length,
-        'intensa': patientPoints.filter(p => p.painLevel > 6 && p.painLevel <= 8).length,
-        'severa': patientPoints.filter(p => p.painLevel > 8).length
-    };
-
-    const pointsBySide = {
-        'front': patientPoints.filter(p => p.bodySide === 'front').length,
-        'back': patientPoints.filter(p => p.bodySide === 'back').length
-    };
-
-    const recentPoints = patientPoints
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 5);
+    // Calcular melhoria percentual
+    const firstSession = sessions[sessions.length - 1];
+    const lastSession = sessions[0];
+    const firstAvg = firstSession.painRegions
+      ? firstSession.painRegions.reduce((sum, r) => sum + r.painLevel, 0) / firstSession.painRegions.length
+      : 0;
+    const lastAvg = lastSession.painRegions
+      ? lastSession.painRegions.reduce((sum, r) => sum + r.painLevel, 0) / lastSession.painRegions.length
+      : 0;
+    const improvementPercent = firstAvg > 0 ? ((firstAvg - lastAvg) / firstAvg) * 100 : 0;
 
     return {
-        totalPoints,
-        averagePainLevel,
-        pointsByPainLevel,
-        pointsBySide,
-        recentPoints
+      patientId,
+      period: period || {
+        start: sessions[sessions.length - 1].sessionDate,
+        end: sessions[0].sessionDate,
+      },
+      painTrend,
+      regionFrequency,
+      mainComplaintProgress,
+      heatmapData,
+      painTypeDistribution,
+      totalSessions: sessions.length,
+      painFreeSessions: sessions.filter(s => s.painFree).length,
+      activeRegions,
+      resolvedRegions,
+      averagePainLevel,
+      improvementPercent,
     };
-};
+  } catch (error) {
+    console.error('Error calculating analytics:', error);
+    throw new Error('Falha ao calcular analytics do mapa corporal');
+  }
+}
 
 /**
- * Exportar dados dos pontos para relatório
+ * Busca analytics em cache
  */
-export const exportBodyMapData = async (patientId: string): Promise<{
-    patientId: string;
-    exportDate: string;
-    totalPoints: number;
-    points: BodyPoint[];
-}> => {
-    await delay(500);
+export async function getBodyMapAnalyticsCache(
+  patientId: string
+): Promise<BodyMapAnalyticsCache | null> {
+  try {
+    const { data, error } = await supabase
+      .from('body_map_analytics_cache')
+      .select('*')
+      .eq('patient_id', patientId)
+      .single();
 
-    const points = await getBodyPointsByPatientId(patientId);
-
-    return {
-        patientId,
-        exportDate: new Date().toISOString(),
-        totalPoints: points.length,
-        points
-    };
-};
-
-/**
- * Professional analytics service for body map insights
- * Provides comprehensive pain analysis and trend data
- */
-export const getBodyMapAnalytics = async (patientId: string): Promise<BodyMapAnalytics> => {
-    await delay(350);
-
-    try {
-        const patientPoints = mockBodyPoints.filter(point => point.patientId === patientId);
-
-        if (patientPoints.length === 0) {
-            return {
-                totalPoints: 0,
-                averagePainLevel: 0,
-                painTrends: [],
-                regionDistribution: {},
-                painTypeDistribution: {},
-                symptomFrequency: {}
-            };
-        }
-
-        // Group points by date for trends
-        const pointsByDate = patientPoints.reduce((acc, point) => {
-            const date = new Date(point.createdAt).toDateString();
-            if (!acc[date]) acc[date] = [];
-            acc[date].push(point);
-            return acc;
-        }, {} as Record<string, BodyPoint[]>);
-
-        const painTrends = Object.entries(pointsByDate).map(([date, dayPoints]) => ({
-            date,
-            averagePain: Math.round((dayPoints.reduce((sum, p) => sum + p.painLevel, 0) / dayPoints.length) * 10) / 10,
-            pointCount: dayPoints.length
-        })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-        // Distribution calculations
-        const regionDistribution = patientPoints.reduce((acc, point) => {
-            acc[point.bodyRegion] = (acc[point.bodyRegion] || 0) + 1;
-            return acc;
-        }, {} as Record<string, number>);
-
-        const painTypeDistribution = patientPoints.reduce((acc, point) => {
-            acc[point.painType] = (acc[point.painType] || 0) + 1;
-            return acc;
-        }, {} as Record<string, number>);
-
-        const symptomFrequency = patientPoints.reduce((acc, point) => {
-            point.symptoms.forEach(symptom => {
-                acc[symptom] = (acc[symptom] || 0) + 1;
-            });
-            return acc;
-        }, {} as Record<string, number>);
-
-        return {
-            totalPoints: patientPoints.length,
-            averagePainLevel: Math.round((patientPoints.reduce((sum, p) => sum + p.painLevel, 0) / patientPoints.length) * 10) / 10,
-            painTrends,
-            regionDistribution,
-            painTypeDistribution,
-            symptomFrequency
-        };
-    } catch (error) {
-        console.error('Error calculating analytics:', error);
-        throw new Error('Failed to calculate body map analytics');
+    if (error) {
+      if (error.code === 'PGRST116') return null;
+      throw error;
     }
-};
+
+    return {
+      id: data.id,
+      patientId: data.patient_id,
+      totalSessions: data.total_sessions,
+      painFreeSessions: data.pain_free_sessions,
+      activePainRegions: data.active_pain_regions,
+      resolvedPainRegions: data.resolved_pain_regions,
+      painTrend: data.pain_trend,
+      averagePainLevel: data.average_pain_level,
+      lastSessionDate: new Date(data.last_session_date),
+      daysSinceLastSession: data.days_since_last_session,
+      mainComplaintInitialPain: data.main_complaint_initial_pain,
+      mainComplaintCurrentPain: data.main_complaint_current_pain,
+      mainComplaintImprovementPercent: data.main_complaint_improvement_percent,
+      lastCalculatedAt: new Date(data.last_calculated_at),
+    };
+  } catch (error) {
+    console.error('Error fetching analytics cache:', error);
+    return null;
+  }
+}
 
 /**
- * Legacy function for backward compatibility
- * @deprecated Use getBodyMapAnalytics instead
+ * Recalcula analytics (chama função do banco)
  */
-export const getPainEvolution = async (patientId: string): Promise<{
-    date: string;
-    averagePainLevel: number;
-    pointCount: number;
-}[]> => {
-    const analytics = await getBodyMapAnalytics(patientId);
-    return analytics.painTrends.map(trend => ({
-        date: trend.date,
-        averagePainLevel: trend.averagePain,
-        pointCount: trend.pointCount
+export async function recalculateAnalytics(patientId: string): Promise<void> {
+  try {
+    const { error } = await supabase.rpc('recalculate_body_map_analytics', {
+      p_patient_id: patientId,
+    });
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error recalculating analytics:', error);
+    // Não lançar erro - isso é executado em background
+  }
+}
+
+// ============================================================================
+// COMPARAÇÃO ENTRE SESSÕES
+// ============================================================================
+
+/**
+ * Compara duas sessões (primeira vs atual)
+ */
+export async function compareBodyMapSessions(
+  patientId: string
+): Promise<BodyMapComparison | null> {
+  try {
+    const sessions = await getPatientBodyMapHistory(patientId);
+
+    if (sessions.length < 2) return null;
+
+    const firstSession = sessions[sessions.length - 1];
+    const lastSession = sessions[0];
+
+    const firstRegions = firstSession.painRegions || [];
+    const lastRegions = lastSession.painRegions || [];
+
+    // Identificar melhorias
+    const improvements: string[] = [];
+    firstRegions.forEach(firstR => {
+      const lastR = lastRegions.find(r => r.bodyRegion === firstR.bodyRegion);
+      if (lastR && lastR.painLevel < firstR.painLevel) {
+        improvements.push(
+          `${firstR.bodyRegion}: ${firstR.painLevel} → ${lastR.painLevel} (-${firstR.painLevel - lastR.painLevel})`
+        );
+      }
+    });
+
+    // Identificar pioras
+    const worsenings: string[] = [];
+    firstRegions.forEach(firstR => {
+      const lastR = lastRegions.find(r => r.bodyRegion === firstR.bodyRegion);
+      if (lastR && lastR.painLevel > firstR.painLevel) {
+        worsenings.push(
+          `${firstR.bodyRegion}: ${firstR.painLevel} → ${lastR.painLevel} (+${lastR.painLevel - firstR.painLevel})`
+        );
+      }
+    });
+
+    // Novas regiões de dor
+    const newRegions = lastRegions
+      .filter(lastR => !firstRegions.some(firstR => firstR.bodyRegion === lastR.bodyRegion))
+      .map(r => r.bodyRegion);
+
+    // Regiões resolvidas
+    const resolvedRegions = firstRegions
+      .filter(firstR => !lastRegions.some(lastR => lastR.bodyRegion === firstR.bodyRegion && lastR.isActive))
+      .map(r => r.bodyRegion);
+
+    // Mudança geral
+    const firstAvg = firstRegions.reduce((sum, r) => sum + r.painLevel, 0) / firstRegions.length || 0;
+    const lastAvg = lastRegions.reduce((sum, r) => sum + r.painLevel, 0) / lastRegions.length || 0;
+    const overallChange = firstAvg > 0 ? ((firstAvg - lastAvg) / firstAvg) * 100 : 0;
+
+    return {
+      firstSession,
+      lastSession,
+      improvements,
+      worsenings,
+      newRegions,
+      resolvedRegions,
+      overallChange,
+    };
+  } catch (error) {
+    console.error('Error comparing sessions:', error);
+    throw new Error('Falha ao comparar sessões');
+  }
+}
+
+// ============================================================================
+// REFERÊNCIAS DE REGIÕES
+// ============================================================================
+
+/**
+ * Busca todas as regiões corporais de referência
+ */
+export async function getBodyRegionsReference(): Promise<BodyRegionReference[]> {
+  try {
+    const { data, error } = await supabase
+      .from('body_regions_reference')
+      .select('*')
+      .order('sort_order', { ascending: true });
+
+    if (error) throw error;
+
+    return (data || []).map((region: any) => ({
+      id: region.id,
+      regionKey: region.region_key,
+      regionNamePt: region.region_name_pt,
+      regionNameEn: region.region_name_en,
+      bodySide: region.body_side,
+      parentRegion: region.parent_region,
+      sortOrder: region.sort_order,
     }));
-};
+  } catch (error) {
+    console.error('Error fetching body regions reference:', error);
+    return [];
+  }
+}
 
-/*
-TODO: Implementar com Supabase real
+// ============================================================================
+// HELPERS / MAPPERS
+// ============================================================================
 
-import { supabase } from '../lib/supabase';
+/**
+ * Converte dados do banco para modelo BodyMapSession
+ */
+function mapDatabaseSessionToModel(data: any): BodyMapSession {
+  return {
+    id: data.id,
+    patientId: data.patient_id,
+    sessionId: data.session_id,
+    appointmentId: data.appointment_id,
+    mainComplaintRegion: data.main_complaint_region,
+    mainComplaintDescription: data.main_complaint_description,
+    sessionDate: new Date(data.session_date),
+    overallPainLevel: data.overall_pain_level,
+    painFree: data.pain_free,
+    notes: data.notes,
+    createdBy: data.created_by,
+    createdAt: new Date(data.created_at),
+    updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+    deletedAt: data.deleted_at ? new Date(data.deleted_at) : undefined,
+  };
+}
 
-export const getBodyPointsByPatientId = async (patientId: string): Promise<BodyPoint[]> => {
-    const { data, error } = await supabase
-        .from('body_points')
-        .select('*')
-        .eq('patientId', patientId)
-        .order('createdAt', { ascending: false });
+/**
+ * Converte dados do banco para modelo BodyMapPainRegion
+ */
+function mapDatabaseRegionToModel(data: any): BodyMapPainRegion {
+  return {
+    id: data.id,
+    bodyMapSessionId: data.body_map_session_id,
+    patientId: data.patient_id,
+    bodyRegion: data.body_region,
+    bodySide: data.body_side,
+    coordinatesX: data.coordinates_x,
+    coordinatesY: data.coordinates_y,
+    painLevel: data.pain_level,
+    painTypes: data.pain_types || [],
+    symptoms: data.symptoms || [],
+    description: data.description,
+    isMainComplaint: data.is_main_complaint,
+    isActive: data.is_active,
+    resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
+    resolvedBy: data.resolved_by,
+    createdAt: new Date(data.created_at),
+    updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+    deletedAt: data.deleted_at ? new Date(data.deleted_at) : undefined,
+  };
+}
 
-    if (error) throw error;
-    return data || [];
-};
+/**
+ * Obtém cor baseada no nível de dor
+ */
+export function getPainLevelColor(painLevel: number): string {
+  if (painLevel === 0) return '#10b981'; // green-500
+  if (painLevel <= 2) return '#22c55e'; // green-500
+  if (painLevel <= 4) return '#eab308'; // yellow-500
+  if (painLevel <= 6) return '#f97316'; // orange-500
+  if (painLevel <= 8) return '#ef4444'; // red-500
+  return '#dc2626'; // red-600
+}
 
-export const addBodyPoint = async (pointData: Omit<BodyPoint, 'id' | 'createdAt'>): Promise<BodyPoint> => {
-    const { data, error } = await supabase
-        .from('body_points')
-        .insert(pointData)
-        .select()
-        .single();
-
-    if (error) throw error;
-    return data;
-};
-
-// ... outras funções similares
-*/
+/**
+ * Obtém label descritivo do nível de dor
+ */
+export function getPainLevelLabel(painLevel: number): string {
+  return PAIN_INTENSITY_LABELS[painLevel as keyof typeof PAIN_INTENSITY_LABELS] || 'Desconhecido';
+}

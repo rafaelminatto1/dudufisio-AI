@@ -68,6 +68,13 @@ export default defineConfig({
     dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
     extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
     alias: {
+      // 🔥 FIX: Força uso de apenas uma instância do React
+      'react': path.resolve(__dirname, './node_modules/react'),
+      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+      'react/jsx-runtime': path.resolve(__dirname, './node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': path.resolve(__dirname, './node_modules/react/jsx-dev-runtime'),
+      
+      // Aliases do projeto
       '@': path.resolve(__dirname, '.'),
       '@/components': path.resolve(__dirname, './components'),
       '@/pages': path.resolve(__dirname, './pages'),

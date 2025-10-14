@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Edit, Calendar, Phone, Mail, User, FileText, Clock, Target, MessageCircle, Activity, BarChart } from 'lucide-react';
+import { ArrowLeft, Edit, Calendar, Phone, Mail, User, FileText, Clock, Target, MessageCircle, Activity, BarChart, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -14,12 +14,16 @@ import { MandatoryTestsConfig } from '../components/patient/MandatoryTestsConfig
 import { MetricsDashboard } from '../components/patient/MetricsDashboard';
 import { EvolutionReport } from '../components/patient/EvolutionReport';
 import { PatientAlerts } from '../components/patient/PatientAlerts';
+import BodyMapManager from '../components/body-map/BodyMapManager';
+import PainHistoryTimeline from '../components/body-map/PainHistoryTimeline';
+import * as bodyMapService from '../services/bodyMapService';
 
 const PatientDetailPage: React.FC = () => {
   const [assignedProtocols, setAssignedProtocols] = useState<ClinicalProtocol[]>([]);
   const [loading, setLoading] = useState(true);
   const [showObservationModal, setShowObservationModal] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const [bodyMapSessions, setBodyMapSessions] = useState<any[]>([]);
 
   const patient = {
     id: 'patient-1', // Usando ID que existe no mock
@@ -46,6 +50,22 @@ const PatientDetailPage: React.FC = () => {
 
     loadAssignedProtocols();
   }, [patient.id]);
+
+  // Carregar sessões de mapa corporal
+  useEffect(() => {
+    const loadBodyMapSessions = async () => {
+      try {
+        const sessions = await bodyMapService.getPatientBodyMapHistory(patient.id);
+        setBodyMapSessions(sessions);
+      } catch (error) {
+        console.error('Erro ao carregar sessões de mapa corporal:', error);
+      }
+    };
+
+    if (activeTab === 'body-map') {
+      loadBodyMapSessions();
+    }
+  }, [patient.id, activeTab]);
 
   const calculateAge = (birthDate: string) => {
     const today = new Date();
@@ -255,7 +275,7 @@ const PatientDetailPage: React.FC = () => {
 
         {/* Tabs de Navegação */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-8">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <User className="w-4 h-4" />
               Visão Geral
@@ -267,6 +287,10 @@ const PatientDetailPage: React.FC = () => {
             <TabsTrigger value="assessments" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Avaliações
+            </TabsTrigger>
+            <TabsTrigger value="body-map" className="flex items-center gap-2">
+              <MapPin className="w-4 h-4" />
+              Mapa de Dor
             </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <BarChart className="w-4 h-4" />
@@ -408,6 +432,33 @@ const PatientDetailPage: React.FC = () => {
             <MetricsDashboard patientId={patient.id} />
             <AssessmentPanel patientId={patient.id} />
             <MandatoryTestsConfig patientId={patient.id} />
+          </TabsContent>
+
+          {/* Tab: Mapa de Dor */}
+          <TabsContent value="body-map" className="space-y-6">
+            {/* Gerenciador Principal do Mapa Corporal */}
+            <BodyMapManager
+              patient={patient as any}
+              onSessionSaved={async (session) => {
+                console.log('Sessão salva:', session);
+                // Recarregar sessões
+                const sessions = await bodyMapService.getPatientBodyMapHistory(patient.id);
+                setBodyMapSessions(sessions);
+              }}
+            />
+
+            {/* Histórico de Evolução da Dor */}
+            {bodyMapSessions.length > 0 && (
+              <div className="mt-8">
+                <h2 className="text-xl font-bold text-slate-800 mb-4">
+                  Histórico de Evolução
+                </h2>
+                <PainHistoryTimeline 
+                  sessions={bodyMapSessions}
+                  showTrend={true}
+                />
+              </div>
+            )}
           </TabsContent>
 
           {/* Tab: Relatórios */}

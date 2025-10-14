@@ -3319,3 +3319,178 @@ export interface EvolutionReportData {
   observations: SessionObservation[];
   totalSessions: number;
 }
+
+// ============================================================================
+// SISTEMA DE MAPA CORPORAL DE DOR - TIPOS
+// ============================================================================
+
+export interface BodyMapSession {
+  id: string;
+  patientId: string;
+  sessionId?: string;
+  appointmentId?: string;
+  mainComplaintRegion: string;
+  mainComplaintDescription?: string;
+  sessionDate: Date;
+  overallPainLevel: number; // 0-10
+  painFree: boolean;
+  notes?: string;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+  painRegions?: BodyMapPainRegion[];
+}
+
+export interface BodyMapPainRegion {
+  id: string;
+  bodyMapSessionId: string;
+  patientId: string;
+  bodyRegion: string;
+  bodySide: 'front' | 'back';
+  coordinatesX: number; // 0-100 (percentual)
+  coordinatesY: number; // 0-100 (percentual)
+  painLevel: number; // 0-10
+  painTypes: string[]; // ['aguda', 'latejante', 'queimação', 'formigamento', 'cansaço']
+  symptoms: string[];
+  description?: string;
+  isMainComplaint: boolean;
+  isActive: boolean;
+  resolvedAt?: Date;
+  resolvedBy?: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+}
+
+export interface BodyMapVisualizationType {
+  id: 'svg-detailed' | 'svg-simple' | 'canvas-interactive' | 'image-anatomical';
+  name: string;
+  description: string;
+  icon?: React.ReactNode;
+}
+
+export interface BodyMapAnalytics {
+  patientId: string;
+  period: { start: Date; end: Date };
+  
+  // Tendência de dor ao longo do tempo
+  painTrend: {
+    date: Date;
+    averagePain: number;
+    activeRegions: number;
+    painFreeSession: boolean;
+  }[];
+  
+  // Frequência de dor por região
+  regionFrequency: Record<string, number>;
+  
+  // Progresso da queixa principal
+  mainComplaintProgress: {
+    date: Date;
+    painLevel: number;
+    status: string;
+  }[];
+  
+  // Dados para mapa de calor
+  heatmapData: {
+    region: string;
+    frequency: number;
+    avgPainLevel: number;
+  }[];
+  
+  // Distribuição de tipos de dor
+  painTypeDistribution: Record<string, number>;
+  
+  // Métricas resumidas
+  totalSessions: number;
+  painFreeSessions: number;
+  activeRegions: number;
+  resolvedRegions: number;
+  averagePainLevel: number;
+  improvementPercent: number;
+}
+
+export interface BodyMapAnalyticsCache {
+  id: string;
+  patientId: string;
+  totalSessions: number;
+  painFreeSessions: number;
+  activePainRegions: number;
+  resolvedPainRegions: number;
+  painTrend: 'improving' | 'stable' | 'worsening';
+  averagePainLevel: number;
+  lastSessionDate: Date;
+  daysSinceLastSession: number;
+  mainComplaintInitialPain: number;
+  mainComplaintCurrentPain: number;
+  mainComplaintImprovementPercent: number;
+  lastCalculatedAt: Date;
+}
+
+export interface BodyRegionReference {
+  id: number;
+  regionKey: string;
+  regionNamePt: string;
+  regionNameEn?: string;
+  bodySide: 'front' | 'back' | 'both';
+  parentRegion?: string;
+  sortOrder: number;
+}
+
+export interface PatientMainPathology {
+  mainPathology?: string;
+  mainPathologyRegion?: string;
+  mainPathologySince?: Date;
+}
+
+// Props para componentes de visualização do mapa corporal
+export interface BodyMapVisualizationProps {
+  bodySide: 'front' | 'back';
+  painRegions: BodyMapPainRegion[];
+  mainComplaint?: BodyMapPainRegion;
+  onAddPoint: (x: number, y: number) => void;
+  onSelectPoint: (region: BodyMapPainRegion) => void;
+  readOnly?: boolean;
+  showLabels?: boolean;
+}
+
+// Dados para geração de PDF
+export interface BodyMapPDFData {
+  patient: Patient;
+  mainPathology?: PatientMainPathology;
+  sessions: BodyMapSession[];
+  analytics: BodyMapAnalytics;
+  generatedAt: Date;
+  generatedBy: string;
+  clinicInfo?: {
+    name: string;
+    logo?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+  };
+}
+
+// Filtros para consultas
+export interface BodyMapFilters {
+  patientId?: string;
+  startDate?: Date;
+  endDate?: Date;
+  includePainFree?: boolean;
+  onlyActiveRegions?: boolean;
+  bodyRegion?: string;
+  minPainLevel?: number;
+  maxPainLevel?: number;
+}
+
+// Comparação entre sessões
+export interface BodyMapComparison {
+  firstSession: BodyMapSession;
+  lastSession: BodyMapSession;
+  improvements: string[];
+  worsenings: string[];
+  newRegions: string[];
+  resolvedRegions: string[];
+  overallChange: number; // percentual
+}
