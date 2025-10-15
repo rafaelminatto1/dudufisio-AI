@@ -1,0 +1,33 @@
+{
+  "timestamp": "2025-10-15T19:33:05.725Z",
+  "stats": {
+    "totalPages": 44,
+    "totalErrors": 6,
+    "totalWarnings": 39,
+    "total404": 4,
+    "totalFailedRequests": 3
+  },
+  "errorTypes": {
+    "timeout": [
+      "Navigation error: /specialty-assessments - page.goto: Timeout 15000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:4173/specialty-assessments\", waiting until \"networkidle\"\n",
+      "Navigation error: /user-management - page.goto: Timeout 15000ms exceeded.\nCall log:\n  - navigating to \"http://localhost:4173/user-management\", waiting until \"networkidle\"\n"
+    ],
+    "supabase": [
+      "Error: VITE_SUPABASE_URL não está definida. Crie o arquivo .env.local na raiz do projeto. Veja env.supabase.example para referência. ⚠️ Use VITE_SUPABASE_URL (não NEXT_PUBLIC_SUPABASE_URL)\n    at http://localhost:4173/assets/supabaseClient-DkHaOLwE.js:1:623",
+      "💥 Error Boundary Caught: Error: VITE_SUPABASE_URL não está definida. Crie o arquivo .env.local na raiz do projeto. Veja env.supabase.example para referência. ⚠️ Use VITE_SUPABASE_URL (não NEXT_PUBLIC_SUPABASE_URL)\n    at http://localhost:4173/assets/supabaseClient-DkHaOLwE.js:1:623",
+      "🚨 Erro no componente lazy: Error: VITE_SUPABASE_URL não está definida. Crie o arquivo .env.local na raiz do projeto. Veja env.supabase.example para referência. ⚠️ Use VITE_SUPABASE_URL (não NEXT_PUBLIC_SUPABASE_URL)\n    at http://localhost:4173/assets/supabaseClient-DkHaOLwE.js:1:623 {componentStack: \n    at Lazy (<anonymous>)\n    at Suspense (<anony…ex-D0j9PL8y.js:246:12119)\n    at pA (<anonymous>)}"
+    ],
+    "navigation": [],
+    "other": [
+      "📍 Component Stack: \n    at Lazy (<anonymous>)\n    at Suspense (<anonymous>)\n    at dS (http://localhost:4173/assets/index-D0j9PL8y.js:206:27502)\n    at Lazy(Component) (<anonymous>)\n    at Suspense (<anonymous>)\n    at gt (http://localhost:4173/assets/CompleteDashboard-6BOShVHd.js:7:348)\n    at C (http://localhost:4173/assets/CompleteDashboard-6BOShVHd.js:7:4901)\n    at Vw (http://localhost:4173/assets/index-D0j9PL8y.js:61:3347)\n    at e1 (http://localhost:4173/assets/index-D0j9PL8y.js:61:7712)\n    at div (<anonymous>)\n    at main (<anonymous>)\n    at div (<anonymous>)\n    at div (<anonymous>)\n    at _ (http://localhost:4173/assets/Layout-p86cLe6y.js:6:485)\n    at dS (http://localhost:4173/assets/index-D0j9PL8y.js:206:27502)\n    at xo (http://localhost:4173/assets/CompleteDashboard-6BOShVHd.js:7:41953)\n    at Suspense (<anonymous>)\n    at dS (http://localhost:4173/assets/index-D0j9PL8y.js:206:27502)\n    at Lazy(Component) (<anonymous>)\n    at Vw (http://localhost:4173/assets/index-D0j9PL8y.js:61:3347)\n    at e1 (http://localhost:4173/assets/index-D0j9PL8y.js:61:7712)\n    at Suspense (<anonymous>)\n    at http://localhost:4173/assets/index-D0j9PL8y.js:246:14406\n    at Hx (http://localhost:4173/assets/index-D0j9PL8y.js:245:113202)\n    at yS (http://localhost:4173/assets/index-D0j9PL8y.js:206:37866)\n    at eA (http://localhost:4173/assets/index-D0j9PL8y.js:245:134519)\n    at Gx (http://localhost:4173/assets/index-D0j9PL8y.js:245:125209)\n    at Bx (http://localhost:4173/assets/index-D0j9PL8y.js:245:110237)\n    at F2 (http://localhost:4173/assets/index-D0j9PL8y.js:245:46292)\n    at qx (http://localhost:4173/assets/index-D0j9PL8y.js:245:112540)\n    at Ww (http://localhost:4173/assets/index-D0j9PL8y.js:61:6875)\n    at x1 (http://localhost:4173/assets/index-D0j9PL8y.js:61:16118)\n    at mA (http://localhost:4173/assets/index-D0j9PL8y.js:246:18628)\n    at fA (http://localhost:4173/assets/index-D0j9PL8y.js:246:12119)\n    at pA (<anonymous>)"
+    ]
+  },
+  "problematicPages": [
+    "/teleconsulta",
+    "/crm",
+    "/integrations",
+    "/integrations-test"
+  ],
+  "score": 88,
+  "status": "PASS"
+}
