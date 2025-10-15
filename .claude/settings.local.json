@@ -17,7 +17,11 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(npm run test:e2e:*)",
-      "Bash(claude mcp:*)"
+      "Bash(claude mcp:*)",
+      "Bash(cat:*)",
+      "Bash(npx playwright install:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(curl:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

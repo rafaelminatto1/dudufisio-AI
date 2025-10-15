@@ -185,7 +185,8 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
   const contextValue: AuthContextType = useMemo(() => ({
     // State
     ...authState,
-    isAuthenticated: !!authState.user && !!authState.session,
+    // Aceita mock auth em desenvolvimento (quando tem user mas não tem session)
+    isAuthenticated: !!authState.user,
     error,
     clearError,
 

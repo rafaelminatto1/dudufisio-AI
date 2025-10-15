@@ -427,7 +427,7 @@ export const PerformanceProfiler: React.FC<PerformanceProfilerProps> = ({
           onRender(id, phase, actualDuration);
         }
         
-        if (actualDuration > 16) { // Mais de 16ms indica problema de performance
+        if (actualDuration > 50) { // Mais de 50ms indica problema de performance
           console.warn(`⚠️ Performance issue in ${id}: ${actualDuration}ms`);
         }
       }

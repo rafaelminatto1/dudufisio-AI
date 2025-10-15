@@ -44,6 +44,12 @@
     "whatsapp:notifications": "node scripts/whatsapp-daily-notifications.js",
     "whatsapp:test-webhook": "node scripts/test-whatsapp-webhook.js",
     "whatsapp:server": "node webhook-server.js",
+    "start:whatsapp": "tsx scripts/start-whatsapp.ts",
+    "whatsapp:pm2": "pm2 start scripts/start-whatsapp.ts --name whatsapp-service --interpreter tsx",
+    "whatsapp:logs": "pm2 logs whatsapp-service",
+    "whatsapp:stop": "pm2 stop whatsapp-service",
+    "whatsapp:restart": "pm2 restart whatsapp-service",
+    "whatsapp:status": "pm2 status whatsapp-service",
     "generate:clinical-content": "npx tsx scripts/populate-clinical-content.ts",
     "clinical:generate": "node scripts/run-clinical-content-generator.js"
   },
@@ -155,12 +161,13 @@
     "rollup-plugin-visualizer": "^6.0.4",
     "shadcn": "^3.4.0",
     "sharp": "^0.34.4",
-    "supabase": "^2.48.3",
+    "supabase": "^2.51.0",
     "tailwindcss": "^3.4.0",
     "terser": "^5.44.0",
     "typescript": "^5.7.2",
     "vite": "^7.1.9",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "whatsapp-web.js": "^1.23.0"
   },
   "resolutions": {
     "react": "^19.0.0",

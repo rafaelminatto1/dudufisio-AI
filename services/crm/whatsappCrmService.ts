@@ -102,7 +102,7 @@ export const whatsappCrmService = {
   },
 
   /**
-   * Enviar mensagem via WhatsApp Business API
+   * Enviar mensagem via WhatsApp (usa WhatsApp Web por padrão)
    */
   async sendMessage(params: SendMessageParams): Promise<{
     success: boolean;
@@ -110,38 +110,70 @@ export const whatsappCrmService = {
     error?: string;
   }> {
     try {
-      const accessToken = import.meta.env.VITE_WHATSAPP_BUSINESS_API_TOKEN;
-      const phoneNumberId = import.meta.env.VITE_WHATSAPP_PHONE_NUMBER_ID;
-
-      if (!accessToken || !phoneNumberId) {
-        throw new Error('WhatsApp Business API não configurado');
-      }
-
-      // Enviar via API do WhatsApp
-      const response = await fetch(
-        `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            to: params.to.replace(/\D/g, ''),
-            type: 'text',
-            text: { body: params.message }
-          })
+      // Verificar se deve usar WhatsApp Web ou API
+      const useWebClient = import.meta.env.VITE_WHATSAPP_USE_WEB_CLIENT === 'true';
+      
+      let whatsappMessageId: string | undefined;
+      
+      if (useWebClient) {
+        // ✅ USAR WHATSAPP WEB (GRATUITO!)
+        const { getWhatsAppWebService } = await import('../whatsapp/WhatsAppWebService');
+        const whatsappWeb = getWhatsAppWebService();
+        
+        if (!whatsappWeb.isConnected()) {
+          throw new Error('WhatsApp Web não está conectado. Execute: npm run start:whatsapp');
         }
-      );
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'Erro ao enviar mensagem');
+        console.log('📱 Enviando via WhatsApp Web (GRATUITO)');
+        
+        const result = await whatsappWeb.sendMessage(
+          params.to.replace(/\D/g, ''),
+          params.message
+        );
+
+        if (!result.success) {
+          throw new Error(result.error || 'Erro ao enviar via WhatsApp Web');
+        }
+
+        whatsappMessageId = result.messageId;
+        
+      } else {
+        // 💰 USAR WHATSAPP BUSINESS API (PAGO)
+        const accessToken = import.meta.env.VITE_WHATSAPP_BUSINESS_API_TOKEN;
+        const phoneNumberId = import.meta.env.VITE_WHATSAPP_PHONE_NUMBER_ID;
+
+        if (!accessToken || !phoneNumberId) {
+          throw new Error('WhatsApp Business API não configurado');
+        }
+
+        console.log('💰 Enviando via WhatsApp Business API (PAGO)');
+
+        // Enviar via API do WhatsApp
+        const response = await fetch(
+          `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              messaging_product: 'whatsapp',
+              to: params.to.replace(/\D/g, ''),
+              type: 'text',
+              text: { body: params.message }
+            })
+          }
+        );
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error?.message || 'Erro ao enviar mensagem');
+        }
+
+        const data = await response.json();
+        whatsappMessageId = data.messages?.[0]?.id;
       }
-
-      const data = await response.json();
-      const whatsappMessageId = data.messages?.[0]?.id;
 
       // Salvar mensagem no banco
       const { data: savedMessage } = await supabase

@@ -43,12 +43,12 @@ export default defineConfig({
     '__DEV__': process.env.NODE_ENV !== 'production'
   },
   server: {
-    port: 5175,
+    port: 5176,
     host: 'localhost',
     hmr: {
-      port: 5175,
+      port: 5176,
       host: 'localhost',
-      clientPort: 5175,
+      clientPort: 5176,
       overlay: true
     },
     watch: {
@@ -56,7 +56,7 @@ export default defineConfig({
       interval: 100
     },
     cors: true,
-    strictPort: false,
+    strictPort: true,
     headers: {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',

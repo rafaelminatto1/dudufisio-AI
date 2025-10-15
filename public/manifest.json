@@ -35,12 +35,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
-    },
-    {
-      "src": "/badge-72x72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "badge"
     }
   ],
   "shortcuts": [

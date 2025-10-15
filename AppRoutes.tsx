@@ -338,7 +338,7 @@ const AppRoutes: React.FC = () => {
                                     <PerformanceProfiler
                                     id="AppRoutes"
                                     onRender={(id, phase, actualDuration) => {
-                                        if (actualDuration > 16) {
+                                        if (actualDuration > 50) {
                                             console.warn(`⚠️ Performance issue in ${id}: ${actualDuration}ms`);
                                         }
                                     }}

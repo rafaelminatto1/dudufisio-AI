@@ -5,6 +5,22 @@
   "framework": null,
   "crons": [
     {
+      "path": "/api/cron/confirmacao-consulta",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/gestao-noshow",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/follow-up-pos-consulta",
+      "schedule": "30 10 * * *"
+    },
+    {
+      "path": "/api/cron/pesquisa-satisfacao",
+      "schedule": "0 20 * * *"
+    },
+    {
       "path": "/api/cron/whatsapp-notifications",
       "schedule": "0 9 * * *"
     }
