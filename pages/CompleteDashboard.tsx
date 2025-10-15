@@ -43,6 +43,7 @@ const IntegrationsTestPage = createLazyComponent(() => import('./IntegrationsTes
 const BIIntegrationTestPage = createLazyComponent(() => import('./BIIntegrationTestPage'));
 const MentoriaPage = createLazyComponent(() => import('./MentoriaPageNew'));
 const TeleconsultaPage = createLazyComponent(() => import('./TeleconsultaPage'));
+const TeleconsultaListPage = createLazyComponent(() => import('./TeleconsultaListPage'));
 const AdvancedReportsPage = createLazyComponent(() => import('./AdvancedReportsPage'));
 const SimpleDashboard = createLazyComponent(() => import('./SimpleDashboard'));
 const PartnerDashboard = createLazyComponent(() => import('./PartnerDashboard'));
@@ -445,6 +446,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/session-view/:sessionId" element={LazyElement(SessionViewPage, 'Visualizar Sessão')} />
                 <Route path="/atendimento/:appointmentId" element={LazyElement(AtendimentoPage, 'Atendimento')} />
                 <Route path="/atendimento-demo" element={LazyElement(AtendimentoPageDemo, 'Demo Atendimento')} />
+                <Route path="/teleconsulta" element={LazyElement(TeleconsultaListPage, 'Teleconsultas')} />
                 <Route path="/teleconsulta/:appointmentId" element={LazyElement(TeleconsultaPage, 'Teleconsulta')} />
                 <Route path="/treatments" element={LazyElement(TreatmentPage, 'Tratamentos')} />
                 

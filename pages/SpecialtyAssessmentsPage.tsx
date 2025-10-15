@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { usePatients } from '../hooks/usePatients';
 import PageHeader from '../components/PageHeader';
@@ -7,7 +7,7 @@ import SpecialtyAssessmentGallery from '../components/SpecialtyAssessmentGallery
 import SportsAssessmentForm from '../components/forms/SportsAssessmentForm';
 import { Specialty } from '../types';
 
-const SpecialtyAssessmentsPage: React.FC = () => {
+const SpecialtyAssessmentsPage: React.FC = memo(() => {
     const { patients, isLoading: isLoadingPatients } = usePatients();
     const [selectedPatientId, setSelectedPatientId] = useState<string>('');
     const [selectedSpecialty, setSelectedSpecialty] = useState<Specialty | null>(null);
@@ -18,7 +18,20 @@ const SpecialtyAssessmentsPage: React.FC = () => {
 
     const renderContent = () => {
         if (isLoadingPatients) {
-            return <Skeleton className="h-20 w-full" />;
+            return (
+                <div className="space-y-6">
+                    <Skeleton className="h-12 w-full" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                            <div key={i} className="space-y-3">
+                                <Skeleton className="h-48 w-full rounded-xl" />
+                                <Skeleton className="h-6 w-3/4" />
+                                <Skeleton className="h-4 w-full" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
         }
 
         if (!selectedPatientId) {
@@ -85,6 +98,8 @@ const SpecialtyAssessmentsPage: React.FC = () => {
             {renderContent()}
         </>
     );
-};
+});
+
+SpecialtyAssessmentsPage.displayName = 'SpecialtyAssessmentsPage';
 
 export default SpecialtyAssessmentsPage;
