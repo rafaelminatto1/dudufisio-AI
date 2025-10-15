@@ -1,34 +1,7 @@
 {
-  "version": 2,
-  "buildCommand": "npm run vercel-build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "framework": null,
-  "crons": [
-    {
-      "path": "/api/cron/confirmacao-consulta",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/gestao-noshow",
-      "schedule": "0 10 * * *"
-    },
-    {
-      "path": "/api/cron/follow-up-pos-consulta",
-      "schedule": "30 10 * * *"
-    },
-    {
-      "path": "/api/cron/pesquisa-satisfacao",
-      "schedule": "0 20 * * *"
-    },
-    {
-      "path": "/api/cron/whatsapp-notifications",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/process-whatsapp-queue",
-      "schedule": "*/5 * * * *"
-    }
-  ],
+  "framework": "vite",
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -38,6 +11,49 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    },
+    {
+      "source": "/(.*\\.(js|css|woff2|png|jpg|jpeg|gif|svg|ico))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -45,5 +61,7 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }

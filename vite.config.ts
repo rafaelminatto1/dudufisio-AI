@@ -136,8 +136,66 @@ export default defineConfig({
         return false;
       },
       output: {
-        // Code splitting simplificado para evitar dependências circulares
-        manualChunks: undefined,
+        // Code splitting otimizado para reduzir tamanho dos chunks
+        manualChunks: (id) => {
+          // Vendor chunks - React ecosystem
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
+            return 'vendor-react';
+          }
+          
+          // UI libraries
+          if (id.includes('node_modules/lucide-react') || id.includes('node_modules/framer-motion')) {
+            return 'vendor-ui';
+          }
+          
+          // Forms
+          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform')) {
+            return 'vendor-forms';
+          }
+          
+          // Charts
+          if (id.includes('node_modules/recharts')) {
+            return 'vendor-charts';
+          }
+          
+          // Heavy libraries - Editor
+          if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror')) {
+            return 'lib-editor';
+          }
+          
+          // Heavy libraries - PDF
+          if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas')) {
+            return 'lib-pdf';
+          }
+          
+          // Supabase
+          if (id.includes('node_modules/@supabase')) {
+            return 'vendor-supabase';
+          }
+          
+          // Date utilities
+          if (id.includes('node_modules/date-fns')) {
+            return 'vendor-date';
+          }
+          
+          // Radix UI
+          if (id.includes('node_modules/@radix-ui')) {
+            return 'vendor-radix';
+          }
+          
+          // Feature chunks baseados em paths
+          if (id.includes('/services/crm/') || id.includes('/components/crm/')) {
+            return 'feature-crm';
+          }
+          
+          if (id.includes('/services/whatsapp/') || id.includes('/components/whatsapp/')) {
+            return 'feature-whatsapp';
+          }
+          
+          if (id.includes('/services/analytics/') || id.includes('/components/analytics/')) {
+            return 'feature-analytics';
+          }
+        },
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]'
