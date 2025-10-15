@@ -1,10 +1,18 @@
 /**
  * WhatsApp CRM Service - Serviço unificado de integração
  * Conecta WhatsApp Business API com sistema de CRM/Leads
+ * 
+ * ✨ FEATURES:
+ * - Rate Limiting (evita spam)
+ * - Business Hours (horário comercial)
+ * - Message Queue (fila inteligente)
+ * - Retry automático com exponential backoff
  */
 
 import { leadService } from './leadService';
 import { supabase } from '../../lib/supabaseClient';
+import { getRateLimiter } from '../whatsapp/rateLimiter';
+import { getBusinessHours } from '../whatsapp/businessHours';
 
 export interface WhatsAppMessage {
   from: string;
@@ -103,14 +111,72 @@ export const whatsappCrmService = {
 
   /**
    * Enviar mensagem via WhatsApp (usa WhatsApp Web por padrão)
+   * 
+   * ✨ COM RATE LIMITING E BUSINESS HOURS
    */
   async sendMessage(params: SendMessageParams): Promise<{
     success: boolean;
     message_id?: string;
     error?: string;
+    queued?: boolean;
+    queueId?: string;
+    reason?: string;
   }> {
     try {
-      // Verificar se deve usar WhatsApp Web ou API
+      // 1. Verificar horário comercial
+      const businessHours = getBusinessHours();
+      const hoursCheck = businessHours.isBusinessHours();
+
+      if (!hoursCheck.isBusinessHours) {
+        // Enfileirar para próximo horário comercial
+        const rateLimiter = getRateLimiter();
+        const priority = await rateLimiter.calculatePriority(params.lead_id);
+        const nextAvailable = hoursCheck.nextAvailable || businessHours.getNextBusinessHours();
+
+        const queueId = await rateLimiter.queueMessage({
+          recipient: params.to,
+          message: params.message,
+          lead_id: params.lead_id,
+          patient_id: params.patient_id,
+          priority,
+          scheduled_for: nextAvailable,
+          status: 'pending'
+        });
+
+        return {
+          success: true,
+          queued: true,
+          queueId,
+          reason: `Mensagem agendada para ${nextAvailable.toLocaleString('pt-BR')}: ${hoursCheck.reason}`
+        };
+      }
+
+      // 2. Verificar rate limiting
+      const rateLimiter = getRateLimiter();
+      const rateLimitCheck = await rateLimiter.canSendMessage(params.to, params.lead_id);
+
+      if (!rateLimitCheck.allowed) {
+        // Enfileirar
+        const priority = await rateLimiter.calculatePriority(params.lead_id);
+        const queueId = await rateLimiter.queueMessage({
+          recipient: params.to,
+          message: params.message,
+          lead_id: params.lead_id,
+          patient_id: params.patient_id,
+          priority,
+          scheduled_for: rateLimitCheck.retryAfter || new Date(),
+          status: 'pending'
+        });
+
+        return {
+          success: true,
+          queued: true,
+          queueId,
+          reason: rateLimitCheck.reason
+        };
+      }
+
+      // 3. Pode enviar! Continuar com envio normal
       const useWebClient = import.meta.env.VITE_WHATSAPP_USE_WEB_CLIENT === 'true';
       
       let whatsappMessageId: string | undefined;

@@ -21,6 +21,7 @@ import NotificationBell from './NotificationBell';
 const NavLinkComponent = withMemoization(({ to, icon: Icon, label, isCollapsed, badgeCount }: { to: string, icon: React.ElementType, label: string, isCollapsed: boolean, badgeCount?: number }) => (
     <NavLink
       to={to}
+      data-testid={`nav-${to.replace(/\//g, '-')}`}
       className={({ isActive }) =>
         `flex items-center p-1.5 rounded-lg transition-colors duration-200 ${
           isActive
