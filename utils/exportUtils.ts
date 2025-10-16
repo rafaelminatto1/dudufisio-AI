@@ -1,4 +1,5 @@
 import type { EvolutionReportData, AssessmentStatistics } from '../types';
+import { logger } from '../lib/logger';
 
 /**
  * Utilitários para export de dados de pacientes
@@ -50,7 +51,10 @@ export function exportAssessmentsToExcel(
     link.click();
     document.body.removeChild(link);
   } catch (error) {
-    console.error('Erro ao exportar para Excel:', error);
+    logger.error('Erro ao exportar dados para Excel.', {
+      context: 'exportUtils.exportAssessmentsToExcel',
+      data: error,
+    });
     throw new Error('Falha ao exportar dados para Excel');
   }
 }
@@ -108,7 +112,10 @@ export function exportStatisticsToExcel(
     link.click();
     document.body.removeChild(link);
   } catch (error) {
-    console.error('Erro ao exportar estatísticas:', error);
+    logger.error('Erro ao exportar estatísticas.', {
+      context: 'exportUtils.exportStatisticsToExcel',
+      data: error,
+    });
     throw new Error('Falha ao exportar estatísticas');
   }
 }
@@ -143,7 +150,10 @@ export function exportReportToPDF(
       printWindow.print();
     };
   } catch (error) {
-    console.error('Erro ao gerar PDF:', error);
+    logger.error('Erro ao gerar PDF do relatório de evolução.', {
+      context: 'exportUtils.exportReportToPDF',
+      data: error,
+    });
     throw new Error('Falha ao gerar PDF');
   }
 }
@@ -349,10 +359,7 @@ function generatePrintHTML(data: EvolutionReportData, patientName: string): stri
 /**
  * Gerar link de compartilhamento (funcionalidade futura)
  */
-export function generateShareableLink(
-  patientId: string,
-  reportData: EvolutionReportData
-): string {
+export function generateShareableLink(patientId: string): string {
   // TODO: Implementar geração de link com token temporário
   // Por enquanto, retorna URL base
   const baseUrl = window.location.origin;
@@ -367,7 +374,10 @@ export async function copyReportToClipboard(data: EvolutionReportData): Promise<
     const text = formatReportAsText(data);
     await navigator.clipboard.writeText(text);
   } catch (error) {
-    console.error('Erro ao copiar para clipboard:', error);
+    logger.error('Erro ao copiar relatório para o clipboard.', {
+      context: 'exportUtils.copyReportToClipboard',
+      data: error,
+    });
     throw new Error('Falha ao copiar dados');
   }
 }

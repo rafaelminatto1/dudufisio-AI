@@ -176,7 +176,7 @@ class CacheManager {
       expiredKeys.forEach(key => this.cache.delete(key));
 
       if (expiredKeys.length > 0) {
-        console.log(`🧹 Cache cleanup: removed ${expiredKeys.length} expired entries`);
+        logger.debug(`Cache cleanup removeu ${expiredKeys.length} entradas expiradas.`, { context: 'cacheManager.cleanup', data: { count: expiredKeys.length } });
       }
     }, 60000); // Limpeza a cada minuto
   }
@@ -254,7 +254,7 @@ export async function withCache<T>(
     cacheManager.set(key, data, customTtl);
     return data;
   } catch (error) {
-    console.error(`Cache fetch error for key ${key}:`, error);
+    logger.error('Falha ao buscar item no cache.', { context: 'cacheManager.getOrFetch', data: { key, error } });
     throw error;
   }
 }

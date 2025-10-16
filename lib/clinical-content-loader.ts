@@ -13,9 +13,9 @@ import { SPECIALIZED_ASSESSMENTS } from '../data/assessmentsLibraryData';
  * Distribuídos em: Esportiva (20), Pós-Operatória (20), Geriátrica (15+)
  */
 export const getExercises = () => {
-  console.log('✅ Carregados', EXERCISES_LIBRARY?.length || 0, 'exercícios profissionais');
+  logger.info('Biblioteca de exercícios carregada.', { context: 'clinical-content-loader', data: { total: EXERCISES_LIBRARY?.length || 0 } });
   if (EXERCISES_LIBRARY && EXERCISES_LIBRARY.length > 0) {
-    console.log('📝 Primeiro exercício:', EXERCISES_LIBRARY[0].name);
+    logger.debug('Primeiro exercício carregado.', { context: 'clinical-content-loader', data: { firstExercise: EXERCISES_LIBRARY[0].name } });
   }
   return EXERCISES_LIBRARY || [];
 };
@@ -25,7 +25,7 @@ export const getExercises = () => {
  * Distribuídos em: Ortopedia (20+)
  */
 export const getClinicalProtocols = () => {
-  console.log('✅ Carregados', CLINICAL_PROTOCOLS?.length || 0, 'protocolos clínicos');
+  logger.info('Protocolos clínicos carregados.', { context: 'clinical-content-loader', data: { total: CLINICAL_PROTOCOLS?.length || 0 } });
   return CLINICAL_PROTOCOLS || [];
 };
 
@@ -34,7 +34,7 @@ export const getClinicalProtocols = () => {
  * Escalas de dor, testes funcionais e avaliações específicas
  */
 export const getAssessments = () => {
-  console.log('✅ Carregadas', SPECIALIZED_ASSESSMENTS?.length || 0, 'avaliações especializadas');
+  logger.info('Avaliações especializadas carregadas.', { context: 'clinical-content-loader', data: { total: SPECIALIZED_ASSESSMENTS?.length || 0 } });
   return SPECIALIZED_ASSESSMENTS || [];
 };
 
@@ -43,7 +43,7 @@ export const getAssessments = () => {
  * Expandido em mockClinicalMaterials.ts
  */
 export const getMaterials = () => {
-  console.log('✅ Carregados 0 materiais clínicos (usar mockClinicalMaterials)');
+  logger.warn('Nenhum material clínico carregado. Usar mockClinicalMaterials.', { context: 'clinical-content-loader' });
   return [];
 };
 

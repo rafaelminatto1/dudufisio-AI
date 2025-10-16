@@ -1,33 +1,51 @@
-/**
- * Utility simples para notificações de paciente
- * Substitui implementação anterior que tinha JSX inline
- */
+import { logger } from '../lib/logger';
+
+const CONTEXT = 'patientToasts';
+
 export const patientToasts = {
     created: (name) => {
-        console.log(`✅ Paciente ${name} criado com sucesso`);
+        logger.info(`Paciente ${name} criado com sucesso.`, {
+            context: CONTEXT,
+            data: { name },
+        });
     },
     updated: (name) => {
-        console.log(`✅ Paciente ${name} atualizado com sucesso`);
+        logger.info(`Paciente ${name} atualizado com sucesso.`, {
+            context: CONTEXT,
+            data: { name },
+        });
     },
     deleted: (name) => {
-        console.log(`✅ Paciente ${name} deletado com sucesso`);
+        logger.info(`Paciente ${name} removido com sucesso.`, {
+            context: CONTEXT,
+            data: { name },
+        });
     },
     duplicateCPF: () => {
-        console.warn('⚠️ CPF já cadastrado');
+        logger.warn('CPF já cadastrado para outro paciente.', { context: CONTEXT });
     },
     duplicateEmail: () => {
-        console.warn('⚠️ Email já cadastrado');
+        logger.warn('E-mail já cadastrado para outro paciente.', { context: CONTEXT });
     },
     createError: (message) => {
-        console.error('❌ Erro ao criar paciente:', message);
+        logger.error('Erro ao criar paciente.', {
+            context: CONTEXT,
+            data: { message },
+        });
     },
     updateError: (message) => {
-        console.error('❌ Erro ao atualizar paciente:', message);
+        logger.error('Erro ao atualizar paciente.', {
+            context: CONTEXT,
+            data: { message },
+        });
     },
     deleteError: (message) => {
-        console.error('❌ Erro ao deletar paciente:', message);
+        logger.error('Erro ao deletar paciente.', {
+            context: CONTEXT,
+            data: { message },
+        });
     },
     loadError: () => {
-        console.error('❌ Erro ao carregar pacientes');
+        logger.error('Erro ao carregar pacientes.', { context: CONTEXT });
     },
 };

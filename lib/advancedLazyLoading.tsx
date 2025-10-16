@@ -5,6 +5,7 @@
  */
 
 import React, { ComponentType, lazy, LazyExoticComponent, useEffect } from 'react';
+import { logger } from './logger';
 
 // Tipos
 type ImportFunc<T = any> = () => Promise<{ default: ComponentType<T> }>;
@@ -182,7 +183,7 @@ export const usePredictivePreload = (
       const component = routeComponentMap.get(predicted);
       if (component) {
         component.preload();
-        console.log(`🔮 Preloading ${predicted} (${(confidence * 100).toFixed(0)}% confidence)`);
+        logger.debug(`Preloading ${predicted} (${(confidence * 100).toFixed(0)}% confidence).`, { context: 'advancedLazyLoading.RoutePredictor', data: { predicted, confidence } });
       }
     }
   }, [currentRoute, routeComponentMap]);
@@ -207,7 +208,7 @@ export function lazyWithRetry<T = any>(
             return;
           }
 
-          console.warn(
+          logger.warn(
             `Falha ao carregar módulo, tentando novamente... (${retriesLeft} tentativas restantes)`
           );
 
@@ -304,12 +305,12 @@ export const RoutePreloader: React.FC<{
  * Inicializar sistema de lazy loading
  */
 export function initializeLazyLoading() {
-  console.log('🚀 Advanced lazy loading system initialized');
+  logger.info('Advanced lazy loading system initialized.', { context: 'advancedLazyLoading.initializeLazyLoading' });
 
   // Preload de componentes críticos em idle time
   if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
     (window as any).requestIdleCallback(() => {
-      console.log('⏰ Idle time detected, preloading secondary components');
+      logger.debug('Idle time detected, preloading secondary components.', { context: 'advancedLazyLoading.initializeLazyLoading' });
     }, { timeout: 2000 });
   }
 }

@@ -8,10 +8,6 @@ export default defineConfig({
   plugins: [
     react({
       jsxRuntime: 'automatic',
-      jsxImportSource: 'react',
-      babel: {
-        plugins: [],
-      },
     }),
     // Visualizer para análise de bundle
     visualizer({
@@ -36,7 +32,6 @@ export default defineConfig({
   esbuild: {
     // Mantém console logs para debugging
     logLevel: 'warning',
-    jsx: 'automatic'
   },
   define: {
     'process.env': 'import.meta.env',

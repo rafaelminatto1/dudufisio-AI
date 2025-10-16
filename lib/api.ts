@@ -1,6 +1,7 @@
 // lib/api.ts
 
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { logger } from './logger';
 
 // --- Instância Axios Configurada ---
 const api = axios.create({
@@ -45,7 +46,15 @@ api.interceptors.response.use(
       // Calcula o tempo de espera (ex: 200ms, 400ms, 800ms)
       const delay = Math.pow(2, config.retries) * INITIAL_DELAY_MS;
       
-      console.warn(`[API Retry] Tentativa ${config.retries}/${MAX_RETRIES}. Tentando novamente em ${delay}ms...`);
+      logger.warn(`[API Retry] Tentativa ${config.retries}/${MAX_RETRIES}. Retentando em ${delay}ms.`, {
+        context: 'api.retry',
+        data: {
+          retries: config.retries,
+          delay,
+          url: config.url,
+          method: config.method,
+        },
+      });
       
       // Espera o tempo calculado antes de tentar novamente
       await new Promise(resolve => setTimeout(resolve, delay));
@@ -89,12 +98,15 @@ export interface Session {
 /**
  * Verifica a saúde da API do Flask.
  */
-export const checkApiHealth = async (): Promise<{ status: string, service: string }> => {
+export const checkApiHealth = async (): Promise<{ status: string; service: string }> => {
   try {
     const response = await api.get('/health');
     return response.data;
   } catch (error: any) {
-    console.error('[API Health Check] Falhou:', error.message || error);
+    logger.error('Falha no health check da API.', {
+      context: 'api.checkApiHealth',
+      data: { message: error.message },
+    });
     return { status: 'error', service: 'mentoria-api' };
   }
 };
@@ -108,7 +120,10 @@ export const getMentoriaSessions = async (): Promise<Session[]> => {
     return response.data;
   } catch (error: any) {
     // O erro já foi padronizado pelo interceptor
-    console.error('Erro ao buscar sessões:', error.message || error);
+    logger.error('Erro ao buscar sessões de mentoria.', {
+      context: 'api.getMentoriaSessions',
+      data: { message: error.message },
+    });
     throw error; // Re-lança para o componente/página tratar
   }
 };

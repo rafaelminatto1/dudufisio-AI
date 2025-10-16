@@ -48,13 +48,15 @@ export enum PatientStatus {
 
 export interface Surgery {
   id: string;
+  patientId: string;
   name: string;
   date: string; // YYYY-MM-DD
   description?: string;
   surgeon?: string;
   hospital?: string;
   complications?: string;
-  recoveryTime?: number; // in days
+  recoveryTimeDays?: number; // in days
+  notes?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -65,20 +67,40 @@ export interface Condition {
   description?: string;
 }
 
+export interface Pathology {
+  id: string;
+  patientId: string;
+  name: string;
+  icdCode?: string;
+  diagnosisDate: string;
+  status: 'active' | 'resolved' | 'chronic' | 'monitoring';
+  severity?: 'mild' | 'moderate' | 'severe' | 'critical';
+  affectedRegion?: string;
+  description?: string;
+  treatmentPlan?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PatientGoal {
   id: string;
   patientId: string;
   title: string;
-  description: string;
-  targetDate: string; // YYYY-MM-DD
-  targetValue?: string; // e.g., "pace 4:30/km"
+  description?: string;
+  category: 'performance' | 'recovery' | 'fitness' | 'lifestyle' | 'medical' | 'mobility' | 'strength' | 'pain_reduction' | 'functional';
+  targetDate?: string; // YYYY-MM-DD
+  targetValue?: string; // e.g., "10 km", "sem muletas"
+  currentValue?: string;
   currentProgress?: number; // 0-100
-  status: 'active' | 'completed' | 'paused' | 'cancelled';
-  category: 'performance' | 'recovery' | 'fitness' | 'lifestyle' | 'medical';
-  priority: 'low' | 'medium' | 'high';
+  unit?: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  status: 'active' | 'completed' | 'paused' | 'cancelled' | 'archived';
+  achievedAt?: string;
+  notes?: string;
+  createdBy?: string;
   createdAt: string;
   updatedAt: string;
-  completedAt?: string;
 }
 
 export interface TrackedMetric {
@@ -91,6 +113,21 @@ export interface TrackedMetric {
 export interface MetricResult {
   metricId: string;
   value: number;
+}
+
+export interface AssessmentTestConfig {
+  id: string;
+  patientId: string;
+  testName: string;
+  testType: 'amplitude' | 'strength' | 'balance' | 'functional' | 'pain';
+  frequencySessions?: number;
+  frequencyDays?: number;
+  isMandatory: boolean;
+  lastPerformedDate?: string;
+  nextDueDate?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface PatientAttachment {
@@ -169,6 +206,9 @@ export interface Patient {
   medical_history?: any; // JSONB do Supabase
   conditions?: Condition[];
   surgeries?: Surgery[];
+  pathologies?: Pathology[];
+  goals?: PatientGoal[];
+  testConfigs?: AssessmentTestConfig[];
   
   // === Sessões e Métricas ===
   session_progress?: any; // JSONB

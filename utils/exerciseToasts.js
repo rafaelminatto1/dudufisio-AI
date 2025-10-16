@@ -1,83 +1,87 @@
-/**
- * Sistema de Notificações Toast para Exercícios
- * Feedback visual para todas as operações CRUD
- */
-// Função auxiliar para toast (usando console por enquanto, pode ser substituído por react-toastify)
+import { logger } from '../lib/logger';
+
+const CONTEXT = 'exerciseToasts';
+
+const logInfo = (message, data) => {
+    logger.info(message, { context: CONTEXT, data });
+};
+
+const logWarn = (message, data) => {
+    logger.warn(message, { context: CONTEXT, data });
+};
+
+const logError = (message, data) => {
+    logger.error(message, { context: CONTEXT, data });
+};
+
 export const exerciseToasts = {
-    // Sucesso
     createSuccess: (exerciseName) => {
-        console.log(`✅ Exercício "${exerciseName}" criado com sucesso!`);
+        logInfo(`Exercício "${exerciseName}" criado com sucesso!`, { exerciseName });
     },
     updateSuccess: (exerciseName) => {
-        console.log(`✅ Exercício "${exerciseName}" atualizado com sucesso!`);
+        logInfo(`Exercício "${exerciseName}" atualizado com sucesso!`, { exerciseName });
     },
     deleteSuccess: (exerciseName) => {
-        console.log(`✅ Exercício "${exerciseName}" excluído com sucesso!`);
+        logInfo(`Exercício "${exerciseName}" excluído com sucesso!`, { exerciseName });
     },
     duplicateSuccess: (exerciseName) => {
-        console.log(`✅ Exercício "${exerciseName}" duplicado com sucesso!`);
+        logInfo(`Exercício "${exerciseName}" duplicado com sucesso!`, { exerciseName });
     },
-    // Categorias
     categoryCreated: (categoryName) => {
-        console.log(`✅ Categoria "${categoryName}" criada com sucesso!`);
+        logInfo(`Categoria "${categoryName}" criada com sucesso!`, { categoryName });
     },
     categoryUpdated: (categoryName) => {
-        console.log(`✅ Categoria "${categoryName}" atualizada com sucesso!`);
+        logInfo(`Categoria "${categoryName}" atualizada com sucesso!`, { categoryName });
     },
     categoryDeleted: (categoryName) => {
-        console.log(`✅ Categoria "${categoryName}" excluída com sucesso!`);
+        logInfo(`Categoria "${categoryName}" excluída com sucesso!`, { categoryName });
     },
-    // Protocolos
     protocolCreated: (protocolName) => {
-        console.log(`✅ Protocolo "${protocolName}" criado com sucesso!`);
+        logInfo(`Protocolo "${protocolName}" criado com sucesso!`, { protocolName });
     },
     protocolUpdated: (protocolName) => {
-        console.log(`✅ Protocolo "${protocolName}" atualizado com sucesso!`);
+        logInfo(`Protocolo "${protocolName}" atualizado com sucesso!`, { protocolName });
     },
     protocolDeleted: (protocolName) => {
-        console.log(`✅ Protocolo "${protocolName}" excluído com sucesso!`);
+        logInfo(`Protocolo "${protocolName}" excluído com sucesso!`, { protocolName });
     },
-    // Atribuições
     assignmentCreated: (patientName, exerciseName) => {
-        console.log(`✅ Exercício "${exerciseName}" atribuído a ${patientName}!`);
+        logInfo(`Exercício "${exerciseName}" atribuído a ${patientName}!`, { exerciseName, patientName });
     },
     assignmentCompleted: (exerciseName) => {
-        console.log(`✅ Atribuição de "${exerciseName}" marcada como concluída!`);
+        logInfo(`Atribuição de "${exerciseName}" marcada como concluída!`, { exerciseName });
     },
-    // Erros
     createError: (error) => {
-        console.error(`❌ Erro ao criar exercício: ${error}`);
+        logError('Erro ao criar exercício.', { error });
     },
     updateError: (error) => {
-        console.error(`❌ Erro ao atualizar exercício: ${error}`);
+        logError('Erro ao atualizar exercício.', { error });
     },
     deleteError: (error) => {
-        console.error(`❌ Erro ao excluir exercício: ${error}`);
+        logError('Erro ao excluir exercício.', { error });
     },
     loadError: (error) => {
-        console.error(`❌ Erro ao carregar exercícios: ${error}`);
+        logError('Erro ao carregar exercícios.', { error });
     },
     validationError: (error) => {
-        console.warn(`⚠️ Erro de validação: ${error}`);
+        logWarn('Erro de validação.', { error });
     },
-    // Avisos
     noExercisesFound: () => {
-        console.warn('⚠️ Nenhum exercício encontrado com os filtros aplicados');
+        logWarn('Nenhum exercício encontrado com os filtros aplicados.');
     },
     loadingData: () => {
-        console.log('🔄 Carregando exercícios...');
+        logInfo('Carregando exercícios...');
     },
-    // Exportação/Importação
     exportSuccess: (count) => {
-        console.log(`✅ ${count} exercício(s) exportado(s) com sucesso!`);
+        logInfo(`${count} exercício(s) exportado(s) com sucesso!`, { count });
     },
     importSuccess: (count) => {
-        console.log(`✅ ${count} exercício(s) importado(s) com sucesso!`);
+        logInfo(`${count} exercício(s) importado(s) com sucesso!`, { count });
     },
     exportError: (error) => {
-        console.error(`❌ Erro ao exportar: ${error}`);
+        logError('Erro ao exportar exercícios.', { error });
     },
     importError: (error) => {
-        console.error(`❌ Erro ao importar: ${error}`);
-    }
+        logError('Erro ao importar exercícios.', { error });
+    },
 };
