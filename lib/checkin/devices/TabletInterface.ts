@@ -1,4 +1,5 @@
 import { CheckInEngine } from '../core/CheckInEngine';
+import { logger } from '../../logger';
 import {
   TabletConfig,
   CheckInData,
@@ -90,11 +91,11 @@ class WelcomeStep extends CheckInStep {
   }
 
   async onEnter(): Promise<void> {
-    console.log('Welcome step entered');
+    logger.debug('Welcome step entered.', { context: 'checkin.tablet.welcome' });
   }
 
   async onExit(): Promise<void> {
-    console.log('Welcome step exited');
+    logger.debug('Welcome step exited.', { context: 'checkin.tablet.welcome' });
   }
 }
 
@@ -205,7 +206,7 @@ class PhotoCaptureStep extends CheckInStep {
       });
 
     } catch (error) {
-      console.error('Camera setup failed:', error);
+      logger.error('Camera setup failed.', { context: 'checkin.tablet.photo', data: { error } });
       container.innerHTML = `
         <div class="text-center">
           <div class="text-6xl mb-4">⚠️</div>
@@ -230,7 +231,7 @@ class PhotoCaptureStep extends CheckInStep {
       ctx.drawImage(video, 0, 0);
       return ctx.getImageData(0, 0, canvas.width, canvas.height);
     } catch (error) {
-      console.error('Photo capture failed:', error);
+      logger.error('Photo capture failed.', { context: 'checkin.tablet.photo', data: { error } });
       return null;
     }
   }
@@ -244,11 +245,11 @@ class PhotoCaptureStep extends CheckInStep {
   }
 
   async onEnter(): Promise<void> {
-    console.log('Photo capture step entered');
+    logger.debug('Photo capture step entered.', { context: 'checkin.tablet.photo' });
   }
 
   async onExit(): Promise<void> {
-    console.log('Photo capture step exited');
+    logger.debug('Photo capture step exited.', { context: 'checkin.tablet.photo' });
     // Clean up camera resources
   }
 }
@@ -392,7 +393,7 @@ class PatientSearchStep extends CheckInStep {
   }
 
   private selectPatient(patient: any): void {
-    console.log('Selected patient:', patient);
+    logger.debug('Selected patient.', { context: 'checkin.tablet.search', data: { patient } });
     // Store selection and proceed to next step
   }
 
@@ -405,11 +406,11 @@ class PatientSearchStep extends CheckInStep {
   }
 
   async onEnter(): Promise<void> {
-    console.log('Patient search step entered');
+    logger.debug('Patient search step entered.', { context: 'checkin.tablet.search' });
   }
 
   async onExit(): Promise<void> {
-    console.log('Patient search step exited');
+    logger.debug('Patient search step exited.', { context: 'checkin.tablet.search' });
   }
 }
 
@@ -580,7 +581,7 @@ class HealthScreeningStep extends CheckInStep {
       isVaccinated
     };
 
-    console.log('Health screening completed:', this.answers);
+    logger.debug('Health screening completed.', { context: 'checkin.tablet.health', data: { answers: this.answers } });
   }
 
   async validate(): Promise<boolean> {
@@ -592,11 +593,11 @@ class HealthScreeningStep extends CheckInStep {
   }
 
   async onEnter(): Promise<void> {
-    console.log('Health screening step entered');
+    logger.debug('Health screening step entered.', { context: 'checkin.tablet.health' });
   }
 
   async onExit(): Promise<void> {
-    console.log('Health screening step exited');
+    logger.debug('Health screening step exited.', { context: 'checkin.tablet.health' });
   }
 }
 
@@ -668,11 +669,11 @@ class ConfirmationStep extends CheckInStep {
 
     confirmBtn.addEventListener('click', () => {
       this.confirmed = true;
-      console.log('Check-in confirmed');
+      logger.info('Check-in confirmed.', { context: 'checkin.tablet.confirmation' });
     });
 
     backBtn.addEventListener('click', () => {
-      console.log('Going back to previous step');
+      logger.debug('Returning to previous step.', { context: 'checkin.tablet.confirmation' });
     });
   }
 
@@ -686,11 +687,11 @@ class ConfirmationStep extends CheckInStep {
   }
 
   async onEnter(): Promise<void> {
-    console.log('Confirmation step entered');
+    logger.debug('Confirmation step entered.', { context: 'checkin.tablet.confirmation' });
   }
 
   async onExit(): Promise<void> {
-    console.log('Confirmation step exited');
+    logger.debug('Confirmation step exited.', { context: 'checkin.tablet.confirmation' });
   }
 }
 
@@ -753,7 +754,7 @@ class CompletionStep extends CheckInStep {
 
     newCheckinBtn.addEventListener('click', () => {
       // Reset to welcome screen after 30 seconds or manual click
-      console.log('Starting new check-in process');
+      logger.info('Starting new check-in process.', { context: 'checkin.tablet.completion' });
       window.location.reload();
     });
 
@@ -772,7 +773,7 @@ class CompletionStep extends CheckInStep {
   }
 
   async onEnter(): Promise<void> {
-    console.log('Completion step entered');
+    logger.debug('Completion step entered.', { context: 'checkin.tablet.completion' });
 
     // Print receipt if requested
     if (this.printer.isReady()) {
@@ -781,7 +782,7 @@ class CompletionStep extends CheckInStep {
   }
 
   async onExit(): Promise<void> {
-    console.log('Completion step exited');
+    logger.debug('Completion step exited.', { context: 'checkin.tablet.completion' });
   }
 
   private generateReceiptText(): string {
@@ -886,7 +887,7 @@ export class CheckInFlowImpl implements CheckInFlow {
   }
 
   async cancel(): Promise<void> {
-    console.log('Check-in flow cancelled');
+    logger.warn('Check-in flow cancelled.', { context: 'checkin.tablet.flow' });
     window.location.reload();
   }
 }
@@ -896,7 +897,7 @@ class MockCameraService implements CameraService {
   private stream: MediaStream | null = null;
 
   async initialize(): Promise<void> {
-    console.log('Camera service initialized');
+    logger.info('Camera service initialized.', { context: 'checkin.tablet.hardware' });
   }
 
   async capturePhoto(): Promise<ImageData | null> {
@@ -935,12 +936,12 @@ class MockCameraService implements CameraService {
 
 class MockPrinterService implements PrinterService {
   async testConnection(): Promise<boolean> {
-    console.log('Printer connection tested');
+    logger.info('Printer connection tested.', { context: 'checkin.tablet.hardware' });
     return true;
   }
 
   async print(content: string): Promise<void> {
-    console.log('Printing:', content);
+    logger.debug('Printing receipt content.', { context: 'checkin.tablet.hardware', data: { content } });
   }
 
   isReady(): boolean {
@@ -963,7 +964,7 @@ export class TabletInterface {
   }
 
   async initializeKiosk(): Promise<void> {
-    console.log('Initializing tablet kiosk mode...');
+    logger.info('Initializing tablet kiosk mode...', { context: 'checkin.tablet.kiosk' });
 
     // Set up full screen mode
     await this.setKioskMode();
@@ -978,7 +979,7 @@ export class TabletInterface {
     // Start the interface
     await this.setupInterface();
 
-    console.log('Tablet kiosk initialized successfully');
+    logger.info('Tablet kiosk initialized successfully.', { context: 'checkin.tablet.kiosk' });
   }
 
   async startCheckInFlow(): Promise<CheckInFlow> {
@@ -1004,7 +1005,7 @@ export class TabletInterface {
       try {
         await document.documentElement.requestFullscreen();
       } catch (error) {
-        console.warn('Could not enter fullscreen mode:', error);
+        logger.warn('Could not enter fullscreen mode.', { context: 'checkin.tablet.kiosk', data: { error } });
       }
     }
 
@@ -1021,7 +1022,7 @@ export class TabletInterface {
 
   private async loadLocalConfig(): Promise<void> {
     // Load any local configuration settings
-    console.log('Loading local configuration...');
+    logger.debug('Loading local configuration...', { context: 'checkin.tablet.kiosk' });
   }
 
   private async setupInterface(): Promise<void> {
@@ -1038,12 +1039,12 @@ export class TabletInterface {
   }
 
   private async handleCheckInComplete(checkInData: CheckInData): Promise<CheckInResult> {
-    console.log('Processing check-in:', checkInData);
+    logger.debug('Processing check-in.', { context: 'checkin.tablet.flow', data: { checkInData } });
     return await this.checkInEngine.processCheckIn(checkInData);
   }
 
   private handleCheckInError(error: Error): void {
-    console.error('Check-in flow error:', error);
+    logger.error('Check-in flow error.', { context: 'checkin.tablet.flow', data: { error } });
 
     // Show error screen
     const container = document.getElementById('checkin-container');

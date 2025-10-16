@@ -4,6 +4,7 @@ import {
 } from '../../../types/checkin';
 import { Appointment } from '../../../types';
 import { AppleAPNSAdapter, createAPNS } from '../adapters/AppleAPNSAdapter';
+import { logger } from '../../logger';
 
 interface DeviceToken {
   token: string;
@@ -68,9 +69,9 @@ export class PushNotificationService {
     // Initialize Apple APNS adapter
     this.apnsAdapter = createAPNS();
     if (this.apnsAdapter) {
-      console.log('✅ Apple APNS adapter initialized successfully');
+      logger.info('Apple APNS adapter initialized successfully.', { context: 'checkin.notifications.apns' });
     } else {
-      console.log('⚠️ Apple APNS credentials not found, iOS notifications will use FCM fallback');
+      logger.warn('Apple APNS credentials not found; using FCM fallback for iOS.', { context: 'checkin.notifications.apns' });
     }
 
     // Start background scheduler
@@ -100,7 +101,7 @@ export class PushNotificationService {
       userTokens.push(deviceToken);
     }
 
-    console.log(`Device registered for patient ${patientId}: ${platform} - ${token.substring(0, 20)}...`);
+    logger.debug(`Device registered for patient ${patientId}.`, { context: 'checkin.notifications.devices', data: { patientId, platform, tokenPreview: token.substring(0, 20) + '...' } });
   }
 
   async unregisterDevice(patientId: PatientId, token: string): Promise<void> {
@@ -108,7 +109,7 @@ export class PushNotificationService {
     if (userTokens) {
       const filteredTokens = userTokens.filter(t => t.token !== token);
       this.deviceTokens.set(patientId, filteredTokens);
-      console.log(`Device unregistered for patient ${patientId}`);
+      logger.debug(`Device unregistered for patient ${patientId}.`, { context: 'checkin.notifications.devices', data: { patientId } });
     }
   }
 
@@ -122,7 +123,7 @@ export class PushNotificationService {
 
     // Don't schedule if time has already passed
     if (scheduledTime <= new Date()) {
-      console.warn(`Cannot schedule reminder for past appointment: ${appointment.id}`);
+      logger.warn(`Cannot schedule reminder for past appointment: ${appointment.id}`, { context: 'checkin.notifications.scheduling', data: { appointmentId: appointment.id } });
       return;
     }
 
@@ -145,7 +146,7 @@ export class PushNotificationService {
       `reminder-${appointment.id}-${hoursBeforeAppointment}h`
     );
 
-    console.log(`Appointment reminder scheduled for patient ${patientId} at ${scheduledTime.toISOString()}`);
+    logger.info(`Appointment reminder scheduled for patient ${patientId} at ${scheduledTime.toISOString()}.`, { context: 'checkin.notifications.scheduling', data: { patientId, scheduledTime: scheduledTime.toISOString() } });
   }
 
   // Public send method for external use
@@ -296,7 +297,7 @@ export class PushNotificationService {
     const deviceTokens = await this.getPatientDeviceTokens(patientId);
 
     if (deviceTokens.length === 0) {
-      console.warn(`No device tokens found for patient ${patientId}`);
+      logger.warn(`No device tokens found for patient ${patientId}.`, { context: 'checkin.notifications.send', data: { patientId } });
       return;
     }
 
@@ -311,7 +312,7 @@ export class PushNotificationService {
     // Log results
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
-        console.error(`Failed to send notification to device ${deviceTokens[index].token}:`, result.reason);
+        logger.error(`Failed to send notification to device ${deviceTokens[index].token}.`, { context: 'checkin.notifications.send', data: { token: deviceTokens[index].token, error: result.reason } });
       }
     });
 
@@ -328,18 +329,18 @@ export class PushNotificationService {
         case 'ios':
           return await this.sendViaAPNS(deviceToken, notification);
         default:
-          console.error(`Unsupported platform: ${deviceToken.platform}`);
+          logger.error(`Unsupported platform: ${deviceToken.platform}`, { context: 'checkin.notifications.send', data: { platform: deviceToken.platform } });
           return false;
       }
     } catch (error) {
-      console.error(`Failed to send notification to ${deviceToken.platform} device:`, error);
+      logger.error(`Failed to send notification to ${deviceToken.platform} device.`, { context: 'checkin.notifications.send', data: { platform: deviceToken.platform, error } });
       return false;
     }
   }
 
   private async sendViaFCM(deviceToken: DeviceToken, notification: PushNotification): Promise<boolean> {
     if (!this.fcmConfig) {
-      console.warn('FCM not configured, using mock notification');
+      logger.warn('FCM not configured; using mock notification.', { context: 'checkin.notifications.fcm' });
       this.mockNotificationSend(deviceToken, notification);
       return true;
     }
@@ -384,10 +385,10 @@ export class PushNotificationService {
       // const admin = require('firebase-admin');
       // const response = await admin.messaging().send(payload.message);
 
-      console.log(`Firebase v1 API notification sent to ${deviceToken.token.substring(0, 20)}...`, payload);
+      logger.debug(`Firebase v1 API notification sent to ${deviceToken.token.substring(0, 20)}...`, { context: 'checkin.notifications.fcm', data: { payload } });
       return true;
     } catch (error) {
-      console.error('FCM v1 send error:', error);
+      logger.error('FCM v1 send error.', { context: 'checkin.notifications.fcm', data: { error } });
       return false;
     }
   }
@@ -405,7 +406,7 @@ export class PushNotificationService {
     // Use real Apple APNS if adapter is available
     if (this.apnsAdapter) {
       try {
-        console.log(`🍎 Sending APNS notification to ${deviceToken.token.substring(0, 8)}...`);
+        logger.debug(`Sending APNS notification to ${deviceToken.token.substring(0, 8)}...`, { context: 'checkin.notifications.apns' });
 
         const apnsNotification = {
           title: notification.title,
@@ -420,18 +421,18 @@ export class PushNotificationService {
         const result = await this.apnsAdapter.sendNotification(apnsNotification);
 
         if (result.success) {
-          console.log(`✅ APNS notification sent successfully - ID: ${result.messageId}`);
+          logger.info(`APNS notification sent successfully - ID: ${result.messageId}`, { context: 'checkin.notifications.apns' });
           return true;
         } else {
-          console.error(`❌ APNS notification failed: ${result.error}`);
+          logger.error(`APNS notification failed: ${result.error}`, { context: 'checkin.notifications.apns' });
 
           // Fallback to FCM for iOS if APNS fails
-          console.log('🔄 Falling back to FCM for iOS...');
+          logger.info('Falling back to FCM for iOS.', { context: 'checkin.notifications.apns' });
           return await this.sendViaFCM(deviceToken, notification);
         }
 
       } catch (error) {
-        console.error('❌ APNS adapter error:', error);
+        logger.error('APNS adapter error.', { context: 'checkin.notifications.apns', data: { error } });
         // Fallback to FCM for iOS
         return await this.sendViaFCM(deviceToken, notification);
       }
@@ -439,24 +440,24 @@ export class PushNotificationService {
 
     // Fallback: use FCM for iOS if APNS not configured
     if (this.fcmConfig) {
-      console.log('📱 Using FCM for iOS notification (APNS not configured)');
+      logger.info('Using FCM for iOS notification (APNS not configured).', { context: 'checkin.notifications.fcm' });
       return await this.sendViaFCM(deviceToken, notification);
     }
 
     // Final fallback: mock notification
-    console.warn('Neither APNS nor FCM configured for iOS, using mock notification');
+    logger.warn('Neither APNS nor FCM configured for iOS; using mock notification.', { context: 'checkin.notifications.mock' });
     this.mockNotificationSend(deviceToken, notification);
     return true;
   }
 
   private mockNotificationSend(deviceToken: DeviceToken, notification: PushNotification): void {
-    console.log(`📱 MOCK PUSH NOTIFICATION`);
-    console.log(`Platform: ${deviceToken.platform}`);
-    console.log(`Token: ${deviceToken.token.substring(0, 20)}...`);
-    console.log(`Title: ${notification.title}`);
-    console.log(`Body: ${notification.body}`);
-    console.log(`Data:`, notification.data);
-    console.log(`Badge: ${notification.badge || 0}`);
+    logger.debug('Mock push notification.', { context: 'checkin.notifications.mock' });
+    logger.debug(`Mock notification platform: ${deviceToken.platform}`, { context: 'checkin.notifications.mock' });
+    logger.debug(`Mock notification token preview: ${deviceToken.token.substring(0, 20)}...`, { context: 'checkin.notifications.mock' });
+    logger.debug(`Mock notification title: ${notification.title}`, { context: 'checkin.notifications.mock' });
+    logger.debug(`Mock notification body: ${notification.body}`, { context: 'checkin.notifications.mock' });
+    logger.debug('Mock notification data.', { context: 'checkin.notifications.mock', data: { data: notification.data } });
+    logger.debug(`Mock notification badge: ${notification.badge || 0}`, { context: 'checkin.notifications.mock' });
   }
 
   private async getPatientDeviceTokens(patientId: PatientId): Promise<DeviceToken[]> {
@@ -476,7 +477,7 @@ export class PushNotificationService {
 
   private async saveLastQueueUpdate(patientId: PatientId, update: { position: number; waitTime: number }): Promise<void> {
     // Mock implementation - in production, this would save to database/cache
-    console.log(`Saved last queue update for ${patientId}:`, update);
+    logger.debug(`Saved last queue update for ${patientId}.`, { context: 'checkin.notifications.queue', data: { update } });
   }
 
   private async updateDeviceTokenStatus(
@@ -491,7 +492,7 @@ export class PushNotificationService {
       } else {
         // Mark token as potentially invalid after multiple failures
         // In production, implement exponential backoff and eventual deactivation
-        console.warn(`Device token may be invalid: ${token.token.substring(0, 20)}...`);
+        logger.warn(`Device token may be invalid: ${token.token.substring(0, 20)}...`, { context: 'checkin.notifications.devices', data: { token: token.token } });
       }
     });
   }
@@ -507,14 +508,14 @@ export class PushNotificationService {
             await this.sendImmediate(schedule.patientId, schedule.notification);
             schedule.status = 'sent';
 
-            console.log(`Scheduled notification sent: ${id}`);
+            logger.info(`Scheduled notification sent: ${id}`, { context: 'checkin.notifications.scheduling' });
 
             // Handle recurring notifications
             if (schedule.recurring) {
               await this.scheduleRecurring(schedule);
             }
           } catch (error) {
-            console.error(`Failed to send scheduled notification ${id}:`, error);
+            logger.error(`Failed to send scheduled notification ${id}.`, { context: 'checkin.notifications.scheduling', data: { error } });
           }
         }
       }

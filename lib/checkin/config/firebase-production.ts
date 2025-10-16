@@ -5,6 +5,7 @@
  */
 
 import { FirebaseV1Adapter } from '../notifications/FirebaseV1Adapter';
+import { logger } from '../../logger';
 
 // Configuração do Firebase para produção
 export const FIREBASE_PRODUCTION_CONFIG = {
@@ -47,7 +48,7 @@ export const validateFirebaseConfig = (): boolean => {
   const missingFields = requiredFields.filter(field => !config[field as keyof typeof config]);
 
   if (missingFields.length > 0) {
-    console.error('Missing Firebase configuration fields:', missingFields);
+    logger.error('Missing Firebase configuration fields.', { context: 'checkin.firebase.config', data: { missingFields } });
     return false;
   }
 
@@ -56,11 +57,11 @@ export const validateFirebaseConfig = (): boolean => {
     try {
       const adminSdk = JSON.parse(config.adminSdk);
       if (!adminSdk.project_id || !adminSdk.private_key || !adminSdk.client_email) {
-        console.error('Invalid Firebase Admin SDK format');
+        logger.error('Invalid Firebase Admin SDK format.', { context: 'checkin.firebase.config' });
         return false;
       }
     } catch (error) {
-      console.error('Invalid Firebase Admin SDK JSON:', error);
+      logger.error('Invalid Firebase Admin SDK JSON.', { context: 'checkin.firebase.config', data: { error } });
       return false;
     }
   }
@@ -87,9 +88,9 @@ import { createFirebaseAdapter, validateFirebaseConfig } from './firebase-produc
 if (validateFirebaseConfig()) {
   const firebase = createFirebaseAdapter();
   if (firebase) {
-    console.log('✅ Firebase configurado com sucesso!');
+    logger.info('Firebase configurado com sucesso.');
   }
 } else {
-  console.error('❌ Configuração Firebase inválida');
+  logger.error('Configuração Firebase inválida.');
 }
 */

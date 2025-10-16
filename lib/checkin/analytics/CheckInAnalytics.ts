@@ -5,6 +5,7 @@ import {
   PatientId,
   DeviceId
 } from '../../../types/checkin';
+import { logger } from '../../logger';
 
 interface AnalyticsEvent {
   id: string;
@@ -756,9 +757,12 @@ export class CheckInAnalytics {
       const cutoffTime = new Date(Date.now() - 24 * 60 * 60 * 1000);
       this.events = this.events.filter(event => event.createdAt > cutoffTime);
 
-      console.log(`Flushed ${eventsToFlush.length} analytics events`);
+      logger.debug(`Flushed ${eventsToFlush.length} analytics events.`, {
+        context: 'checkin.analytics.flush',
+        data: { count: eventsToFlush.length },
+      });
     } catch (error) {
-      console.error('Failed to flush analytics events:', error);
+      logger.error('Failed to flush analytics events.', { context: 'checkin.analytics.flush', data: { error } });
       // Re-add events to buffer for retry
       this.eventBuffer.unshift(...eventsToFlush);
     }
@@ -804,7 +808,10 @@ export class CheckInAnalytics {
     this.events = this.events.filter(event => event.createdAt > cutoffTime);
 
     const removedCount = initialCount - this.events.length;
-    console.log(`Removed ${removedCount} old analytics events`);
+    logger.info(`Removed ${removedCount} old analytics events.`, {
+      context: 'checkin.analytics.cleanup',
+      data: { removedCount },
+    });
 
     return removedCount;
   }

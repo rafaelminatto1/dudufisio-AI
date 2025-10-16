@@ -5,6 +5,7 @@
  */
 
 import { PatientId } from '../../../types/checkin';
+import { logger } from '../../logger';
 
 // Tipos AWS Rekognition
 interface RekognitionFace {
@@ -70,7 +71,7 @@ export class AWSRekognitionAdapter {
     const region = process.env.AWS_REGION || 'us-east-1';
 
     if (!accessKeyId || !secretAccessKey) {
-      console.warn('AWS credentials not found in environment');
+      logger.warn('AWS credentials not found in environment.', { context: 'checkin.awsRekognition' });
       return null;
     }
 
@@ -122,7 +123,7 @@ export class AWSRekognitionAdapter {
       const qualityScore = (faceRecord.FaceDetail.Quality.Brightness +
                            faceRecord.FaceDetail.Quality.Sharpness) / 2;
 
-      console.log(`✅ Face cadastrada para ${patientId}:`, {
+      logger.info('Face enrolled for patient.', { context: 'checkin.awsRekognition.enroll', data: {
         faceId: faceRecord.Face.FaceId,
         confidence: faceRecord.FaceDetail.Confidence,
         qualityScore
@@ -135,7 +136,7 @@ export class AWSRekognitionAdapter {
       };
 
     } catch (error) {
-      console.error('❌ Erro ao cadastrar face:', error);
+      logger.error('Erro ao cadastrar face.', { context: 'checkin.awsRekognition.enroll', data: { error } });
       return {
         success: false,
         error: `Falha no cadastro: ${error}`
@@ -179,7 +180,7 @@ export class AWSRekognitionAdapter {
       // O External Image ID é o patientId que definimos no enrollment
       const patientId = await this.getFaceExternalId(bestMatch.Face.FaceId);
 
-      console.log(`✅ Paciente encontrado:`, {
+      logger.info('Paciente encontrado via reconhecimento facial.', { context: 'checkin.awsRekognition.search', data: {
         patientId,
         similarity: bestMatch.Similarity,
         confidence: bestMatch.Face.Confidence
@@ -193,7 +194,7 @@ export class AWSRekognitionAdapter {
       };
 
     } catch (error) {
-      console.error('❌ Erro na busca facial:', error);
+      logger.error('Erro na busca facial.', { context: 'checkin.awsRekognition.search', data: { error } });
       return {
         success: false,
         error: `Falha na busca: ${error}`
@@ -210,7 +211,7 @@ export class AWSRekognitionAdapter {
       const faces = await this.listFaces(patientId);
 
       if (faces.length === 0) {
-        console.log(`ℹ️ Nenhuma face encontrada para ${patientId}`);
+        logger.warn(`Nenhuma face encontrada para ${patientId}.`, { context: 'checkin.awsRekognition.search', data: { patientId } });
         return true;
       }
 
@@ -224,11 +225,11 @@ export class AWSRekognitionAdapter {
 
       await this.callRekognition('DeleteFaces', params);
 
-      console.log(`✅ ${faceIds.length} face(s) deletada(s) para ${patientId}`);
+      logger.info(`Faces deletadas para ${patientId}.`, { context: 'checkin.awsRekognition.delete', data: { count: faceIds.length, patientId } });
       return true;
 
     } catch (error) {
-      console.error('❌ Erro ao deletar faces:', error);
+      logger.error('Erro ao deletar faces.', { context: 'checkin.awsRekognition.delete', data: { error } });
       return false;
     }
   }
@@ -255,7 +256,7 @@ export class AWSRekognitionAdapter {
       };
 
     } catch (error) {
-      console.error('❌ Erro ao obter estatísticas:', error);
+      logger.error('Erro ao obter estatísticas do AWS Rekognition.', { context: 'checkin.awsRekognition.stats', data: { error } });
       return {
         faceCount: 0,
         collectionId: this.collectionId
@@ -275,13 +276,13 @@ export class AWSRekognitionAdapter {
     } catch (error: any) {
       if (error.code === 'ResourceNotFoundException') {
         // Collection não existe, criar
-        console.log(`📦 Criando collection: ${this.collectionId}`);
+        logger.debug(`Criando collection ${this.collectionId}.`, { context: 'checkin.awsRekognition.collection', data: { collectionId: this.collectionId } });
 
         await this.callRekognition('CreateCollection', {
           CollectionId: this.collectionId
         });
 
-        console.log(`✅ Collection criada: ${this.collectionId}`);
+        logger.info(`Collection criada: ${this.collectionId}.`, { context: 'checkin.awsRekognition.collection' });
       } else {
         throw error;
       }
@@ -344,7 +345,7 @@ export class AWSRekognitionAdapter {
       );
 
     } catch (error) {
-      console.error('❌ Erro ao listar faces:', error);
+      logger.error('Erro ao listar faces.', { context: 'checkin.awsRekognition.list', data: { error } });
       return [];
     }
   }
@@ -359,7 +360,7 @@ export class AWSRekognitionAdapter {
       return face?.ExternalImageId || null;
 
     } catch (error) {
-      console.error('❌ Erro ao buscar External ID:', error);
+      logger.error('Erro ao buscar External ID.', { context: 'checkin.awsRekognition.list', data: { error } });
       return null;
     }
   }

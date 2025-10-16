@@ -52,7 +52,7 @@ export class AppleAPNSAdapter {
     const privateKey = process.env.APNS_PRIVATE_KEY;
 
     if (!keyId || !teamId || !bundleId || !privateKey) {
-      console.warn('Apple APNS credentials not found in environment');
+      logger.warn('Apple APNS credentials not found in environment.', { context: 'checkin.apns' });
       return null;
     }
 
@@ -90,7 +90,7 @@ export class AppleAPNSAdapter {
 
       if (response.ok) {
         const apnsId = response.headers.get('apns-id');
-        console.log('✅ APNS notification sent successfully:', {
+        logger.info('APNS notification sent successfully.', { context: 'checkin.apns', data: {
           deviceToken: notification.deviceToken.substring(0, 8) + '...',
           apnsId,
           title: notification.title
@@ -102,7 +102,7 @@ export class AppleAPNSAdapter {
         };
       } else {
         const error = await response.text();
-        console.error('❌ APNS error:', {
+        logger.error('APNS error.', { context: 'checkin.apns', data: {
           status: response.status,
           error,
           deviceToken: notification.deviceToken.substring(0, 8) + '...'
@@ -116,7 +116,7 @@ export class AppleAPNSAdapter {
       }
 
     } catch (error) {
-      console.error('❌ APNS send error:', error);
+      logger.error('APNS send error.', { context: 'checkin.apns', data: { error } });
       return {
         success: false,
         error: `Network error: ${error}`
@@ -130,7 +130,7 @@ export class AppleAPNSAdapter {
   async sendBulkNotifications(
     notifications: APNSNotification[]
   ): Promise<APNSResponse[]> {
-    console.log(`📱 Sending ${notifications.length} APNS notifications...`);
+    logger.info(`Sending ${notifications.length} APNS notifications...`, { context: 'checkin.apns', data: { count: notifications.length } });
 
     const results = await Promise.allSettled(
       notifications.map(notification => this.sendNotification(notification))
@@ -281,7 +281,7 @@ export class AppleAPNSAdapter {
         .replace(/=/g, '');
 
     } catch (error) {
-      console.error('❌ JWT signing error:', error);
+      logger.error('JWT signing error.', { context: 'checkin.apns.jwt', data: { error } });
 
       // Fallback para mock em desenvolvimento
       return 'mock-signature-for-development';

@@ -15,6 +15,11 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
+        // Health variants
+        success: "border-transparent bg-health-success-500 text-white hover:bg-health-success-600",
+        warning: "border-transparent bg-health-warning-500 text-white hover:bg-health-warning-600",
+        info: "border-transparent bg-health-info-500 text-white hover:bg-health-info-600",
+        danger: "border-transparent bg-health-danger-500 text-white hover:bg-health-danger-600",
       },
     },
     defaultVariants: {
