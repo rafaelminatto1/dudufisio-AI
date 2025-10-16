@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { observability } from './observabilityLogger';
+import { logger } from './logger';
 import type { SupabaseRealtimePayload } from '../types/realtime';
 import type { Database } from '../types/database';
 
@@ -9,16 +10,21 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Debug em desenvolvimento
 if (import.meta.env.DEV) {
-  console.log('🔍 [SUPABASE] Verificando variáveis de ambiente...');
-  console.log('   • VITE_SUPABASE_URL:', supabaseUrl ? '✅ Definida' : '❌ Não definida');
-  console.log('   • VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? '✅ Definida' : '❌ Não definida');
-  console.log('   • Todas as variáveis env:', Object.keys(import.meta.env).filter(k => k.startsWith('VITE_')));
+  logger.debug('[SUPABASE] Verificando variáveis de ambiente...', {
+    context: 'supabase.env',
+    data: {
+      hasUrl: Boolean(supabaseUrl),
+      hasAnonKey: Boolean(supabaseAnonKey),
+      envKeys: Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')),
+    },
+  });
 }
 
+
 if (!supabaseUrl) {
-  console.error('❌ [SUPABASE] VITE_SUPABASE_URL não encontrada!');
-  console.error('   Verifique se o arquivo .env.local existe na raiz do projeto');
-  console.error('   Conteúdo esperado: VITE_SUPABASE_URL=https://urfxniitfbbvsaskicfo.supabase.co');
+  logger.error('[SUPABASE] VITE_SUPABASE_URL não encontrada!', { context: 'supabase.env' });
+  logger.error('Verifique se o arquivo .env.local existe na raiz do projeto.', { context: 'supabase.env' });
+  logger.error('Conteúdo esperado: VITE_SUPABASE_URL=https://urfxniitfbbvsaskicfo.supabase.co', { context: 'supabase.env' });
   throw new Error(
     'VITE_SUPABASE_URL não está definida. ' +
     'Crie o arquivo .env.local na raiz do projeto. ' +
@@ -28,9 +34,9 @@ if (!supabaseUrl) {
 }
 
 if (!supabaseAnonKey) {
-  console.error('❌ [SUPABASE] VITE_SUPABASE_ANON_KEY não encontrada!');
-  console.error('   Verifique se o arquivo .env.local existe na raiz do projeto');
-  console.error('   Conteúdo esperado: VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
+  logger.error('[SUPABASE] VITE_SUPABASE_ANON_KEY não encontrada!', { context: 'supabase.env' });
+  logger.error('Verifique se o arquivo .env.local existe na raiz do projeto.', { context: 'supabase.env' });
+  logger.error('Conteúdo esperado: VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...', { context: 'supabase.env' });
   throw new Error(
     'VITE_SUPABASE_ANON_KEY não está definida. ' +
     'Adicione a anon key no arquivo .env.local. ' +
@@ -73,9 +79,10 @@ observability.config.load('supabase.config.loaded', {
 
 // Log de inicialização (apenas em desenvolvimento)
 if (import.meta.env.DEV) {
-  console.log('✅ Supabase Client inicializado (lib/supabase.ts)');
-  console.log('📍 URL:', supabaseUrl);
-  console.log('🌍 Ambiente:', environment);
+  logger.info('Supabase Client inicializado (lib/supabase.ts)', {
+    context: 'supabase.init',
+    data: { url: supabaseUrl, environment },
+  });
 }
 
 type SupabaseError = {

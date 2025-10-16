@@ -4,6 +4,8 @@
  * Gerencia registro, atualização e comunicação com o Service Worker
  */
 
+import { logger } from './logger';
+
 export interface ServiceWorkerStatus {
   isRegistered: boolean;
   isUpdateAvailable: boolean;
@@ -25,7 +27,9 @@ class ServiceWorkerManager {
    */
   async register(scriptPath: string = '/service-worker-advanced.js'): Promise<boolean> {
     if (!('serviceWorker' in navigator)) {
-      console.warn('Service Worker não suportado neste navegador');
+      logger.warn('Service Worker não suportado neste navegador.', {
+        context: 'serviceWorkerManager.register',
+      });
       return false;
     }
 
@@ -34,7 +38,10 @@ class ServiceWorkerManager {
         scope: '/'
       });
 
-      console.log('✅ Service Worker registrado:', this.registration.scope);
+      logger.info('Service Worker registrado.', {
+        context: 'serviceWorkerManager.register',
+        data: { scope: this.registration.scope },
+      });
 
       this.status.isRegistered = true;
       this.emit('registered', this.registration);
@@ -55,7 +62,10 @@ class ServiceWorkerManager {
 
       return true;
     } catch (error) {
-      console.error('❌ Erro ao registrar Service Worker:', error);
+      logger.error('Erro ao registrar Service Worker.', {
+        context: 'serviceWorkerManager.register',
+        data: { error },
+      });
       return false;
     }
   }
@@ -70,7 +80,9 @@ class ServiceWorkerManager {
 
     try {
       const result = await this.registration.unregister();
-      console.log('🗑️ Service Worker desregistrado');
+      logger.info('Service Worker desregistrado.', {
+        context: 'serviceWorkerManager.unregister',
+      });
       
       this.status.isRegistered = false;
       this.status.isOfflineReady = false;
@@ -78,7 +90,10 @@ class ServiceWorkerManager {
       
       return result;
     } catch (error) {
-      console.error('❌ Erro ao desregistrar Service Worker:', error);
+      logger.error('Erro ao desregistrar Service Worker.', {
+        context: 'serviceWorkerManager.unregister',
+        data: { error },
+      });
       return false;
     }
   }
@@ -88,15 +103,22 @@ class ServiceWorkerManager {
    */
   async update(): Promise<void> {
     if (!this.registration) {
-      console.warn('Service Worker não está registrado');
+      logger.warn('Service Worker não está registrado.', {
+        context: 'serviceWorkerManager.update',
+      });
       return;
     }
 
     try {
       await this.registration.update();
-      console.log('🔄 Service Worker atualizado');
+      logger.info('Service Worker atualizado.', {
+        context: 'serviceWorkerManager.update',
+      });
     } catch (error) {
-      console.error('❌ Erro ao atualizar Service Worker:', error);
+      logger.error('Erro ao atualizar Service Worker.', {
+        context: 'serviceWorkerManager.update',
+        data: { error },
+      });
     }
   }
 
@@ -127,7 +149,10 @@ class ServiceWorkerManager {
     if ('caches' in window) {
       const cacheNames = await caches.keys();
       await Promise.all(cacheNames.map(name => caches.delete(name)));
-      console.log('🗑️ Cache limpo');
+      logger.info('Cache limpo.', {
+        context: 'serviceWorkerManager.clearCache',
+        data: { cacheNames },
+      });
     }
   }
 
@@ -136,7 +161,9 @@ class ServiceWorkerManager {
    */
   postMessage(message: any): void {
     if (!this.registration?.active) {
-      console.warn('Service Worker não está ativo');
+      logger.warn('Service Worker não está ativo.', {
+        context: 'serviceWorkerManager.postMessage',
+      });
       return;
     }
 
@@ -162,7 +189,9 @@ class ServiceWorkerManager {
     const newWorker = this.registration.installing;
     if (!newWorker) return;
 
-    console.log('🆕 Nova versão do Service Worker encontrada');
+    logger.info('Nova versão do Service Worker encontrada.', {
+      context: 'serviceWorkerManager.handleUpdateFound',
+    });
 
     newWorker.addEventListener('statechange', () => {
       if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
@@ -222,7 +251,7 @@ export async function initializeServiceWorker(): Promise<boolean> {
     return await serviceWorkerManager.register();
   }
   
-  console.log('Service Worker desabilitado em desenvolvimento');
+  logger.info('Service Worker desabilitado em desenvolvimento.', { context: 'initializeServiceWorker' });
   return false;
 }
 

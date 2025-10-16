@@ -72,13 +72,13 @@ export class OfflineManager {
   private async initializeOfflineCapabilities(): Promise<void> {
     // Set up network status listeners
     window.addEventListener('online', () => {
-      console.log('Network connection restored');
+      logger.info('Network connection restored.', { context: 'checkin.offline' });
       this.isOnline = true;
       this.startSync();
     });
 
     window.addEventListener('offline', () => {
-      console.log('Network connection lost - switching to offline mode');
+      logger.warn('Network connection lost - switching to offline mode.', { context: 'checkin.offline' });
       this.isOnline = false;
     });
 
@@ -91,7 +91,7 @@ export class OfflineManager {
     // Start periodic sync
     this.startPeriodicSync();
 
-    console.log('Offline manager initialized');
+    logger.info('Offline manager initialized.', { context: 'checkin.offline' });
   }
 
   // Offline queue management
@@ -123,7 +123,10 @@ export class OfflineManager {
 
     await this.saveOfflineQueue();
 
-    console.log(`Queued ${type} item for sync: ${item.id}`);
+    logger.debug(`Queued ${type} item for sync: ${item.id}`, {
+      context: 'checkin.offline.queue',
+      data: { type, id: item.id },
+    });
 
     // Try to sync immediately if online
     if (this.isOnline && !this.syncInProgress) {
@@ -135,7 +138,7 @@ export class OfflineManager {
 
   async processCheckInOffline(checkInData: CheckInData): Promise<CheckInResult> {
     try {
-      console.log('Processing check-in in offline mode');
+      logger.debug('Processing check-in in offline mode.', { context: 'checkin.offline' });
 
       // Validate cached data availability
       const validationResult = await this.validateOfflineCheckIn(checkInData);
@@ -187,7 +190,7 @@ export class OfflineManager {
       };
 
     } catch (error) {
-      console.error('Offline check-in failed:', error);
+      logger.error('Offline check-in failed.', { context: 'checkin.offline', data: { error } });
       return {
         success: false,
         error: `Offline check-in failed: ${error}`
@@ -205,7 +208,10 @@ export class OfflineManager {
     });
 
     await this.saveCachedData();
-    console.log(`Cached ${patients.length} patients for offline use`);
+    logger.info(`Cached ${patients.length} patients for offline use.`, {
+      context: 'checkin.offline.cache',
+      data: { count: patients.length },
+    });
   }
 
   async cacheAppointmentData(appointments: any[]): Promise<void> {
@@ -217,7 +223,10 @@ export class OfflineManager {
     });
 
     await this.saveCachedData();
-    console.log(`Cached ${appointments.length} appointments for offline use`);
+    logger.info(`Cached ${appointments.length} appointments for offline use.`, {
+      context: 'checkin.offline.cache',
+      data: { count: appointments.length },
+    });
   }
 
   async getCachedPatient(patientId: PatientId): Promise<any | null> {
@@ -245,7 +254,10 @@ export class OfflineManager {
     this.syncInProgress = true;
     this.notifyStatusChange();
 
-    console.log(`Starting sync with ${this.offlineQueue.length} items`);
+    logger.info(`Starting sync with ${this.offlineQueue.length} items.`, {
+      context: 'checkin.offline.sync',
+      data: { total: this.offlineQueue.length },
+    });
 
     let syncedCount = 0;
     let failedCount = 0;
@@ -261,13 +273,19 @@ export class OfflineManager {
         } else {
           item.retryCount++;
           if (item.retryCount >= item.maxRetries) {
-            console.warn(`Item ${item.id} exceeded max retries, removing from queue`);
+        logger.warn(`Item ${item.id} exceeded max retries, removing from queue.`, {
+          context: 'checkin.offline.sync',
+          data: { itemId: item.id },
+        });
             this.removeFromQueue(item.id);
             failedCount++;
           }
         }
       } catch (error) {
-        console.error(`Failed to sync item ${item.id}:`, error);
+        logger.error(`Failed to sync item ${item.id}.`, {
+          context: 'checkin.offline.sync',
+          data: { itemId: item.id, error },
+        });
         item.retryCount++;
         if (item.retryCount >= item.maxRetries) {
           this.removeFromQueue(item.id);
@@ -280,7 +298,10 @@ export class OfflineManager {
     this.lastSyncTime = new Date();
     this.syncInProgress = false;
 
-    console.log(`Sync completed: ${syncedCount} synced, ${failedCount} failed`);
+    logger.info(`Sync completed: ${syncedCount} synced, ${failedCount} failed.`, {
+      context: 'checkin.offline.sync',
+      data: { syncedCount, failedCount },
+    });
     this.notifyStatusChange();
   }
 
@@ -299,7 +320,10 @@ export class OfflineManager {
       case 'progress':
         return await this.syncProgress(data);
       default:
-        console.warn(`Unknown sync item type: ${item.type}`);
+        logger.warn(`Unknown sync item type: ${item.type}`, {
+          context: 'checkin.offline.sync',
+          data: { type: item.type },
+        });
         return false;
     }
   }
@@ -307,7 +331,7 @@ export class OfflineManager {
   private async syncCheckIn(data: any): Promise<boolean> {
     try {
       // In production, this would call the actual check-in API
-      console.log('Syncing offline check-in to server:', data.offlineCheckIn.id);
+      logger.debug('Syncing offline check-in to server.', { context: 'checkin.offline.sync', data: { id: data.offlineCheckIn.id } });
 
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -317,43 +341,43 @@ export class OfflineManager {
 
       return true;
     } catch (error) {
-      console.error('Failed to sync check-in:', error);
+      logger.error('Failed to sync check-in.', { context: 'checkin.offline.sync', data: { error } });
       return false;
     }
   }
 
   private async syncAnalytics(data: any): Promise<boolean> {
     try {
-      console.log('Syncing analytics event:', data.eventType);
+      logger.debug('Syncing analytics event.', { context: 'checkin.offline.sync', data: { eventType: data.eventType } });
       // In production, send to analytics service
       await new Promise(resolve => setTimeout(resolve, 500));
       return true;
     } catch (error) {
-      console.error('Failed to sync analytics:', error);
+      logger.error('Failed to sync analytics.', { context: 'checkin.offline.sync', data: { error } });
       return false;
     }
   }
 
   private async syncNotification(data: any): Promise<boolean> {
     try {
-      console.log('Syncing notification:', data.type);
+      logger.debug('Syncing notification.', { context: 'checkin.offline.sync', data: { type: data.type } });
       // In production, send via notification service
       await new Promise(resolve => setTimeout(resolve, 300));
       return true;
     } catch (error) {
-      console.error('Failed to sync notification:', error);
+      logger.error('Failed to sync notification.', { context: 'checkin.offline.sync', data: { error } });
       return false;
     }
   }
 
   private async syncProgress(data: any): Promise<boolean> {
     try {
-      console.log('Syncing progress data:', data.patientId);
+      logger.debug('Syncing progress data.', { context: 'checkin.offline.sync', data: { patientId: data.patientId } });
       // In production, update patient progress
       await new Promise(resolve => setTimeout(resolve, 800));
       return true;
     } catch (error) {
-      console.error('Failed to sync progress:', error);
+      logger.error('Failed to sync progress.', { context: 'checkin.offline.sync', data: { error } });
       return false;
     }
   }
@@ -483,7 +507,7 @@ export class OfflineManager {
         };
       }
     } catch (error) {
-      console.error('Failed to load cached data:', error);
+      logger.error('Failed to load cached data.', { context: 'checkin.offline.storage', data: { error } });
     }
   }
 
@@ -498,7 +522,7 @@ export class OfflineManager {
       };
       localStorage.setItem('cached_data', JSON.stringify(data));
     } catch (error) {
-      console.error('Failed to save cached data:', error);
+      logger.error('Failed to save cached data.', { context: 'checkin.offline.storage', data: { error } });
     }
   }
 
@@ -512,7 +536,7 @@ export class OfflineManager {
         }));
       }
     } catch (error) {
-      console.error('Failed to load offline queue:', error);
+      logger.error('Failed to load offline queue.', { context: 'checkin.offline.queue', data: { error } });
     }
   }
 
@@ -520,7 +544,7 @@ export class OfflineManager {
     try {
       localStorage.setItem('offline_queue', JSON.stringify(this.offlineQueue));
     } catch (error) {
-      console.error('Failed to save offline queue:', error);
+      logger.error('Failed to save offline queue.', { context: 'checkin.offline.queue', data: { error } });
     }
   }
 
@@ -595,7 +619,7 @@ export class OfflineManager {
       try {
         callback(status);
       } catch (error) {
-        console.error('Error in sync status callback:', error);
+        logger.error('Error in sync status callback.', { context: 'checkin.offline.sync', data: { error } });
       }
     });
   }
@@ -610,25 +634,28 @@ export class OfflineManager {
       lastUpdated: new Date()
     };
     await this.saveCachedData();
-    console.log('Cache cleared');
+    logger.info('Offline cache cleared.', { context: 'checkin.offline.cache' });
   }
 
   async clearOfflineQueue(): Promise<void> {
     this.offlineQueue = [];
     await this.saveOfflineQueue();
-    console.log('Offline queue cleared');
+    logger.info('Offline queue cleared.', { context: 'checkin.offline.queue' });
   }
 
   async forceSync(): Promise<void> {
     if (this.isOnline) {
       await this.startSync();
     } else {
-      console.warn('Cannot force sync while offline');
+      logger.warn('Cannot force sync while offline.', { context: 'checkin.offline.sync' });
     }
   }
 
   async preloadCriticalData(patientIds: PatientId[]): Promise<void> {
-    console.log(`Preloading critical data for ${patientIds.length} patients`);
+    logger.info(`Preloading critical data for ${patientIds.length} patients.`, {
+      context: 'checkin.offline.cache',
+      data: { count: patientIds.length },
+    });
 
     // In production, this would fetch from API
     const mockPatients = patientIds.map(id => ({
@@ -649,7 +676,7 @@ export class OfflineManager {
     await this.cachePatientData(mockPatients);
     await this.cacheAppointmentData(mockAppointments);
 
-    console.log('Critical data preloaded successfully');
+    logger.info('Critical data preloaded successfully.', { context: 'checkin.offline.cache' });
   }
 
   getStats(): {

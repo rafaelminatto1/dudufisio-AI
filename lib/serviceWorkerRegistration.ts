@@ -4,6 +4,8 @@
  * Utilitário para registrar e gerenciar o service worker
  */
 
+import { logger } from './logger';
+
 interface ServiceWorkerConfig {
   onSuccess?: (registration: ServiceWorkerRegistration) => void;
   onUpdate?: (registration: ServiceWorkerRegistration) => void;
@@ -17,13 +19,13 @@ interface ServiceWorkerConfig {
 export async function registerServiceWorker(config?: ServiceWorkerConfig) {
   // Só registrar em produção
   if (process.env.NODE_ENV !== 'production') {
-    console.log('[SW] Service worker disabled in development');
+    logger.info('[SW] Service worker disabled em desenvolvimento.', { context: 'serviceWorkerRegistration.register' });
     return;
   }
 
   // Verificar se o navegador suporta service workers
   if (!('serviceWorker' in navigator)) {
-    console.warn('[SW] Service workers not supported');
+    logger.warn('Service workers não são suportados neste navegador.', { context: 'serviceWorkerRegistration.register' });
     return;
   }
 
@@ -35,7 +37,7 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
           scope: '/',
         });
 
-        console.log('[SW] Service worker registered successfully:', registration.scope);
+        logger.info('Service worker registrado com sucesso.', { context: 'serviceWorkerRegistration.register', data: { scope: registration.scope } });
 
         // Verificar se existe atualização
         registration.addEventListener('updatefound', () => {
@@ -47,14 +49,14 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
             if (newWorker.state === 'installed') {
               if (navigator.serviceWorker.controller) {
                 // Nova versão disponível
-                console.log('[SW] New version available');
+                logger.info('Nova versão do service worker disponível.', { context: 'serviceWorkerRegistration.updateFound' });
                 config?.onUpdate?.(registration);
 
                 // Notificar usuário
                 showUpdateNotification(registration);
               } else {
                 // Service worker instalado pela primeira vez
-                console.log('[SW] Service worker installed successfully');
+                logger.info('Service worker instalado com sucesso.', { context: 'serviceWorkerRegistration.install' });
                 config?.onSuccess?.(registration);
               }
             }
@@ -67,13 +69,13 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
         }, 60 * 60 * 1000); // 1 hora
 
       } catch (error) {
-        console.error('[SW] Service worker registration failed:', error);
+        logger.error('Falha ao registrar service worker.', { context: 'serviceWorkerRegistration.register', data: { error } });
         config?.onError?.(error as Error);
       }
     });
 
   } catch (error) {
-    console.error('[SW] Unexpected error:', error);
+    logger.error('Erro inesperado durante o registro do service worker.', { context: 'serviceWorkerRegistration.register', data: { error } });
     config?.onError?.(error as Error);
   }
 }
@@ -91,12 +93,12 @@ export async function unregisterServiceWorker() {
     const success = await registration.unregister();
 
     if (success) {
-      console.log('[SW] Service worker unregistered successfully');
+      logger.info('Service worker desregistrado com sucesso.', { context: 'serviceWorkerRegistration.unregister' });
     }
 
     return success;
   } catch (error) {
-    console.error('[SW] Failed to unregister service worker:', error);
+    logger.error('Falha ao desregistrar service worker.', { context: 'serviceWorkerRegistration.unregister', data: { error } });
     return false;
   }
 }
@@ -135,7 +137,7 @@ function showUpdateNotification(registration: ServiceWorkerRegistration) {
   
   // Se já está mostrando notificação, não mostrar outra
   if (isNotificationShowing) {
-    console.log('[SW] Notification already showing, skipping duplicate');
+    logger.debug('Notificação de atualização já exibida, pulando duplicata.', { context: 'serviceWorkerRegistration.notification' });
     return;
   }
   
@@ -269,7 +271,7 @@ export async function getCacheSize(): Promise<number> {
       setTimeout(() => resolve(0), 5000);
     });
   } catch (error) {
-    console.error('[SW] Failed to get cache size:', error);
+    logger.error('Falha ao obter tamanho do cache.', { context: 'serviceWorkerRegistration.cache', data: { error } });
     return 0;
   }
 }
@@ -286,10 +288,10 @@ export async function clearServiceWorkerCache() {
     const registration = await navigator.serviceWorker.ready;
     registration.active?.postMessage({ action: 'clearCache' });
 
-    console.log('[SW] Cache cleared successfully');
+    logger.info('Cache limpo com sucesso.', { context: 'serviceWorkerRegistration.cache' });
     return true;
   } catch (error) {
-    console.error('[SW] Failed to clear cache:', error);
+    logger.error('Falha ao limpar cache.', { context: 'serviceWorkerRegistration.cache', data: { error } });
     return false;
   }
 }
@@ -309,12 +311,12 @@ export function setupNetworkListeners(
   onOffline?: () => void
 ) {
   window.addEventListener('online', () => {
-    console.log('[SW] Network: Online');
+    logger.info('Rede online.', { context: 'serviceWorkerRegistration.network' });
     onOnline?.();
   });
 
   window.addEventListener('offline', () => {
-    console.log('[SW] Network: Offline');
+    logger.warn('Rede offline.', { context: 'serviceWorkerRegistration.network' });
     onOffline?.();
   });
 }
@@ -324,7 +326,7 @@ export function setupNetworkListeners(
  */
 export async function requestBackgroundSync(tag: string) {
   if (!('serviceWorker' in navigator) || !('sync' in ServiceWorkerRegistration.prototype)) {
-    console.warn('[SW] Background sync not supported');
+    logger.warn('Background sync não suportado.', { context: 'serviceWorkerRegistration.backgroundSync' });
     return false;
   }
 
@@ -332,10 +334,10 @@ export async function requestBackgroundSync(tag: string) {
     const registration = await navigator.serviceWorker.ready;
     await (registration as any).sync.register(tag);
 
-    console.log(`[SW] Background sync registered: ${tag}`);
+    logger.info(`[SW] Background sync registrado: ${tag}`, { context: 'serviceWorkerRegistration.backgroundSync', data: { tag } });
     return true;
   } catch (error) {
-    console.error('[SW] Background sync registration failed:', error);
+    logger.error('Falha ao registrar background sync.', { context: 'serviceWorkerRegistration.backgroundSync', data: { error } });
     return false;
   }
 }
@@ -385,7 +387,7 @@ export async function getServiceWorkerStatus(): Promise<{
       installing: !!registration.installing,
     };
   } catch (error) {
-    console.error('[SW] Failed to get service worker status:', error);
+    logger.error('Falha ao obter status do service worker.', { context: 'serviceWorkerRegistration.status', data: { error } });
     return {
       registered: false,
       active: false,
@@ -412,6 +414,6 @@ export async function exportServiceWorkerMetrics() {
     timestamp: new Date().toISOString(),
   };
 
-  console.log('[SW] Metrics:', metrics);
+  logger.info('[SW] Métricas do service worker.', { context: 'serviceWorkerRegistration.metrics', data: metrics });
   return metrics;
 }

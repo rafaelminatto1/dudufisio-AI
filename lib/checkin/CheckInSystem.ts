@@ -6,6 +6,7 @@ import { CheckInAnalytics } from './analytics/CheckInAnalytics';
 import { OfflineManager } from './offline/OfflineManager';
 import { PatientPortalService } from '../patient-portal/PatientPortalService';
 import { TabletInterface } from './devices/TabletInterface';
+import { logger } from './logger';
 
 import {
   CheckInData,
@@ -83,15 +84,15 @@ export class CheckInSystem {
 
   async initialize(): Promise<void> {
     if (this.initialized) {
-      console.warn('CheckInSystem already initialized');
+      logger.warn('CheckInSystem already initialized.', { context: 'checkin.system' });
       return;
     }
 
-    console.log('Initializing FisioFlow Intelligent Check-in System...');
+    logger.info('Initializing FisioFlow Intelligent Check-in System...', { context: 'checkin.system' });
 
     try {
       // Initialize offline capabilities first
-      console.log('Initializing offline manager...');
+      logger.info('Initializing offline manager...', { context: 'checkin.system.offline' });
       // OfflineManager initializes itself in constructor
 
       // Preload critical data for offline use
@@ -99,7 +100,7 @@ export class CheckInSystem {
 
       // Initialize tablet interface if available
       if (this.tabletInterface) {
-        console.log('Initializing tablet kiosk interface...');
+        logger.info('Initializing tablet kiosk interface...', { context: 'checkin.system.tablet' });
         await this.tabletInterface.initializeKiosk();
       }
 
@@ -113,7 +114,7 @@ export class CheckInSystem {
       this.setupOfflineSync();
 
       this.initialized = true;
-      console.log('✅ FisioFlow Check-in System initialized successfully');
+      logger.info('FisioFlow Check-in System initialized successfully.', { context: 'checkin.system' });
 
       // Track system initialization
       await this.analytics.trackEvent({
@@ -134,7 +135,7 @@ export class CheckInSystem {
       });
 
     } catch (error) {
-      console.error('❌ Failed to initialize CheckInSystem:', error);
+      logger.error('Failed to initialize CheckInSystem.', { context: 'checkin.system', data: { error } });
 
       await this.analytics.trackError(
         'system_initialization',
@@ -168,10 +169,10 @@ export class CheckInSystem {
 
       // Check if online or offline
       if (navigator.onLine) {
-        console.log('Processing online check-in');
+        logger.debug('Processing online check-in.', { context: 'checkin.system' });
         result = await this.checkInEngine.processCheckIn(checkInData);
       } else {
-        console.log('Processing offline check-in');
+        logger.debug('Processing offline check-in.', { context: 'checkin.system' });
         result = await this.offlineManager.processCheckInOffline(checkInData);
       }
 
@@ -192,7 +193,7 @@ export class CheckInSystem {
       return result;
 
     } catch (error) {
-      console.error('Check-in processing failed:', error);
+      logger.error('Check-in processing failed.', { context: 'checkin.system', data: { error } });
 
       await this.analytics.trackError(
         'checkin_processing',
@@ -423,25 +424,25 @@ export class CheckInSystem {
   }
 
   private setupAnalyticsTracking() {
-    console.log('Setting up analytics tracking...');
+    logger.debug('Setting up analytics tracking.', { context: 'checkin.system.analytics' });
 
     // Analytics is already set up in the constructor
     // Additional setup could include custom event handlers
   }
 
   private setupNotificationHandlers() {
-    console.log('Setting up notification handlers...');
+    logger.debug('Setting up notification handlers.', { context: 'checkin.system.notifications' });
 
     // Set up queue position update notifications
     // In a real implementation, this would listen to queue changes
   }
 
   private setupOfflineSync() {
-    console.log('Setting up offline synchronization...');
+    logger.debug('Setting up offline synchronization.', { context: 'checkin.system.offline' });
 
     // Monitor sync status
     this.offlineManager.onStatusChange((status) => {
-      console.log('Sync status changed:', status);
+      logger.debug('Sync status changed.', { context: 'checkin.system.offline', data: status });
 
       // Track sync events
       this.analytics.trackEvent({
@@ -460,7 +461,7 @@ export class CheckInSystem {
 
   // Cleanup methods
   async shutdown() {
-    console.log('Shutting down CheckInSystem...');
+    logger.info('Shutting down CheckInSystem...', { context: 'checkin.system' });
 
     try {
       // Force final sync
@@ -480,10 +481,10 @@ export class CheckInSystem {
       });
 
       this.initialized = false;
-      console.log('✅ CheckInSystem shutdown complete');
+      logger.info('CheckInSystem shutdown complete.', { context: 'checkin.system' });
 
     } catch (error) {
-      console.error('❌ Error during shutdown:', error);
+      logger.error('Error during CheckInSystem shutdown.', { context: 'checkin.system', data: { error } });
       throw error;
     }
   }

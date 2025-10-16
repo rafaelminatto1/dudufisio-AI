@@ -120,7 +120,7 @@ export default defineConfig({
       '@tiptap/extension-table-cell',
       '@tiptap/extension-table-header'
     ],
-    exclude: ['@playwright/test', 'lucide-react'],
+    exclude: ['@playwright/test'],
     // Otimização forçada apenas quando necessário
     force: false,
     esbuildOptions: {
@@ -199,6 +199,32 @@ export default defineConfig({
           // Radix UI
           if (id.includes('node_modules/@radix-ui')) {
             return 'vendor-radix';
+          }
+
+          // Monitoring & Observability (Sentry + OpenTelemetry)
+          if (id.includes('node_modules/@sentry') ||
+              id.includes('node_modules/@opentelemetry')) {
+            return 'vendor-monitoring';
+          }
+
+          // AWS SDK & Dependencies (@aws-sdk, @smithy)
+          if (id.includes('node_modules/@aws-sdk') ||
+              id.includes('node_modules/@smithy')) {
+            return 'vendor-aws';
+          }
+
+          // React Ecosystem Extras (@tanstack, @floating-ui)
+          if (id.includes('node_modules/@tanstack') ||
+              id.includes('node_modules/@floating-ui') ||
+              id.includes('node_modules/react-toastify')) {
+            return 'vendor-react-extras';
+          }
+
+          // Crypto & Security (@noble, uuid, crypto-js)
+          if (id.includes('node_modules/@noble') ||
+              id.includes('node_modules/uuid') ||
+              id.includes('node_modules/crypto-js')) {
+            return 'vendor-crypto';
           }
 
           // CONSOLIDAR todos os outros node_modules em um único chunk

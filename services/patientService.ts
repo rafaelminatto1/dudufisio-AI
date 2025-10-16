@@ -374,3 +374,70 @@ const paginatePatients = (
 // Funções removidas - campos não existem no schema atual do Supabase
 
 // Funções de patologia removidas - campos não existem no schema atual
+
+// ============================================================================
+// COMMUNICATION LOGS & PAIN POINTS - HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Adiciona um log de comunicação ao paciente
+ * Atualiza o campo communication_logs (JSONB) no Supabase
+ */
+export async function addCommunicationLog(
+  patientId: string,
+  logData: Omit<import('../types').CommunicationLog, 'id'>
+): Promise<void> {
+  try {
+    // Buscar patient atual para pegar logs existentes
+    const patient = await getPatientById(patientId);
+    if (!patient) {
+      throw new Error('Paciente não encontrado');
+    }
+
+    const existingLogs = patient.communicationLogs || [];
+    const newLog: import('../types').CommunicationLog = {
+      id: `log_${Date.now()}`,
+      ...logData,
+    };
+
+    const updatedLogs = [...existingLogs, newLog];
+
+    // Atualizar no Supabase
+    const { error } = await supabase
+      .from('patients')
+      .update({ communication_logs: updatedLogs })
+      .eq('id', patientId);
+
+    if (error) {
+      console.error('Error adding communication log:', error);
+      throw new Error('Falha ao adicionar log de comunicação');
+    }
+  } catch (error) {
+    console.error('Error in addCommunicationLog:', error);
+    throw error;
+  }
+}
+
+/**
+ * Salva/atualiza os pontos de dor do paciente
+ * Atualiza o campo pain_points (JSONB) no Supabase
+ */
+export async function savePainPoints(
+  patientId: string,
+  painPoints: import('../types').PainPoint[]
+): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('patients')
+      .update({ pain_points: painPoints })
+      .eq('id', patientId);
+
+    if (error) {
+      console.error('Error saving pain points:', error);
+      throw new Error('Falha ao salvar pontos de dor');
+    }
+  } catch (error) {
+    console.error('Error in savePainPoints:', error);
+    throw error;
+  }
+}

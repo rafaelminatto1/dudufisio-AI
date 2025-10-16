@@ -36,7 +36,10 @@
       "Bash(dir:*)",
       "Read(//c/**)",
       "Bash(awk:*)",
-      "Bash(node scripts/optimize-icon-imports.cjs:*)"
+      "Bash(node scripts/optimize-icon-imports.cjs:*)",
+      "Bash(tee:*)",
+      "Bash(start dist/stats.html)",
+      "Bash(node scripts/analyze-vendor-misc.cjs:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

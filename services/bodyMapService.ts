@@ -831,3 +831,174 @@ export function getPainLevelColor(painLevel: number): string {
 export function getPainLevelLabel(painLevel: number): string {
   return PAIN_INTENSITY_LABELS[painLevel as keyof typeof PAIN_INTENSITY_LABELS] || 'Desconhecido';
 }
+
+// ============================================================================
+// BODYPOINT API - WRAPPER FUNCTIONS (COMPATIBILIDADE COM useBodyMapPro)
+// ============================================================================
+// Estas funções fornecem uma interface simplificada BodyPoint que é
+// traduzida para a API BodyMapPainRegion mais completa internamente.
+
+import type { BodyPoint } from '../types';
+
+/**
+ * Busca todos os pontos de dor de um paciente (wrapper para getPatientBodyMapHistory)
+ * Converte BodyMapPainRegion → BodyPoint para compatibilidade
+ */
+export async function getBodyPointsByPatientId(patientId: string): Promise<BodyPoint[]> {
+  try {
+    const sessions = await getPatientBodyMapHistory(patientId);
+    const allRegions = sessions.flatMap(s => s.painRegions || []);
+
+    // Converter BodyMapPainRegion → BodyPoint
+    return allRegions.map(region => ({
+      id: region.id,
+      patientId: region.patientId,
+      coordinates: {
+        x: region.coordinatesX,
+        y: region.coordinatesY,
+      },
+      bodySide: region.bodySide,
+      painLevel: region.painLevel,
+      painType: region.isActive ? 'constant' : 'intermittent', // Aproximação
+      bodyRegion: region.bodyRegion as any, // Cast para tipo compatível
+      description: region.description || '',
+      symptoms: region.symptoms || [],
+      createdAt: region.createdAt,
+      updatedAt: region.updatedAt || region.createdAt,
+      createdBy: '', // Não disponível em BodyMapPainRegion
+      sessionId: region.bodyMapSessionId,
+    }));
+  } catch (error) {
+    console.error('Error fetching body points:', error);
+    return [];
+  }
+}
+
+/**
+ * Adiciona um novo ponto de dor (wrapper para addPainRegion)
+ * Converte BodyPoint → BodyMapPainRegion
+ */
+export async function addBodyPoint(
+  point: Omit<BodyPoint, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<BodyPoint> {
+  try {
+    // Se não tem sessionId, criar uma sessão nova
+    let sessionId = point.sessionId;
+    if (!sessionId) {
+      const session = await createBodyMapSession({
+        patientId: point.patientId,
+        sessionId: undefined,
+        appointmentId: undefined,
+        mainComplaintRegion: point.bodyRegion,
+        mainComplaintDescription: point.description,
+        sessionDate: new Date(),
+        overallPainLevel: point.painLevel,
+        painFree: false,
+        notes: '',
+        createdBy: point.createdBy,
+      });
+      sessionId = session.id;
+    }
+
+    // Converter BodyPoint → BodyMapPainRegion
+    const region = await addPainRegion({
+      bodyMapSessionId: sessionId,
+      patientId: point.patientId,
+      bodyRegion: point.bodyRegion,
+      bodySide: point.bodySide,
+      coordinatesX: point.coordinates.x,
+      coordinatesY: point.coordinates.y,
+      painLevel: point.painLevel,
+      painTypes: [point.painType], // Array de 1 item
+      symptoms: point.symptoms,
+      description: point.description,
+      isMainComplaint: false,
+      isActive: true,
+    });
+
+    // Converter de volta para BodyPoint
+    return {
+      id: region.id,
+      patientId: region.patientId,
+      coordinates: {
+        x: region.coordinatesX,
+        y: region.coordinatesY,
+      },
+      bodySide: region.bodySide,
+      painLevel: region.painLevel,
+      painType: point.painType,
+      bodyRegion: region.bodyRegion as any,
+      description: region.description || '',
+      symptoms: region.symptoms || [],
+      createdAt: region.createdAt,
+      updatedAt: region.updatedAt || region.createdAt,
+      createdBy: point.createdBy,
+      sessionId: region.bodyMapSessionId,
+    };
+  } catch (error) {
+    console.error('Error adding body point:', error);
+    throw new Error('Falha ao adicionar ponto de dor');
+  }
+}
+
+/**
+ * Atualiza um ponto de dor existente (wrapper para updatePainRegion)
+ */
+export async function updateBodyPoint(
+  pointId: string,
+  updates: Partial<Omit<BodyPoint, 'id' | 'createdAt'>>
+): Promise<BodyPoint> {
+  try {
+    // Converter BodyPoint updates → BodyMapPainRegion updates
+    const regionUpdates: Partial<Omit<import('../types').BodyMapPainRegion, 'id' | 'createdAt'>> = {};
+
+    if (updates.bodyRegion) regionUpdates.bodyRegion = updates.bodyRegion;
+    if (updates.painLevel !== undefined) regionUpdates.painLevel = updates.painLevel;
+    if (updates.description) regionUpdates.description = updates.description;
+    if (updates.symptoms) regionUpdates.symptoms = updates.symptoms;
+    if (updates.coordinates) {
+      regionUpdates.coordinatesX = updates.coordinates.x;
+      regionUpdates.coordinatesY = updates.coordinates.y;
+    }
+    if (updates.painType) {
+      regionUpdates.painTypes = [updates.painType];
+    }
+
+    const region = await updatePainRegion(pointId, regionUpdates);
+
+    // Converter de volta para BodyPoint
+    return {
+      id: region.id,
+      patientId: region.patientId,
+      coordinates: {
+        x: region.coordinatesX,
+        y: region.coordinatesY,
+      },
+      bodySide: region.bodySide,
+      painLevel: region.painLevel,
+      painType: region.painTypes[0] as any || 'constant',
+      bodyRegion: region.bodyRegion as any,
+      description: region.description || '',
+      symptoms: region.symptoms || [],
+      createdAt: region.createdAt,
+      updatedAt: region.updatedAt || region.createdAt,
+      createdBy: '',
+      sessionId: region.bodyMapSessionId,
+    };
+  } catch (error) {
+    console.error('Error updating body point:', error);
+    throw new Error('Falha ao atualizar ponto de dor');
+  }
+}
+
+/**
+ * Remove um ponto de dor (wrapper para removePainRegion)
+ */
+export async function deleteBodyPoint(pointId: string): Promise<void> {
+  try {
+    await removePainRegion(pointId);
+  } catch (error) {
+    console.error('Error deleting body point:', error);
+    throw new Error('Falha ao remover ponto de dor');
+  }
+}

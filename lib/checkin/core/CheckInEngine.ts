@@ -12,6 +12,7 @@ import {
 import { FaceRecognitionService } from './FaceRecognition';
 import { QueueManager, QueuePositionImpl } from './QueueManager';
 import { HealthScreening, HealthScreeningResultImpl } from '../validation/HealthScreening';
+import { logger } from '../../logger';
 
 interface AppointmentService {
   validateAppointment(patientId: PatientId, date: Date): Promise<AppointmentValidation>;
@@ -165,19 +166,33 @@ class MockPatientService implements PatientService {
 
 class MockNotificationService implements NotificationService {
   async notifyStaff(checkIn: CheckIn): Promise<void> {
-    console.log(`Staff notification: Patient ${checkIn.patientId} has checked in for appointment ${checkIn.appointmentId}`);
+    logger.info(`Staff notification sent for patient ${checkIn.patientId}.`, {
+      context: 'checkin.engine.mockNotification',
+      data: {
+        patientId: checkIn.patientId,
+        appointmentId: checkIn.appointmentId,
+      },
+    });
   }
 
   async notifyPatient(patientId: PatientId, message: string): Promise<void> {
-    console.log(`Patient notification to ${patientId}: ${message}`);
+    logger.debug('Patient notification sent.', {
+      context: 'checkin.engine.mockNotification',
+      data: { patientId, message },
+    });
   }
 }
 
 class MockPrinterService implements PrinterService {
   async printCheckInReceipt(checkIn: CheckIn): Promise<void> {
-    console.log(`Printing check-in receipt for patient ${checkIn.patientId}`);
-    console.log(`Queue position: ${checkIn.queuePosition}`);
-    console.log(`Estimated wait time: ${checkIn.estimatedWaitTime} minutes`);
+    logger.debug('Printing check-in receipt for patient.', {
+      context: 'checkin.engine.mockPrinter',
+      data: {
+        patientId: checkIn.patientId,
+        queuePosition: checkIn.queuePosition,
+        estimatedWaitTime: checkIn.estimatedWaitTime,
+      },
+    });
   }
 }
 
@@ -195,7 +210,10 @@ export class CheckInEngine {
 
   async processCheckIn(checkInData: CheckInData): Promise<CheckInResult> {
     const sessionId = ++this.sessionCounter;
-    console.log(`Starting check-in session ${sessionId} on device ${checkInData.deviceId}`);
+    logger.info(`Starting check-in session ${sessionId} on device ${checkInData.deviceId}.`, {
+      context: 'checkin.engine.session',
+      data: { sessionId, deviceId: checkInData.deviceId },
+    });
 
     try {
       // 1. Patient identification
@@ -203,54 +221,74 @@ export class CheckInEngine {
 
       // Try facial recognition first if photo provided
       if (checkInData.photo) {
-        console.log('Attempting facial recognition...');
+        logger.debug('Attempting facial recognition.', { context: 'checkin.engine.identification' });
         const recognition = await this.faceRecognition.recognizePatient(checkInData.photo);
 
         if (recognition.type === 'success') {
           patientId = recognition.patientId!;
-          console.log(`Patient identified via facial recognition: ${patientId} (confidence: ${recognition.confidence})`);
+          logger.info('Patient identified via facial recognition.', {
+            context: 'checkin.engine.identification',
+            data: { patientId, confidence: recognition.confidence },
+          });
         } else {
-          console.log(`Facial recognition failed: ${recognition.type}`);
+          logger.warn('Facial recognition failed.', {
+            context: 'checkin.engine.identification',
+            data: { type: recognition.type },
+          });
         }
       }
 
       // Fallback to manual search if facial recognition failed or no photo
       if (!patientId && checkInData.searchCriteria) {
-        console.log('Attempting manual patient search...');
+        logger.debug('Attempting manual patient search.', { context: 'checkin.engine.identification' });
         const searchResult = await this.patientService.searchPatient(checkInData.searchCriteria);
 
         if (searchResult.isUnique()) {
           patientId = searchResult.matches[0].patientId;
-          console.log(`Patient identified via search: ${patientId}`);
+          logger.info('Patient identified via manual search.', {
+            context: 'checkin.engine.identification',
+            data: { patientId },
+          });
         } else if (searchResult.hasMultipleMatches()) {
-          console.log('Multiple patients found - manual selection required');
+          logger.warn('Multiple patient matches found - manual selection required.', {
+            context: 'checkin.engine.identification',
+          });
           return CheckInResultImpl.requiresManualSelection(searchResult.matches);
         }
       }
 
       if (!patientId) {
-        console.log('Patient identification failed');
+        logger.error('Patient identification failed.', { context: 'checkin.engine.identification' });
         return CheckInResultImpl.patientNotFound();
       }
 
       // 2. Validate appointment
-      console.log(`Validating appointment for patient ${patientId}...`);
+      logger.debug('Validating appointment for patient.', {
+        context: 'checkin.engine.appointment',
+        data: { patientId },
+      });
       const appointmentValidation = await this.appointmentService.validateAppointment(patientId, new Date());
 
       if (!appointmentValidation.isValid) {
-        console.log(`Appointment validation failed: ${appointmentValidation.reason}`);
+        logger.warn('Appointment validation failed.', {
+          context: 'checkin.engine.appointment',
+          data: { reason: appointmentValidation.reason },
+        });
         return CheckInResultImpl.noValidAppointment(appointmentValidation.reason!);
       }
 
-      console.log(`Valid appointment found: ${appointmentValidation.appointmentId}`);
+      logger.info('Valid appointment found.', {
+        context: 'checkin.engine.appointment',
+        data: { appointmentId: appointmentValidation.appointmentId },
+      });
 
       // 3. Health screening
-      console.log('Performing health screening...');
+      logger.debug('Performing health screening.', { context: 'checkin.engine.healthScreening' });
       const healthScreening = new HealthScreening(patientId, checkInData.healthAnswers);
       const screeningResult = await healthScreening.performScreening();
 
       if (!screeningResult.isApproved) {
-        console.log('Health screening failed');
+        logger.warn('Health screening failed.', { context: 'checkin.engine.healthScreening' });
         const issues = screeningResult.issues || ['Health screening requirements not met'];
 
         // Generate recommendations for patient
@@ -263,7 +301,7 @@ export class CheckInEngine {
         return CheckInResultImpl.healthScreeningFailed(issues);
       }
 
-      console.log('Health screening passed');
+      logger.info('Health screening passed.', { context: 'checkin.engine.healthScreening' });
 
       // 4. Create check-in record
       const checkIn: CheckIn = {
@@ -284,16 +322,22 @@ export class CheckInEngine {
       };
 
       // 5. Add to queue
-      console.log('Adding patient to queue...');
+      logger.debug('Adding patient to queue.', { context: 'checkin.engine.queue' });
       const queuePosition = await this.queueManager.addToQueue(checkIn);
-      console.log(`Patient added to queue at position ${queuePosition.position} with estimated wait time ${queuePosition.estimatedWaitTime} minutes`);
+      logger.info('Patient added to queue.', {
+        context: 'checkin.engine.queue',
+        data: {
+          position: queuePosition.position,
+          estimatedWaitTime: queuePosition.estimatedWaitTime,
+        },
+      });
 
       // 6. Notify staff
       await this.notificationService.notifyStaff(checkIn);
 
       // 7. Print receipt if requested
       if (checkInData.printReceipt) {
-        console.log('Printing check-in receipt...');
+        logger.debug('Printing check-in receipt...', { context: 'checkin.engine.receipt' });
         await this.printerService.printCheckInReceipt(checkIn);
       }
 
@@ -303,11 +347,17 @@ export class CheckInEngine {
         `Check-in successful! You are #${checkIn.queuePosition} in queue. Estimated wait time: ${checkIn.estimatedWaitTime} minutes.`
       );
 
-      console.log(`Check-in session ${sessionId} completed successfully`);
+      logger.info(`Check-in session ${sessionId} completed successfully.`, {
+        context: 'checkin.engine.session',
+        data: { sessionId },
+      });
       return CheckInResultImpl.success(checkIn);
 
     } catch (error) {
-      console.error(`Check-in session ${sessionId} failed:`, error);
+      logger.error(`Check-in session ${sessionId} failed.`, {
+        context: 'checkin.engine.session',
+        data: { sessionId, error },
+      });
       return new CheckInResultImpl(false, undefined, undefined, `Check-in failed: ${error}`);
     }
   }

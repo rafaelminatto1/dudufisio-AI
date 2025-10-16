@@ -4,6 +4,7 @@ import {
   QueuePosition,
   PatientId
 } from '../../../types/checkin';
+import { logger } from '../../logger';
 
 class PriorityQueue<T> {
   private items: T[] = [];
@@ -288,7 +289,10 @@ export class QueueManager {
     estimatedWaitTime: number
   ): Promise<void> {
     // Mock notification - in production, this would send push notification or SMS
-    console.log(`Notifying patient ${patientId}: Position ${position}, estimated wait: ${estimatedWaitTime} minutes`);
+    logger.info(`Notifying patient ${patientId} of queue position.`, {
+      context: 'checkin.queue.notifyPatientPosition',
+      data: { patientId, position, estimatedWaitTime },
+    });
   }
 
   private async updateQueuePositions(): Promise<void> {
@@ -343,7 +347,14 @@ export class QueueManager {
     const actualDuration = checkIn.additionalData?.actualDuration;
     if (actualDuration) {
       // In production, this would update the ML model or statistical model
-      console.log(`Updating estimation model: predicted vs actual duration`);
+      logger.debug('Updating estimation model with actual duration.', {
+        context: 'checkin.queue.updateEstimationModel',
+        data: {
+          checkInId: checkIn.id,
+          predicted: checkIn.estimatedDuration,
+          actual: actualDuration,
+        },
+      });
     }
   }
 

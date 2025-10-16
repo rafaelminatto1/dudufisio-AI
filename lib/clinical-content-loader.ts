@@ -7,6 +7,7 @@
 import { EXERCISES_LIBRARY } from '../data/exercisesLibraryData';
 import { CLINICAL_PROTOCOLS } from '../data/protocolsLibraryData';
 import { SPECIALIZED_ASSESSMENTS } from '../data/assessmentsLibraryData';
+import { logger } from './logger';
 
 /**
  * Retorna 55+ exercícios profissionais detalhados

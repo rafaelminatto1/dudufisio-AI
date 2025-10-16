@@ -4,6 +4,7 @@
  */
 
 import { supabase } from '../../lib/supabaseClient';
+import { whatsappCrmService } from '../crm/whatsappCrmService';
 
 export interface RateLimitConfig {
   maxMessagesPerHour: number;
@@ -329,7 +330,6 @@ export class RateLimiterService {
         }
 
         // Enviar via serviço de WhatsApp
-        const { whatsappCrmService } = await import('../crm/whatsappCrmService');
         const result = await whatsappCrmService.sendMessage({
           to: msg.recipient,
           message: msg.message,

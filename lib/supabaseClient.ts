@@ -10,6 +10,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/supabase';
+import { logger } from './logger';
 
 // Validar variáveis de ambiente (VITE syntax)
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -52,9 +53,10 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 
 // Log de inicialização (apenas em desenvolvimento)
 if (import.meta.env.DEV) {
-  console.log('✅ Supabase Client inicializado');
-  console.log('📍 URL:', supabaseUrl);
-  console.log('🔑 Key:', supabaseAnonKey.substring(0, 20) + '...');
+  logger.info('Supabase Client inicializado.', {
+    context: 'supabaseClient.init',
+    data: { url: supabaseUrl, keyPreview: supabaseAnonKey.substring(0, 20) + '...' },
+  });
 }
 
 // Helper para verificar se está conectado
@@ -72,7 +74,7 @@ export async function getCurrentUser() {
   const { data: { user }, error } = await supabase.auth.getUser();
   
   if (error) {
-    console.error('Erro ao buscar usuário:', error);
+    logger.error('Erro ao buscar usuário.', { context: 'supabaseClient.getCurrentUser', data: { error } });
     return null;
   }
   

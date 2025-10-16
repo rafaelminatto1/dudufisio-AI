@@ -208,9 +208,10 @@ export function lazyWithRetry<T = any>(
             return;
           }
 
-          logger.warn(
-            `Falha ao carregar módulo, tentando novamente... (${retriesLeft} tentativas restantes)`
-          );
+          logger.warn(`Falha ao carregar módulo, tentando novamente... (${retriesLeft} tentativas restantes)`, {
+            context: 'advancedLazyLoading.lazyWithRetry',
+            data: { retriesLeft, error },
+          });
 
           // Exponential backoff
           const delay = Math.pow(2, maxRetries - retriesLeft) * 1000;

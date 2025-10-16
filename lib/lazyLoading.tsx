@@ -81,7 +81,7 @@ export const LazyPages = {
   InventoryPage: createLazyComponent(() => import('../pages/InventoryPage')),
   UserManagementPage: createLazyComponent(() => import('../pages/UserManagementPage')),
   NotFoundPage: createLazyComponent(() => import('../pages/NotFoundPage')),
-  ErrorPage: createLazyComponent(() => import('../pages/ErrorPage')),
+  // ErrorPage: NÃO é lazy - usado estaticamente no ErrorBoundary (crítico)
   AdminDashboardPage: createLazyComponent(() => import('../pages/AdminDashboardPage')),
   CompleteDashboard: CompleteDashboard,
   SessionFormPage: createLazyComponent(() => import('../pages/SessionFormPage')),
