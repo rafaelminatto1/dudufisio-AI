@@ -128,12 +128,12 @@ const SimpleWaitlistModal: React.FC<SimpleWaitlistModalProps> = ({
           {/* Terapeuta (opcional) */}
           <div className="space-y-2">
             <Label htmlFor="therapist">Terapeuta (opcional)</Label>
-            <Select value={formData.therapistId} onValueChange={(value) => setFormData(prev => ({ ...prev, therapistId: value }))}>
+            <Select value={formData.therapistId || 'any'} onValueChange={(value) => setFormData(prev => ({ ...prev, therapistId: value === 'any' ? '' : value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Qualquer terapeuta" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Qualquer terapeuta</SelectItem>
+                <SelectItem value="any">Qualquer terapeuta</SelectItem>
                 {therapists.map((therapist) => (
                   <SelectItem key={therapist.id} value={therapist.id}>
                     {therapist.name}

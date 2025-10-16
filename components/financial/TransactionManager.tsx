@@ -221,12 +221,12 @@ export function TransactionManager() {
               />
             </div>
             
-            <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
+            <Select value={filters.status || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value === 'all' ? '' : value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os Status</SelectItem>
+                <SelectItem value="all">Todos os Status</SelectItem>
                 <SelectItem value="pending">Pendente</SelectItem>
                 <SelectItem value="paid">Pago</SelectItem>
                 <SelectItem value="overdue">Em Atraso</SelectItem>
@@ -235,12 +235,12 @@ export function TransactionManager() {
               </SelectContent>
             </Select>
 
-            <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
+            <Select value={filters.type || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value === 'all' ? '' : value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os Tipos</SelectItem>
+                <SelectItem value="all">Todos os Tipos</SelectItem>
                 <SelectItem value="package_purchase">Compra de Pacote</SelectItem>
                 <SelectItem value="single_session">Sessão Avulsa</SelectItem>
                 <SelectItem value="installment">Parcela</SelectItem>
@@ -249,12 +249,12 @@ export function TransactionManager() {
               </SelectContent>
             </Select>
 
-            <Select value={filters.paymentMethod} onValueChange={(value) => setFilters(prev => ({ ...prev, paymentMethod: value }))}>
+            <Select value={filters.paymentMethod || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, paymentMethod: value === 'all' ? '' : value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Método de Pagamento" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os Métodos</SelectItem>
+                <SelectItem value="all">Todos os Métodos</SelectItem>
                 <SelectItem value="credit_card">Cartão de Crédito</SelectItem>
                 <SelectItem value="debit_card">Cartão de Débito</SelectItem>
                 <SelectItem value="pix">PIX</SelectItem>

@@ -228,14 +228,14 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
               <div>
                 <label className="text-sm font-medium mb-1 block">Fisioterapeuta</label>
                 <Select
-                  value={filters.therapistId || ''}
-                  onValueChange={(value: string) => handleFilterChange('therapistId', value)}
+                  value={filters.therapistId || 'all'}
+                  onValueChange={(value: string) => handleFilterChange('therapistId', value === 'all' ? undefined : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar fisioterapeuta" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     {therapists.map((therapist) => (
                       <SelectItem key={therapist.id} value={therapist.id}>
                         <div className="flex items-center space-x-2">
@@ -255,14 +255,14 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
               <div>
                 <label className="text-sm font-medium mb-1 block">Status</label>
                 <Select
-                  value={filters.status || ''}
-                  onValueChange={(value: string) => handleFilterChange('status', value)}
+                  value={filters.status || 'all'}
+                  onValueChange={(value: string) => handleFilterChange('status', value === 'all' ? undefined : value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     {statusOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         <div className="flex items-center space-x-2">
@@ -340,14 +340,14 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
               <div>
                 <label className="text-sm font-medium mb-1 block">Observações</label>
                 <Select
-                  value={filters.hasNotes?.toString() || ''}
-                  onValueChange={(value: string) => handleFilterChange('hasNotes', value === 'true')}
+                  value={filters.hasNotes?.toString() || 'all'}
+                  onValueChange={(value: string) => handleFilterChange('hasNotes', value === 'all' ? undefined : value === 'true')}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Filtrar por observações" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     <SelectItem value="true">Com observações</SelectItem>
                     <SelectItem value="false">Sem observações</SelectItem>
                   </SelectContent>

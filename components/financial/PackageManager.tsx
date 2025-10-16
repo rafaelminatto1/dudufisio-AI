@@ -329,12 +329,12 @@ export function PackageManager() {
               />
             </div>
             
-            <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
+            <Select value={filters.status || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value === 'all' ? '' : value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os Status</SelectItem>
+                <SelectItem value="all">Todos os Status</SelectItem>
                 <SelectItem value="active">Ativo</SelectItem>
                 <SelectItem value="expired">Expirado</SelectItem>
                 <SelectItem value="cancelled">Cancelado</SelectItem>
@@ -342,12 +342,12 @@ export function PackageManager() {
               </SelectContent>
             </Select>
 
-            <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
+            <Select value={filters.type || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value === 'all' ? '' : value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os Tipos</SelectItem>
+                <SelectItem value="all">Todos os Tipos</SelectItem>
                 <SelectItem value="sessions_10">10 Sessões</SelectItem>
                 <SelectItem value="sessions_20">20 Sessões</SelectItem>
                 <SelectItem value="monthly_unlimited">Ilimitado Mensal</SelectItem>
@@ -355,12 +355,12 @@ export function PackageManager() {
               </SelectContent>
             </Select>
 
-            <Select value={filters.expiryRange} onValueChange={(value) => setFilters(prev => ({ ...prev, expiryRange: value }))}>
+            <Select value={filters.expiryRange || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, expiryRange: value === 'all' ? '' : value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Expiração" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas as Expirações</SelectItem>
+                <SelectItem value="all">Todas as Expirações</SelectItem>
                 <SelectItem value="expired">Já expirados</SelectItem>
                 <SelectItem value="expiring_week">Expirando em 7 dias</SelectItem>
                 <SelectItem value="expiring_month">Expirando em 30 dias</SelectItem>

@@ -371,12 +371,12 @@ export function InvoiceManager() {
               />
             </div>
             
-            <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
+            <Select value={filters.status || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value === 'all' ? '' : value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os Status</SelectItem>
+                <SelectItem value="all">Todos os Status</SelectItem>
                 <SelectItem value="draft">Rascunho</SelectItem>
                 <SelectItem value="issued">Emitida</SelectItem>
                 <SelectItem value="paid">Paga</SelectItem>
@@ -385,12 +385,12 @@ export function InvoiceManager() {
               </SelectContent>
             </Select>
 
-            <Select value={filters.dateRange} onValueChange={(value) => setFilters(prev => ({ ...prev, dateRange: value }))}>
+            <Select value={filters.dateRange || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, dateRange: value === 'all' ? '' : value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Período" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os Períodos</SelectItem>
+                <SelectItem value="all">Todos os Períodos</SelectItem>
                 <SelectItem value="today">Hoje</SelectItem>
                 <SelectItem value="week">Esta Semana</SelectItem>
                 <SelectItem value="month">Este Mês</SelectItem>
