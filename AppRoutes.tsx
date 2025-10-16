@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component, ErrorInfo, ReactNode, memo, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, Component, ErrorInfo, ReactNode, memo, useMemo, useCallback, lazy } from 'react';
 import { 
   CompleteDashboard, 
   PatientPortalDashboard, 

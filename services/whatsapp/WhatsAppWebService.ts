@@ -4,13 +4,15 @@
  * 
  * Usa whatsapp-web.js para automação gratuita com número business
  * Economia de 60-70% vs WhatsApp Business API
+ * 
+ * TEMPORARIAMENTE DESABILITADO - Causa erro no Vite build
  */
 
-import { Client, LocalAuth, Message } from 'whatsapp-web.js';
+// import { Client, LocalAuth, Message } from 'whatsapp-web.js';
 import { whatsappCrmService } from '../crm/whatsappCrmService';
 
 export class WhatsAppWebService {
-  private client: Client;
+  // private client: Client;
   private isReady = false;
   private reconnectAttempts = 0;
   private readonly maxReconnectAttempts = 5;
@@ -18,8 +20,9 @@ export class WhatsAppWebService {
   private isProcessingQueue = false;
 
   constructor() {
-    console.log('🚀 Inicializando WhatsApp Web Service...');
+    console.log('🚀 WhatsApp Web Service DESABILITADO temporariamente');
     
+    /* TEMPORARIAMENTE DESABILITADO
     this.client = new Client({
       authStrategy: new LocalAuth({
         dataPath: './whatsapp-session'
