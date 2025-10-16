@@ -337,7 +337,8 @@ const AppRoutes: React.FC = () => {
                                     <PerformanceProfiler
                                     id="AppRoutes"
                                     onRender={(id, phase, actualDuration) => {
-                                        if (actualDuration > 50) {
+                                        // Apenas logar em desenvolvimento e para renderizações > 100ms
+                                        if (import.meta.env.DEV && actualDuration > 100) {
                                             console.warn(`⚠️ Performance issue in ${id}: ${actualDuration}ms`);
                                         }
                                     }}

@@ -230,14 +230,18 @@ export const preloadCriticalComponents = () => {
   // Usar requestIdleCallback para preload quando o browser estiver ocioso
   if ('requestIdleCallback' in window) {
     requestIdleCallback(() => {
-      console.log('🔵 [PRELOAD] Iniciando preload de componentes críticos...');
+      if (import.meta.env.DEV) {
+        console.log('🔵 [PRELOAD] Iniciando preload de componentes críticos...');
+      }
       Promise.all([
         import('../pages/CompleteDashboard'),
         import('../components/Sidebar'),
         import('../components/Breadcrumbs')
       ])
       .then(() => {
-        console.log('✅ [PRELOAD] Componentes críticos carregados com sucesso');
+        if (import.meta.env.DEV) {
+          console.log('✅ [PRELOAD] Componentes críticos carregados com sucesso');
+        }
       })
       .catch((error) => {
         console.error('❌ [PRELOAD] Erro ao carregar componentes críticos:', error);
@@ -246,14 +250,18 @@ export const preloadCriticalComponents = () => {
   } else {
     // Fallback para browsers que não suportam requestIdleCallback
     setTimeout(() => {
-      console.log('🔵 [PRELOAD] Iniciando preload de componentes críticos (fallback)...');
+      if (import.meta.env.DEV) {
+        console.log('🔵 [PRELOAD] Iniciando preload de componentes críticos (fallback)...');
+      }
       Promise.all([
         import('../pages/CompleteDashboard'),
         import('../components/Sidebar'),
         import('../components/Breadcrumbs')
       ])
       .then(() => {
-        console.log('✅ [PRELOAD] Componentes críticos carregados com sucesso');
+        if (import.meta.env.DEV) {
+          console.log('✅ [PRELOAD] Componentes críticos carregados com sucesso');
+        }
       })
       .catch((error) => {
         console.error('❌ [PRELOAD] Erro ao carregar componentes críticos:', error);
@@ -266,7 +274,9 @@ export const preloadCriticalComponents = () => {
 export const preloadUserRoleComponents = (userRole: string) => {
   // Usar requestIdleCallback para preload quando o browser estiver ocioso
   const doPreload = () => {
-    console.log(`🔵 [PRELOAD] Carregando componentes para role: ${userRole}`);
+    if (import.meta.env.DEV) {
+      console.log(`🔵 [PRELOAD] Carregando componentes para role: ${userRole}`);
+    }
     
     switch (userRole) {
       case 'Admin':
@@ -277,7 +287,9 @@ export const preloadUserRoleComponents = (userRole: string) => {
           import('../pages/NotificationCenterPage')
         ])
         .then(() => {
-          console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+          if (import.meta.env.DEV) {
+            console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+          }
         })
         .catch((error) => {
           console.error(`❌ [PRELOAD] Erro ao carregar componentes de ${userRole}:`, error);
@@ -290,7 +302,9 @@ export const preloadUserRoleComponents = (userRole: string) => {
           import('../pages/patient-portal/MyExercisesPage')
         ])
         .then(() => {
-          console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+          if (import.meta.env.DEV) {
+            console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+          }
         })
         .catch((error) => {
           console.error(`❌ [PRELOAD] Erro ao carregar componentes de ${userRole}:`, error);
@@ -302,7 +316,9 @@ export const preloadUserRoleComponents = (userRole: string) => {
           import('../pages/partner-portal/ClientListPage')
         ])
         .then(() => {
-          console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+          if (import.meta.env.DEV) {
+            console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+          }
         })
         .catch((error) => {
           console.error(`❌ [PRELOAD] Erro ao carregar componentes de ${userRole}:`, error);
