@@ -1,5 +1,13 @@
 // Mock service for build purposes - Complete function list
 import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// Generic text generation function
+export const generateText = async (prompt: string): Promise<string> => {
+  // Mock implementation
+  await new Promise(resolve => setTimeout(resolve, 100));
+  return 'Mock response from generateText';
+};
+
 export const generateTreatmentProtocol = () => Promise.resolve('');
 export const generateSoapNote = () => Promise.resolve('');
 export const analyzePainPatterns = () => Promise.resolve('');

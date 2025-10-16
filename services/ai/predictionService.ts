@@ -4,7 +4,7 @@
  * Serviço de análise preditiva usando IA (Gemini)
  */
 
-import { geminiService } from '../geminiService';
+import { generateText } from '../geminiService';
 import { Surgery, Pathology, PatientGoal } from '@/types';
 
 export interface PredictionResult {
@@ -79,7 +79,7 @@ Responda APENAS em formato JSON:
 }
 `;
 
-      const response = await geminiService.generateText(prompt);
+      const response = await generateText(prompt);
       const result = JSON.parse(response);
 
       return {
@@ -141,7 +141,7 @@ Responda APENAS em formato JSON:
 }
 `;
 
-      const response = await geminiService.generateText(prompt);
+      const response = await generateText(prompt);
       const result = JSON.parse(response);
 
       return {
@@ -192,7 +192,7 @@ Responda APENAS em formato JSON:
 }
 `;
 
-      const response = await geminiService.generateText(prompt);
+      const response = await generateText(prompt);
       const result = JSON.parse(response);
 
       return {
@@ -245,7 +245,7 @@ Responda APENAS em formato JSON:
 }
 `;
 
-      const response = await geminiService.generateText(prompt);
+      const response = await generateText(prompt);
       const result = JSON.parse(response);
 
       return result.recommendations || [];
@@ -291,7 +291,7 @@ Responda APENAS em formato JSON:
 }
 `;
 
-      const response = await geminiService.generateText(prompt);
+      const response = await generateText(prompt);
       const result = JSON.parse(response);
 
       return {
