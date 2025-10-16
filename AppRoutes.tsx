@@ -145,24 +145,34 @@ const AppContent: React.FC = memo(() => {
     }, []);
 
     useEffect(() => {
-        console.log('🔵 [INIT] Iniciando aplicação...');
+        if (import.meta.env.DEV) {
+            console.log('🔵 [INIT] Iniciando aplicação...');
+        }
         initializeServiceWorkerCallback();
     }, [initializeServiceWorkerCallback]);
 
     // 🚀 Preloading inteligente de componentes - memoizado
     const preloadComponentsCallback = useCallback(() => {
-        console.log('🔵 [INIT] Preloading componentes críticos...');
+        if (import.meta.env.DEV) {
+            console.log('🔵 [INIT] Preloading componentes críticos...');
+        }
         preloadCriticalComponents();
         
-        console.log('🔵 [INIT] Inicializando sistema de lazy loading...');
+        if (import.meta.env.DEV) {
+            console.log('🔵 [INIT] Inicializando sistema de lazy loading...');
+        }
         initializeLazyLoading();
         
         if (user?.role) {
-            console.log(`🔵 [INIT] Preloading componentes para role: ${user.role}`);
+            if (import.meta.env.DEV) {
+                console.log(`🔵 [INIT] Preloading componentes para role: ${user.role}`);
+            }
             preloadUserRoleComponents(user.role);
         }
         
-        console.log('✅ [INIT] Preloading concluído');
+        if (import.meta.env.DEV) {
+            console.log('✅ [INIT] Preloading concluído');
+        }
     }, [user?.role]);
 
     useEffect(() => {
@@ -172,7 +182,6 @@ const AppContent: React.FC = memo(() => {
     // ⏱️ Timeout de segurança para loading
     useEffect(() => {
         if (loading) {
-            console.log('⏱️  [INIT] Iniciando timer de timeout (10s)...');
             const timer = setTimeout(() => {
                 console.error('❌ [TIMEOUT] Carregamento excedeu tempo limite de 10 segundos');
                 setLoadingTimeout(true);
@@ -194,7 +203,9 @@ const AppContent: React.FC = memo(() => {
     }), [isAuthenticated, user, loading]);
 
     useEffect(() => {
-        console.log('🔐 Auth State:', authState);
+        if (import.meta.env.DEV) {
+            console.log('🔐 Auth State:', authState);
+        }
     }, [authState]);
 
     // Memoizar componentes de loading
@@ -270,38 +281,24 @@ const AppContent: React.FC = memo(() => {
 
     // Memoizar dashboard component para evitar re-renderizações desnecessárias
     const dashboardComponent = useMemo(() => {
-        console.log('🔍 [APPROUTES] Dashboard memoizado recalculado:', { 
-            hasUser: !!user, 
-            userRole: user?.role 
-        });
-        
         if (!user) {
-            console.log('❌ [APPROUTES] Dashboard: usuário não encontrado');
             return null;
         }
 
         // Route to appropriate dashboard based on user role
         switch (user.role) {
             case Role.Patient:
-                console.log('🔍 [APPROUTES] Renderizando PatientPortalDashboard');
                 return <PatientPortalDashboard user={user} onLogout={logout} />;
             case Role.EducadorFisico:
-                console.log('🔍 [APPROUTES] Renderizando PartnerPortalDashboard');
                 return <PartnerPortalDashboard user={user} onLogout={logout} />;
             case Role.Admin:
             case Role.Therapist:
             default:
-                console.log('🔍 [APPROUTES] Renderizando CompleteDashboard');
                 return <CompleteDashboard user={user} onLogout={logout} />;
         }
     }, [user, logout]);
 
     if (isAuthenticated && user) {
-        console.log('🔍 [APPROUTES] Usuário autenticado, renderizando dashboard:', {
-            userId: user.id,
-            userRole: user.role,
-            userName: user.name
-        });
         
         return (
             <React.Suspense fallback={DashboardLoadingScreen}>

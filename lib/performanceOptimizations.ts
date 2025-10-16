@@ -418,6 +418,9 @@ export const PerformanceProfiler: React.FC<PerformanceProfilerProps> = ({
   id,
   onRender
 }) => {
+  // Threshold diferente para dev (50ms) e produção (16ms)
+  const performanceThreshold = import.meta.env.DEV ? 50 : 16;
+  
   return React.createElement(
     React.Profiler,
     {
@@ -427,7 +430,8 @@ export const PerformanceProfiler: React.FC<PerformanceProfilerProps> = ({
           onRender(id, phase, actualDuration);
         }
         
-        if (actualDuration > 50) { // Mais de 50ms indica problema de performance
+        // Apenas logar se exceder threshold do ambiente
+        if (actualDuration > performanceThreshold) {
           console.warn(`⚠️ Performance issue in ${id}: ${actualDuration}ms`);
         }
       }

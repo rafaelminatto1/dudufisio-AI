@@ -16,7 +16,18 @@ const sanitizeNullableString = (value: string | null | undefined): string | null
   return trimmed.length > 0 ? trimmed : null;
 };
 
+type ListParams = {
+  q?: string;
+  status?: PatientStatus;
+  sort?: 'name' | 'created_at' | 'updated_at';
+  dir?: 'asc' | 'desc';
+  limit?: number;
+  offset?: number;
+};
+
 class SupabasePatientService {
+  // Expor instância para casos legados que acessam diretamente
+  public supabase = supabase;
   private mapRowToPatient(row: PatientRow): Patient {
     // const status = (row.status || 'active').toLowerCase(); // Field not available in current schema
     const status = 'active'; // Default status
@@ -58,7 +69,7 @@ class SupabasePatientService {
       allergies: undefined,
       medicalAlerts: undefined, // medical_history field not available
       surgeries: undefined,
-      conditions: undefined,
+      conditions: [],
       attachments: undefined,
       trackedMetrics: undefined,
       communicationLogs: undefined,
@@ -157,6 +168,46 @@ class SupabasePatientService {
     }
   }
 
+  async list(params: ListParams = {}): Promise<{ patients: Patient[]; total: number }> {
+    try {
+      const {
+        q,
+        status,
+        sort = 'created_at',
+        dir = 'desc',
+        limit = 20,
+        offset = 0,
+      } = params;
+
+      let query = (supabase as any)
+        .from('patients')
+        .select('*', { count: 'exact' })
+        .order(sort, { ascending: dir === 'asc' });
+
+      if (q && q.trim()) {
+        const term = q.trim();
+        query = query.or(
+          `name.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`
+        );
+      }
+
+      if (status) {
+        // Muitos schemas usam string; se não existir, não filtra
+        query = (query as any).eq('status', status as any);
+      }
+
+      const { data, error, count } = await (query as any).range(offset, offset + limit - 1);
+      if (error) throw error;
+
+      return {
+        patients: (data ?? []).map(this.mapRowToPatient.bind(this)),
+        total: count ?? (data?.length ?? 0),
+      };
+    } catch (error: unknown) {
+      throw new Error(handleSupabaseError(error));
+    }
+  }
+
   async getPatientById(id: string): Promise<Patient | null> {
     try {
       const { data, error } = await supabase
@@ -178,7 +229,7 @@ class SupabasePatientService {
 
   async getPatientsByTherapist(therapistId: string): Promise<Patient[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('patients')
         .select('*')
         .eq('therapist_id', therapistId)
@@ -263,9 +314,33 @@ class SupabasePatientService {
     }
   }
 
+  async archivePatient(id: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('patients')
+        .update({ status: 'inactive' as any, updated_at: new Date().toISOString() })
+        .eq('id', id);
+      if (error) throw error;
+    } catch (error: unknown) {
+      throw new Error(handleSupabaseError(error));
+    }
+  }
+
+  async restorePatient(id: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('patients')
+        .update({ status: 'active' as any, updated_at: new Date().toISOString() })
+        .eq('id', id);
+      if (error) throw error;
+    } catch (error: unknown) {
+      throw new Error(handleSupabaseError(error));
+    }
+  }
+
   async getPatientsByStatus(status: PatientStatus): Promise<Patient[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('patients')
         .select('*')
         .eq('status', status)
@@ -291,11 +366,11 @@ class SupabasePatientService {
       currentMonth.setHours(0, 0, 0, 0);
 
       const [totalResult, activeResult, inactiveResult, newThisMonthResult] = await Promise.all([
-        supabase.from('patients').select('id', { count: 'exact', head: true }),
-        supabase.from('patients').select('id', { count: 'exact', head: true }).eq('status', PatientStatus.Active),
-        supabase.from('patients').select('id', { count: 'exact', head: true }).eq('status', PatientStatus.Inactive),
-        supabase.from('patients').select('id', { count: 'exact', head: true }).gte('created_at', currentMonth.toISOString())
-      ]);
+        (supabase as any).from('patients').select('id', { count: 'exact', head: true }),
+        (supabase as any).from('patients').select('id', { count: 'exact', head: true }).eq('status', PatientStatus.Active),
+        (supabase as any).from('patients').select('id', { count: 'exact', head: true }).eq('status', PatientStatus.Inactive),
+        (supabase as any).from('patients').select('id', { count: 'exact', head: true }).gte('created_at', currentMonth.toISOString())
+      ] as any);
 
       return {
         total: totalResult.count ?? 0,

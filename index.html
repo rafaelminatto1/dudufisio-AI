@@ -26,13 +26,13 @@
       </div>
     </div>
     <script type="module" src="/index.tsx"></script>
-    <script>
-      if ('serviceWorker' in navigator) {
+    <script type="module">
+      // Registrar SW apenas em produção para evitar cache em dev (que pode quebrar HMR)
+      if (import.meta.env && import.meta.env.PROD && 'serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js').then(registration => {
             console.log('✅ ServiceWorker registration successful with scope: ', registration.scope);
 
-            // Request notification permission when service worker is ready
             if (Notification.permission === 'default') {
               console.log('📱 Notification permission not set, will request when user interacts');
             }
@@ -40,6 +40,8 @@
             console.log('❌ ServiceWorker registration failed: ', err);
           });
         });
+      } else {
+        console.log('[SW] Service worker disabled in development');
       }
     </script>
   </body>

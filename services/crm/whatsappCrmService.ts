@@ -176,7 +176,7 @@ export const whatsappCrmService = {
         };
       }
 
-      // 3. Pode enviar! Continuar com envio normal
+      // 3. Pode enviar! Verificar se deve usar WhatsApp Web ou API
       const useWebClient = import.meta.env.VITE_WHATSAPP_USE_WEB_CLIENT === 'true';
       
       let whatsappMessageId: string | undefined;

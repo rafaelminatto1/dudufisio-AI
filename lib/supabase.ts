@@ -3,36 +3,51 @@ import { observability } from './observabilityLogger';
 import type { SupabaseRealtimePayload } from '../types/realtime';
 import type { Database } from '../types/database';
 
-// Use Supabase local credentials for development
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'http://127.0.0.1:54321';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH';
+// Validar variáveis de ambiente (VITE syntax)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Check if we have valid Supabase credentials (local or production)
-const hasValidCredentials = Boolean(
-  supabaseUrl &&
-  supabaseAnonKey &&
-  supabaseAnonKey !== 'your_anon_key_here' &&
-  (supabaseUrl.includes('supabase.co') || supabaseUrl.includes('127.0.0.1') || supabaseUrl.includes('localhost'))
-);
-
-if (!hasValidCredentials) {
-  observability.security.warn('supabase.credentials.missing', {
-    message: 'Supabase credentials not configuradas. Usando modo de desenvolvimento.',
-  });
+// Debug em desenvolvimento
+if (import.meta.env.DEV) {
+  console.log('🔍 [SUPABASE] Verificando variáveis de ambiente...');
+  console.log('   • VITE_SUPABASE_URL:', supabaseUrl ? '✅ Definida' : '❌ Não definida');
+  console.log('   • VITE_SUPABASE_ANON_KEY:', supabaseAnonKey ? '✅ Definida' : '❌ Não definida');
+  console.log('   • Todas as variáveis env:', Object.keys(import.meta.env).filter(k => k.startsWith('VITE_')));
 }
 
-// Use mock values for development if real credentials are not available
-const finalSupabaseUrl = hasValidCredentials ? supabaseUrl : 'https://mock.supabase.local';
-const finalSupabaseAnonKey = hasValidCredentials
-  ? supabaseAnonKey
-  : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vY2siLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY0NTE5MjgwMCwiZXhwIjoxOTYwNzY4ODAwfQ.mock';
+if (!supabaseUrl) {
+  console.error('❌ [SUPABASE] VITE_SUPABASE_URL não encontrada!');
+  console.error('   Verifique se o arquivo .env.local existe na raiz do projeto');
+  console.error('   Conteúdo esperado: VITE_SUPABASE_URL=https://urfxniitfbbvsaskicfo.supabase.co');
+  throw new Error(
+    'VITE_SUPABASE_URL não está definida. ' +
+    'Crie o arquivo .env.local na raiz do projeto. ' +
+    'Veja env.supabase.example para referência. ' +
+    '⚠️ Use VITE_SUPABASE_URL (não NEXT_PUBLIC_SUPABASE_URL)'
+  );
+}
 
-// Create Supabase client with mock mode handling
-export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAnonKey, {
+if (!supabaseAnonKey) {
+  console.error('❌ [SUPABASE] VITE_SUPABASE_ANON_KEY não encontrada!');
+  console.error('   Verifique se o arquivo .env.local existe na raiz do projeto');
+  console.error('   Conteúdo esperado: VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
+  throw new Error(
+    'VITE_SUPABASE_ANON_KEY não está definida. ' +
+    'Adicione a anon key no arquivo .env.local. ' +
+    'Pegue em: https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo/settings/api ' +
+    '⚠️ Use VITE_SUPABASE_ANON_KEY (não NEXT_PUBLIC_SUPABASE_ANON_KEY)'
+  );
+}
+
+// Detectar ambiente baseado na URL
+const environment = supabaseUrl.includes('supabase.co') ? 'production' : 'local';
+
+// Create Supabase client
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
-    autoRefreshToken: hasValidCredentials,
-    persistSession: hasValidCredentials,
-    detectSessionInUrl: hasValidCredentials,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
   },
   global: {
     headers: {
@@ -42,20 +57,25 @@ export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAn
   db: {
     schema: 'public',
   },
-  realtime: hasValidCredentials ? {
+  realtime: {
     params: {
       eventsPerSecond: 10,
     },
-  } : undefined,
+  },
 });
 
 // Log successful Supabase configuration
-if (hasValidCredentials) {
-  observability.config.load('supabase.config.loaded', {
-    environment: supabaseUrl.includes('127.0.0.1') || supabaseUrl.includes('localhost') ? 'local' : 'production',
-    hasValidCredentials: true,
-    url: supabaseUrl
-  });
+observability.config.load('supabase.config.loaded', {
+  environment,
+  hasValidCredentials: true,
+  url: supabaseUrl
+});
+
+// Log de inicialização (apenas em desenvolvimento)
+if (import.meta.env.DEV) {
+  console.log('✅ Supabase Client inicializado (lib/supabase.ts)');
+  console.log('📍 URL:', supabaseUrl);
+  console.log('🌍 Ambiente:', environment);
 }
 
 type SupabaseError = {
@@ -66,8 +86,8 @@ type SupabaseError = {
 export const handleSupabaseError = (error: unknown): string => {
   const supabaseError = (error ?? {}) as SupabaseError;
   
-  // Only log errors in development mode and when not in mock mode
-  if (hasValidCredentials || import.meta.env.DEV) {
+  // Log errors in development mode
+  if (import.meta.env.DEV) {
     observability.database.error('supabase.error', {
       error: supabaseError,
     });
@@ -75,11 +95,6 @@ export const handleSupabaseError = (error: unknown): string => {
 
   const message = supabaseError.message ?? '';
   const code = supabaseError.code;
-
-  // Handle mock mode errors silently
-  if (message.includes('Mock mode') || message.includes('mock.supabase.local')) {
-    return ''; // Don't show error messages for mock mode
-  }
 
   if (message.includes('JWT')) {
     return 'Sessão expirada. Por favor, faça login novamente.';
