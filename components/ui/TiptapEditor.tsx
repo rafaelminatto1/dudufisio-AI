@@ -11,6 +11,7 @@ import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
+import { History } from '@tiptap/extension-history';
 import { 
   Bold, 
   Italic, 
@@ -63,9 +64,14 @@ const TiptapEditor: React.FC<TiptapEditorProps> = ({
         // Desabilitar extensões que serão adicionadas com configuração customizada
         link: false,
         strike: false, // Desabilita strike do StarterKit para evitar conflitos
+        history: false, // Desabilita History do StarterKit para evitar conflitos com React 19
       }),
       TextStyle,
       Color,
+      History.configure({
+        depth: 100,
+        newGroupDelay: 500,
+      }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),

@@ -21,7 +21,21 @@
       "Bash(cat:*)",
       "Bash(npx playwright install:*)",
       "Bash(npx playwright test:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npm run validate-supabase:*)",
+      "Bash(npx tsx:*)",
+      "Read(//c/Users/rafal/AppData/Roaming/Cursor/User/**)",
+      "Bash(dir \"%APPDATA%\\Cursor\\User\" /b)",
+      "Read(//c/Users/rafal/AppData/Roaming/Cursor/logs/20251016T103422/window1/exthost/anysphere.cursor-mcp/**)",
+      "Bash(npx:*)",
+      "Bash(npm search:*)",
+      "Bash(npm uninstall:*)",
+      "Read(//c/Users/rafal/cursor/dudufisio-ai/**)",
+      "Bash(npm run build:fast:*)",
+      "Bash(node scripts/check-bundle-size.cjs:*)",
+      "Bash(dir:*)",
+      "Read(//c/**)",
+      "Bash(awk:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
@@ -30,15 +44,8 @@
   ],
   "mcpServers": {
     "supabase": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@supabase/mcp-server"
-      ],
-      "env": {
-        "SUPABASE_URL": "https://urfxniitfbbvsaskicfo.supabase.co",
-        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnhuaWl0ZmJidnNhc2tpY2ZvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1ODMwNTQ0NywiZXhwIjoyMDczODgxNDQ3fQ.hCnWP5UjAywrkCX1hnHQviu9R3J56y2VZdLI1tKhgWg"
-      }
+      "transport": "http",
+      "url": "https://mcp.supabase.com/mcp"
     }
   }
 }

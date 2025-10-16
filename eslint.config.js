@@ -8,12 +8,35 @@ import tsparser from '@typescript-eslint/parser';
 export default [
   // Base configuration for all files
   {
-    ignores: ['dist/**', 'node_modules/**', '*.log', 'coverage/**']
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      '.next/**',
+      'out/**',
+      'storybook-static/**',
+      'public/build/**',
+      'coverage/**',
+      'reports/**',
+      'playwright-report/**',
+      'test-results/**',
+      'generated/**',
+      'tmp/**',
+      'temp/**',
+      '.vercel/**',
+      '.turbo/**',
+      'scripts/**/*.js',
+      '**/*.min.js',
+      '*.log',
+      '*.zip',
+      '*.svg',
+      'tests/**'
+    ]
   },
   
-  // JavaScript/TypeScript base configuration
+  // TypeScript base configuration
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',
@@ -29,7 +52,7 @@ export default [
         ecmaFeatures: {
           jsx: true
         },
-        project: './tsconfig.json',
+        project: './tsconfig.eslint.json',
         tsconfigRootDir: import.meta.dirname
       }
     },
@@ -57,7 +80,6 @@ export default [
       // TypeScript strict rules for data safety
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
-      '@typescript-eslint/prefer-nullish-coalescing': 'error',
       '@typescript-eslint/prefer-optional-chain': 'error',
 
       // Security rules
@@ -68,6 +90,7 @@ export default [
 
       // LGPD compliance rules
       'no-unused-vars': 'error',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
       '@typescript-eslint/no-unused-vars': 'error',
 
       // React best practices for healthcare apps
@@ -80,11 +103,56 @@ export default [
     }
   },
 
+  // JavaScript base configuration (sem TypeScript project)
+  {
+    files: ['**/*.{js,jsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.es2020,
+        ...globals.node,
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      'no-console': 'error',
+      'no-debugger': 'error',
+      'no-alert': 'error',
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-script-url': 'error',
+      'no-unused-vars': 'error',
+      'prefer-const': 'error',
+      'no-var': 'error',
+    },
+  },
+
   // Test files configuration
   {
     files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],
     rules: {
       'no-console': 'off' // Allow console in tests
+    }
+  },
+
+  // CLI / maintenance scripts
+  {
+    files: ['scripts/**/*.{ts,js}', 'scripts/**/*.{tsx,jsx}'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        project: './tsconfig.eslint.json',
+        tsconfigRootDir: import.meta.dirname
+      },
+      globals: {
+        ...globals.node
+      }
+    },
+    rules: {
+      'no-console': 'off'
     }
   },
 

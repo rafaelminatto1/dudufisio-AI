@@ -5,35 +5,34 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 export default defineConfig({
-  plugins: [react({
-    jsxRuntime: 'automatic',
-    jsxImportSource: 'react',
-    babel: {
-      plugins: [],
-    },
-  }), // Sentry plugin para upload de source maps
-  visualizer({
-    filename: './dist/stats.html',
-    open: false,
-    gzipSize: true,
-    brotliSize: true,
-  }), sentryVitePlugin({
-    org: process.env.SENTRY_ORG,
-    project: process.env.SENTRY_PROJECT,
-    authToken: process.env.SENTRY_AUTH_TOKEN,
-    sourcemaps: {
-      assets: './dist/assets/**',
-      filesToDeleteAfterUpload: './dist/assets/**/*.map'
-    },
-    telemetry: false,
-    silent: true,
-  }), sentryVitePlugin({
-    org: "activity-fisioterapia",
-    project: "dudu-aiok"
-  }), sentryVitePlugin({
-    org: "activity-fisioterapia",
-    project: "dudu-aiok"
-  })],
+  plugins: [
+    react({
+      jsxRuntime: 'automatic',
+      jsxImportSource: 'react',
+      babel: {
+        plugins: [],
+      },
+    }),
+    // Visualizer para análise de bundle
+    visualizer({
+      filename: './dist/stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+    // Sentry plugin - APENAS UMA instância, condicional para evitar erros sem token
+    process.env.SENTRY_AUTH_TOKEN && sentryVitePlugin({
+      org: process.env.SENTRY_ORG || "activity-fisioterapia",
+      project: process.env.SENTRY_PROJECT || "dudu-aiok",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      sourcemaps: {
+        assets: './dist/assets/**',
+        filesToDeleteAfterUpload: './dist/assets/**/*.map'
+      },
+      telemetry: false,
+      silent: !process.env.CI, // Verbose em CI, silencioso localmente
+    })
+  ].filter(Boolean), // Remove plugins undefined
   esbuild: {
     // Mantém console logs para debugging
     logLevel: 'warning',
@@ -110,9 +109,23 @@ export default defineConfig({
       '@radix-ui/react-select',
       '@radix-ui/react-label',
       '@radix-ui/react-dialog',
-      'react-toastify'
+      'react-toastify',
+      // Tiptap extensions para evitar conflitos de bundling
+      '@tiptap/react',
+      '@tiptap/starter-kit',
+      '@tiptap/extension-history',
+      '@tiptap/extension-text-style',
+      '@tiptap/extension-color',
+      '@tiptap/extension-text-align',
+      '@tiptap/extension-underline',
+      '@tiptap/extension-link',
+      '@tiptap/extension-image',
+      '@tiptap/extension-table',
+      '@tiptap/extension-table-row',
+      '@tiptap/extension-table-cell',
+      '@tiptap/extension-table-header'
     ],
-    exclude: ['@playwright/test'],
+    exclude: ['@playwright/test', 'lucide-react'],
     // Otimização forçada apenas quando necessário
     force: false,
     esbuildOptions: {
@@ -135,67 +148,107 @@ export default defineConfig({
         if (id.includes('/scripts/') || id.includes('\\scripts\\')) {
           return true;
         }
+        // Exclui pacotes backend que foram removidos
+        if (id.includes('whatsapp-web.js') ||
+            id.includes('nodemailer') ||
+            id.includes('express') ||
+            id.includes('bull') ||
+            id.includes('redis')) {
+          return true;
+        }
         return false;
       },
       output: {
-        // Code splitting otimizado para reduzir tamanho dos chunks
+        // Code splitting otimizado - CONSOLIDADO para reduzir número de chunks
         manualChunks: (id) => {
           // Vendor chunks - React ecosystem
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
             return 'vendor-react';
           }
-          
+
           // UI libraries
           if (id.includes('node_modules/lucide-react') || id.includes('node_modules/framer-motion')) {
             return 'vendor-ui';
           }
-          
+
           // Forms
           if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform')) {
             return 'vendor-forms';
           }
-          
+
           // Charts
           if (id.includes('node_modules/recharts')) {
             return 'vendor-charts';
           }
-          
+
           // Heavy libraries - Editor
           if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror')) {
             return 'lib-editor';
           }
-          
+
           // Heavy libraries - PDF
           if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas')) {
             return 'lib-pdf';
           }
-          
+
           // Supabase
           if (id.includes('node_modules/@supabase')) {
             return 'vendor-supabase';
           }
-          
+
           // Date utilities
           if (id.includes('node_modules/date-fns')) {
             return 'vendor-date';
           }
-          
+
           // Radix UI
           if (id.includes('node_modules/@radix-ui')) {
             return 'vendor-radix';
           }
-          
-          // Feature chunks baseados em paths
-          if (id.includes('/services/crm/') || id.includes('/components/crm/')) {
-            return 'feature-crm';
+
+          // CONSOLIDAR todos os outros node_modules em um único chunk
+          if (id.includes('node_modules')) {
+            return 'vendor-misc';
           }
-          
-          if (id.includes('/services/whatsapp/') || id.includes('/components/whatsapp/')) {
-            return 'feature-whatsapp';
+
+          // CONSOLIDAR todas as páginas em chunks maiores por funcionalidade
+          if (id.includes('/pages/')) {
+            // Páginas de pacientes
+            if (id.includes('Patient') || id.includes('Acompanhamento') || id.includes('Session') || id.includes('Atendimento')) {
+              return 'pages-patients';
+            }
+            // Páginas de agenda
+            if (id.includes('Agenda') || id.includes('Event') || id.includes('Teleconsulta')) {
+              return 'pages-scheduling';
+            }
+            // Páginas de exercícios e protocolos
+            if (id.includes('Exercise') || id.includes('Protocol') || id.includes('Assessment') || id.includes('Treatment')) {
+              return 'pages-clinical';
+            }
+            // Páginas financeiras e administrativas
+            if (id.includes('Financial') || id.includes('Inventory') || id.includes('Supplies') || id.includes('Backup') || id.includes('Audit')) {
+              return 'pages-admin';
+            }
+            // Páginas de dashboard e relatórios
+            if (id.includes('Dashboard') || id.includes('Report') || id.includes('Analytics') || id.includes('Performance')) {
+              return 'pages-dashboards';
+            }
+            // Páginas de parceiros e comunicação
+            if (id.includes('Partner') || id.includes('Communication') || id.includes('WhatsApp') || id.includes('Notification')) {
+              return 'pages-communication';
+            }
+            // Todas as outras páginas
+            return 'pages-other';
           }
-          
-          if (id.includes('/services/analytics/') || id.includes('/components/analytics/')) {
-            return 'feature-analytics';
+
+          // CONSOLIDAR serviços
+          if (id.includes('/services/')) {
+            return 'app-services';
+          }
+
+          // CONSOLIDAR componentes
+          if (id.includes('/components/')) {
+            return 'app-components';
           }
         },
         entryFileNames: 'assets/[name]-[hash].js',

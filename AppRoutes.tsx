@@ -1,4 +1,4 @@
-import React, { lazy, useState, useEffect, Component, ErrorInfo, ReactNode, memo, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, Component, ErrorInfo, ReactNode, memo, useMemo, useCallback } from 'react';
 import { 
   CompleteDashboard, 
   PatientPortalDashboard, 
@@ -20,6 +20,7 @@ import TwoFactorSetupPage from './pages/auth/TwoFactorSetupPage';
 import { Role } from './types';
 import { initializeServiceWorker } from './lib/serviceWorkerManager';
 import OfflineIndicator from './components/OfflineIndicator';
+import { logger } from './lib/logger';
 import './lib/debugHelpers'; // Instala helpers de debug
 
 // 🛡️ Error Boundary para capturar erros silenciosos
