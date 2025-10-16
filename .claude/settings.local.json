@@ -35,7 +35,8 @@
       "Bash(node scripts/check-bundle-size.cjs:*)",
       "Bash(dir:*)",
       "Read(//c/**)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(node scripts/optimize-icon-imports.cjs:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

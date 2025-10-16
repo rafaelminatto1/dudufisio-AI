@@ -211,44 +211,33 @@ export default defineConfig({
             return 'vendor-misc';
           }
 
-          // CONSOLIDAR todas as páginas em chunks maiores por funcionalidade
-          if (id.includes('/pages/')) {
-            // Páginas de pacientes
-            if (id.includes('Patient') || id.includes('Acompanhamento') || id.includes('Session') || id.includes('Atendimento')) {
-              return 'pages-patients';
-            }
-            // Páginas de agenda
-            if (id.includes('Agenda') || id.includes('Event') || id.includes('Teleconsulta')) {
-              return 'pages-scheduling';
-            }
-            // Páginas de exercícios e protocolos
-            if (id.includes('Exercise') || id.includes('Protocol') || id.includes('Assessment') || id.includes('Treatment')) {
-              return 'pages-clinical';
-            }
-            // Páginas financeiras e administrativas
-            if (id.includes('Financial') || id.includes('Inventory') || id.includes('Supplies') || id.includes('Backup') || id.includes('Audit')) {
-              return 'pages-admin';
-            }
-            // Páginas de dashboard e relatórios
-            if (id.includes('Dashboard') || id.includes('Report') || id.includes('Analytics') || id.includes('Performance')) {
-              return 'pages-dashboards';
-            }
-            // Páginas de parceiros e comunicação
-            if (id.includes('Partner') || id.includes('Communication') || id.includes('WhatsApp') || id.includes('Notification')) {
-              return 'pages-communication';
-            }
-            // Todas as outras páginas
-            return 'pages-other';
-          }
+          // NÃO consolidar páginas - deixar React Lazy Loading fazer o trabalho
+          // Páginas serão code-split automaticamente via React.lazy()
 
-          // CONSOLIDAR serviços
+          // CONSOLIDAR apenas serviços COMPARTILHADOS (não pesados)
           if (id.includes('/services/')) {
+            // Serviços pesados ficam separados para lazy loading
+            if (id.includes('geminiService') || id.includes('clinicalContentService')) {
+              return; // Não consolidar - permitir lazy loading
+            }
+            // Serviços leves podem ser consolidados
             return 'app-services';
           }
 
-          // CONSOLIDAR componentes
+          // CONSOLIDAR apenas componentes UI PEQUENOS (não páginas ou features)
           if (id.includes('/components/')) {
-            return 'app-components';
+            // Componentes pesados ficam separados
+            if (id.includes('BodyMapContainer') ||
+                id.includes('TiptapEditor') ||
+                id.includes('ConsolidatedAITools') ||
+                id.includes('MedicalRecordsDashboard') ||
+                id.includes('ClinicalReportsGenerator')) {
+              return; // Não consolidar - permitir lazy loading
+            }
+            // Apenas componentes UI pequenos
+            if (id.includes('/components/ui/') || id.includes('/components/layout/')) {
+              return 'app-ui-components';
+            }
           }
         },
         entryFileNames: 'assets/[name]-[hash].js',

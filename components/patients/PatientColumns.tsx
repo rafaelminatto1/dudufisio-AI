@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 import { Button } from "../ui/button"
 import {
   DropdownMenu,

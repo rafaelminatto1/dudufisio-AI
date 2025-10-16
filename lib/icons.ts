@@ -36,6 +36,7 @@ export {
   Clock,
   DollarSign,
   AlertCircle,
+  AlertTriangle,
   CheckCircle,
   Info,
   XCircle,
@@ -104,6 +105,7 @@ export {
   CheckSquare,
   Square,
   Circle,
+  Loader,
   Loader2,
   Zap,
   Star,
@@ -135,4 +137,5 @@ export {
   ExternalLink,
   Link as LinkIcon,
   Unlink,
+  Github,
 } from 'lucide-react';
