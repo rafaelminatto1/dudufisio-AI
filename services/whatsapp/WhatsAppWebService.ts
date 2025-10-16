@@ -7,7 +7,6 @@
  */
 
 import { Client, LocalAuth, Message } from 'whatsapp-web.js';
-import qrcode from 'qrcode-terminal';
 import { whatsappCrmService } from '../crm/whatsappCrmService';
 
 export class WhatsAppWebService {
@@ -57,13 +56,14 @@ export class WhatsAppWebService {
       console.log('');
       console.log('⚠️  IMPORTANTE: Use o WhatsApp BUSINESS do número fixo da clínica!');
       console.log('');
-      qrcode.generate(qr, { small: true });
+      console.log('🔗 QR Code (cole em https://api.qrserver.com/v1/create-qr-code/?data=):');
+      console.log(qr);
       console.log('');
       console.log('📱 Como escanear:');
       console.log('   1. Abra o WhatsApp Business no celular');
       console.log('   2. Toque em Mais opções (⋮) > Aparelhos conectados');
       console.log('   3. Toque em Conectar um aparelho');
-      console.log('   4. Aponte a câmera para o QR Code acima');
+      console.log('   4. Aponte a câmera para o QR Code gerado no link acima');
       console.log('');
       console.log('═══════════════════════════════════════════════════════');
     });
