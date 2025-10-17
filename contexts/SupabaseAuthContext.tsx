@@ -29,6 +29,7 @@ interface AuthContextType extends AuthState {
   // Social login
   loginWithGoogle: () => Promise<void>;
   loginWithGitHub: () => Promise<void>;
+  loginWithApple: () => Promise<void>;
 
   // Permissions
   hasPermission: (permission: string) => Promise<boolean>;
@@ -159,6 +160,10 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
     return handleAuthOperation(() => authService.loginWithGitHub());
   };
 
+  const loginWithApple = async (): Promise<void> => {
+    return handleAuthOperation(() => authService.loginWithApple());
+  };
+
   const hasPermission = async (permission: string): Promise<boolean> => {
     return handleAuthOperation(() => authService.hasPermission(permission));
   };
@@ -223,6 +228,7 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
     disable2FA,
     loginWithGoogle,
     loginWithGitHub,
+    loginWithApple,
     hasPermission,
     getUserRole,
     refreshSession,

@@ -2035,6 +2035,39 @@ export interface BodyMapAnalytics {
 
 // --- Calendar Integration Types ---
 
+export interface CalendarPreferences {
+  id: string;
+  patient_id: string;
+  auto_send_calendar_invite: boolean;
+  preferred_calendar: 'google' | 'apple' | 'outlook' | 'yahoo' | 'none';
+  send_via_whatsapp: boolean;
+  send_via_email: boolean;
+  send_via_sms: boolean;
+  reminder_hours_before: number[]; // [24, 2]
+  timezone: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CalendarLink {
+  id: string;
+  appointment_id: string;
+  patient_id: string;
+  universal_link: string; // .ics via Edge Function
+  google_link: string;
+  outlook_link?: string;
+  yahoo_link?: string;
+  apple_ics_link: string;
+  event_title: string;
+  event_date: string;
+  sent_via: string[];
+  link_accessed: boolean;
+  accessed_at?: string;
+  access_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export enum CalendarFeature {
   CREATE_EVENT = 'CREATE_EVENT',
   UPDATE_EVENT = 'UPDATE_EVENT',

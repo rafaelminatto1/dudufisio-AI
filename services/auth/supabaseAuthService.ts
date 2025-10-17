@@ -606,6 +606,21 @@ class SupabaseAuthService {
     }
   }
 
+  async loginWithApple(): Promise<void> {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: 'name email',
+        }
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      throw new Error(handleSupabaseError(error));
+    }
+  }
+
   // Session management
   async refreshSession(): Promise<void> {
     try {
