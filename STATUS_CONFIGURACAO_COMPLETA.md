@@ -65,24 +65,24 @@ Status: Pushed to GitHub → Deploy automático Vercel em andamento
 
 ## 📋 CONFIGURAÇÕES PENDENTES (Manuais)
 
-### 1. ⏳ Obter Credenciais do Twilio
+### 1. ✅ Twilio - JÁ INCLUÍDO NO SUPABASE PRO!
 
-**Você precisa:**
+**🎉 VOCÊ NÃO PRECISA CONFIGURAR TWILIO!**
 
-1. Criar conta Twilio: https://www.twilio.com/try-twilio
-2. Obter credenciais: https://console.twilio.com
-   - Account SID (começa com "AC...")
-   - Auth Token (string longa alfanumérica)
-3. Comprar número: https://console.twilio.com/phone-numbers/search
-   - Formato: +1234567890
+O Supabase Pro já inclui:
+- ✅ Credenciais Twilio configuradas automaticamente
+- ✅ Número de telefone (o mesmo usado para Phone Authentication)
+- ✅ SMS habilitado e pronto para usar
 
-4. Atualizar secrets no Supabase:
-
+**Verificar:**
 ```bash
-supabase secrets set TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxx
-supabase secrets set TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxx
-supabase secrets set TWILIO_PHONE_NUMBER=+1234567890
+supabase secrets list | grep TWILIO
+# Deve mostrar TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
 ```
+
+**Custo:** ~$0.0075/SMS (pay-as-you-go, cobrado junto com o Supabase Pro)
+
+**📖 Leia mais:** [SUPABASE_PRO_TWILIO_INTEGRADO.md](SUPABASE_PRO_TWILIO_INTEGRADO.md)
 
 ### 2. ⏳ Configurar CRON_SECRET no Vercel
 
@@ -289,8 +289,7 @@ WHERE pubname = 'supabase_realtime'
 - [x] Script de teste criado
 
 ### Configurações Pendentes (Você)
-- [ ] Obter credenciais Twilio (Account SID, Auth Token, Phone Number)
-- [ ] Atualizar Supabase secrets com credenciais reais do Twilio
+- [x] ~~Obter credenciais Twilio~~ → **JÁ INCLUÍDO NO SUPABASE PRO!** ✅
 - [ ] Configurar CRON_SECRET no Vercel Dashboard
 - [ ] (Opcional) Configurar Resend API Key
 - [ ] Executar testes manuais no frontend
@@ -338,18 +337,17 @@ WHERE pubname = 'supabase_realtime'
 
 **Para completar 100%:**
 
-1. Acesse https://console.twilio.com e obtenha credenciais
-2. Execute:
-   ```bash
-   supabase secrets set TWILIO_ACCOUNT_SID=ACxxxxxxxx
-   supabase secrets set TWILIO_AUTH_TOKEN=xxxxxxxx
-   supabase secrets set TWILIO_PHONE_NUMBER=+1234567890
-   ```
-3. Adicione CRON_SECRET no Vercel Dashboard
-4. Execute: `node scripts/test-notifications.js`
-5. Teste no frontend
+1. ~~Configurar Twilio~~ → **JÁ ESTÁ CONFIGURADO!** ✅
+2. Adicione CRON_SECRET no Vercel Dashboard (2 min)
+   - https://vercel.com/dudufisio-ai/settings/environment-variables
+   - Nome: `CRON_SECRET`
+   - Valor: `d4e479e543723152271f51109d43dfac28035b7151158957473552c60ae606bf`
+3. Execute: `node scripts/test-notifications.js` (1 min)
+4. Teste no frontend (2 min)
 
-**Estimativa:** 10 minutos ⏱️
+**Estimativa:** 5 minutos ⏱️
+
+**Economia vs estimativa anterior:** 5 minutos economizados! 🎉
 
 ---
 
