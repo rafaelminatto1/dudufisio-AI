@@ -13,22 +13,30 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- =====================================================
 
 -- User roles enum
-CREATE TYPE user_role AS ENUM (
-  'admin',
-  'manager',
-  'therapist',
-  'receptionist',
-  'patient',
-  'partner'
-);
+DO $$ BEGIN
+  CREATE TYPE user_role AS ENUM (
+    'admin',
+    'manager',
+    'therapist',
+    'receptionist',
+    'patient',
+    'partner'
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- User status enum
-CREATE TYPE user_status AS ENUM (
-  'active',
-  'inactive',
-  'suspended',
-  'pending_verification'
-);
+DO $$ BEGIN
+  CREATE TYPE user_status AS ENUM (
+    'active',
+    'inactive',
+    'suspended',
+    'pending_verification'
+  );
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
 
 -- =====================================================
 -- 2. USERS TABLE (Enhanced)
@@ -250,12 +258,14 @@ CREATE TRIGGER update_users_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 
 -- Trigger: Create user profile on auth signup
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW
   EXECUTE FUNCTION handle_new_user();
 
 -- Trigger: Update last login on successful auth
+DROP TRIGGER IF EXISTS on_auth_user_login ON auth.users;
 CREATE TRIGGER on_auth_user_login
   AFTER UPDATE OF last_sign_in_at ON auth.users
   FOR EACH ROW

@@ -236,8 +236,9 @@ CREATE INDEX idx_appointments_start_time ON appointments(start_time);
 CREATE INDEX idx_appointments_end_time ON appointments(end_time);
 CREATE INDEX idx_appointments_status ON appointments(status);
 CREATE INDEX idx_appointments_type ON appointments(type);
-CREATE INDEX idx_appointments_date ON appointments(DATE(start_time));
-CREATE INDEX idx_appointments_therapist_date ON appointments(therapist_id, DATE(start_time));
+-- Removed: Problematic indexes with DATE() function
+-- CREATE INDEX idx_appointments_date ON appointments((start_time::date));
+-- CREATE INDEX idx_appointments_therapist_date ON appointments(therapist_id, (start_time::date));
 
 -- Composite index for conflict detection
 CREATE INDEX idx_appointments_conflict ON appointments(

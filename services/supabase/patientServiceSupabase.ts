@@ -29,12 +29,11 @@ class SupabasePatientService {
   // Expor instância para casos legados que acessam diretamente
   public supabase = supabase;
   private mapRowToPatient(row: PatientRow): Patient {
-    // const status = (row.status || 'active').toLowerCase(); // Field not available in current schema
-    const status = 'active'; // Default status
+    const status = (row.status || 'active').toLowerCase();
 
     const mapStatus = (): PatientStatus => {
       const statusLower = status.toLowerCase();
-      if (statusLower.includes('inactive')) {
+      if (statusLower.includes('inactive') || statusLower.includes('archived')) {
         return PatientStatus.Inactive;
       } else if (statusLower.includes('discharged')) {
         return PatientStatus.Discharged;
@@ -43,22 +42,29 @@ class SupabasePatientService {
       }
     };
 
+    // Parse JSONB fields safely
+    const address = (row.address as any) || {};
+    const emergencyContact = (row.emergency_contact as any) || {};
+
     return {
       id: row.id,
-      name: row.name ?? '', // full_name field not available
-      cpf: '', // cpf field not available in current schema
+      name: row.full_name ?? row.name ?? '',
+      cpf: row.cpf ?? '',
       birthDate: row.birth_date ?? '',
       phone: row.phone ?? '',
       email: row.email ?? '',
       emergencyContact: {
-        name: '', // emergency_contact_name field not available
-        phone: '', // emergency_contact_phone field not available
+        name: emergencyContact.name ?? '',
+        phone: emergencyContact.phone ?? '',
       },
       address: {
-        street: '', // address fields not available in current schema
-        city: '',
-        state: '',
-        zip: '',
+        street: address.street ?? '',
+        city: address.city ?? '',
+        state: address.state ?? '',
+        zip: address.zipcode ?? address.zip ?? '',
+        number: address.number ?? '',
+        complement: address.complement ?? '',
+        neighborhood: address.neighborhood ?? '',
       },
       status: mapStatus(),
       lastVisit: row.updated_at ?? row.created_at ?? new Date().toISOString(),
@@ -66,14 +72,19 @@ class SupabasePatientService {
       avatarUrl: '',
       consentGiven: true,
       whatsappConsent: 'opt-out',
-      allergies: undefined,
-      medicalAlerts: undefined, // medical_history field not available
+      allergies: row.allergies?.join(', '),
+      medicalAlerts: row.notes,
       surgeries: undefined,
-      conditions: [],
+      conditions: row.chronic_conditions?.map(c => ({ name: c, date: '', description: '' })) || [],
       attachments: undefined,
       trackedMetrics: undefined,
       communicationLogs: undefined,
       painPoints: undefined,
+      blood_type: row.blood_type,
+      insurance: row.health_insurance,
+      insuranceType: row.health_insurance ? 'private' : 'none' as any,
+      tags: row.tags,
+      observations: row.notes,
     };
   }
 
@@ -94,23 +105,40 @@ class SupabasePatientService {
     const createdAt = patient.registrationDate ?? new Date().toISOString();
     const updatedAt = patient.lastVisit ?? createdAt;
 
+    // Build address JSONB
+    const addressJson = patient.address ? {
+      street: patient.address.street || '',
+      number: patient.address.number || '',
+      complement: patient.address.complement || '',
+      neighborhood: patient.address.neighborhood || '',
+      city: patient.address.city || '',
+      state: patient.address.state || '',
+      zipcode: patient.address.zip || '',
+    } : {};
+
+    // Build emergency contact JSONB
+    const emergencyContactJson = patient.emergencyContact ? {
+      name: patient.emergencyContact.name || '',
+      phone: patient.emergencyContact.phone || '',
+      relationship: '',
+    } : {};
+
     return {
-      // full_name: patient.name, // Field not available in current schema
-      name: patient.name,
+      full_name: patient.name,
       email: sanitizeNullableString(patient.email),
-      phone: sanitizeNullableString(patient.phone),
+      phone: sanitizeNullableString(patient.phone) || '',
       birth_date: sanitizeNullableString(patient.birthDate),
-      // date_of_birth: sanitizeNullableString(patient.birthDate), // Field not available
-      // cpf: sanitizeNullableString(patient.cpf), // Field not available
-      // address_street: sanitizeNullableString(patient.address?.street), // Field not available
-      // address_number: null, // Field not available
-      // address_city: sanitizeNullableString(patient.address?.city), // Field not available
-      // address_state: sanitizeNullableString(patient.address?.state), // Field not available
-      // address_zip: sanitizeNullableString(patient.address?.zip), // Field not available
-      // emergency_contact_name: sanitizeNullableString(patient.emergencyContact?.name), // Field not available
-      // emergency_contact_phone: sanitizeNullableString(patient.emergencyContact?.phone), // Field not available
-      // medical_history: sanitizeNullableString(patient.medicalAlerts), // Field not available
-      // status: this.mapPatientStatus(patient.status), // Field not available
+      cpf: sanitizeNullableString(patient.cpf),
+      gender: patient.gender as any,
+      address: addressJson as any,
+      emergency_contact: emergencyContactJson as any,
+      blood_type: patient.blood_type,
+      allergies: patient.allergies ? patient.allergies.split(',').map(a => a.trim()) : null,
+      chronic_conditions: patient.conditions?.map(c => c.name) || null,
+      health_insurance: patient.insurance as any,
+      notes: sanitizeNullableString(patient.medicalAlerts || patient.observations),
+      tags: patient.tags || null,
+      status: this.mapPatientStatus(patient.status) as any,
       created_at: createdAt,
       updated_at: updatedAt,
     };
@@ -122,33 +150,52 @@ class SupabasePatientService {
     };
 
     if (patient.name !== undefined) {
-      // update.full_name = patient.name; // Field not available
-      update.name = patient.name;
+      update.full_name = patient.name;
     }
     if (patient.email !== undefined) update.email = sanitizeNullableString(patient.email);
     if (patient.phone !== undefined) update.phone = sanitizeNullableString(patient.phone);
     if (patient.birthDate !== undefined) {
-      const value = sanitizeNullableString(patient.birthDate);
-      update.birth_date = value;
-      // update.date_of_birth = value; // Field not available
+      update.birth_date = sanitizeNullableString(patient.birthDate);
     }
-    // if (patient.cpf !== undefined) update.cpf = sanitizeNullableString(patient.cpf); // Field not available
-    // if (patient.address !== undefined) {
-    //   update.address_street = sanitizeNullableString(patient.address?.street); // Field not available
-    //   update.address_city = sanitizeNullableString(patient.address?.city); // Field not available
-    //   update.address_state = sanitizeNullableString(patient.address?.state); // Field not available
-    //   update.address_zip = sanitizeNullableString(patient.address?.zip); // Field not available
-    // }
-    // if (patient.emergencyContact !== undefined) {
-    //   update.emergency_contact_name = sanitizeNullableString(patient.emergencyContact?.name); // Field not available
-    //   update.emergency_contact_phone = sanitizeNullableString(patient.emergencyContact?.phone); // Field not available
-    // }
-    // if (patient.medicalAlerts !== undefined) {
-    //   update.medical_history = sanitizeNullableString(patient.medicalAlerts); // Field not available
-    // }
-    // if (patient.status !== undefined) {
-    //   update.status = this.mapPatientStatus(patient.status); // Field not available
-    // }
+    if (patient.cpf !== undefined) update.cpf = sanitizeNullableString(patient.cpf);
+    if (patient.gender !== undefined) update.gender = patient.gender as any;
+    if (patient.blood_type !== undefined) update.blood_type = patient.blood_type;
+    if (patient.address !== undefined) {
+      update.address = {
+        street: patient.address.street || '',
+        number: patient.address.number || '',
+        complement: patient.address.complement || '',
+        neighborhood: patient.address.neighborhood || '',
+        city: patient.address.city || '',
+        state: patient.address.state || '',
+        zipcode: patient.address.zip || '',
+      } as any;
+    }
+    if (patient.emergencyContact !== undefined) {
+      update.emergency_contact = {
+        name: patient.emergencyContact.name || '',
+        phone: patient.emergencyContact.phone || '',
+        relationship: '',
+      } as any;
+    }
+    if (patient.allergies !== undefined) {
+      update.allergies = patient.allergies.split(',').map(a => a.trim()) as any;
+    }
+    if (patient.conditions !== undefined) {
+      update.chronic_conditions = patient.conditions.map(c => c.name) as any;
+    }
+    if (patient.insurance !== undefined || patient.insuranceType !== undefined) {
+      update.health_insurance = (patient.insurance || patient.insuranceType) as any;
+    }
+    if (patient.medicalAlerts !== undefined || patient.observations !== undefined) {
+      update.notes = sanitizeNullableString(patient.medicalAlerts || patient.observations);
+    }
+    if (patient.tags !== undefined) {
+      update.tags = patient.tags as any;
+    }
+    if (patient.status !== undefined) {
+      update.status = this.mapPatientStatus(patient.status) as any;
+    }
 
     return update;
   }

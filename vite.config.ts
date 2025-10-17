@@ -153,9 +153,22 @@ export default defineConfig({
       output: {
         // Code splitting otimizado - CONSOLIDADO para reduzir número de chunks
         manualChunks: (id) => {
-          // Vendor chunks - React ecosystem
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) {
+          // 🔥 FIX: React e TODAS as suas dependências em um único chunk
+          // Isso garante que o React esteja disponível antes de qualquer biblioteca que dependa dele
+          if (id.includes('node_modules/react') || 
+              id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/scheduler') ||
+              id.includes('node_modules/react-router') ||
+              id.includes('node_modules/@tanstack') ||
+              id.includes('node_modules/@floating-ui') ||
+              id.includes('node_modules/react-toastify') ||
+              id.includes('node_modules/@radix-ui')) {
             return 'vendor-react';
+          }
+
+          // Consolidar todas as outras dependências em um único chunk
+          if (id.includes('node_modules')) {
+            return 'vendor-misc';
           }
 
           // UI libraries
@@ -193,11 +206,6 @@ export default defineConfig({
             return 'vendor-date';
           }
 
-          // Radix UI
-          if (id.includes('node_modules/@radix-ui')) {
-            return 'vendor-radix';
-          }
-
           // Monitoring & Observability (Sentry + OpenTelemetry)
           if (id.includes('node_modules/@sentry') ||
               id.includes('node_modules/@opentelemetry')) {
@@ -208,13 +216,6 @@ export default defineConfig({
           if (id.includes('node_modules/@aws-sdk') ||
               id.includes('node_modules/@smithy')) {
             return 'vendor-aws';
-          }
-
-          // React Ecosystem Extras (@tanstack, @floating-ui)
-          if (id.includes('node_modules/@tanstack') ||
-              id.includes('node_modules/@floating-ui') ||
-              id.includes('node_modules/react-toastify')) {
-            return 'vendor-react-extras';
           }
 
           // Crypto & Security (@noble, uuid, crypto-js)
