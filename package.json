@@ -65,7 +65,12 @@
     "whatsapp:restart": "pm2 restart whatsapp-service",
     "whatsapp:status": "pm2 status whatsapp-service",
     "generate:clinical-content": "npx tsx scripts/populate-clinical-content.ts",
-    "clinical:generate": "node scripts/run-clinical-content-generator.js"
+    "clinical:generate": "node scripts/run-clinical-content-generator.js",
+    "setup:auth": "node scripts/setup-auth.js",
+    "test:calendar": "node scripts/test-calendar.js",
+    "generate:cron-secret": "node scripts/generate-cron-secret.js",
+    "check:deployment": "node scripts/check-deployment.js",
+    "setup:complete": "npm run setup:auth && npm run check:deployment && npm run test:calendar"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
