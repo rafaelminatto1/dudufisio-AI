@@ -58,7 +58,9 @@
       "Bash(supabase login:*)",
       "Bash(export PGPASSWORD=\"cFfS1GEwkj2fOAE2\")",
       "Bash(psql:*)",
-      "Bash(supabase db reset:*)"
+      "Bash(supabase db reset:*)",
+      "Bash(supabase functions deploy:*)",
+      "Bash(openssl rand:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
