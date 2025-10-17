@@ -1,0 +1,30 @@
+{
+  "root": true,
+  "ignorePatterns": ["dist", "build", "node_modules"],
+  "rules": {},
+  "overrides": [
+    {
+      "files": [
+        "lib/checkin/**/*.{ts,tsx}",
+        "lib/compliance/**/*.{ts,tsx}",
+        "lib/analytics/**/*.{ts,tsx}"
+      ],
+      "rules": {
+        "no-console": "error",
+        "@typescript-eslint/no-explicit-any": "warn"
+      }
+    },
+    {
+      "files": ["lib/logger.ts"],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["**/*.spec.ts", "**/*.test.ts", "tests/**/*"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ]
+}
