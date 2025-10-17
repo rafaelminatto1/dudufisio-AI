@@ -64,7 +64,10 @@
       "Bash(git push)",
       "Bash(supabase secrets set:*)",
       "Bash(supabase secrets:*)",
-      "Bash(node scripts/test-notifications.js:*)"
+      "Bash(node scripts/test-notifications.js:*)",
+      "Bash(node scripts/create-test-user.js:*)",
+      "Bash(node scripts/check-users.js:*)",
+      "Bash(node scripts/sync-auth-users.js:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
