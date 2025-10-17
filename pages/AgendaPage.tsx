@@ -18,6 +18,9 @@ import AgendaViewSelector, { AgendaViewType } from '../components/agenda/AgendaV
 import WaitlistCompactBanner from '../components/agenda/WaitlistCompactBanner';
 import WaitlistModal from '../components/agenda/WaitlistModal';
 import SimpleWaitlistModal from '../components/agenda/SimpleWaitlistModal';
+import WaitlistManagerDialog from '../components/agenda/WaitlistManagerDialog';
+import QuickAddPatientDialog from '../components/agenda/QuickAddPatientDialog';
+import AgendaToolbar from '../components/agenda/AgendaToolbar';
 import { waitlistService } from '../services/waitlistService';
 // Removido: listActiveAlerts - não usamos mais alertas
 import DailyView from '../components/agenda/DailyView';
@@ -27,6 +30,7 @@ import ListView from '../components/agenda/ListView';
 import { useLocation, useNavigate } from 'react-router-dom';
 import SessionFormPage from './SessionFormPage';
 import ResponsiveContainer from '../components/ui/ResponsiveContainer';
+import { useAgendaHotkeys } from '../hooks/useAgendaHotkeys';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
@@ -70,6 +74,10 @@ export default function AgendaPage() {
     const [, setIsLoadingData] = useState(true);
     const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
     const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
+    const [isWaitlistManagerOpen, setIsWaitlistManagerOpen] = useState(false);
+    const [showQuickAddPatient, setShowQuickAddPatient] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showFilters, setShowFilters] = useState(false);
     const { showToast } = useToast();
 
     // Modal states
@@ -82,7 +90,7 @@ export default function AgendaPage() {
     // Drag & Drop states
     const [draggedAppointmentId, setDraggedAppointmentId] = useState<string | null>(null);
 
-    // Filter appointments based on user role
+    // Filter appointments based on user role and search
     const filteredAppointments = useMemo(() => {
         let scopedAppointments = appointments;
 
@@ -105,8 +113,23 @@ export default function AgendaPage() {
             scopedAppointments = scopedAppointments.filter(appointment => appointment.patientId === highlightedPatientId);
         }
 
+        // Search filter
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            scopedAppointments = scopedAppointments.filter(appointment =>
+                appointment.patientName.toLowerCase().includes(query) ||
+                appointment.therapistName?.toLowerCase().includes(query) ||
+                appointment.type.toLowerCase().includes(query)
+            );
+        }
+
         return scopedAppointments;
-    }, [appointments, user, highlightedPatientId]);
+    }, [appointments, user, highlightedPatientId, searchQuery]);
+
+    // Count conflicts
+    const conflictsCount = useMemo(() => {
+        return filteredAppointments.filter(a => a.hasConflict).length;
+    }, [filteredAppointments]);
 
     const refreshWaitlist = useCallback(async () => {
         try {
@@ -254,8 +277,9 @@ export default function AgendaPage() {
         const rect = columnEl.getBoundingClientRect();
         const dropY = e.clientY - rect.top;
 
+        // Snap-to-grid de 30 minutos
         const minutesFromTop = dropY / PIXELS_PER_MINUTE;
-        const snappedMinutes = Math.round(minutesFromTop / 15) * 15;
+        const snappedMinutes = Math.round(minutesFromTop / 30) * 30;
         const newHour = START_HOUR + Math.floor(snappedMinutes / 60);
         const newMinute = snappedMinutes % 60;
 
@@ -285,8 +309,43 @@ export default function AgendaPage() {
     };
 
     const handleViewWaitlist = () => {
-        // TODO: Implementar visualização completa da lista de espera
-        showToast('Visualização completa da lista de espera em desenvolvimento', 'info');
+        setIsWaitlistManagerOpen(true);
+    };
+
+    const handleEditWaitlistEntry = (entry: WaitlistEntry) => {
+        // TODO: Implementar edição de entrada da lista de espera
+        showToast('Edição de entrada em desenvolvimento', 'info');
+    };
+
+    const handleDeleteWaitlistEntry = async (entryId: string) => {
+        if (window.confirm('Tem certeza que deseja remover esta entrada da lista de espera?')) {
+            try {
+                await waitlistService.removeEntry(entryId);
+                showToast('Entrada removida com sucesso!', 'success');
+                await refreshWaitlist();
+            } catch (error) {
+                showToast('Erro ao remover entrada', 'error');
+            }
+        }
+    };
+
+    const handleSavePatient = async (patientData: Omit<Patient, 'id' | 'code' | 'age' | 'bmi' | 'created_at' | 'updated_at'>): Promise<Patient> => {
+        // TODO: Implementar salvamento de paciente
+        const newPatient: Patient = {
+            ...patientData,
+            id: `patient_${Date.now()}`,
+            code: `PAC-${Date.now().toString().slice(-6)}`,
+            age: patientData.birthDate ? new Date().getFullYear() - new Date(patientData.birthDate).getFullYear() : undefined,
+            bmi: patientData.height && patientData.weight ? (patientData.weight / ((patientData.height / 100) ** 2)) : undefined,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+        };
+        return newPatient;
+    };
+
+    const handleSelectPatient = (patient: Patient) => {
+        setPatients(prev => [...prev, patient]);
+        setShowQuickAddPatient(false);
     };
 
     const handleScheduleFromWaitlist = (entry: WaitlistEntry) => {
@@ -325,6 +384,26 @@ export default function AgendaPage() {
             navigate(location.pathname, { replace: true, state: {} });
         }
     }, [locationState, location.pathname, navigate]);
+
+    // Keyboard shortcuts
+    useAgendaHotkeys({
+        onNewAppointment: () => {
+            setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' });
+            setIsFormOpen(true);
+        },
+        onToday: handleToday,
+        onPrevious: handlePrevious,
+        onNext: handleNext,
+        onCloseModal: () => {
+            if (isFormOpen) setIsFormOpen(false);
+            if (selectedAppointment) setSelectedAppointment(null);
+            if (isWaitlistModalOpen) setIsWaitlistModalOpen(false);
+            if (isWaitlistManagerOpen) setIsWaitlistManagerOpen(false);
+        },
+        onToggleFilters: () => setShowFilters(!showFilters),
+        onViewWaitlist: handleViewWaitlist,
+        enabled: !showSessionForm
+    });
 
     // Navigation handlers
     const handlePrevious = () => {
@@ -496,6 +575,22 @@ export default function AgendaPage() {
                                 onViewWaitlist={handleViewWaitlist}
                                 onScheduleFromWaitlist={handleScheduleFromWaitlist}
                             />
+                            
+                            {/* Agenda Toolbar */}
+                            <AgendaToolbar
+                                onNewAppointment={() => {
+                                    setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' });
+                                    setIsFormOpen(true);
+                                }}
+                                onViewWaitlist={handleViewWaitlist}
+                                onToggleFilters={() => setShowFilters(!showFilters)}
+                                onSearch={(query) => setSearchQuery(query)}
+                                searchQuery={searchQuery}
+                                totalAppointments={filteredAppointments.length}
+                                conflictsCount={conflictsCount}
+                                waitlistCount={waitlistEntries.length}
+                                showFilters={showFilters}
+                            />
                         </div>
 
                             {/* Navigation Controls */}
@@ -637,6 +732,26 @@ export default function AgendaPage() {
                 onSave={handleAddToWaitlist}
                 patients={patients}
                 therapists={therapists}
+            />
+
+            {/* Waitlist Manager Dialog */}
+            <WaitlistManagerDialog
+                isOpen={isWaitlistManagerOpen}
+                onClose={() => setIsWaitlistManagerOpen(false)}
+                entries={waitlistEntries}
+                patients={patients}
+                therapists={therapists}
+                onSchedule={handleScheduleFromWaitlist}
+                onEdit={handleEditWaitlistEntry}
+                onDelete={handleDeleteWaitlistEntry}
+            />
+
+            {/* Quick Add Patient Dialog */}
+            <QuickAddPatientDialog
+                isOpen={showQuickAddPatient}
+                onClose={() => setShowQuickAddPatient(false)}
+                onSave={handleSavePatient}
+                onSelectPatient={handleSelectPatient}
             />
         </main>
     );

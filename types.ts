@@ -444,6 +444,11 @@ export interface Appointment {
   reminderSent?: boolean;
   confirmationReceived?: boolean;
   
+  // === Conflitos ===
+  hasConflict?: boolean;
+  conflictReason?: string;
+  conflictResolvedAt?: Date;
+  
   // === Metadata ===
   metadata?: Record<string, any>;
   created_by?: string;

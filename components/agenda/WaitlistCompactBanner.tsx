@@ -81,19 +81,36 @@ const WaitlistCompactBanner: React.FC<WaitlistCompactBannerProps> = ({
               return (
                 <div 
                   key={entry.id} 
+                  role="button"
+                  tabIndex={0}
                   className={cn(
-                    "flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border border-slate-200 text-xs cursor-pointer transition-all duration-200 shadow-sm",
-                    onScheduleFromWaitlist && "hover:bg-blue-50/50 hover:border-blue-300 hover:shadow-md"
+                    "flex items-center justify-between p-3 bg-white/80 backdrop-blur-sm rounded-lg border text-xs transition-all duration-200 shadow-sm group",
+                    onScheduleFromWaitlist 
+                      ? "border-slate-200 cursor-pointer hover:bg-blue-50/50 hover:border-blue-300 hover:shadow-md hover:scale-[1.01] active:scale-[0.99]" 
+                      : "border-slate-200 cursor-default"
                   )}
                   onClick={() => onScheduleFromWaitlist?.(entry)}
+                  onKeyDown={(e) => {
+                    if ((e.key === 'Enter' || e.key === ' ') && onScheduleFromWaitlist) {
+                      e.preventDefault();
+                      onScheduleFromWaitlist(entry);
+                    }
+                  }}
                 >
-                  <div className="flex items-center gap-2 flex-1">
-                    <div className="w-1.5 h-1.5 bg-orange-400 rounded-full flex-shrink-0"></div>
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div className="w-1.5 h-1.5 bg-orange-400 rounded-full flex-shrink-0 animate-pulse"></div>
                     <div className="flex flex-col min-w-0 flex-1">
-                      <span className="font-medium truncate text-slate-900">
-                        {patient?.name || `Paciente #${entry.patientId.slice(-4)}`}
-                      </span>
-                      <div className="flex items-center gap-4 text-slate-600 mt-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium truncate text-slate-900">
+                          {patient?.name || `Paciente #${entry.patientId.slice(-4)}`}
+                        </span>
+                        {entry.urgency > 3 && (
+                          <Badge variant="destructive" className="h-4 px-1.5 text-[10px] bg-red-100 text-red-700 border-red-200 flex-shrink-0">
+                            Urgente
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4 text-slate-600 mt-1 flex-wrap">
                         {entry.preferredStartFrom ? (
                           <div className="flex items-center gap-1.5">
                             <Calendar className="w-3 h-3 text-slate-500" />
@@ -120,26 +137,13 @@ const WaitlistCompactBanner: React.FC<WaitlistCompactBannerProps> = ({
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      {entry.urgency > 3 && (
-                        <Badge variant="destructive" className="h-5 px-2 text-xs bg-red-100 text-red-700 border-red-200">
-                          Urgente
-                        </Badge>
-                      )}
-                      {onScheduleFromWaitlist && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-100/50"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onScheduleFromWaitlist(entry);
-                          }}
-                        >
-                          Agendar
-                        </Button>
-                      )}
-                    </div>
+                    {onScheduleFromWaitlist && (
+                      <div className="flex-shrink-0 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                          <span className="text-blue-600 text-xs font-bold">→</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );

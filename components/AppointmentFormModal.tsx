@@ -14,6 +14,8 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import RecurrenceSelector from './RecurrenceSelector';
 import { findConflict } from '../services/scheduling/conflictDetection';
+import { conflictDetectionService, Conflict } from '../services/scheduling/conflictDetectionService';
+import ConflictWarningDialog from './agenda/ConflictWarningDialog';
 import { generateRecurrences } from '../services/scheduling/recurrenceService';
 import { schedulingSettingsService } from '../services/schedulingSettingsService';
 
@@ -42,6 +44,9 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | undefined>();
   const [availableBlocks, setAvailableBlocks] = useState<ScheduleBlock[]>([]);
   const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
+  const [conflicts, setConflicts] = useState<Conflict[]>([]);
+  const [showConflictDialog, setShowConflictDialog] = useState(false);
+  const [pendingAppointment, setPendingAppointment] = useState<Appointment | null>(null);
   
   const { showToast } = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -133,11 +138,18 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     
     const appointmentsToSave = generateRecurrences(baseAppointment);
     
-    const conflict = findConflict(appointmentsToSave, allAppointments, appointmentToEdit?.id);
-    if (conflict) {
-        showToast(`Conflito com o agendamento de ${conflict.patientName} em ${format(conflict.startTime, 'dd/MM HH:mm')}.`, 'error');
-        setIsSaving(false);
-        return;
+    // Verificar conflitos usando o novo serviço
+    const conflictCheck = await conflictDetectionService.checkConflicts(
+      baseAppointment,
+      allAppointments
+    );
+
+    if (conflictCheck.hasConflicts) {
+      setConflicts(conflictCheck.conflicts);
+      setPendingAppointment(baseAppointment);
+      setShowConflictDialog(true);
+      setIsSaving(false);
+      return;
     }
 
     // In a real scenario, this might be a single batch API call
@@ -151,6 +163,36 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     }
 
     if (success) {
+      onClose();
+    }
+    setIsSaving(false);
+  };
+
+  const handleConfirmConflict = async () => {
+    if (!pendingAppointment) return;
+
+    setIsSaving(true);
+    setShowConflictDialog(false);
+
+    // Marcar o agendamento com conflitos
+    const appointmentWithConflict = conflictDetectionService.markAppointmentWithConflicts(
+      pendingAppointment,
+      conflicts
+    );
+
+    const appointmentsToSave = generateRecurrences(appointmentWithConflict);
+
+    let success = true;
+    for (const app of appointmentsToSave) {
+      const result = await onSave(app);
+      if (!result) {
+        success = false;
+        break;
+      }
+    }
+
+    if (success) {
+      showToast('Agendamento criado com aviso de conflito.', 'warning');
       onClose();
     }
     setIsSaving(false);
@@ -340,6 +382,20 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           </button>
         </div>
       </div>
+
+      {/* Conflict Warning Dialog */}
+      <ConflictWarningDialog
+        isOpen={showConflictDialog}
+        onClose={() => {
+          setShowConflictDialog(false);
+          setConflicts([]);
+          setPendingAppointment(null);
+        }}
+        onConfirm={handleConfirmConflict}
+        conflicts={conflicts}
+        patientName={pendingAppointment?.patientName}
+        therapistName={therapists.find(t => t.id === pendingAppointment?.therapistId)?.name}
+      />
     </div>
   );
 };

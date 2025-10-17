@@ -39,6 +39,8 @@ interface FilterOptions {
   valueMin?: number;
   valueMax?: number;
   hasNotes?: boolean;
+  hasConflict?: boolean;
+  isRecurring?: boolean;
 }
 
 interface AdvancedFiltersProps {
@@ -350,6 +352,42 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
                     <SelectItem value="all">Todos</SelectItem>
                     <SelectItem value="true">Com observações</SelectItem>
                     <SelectItem value="false">Sem observações</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Has Conflict */}
+              <div>
+                <label className="text-sm font-medium mb-1 block">Conflitos</label>
+                <Select
+                  value={filters.hasConflict?.toString() || 'all'}
+                  onValueChange={(value: string) => handleFilterChange('hasConflict', value === 'all' ? undefined : value === 'true')}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filtrar por conflitos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="true">Com conflitos</SelectItem>
+                    <SelectItem value="false">Sem conflitos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Is Recurring */}
+              <div>
+                <label className="text-sm font-medium mb-1 block">Recorrência</label>
+                <Select
+                  value={filters.isRecurring?.toString() || 'all'}
+                  onValueChange={(value: string) => handleFilterChange('isRecurring', value === 'all' ? undefined : value === 'true')}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filtrar por recorrência" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    <SelectItem value="true">Recorrentes</SelectItem>
+                    <SelectItem value="false">Não recorrentes</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

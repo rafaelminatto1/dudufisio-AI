@@ -190,7 +190,8 @@ const MultiTherapistAppointmentCard: React.FC<{
         className={cn(
           "absolute p-1 rounded-md text-white cursor-pointer transition-all overflow-hidden flex flex-col border-l-2 hover:shadow-lg hover:scale-[1.02] font-semibold",
           getAppointmentStyle(appointment.therapistColor, appointment.status),
-          isBeingDragged && 'opacity-50 ring-2 ring-blue-400 scale-105'
+          isBeingDragged && 'opacity-50 ring-2 ring-blue-400 scale-105',
+          appointment.hasConflict && 'ring-2 ring-red-500 ring-opacity-75 animate-pulse'
         )}
         data-testid="appointment-block"
         style={{
@@ -202,13 +203,20 @@ const MultiTherapistAppointmentCard: React.FC<{
         }}
       >
         <div className="flex-grow min-h-0 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-1">
             <div className="font-semibold text-sm leading-tight truncate flex-1" data-testid="appointment-text">
               {appointment.patientName.split(' ')[0] || appointment.patientName}
             </div>
-            {appointment.paymentStatus === 'paid' && (
-              <div className="w-2 h-2 bg-green-300 rounded-full ml-1 flex-shrink-0"></div>
-            )}
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {appointment.hasConflict && (
+                <span className="text-red-300 text-xs" title={appointment.conflictReason}>
+                  ⚠️
+                </span>
+              )}
+              {appointment.paymentStatus === 'paid' && (
+                <div className="w-2 h-2 bg-green-300 rounded-full flex-shrink-0"></div>
+              )}
+            </div>
           </div>
           <div className="text-xs leading-tight font-mono text-white font-bold">
             {format(appointment.startTime, 'HH:mm')}
