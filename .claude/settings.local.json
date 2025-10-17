@@ -62,7 +62,9 @@
       "Bash(supabase functions deploy:*)",
       "Bash(openssl rand:*)",
       "Bash(git push)",
-      "Bash(supabase secrets set:*)"
+      "Bash(supabase secrets set:*)",
+      "Bash(supabase secrets:*)",
+      "Bash(node scripts/test-notifications.js:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
