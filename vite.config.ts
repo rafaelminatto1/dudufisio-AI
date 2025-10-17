@@ -166,6 +166,11 @@ export default defineConfig({
             return 'vendor-react';
           }
 
+          // Consolidar Supabase primeiro para evitar dependências circulares
+          if (id.includes('node_modules/@supabase')) {
+            return 'vendor-supabase';
+          }
+
           // Consolidar todas as outras dependências em um único chunk
           if (id.includes('node_modules')) {
             return 'vendor-misc';
@@ -194,11 +199,6 @@ export default defineConfig({
           // Heavy libraries - PDF
           if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas')) {
             return 'lib-pdf';
-          }
-
-          // Supabase
-          if (id.includes('node_modules/@supabase')) {
-            return 'vendor-supabase';
           }
 
           // Date utilities

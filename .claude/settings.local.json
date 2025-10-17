@@ -60,7 +60,9 @@
       "Bash(psql:*)",
       "Bash(supabase db reset:*)",
       "Bash(supabase functions deploy:*)",
-      "Bash(openssl rand:*)"
+      "Bash(openssl rand:*)",
+      "Bash(git push)",
+      "Bash(supabase secrets set:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
