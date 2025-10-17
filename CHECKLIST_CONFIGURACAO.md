@@ -64,21 +64,15 @@ npm run check:deployment
 5. Gerar Client Secret
 6. Copiar Client ID e Client Secret
 
-#### 2.3 Twilio para SMS OTP
-- [ ] **Configurar Twilio**
+#### 2.3 Phone Auth (SMS OTP)
+- [ ] **Habilitar Phone Auth**
   - [ ] Acessar: https://supabase.com/dashboard/project/[PROJECT_ID]/settings/auth
   - [ ] Role até "Phone Auth"
-  - [ ] Adicionar Twilio Account SID
-  - [ ] Adicionar Twilio Auth Token
-  - [ ] Adicionar Twilio Phone Number
+  - [ ] Habilitar "Enable Phone Auth"
+  - [ ] Confirmar que Twilio está integrado (Supabase Pro)
 
-**Como obter credenciais do Twilio:**
-1. Acessar: https://www.twilio.com
-2. Criar conta ou fazer login
-3. Ir em "Console" > "Account"
-4. Copiar Account SID e Auth Token
-5. Ir em "Phone Numbers" > "Manage" > "Buy a number"
-6. Copiar o número de telefone
+**Nota:** O Supabase Pro já tem Twilio integrado (50.000 MAUs inclusos)
+**Não é necessário configurar credenciais do Twilio manualmente!**
 
 #### 2.4 Executar Migrations
 - [ ] **Executar migrations no banco de dados**
@@ -262,7 +256,7 @@ npm run generate:cron-secret
 - [Vercel Dashboard](https://vercel.com/dashboard)
 - [Google Cloud Console](https://console.cloud.google.com)
 - [Apple Developer](https://developer.apple.com)
-- [Twilio Console](https://www.twilio.com/console)
+- [Supabase Phone Auth](https://supabase.com/docs/guides/auth/phone-login)
 
 ---
 

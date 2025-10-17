@@ -43,13 +43,11 @@ Copie a chave gerada e adicione no Vercel:
    - Client Secret (do Apple Developer)
    - Redirect URL: `https://[PROJECT_ID].supabase.co/auth/v1/callback`
 
-#### Twilio para SMS OTP
+#### Habilitar Phone Auth (SMS OTP)
 1. Acesse: https://supabase.com/dashboard/project/[PROJECT_ID]/settings/auth
 2. Role até "Phone Auth"
-3. Adicione:
-   - Twilio Account SID
-   - Twilio Auth Token
-   - Twilio Phone Number
+3. Habilite "Enable Phone Auth"
+4. **Nota:** Twilio já está integrado no Supabase Pro (50k MAUs inclusos)
 
 #### Executar Migrations
 1. Acesse: https://supabase.com/dashboard/project/[PROJECT_ID]/sql/new
@@ -102,7 +100,7 @@ npm run setup:complete
 - [ ] Adicionar CRON_SECRET no Vercel
 - [ ] Configurar Google OAuth no Supabase
 - [ ] Configurar Apple Sign-In no Supabase
-- [ ] Configurar Twilio no Supabase
+- [ ] Habilitar Phone Auth no Supabase
 - [ ] Executar migrations no Supabase
 - [ ] Testar login com Google
 - [ ] Testar login com Apple
@@ -167,7 +165,7 @@ O site pode estar offline ou em manutenção
 Verifique se os providers OAuth estão configurados no Supabase
 
 ### Erro no OTP
-Verifique se o Twilio está configurado no Supabase
+Verifique se Phone Auth está habilitado no Supabase
 
 ---
 
@@ -187,7 +185,7 @@ Após seguir os passos acima, seu sistema estará 100% funcional!
 - [Vercel Dashboard](https://vercel.com/dashboard)
 - [Google Cloud Console](https://console.cloud.google.com)
 - [Apple Developer](https://developer.apple.com)
-- [Twilio Console](https://www.twilio.com/console)
+- [Supabase Phone Auth](https://supabase.com/docs/guides/auth/phone-login)
 
 ---
 

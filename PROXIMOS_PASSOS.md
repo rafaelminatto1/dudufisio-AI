@@ -47,15 +47,13 @@ O Vercel está fazendo o build do projeto. Você pode acompanhar em:
    - **Client Secret:** (gerado no Apple Developer)
 4. **Redirect URL:** `https://[SEU_PROJECT_ID].supabase.co/auth/v1/callback`
 
-#### 2.3 Configurar Twilio para SMS OTP
+#### 2.3 Habilitar Phone Auth (SMS OTP)
 
 1. Acesse: https://supabase.com/dashboard/project/[SEU_PROJECT_ID]/settings/auth
 2. Role até **Phone Auth**
-3. Configure o Twilio:
-   - **Twilio Account SID:** (da sua conta Twilio)
-   - **Twilio Auth Token:** (da sua conta Twilio)
-   - **Twilio Phone Number:** (seu número Twilio)
-4. **Nota:** 50.000 MAUs inclusos no Supabase Pro
+3. Habilite a opção **Enable Phone Auth**
+4. **Nota:** O Supabase Pro já tem Twilio integrado (50.000 MAUs inclusos)
+5. Não é necessário configurar credenciais do Twilio manualmente!
 
 #### 2.4 Executar Migrations
 
@@ -252,9 +250,10 @@ curl http://localhost:5173/api/calendar/test-appointment-id.ics
 
 ### Problema: OTP não é enviado
 **Solução:**
-1. Verifique se o Twilio está configurado no Supabase
+1. Verifique se Phone Auth está habilitado no Supabase
 2. Confirme que o número está no formato correto (+5511999999999)
 3. Verifique os logs do Supabase para erros
+4. Confirme que está usando Supabase Pro (Twilio integrado)
 
 ### Problema: Links de calendário não são gerados
 **Solução:**

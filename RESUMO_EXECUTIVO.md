@@ -141,7 +141,7 @@ ECONOMIA:                 $240-600/ano
 - Apple Sign-In
 - WhatsApp Business API
 - Email SMTP
-- SMS Twilio (via Supabase)
+- SMS Twilio (integrado no Supabase Pro)
 
 ---
 
@@ -151,7 +151,7 @@ ECONOMIA:                 $240-600/ano
 1. ✅ Aguardar deploy finalizar (5-10 minutos)
 2. ⏳ Configurar Google OAuth no Supabase
 3. ⏳ Configurar Apple Sign-In no Supabase
-4. ⏳ Configurar Twilio para SMS OTP
+4. ⏳ Habilitar Phone Auth no Supabase (SMS OTP já integrado)
 5. ⏳ Executar migrations no Supabase
 6. ⏳ Adicionar CRON_SECRET no Vercel
 

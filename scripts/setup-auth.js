@@ -85,9 +85,9 @@ async function main() {
       description: 'Habilitar Apple Sign-In e adicionar credenciais'
     },
     {
-      title: 'Twilio para SMS OTP',
+      title: 'Phone Auth (SMS OTP)',
       url: 'https://supabase.com/dashboard/project/[PROJECT_ID]/settings/auth',
-      description: 'Configurar Twilio para envio de SMS'
+      description: 'Habilitar Phone Auth (Twilio já integrado no Supabase Pro)'
     },
     {
       title: 'Executar Migrations',

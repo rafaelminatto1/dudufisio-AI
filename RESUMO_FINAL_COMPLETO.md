@@ -271,7 +271,7 @@ npm run setup:auth
 - Apple Sign-In
 - WhatsApp Business API
 - Email SMTP
-- SMS Twilio (via Supabase)
+- SMS Twilio (integrado no Supabase Pro)
 
 ---
 
@@ -349,7 +349,7 @@ npm run setup:auth
 - [Vercel Dashboard](https://vercel.com/dashboard)
 - [Google Cloud Console](https://console.cloud.google.com)
 - [Apple Developer](https://developer.apple.com)
-- [Twilio Console](https://www.twilio.com/console)
+- [Supabase Phone Auth](https://supabase.com/docs/guides/auth/phone-login)
 
 ---
 
