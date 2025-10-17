@@ -11,6 +11,7 @@
 
 import { LGPDComplianceService, LGPDConsent, LGPDAuditLog, LGPDDataBreach } from './LGPDComplianceService';
 import { COFFITOComplianceService, COFFITOSupervision, COFFITODocumentation, COFFITOEthicsViolation } from './COFFITOComplianceService';
+import { logger } from '../logger';
 
 export interface ComplianceStatus {
   overall: 'compliant' | 'non_compliant' | 'requires_attention' | 'critical';
@@ -106,7 +107,9 @@ export class ComplianceManager {
    */
   async getComplianceStatus(): Promise<ComplianceStatus> {
     try {
-      console.log('🔒 Verificando status geral de conformidade');
+      logger.info('Verificando status geral de conformidade.', {
+        context: 'compliance.manager.status'
+      });
       
       // Verificar status LGPD
       const lgpdReport = await this.lgpdService.getComplianceReport({
@@ -145,11 +148,17 @@ export class ComplianceManager {
         lastUpdated: new Date()
       };
       
-      console.log(`✅ Status de conformidade: ${overallStatus}`);
+      logger.info('Status de conformidade calculado.', {
+        context: 'compliance.manager.status',
+        data: { overallStatus }
+      });
       return status;
       
     } catch (error) {
-      console.error('❌ Erro ao verificar status de conformidade:', error);
+      logger.error('Erro ao verificar status de conformidade.', {
+        context: 'compliance.manager.status',
+        data: { error }
+      });
       throw error;
     }
   }
@@ -159,7 +168,9 @@ export class ComplianceManager {
    */
   async getComplianceDashboard(): Promise<ComplianceDashboard> {
     try {
-      console.log('📊 Gerando dashboard de conformidade');
+      logger.info('Gerando dashboard de conformidade.', {
+        context: 'compliance.manager.dashboard'
+      });
       
       const status = await this.getComplianceStatus();
       const alerts = Array.from(this.alerts.values()).filter(alert => !alert.isResolved);
@@ -218,11 +229,16 @@ export class ComplianceManager {
       };
       
       this.dashboard = dashboard;
-      console.log('✅ Dashboard de conformidade gerado');
+      logger.info('Dashboard de conformidade gerado.', {
+        context: 'compliance.manager.dashboard'
+      });
       return dashboard;
       
     } catch (error) {
-      console.error('❌ Erro ao gerar dashboard:', error);
+      logger.error('Erro ao gerar dashboard de conformidade.', {
+        context: 'compliance.manager.dashboard',
+        data: { error }
+      });
       throw error;
     }
   }
@@ -232,7 +248,10 @@ export class ComplianceManager {
    */
   async createAlert(alertData: Omit<ComplianceAlert, 'id' | 'createdAt' | 'updatedAt'>): Promise<ComplianceAlert> {
     try {
-      console.log(`🚨 Criando alerta de conformidade: ${alertData.title}`);
+      logger.warn('Criando alerta de conformidade.', {
+        context: 'compliance.manager.alerts',
+        data: { title: alertData.title, severity: alertData.severity }
+      });
       
       const alert: ComplianceAlert = {
         id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -243,11 +262,17 @@ export class ComplianceManager {
       
       this.alerts.set(alert.id, alert);
       
-      console.log(`✅ Alerta criado: ${alert.id}`);
+      logger.info('Alerta de conformidade criado.', {
+        context: 'compliance.manager.alerts',
+        data: { alertId: alert.id, title: alert.title }
+      });
       return alert;
       
     } catch (error) {
-      console.error('❌ Erro ao criar alerta:', error);
+      logger.error('Erro ao criar alerta de conformidade.', {
+        context: 'compliance.manager.alerts',
+        data: { error, title: alertData.title }
+      });
       throw error;
     }
   }
@@ -257,7 +282,10 @@ export class ComplianceManager {
    */
   async resolveAlert(alertId: string, resolvedBy: string, resolution: string): Promise<boolean> {
     try {
-      console.log(`✅ Resolvendo alerta: ${alertId}`);
+      logger.info('Resolvendo alerta de conformidade.', {
+        context: 'compliance.manager.alerts',
+        data: { alertId }
+      });
       
       const alert = this.alerts.get(alertId);
       if (!alert) {
@@ -271,11 +299,17 @@ export class ComplianceManager {
       
       this.alerts.set(alertId, alert);
       
-      console.log(`✅ Alerta resolvido: ${alertId}`);
+      logger.info('Alerta de conformidade resolvido.', {
+        context: 'compliance.manager.alerts',
+        data: { alertId }
+      });
       return true;
       
     } catch (error) {
-      console.error('❌ Erro ao resolver alerta:', error);
+      logger.error('Erro ao resolver alerta de conformidade.', {
+        context: 'compliance.manager.alerts',
+        data: { alertId, error }
+      });
       throw error;
     }
   }
@@ -289,7 +323,10 @@ export class ComplianceManager {
     generatedBy: string
   ): Promise<ComplianceReport> {
     try {
-      console.log(`📋 Gerando relatório de conformidade: ${type}`);
+      logger.info('Gerando relatório de conformidade.', {
+        context: 'compliance.manager.reports',
+        data: { type }
+      });
       
       let lgpdDetails: any = null;
       let coffitoDetails: any = null;
@@ -322,11 +359,17 @@ export class ComplianceManager {
         attachments: []
       };
       
-      console.log(`✅ Relatório gerado: ${report.id}`);
+      logger.info('Relatório de conformidade gerado.', {
+        context: 'compliance.manager.reports',
+        data: { reportId: report.id, type }
+      });
       return report;
       
     } catch (error) {
-      console.error('❌ Erro ao gerar relatório:', error);
+      logger.error('Erro ao gerar relatório de conformidade.', {
+        context: 'compliance.manager.reports',
+        data: { type, error }
+      });
       throw error;
     }
   }
@@ -340,7 +383,10 @@ export class ComplianceManager {
     alerts: ComplianceAlert[];
   }> {
     try {
-      console.log('🔍 Realizando verificação de conformidade em tempo real');
+      logger.info('Iniciando verificação de conformidade em tempo real.', {
+        context: 'compliance.manager.realTime',
+        data: { requestId: request.id }
+      });
       
       const status = await this.getComplianceStatus();
       const violations: string[] = [];
@@ -378,7 +424,10 @@ export class ComplianceManager {
       
       const isCompliant = violations.length === 0;
       
-      console.log(`✅ Verificação concluída: ${isCompliant ? 'Conforme' : 'Não conforme'}`);
+      logger.info('Verificação de conformidade concluída.', {
+        context: 'compliance.manager.realTime',
+        data: { requestId: request.id, isCompliant }
+      });
       
       return {
         isCompliant,
@@ -387,7 +436,10 @@ export class ComplianceManager {
       };
       
     } catch (error) {
-      console.error('❌ Erro na verificação em tempo real:', error);
+      logger.error('Erro na verificação de conformidade em tempo real.', {
+        context: 'compliance.manager.realTime',
+        data: { requestId: request.id, error }
+      });
       throw error;
     }
   }

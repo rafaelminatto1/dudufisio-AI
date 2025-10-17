@@ -147,33 +147,36 @@ const MultiTherapistAppointmentCard: React.FC<{
 
   const getAppointmentStyle = (color: string, status: AppointmentStatus) => {
     const baseStyles = {
-      purple: 'bg-purple-600 hover:bg-purple-700 shadow-md',
-      emerald: 'bg-emerald-600 hover:bg-emerald-700 shadow-md',
-      blue: 'bg-blue-600 hover:bg-blue-700 shadow-md',
-      amber: 'bg-amber-600 hover:bg-amber-700 shadow-md',
-      red: 'bg-red-600 hover:bg-red-700 shadow-md',
-      indigo: 'bg-indigo-600 hover:bg-indigo-700 shadow-md',
-      teal: 'bg-teal-600 hover:bg-teal-700 shadow-md',
-      sky: 'bg-sky-600 hover:bg-sky-700 shadow-md',
+      purple: 'bg-gradient-to-br from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-lg border-purple-400',
+      emerald: 'bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 shadow-lg border-emerald-400',
+      blue: 'bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 shadow-lg border-blue-400',
+      amber: 'bg-gradient-to-br from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 shadow-lg border-amber-400',
+      red: 'bg-gradient-to-br from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 shadow-lg border-red-400',
+      indigo: 'bg-gradient-to-br from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg border-indigo-400',
+      teal: 'bg-gradient-to-br from-teal-500 to-teal-700 hover:from-teal-600 hover:to-teal-800 shadow-lg border-teal-400',
+      sky: 'bg-gradient-to-br from-sky-500 to-sky-700 hover:from-sky-600 hover:to-sky-800 shadow-lg border-sky-400',
+      pink: 'bg-gradient-to-br from-pink-500 to-pink-700 hover:from-pink-600 hover:to-pink-800 shadow-lg border-pink-400',
+      rose: 'bg-gradient-to-br from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 shadow-lg border-rose-400',
+      cyan: 'bg-gradient-to-br from-cyan-500 to-cyan-700 hover:from-cyan-600 hover:to-cyan-800 shadow-lg border-cyan-400',
     };
 
-    // Map status enum values to CSS classes - sem transparência
+    // Map status enum values to CSS classes - com gradientes vibrantes
     const getStatusStyle = (status: AppointmentStatus): string => {
       switch (status) {
         case AppointmentStatus.Scheduled:
-          return ''; // Default style - cores vivas
+          return ''; // Default style - cores vivas com gradiente
         case AppointmentStatus.Completed:
-          return 'bg-green-600 hover:bg-green-700'; // Verde vibrante para concluídos
+          return 'bg-gradient-to-br from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 border-green-400'; // Verde vibrante
         case AppointmentStatus.Canceled:
-          return 'bg-gray-600 hover:bg-gray-700'; // Cinza sólido para cancelados
+          return 'bg-gradient-to-br from-gray-500 to-gray-700 hover:from-gray-600 hover:to-gray-800 border-gray-400'; // Cinza sólido
         case AppointmentStatus.NoShow:
-          return 'bg-orange-600 hover:bg-orange-700'; // Laranja vibrante para faltas
+          return 'bg-gradient-to-br from-orange-500 to-orange-700 hover:from-orange-600 hover:to-orange-800 border-orange-400'; // Laranja vibrante
         default:
           return '';
       }
     };
 
-    const colorStyle = baseStyles[color as keyof typeof baseStyles] || 'bg-slate-600 hover:bg-slate-700 shadow-md';
+    const colorStyle = baseStyles[color as keyof typeof baseStyles] || 'bg-gradient-to-br from-slate-500 to-slate-700 hover:from-slate-600 hover:to-slate-800 shadow-lg border-slate-400';
     const statusStyle = getStatusStyle(status);
 
     return statusStyle || colorStyle;
@@ -188,10 +191,10 @@ const MultiTherapistAppointmentCard: React.FC<{
         onDragStart={(e) => onDragStart(e, appointment)}
         onDragEnd={onDragEnd}
         className={cn(
-          "absolute p-1 rounded-md text-white cursor-pointer transition-all overflow-hidden flex flex-col border-l-2 hover:shadow-lg hover:scale-[1.02] font-semibold",
+          "absolute p-2 rounded-lg text-white cursor-pointer transition-all overflow-hidden flex flex-col border-l-4 hover:shadow-xl hover:scale-[1.03] font-semibold",
           getAppointmentStyle(appointment.therapistColor, appointment.status),
-          isBeingDragged && 'opacity-50 ring-2 ring-blue-400 scale-105',
-          appointment.hasConflict && 'ring-2 ring-red-500 ring-opacity-75 animate-pulse'
+          isBeingDragged && 'opacity-50 ring-4 ring-blue-400 scale-105',
+          appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse'
         )}
         data-testid="appointment-block"
         style={{
@@ -199,27 +202,32 @@ const MultiTherapistAppointmentCard: React.FC<{
           height: `${height}px`,
           width: `${width}%`,
           left: `${leftOffset}%`,
-          zIndex: 20
+          zIndex: 50
         }}
       >
         <div className="flex-grow min-h-0 flex flex-col justify-between">
-          <div className="flex items-center justify-between gap-1">
-            <div className="font-semibold text-sm leading-tight truncate flex-1" data-testid="appointment-text">
+          <div className="flex items-center justify-between gap-1 mb-1">
+            <div className="font-bold text-sm leading-tight truncate flex-1 drop-shadow-sm" data-testid="appointment-text">
               {appointment.patientName.split(' ')[0] || appointment.patientName}
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-1.5 flex-shrink-0">
               {appointment.hasConflict && (
-                <span className="text-red-300 text-xs" title={appointment.conflictReason}>
+                <span className="text-yellow-200 text-base drop-shadow-md" title={appointment.conflictReason}>
                   ⚠️
                 </span>
               )}
               {appointment.paymentStatus === 'paid' && (
-                <div className="w-2 h-2 bg-green-300 rounded-full flex-shrink-0"></div>
+                <div className="w-2.5 h-2.5 bg-green-300 rounded-full flex-shrink-0 ring-2 ring-white shadow-md"></div>
               )}
             </div>
           </div>
-          <div className="text-xs leading-tight font-mono text-white font-bold">
-            {format(appointment.startTime, 'HH:mm')}
+          <div className="flex items-center justify-between">
+            <div className="text-xs leading-tight font-mono text-white/90 font-bold drop-shadow-sm">
+              {format(appointment.startTime, 'HH:mm')}
+            </div>
+            <div className="text-[10px] font-semibold text-white/80 uppercase tracking-wide">
+              {appointment.type.substring(0, 3)}
+            </div>
           </div>
         </div>
       </div>
@@ -278,29 +286,40 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Header with day info - Compact design */}
-      <div className="mb-3">
-        <div className="grid grid-cols-6 gap-0.5 bg-slate-200 ml-2">
+      {/* Header with day info - Modern design with gradients */}
+      <div className="mb-4">
+        <div className="grid grid-cols-6 gap-1 ml-2">
           {weekDays.map(day => {
             const dayAppointments = appointments.filter(app => isSameDay(app.startTime, day));
             return (
               <Card key={day.toISOString()} className={cn(
-                "p-2 transition-colors",
-                isToday(day) ? "border-sky-300 bg-sky-50" : "border-slate-200 bg-white"
+                "p-3 transition-all duration-200 hover:shadow-md",
+                isToday(day)
+                  ? "border-2 border-sky-500 bg-gradient-to-br from-sky-50 to-blue-50 shadow-md"
+                  : "border border-slate-200 bg-gradient-to-br from-white to-slate-50 hover:border-slate-300"
               )} data-testid="day-header">
                 <div className="text-center">
                   <div className={cn(
-                    "text-sm font-bold",
+                    "text-base font-bold mb-1",
                     isToday(day) ? "text-sky-700" : "text-slate-800"
                   )}>
-                    {format(day, 'd')}/{format(day, 'EEE', { locale: ptBR }).slice(0, 3)}
+                    {format(day, 'd')}
+                  </div>
+                  <div className={cn(
+                    "text-xs font-semibold uppercase tracking-wide mb-1",
+                    isToday(day) ? "text-sky-600" : "text-slate-600"
+                  )}>
+                    {format(day, 'EEE', { locale: ptBR }).slice(0, 3)}
                   </div>
                   {dayAppointments.length > 0 && (
-                    <Badge 
-                      variant={isToday(day) ? "default" : "secondary"} 
-                      className="mt-1 text-xs h-4 px-1.5"
+                    <Badge
+                      variant={isToday(day) ? "default" : "secondary"}
+                      className={cn(
+                        "text-xs h-5 px-2 font-semibold shadow-sm",
+                        isToday(day) && "bg-sky-600 hover:bg-sky-700"
+                      )}
                     >
-                      {dayAppointments.length}
+                      {dayAppointments.length} {dayAppointments.length === 1 ? 'consulta' : 'consultas'}
                     </Badge>
                   )}
                   <HolidayIndicator date={day} />
@@ -312,33 +331,41 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
       </div>
 
       {/* Main calendar grid */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Time column - Professional design */}
-        <div className="w-20 flex-shrink-0 border-r border-slate-200 bg-slate-50/30 ml-2">
-          <div className="h-8 text-center text-xs font-semibold text-slate-700 py-1 bg-slate-100/50">Hora</div>
+      <div className="flex-1 flex overflow-hidden rounded-lg shadow-md">
+        {/* Time column - Modern design */}
+        <div className="w-20 flex-shrink-0 border-r-2 border-slate-300 bg-gradient-to-b from-slate-50 to-slate-100 ml-2">
+          <div className="h-10 text-center text-xs font-bold text-slate-700 py-2 bg-gradient-to-r from-slate-200 to-slate-300 shadow-sm">
+            Hora
+          </div>
           {timeSlots.map(time => (
-            <div key={time} className="h-8 text-right pr-4 text-xs text-slate-600 font-medium flex items-center border-b border-slate-100">
+            <div key={time} className={cn(
+              "h-8 text-right pr-3 text-xs font-semibold flex items-center justify-end border-b transition-colors",
+              time.endsWith('00') ? "border-slate-300 text-slate-700 bg-slate-100/50" : "border-slate-200 text-slate-500"
+            )}>
               {time.endsWith('00') ? time : ''}
             </div>
           ))}
         </div>
 
-        {/* Days grid - Professional design */}
-        <div className="flex-1 grid grid-cols-6 gap-0.5 bg-slate-100/50 overflow-auto scroll-smooth ml-2" data-testid="calendar-grid">
+        {/* Days grid - Modern design with better contrast */}
+        <div className="flex-1 grid grid-cols-6 gap-1 bg-slate-200 overflow-auto scroll-smooth ml-2 p-1 rounded-r-lg" data-testid="calendar-grid">
           {weekDays.map((day) => {
             const dayAppointments = appointments.filter(app => isSameDay(app.startTime, day));
             const groupedAppointments = groupOverlappingAppointments(dayAppointments);
 
             return (
-              <div key={day.toISOString()} className="bg-white relative shadow-sm">
-                {/* Time lines for each hour - Subtle and professional */}
+              <div key={day.toISOString()} className={cn(
+                "relative shadow-md rounded-md overflow-hidden",
+                isToday(day) ? "bg-blue-50/50" : "bg-white"
+              )}>
+                {/* Time lines for each hour - More visible */}
                 {timeSlots.map(time => (
-                  <div 
-                    key={time} 
+                  <div
+                    key={time}
                     className={cn(
                       "absolute w-full border-b transition-colors",
-                      time.endsWith('00') ? "border-slate-200" : "border-slate-100"
-                    )} 
+                      time.endsWith('00') ? "border-slate-300" : "border-slate-200"
+                    )}
                     style={{ top: `${(parseInt(time.split(':')[0]) - START_HOUR) * 60 * PIXELS_PER_MINUTE}px`, height: '1px' }}
                   ></div>
                 ))}
@@ -347,10 +374,15 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                 <div className="relative" style={{ height: `${(END_HOUR - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }}>
                   {/* Drop zones para cada terapeuta */}
                   <div className="absolute inset-0 grid grid-cols-3">
-                    {therapists.slice(0, 3).map((therapist) => (
+                    {therapists.slice(0, 3).map((therapist, therapistIndex) => (
                       <div
                         key={therapist.id}
-                        className="border-r border-slate-200 last:border-r-0 hover:bg-slate-50/50 transition-colors"
+                        className={cn(
+                          "border-r-2 last:border-r-0 hover:bg-blue-50/30 transition-all duration-150",
+                          therapistIndex === 0 && "border-purple-200",
+                          therapistIndex === 1 && "border-emerald-200",
+                          therapistIndex === 2 && "border-blue-200"
+                        )}
                         onDragOver={onDragOver}
                         onDrop={(e) => onDrop(e, day, therapist.id)}
                       >
@@ -358,13 +390,16 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                           <div
                             key={time}
                             className={cn(
-                              "border-t border-slate-100 hover:bg-blue-50/50 transition-colors cursor-pointer group",
-                              time.endsWith('00') ? "border-slate-200" : "border-slate-100",
-                              "hover:shadow-sm"
+                              "border-t hover:bg-gradient-to-r transition-all duration-150 cursor-pointer group relative",
+                              time.endsWith('00') ? "border-slate-300" : "border-slate-200",
+                              "hover:shadow-md hover:scale-[1.01]",
+                              therapistIndex === 0 && "hover:from-purple-50 hover:to-purple-100/50",
+                              therapistIndex === 1 && "hover:from-emerald-50 hover:to-emerald-100/50",
+                              therapistIndex === 2 && "hover:from-blue-50 hover:to-blue-100/50"
                             )}
                             style={{
                               height: `${SLOT_DURATION * PIXELS_PER_MINUTE}px`,
-                              minHeight: '32px' // Altura mínima para slots
+                              minHeight: '32px'
                             }}
                             onClick={(e) => {
                               const rect = e.currentTarget.getBoundingClientRect();
@@ -375,7 +410,12 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                               const minute = snappedMinutes % 60;
                               onSlotClick(day, `${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`, therapist.id);
                             }}
-                          />
+                          >
+                            {/* Hover indicator */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <span className="text-[10px] font-bold text-slate-400">+</span>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     ))}

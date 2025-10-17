@@ -10,6 +10,7 @@
  */
 
 import { Patient, Appointment, User } from '../../types';
+import { logger } from '../logger';
 
 export interface COFFITOGuideline {
   id: string;
@@ -178,7 +179,10 @@ export class COFFITOComplianceService {
     score: number;
   }> {
     try {
-      console.log(`🏥 Verificando conformidade COFFITO para terapeuta ${therapistId}`);
+      logger.info('Verificando conformidade COFFITO para terapeuta.', {
+        context: 'compliance.coffito.check',
+        data: { therapistId }
+      });
       
       const violations: string[] = [];
       const recommendations: string[] = [];
@@ -214,7 +218,10 @@ export class COFFITOComplianceService {
       
       const isCompliant = violations.length === 0 && score >= 80;
       
-      console.log(`✅ Verificação de conformidade concluída: ${isCompliant ? 'Conforme' : 'Não conforme'}`);
+      logger.info('Verificação de conformidade concluída.', {
+        context: 'compliance.coffito.check',
+        data: { therapistId, isCompliant }
+      });
       
       return {
         isCompliant,
@@ -224,7 +231,10 @@ export class COFFITOComplianceService {
       };
       
     } catch (error) {
-      console.error('❌ Erro na verificação de conformidade:', error);
+      logger.error('Erro na verificação de conformidade.', {
+        context: 'compliance.coffito.check',
+        data: { therapistId, error }
+      });
       throw error;
     }
   }
@@ -238,7 +248,10 @@ export class COFFITOComplianceService {
     supervisionData: Omit<COFFITOSupervision, 'id' | 'supervisorId' | 'superviseeId' | 'createdAt' | 'updatedAt'>
   ): Promise<COFFITOSupervision> {
     try {
-      console.log(`🏥 Registrando supervisão: ${supervisorId} -> ${superviseeId}`);
+      logger.info('Registrando supervisão.', {
+        context: 'compliance.coffito.supervision',
+        data: { supervisorId, superviseeId }
+      });
       
       const supervision: COFFITOSupervision = {
         id: `supervision_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -251,11 +264,17 @@ export class COFFITOComplianceService {
       
       this.supervisions.set(supervision.id, supervision);
       
-      console.log(`✅ Supervisão registrada: ${supervision.id}`);
+      logger.info('Supervisão registrada.', {
+        context: 'compliance.coffito.supervision',
+        data: { supervisionId: supervision.id, supervisorId, superviseeId }
+      });
       return supervision;
       
     } catch (error) {
-      console.error('❌ Erro ao registrar supervisão:', error);
+      logger.error('Erro ao registrar supervisão.', {
+        context: 'compliance.coffito.supervision',
+        data: { supervisorId, superviseeId, error }
+      });
       throw error;
     }
   }
@@ -270,7 +289,10 @@ export class COFFITOComplianceService {
     documentationData: Omit<COFFITODocumentation, 'id' | 'patientId' | 'therapistId' | 'appointmentId' | 'createdAt' | 'updatedAt'>
   ): Promise<COFFITODocumentation> {
     try {
-      console.log(`🏥 Validando documentação para paciente ${patientId}`);
+      logger.info('Validando documentação do paciente.', {
+        context: 'compliance.coffito.documentation',
+        data: { patientId }
+      });
       
       const documentation: COFFITODocumentation = {
         id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -291,11 +313,17 @@ export class COFFITOComplianceService {
       
       this.documentations.set(documentation.id, documentation);
       
-      console.log(`✅ Documentação validada: ${documentation.id} (Score: ${documentation.qualityScore})`);
+      logger.info('Documentação validada.', {
+        context: 'compliance.coffito.documentation',
+        data: { documentationId: documentation.id, patientId, qualityScore: documentation.qualityScore }
+      });
       return documentation;
       
     } catch (error) {
-      console.error('❌ Erro ao validar documentação:', error);
+      logger.error('Erro ao validar documentação.', {
+        context: 'compliance.coffito.documentation',
+        data: { patientId, error }
+      });
       throw error;
     }
   }
@@ -308,7 +336,10 @@ export class COFFITOComplianceService {
     educationData: Omit<COFFITOContinuingEducation, 'id' | 'therapistId' | 'createdAt' | 'updatedAt'>
   ): Promise<COFFITOContinuingEducation> {
     try {
-      console.log(`🏥 Registrando educação continuada para terapeuta ${therapistId}`);
+      logger.info('Registrando educação continuada.', {
+        context: 'compliance.coffito.education',
+        data: { therapistId }
+      });
       
       const education: COFFITOContinuingEducation = {
         id: `edu_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -320,11 +351,17 @@ export class COFFITOComplianceService {
       
       this.continuingEducations.set(education.id, education);
       
-      console.log(`✅ Educação continuada registrada: ${education.id}`);
+      logger.info('Educação continuada registrada.', {
+        context: 'compliance.coffito.education',
+        data: { educationId: education.id, therapistId }
+      });
       return education;
       
     } catch (error) {
-      console.error('❌ Erro ao registrar educação continuada:', error);
+      logger.error('Erro ao registrar educação continuada.', {
+        context: 'compliance.coffito.education',
+        data: { therapistId, error }
+      });
       throw error;
     }
   }
@@ -337,7 +374,10 @@ export class COFFITOComplianceService {
     violationData: Omit<COFFITOEthicsViolation, 'id' | 'therapistId' | 'createdAt' | 'updatedAt'>
   ): Promise<COFFITOEthicsViolation> {
     try {
-      console.log(`🚨 Reportando violação ética para terapeuta ${therapistId}`);
+      logger.warn('Reportando possível violação ética.', {
+        context: 'compliance.coffito.ethics',
+        data: { therapistId, type: violation.type, severity: violation.severity }
+      });
       
       const violation: COFFITOEthicsViolation = {
         id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -349,11 +389,17 @@ export class COFFITOComplianceService {
       
       this.ethicsViolations.set(violation.id, violation);
       
-      console.log(`✅ Violação ética reportada: ${violation.id}`);
+      logger.info('Violação ética reportada.', {
+        context: 'compliance.coffito.ethics',
+        data: { violationId: violation.id, therapistId }
+      });
       return violation;
       
     } catch (error) {
-      console.error('❌ Erro ao reportar violação ética:', error);
+      logger.error('Erro ao reportar violação ética.', {
+        context: 'compliance.coffito.ethics',
+        data: { therapistId, error }
+      });
       throw error;
     }
   }
@@ -366,7 +412,10 @@ export class COFFITOComplianceService {
     competencyData: Omit<COFFITOCompetency, 'id' | 'therapistId' | 'createdAt' | 'updatedAt'>
   ): Promise<COFFITOCompetency> {
     try {
-      console.log(`🏥 Avaliando competência para terapeuta ${therapistId}`);
+      logger.info('Avaliando competência profissional.', {
+        context: 'compliance.coffito.competency',
+        data: { therapistId }
+      });
       
       const competency: COFFITOCompetency = {
         id: `comp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -378,11 +427,17 @@ export class COFFITOComplianceService {
       
       this.competencies.set(competency.id, competency);
       
-      console.log(`✅ Competência avaliada: ${competency.id}`);
+      logger.info('Competência avaliada.', {
+        context: 'compliance.coffito.competency',
+        data: { competencyId: competency.id, therapistId, score: competency.score }
+      });
       return competency;
       
     } catch (error) {
-      console.error('❌ Erro ao avaliar competência:', error);
+      logger.error('Erro ao avaliar competência.', {
+        context: 'compliance.coffito.competency',
+        data: { therapistId, error }
+      });
       throw error;
     }
   }
@@ -396,7 +451,10 @@ export class COFFITOComplianceService {
     auditData: Omit<COFFITOAudit, 'id' | 'therapistId' | 'auditorId' | 'createdAt' | 'updatedAt'>
   ): Promise<COFFITOAudit> {
     try {
-      console.log(`🏥 Realizando auditoria para terapeuta ${therapistId}`);
+      logger.info('Iniciando auditoria COFFITO.', {
+        context: 'compliance.coffito.audit',
+        data: { therapistId }
+      });
       
       const audit: COFFITOAudit = {
         id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -420,11 +478,17 @@ export class COFFITOComplianceService {
       
       this.audits.set(audit.id, audit);
       
-      console.log(`✅ Auditoria concluída: ${audit.id} (Grade: ${audit.grade})`);
+      logger.info('Auditoria concluída.', {
+        context: 'compliance.coffito.audit',
+        data: { auditId: audit.id, therapistId, grade: audit.grade }
+      });
       return audit;
       
     } catch (error) {
-      console.error('❌ Erro ao realizar auditoria:', error);
+      logger.error('Erro ao realizar auditoria.', {
+        context: 'compliance.coffito.audit',
+        data: { therapistId, error }
+      });
       throw error;
     }
   }

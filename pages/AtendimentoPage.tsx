@@ -1,36 +1,42 @@
 
 
 
-// pages/AtendimentoPage.tsx
+// pages/AtendimentoPage.tsx - REFATORADO COM REACT HOOK FORM + ZOD
 'use client';
-import React, { useState, useEffect, useCallback } from 'react';
-// FIX: Use namespace import for react-router-dom to fix module resolution issues.
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebounce } from 'use-debounce';
 import * as ReactRouterDOM from 'react-router-dom';
-import { Save, BrainCircuit, Loader, Target, ListChecks, FileText, CheckCircle } from 'lucide-react';
+import { Save, BrainCircuit, Loader, Target, ListChecks, FileText, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react';
 import { usePageData } from '../hooks/usePageData';
 import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
 import * as soapNoteService from '../services/soapNoteService';
 import * as treatmentService from '../services/treatmentService';
-import { Appointment, Patient, SoapNote, TreatmentPlan, ExercisePrescription, AppointmentStatus, MetricResult, TrackedMetric } from '../types';
+import { Appointment, Patient, SoapNote, TreatmentPlan, ExercisePrescription, AppointmentStatus, TrackedMetric } from '../types';
 import PageLoader from '../components/ui/PageLoader';
 import InfoCard from '../components/ui/InfoCard';
 import PainScale from '../components/PainScale';
 import { aiOrchestratorService } from '../services/ai/aiOrchestratorService';
 import TiptapEditor from '../components/ui/TiptapEditor';
-
-interface PainPoint {
-    part: string;
-    observation: string;
-}
+import { Progress } from '../components/ui/progress';
+import {
+  attendanceFormSchema,
+  type AttendanceFormData,
+  type PainPoint,
+  type MetricResult,
+  calculateFormCompletion,
+  isFormReadyToFinish
+} from '../schemas/attendanceFormValidation';
 
 const AtendimentoPage: React.FC = () => {
     const { appointmentId } = ReactRouterDOM.useParams<{ appointmentId: string }>();
     const navigate = ReactRouterDOM.useNavigate();
     const { showToast } = useToast();
 
-    // Data states
+    // Data states (contextuais - não são parte do formulário)
     const [appointment, setAppointment] = useState<Appointment | null>(null);
     const [patient, setPatient] = useState<Patient | null>(null);
     const [treatmentPlan, setTreatmentPlan] = useState<TreatmentPlan | null>(null);
@@ -38,25 +44,35 @@ const AtendimentoPage: React.FC = () => {
     const [previousNote, setPreviousNote] = useState<SoapNote | null>(null);
     const [activeMetrics, setActiveMetrics] = useState<TrackedMetric[]>([]);
 
-    // UI/Form states
+    // UI states
     const [isFinishing, setIsFinishing] = useState(false);
     const [isAiLoading, setIsAiLoading] = useState(false);
-    const [subjective, setSubjective] = useState('');
-    const [objective, setObjective] = useState('');
-    const [assessment, setAssessment] = useState('');
-    const [plan, setPlanState] = useState('');
-    const [painScale, setPainScale] = useState<number | undefined>(undefined);
-    const [attachments, setAttachments] = useState<File[]>([]);
-    const [metricResults, setMetricResults] = useState<Record<string, number | ''>>({});
-    
-    // Auto-save states
     const [saveStatus, setSaveStatus] = useState<'saved' | 'unsaved' | 'saving'>('saved');
     const [currentNote, setCurrentNote] = useState<SoapNote | null>(null);
-    
-    // Body map states
-    const [painPoints, setPainPoints] = useState<PainPoint[]>([]);
     const [, setIsPainModalOpen] = useState(false);
     const [currentPainPoint, setCurrentPainPoint] = useState<PainPoint | null>(null);
+
+    // ✅ REACT HOOK FORM - Gerencia todo o estado do formulário
+    const form = useForm<AttendanceFormData>({
+        resolver: zodResolver(attendanceFormSchema),
+        mode: 'onBlur', // Valida quando o usuário sai do campo
+        defaultValues: {
+            subjective: '',
+            objective: '',
+            assessment: '',
+            plan: '',
+            painScale: undefined,
+            painPoints: [],
+            metricResults: [],
+            attachments: [],
+        },
+    });
+
+    const { watch, setValue, getValues, formState: { errors, isDirty } } = form;
+
+    // Observa mudanças no formulário para auto-save (com debounce)
+    const formData = watch();
+    const [debouncedFormData] = useDebounce(formData, 2500); // 2.5s debounce
     
     const fetchAllData = useCallback(async () => {
         if (!appointmentId) return;
@@ -85,53 +101,57 @@ const AtendimentoPage: React.FC = () => {
     }, [appointmentId]);
 
     const { isLoading, error } = usePageData([fetchAllData], [appointmentId]);
-    
-    // This effect tracks changes and marks content as 'unsaved'
+
+    // ✅ AUTO-SAVE OTIMIZADO COM REACT HOOK FORM + DEBOUNCE
     useEffect(() => {
-        if (isLoading || saveStatus === 'saving') return;
-        setSaveStatus('unsaved');
-    }, [subjective, objective, assessment, plan, painScale, attachments, metricResults, painPoints, isLoading]);
+        // Não salva se estiver carregando, já salvando, ou sem paciente
+        if (isLoading || saveStatus === 'saving' || !patient) return;
 
-    // This effect handles the debounced saving
-    useEffect(() => {
-        if (saveStatus !== 'unsaved' || !patient) return;
+        // Marca como "não salvo" se houver mudanças
+        if (isDirty && saveStatus !== 'unsaved') {
+            setSaveStatus('unsaved');
+        }
 
-        const timer = setTimeout(async () => {
-            setSaveStatus('saving');
-            
-            const painObservations = painPoints.map(p => `- ${p.part}: ${p.observation}`).join('\n');
-            const fullObjective = [objective, painObservations].filter(Boolean).join('\n\n**Observações do Mapa Corporal:**\n');
+        // Auto-save após debounce
+        if (isDirty) {
+            const performAutoSave = async () => {
+                setSaveStatus('saving');
 
-            const formattedMetricResults: MetricResult[] = Object.entries(metricResults)
-                .filter(([, value]) => value !== '' && !isNaN(Number(value)))
-                .map(([metricId, value]) => ({ metricId, value: Number(value) }));
+                const painObservations = debouncedFormData.painPoints
+                    .map(p => `- ${p.part}: ${p.observation}`)
+                    .join('\n');
 
-            const noteData: Partial<SoapNote> & { patientId: string } = {
-                ...(currentNote?.id && { id: currentNote.id }),
-                patientId: patient.id,
-                date: new Date().toLocaleDateString('pt-BR'),
-                subjective,
-                objective: fullObjective,
-                assessment,
-                plan,
-                ...(painScale !== undefined && { painScale }),
-                bodyParts: painPoints.map(p => p.part),
-                metricResults: formattedMetricResults,
-                // attachments are handled only on final save for now
+                const fullObjective = [
+                    debouncedFormData.objective,
+                    painObservations
+                ].filter(Boolean).join('\n\n**Observações do Mapa Corporal:**\n');
+
+                const noteData: Partial<SoapNote> & { patientId: string } = {
+                    ...(currentNote?.id && { id: currentNote.id }),
+                    patientId: patient.id,
+                    date: new Date().toLocaleDateString('pt-BR'),
+                    subjective: debouncedFormData.subjective,
+                    objective: fullObjective,
+                    assessment: debouncedFormData.assessment,
+                    plan: debouncedFormData.plan,
+                    ...(debouncedFormData.painScale !== undefined && { painScale: debouncedFormData.painScale }),
+                    bodyParts: debouncedFormData.painPoints.map(p => p.part),
+                    metricResults: debouncedFormData.metricResults,
+                };
+
+                try {
+                    const savedNote = await soapNoteService.saveNote(noteData);
+                    setCurrentNote(savedNote);
+                    setSaveStatus('saved');
+                } catch {
+                    showToast('Falha no salvamento automático.', 'error');
+                    setSaveStatus('unsaved');
+                }
             };
 
-            try {
-                const savedNote = await soapNoteService.saveNote(noteData);
-                setCurrentNote(savedNote);
-                setSaveStatus('saved');
-            } catch {
-                showToast('Falha no salvamento automático.', 'error');
-                setSaveStatus('unsaved');
-            }
-        }, 2500); // 2.5 second debounce
-
-        return () => clearTimeout(timer);
-    }, [saveStatus, patient, currentNote, subjective, objective, assessment, plan, painScale, metricResults, painPoints, showToast]);
+            performAutoSave();
+        }
+    }, [debouncedFormData, isLoading, patient, currentNote, isDirty, saveStatus, showToast]);
 
 
     const handleFinishSession = async () => {
@@ -154,9 +174,9 @@ const AtendimentoPage: React.FC = () => {
         }
     };
     
-    const handleMetricChange = (metricId: string, value: string) => {
-        setMetricResults(prev => ({ ...prev, [metricId]: value === '' ? '' : Number(value) }));
-    };
+    // ✅ HELPERS E INDICADORES
+    const formCompletion = useMemo(() => calculateFormCompletion(formData), [formData]);
+    const canFinish = useMemo(() => isFormReadyToFinish(formData), [formData]);
 
     const getSaveStatusIndicator = () => {
         switch (saveStatus) {
@@ -166,49 +186,88 @@ const AtendimentoPage: React.FC = () => {
             default: return null;
         }
     };
-    
-    // --- Other handlers (AI, PainMap, etc) ---
-    const handleGenerateSuggestion = async () => {
-        if ((!subjective.trim() && !objective.trim()) || isAiLoading) return;
+
+    // ✅ HANDLERS COM REACT HOOK FORM
+    const handleMetricChange = useCallback((metricId: string, value: string) => {
+        const currentMetrics = getValues('metricResults');
+        const metricValue = value === '' ? 0 : Number(value);
+
+        // Remove ou atualiza métrica
+        const updatedMetrics = value === ''
+            ? currentMetrics.filter(m => m.metricId !== metricId)
+            : [
+                ...currentMetrics.filter(m => m.metricId !== metricId),
+                { metricId, value: metricValue }
+            ];
+
+        setValue('metricResults', updatedMetrics, { shouldDirty: true });
+    }, [getValues, setValue]);
+
+    const handleGenerateSuggestion = useCallback(async () => {
+        const { subjective, objective, painScale } = getValues();
+
+        if ((!subjective?.trim() && !objective?.trim()) || isAiLoading) return;
+
         setIsAiLoading(true);
         const prompt = `Com base no relato Subjetivo e nos achados Objetivos a seguir, sugira uma Avaliação e um Plano de tratamento concisos. Nível de dor: ${painScale || 'N/A'}. Formate a resposta com "AVALIAÇÃO:" e "PLANO:".\nS: "${subjective}"\nO: "${objective}"`;
+
         try {
-          const response = await aiOrchestratorService.getResponse(prompt);
-          const content = response.content;
-          const assessmentMatch = content.match(/AVALIAÇÃO:([\s\S]*?)PLANO:/i);
-          const planMatch = content.match(/PLANO:([\s\S]*)/i);
-          if (assessmentMatch?.[1]) setAssessment(assessmentMatch[1].trim());
-          if (planMatch?.[1]) setPlanState(planMatch[1].trim());
-          showToast('Sugestão gerada pela IA.', 'info');
-        } catch (error) { showToast('Erro ao gerar sugestão.', 'error'); } finally { setIsAiLoading(false); }
-    };
-    const handleSelectPart = (part: string) => {
+            const response = await aiOrchestratorService.getResponse(prompt);
+            const content = response.content;
+            const assessmentMatch = content.match(/AVALIAÇÃO:([\s\S]*?)PLANO:/i);
+            const planMatch = content.match(/PLANO:([\s\S]*)/i);
+
+            if (assessmentMatch?.[1]) setValue('assessment', assessmentMatch[1].trim(), { shouldDirty: true });
+            if (planMatch?.[1]) setValue('plan', planMatch[1].trim(), { shouldDirty: true });
+
+            showToast('Sugestão gerada pela IA.', 'info');
+        } catch (error) {
+            showToast('Erro ao gerar sugestão.', 'error');
+        } finally {
+            setIsAiLoading(false);
+        }
+    }, [getValues, setValue, isAiLoading, showToast]);
+
+    const handleSelectPart = useCallback((part: string) => {
+        const painPoints = getValues('painPoints');
         const existingPoint = painPoints.find(p => p.part === part);
         setCurrentPainPoint(existingPoint || { part, observation: '' });
         setIsPainModalOpen(true);
-    };
-    const handleSavePainPoint = () => {
+    }, [getValues]);
+
+    const handleSavePainPoint = useCallback(() => {
         if (!currentPainPoint) return;
+
+        const painPoints = getValues('painPoints');
+
         if (currentPainPoint.observation.trim() === '') {
-            handleDeletePainPoint(currentPainPoint.part);
+            // Remove ponto de dor se observação estiver vazia
+            setValue('painPoints', painPoints.filter(p => p.part !== currentPainPoint.part), { shouldDirty: true });
         } else {
-             setPainPoints(prev => {
-                const existing = prev.find(p => p.part === currentPainPoint.part);
-                if (existing) return prev.map(p => p.part === currentPainPoint.part ? currentPainPoint : p);
-                return [...prev, currentPainPoint];
-             });
+            // Adiciona ou atualiza ponto de dor
+            const existing = painPoints.find(p => p.part === currentPainPoint.part);
+            const updatedPoints = existing
+                ? painPoints.map(p => p.part === currentPainPoint.part ? currentPainPoint : p)
+                : [...painPoints, currentPainPoint];
+
+            setValue('painPoints', updatedPoints, { shouldDirty: true });
         }
+
         setIsPainModalOpen(false);
         setCurrentPainPoint(null);
-    };
-    const handleDeletePainPoint = (part: string) => {
-        setPainPoints(prev => prev.filter(p => p.part !== part));
-    };
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    }, [currentPainPoint, getValues, setValue]);
+
+    const handleDeletePainPoint = useCallback((part: string) => {
+        const painPoints = getValues('painPoints');
+        setValue('painPoints', painPoints.filter(p => p.part !== part), { shouldDirty: true });
+    }, [getValues, setValue]);
+
+    const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            setAttachments(prev => [...prev, ...Array.from(e.target.files!)]);
+            const currentAttachments = getValues('attachments');
+            setValue('attachments', [...currentAttachments, ...Array.from(e.target.files)], { shouldDirty: true });
         }
-    };
+    }, [getValues, setValue]);
     
     // Handle loading state
     if (isLoading) {
@@ -230,7 +289,12 @@ const AtendimentoPage: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-4">
                         {getSaveStatusIndicator()}
-                        <button onClick={handleFinishSession} disabled={isFinishing || saveStatus !== 'saved'} className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-colors disabled:bg-green-300 disabled:cursor-not-allowed">
+                        <button
+                            onClick={handleFinishSession}
+                            disabled={isFinishing || saveStatus !== 'saved' || !canFinish}
+                            className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-colors disabled:bg-green-300 disabled:cursor-not-allowed"
+                            title={!canFinish ? 'Preencha todos os campos obrigatórios' : ''}
+                        >
                             {isFinishing ? <Loader className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
                             {isFinishing ? 'Salvando...' : 'Finalizar e Salvar'}
                         </button>
@@ -265,53 +329,164 @@ const AtendimentoPage: React.FC = () => {
                     <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm space-y-4">
                         <h2 className="text-xl font-bold text-slate-800">Evolução da Sessão Atual</h2>
                         
+                        {/* ✅ PROGRESSO DO FORMULÁRIO */}
+                        <div className="p-4 bg-gradient-to-r from-sky-50 to-teal-50 rounded-lg border border-sky-200">
+                            <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center gap-2">
+                                    <TrendingUp className="w-4 h-4 text-sky-600" />
+                                    <span className="text-sm font-semibold text-sky-700">Progresso do Prontuário</span>
+                                </div>
+                                <span className="text-xs font-bold text-sky-600">{formCompletion}%</span>
+                            </div>
+                            <Progress value={formCompletion} className="h-2 bg-sky-100" />
+                            {!canFinish && (
+                                <p className="mt-2 text-xs text-slate-600 flex items-center gap-1">
+                                    <AlertCircle className="w-3 h-3" />
+                                    Preencha todos os campos obrigatórios para finalizar
+                                </p>
+                            )}
+                        </div>
+
                         {activeMetrics.length > 0 && (
                             <div className="p-4 bg-slate-50 rounded-lg">
                                 <h3 className="text-sm font-semibold text-teal-700 mb-2">Métricas de Acompanhamento</h3>
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {activeMetrics.map(metric => (
-                                        <div key={metric.id}>
-                                            <label className="text-xs font-medium text-slate-600">{metric.name}</label>
-                                            <div className="relative">
-                                                <input
-                                                    type="number"
-                                                    value={metricResults[metric.id] ?? ''}
-                                                    onChange={e => handleMetricChange(metric.id, e.target.value)}
-                                                    className="mt-1 w-full p-2 pr-10 border border-slate-300 rounded-lg"
-                                                    aria-label={`Valor para ${metric.name}`}
-                                                    placeholder="0"
-                                                />
-                                                <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-500">{metric.unit}</span>
+                                    {activeMetrics.map(metric => {
+                                        const currentMetricResults = formData.metricResults;
+                                        const metricValue = currentMetricResults.find(m => m.metricId === metric.id)?.value ?? '';
+
+                                        return (
+                                            <div key={metric.id}>
+                                                <label className="text-xs font-medium text-slate-600">{metric.name}</label>
+                                                <div className="relative">
+                                                    <input
+                                                        type="number"
+                                                        value={metricValue}
+                                                        onChange={e => handleMetricChange(metric.id, e.target.value)}
+                                                        className="mt-1 w-full p-2 pr-10 border border-slate-300 rounded-lg"
+                                                        aria-label={`Valor para ${metric.name}`}
+                                                        placeholder="0"
+                                                    />
+                                                    <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-500">{metric.unit}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}
 
-                        <PainScale selectedScore={painScale} onSelectScore={setPainScale} />
-                        
+                        <PainScale
+                            selectedScore={formData.painScale}
+                            onSelectScore={(score) => setValue('painScale', score, { shouldDirty: true })}
+                        />
+
+                        {/* ✅ CAMPO SUBJETIVO COM VALIDAÇÃO */}
                         <div>
-                            <label className="text-sm font-semibold text-sky-700">S (Subjetivo)</label>
-                            <TiptapEditor value={subjective} onChange={setSubjective} minHeight="80px" placeholder="Relato do paciente..."/>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="text-sm font-semibold text-sky-700">
+                                    S (Subjetivo) <span className="text-red-500">*</span>
+                                </label>
+                                <span className={`text-xs ${formData.subjective.length < 10 ? 'text-red-500' : formData.subjective.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                    {formData.subjective.length} / 5000
+                                </span>
+                            </div>
+                            <TiptapEditor
+                                value={formData.subjective}
+                                onChange={(value) => setValue('subjective', value, { shouldDirty: true })}
+                                minHeight="80px"
+                                placeholder="Relato do paciente..."
+                            />
+                            {errors.subjective && (
+                                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                                    <AlertCircle className="w-3 h-3" />
+                                    {errors.subjective.message}
+                                </p>
+                            )}
                         </div>
+
+                        {/* ✅ CAMPO OBJETIVO COM VALIDAÇÃO */}
                         <div>
-                            <label className="text-sm font-semibold text-sky-700">O (Objetivo)</label>
-                            <TiptapEditor value={objective} onChange={setObjective} minHeight="80px" placeholder="Achados, testes, medidas..."/>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="text-sm font-semibold text-sky-700">
+                                    O (Objetivo) <span className="text-red-500">*</span>
+                                </label>
+                                <span className={`text-xs ${formData.objective.length < 10 ? 'text-red-500' : formData.objective.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                    {formData.objective.length} / 5000
+                                </span>
+                            </div>
+                            <TiptapEditor
+                                value={formData.objective}
+                                onChange={(value) => setValue('objective', value, { shouldDirty: true })}
+                                minHeight="80px"
+                                placeholder="Achados, testes, medidas..."
+                            />
+                            {errors.objective && (
+                                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                                    <AlertCircle className="w-3 h-3" />
+                                    {errors.objective.message}
+                                </p>
+                            )}
                         </div>
+
+                        {/* ✅ BOTÃO IA */}
                         <div className="flex justify-end">
-                             <button onClick={handleGenerateSuggestion} disabled={isAiLoading || (!subjective.trim() && !objective.trim())} className="px-4 py-2 text-sm font-medium text-sky-600 bg-sky-50 border border-sky-200 rounded-lg hover:bg-sky-100 flex items-center disabled:bg-slate-100 disabled:text-slate-400">
+                             <button
+                                onClick={handleGenerateSuggestion}
+                                disabled={isAiLoading || (!formData.subjective?.trim() && !formData.objective?.trim())}
+                                className="px-4 py-2 text-sm font-medium text-sky-600 bg-sky-50 border border-sky-200 rounded-lg hover:bg-sky-100 flex items-center disabled:bg-slate-100 disabled:text-slate-400"
+                            >
                                  {isAiLoading ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <BrainCircuit className="w-4 h-4 mr-2" />}
                                  Sugerir A/P com IA
                              </button>
                         </div>
-                         <div>
-                            <label className="text-sm font-semibold text-sky-700">A (Avaliação)</label>
-                            <TiptapEditor value={assessment} onChange={setAssessment} minHeight="80px" placeholder="Diagnóstico cinesiofuncional da sessão..."/>
+
+                        {/* ✅ CAMPO AVALIAÇÃO COM VALIDAÇÃO */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="text-sm font-semibold text-sky-700">
+                                    A (Avaliação) <span className="text-red-500">*</span>
+                                </label>
+                                <span className={`text-xs ${formData.assessment.length < 10 ? 'text-red-500' : formData.assessment.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                    {formData.assessment.length} / 5000
+                                </span>
+                            </div>
+                            <TiptapEditor
+                                value={formData.assessment}
+                                onChange={(value) => setValue('assessment', value, { shouldDirty: true })}
+                                minHeight="80px"
+                                placeholder="Diagnóstico cinesiofuncional da sessão..."
+                            />
+                            {errors.assessment && (
+                                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                                    <AlertCircle className="w-3 h-3" />
+                                    {errors.assessment.message}
+                                </p>
+                            )}
                         </div>
-                         <div>
-                            <label className="text-sm font-semibold text-sky-700">P (Plano)</label>
-                            <TiptapEditor value={plan} onChange={setPlanState} minHeight="80px" placeholder="Condutas para a próxima sessão, orientações..."/>
+
+                        {/* ✅ CAMPO PLANO COM VALIDAÇÃO */}
+                        <div>
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="text-sm font-semibold text-sky-700">
+                                    P (Plano) <span className="text-red-500">*</span>
+                                </label>
+                                <span className={`text-xs ${formData.plan.length < 10 ? 'text-red-500' : formData.plan.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                    {formData.plan.length} / 5000
+                                </span>
+                            </div>
+                            <TiptapEditor
+                                value={formData.plan}
+                                onChange={(value) => setValue('plan', value, { shouldDirty: true })}
+                                minHeight="80px"
+                                placeholder="Condutas para a próxima sessão, orientações..."
+                            />
+                            {errors.plan && (
+                                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
+                                    <AlertCircle className="w-3 h-3" />
+                                    {errors.plan.message}
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>

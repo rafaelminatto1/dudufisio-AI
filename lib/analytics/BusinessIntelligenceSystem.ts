@@ -17,6 +17,7 @@ import {
   OutcomePrediction,
   Anomaly
 } from './types';
+import { logger } from '../logger';
 
 export class BusinessIntelligenceSystem {
   private warehouse: DataWarehouse;
@@ -79,27 +80,28 @@ export class BusinessIntelligenceSystem {
   // System Initialization
   async initialize(): Promise<void> {
     try {
-      console.log('🚀 Inicializando Sistema de Business Intelligence...');
+      logger.info('Inicializando Sistema de Business Intelligence.', { context: 'analytics.bi.init' });
 
       // Initialize Data Warehouse
-      console.log('📊 Inicializando Data Warehouse...');
+      logger.info('Inicializando Data Warehouse.', { context: 'analytics.bi.init' });
       await this.warehouse.initializeSchema();
       await this.warehouse.populateDateDimension();
 
       // Run initial ETL
-      console.log('🔄 Executando ETL inicial...');
+      logger.info('Executando ETL inicial.', { context: 'analytics.bi.init' });
       const etlResult = await this.etlPipeline.executeFullETL();
 
       if (!etlResult.success) {
-        console.warn('⚠️ ETL inicial completado com erros:', etlResult.errors);
+        logger.warn('ETL inicial completado com erros.', { context: 'analytics.bi.init', data: { errors: etlResult.errors } });
       }
 
-      console.log('✅ Sistema BI inicializado com sucesso!');
-      console.log(`📈 Registros processados: ${etlResult.recordsProcessed}`);
-      console.log(`⏱️ Tempo de execução: ${etlResult.duration}ms`);
+      logger.info('Sistema BI inicializado com sucesso.', {
+        context: 'analytics.bi.init',
+        data: { recordsProcessed: etlResult.recordsProcessed, durationMs: etlResult.duration }
+      });
 
     } catch (error) {
-      console.error('❌ Erro na inicialização do sistema BI:', error);
+      logger.error('Erro na inicialização do sistema BI.', { context: 'analytics.bi.init', data: { error } });
       throw error;
     }
   }
@@ -107,10 +109,10 @@ export class BusinessIntelligenceSystem {
   // Dashboard Operations
   async generateExecutiveDashboard(period: DateRange): Promise<KPIDashboard> {
     try {
-      console.log('📊 Gerando Dashboard Executivo...');
+      logger.info('Gerando Dashboard Executivo.', { context: 'analytics.bi.dashboard' });
       return await this.dashboard.generateDashboard(period);
     } catch (error) {
-      console.error('❌ Erro ao gerar dashboard:', error);
+      logger.error('Erro ao gerar dashboard executivo.', { context: 'analytics.bi.dashboard', data: { error } });
       throw error;
     }
   }
@@ -120,7 +122,7 @@ export class BusinessIntelligenceSystem {
     try {
       return await this.mlModels.predictNoShow(appointmentId);
     } catch (error) {
-      console.error('❌ Erro na predição de no-show:', error);
+      logger.error('Erro na predição de no-show.', { context: 'analytics.bi.prediction.noShow', data: { error } });
       throw error;
     }
   }
@@ -129,7 +131,7 @@ export class BusinessIntelligenceSystem {
     try {
       return await this.mlModels.predictTreatmentOutcome(patientId, treatmentType);
     } catch (error) {
-      console.error('❌ Erro na predição de resultado:', error);
+      logger.error('Erro na predição de resultado.', { context: 'analytics.bi.prediction.outcome', data: { error } });
       throw error;
     }
   }
@@ -138,7 +140,7 @@ export class BusinessIntelligenceSystem {
     try {
       return await this.mlModels.detectAnomalies(period);
     } catch (error) {
-      console.error('❌ Erro na detecção de anomalias:', error);
+      logger.error('Erro na detecção de anomalias.', { context: 'analytics.bi.anomaly', data: { error } });
       return [];
     }
   }
@@ -146,10 +148,10 @@ export class BusinessIntelligenceSystem {
   // Reporting Operations
   async generateReport(request: ReportRequest): Promise<Report> {
     try {
-      console.log(`📋 Gerando relatório: ${request.title}`);
+      logger.info('Gerando relatório.', { context: 'analytics.bi.report', data: { title: request.title } });
       return await this.reportGenerator.generateReport(request);
     } catch (error) {
-      console.error('❌ Erro ao gerar relatório:', error);
+      logger.error('Erro ao gerar relatório.', { context: 'analytics.bi.report', data: { error } });
       throw error;
     }
   }
@@ -189,7 +191,7 @@ export class BusinessIntelligenceSystem {
           throw new Error(`Tipo de gráfico não suportado: ${type}`);
       }
     } catch (error) {
-      console.error(`❌ Erro ao gerar gráficos ${type}:`, error);
+      logger.error('Erro ao gerar gráficos.', { context: 'analytics.bi.charts', data: { type, error } });
       return [];
     }
   }
@@ -199,7 +201,7 @@ export class BusinessIntelligenceSystem {
     try {
       return await this.exportService.exportReport(report, options);
     } catch (error) {
-      console.error('❌ Erro ao exportar relatório:', error);
+      logger.error('Erro ao exportar relatório.', { context: 'analytics.bi.export', data: { error } });
       throw error;
     }
   }
@@ -207,7 +209,7 @@ export class BusinessIntelligenceSystem {
   // ETL Operations
   async runETL(incremental: boolean = true): Promise<void> {
     try {
-      console.log(`🔄 Executando ETL ${incremental ? 'incremental' : 'completo'}...`);
+      logger.info('Executando ETL.', { context: 'analytics.bi.etl', data: { mode: incremental ? 'incremental' : 'completo' } });
 
       let result;
       if (incremental) {
@@ -218,17 +220,17 @@ export class BusinessIntelligenceSystem {
       }
 
       if (result.success) {
-        console.log('✅ ETL executado com sucesso');
-        console.log(`📊 Registros processados: ${result.recordsProcessed}`);
+        logger.info('ETL executado com sucesso.', { context: 'analytics.bi.etl', data: { recordsProcessed: result.recordsProcessed } });
+        
       } else {
-        console.error('❌ ETL executado com erros:', result.errors);
+        logger.error('ETL executado com erros.', { context: 'analytics.bi.etl', data: { errors: result.errors } });
       }
 
       // Store execution log
       await this.storeETLLog(result);
 
     } catch (error) {
-      console.error('❌ Erro na execução do ETL:', error);
+      logger.error('Erro na execução do ETL.', { context: 'analytics.bi.etl', data: { error } });
       throw error;
     }
   }

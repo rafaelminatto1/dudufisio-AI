@@ -42,9 +42,6 @@ export default defineConfig({
     port: 5176,
     host: 'localhost',
     hmr: {
-      port: 5176,
-      host: 'localhost',
-      clientPort: 5176,
       overlay: true
     },
     watch: {

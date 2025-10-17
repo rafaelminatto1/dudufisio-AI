@@ -3,6 +3,7 @@
  *
  * Implementação completa do Apple Push Notification Service
  */
+import { logger } from '../../logger';
 
 export interface APNSConfig {
   keyId: string;
@@ -18,7 +19,7 @@ export interface APNSNotification {
   badge?: number;
   sound?: string;
   category?: string;
-  data?: Record<string, any>;
+  data?: Record<string, string>;
   deviceToken: string;
 }
 
@@ -94,7 +95,7 @@ export class AppleAPNSAdapter {
           deviceToken: notification.deviceToken.substring(0, 8) + '...',
           apnsId,
           title: notification.title
-        });
+        }});
 
         return {
           success: true,
@@ -106,7 +107,7 @@ export class AppleAPNSAdapter {
           status: response.status,
           error,
           deviceToken: notification.deviceToken.substring(0, 8) + '...'
-        });
+        }});
 
         return {
           success: false,
@@ -171,8 +172,8 @@ export class AppleAPNSAdapter {
 
   // --- Métodos privados ---
 
-  private createAPNSPayload(notification: APNSNotification): any {
-    const payload: any = {
+  private createAPNSPayload(notification: APNSNotification): Record<string, unknown> {
+    const payload: Record<string, unknown> = {
       aps: {
         alert: {
           title: notification.title,
@@ -185,13 +186,14 @@ export class AppleAPNSAdapter {
 
     // Adicionar categoria se especificada (para ações customizadas)
     if (notification.category) {
-      payload.aps.category = notification.category;
+      (payload.aps as Record<string, unknown>).category = notification.category;
     }
 
     // Adicionar dados customizados
     if (notification.data) {
-      Object.keys(notification.data).forEach(key => {
-        payload[key] = notification.data![key];
+      const data = notification.data as Record<string, unknown>;
+      Object.entries(data).forEach(([key, value]) => {
+        (payload as Record<string, unknown>)[key] = value;
       });
     }
 
@@ -326,11 +328,11 @@ export class AppleAPNSAdapter {
   static validateConfig(config: APNSConfig): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    if (!config.keyId || config.keyId.length !== 10) {
+    if (config.keyId?.length !== 10) {
       errors.push('Key ID deve ter 10 caracteres');
     }
 
-    if (!config.teamId || config.teamId.length !== 10) {
+    if (config.teamId?.length !== 10) {
       errors.push('Team ID deve ter 10 caracteres');
     }
 

@@ -51,17 +51,15 @@ export function LeadsKanban() {
   const loadLeads = async () => {
     try {
       setLoading(true);
-      const grouped: Record<string, Lead[]> = {};
-
-      // Load leads for each stage
-      for (const stage of STAGES) {
-        const leads = await leadService.getLeadsByStage(stage.id);
-        grouped[stage.id] = leads;
-      }
+      
+      // Load all leads grouped by stage (single call)
+      const grouped = await leadService.getLeadsByStage();
 
       setLeadsByStage(grouped);
     } catch (err) {
       console.error('Erro ao carregar leads:', err);
+      // Set empty state on error
+      setLeadsByStage({});
     } finally {
       setLoading(false);
     }

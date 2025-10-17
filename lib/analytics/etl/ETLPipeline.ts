@@ -2,6 +2,7 @@ import { DataExtractor } from './DataExtractor';
 import { DataTransformer } from './DataTransformer';
 import { DataLoader } from './DataLoader';
 import { DataWarehouse } from '../warehouse/DataWarehouse';
+import { logger } from '../../logger';
 import { ETLResult, ETLConfig, ExtractionResult, TransformationResult, LoadResult } from '../types';
 
 export class ETLPipeline {
@@ -30,15 +31,15 @@ export class ETLPipeline {
     let totalRecordsProcessed = 0;
 
     try {
-      console.log('🚀 Iniciando ETL Pipeline completo...');
+      logger.info('Iniciando ETL Pipeline completo.', { context: 'analytics.etl.run' });
 
       // Phase 1: Initialize Data Warehouse
-      console.log('📊 Inicializando Data Warehouse...');
+      logger.info('Inicializando Data Warehouse.', { context: 'analytics.etl.run' });
       await this.warehouse.initializeSchema();
       await this.warehouse.populateDateDimension();
 
       // Phase 2: Extract Data
-      console.log('📤 Extraindo dados das tabelas operacionais...');
+      logger.info('Extraindo dados das tabelas operacionais.', { context: 'analytics.etl.extract' });
       const extractionResults = await this.extractData();
 
       // Check for extraction errors
@@ -52,7 +53,7 @@ export class ETLPipeline {
       });
 
       // Phase 3: Transform Data
-      console.log('⚙️ Transformando dados...');
+      logger.info('Transformando dados.', { context: 'analytics.etl.transform' });
       const transformationResults = await this.transformData(extractionResults);
 
       // Check for transformation errors
@@ -65,7 +66,7 @@ export class ETLPipeline {
       });
 
       // Phase 4: Load Data
-      console.log('📥 Carregando dados no Data Warehouse...');
+      logger.info('Carregando dados no Data Warehouse.', { context: 'analytics.etl.load' });
       const loadResults = await this.loadData(transformationResults, extractionResults);
 
       // Check for loading errors
@@ -76,14 +77,13 @@ export class ETLPipeline {
       });
 
       // Phase 5: Update Statistics
-      console.log('📊 Atualizando estatísticas do Data Warehouse...');
+      logger.info('Atualizando estatísticas do Data Warehouse.', { context: 'analytics.etl.stats' });
       await this.updateWarehouseStatistics();
 
       const endTime = Date.now();
       const duration = endTime - startTime;
 
-      console.log(`✅ ETL Pipeline concluído em ${duration}ms`);
-      console.log(`📈 Total de registros processados: ${totalRecordsProcessed}`);
+      logger.info('ETL Pipeline concluído.', { context: 'analytics.etl.run', data: { durationMs: duration, totalRecordsProcessed } });
 
       return {
         success: errors.length === 0,
@@ -118,13 +118,13 @@ export class ETLPipeline {
     let totalRecordsProcessed = 0;
 
     try {
-      console.log('🔄 Iniciando ETL Incremental...');
+      logger.info('Iniciando ETL incremental.', { context: 'analytics.etl.incremental' });
 
       // Extract only changed data since last execution
       const extractionResults = await this.extractIncrementalData(lastExecutionTime);
 
       if (extractionResults.every(result => result.recordsExtracted === 0)) {
-        console.log('ℹ️ Nenhum dado novo encontrado para processamento');
+        logger.info('Nenhum dado novo encontrado para processamento.', { context: 'analytics.etl.incremental' });
         return {
           success: true,
           recordsProcessed: 0,
@@ -145,8 +145,7 @@ export class ETLPipeline {
       const endTime = Date.now();
       const duration = endTime - startTime;
 
-      console.log(`✅ ETL Incremental concluído em ${duration}ms`);
-      console.log(`📈 Total de registros processados: ${totalRecordsProcessed}`);
+      logger.info('ETL incremental concluído.', { context: 'analytics.etl.incremental', data: { durationMs: duration, totalRecordsProcessed } });
 
       return {
         success: errors.length === 0,
@@ -212,10 +211,10 @@ export class ETLPipeline {
         }
 
         results.push(result);
-        console.log(`✅ Extraídos ${result.recordsExtracted} registros da tabela ${result.table}`);
+          logger.debug('Extração concluída.', { context: 'analytics.etl.extract', data: { table: result.table, recordsExtracted: result.recordsExtracted } });
 
       } catch (error) {
-        console.error(`❌ Erro na extração da tabela ${config.name}:`, error);
+          logger.error('Erro na extração.', { context: 'analytics.etl.extract', data: { table: config.name, error } });
         results.push({
           table: config.name,
           recordsExtracted: 0,
@@ -276,10 +275,10 @@ export class ETLPipeline {
         }
 
         results.push(transformationResult);
-        console.log(`⚙️ Transformados ${transformationResult.recordsTransformed} registros de ${extractionResult.table}`);
+          logger.debug('Transformação concluída.', { context: 'analytics.etl.transform', data: { table: extractionResult.table, recordsTransformed: transformationResult.recordsTransformed } });
 
       } catch (error) {
-        console.error(`❌ Erro na transformação dos dados de ${extractionResult.table}:`, error);
+          logger.error('Erro na transformação.', { context: 'analytics.etl.transform', data: { table: extractionResult.table, error } });
         results.push({
           recordsTransformed: 0,
           status: 'error',
@@ -309,9 +308,9 @@ export class ETLPipeline {
         try {
           const result = await (this.loader as any)[load.method](load.transformation.data);
           results.push(result);
-          console.log(`📥 Carregados ${result.recordsLoaded} registros na ${result.targetTable}`);
+            logger.debug('Carga concluída.', { context: 'analytics.etl.load', data: { targetTable: result.targetTable, recordsLoaded: result.recordsLoaded } });
         } catch (error) {
-          console.error(`❌ Erro no carregamento da dimensão:`, error);
+          logger.error('Erro no carregamento da dimensão.', { context: 'analytics.etl.load', data: { error } });
           results.push({
             recordsLoaded: 0,
             status: 'error',
@@ -334,9 +333,9 @@ export class ETLPipeline {
         try {
           const result = await (this.loader as any)[load.method](load.transformation.data);
           results.push(result);
-          console.log(`📥 Carregados ${result.recordsLoaded} registros na ${result.targetTable}`);
+            logger.debug('Carga concluída.', { context: 'analytics.etl.load', data: { targetTable: result.targetTable, recordsLoaded: result.recordsLoaded } });
         } catch (error) {
-          console.error(`❌ Erro no carregamento da tabela de fatos:`, error);
+          logger.error('Erro no carregamento da tabela de fatos.', { context: 'analytics.etl.load', data: { error } });
           results.push({
             recordsLoaded: 0,
             status: 'error',
@@ -375,9 +374,9 @@ export class ETLPipeline {
         await this.warehouse.analyzeTable(table);
       }
 
-      console.log('📊 Estatísticas do Data Warehouse atualizadas');
+      logger.info('Estatísticas do Data Warehouse atualizadas.', { context: 'analytics.etl.stats' });
     } catch (error) {
-      console.error('❌ Erro ao atualizar estatísticas:', error);
+      logger.error('Erro ao atualizar estatísticas.', { context: 'analytics.etl.stats', data: { error } });
     }
   }
 
@@ -411,7 +410,7 @@ export class ETLPipeline {
 
   async scheduleETL(cronExpression: string): Promise<void> {
     // This would integrate with a job scheduler
-    console.log(`📅 ETL agendado com expressão cron: ${cronExpression}`);
+    logger.info('ETL agendado.', { context: 'analytics.etl.schedule', data: { cronExpression } });
   }
 
   async validateDataQuality(): Promise<{ isValid: boolean; issues: string[] }> {

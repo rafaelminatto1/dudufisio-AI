@@ -112,7 +112,7 @@ export class AWSRekognitionAdapter {
 
       const response = await this.callRekognition('IndexFaces', params) as IndexFacesResponse;
 
-      if (!response.FaceRecords || response.FaceRecords.length === 0) {
+      if (!response.FaceRecords?.length) {
         return {
           success: false,
           error: 'Nenhuma face detectada na imagem'
@@ -127,7 +127,7 @@ export class AWSRekognitionAdapter {
         faceId: faceRecord.Face.FaceId,
         confidence: faceRecord.FaceDetail.Confidence,
         qualityScore
-      });
+      }});
 
       return {
         success: true,
@@ -168,7 +168,7 @@ export class AWSRekognitionAdapter {
 
       const response = await this.callRekognition('SearchFacesByImage', params) as SearchFacesResponse;
 
-      if (!response.FaceMatches || response.FaceMatches.length === 0) {
+      if (!response.FaceMatches?.length) {
         return {
           success: false,
           error: 'Nenhum paciente encontrado com essa face'
@@ -184,7 +184,7 @@ export class AWSRekognitionAdapter {
         patientId,
         similarity: bestMatch.Similarity,
         confidence: bestMatch.Face.Confidence
-      });
+      }});
 
       return {
         success: true,
@@ -273,7 +273,7 @@ export class AWSRekognitionAdapter {
         CollectionId: this.collectionId
       });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error.code === 'ResourceNotFoundException') {
         // Collection não existe, criar
         logger.debug(`Criando collection ${this.collectionId}.`, { context: 'checkin.awsRekognition.collection', data: { collectionId: this.collectionId } });
@@ -320,7 +320,11 @@ export class AWSRekognitionAdapter {
       const canvas = document.createElement('canvas');
       canvas.width = imageData.width;
       canvas.height = imageData.height;
-      const ctx = canvas.getContext('2d')!;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(new ArrayBuffer(0));
+        return;
+      }
       ctx.putImageData(imageData, 0, 0);
 
       canvas.toBlob((blob) => {
@@ -335,12 +339,12 @@ export class AWSRekognitionAdapter {
 
   private async listFaces(patientId: PatientId): Promise<RekognitionFace[]> {
     try {
-      const response = await this.callRekognition('ListFaces', {
+      const response = await this.callRekognition<{ Faces?: Array<(RekognitionFace & { ExternalImageId?: string })> }>('ListFaces', {
         CollectionId: this.collectionId
       });
 
       // Filtrar faces por External Image ID (patientId)
-      return (response.Faces || []).filter((face: any) =>
+      return (response.Faces || []).filter((face) =>
         face.ExternalImageId === patientId
       );
 
@@ -352,11 +356,11 @@ export class AWSRekognitionAdapter {
 
   private async getFaceExternalId(faceId: string): Promise<string | null> {
     try {
-      const response = await this.callRekognition('ListFaces', {
+      const response = await this.callRekognition<{ Faces?: Array<(RekognitionFace & { ExternalImageId?: string })> }>('ListFaces', {
         CollectionId: this.collectionId
       });
 
-      const face = (response.Faces || []).find((f: any) => f.FaceId === faceId);
+      const face = (response.Faces || []).find((f) => f.FaceId === faceId);
       return face?.ExternalImageId || null;
 
     } catch (error) {
@@ -365,8 +369,8 @@ export class AWSRekognitionAdapter {
     }
   }
 
-  private async callRekognition(operation: string, params: any): Promise<any> {
-    const timestamp = new Date().toISOString().replace(/[:\-]|\.\d{3}/g, '');
+  private async callRekognition<T = unknown>(operation: string, params: Record<string, unknown>): Promise<T> {
+    const timestamp = new Date().toISOString().replace(/[:-]|\.\d{3}/g, '');
     const dateStamp = timestamp.substr(0, 8);
 
     // Preparar headers de autenticação AWS Signature V4
@@ -383,10 +387,10 @@ export class AWSRekognitionAdapter {
       throw new Error(`AWS Rekognition error: ${response.status} - ${error}`);
     }
 
-    return await response.json();
+    return await response.json() as T;
   }
 
-  private async createAuthHeaders(operation: string, params: any, timestamp: string, dateStamp: string): Promise<Record<string, string>> {
+  private async createAuthHeaders(operation: string, params: Record<string, unknown>, timestamp: string, dateStamp: string): Promise<Record<string, string>> {
     const service = 'rekognition';
     const host = `${service}.${this.config.region}.amazonaws.com`;
 

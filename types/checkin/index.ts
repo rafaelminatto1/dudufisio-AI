@@ -33,7 +33,7 @@ export interface CheckInData {
   searchCriteria?: PatientSearchCriteria;
   healthAnswers: HealthScreeningAnswers;
   printReceipt: boolean;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface PatientSearchCriteria {
@@ -97,7 +97,7 @@ export interface CheckIn {
   status: 'completed' | 'failed' | 'cancelled' | 'requires_review';
   queuePosition?: number;
   estimatedWaitTime?: number;
-  additionalData?: Record<string, any>;
+  additionalData?: Record<string, unknown>;
 }
 
 export interface AppointmentValidation {
@@ -196,7 +196,7 @@ export interface TimelineEvent {
   date: Date;
   title: string;
   description: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface CheckInMetrics {
@@ -225,10 +225,7 @@ export interface DateRange {
 export interface PushNotification {
   title: string;
   body: string;
-  data: {
-    type: string;
-    [key: string]: any;
-  };
+  data: ({ type: string } & Record<string, string>);
   badge?: number;
 }
 
@@ -236,7 +233,7 @@ export interface PatientPortalSession {
   id: string;
   patientId: PatientId;
   sessionToken: string;
-  deviceInfo?: Record<string, any>;
+  deviceInfo?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   createdAt: Date;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Stethoscope,
   Loader,
@@ -329,23 +329,21 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
           <CardFooter className="flex flex-col space-y-2">
             <div className="text-sm text-center text-gray-600">
               Esqueceu sua senha?{' '}
-              <button className="text-indigo-600 hover:text-indigo-700 font-medium">
+              <Link
+                to="/forgot-password"
+                className="text-indigo-600 hover:text-indigo-700 font-medium hover:underline"
+              >
                 Recuperar senha
-              </button>
+              </Link>
             </div>
             <div className="text-sm text-center text-gray-600">
               Não tem uma conta?{' '}
-              <button 
-                className="text-indigo-600 hover:text-indigo-700 font-medium"
-                onClick={() => {
-                  // Navigate to register page - this will be handled by the parent component
-                  if ((window as any).__navigateToRegister) {
-                    (window as any).__navigateToRegister();
-                  }
-                }}
+              <Link
+                to="/register"
+                className="text-indigo-600 hover:text-indigo-700 font-medium hover:underline"
               >
                 Criar conta
-              </button>
+              </Link>
             </div>
           </CardFooter>
         </Card>

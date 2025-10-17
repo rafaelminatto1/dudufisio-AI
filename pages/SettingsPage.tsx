@@ -6,9 +6,11 @@ import {
   BarChart3,
   Bell,
   Calendar,
+  Database,
   Loader2,
   Settings as SettingsIcon,
   Shield,
+  Trash2,
   User,
   Users,
 } from 'lucide-react';
@@ -23,8 +25,9 @@ import NotificationSettings from '../components/alerts/NotificationSettings';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import { useToast } from '../contexts/ToastContext';
 import userService, { UserProfile } from '../services/userService';
+import DemoDataManager from '../components/settings/DemoDataManager';
 
-type SectionId = 'profile' | 'security' | 'notifications' | 'agenda' | 'crm' | 'advanced';
+type SectionId = 'profile' | 'security' | 'notifications' | 'agenda' | 'crm' | 'advanced' | 'demo-data';
 type AgendaView = 'week' | 'day' | 'month' | 'list';
 type AppointmentView = 'compact' | 'detailed' | 'list';
 type ReminderChannel = 'email' | 'sms' | 'push';
@@ -145,6 +148,7 @@ const NAVIGATION_SECTIONS: Array<{ id: SectionId; label: string; icon: LucideIco
   { id: 'agenda', label: 'Agenda', icon: Calendar },
   { id: 'crm', label: 'CRM', icon: BarChart3 },
   { id: 'advanced', label: 'Outros Perfis', icon: Users },
+  { id: 'demo-data', label: 'Dados Demo', icon: Database },
 ];
 
 const parseProfileSettings = (raw: UserProfile['profile_settings']): ProfileSettings => {
@@ -1607,6 +1611,15 @@ const SettingsPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </SectionCard>
+
+              <SectionCard
+                id="demo-data"
+                icon={<Database className="h-5 w-5" />}
+                title="Dados de Demonstração"
+                description="Popule o sistema com dados de exemplo ou limpe tudo de uma vez."
+              >
+                <DemoDataManager />
               </SectionCard>
             </div>
           </div>

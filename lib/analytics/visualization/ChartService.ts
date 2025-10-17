@@ -1,5 +1,6 @@
 import { ChartConfig, ChartData, Dataset, DateRange } from '../types';
 import { createClient } from '@supabase/supabase-js';
+import { logger } from '../../logger';
 
 export class ChartService {
   private supabase;
@@ -12,7 +13,9 @@ export class ChartService {
     const charts: ChartConfig[] = [];
 
     try {
-      console.log('📊 Gerando gráficos financeiros...');
+      logger.info('Gerando gráficos financeiros.', {
+        context: 'analytics.charts.financial'
+      });
 
       // Revenue Trend Line Chart
       const revenueTrendChart = await this.generateRevenueTrendChart(period);
@@ -30,11 +33,17 @@ export class ChartService {
       const serviceRevenueChart = await this.generateServiceRevenueChart(period);
       charts.push(serviceRevenueChart);
 
-      console.log(`✅ ${charts.length} gráficos financeiros gerados`);
+      logger.info('Gráficos financeiros gerados.', {
+        context: 'analytics.charts.financial',
+        data: { count: charts.length }
+      });
       return charts;
 
     } catch (error) {
-      console.error('❌ Erro ao gerar gráficos financeiros:', error);
+      logger.error('Erro ao gerar gráficos financeiros.', {
+        context: 'analytics.charts.financial',
+        data: { error }
+      });
       return [];
     }
   }
@@ -43,7 +52,9 @@ export class ChartService {
     const charts: ChartConfig[] = [];
 
     try {
-      console.log('📊 Gerando gráficos operacionais...');
+      logger.info('Gerando gráficos operacionais.', {
+        context: 'analytics.charts.operational'
+      });
 
       // Appointments Trend Chart
       const appointmentsTrendChart = await this.generateAppointmentsTrendChart(period);
@@ -65,11 +76,17 @@ export class ChartService {
       const weeklyPatternChart = await this.generateWeeklyPatternChart(period);
       charts.push(weeklyPatternChart);
 
-      console.log(`✅ ${charts.length} gráficos operacionais gerados`);
+      logger.info('Gráficos operacionais gerados.', {
+        context: 'analytics.charts.operational',
+        data: { count: charts.length }
+      });
       return charts;
 
     } catch (error) {
-      console.error('❌ Erro ao gerar gráficos operacionais:', error);
+      logger.error('Erro ao gerar gráficos operacionais.', {
+        context: 'analytics.charts.operational',
+        data: { error }
+      });
       return [];
     }
   }
@@ -78,7 +95,9 @@ export class ChartService {
     const charts: ChartConfig[] = [];
 
     try {
-      console.log('📊 Gerando gráficos clínicos...');
+      logger.info('Gerando gráficos clínicos.', {
+        context: 'analytics.charts.clinical'
+      });
 
       // Pain Reduction Trend
       const painReductionChart = await this.generatePainReductionChart(period);
@@ -100,11 +119,17 @@ export class ChartService {
       const ageSuccessChart = await this.generateAgeGroupSuccessChart(period);
       charts.push(ageSuccessChart);
 
-      console.log(`✅ ${charts.length} gráficos clínicos gerados`);
+      logger.info('Gráficos clínicos gerados.', {
+        context: 'analytics.charts.clinical',
+        data: { count: charts.length }
+      });
       return charts;
 
     } catch (error) {
-      console.error('❌ Erro ao gerar gráficos clínicos:', error);
+      logger.error('Erro ao gerar gráficos clínicos.', {
+        context: 'analytics.charts.clinical',
+        data: { error }
+      });
       return [];
     }
   }
@@ -113,7 +138,9 @@ export class ChartService {
     const charts: ChartConfig[] = [];
 
     try {
-      console.log('📊 Gerando gráficos de pacientes...');
+      logger.info('Gerando gráficos de pacientes.', {
+        context: 'analytics.charts.patient'
+      });
 
       // Patient Growth Chart
       const growthChart = await this.generatePatientGrowthChart(period);
@@ -131,11 +158,17 @@ export class ChartService {
       const engagementChart = await this.generateEngagementHeatmap(period);
       charts.push(engagementChart);
 
-      console.log(`✅ ${charts.length} gráficos de pacientes gerados`);
+      logger.info('Gráficos de pacientes gerados.', {
+        context: 'analytics.charts.patient',
+        data: { count: charts.length }
+      });
       return charts;
 
     } catch (error) {
-      console.error('❌ Erro ao gerar gráficos de pacientes:', error);
+      logger.error('Erro ao gerar gráficos de pacientes.', {
+        context: 'analytics.charts.patient',
+        data: { error }
+      });
       return [];
     }
   }

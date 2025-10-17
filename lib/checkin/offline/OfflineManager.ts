@@ -8,7 +8,7 @@ import {
 interface OfflineQueueItem {
   id: string;
   type: 'checkin' | 'analytics' | 'notification' | 'progress';
-  data: any;
+  data: unknown;
   timestamp: Date;
   retryCount: number;
   maxRetries: number;
@@ -32,10 +32,10 @@ interface OfflineConfig {
 }
 
 interface CachedData {
-  patients: Map<PatientId, any>;
-  appointments: Map<string, any>;
-  exercises: Map<string, any>;
-  faceEncodings: Map<PatientId, any>;
+  patients: Map<PatientId, unknown>;
+  appointments: Map<string, unknown>;
+  exercises: Map<string, unknown>;
+  faceEncodings: Map<PatientId, unknown>;
   lastUpdated: Date;
 }
 
@@ -97,7 +97,7 @@ export class OfflineManager {
   // Offline queue management
   async queueForSync(
     type: OfflineQueueItem['type'],
-    data: any,
+    data: unknown,
     priority: OfflineQueueItem['priority'] = 'normal'
   ): Promise<string> {
     const item: OfflineQueueItem = {
@@ -199,7 +199,7 @@ export class OfflineManager {
   }
 
   // Data caching and retrieval
-  async cachePatientData(patients: any[]): Promise<void> {
+  async cachePatientData(patients: unknown[]): Promise<void> {
     patients.forEach(patient => {
       this.cachedData.patients.set(patient.id, {
         ...patient,
@@ -214,7 +214,7 @@ export class OfflineManager {
     });
   }
 
-  async cacheAppointmentData(appointments: any[]): Promise<void> {
+  async cacheAppointmentData(appointments: unknown[]): Promise<void> {
     appointments.forEach(appointment => {
       this.cachedData.appointments.set(appointment.id, {
         ...appointment,
@@ -328,7 +328,7 @@ export class OfflineManager {
     }
   }
 
-  private async syncCheckIn(data: any): Promise<boolean> {
+  private async syncCheckIn(data: { offlineCheckIn: { id: string } }): Promise<boolean> {
     try {
       // In production, this would call the actual check-in API
       logger.debug('Syncing offline check-in to server.', { context: 'checkin.offline.sync', data: { id: data.offlineCheckIn.id } });
@@ -346,7 +346,7 @@ export class OfflineManager {
     }
   }
 
-  private async syncAnalytics(data: any): Promise<boolean> {
+  private async syncAnalytics(data: { eventType: string; [key: string]: unknown }): Promise<boolean> {
     try {
       logger.debug('Syncing analytics event.', { context: 'checkin.offline.sync', data: { eventType: data.eventType } });
       // In production, send to analytics service
@@ -358,7 +358,7 @@ export class OfflineManager {
     }
   }
 
-  private async syncNotification(data: any): Promise<boolean> {
+  private async syncNotification(data: unknown): Promise<boolean> {
     try {
       logger.debug('Syncing notification.', { context: 'checkin.offline.sync', data: { type: data.type } });
       // In production, send via notification service
@@ -370,7 +370,7 @@ export class OfflineManager {
     }
   }
 
-  private async syncProgress(data: any): Promise<boolean> {
+  private async syncProgress(data: unknown): Promise<boolean> {
     try {
       logger.debug('Syncing progress data.', { context: 'checkin.offline.sync', data: { patientId: data.patientId } });
       // In production, update patient progress
@@ -434,7 +434,7 @@ export class OfflineManager {
     return cachedEncodings[0][0];
   }
 
-  private async searchCachedPatients(searchCriteria: any): Promise<PatientId | null> {
+  private async searchCachedPatients(searchCriteria: unknown): Promise<PatientId | null> {
     for (const [patientId, patient] of this.cachedData.patients.entries()) {
       if (searchCriteria.name && patient.name?.toLowerCase().includes(searchCriteria.name.toLowerCase())) {
         return patientId;
@@ -464,12 +464,12 @@ export class OfflineManager {
     return offlineCheckIns.length + 1;
   }
 
-  private async getOfflineCheckIns(): Promise<any[]> {
+  private async getOfflineCheckIns(): Promise<unknown[]> {
     const stored = localStorage.getItem('offline_checkins');
     return stored ? JSON.parse(stored) : [];
   }
 
-  private async storeOfflineCheckIn(checkIn: any): Promise<void> {
+  private async storeOfflineCheckIn(checkIn: unknown): Promise<void> {
     const existing = await this.getOfflineCheckIns();
     existing.push(checkIn);
     localStorage.setItem('offline_checkins', JSON.stringify(existing));
@@ -483,7 +483,7 @@ export class OfflineManager {
     localStorage.setItem('offline_checkins', JSON.stringify(updated));
   }
 
-  private async trackOfflineAnalytics(eventType: string, data: any): Promise<void> {
+  private async trackOfflineAnalytics(eventType: string, data: unknown): Promise<void> {
     await this.queueForSync('analytics', {
       eventType,
       eventCategory: 'offline',
@@ -530,7 +530,7 @@ export class OfflineManager {
     try {
       const stored = localStorage.getItem('offline_queue');
       if (stored) {
-        this.offlineQueue = JSON.parse(stored).map((item: any) => ({
+        this.offlineQueue = JSON.parse(stored).map((item: unknown) => ({
           ...item,
           timestamp: new Date(item.timestamp)
         }));
@@ -574,7 +574,7 @@ export class OfflineManager {
     return Date.now() - cachedAt.getTime() < maxAge;
   }
 
-  private async compressData(data: any): Promise<any> {
+  private async compressData(data: unknown): Promise<{ compressed: true; data: string } | unknown> {
     if (!this.config.compressionEnabled) return data;
 
     // Simple compression - in production use proper compression library
@@ -584,9 +584,10 @@ export class OfflineManager {
     };
   }
 
-  private async decompressData(data: any): Promise<any> {
-    if (!data.compressed) return data;
-    return JSON.parse(data.data);
+  private async decompressData(data: unknown): Promise<unknown> {
+    const maybe = data as { compressed?: boolean; data?: string };
+    if (!maybe || !maybe.compressed) return data;
+    return JSON.parse(maybe.data || 'null');
   }
 
   private startPeriodicSync(): void {

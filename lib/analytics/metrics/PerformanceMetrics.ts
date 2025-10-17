@@ -25,6 +25,8 @@ export interface PerformanceReport {
   generatedAt: Date;
 }
 
+import { logger } from '../../logger';
+
 export class PerformanceMetrics {
   private static instance: PerformanceMetrics;
   private metrics: PerformanceMetric[] = [];
@@ -57,7 +59,7 @@ export class PerformanceMetrics {
   ): number {
     const startTime = this.operationTimers.get(operationId);
     if (!startTime) {
-      console.warn(`No start time found for operation: ${operationId}`);
+      logger.warn('No start time found for operation.', { context: 'analytics.metrics', data: { operationId } });
       return 0;
     }
 
@@ -278,4 +280,3 @@ export class PerformanceMetrics {
 }
 
 export const performanceMetrics = PerformanceMetrics.getInstance();
-

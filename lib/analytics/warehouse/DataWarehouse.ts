@@ -3,6 +3,7 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { logger } from '../../logger';
 import { DateRange, DimensionTable, FactTable, DataMart } from '../types';
 
 export class DataWarehouse {
@@ -28,7 +29,7 @@ export class DataWarehouse {
 
       return data || [];
     } catch (error) {
-      console.error('Data warehouse query failed:', error);
+      logger.error('Data warehouse query failed.', { context: 'analytics.warehouse.query', data: { error } });
       throw error;
     }
   }
@@ -214,7 +215,7 @@ export class DataWarehouse {
    */
   async initializeSchema(): Promise<void> {
     try {
-      console.log('Initializing data warehouse schema...');
+      logger.info('Initializing data warehouse schema...', { context: 'analytics.warehouse.schema' });
 
       // Create dimension tables
       await this.createDimensionTables();
@@ -228,9 +229,9 @@ export class DataWarehouse {
       // Populate date dimension
       await this.populateDateDimension();
 
-      console.log('Data warehouse schema initialized successfully');
+      logger.info('Data warehouse schema initialized successfully.', { context: 'analytics.warehouse.schema' });
     } catch (error) {
-      console.error('Failed to initialize data warehouse schema:', error);
+      logger.error('Failed to initialize data warehouse schema.', { context: 'analytics.warehouse.schema', data: { error } });
       throw error;
     }
   }
@@ -600,7 +601,7 @@ export class DataWarehouse {
    */
   async optimizePerformance(): Promise<void> {
     try {
-      console.log('Optimizing data warehouse performance...');
+      logger.info('Optimizing data warehouse performance...', { context: 'analytics.warehouse.optimize' });
 
       // Vacuum analyze tables to reclaim space and update statistics
       const tables = [
@@ -618,9 +619,9 @@ export class DataWarehouse {
         await this.query(`VACUUM ANALYZE ${table}`);
       }
 
-      console.log('Performance optimization completed');
+      logger.info('Performance optimization completed.', { context: 'analytics.warehouse.optimize' });
     } catch (error) {
-      console.error('Failed to optimize performance:', error);
+      logger.error('Failed to optimize performance.', { context: 'analytics.warehouse.optimize', data: { error } });
       throw error;
     }
   }
@@ -631,9 +632,9 @@ export class DataWarehouse {
   async analyzeTable(tableName: string): Promise<void> {
     try {
       await this.query(`ANALYZE ${tableName}`);
-      console.log(`Table ${tableName} analyzed successfully`);
+      logger.info('Table analyzed successfully.', { context: 'analytics.warehouse.analyze', data: { tableName } });
     } catch (error) {
-      console.error(`Failed to analyze table ${tableName}:`, error);
+      logger.error('Failed to analyze table.', { context: 'analytics.warehouse.analyze', data: { tableName, error } });
       throw error;
     }
   }

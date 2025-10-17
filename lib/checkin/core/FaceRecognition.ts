@@ -6,6 +6,7 @@ import {
   FaceMatch
 } from '../../../types/checkin';
 import { AWSRekognitionAdapter, createAWSRekognition } from '../adapters/AWSRekognitionAdapter';
+import { logger } from '../../logger';
 
 interface FaceAPI {
   detectFaces(imageData: ImageData): Promise<DetectedFace[]>;
@@ -126,9 +127,13 @@ export class FaceRecognitionService {
     this.useAWS = !!this.awsRekognition;
 
     if (this.useAWS) {
-      console.log('✅ Using AWS Rekognition for face recognition');
+      logger.info('Using AWS Rekognition for face recognition.', {
+        context: 'checkin.faceRecognition.initialization'
+      });
     } else {
-      console.log('⚠️ AWS credentials not found, using mock face recognition');
+      logger.warn('AWS credentials not found, using mock face recognition.', {
+        context: 'checkin.faceRecognition.initialization'
+      });
     }
 
     // Fallback to mock API if AWS not available
@@ -140,7 +145,10 @@ export class FaceRecognitionService {
     try {
       // Use AWS Rekognition if available
       if (this.useAWS && this.awsRekognition) {
-        console.log(`🔍 Enrolling patient ${patientId} with AWS Rekognition...`);
+        logger.debug('Enrolling patient with AWS Rekognition.', {
+          context: 'checkin.faceRecognition.enrollment',
+          data: { patientId }
+        });
 
         const result = await this.awsRekognition.enrollPatient(patientId, photoData);
 
@@ -156,7 +164,10 @@ export class FaceRecognitionService {
       }
 
       // Fallback to mock implementation
-      console.log(`🔍 Enrolling patient ${patientId} with mock face recognition...`);
+      logger.debug('Enrolling patient with mock face recognition.', {
+        context: 'checkin.faceRecognition.enrollment',
+        data: { patientId }
+      });
 
       const faces = await this.faceApi.detectFaces(photoData);
       if (faces.length === 0) {
@@ -196,7 +207,9 @@ export class FaceRecognitionService {
     try {
       // Use AWS Rekognition if available
       if (this.useAWS && this.awsRekognition) {
-        console.log(`🔍 Searching patient with AWS Rekognition...`);
+        logger.debug('Searching patient with AWS Rekognition.', {
+          context: 'checkin.faceRecognition.recognition'
+        });
 
         const result = await this.awsRekognition.searchPatient(photoData);
 
@@ -211,7 +224,9 @@ export class FaceRecognitionService {
       }
 
       // Fallback to mock implementation
-      console.log(`🔍 Searching patient with mock face recognition...`);
+      logger.debug('Searching patient with mock face recognition.', {
+        context: 'checkin.faceRecognition.recognition'
+      });
 
       const faces = await this.faceApi.detectFaces(photoData);
       if (faces.length === 0) {
@@ -305,7 +320,10 @@ export class FaceRecognitionService {
     // Store in cache for immediate use
     this.encodingCache.set(patientId, encoding);
 
-    console.log(`Face encoding stored for patient ${patientId}`);
+    logger.debug('Face encoding stored for patient.', {
+      context: 'checkin.faceRecognition.storage',
+      data: { patientId }
+    });
   }
 
   private async searchInDatabase(unknownEncoding: Float32Array): Promise<FaceMatch[]> {
@@ -384,7 +402,10 @@ export class FaceRecognitionService {
           awsCollectionStats: awsStats
         };
       } catch (error) {
-        console.warn('Failed to get AWS Rekognition stats:', error);
+        logger.warn('Failed to get AWS Rekognition stats.', {
+          context: 'checkin.faceRecognition.stats',
+          data: error instanceof Error ? error : { error }
+        });
       }
     }
 
@@ -403,18 +424,27 @@ export class FaceRecognitionService {
       if (this.useAWS && this.awsRekognition) {
         const deleted = await this.awsRekognition.deletePatientFace(patientId);
         if (deleted) {
-          console.log(`✅ Patient ${patientId} face data deleted from AWS`);
+          logger.info('Patient face data deleted from AWS.', {
+            context: 'checkin.faceRecognition.deletion',
+            data: { patientId }
+          });
         }
         return deleted;
       }
 
       // Remove from mock storage (cache)
       this.encodingCache.delete(patientId);
-      console.log(`✅ Patient ${patientId} face data deleted from local storage`);
+      logger.info('Patient face data deleted from local storage.', {
+        context: 'checkin.faceRecognition.deletion',
+        data: { patientId }
+      });
 
       return true;
     } catch (error) {
-      console.error(`❌ Failed to delete patient ${patientId} face data:`, error);
+      logger.error('Failed to delete patient face data.', {
+        context: 'checkin.faceRecognition.deletion',
+        data: { patientId, error }
+      });
       return false;
     }
   }

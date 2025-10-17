@@ -5,6 +5,8 @@
  * Substitui completamente a Legacy Server Key API
  */
 
+import { logger } from '../../logger';
+
 interface FirebaseAdminConfig {
   type: string;
   project_id: string;
@@ -85,16 +87,25 @@ export class FirebaseV1Adapter {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('FCM v1 API Error:', errorData);
+        logger.error('FCM v1 API error.', {
+          context: 'checkin.notifications.firebaseV1',
+          data: errorData
+        });
         return false;
       }
 
       const result = await response.json();
-      console.log('FCM v1 Success:', result.name);
+      logger.info('FCM v1 message sent successfully.', {
+        context: 'checkin.notifications.firebaseV1',
+        data: { messageId: result.name }
+      });
       return true;
 
     } catch (error) {
-      console.error('Firebase v1 Adapter Error:', error);
+      logger.error('Firebase v1 adapter error.', {
+        context: 'checkin.notifications.firebaseV1',
+        data: error instanceof Error ? error : { error }
+      });
       return false;
     }
   }
@@ -117,7 +128,14 @@ export class FirebaseV1Adapter {
         success++;
       } else {
         failure++;
-        console.error(`Failed to send to token ${tokens[index].substring(0, 20)}...`);
+        const token = tokens[index];
+        logger.error('Failed to send Firebase v1 message to token.', {
+          context: 'checkin.notifications.firebaseV1',
+          data: {
+            tokenPreview: token?.substring(0, 20),
+            reason: result.status === 'rejected' ? result.reason : null
+          }
+        });
       }
     });
 
@@ -160,7 +178,10 @@ export class FirebaseV1Adapter {
       return this.accessToken ?? '';
 
     } catch (error) {
-      console.error('Failed to get Firebase access token:', error);
+      logger.error('Failed to get Firebase access token.', {
+        context: 'checkin.notifications.firebaseV1',
+        data: error instanceof Error ? error : { error }
+      });
       throw error;
     }
   }
@@ -209,7 +230,10 @@ export class FirebaseV1Adapter {
 
     for (const field of requiredFields) {
       if (!this.config[field as keyof FirebaseAdminConfig]) {
-        console.error(`Missing required Firebase config field: ${field}`);
+        logger.error('Missing required Firebase config field.', {
+          context: 'checkin.notifications.firebaseV1.validation',
+          data: { field }
+        });
         return false;
       }
     }
@@ -224,7 +248,9 @@ export class FirebaseV1Adapter {
     const adminSdk = process.env.FIREBASE_ADMIN_SDK;
 
     if (!adminSdk) {
-      console.warn('FIREBASE_ADMIN_SDK environment variable not set');
+      logger.warn('FIREBASE_ADMIN_SDK environment variable not set.', {
+        context: 'checkin.notifications.firebaseV1'
+      });
       return null;
     }
 
@@ -232,13 +258,18 @@ export class FirebaseV1Adapter {
       const adapter = new FirebaseV1Adapter(adminSdk);
 
       if (!adapter.validateConfig()) {
-        console.error('Invalid Firebase Admin SDK configuration');
+        logger.error('Invalid Firebase Admin SDK configuration.', {
+          context: 'checkin.notifications.firebaseV1.validation'
+        });
         return null;
       }
 
       return adapter;
     } catch (error) {
-      console.error('Failed to create Firebase adapter:', error);
+      logger.error('Failed to create Firebase adapter.', {
+        context: 'checkin.notifications.firebaseV1',
+        data: error instanceof Error ? error : { error }
+      });
       return null;
     }
   }

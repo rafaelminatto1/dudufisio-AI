@@ -25,8 +25,7 @@ import { ToastProvider } from './contexts/ToastContext';
 import { DebugProvider } from './contexts/DebugContext';
 import { PatientProvider } from './contexts/PatientContext';
 import { ExerciseProvider } from './contexts/ExerciseContext';
-import LoginPage from './pages/auth/LoginPage';
-import TwoFactorSetupPage from './pages/auth/TwoFactorSetupPage';
+import AuthRoutes from './pages/auth/AuthRoutes';
 import { Role } from './types';
 import { initializeServiceWorker } from './lib/serviceWorkerManager';
 import OfflineIndicator from './components/OfflineIndicator';
@@ -310,15 +309,6 @@ const AppContent: React.FC = memo(() => {
     return TIMEOUT_SCREEN;
   }
 
-  if (show2FASetup) {
-    return (
-      <TwoFactorSetupPage
-        onComplete={() => setShow2FASetup(false)}
-        onBack={() => setShow2FASetup(false)}
-      />
-    );
-  }
-
   if (isAuthenticated && user) {
     return (
       <Suspense fallback={dashboardLoadingScreen}>
@@ -330,10 +320,11 @@ const AppContent: React.FC = memo(() => {
   }
 
   return (
-    <LoginPage
-      onSuccess={() => {
-        setShow2FASetup(false);
-      }}
+    <AuthRoutes
+      onSuccess={() => setShow2FASetup(false)}
+      show2FASetup={show2FASetup}
+      onBack2FA={() => setShow2FASetup(false)}
+      onComplete2FA={() => setShow2FASetup(false)}
     />
   );
 });

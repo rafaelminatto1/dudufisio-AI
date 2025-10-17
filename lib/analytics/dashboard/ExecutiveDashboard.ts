@@ -10,6 +10,7 @@ import {
   BusinessAlert,
   ChartConfig
 } from '../types';
+import { logger } from '../../logger';
 
 export class ExecutiveDashboard {
   private supabase;
@@ -20,7 +21,9 @@ export class ExecutiveDashboard {
 
   async generateDashboard(period: DateRange): Promise<KPIDashboard> {
     try {
-      console.log('📊 Gerando Dashboard Executivo...');
+      logger.info('Gerando dashboard executivo.', {
+        context: 'analytics.dashboard.executive'
+      });
 
       const [financial, operational, clinical, patient] = await Promise.all([
         this.calculateFinancialKPIs(period),
@@ -43,11 +46,16 @@ export class ExecutiveDashboard {
         lastUpdated: new Date()
       };
 
-      console.log('✅ Dashboard Executivo gerado com sucesso');
+      logger.info('Dashboard executivo gerado com sucesso.', {
+        context: 'analytics.dashboard.executive'
+      });
       return dashboard;
 
     } catch (error) {
-      console.error('❌ Erro ao gerar dashboard:', error);
+      logger.error('Erro ao gerar dashboard executivo.', {
+        context: 'analytics.dashboard.executive',
+        data: { error }
+      });
       throw error;
     }
   }
@@ -125,7 +133,10 @@ export class ExecutiveDashboard {
       };
 
     } catch (error) {
-      console.error('❌ Erro no cálculo de KPIs financeiros:', error);
+      logger.error('Erro no cálculo de KPIs financeiros.', {
+        context: 'analytics.dashboard.executive.financial',
+        data: { error }
+      });
       return {
         totalRevenue: 0,
         revenueGrowth: 0,
@@ -197,7 +208,10 @@ export class ExecutiveDashboard {
       };
 
     } catch (error) {
-      console.error('❌ Erro no cálculo de KPIs operacionais:', error);
+      logger.error('Erro no cálculo de KPIs operacionais.', {
+        context: 'analytics.dashboard.executive.operational',
+        data: { error }
+      });
       return {
         totalAppointments: 0,
         appointmentGrowth: 0,
@@ -258,7 +272,10 @@ export class ExecutiveDashboard {
       };
 
     } catch (error) {
-      console.error('❌ Erro no cálculo de KPIs clínicos:', error);
+      logger.error('Erro no cálculo de KPIs clínicos.', {
+        context: 'analytics.dashboard.executive.clinical',
+        data: { error }
+      });
       return {
         totalTreatments: 0,
         avgPainReduction: 0,
@@ -350,7 +367,10 @@ export class ExecutiveDashboard {
       };
 
     } catch (error) {
-      console.error('❌ Erro no cálculo de KPIs de pacientes:', error);
+      logger.error('Erro no cálculo de KPIs de pacientes.', {
+        context: 'analytics.dashboard.executive.patient',
+        data: { error }
+      });
       return {
         totalPatients: 0,
         newPatients: 0,
@@ -384,7 +404,10 @@ export class ExecutiveDashboard {
       trends.push(noShowTrend);
 
     } catch (error) {
-      console.error('❌ Erro na análise de tendências:', error);
+      logger.error('Erro na análise de tendências.', {
+        context: 'analytics.dashboard.executive.trends',
+        data: { error }
+      });
     }
 
     return trends;

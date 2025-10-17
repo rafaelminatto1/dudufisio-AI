@@ -385,6 +385,53 @@ export default function AgendaPage() {
         }
     }, [locationState, location.pathname, navigate]);
 
+    // Navigation handlers - MUST be defined before useAgendaHotkeys
+    const handlePrevious = useCallback(() => {
+        switch (currentView) {
+            case 'daily': {
+                setCurrentDate(addDays(currentDate, -1));
+                break;
+            }
+            case 'weekly': {
+                setCurrentDate(addDays(currentDate, -7));
+                break;
+            }
+            case 'monthly': {
+                setCurrentDate(subMonths(currentDate, 1));
+                break;
+            }
+            case 'list': {
+                setCurrentDate(addDays(currentDate, -14));
+                break;
+            }
+        }
+    }, [currentView, currentDate]);
+
+    const handleNext = useCallback(() => {
+        switch (currentView) {
+            case 'daily': {
+                setCurrentDate(addDays(currentDate, 1));
+                break;
+            }
+            case 'weekly': {
+                setCurrentDate(addDays(currentDate, 7));
+                break;
+            }
+            case 'monthly': {
+                setCurrentDate(addMonths(currentDate, 1));
+                break;
+            }
+            case 'list': {
+                setCurrentDate(addDays(currentDate, 14));
+                break;
+            }
+        }
+    }, [currentView, currentDate]);
+
+    const handleToday = useCallback(() => {
+        setCurrentDate(new Date());
+    }, []);
+
     // Keyboard shortcuts
     useAgendaHotkeys({
         onNewAppointment: () => {
@@ -404,53 +451,6 @@ export default function AgendaPage() {
         onViewWaitlist: handleViewWaitlist,
         enabled: !showSessionForm
     });
-
-    // Navigation handlers
-    const handlePrevious = () => {
-        switch (currentView) {
-            case 'daily': {
-                setCurrentDate(addDays(currentDate, -1));
-                break;
-            }
-            case 'weekly': {
-                setCurrentDate(addDays(currentDate, -7));
-                break;
-            }
-            case 'monthly': {
-                setCurrentDate(subMonths(currentDate, 1));
-                break;
-            }
-            case 'list': {
-                setCurrentDate(addDays(currentDate, -14));
-                break;
-            }
-        }
-    };
-
-    const handleNext = () => {
-        switch (currentView) {
-            case 'daily': {
-                setCurrentDate(addDays(currentDate, 1));
-                break;
-            }
-            case 'weekly': {
-                setCurrentDate(addDays(currentDate, 7));
-                break;
-            }
-            case 'monthly': {
-                setCurrentDate(addMonths(currentDate, 1));
-                break;
-            }
-            case 'list': {
-                setCurrentDate(addDays(currentDate, 14));
-                break;
-            }
-        }
-    };
-
-    const handleToday = () => {
-        setCurrentDate(new Date());
-    };
 
     const handleDateClick = (date: Date) => {
         setCurrentDate(date);

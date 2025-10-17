@@ -10,6 +10,7 @@
  */
 
 import { Patient, Appointment, User } from '../../types';
+import { logger } from '../logger';
 
 export interface LGPDConsent {
   id: string;
@@ -189,7 +190,10 @@ export class LGPDComplianceService {
     consentData: Omit<LGPDConsent, 'id' | 'patientId' | 'createdAt' | 'updatedAt'>
   ): Promise<LGPDConsent> {
     try {
-      console.log(`🔒 Registrando consentimento LGPD para paciente ${patientId}`);
+      logger.info('Registrando consentimento LGPD.', {
+        context: 'compliance.lgpd.consent',
+        data: { patientId }
+      });
       
       const consent: LGPDConsent = {
         id: `consent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -221,11 +225,17 @@ export class LGPDComplianceService {
         purpose: consent.purpose
       });
       
-      console.log(`✅ Consentimento registrado: ${consent.id}`);
+      logger.info('Consentimento LGPD registrado.', {
+        context: 'compliance.lgpd.consent',
+        data: { consentId: consent.id, patientId }
+      });
       return consent;
       
     } catch (error) {
-      console.error('❌ Erro ao registrar consentimento:', error);
+      logger.error('Erro ao registrar consentimento LGPD.', {
+        context: 'compliance.lgpd.consent',
+        data: { patientId, error }
+      });
       throw error;
     }
   }
@@ -235,7 +245,10 @@ export class LGPDComplianceService {
    */
   async withdrawConsent(consentId: string, reason: string): Promise<boolean> {
     try {
-      console.log(`🔒 Retirando consentimento ${consentId}`);
+      logger.info('Retirando consentimento LGPD.', {
+        context: 'compliance.lgpd.consent',
+        data: { consentId, patientId }
+      });
       
       const consent = this.consents.get(consentId);
       if (!consent) {
@@ -269,11 +282,17 @@ export class LGPDComplianceService {
         purpose: consent.purpose
       });
       
-      console.log(`✅ Consentimento retirado: ${consentId}`);
+      logger.info('Consentimento LGPD retirado.', {
+        context: 'compliance.lgpd.consent',
+        data: { consentId, patientId }
+      });
       return true;
       
     } catch (error) {
-      console.error('❌ Erro ao retirar consentimento:', error);
+      logger.error('Erro ao retirar consentimento LGPD.', {
+        context: 'compliance.lgpd.consent',
+        data: { consentId, patientId, error }
+      });
       throw error;
     }
   }
@@ -376,7 +395,10 @@ export class LGPDComplianceService {
     format: 'json' | 'xml' | 'csv';
   }> {
     try {
-      console.log(`🔒 Exportando dados do paciente ${patientId}`);
+      logger.info('Exportando dados do paciente.', {
+        context: 'compliance.lgpd.dataExport',
+        data: { patientId }
+      });
       
       // Verificar consentimento para exportação
       const hasConsent = await this.hasValidConsent(patientId, 'data_processing', 'data_export');
@@ -418,7 +440,10 @@ export class LGPDComplianceService {
         purpose: 'data_portability'
       });
       
-      console.log(`✅ Dados exportados para paciente ${patientId}`);
+      logger.info('Dados exportados.', {
+        context: 'compliance.lgpd.dataExport',
+        data: { patientId }
+      });
       
       return {
         patient,
@@ -430,7 +455,10 @@ export class LGPDComplianceService {
       };
       
     } catch (error) {
-      console.error('❌ Erro ao exportar dados:', error);
+      logger.error('Erro ao exportar dados.', {
+        context: 'compliance.lgpd.dataExport',
+        data: { patientId, error }
+      });
       throw error;
     }
   }
@@ -440,7 +468,10 @@ export class LGPDComplianceService {
    */
   async anonymizePatientData(patientId: string, reason: string): Promise<boolean> {
     try {
-      console.log(`🔒 Anonimizando dados do paciente ${patientId}`);
+      logger.info('Anonimizando dados do paciente.', {
+        context: 'compliance.lgpd.anonymization',
+        data: { patientId }
+      });
       
       // Verificar se há base legal para anonimização
       const hasLegalBasis = await this.checkAnonymizationLegalBasis(patientId);
@@ -493,11 +524,17 @@ export class LGPDComplianceService {
         purpose: 'right_to_be_forgotten'
       });
       
-      console.log(`✅ Dados anonimizados para paciente ${patientId}`);
+      logger.info('Dados anonimizados.', {
+        context: 'compliance.lgpd.anonymization',
+        data: { patientId }
+      });
       return true;
       
     } catch (error) {
-      console.error('❌ Erro ao anonimizar dados:', error);
+      logger.error('Erro ao anonimizar dados.', {
+        context: 'compliance.lgpd.anonymization',
+        data: { patientId, error }
+      });
       throw error;
     }
   }
@@ -507,7 +544,10 @@ export class LGPDComplianceService {
    */
   async reportDataBreach(breachData: Omit<LGPDDataBreach, 'id' | 'incidentId' | 'createdAt' | 'updatedAt'>): Promise<LGPDDataBreach> {
     try {
-      console.log(`🚨 Reportando violação de dados`);
+      logger.warn('Reportando violação de dados.', {
+        context: 'compliance.lgpd.breach',
+        data: { incidentId: breach.incidentId }
+      });
       
       const breach: LGPDDataBreach = {
         id: `breach_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -543,11 +583,17 @@ export class LGPDComplianceService {
         await this.notifyAuthorities(breach);
       }
       
-      console.log(`✅ Violação de dados reportada: ${breach.incidentId}`);
+      logger.info('Violação de dados reportada.', {
+        context: 'compliance.lgpd.breach',
+        data: { incidentId: breach.incidentId }
+      });
       return breach;
       
     } catch (error) {
-      console.error('❌ Erro ao reportar violação:', error);
+      logger.error('Erro ao reportar violação de dados.', {
+        context: 'compliance.lgpd.breach',
+        data: { incidentId: breach.incidentId, error }
+      });
       throw error;
     }
   }
@@ -645,7 +691,10 @@ export class LGPDComplianceService {
    * Notificar autoridades sobre violação
    */
   private async notifyAuthorities(breach: LGPDDataBreach): Promise<void> {
-    console.log(`📧 Notificando autoridades sobre violação ${breach.incidentId}`);
+    logger.info('Notificando autoridades sobre violação.', {
+      context: 'compliance.lgpd.breachNotification',
+      data: { incidentId: breach.incidentId }
+    });
     // Implementar notificação real para ANPD
   }
 

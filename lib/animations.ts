@@ -1,8 +1,11 @@
-import { Variants } from 'framer-motion';
-
 /**
- * Configurações de animação reutilizáveis com Framer Motion
+ * Animation Variants Library
+ * 
+ * Reusable Framer Motion animation configurations for consistent
+ * animations throughout the application.
  */
+
+import { Variants } from 'framer-motion';
 
 // Slide In Animations
 export const slideInFromLeft: Variants = {
@@ -46,15 +49,15 @@ export const fadeIn: Variants = {
   hidden: { opacity: 0 },
   visible: { 
     opacity: 1,
-    transition: { duration: 0.2 }
+    transition: { duration: 0.2, ease: 'easeOut' }
   }
 };
 
 export const fadeOut: Variants = {
-  hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1,
-    transition: { duration: 0.2 }
+  visible: { opacity: 1 },
+  hidden: { 
+    opacity: 0,
+    transition: { duration: 0.2, ease: 'easeIn' }
   }
 };
 
@@ -69,34 +72,31 @@ export const scaleIn: Variants = {
 };
 
 export const scaleOut: Variants = {
-  hidden: { scale: 1, opacity: 1 },
-  visible: { 
+  visible: { scale: 1, opacity: 1 },
+  hidden: { 
     scale: 0.8, 
     opacity: 0,
     transition: { duration: 0.2, ease: 'easeIn' }
   }
 };
 
-// Stagger Animations (para listas)
+// Stagger Animations
 export const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
+      staggerChildren: 0.05
     }
   }
 };
 
 export const staggerItem: Variants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
     y: 0,
-    opacity: 1,
-    transition: {
-      duration: 0.3,
-      ease: 'easeOut'
-    }
+    transition: { duration: 0.3 }
   }
 };
 
@@ -110,23 +110,24 @@ export const modalBackdrop: Variants = {
 };
 
 export const modalContent: Variants = {
-  hidden: { scale: 0.9, opacity: 0 },
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
   visible: { 
-    scale: 1, 
-    opacity: 1,
+    opacity: 1, 
+    y: 0,
+    scale: 1,
     transition: { 
       duration: 0.3,
-      ease: 'easeOut'
+      ease: [0.16, 1, 0.3, 1] // Custom easing for smooth animation
     }
   }
 };
 
 // Card Animations
 export const cardHover: Variants = {
-  rest: { scale: 1, y: 0 },
+  rest: { scale: 1 },
   hover: { 
-    scale: 1.02, 
-    y: -4,
+    scale: 1.02,
+    boxShadow: "0 10px 40px rgba(0,0,0,0.1)",
     transition: { duration: 0.2 }
   }
 };
@@ -139,63 +140,67 @@ export const cardTap: Variants = {
   }
 };
 
-// Loading Animations
+// Pulse Animation
 export const pulse: Variants = {
   animate: {
-    opacity: [1, 0.5, 1],
+    scale: [1, 1.05, 1],
+    opacity: [1, 0.9, 1],
     transition: {
-      duration: 1.5,
+      duration: 2,
       repeat: Infinity,
-      ease: 'easeInOut'
+      ease: "easeInOut"
     }
   }
 };
 
+// Spin Animation
 export const spin: Variants = {
   animate: {
     rotate: 360,
     transition: {
       duration: 1,
       repeat: Infinity,
-      ease: 'linear'
+      ease: "linear"
     }
   }
 };
 
-// Drag & Drop Animations
+// Drag Animations
 export const dragItem: Variants = {
-  initial: { scale: 1, opacity: 1 },
-  drag: { 
-    scale: 1.05, 
+  dragging: {
     opacity: 0.8,
-    transition: { duration: 0.1 }
+    rotate: 2,
+    scale: 1.05,
+    boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+    zIndex: 1000,
+    transition: { duration: 0.2 }
   }
 };
 
-// Page Transitions
+// Page Transition
 export const pageTransition: Variants = {
   initial: { opacity: 0, y: 20 },
   animate: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.4 }
+    transition: { duration: 0.3 }
   },
   exit: { 
     opacity: 0, 
     y: -20,
-    transition: { duration: 0.3 }
+    transition: { duration: 0.2 }
   }
 };
 
-// Notification Animations
+// Notification Slide In
 export const notificationSlideIn: Variants = {
   hidden: { x: 400, opacity: 0 },
   visible: { 
     x: 0, 
     opacity: 1,
     transition: { 
-      type: 'spring',
-      stiffness: 500,
+      type: "spring",
+      stiffness: 300,
       damping: 30
     }
   },
@@ -206,27 +211,30 @@ export const notificationSlideIn: Variants = {
   }
 };
 
-// Tooltip Animations
+// Tooltip Fade
 export const tooltipFade: Variants = {
-  hidden: { opacity: 0, y: -10 },
+  hidden: { opacity: 0, y: 5 },
   visible: { 
     opacity: 1, 
     y: 0,
-    transition: { duration: 0.2 }
+    transition: { duration: 0.15 }
   }
 };
 
-// Accordion Animations
+// Accordion Content
 export const accordionContent: Variants = {
-  collapsed: { 
+  hidden: { 
     height: 0,
     opacity: 0,
-    transition: { duration: 0.3 }
+    transition: { duration: 0.2 }
   },
-  expanded: { 
-    height: 'auto',
+  visible: { 
+    height: "auto",
     opacity: 1,
-    transition: { duration: 0.3 }
+    transition: { 
+      duration: 0.3,
+      ease: "easeInOut"
+    }
   }
 };
 
@@ -240,28 +248,31 @@ export const drawerBackdrop: Variants = {
 };
 
 export const drawerSlide: Variants = {
-  hidden: { x: '-100%' },
+  hidden: { x: "-100%" },
   visible: { 
     x: 0,
     transition: { 
-      type: 'spring',
-      stiffness: 400,
-      damping: 40
+      type: "spring",
+      stiffness: 300,
+      damping: 30
     }
   },
   exit: { 
-    x: '-100%',
+    x: "-100%",
     transition: { duration: 0.2 }
   }
 };
 
-// Progress Bar Animation
+// Progress Bar
 export const progressBar: Variants = {
-  initial: { width: 0 },
-  animate: (progress: number) => ({
-    width: `${progress}%`,
-    transition: { duration: 0.5, ease: 'easeOut' }
-  })
+  hidden: { width: 0 },
+  visible: { 
+    width: "100%",
+    transition: { 
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
 };
 
 // Bounce Animation
@@ -269,19 +280,20 @@ export const bounce: Variants = {
   animate: {
     y: [0, -10, 0],
     transition: {
-      duration: 0.6,
+      duration: 0.5,
       repeat: Infinity,
-      repeatDelay: 1
+      ease: "easeInOut"
     }
   }
 };
 
-// Shake Animation (para erros)
+// Shake Animation
 export const shake: Variants = {
   animate: {
     x: [0, -10, 10, -10, 10, 0],
     transition: {
-      duration: 0.5
+      duration: 0.5,
+      ease: "easeInOut"
     }
   }
 };
@@ -291,27 +303,26 @@ export const rotate: Variants = {
   animate: {
     rotate: 360,
     transition: {
-      duration: 2,
+      duration: 1,
       repeat: Infinity,
-      ease: 'linear'
+      ease: "linear"
     }
   }
 };
 
-// Zoom Animation
+// Zoom In Animation
 export const zoomIn: Variants = {
   hidden: { scale: 0 },
   visible: { 
     scale: 1,
     transition: { 
-      type: 'spring',
-      stiffness: 300,
-      damping: 20
+      duration: 0.3,
+      ease: [0.16, 1, 0.3, 1]
     }
   }
 };
 
-// Slide & Fade (combinado)
+// Slide Fade Animation
 export const slideFade: Variants = {
   hidden: { x: -20, opacity: 0 },
   visible: { 
@@ -321,27 +332,93 @@ export const slideFade: Variants = {
   }
 };
 
-// Height Animation (para expansão)
+// Height Expand Animation
 export const heightExpand: Variants = {
-  collapsed: { 
-    height: 0,
-    transition: { duration: 0.3 }
-  },
-  expanded: { 
-    height: 'auto',
-    transition: { duration: 0.3 }
+  hidden: { height: 0, opacity: 0 },
+  visible: { 
+    height: "auto",
+    opacity: 1,
+    transition: { 
+      duration: 0.3,
+      ease: "easeInOut"
+    }
   }
 };
 
-// Width Animation
+// Width Expand Animation
 export const widthExpand: Variants = {
-  collapsed: { 
-    width: 0,
-    transition: { duration: 0.3 }
-  },
-  expanded: { 
-    width: 'auto',
-    transition: { duration: 0.3 }
+  hidden: { width: 0, opacity: 0 },
+  visible: { 
+    width: "auto",
+    opacity: 1,
+    transition: { 
+      duration: 0.3,
+      ease: "easeInOut"
+    }
   }
 };
 
+// Combined Card Animation (for AppointmentCard)
+export const appointmentCardVariants: Variants = {
+  initial: { opacity: 0, y: 10 },
+  animate: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.2 }
+  },
+  hover: {
+    scale: 1.02,
+    y: -2,
+    boxShadow: "0 10px 40px rgba(0,0,0,0.15)",
+    transition: { duration: 0.2 }
+  },
+  tap: {
+    scale: 0.98,
+    transition: { duration: 0.1 }
+  }
+};
+
+// Drag Overlay Animation
+export const dragOverlayVariants: Variants = {
+  initial: { scale: 1 },
+  animate: {
+    scale: 1.05,
+    rotate: 3,
+    boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+    transition: { duration: 0.2 }
+  }
+};
+
+// Time Slot Grid Animation
+export const timeSlotVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      staggerChildren: 0.02,
+      delayChildren: 0.1
+    }
+  }
+};
+
+// Time Slot Item Animation
+export const timeSlotItem: Variants = {
+  hidden: { opacity: 0, y: 5 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.2 }
+  }
+};
+
+// Conflict Warning Animation
+export const conflictWarning: Variants = {
+  animate: {
+    scale: [1, 1.05, 1],
+    transition: {
+      duration: 0.5,
+      repeat: Infinity,
+      ease: "easeInOut"
+    }
+  }
+};

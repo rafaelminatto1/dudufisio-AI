@@ -12,9 +12,9 @@ import {
   CheckInData,
   CheckInResult,
   PatientId,
-  DeviceId,
   FaceRecognitionConfig,
-  TabletConfig
+  TabletConfig,
+  CheckIn
 } from '../../types/checkin';
 import { getFCMConfig, validateFirebaseConfig } from './config/firebase-production';
 
@@ -264,7 +264,7 @@ export class CheckInSystem {
     await this.notificationService.registerDevice(patientId, token, platform);
   }
 
-  async sendCustomNotification(patientId: PatientId, title: string, body: string, data?: Record<string, any>) {
+  async sendCustomNotification(patientId: PatientId, title: string, body: string, data?: Record<string, string>) {
     // sendImmediate is private, use send instead
     await this.notificationService.send({
       patientId,
@@ -359,7 +359,7 @@ export class CheckInSystem {
     }
 
     try {
-      const queueStatus = this.queueManager.getQueueStatus();
+      this.queueManager.getQueueStatus();
       checks.queueManager = { status: 'pass' };
     } catch (error) {
       checks.queueManager = { status: 'fail', message: `Queue manager error: ${error}` };
@@ -378,7 +378,7 @@ export class CheckInSystem {
 
     // Check notification service
     try {
-      const notificationStats = this.notificationService.getStats();
+      this.notificationService.getStats();
       checks.notifications = { status: 'pass' };
     } catch (error) {
       checks.notifications = { status: 'fail', message: `Notification service error: ${error}` };
@@ -400,7 +400,7 @@ export class CheckInSystem {
   }
 
   // Private helper methods
-  private async handleSuccessfulCheckIn(checkIn: any) {
+  private async handleSuccessfulCheckIn(checkIn: CheckIn) {
     // Send check-in confirmation notification
     if (checkIn.queuePosition && checkIn.estimatedWaitTime) {
       await this.notificationService.sendCheckInConfirmation(

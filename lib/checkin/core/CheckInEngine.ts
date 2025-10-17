@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   CheckInData,
   CheckInResult,
@@ -10,27 +11,27 @@ import {
 } from '../../../types/checkin';
 
 import { FaceRecognitionService } from './FaceRecognition';
-import { QueueManager, QueuePositionImpl } from './QueueManager';
-import { HealthScreening, HealthScreeningResultImpl } from '../validation/HealthScreening';
+import { QueueManager } from './QueueManager';
+import { HealthScreening } from '../validation/HealthScreening';
 import { logger } from '../../logger';
 
 interface AppointmentService {
-  validateAppointment(patientId: PatientId, date: Date): Promise<AppointmentValidation>;
-  getAppointment(appointmentId: AppointmentId): Promise<any>;
+  validateAppointment(_patientId: PatientId, _date: Date): Promise<AppointmentValidation>;
+  getAppointment(_appointmentId: AppointmentId): Promise<unknown>;
 }
 
 interface PatientService {
-  searchPatient(criteria: PatientSearchCriteria): Promise<PatientSearchResult>;
-  getPatient(patientId: PatientId): Promise<any>;
+  searchPatient(_criteria: PatientSearchCriteria): Promise<PatientSearchResult>;
+  getPatient(_patientId: PatientId): Promise<unknown>;
 }
 
 interface NotificationService {
-  notifyStaff(checkIn: CheckIn): Promise<void>;
-  notifyPatient(patientId: PatientId, message: string): Promise<void>;
+  notifyStaff(_checkIn: CheckIn): Promise<void>;
+  notifyPatient(_patientId: PatientId, _message: string): Promise<void>;
 }
 
 interface PrinterService {
-  printCheckInReceipt(checkIn: CheckIn): Promise<void>;
+  printCheckInReceipt(_checkIn: CheckIn): Promise<void>;
 }
 
 interface PatientSearchResult {
@@ -56,6 +57,7 @@ class PatientSearchResultImpl implements PatientSearchResult {
 }
 
 export class CheckInResultImpl implements CheckInResult {
+  // Values are consumed by callers
   constructor(
     public success: boolean,
     public checkIn?: CheckIn,
@@ -106,7 +108,7 @@ class MockAppointmentService implements AppointmentService {
     return { isValid: false, reason: 'Appointment not found or cancelled' };
   }
 
-  async getAppointment(appointmentId: AppointmentId): Promise<any> {
+  async getAppointment(appointmentId: AppointmentId): Promise<unknown> {
     return {
       id: appointmentId,
       patientId: 'patient-123',
@@ -154,7 +156,7 @@ class MockPatientService implements PatientService {
     return new PatientSearchResultImpl(matches);
   }
 
-  async getPatient(patientId: PatientId): Promise<any> {
+  async getPatient(patientId: PatientId): Promise<unknown> {
     return {
       id: patientId,
       name: 'John Doe',
@@ -224,8 +226,8 @@ export class CheckInEngine {
         logger.debug('Attempting facial recognition.', { context: 'checkin.engine.identification' });
         const recognition = await this.faceRecognition.recognizePatient(checkInData.photo);
 
-        if (recognition.type === 'success') {
-          patientId = recognition.patientId!;
+        if (recognition.type === 'success' && recognition.patientId) {
+          patientId = recognition.patientId;
           logger.info('Patient identified via facial recognition.', {
             context: 'checkin.engine.identification',
             data: { patientId, confidence: recognition.confidence },
@@ -274,7 +276,7 @@ export class CheckInEngine {
           context: 'checkin.engine.appointment',
           data: { reason: appointmentValidation.reason },
         });
-        return CheckInResultImpl.noValidAppointment(appointmentValidation.reason!);
+        return CheckInResultImpl.noValidAppointment(appointmentValidation.reason ?? 'Unknown reason');
       }
 
       logger.info('Valid appointment found.', {
@@ -307,7 +309,7 @@ export class CheckInEngine {
       const checkIn: CheckIn = {
         id: `checkin-${sessionId}-${Date.now()}`,
         patientId,
-        appointmentId: appointmentValidation.appointmentId!,
+        appointmentId: (appointmentValidation.appointmentId || 'unknown') as AppointmentId,
         checkInTime: new Date(),
         method: checkInData.photo ? 'facial_recognition' : 'manual_search',
         deviceId: checkInData.deviceId,

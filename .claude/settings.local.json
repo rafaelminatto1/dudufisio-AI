@@ -39,7 +39,8 @@
       "Bash(node scripts/optimize-icon-imports.cjs:*)",
       "Bash(tee:*)",
       "Bash(start dist/stats.html)",
-      "Bash(node scripts/analyze-vendor-misc.cjs:*)"
+      "Bash(node scripts/analyze-vendor-misc.cjs:*)",
+      "Bash(clip:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

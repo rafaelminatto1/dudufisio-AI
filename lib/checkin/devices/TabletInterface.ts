@@ -38,7 +38,7 @@ abstract class CheckInStep {
 
   abstract render(): Promise<HTMLElement>;
   abstract validate(): Promise<boolean>;
-  abstract getData(): any;
+  abstract getData(): unknown;
   abstract onEnter(): Promise<void>;
   abstract onExit(): Promise<void>;
 }
@@ -86,7 +86,7 @@ class WelcomeStep extends CheckInStep {
     return true; // Welcome step is always valid
   }
 
-  getData(): any {
+  getData(): unknown {
     return {};
   }
 
@@ -240,7 +240,7 @@ class PhotoCaptureStep extends CheckInStep {
     return true; // Photo capture is optional
   }
 
-  getData(): any {
+  getData(): unknown {
     return { photo: this.capturedPhoto };
   }
 
@@ -392,7 +392,7 @@ class PatientSearchStep extends CheckInStep {
     resultsDiv.classList.remove('hidden');
   }
 
-  private selectPatient(patient: any): void {
+  private selectPatient(patient: unknown): void {
     logger.debug('Selected patient.', { context: 'checkin.tablet.search', data: { patient } });
     // Store selection and proceed to next step
   }
@@ -401,7 +401,7 @@ class PatientSearchStep extends CheckInStep {
     return Object.keys(this.searchCriteria).length > 0;
   }
 
-  getData(): any {
+  getData(): unknown {
     return { searchCriteria: this.searchCriteria };
   }
 
@@ -588,7 +588,7 @@ class HealthScreeningStep extends CheckInStep {
     return true; // Health screening can be completed
   }
 
-  getData(): any {
+  getData(): unknown {
     return { healthAnswers: this.answers };
   }
 
@@ -681,7 +681,7 @@ class ConfirmationStep extends CheckInStep {
     return this.confirmed;
   }
 
-  getData(): any {
+  getData(): unknown {
     const printReceipt = (document.querySelector('#print-receipt') as HTMLInputElement)?.checked || false;
     return { confirmed: this.confirmed, printReceipt };
   }
@@ -768,7 +768,7 @@ class CompletionStep extends CheckInStep {
     return true;
   }
 
-  getData(): any {
+  getData(): unknown {
     return { completed: true };
   }
 
@@ -805,7 +805,7 @@ Please keep this receipt.
 export class CheckInFlowImpl implements CheckInFlow {
   private steps: CheckInStep[];
   private currentStepIndex = 0;
-  private flowData: any = {};
+  private flowData: Record<string, unknown> = {};
 
   constructor(
     steps: CheckInStep[],
