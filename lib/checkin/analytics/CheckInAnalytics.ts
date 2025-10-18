@@ -14,7 +14,7 @@ interface AnalyticsEvent {
   patientId?: PatientId;
   sessionId?: string;
   deviceId?: DeviceId;
-  eventData: Record<string, any>;
+  eventData: Record<string, unknown>;
   userAgent?: string;
   ipAddress?: string;
   durationMs?: number;
@@ -80,7 +80,7 @@ export class CheckInAnalytics {
     sessionId: string,
     deviceId: DeviceId,
     patientId?: PatientId,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<void> {
     await this.trackEventInternal({
       eventType: 'checkin_started',
@@ -187,7 +187,7 @@ export class CheckInAnalytics {
     patientId: PatientId,
     sessionId: string,
     loginMethod: string,
-    deviceInfo: Record<string, any>
+    deviceInfo: Record<string, unknown>
   ): Promise<void> {
     await this.trackEventInternal({
       eventType: 'portal_access',
@@ -197,8 +197,8 @@ export class CheckInAnalytics {
       eventData: {
         loginMethod,
         deviceInfo,
-        userAgent: deviceInfo.userAgent,
-        platform: deviceInfo.platform
+        userAgent: (deviceInfo as { userAgent?: string }).userAgent,
+        platform: (deviceInfo as { platform?: string }).platform
       },
       success: true
     });
@@ -272,7 +272,7 @@ export class CheckInAnalytics {
     eventType: string,
     errorCode: string,
     errorMessage: string,
-    context: Record<string, any>
+    context: Record<string, unknown>
   ): Promise<void> {
     await this.trackEventInternal({
       eventType: `error_${eventType}`,
@@ -280,7 +280,7 @@ export class CheckInAnalytics {
       eventData: {
         context,
         severity: this.classifyErrorSeverity(errorCode),
-        stackTrace: context.stackTrace
+        stackTrace: (context as { stackTrace?: string }).stackTrace
       },
       success: false,
       errorCode,
@@ -310,8 +310,8 @@ export class CheckInAnalytics {
     ).length;
 
     const durations = checkInEvents
-      .filter(e => e.eventType === 'checkin_completed' && e.durationMs)
-      .map(e => e.durationMs!);
+      .filter(e => e.eventType === 'checkin_completed' && typeof e.durationMs === 'number')
+      .map(e => e.durationMs as number);
     const avgCheckInDuration = durations.length > 0
       ? durations.reduce((a, b) => a + b, 0) / durations.length / 1000 // Convert to seconds
       : 0;
@@ -331,8 +331,8 @@ export class CheckInAnalytics {
 
     // Average check-in time
     const checkInTimes = events
-      .filter(e => e.eventType === 'checkin_completed' && e.durationMs)
-      .map(e => e.durationMs! / 1000);
+      .filter(e => e.eventType === 'checkin_completed' && typeof e.durationMs === 'number')
+      .map(e => (e.durationMs as number) / 1000);
     const averageCheckInTime = checkInTimes.length > 0
       ? checkInTimes.reduce((a, b) => a + b, 0) / checkInTimes.length
       : 0;
@@ -471,8 +471,8 @@ export class CheckInAnalytics {
 
     // Average session duration
     const sessionDurations = events
-      .filter(e => e.eventType === 'checkin_completed' && e.durationMs)
-      .map(e => e.durationMs! / 1000);
+      .filter(e => e.eventType === 'checkin_completed' && typeof e.durationMs === 'number')
+      .map(e => (e.durationMs as number) / 1000);
     const averageSessionDuration = sessionDurations.length > 0
       ? sessionDurations.reduce((a, b) => a + b, 0) / sessionDurations.length
       : 0;
@@ -565,8 +565,8 @@ export class CheckInAnalytics {
     const errorRate = totalRecentEvents > 0 ? (errorEvents / totalRecentEvents) * 100 : 0;
 
     const processingTimes = recentEvents
-      .filter(e => e.durationMs)
-      .map(e => e.durationMs!);
+      .filter(e => typeof e.durationMs === 'number')
+      .map(e => e.durationMs as number);
     const averageProcessingTime = processingTimes.length > 0
       ? processingTimes.reduce((a, b) => a + b, 0) / processingTimes.length
       : 0;
@@ -629,7 +629,13 @@ export class CheckInAnalytics {
         });
       }
 
-      const dayData = dailyMap.get(dateKey)!;
+    const dayData = dailyMap.get(dateKey) as {
+      totalCheckIns: number;
+      faceRecognitionCount: number;
+      confidenceValues: number[];
+      failedCheckIns: number;
+      durations: number[];
+    };
 
       if (event.eventType === 'checkin_completed') {
         dayData.totalCheckIns++;
@@ -663,7 +669,8 @@ export class CheckInAnalytics {
     })).sort((a, b) => a.date.getTime() - b.date.getTime());
   }
 
-  private calculateErrorTrends(events: AnalyticsEvent[], period: DateRange): { date: Date; errorCount: number; totalEvents: number }[] {
+  private calculateErrorTrends(events: AnalyticsEvent[]): { date: Date; errorCount: number; totalEvents: number }[] {
+    // _period reserved for future trend calculations; currently unused
     const dailyMap = new Map<string, { errorCount: number; totalEvents: number }>();
 
     events.forEach(event => {
@@ -673,7 +680,7 @@ export class CheckInAnalytics {
         dailyMap.set(dateKey, { errorCount: 0, totalEvents: 0 });
       }
 
-      const dayData = dailyMap.get(dateKey)!;
+      const dayData = dailyMap.get(dateKey) as { errorCount: number; totalEvents: number };
       dayData.totalEvents++;
 
       if (event.eventCategory === 'error') {

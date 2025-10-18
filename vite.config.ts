@@ -166,14 +166,9 @@ export default defineConfig({
             return 'vendor-react';
           }
 
-          // Consolidar Supabase primeiro para evitar dependências circulares
+          // 🔥 FIX: Consolidar Supabase PRIMEIRO para evitar dependências circulares
           if (id.includes('node_modules/@supabase')) {
             return 'vendor-supabase';
-          }
-
-          // Consolidar todas as outras dependências em um único chunk
-          if (id.includes('node_modules')) {
-            return 'vendor-misc';
           }
 
           // UI libraries
@@ -233,64 +228,11 @@ export default defineConfig({
           // NÃO consolidar páginas - deixar React Lazy Loading fazer o trabalho
           // Páginas serão code-split automaticamente via React.lazy()
 
-          // CATEGORIZAR serviços por domínio (68 serviços divididos em 6 categorias)
+          // 🔥 FIX: NÃO consolidar serviços - deixar lazy loading gerenciar
+          // Isso evita problemas de dependência circular e ordem de inicialização
           if (id.includes('/services/')) {
-            // Serviços de IA - pesados, ficam separados
-            if (id.includes('geminiService') ||
-                id.includes('groqService') ||
-                id.includes('xaiService') ||
-                id.includes('clinicalContentService')) {
-              return; // Não consolidar - permitir lazy loading
-            }
-
-            // Serviços de pacientes e clínica (~150KB)
-            if (id.includes('patientService') ||
-                id.includes('bodyMapService') ||
-                id.includes('acompanhamentoService') ||
-                id.includes('sessionService') ||
-                id.includes('treatmentService') ||
-                id.includes('soapNoteService')) {
-              return 'services-patient';
-            }
-
-            // Serviços de exercícios e protocolos (~120KB)
-            if (id.includes('exerciseService') ||
-                id.includes('exerciseProtocolService') ||
-                id.includes('exerciseLibraryService') ||
-                id.includes('integratedExerciseService') ||
-                id.includes('integratedProtocolsService') ||
-                id.includes('integratedAssessmentService')) {
-              return 'services-exercise';
-            }
-
-            // Serviços de comunicação (~80KB)
-            if (id.includes('whatsappService') ||
-                id.includes('whatsappLogService') ||
-                id.includes('emailService') ||
-                id.includes('notificationService') ||
-                id.includes('commentService')) {
-              return 'services-communication';
-            }
-
-            // Serviços financeiros e administrativos (~100KB)
-            if (id.includes('financialService') ||
-                id.includes('voucherService') ||
-                id.includes('inventoryService') ||
-                id.includes('suppliesService') ||
-                id.includes('partnershipService')) {
-              return 'services-admin';
-            }
-
-            // Serviços de agendamento (~80KB)
-            if (id.includes('appointmentService') ||
-                id.includes('availabilityService') ||
-                id.includes('waitlistService') ||
-                id.includes('schedulingService')) {
-              return 'services-scheduling';
-            }
-
-            // Todos os outros serviços compartilhados (utils, auth, etc)
-            return 'services-utils';
+            // Retornar undefined para permitir code splitting automático
+            return;
           }
 
           // CONSOLIDAR apenas componentes UI PEQUENOS (não páginas ou features)
