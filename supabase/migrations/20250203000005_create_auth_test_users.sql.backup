@@ -1,0 +1,63 @@
+-- Create auth users for testing
+-- These users need to exist in auth.users for foreign key constraints
+
+BEGIN;
+
+-- Insert into auth.users (bypassing normal auth flow for testing)
+INSERT INTO auth.users (
+    id,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    created_at,
+    updated_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    is_super_admin,
+    role
+)
+VALUES
+-- Therapist
+(
+    'c0000000-0000-0000-0000-000000000001',
+    'terapeuta@dudufisio.com',
+    crypt('teste123', gen_salt('bf')),
+    NOW(),
+    NOW(),
+    NOW(),
+    '{"provider": "email", "providers": ["email"]}',
+    '{"full_name": "Dr. João Silva"}',
+    false,
+    'authenticated'
+),
+-- Patient
+(
+    'c0000000-0000-0000-0000-000000000002',
+    'paciente@dudufisio.com',
+    crypt('teste123', gen_salt('bf')),
+    NOW(),
+    NOW(),
+    NOW(),
+    '{"provider": "email", "providers": ["email"]}',
+    '{"full_name": "Maria Santos"}',
+    false,
+    'authenticated'
+),
+-- Admin
+(
+    'c0000000-0000-0000-0000-000000000003',
+    'admin@dudufisio.com',
+    crypt('teste123', gen_salt('bf')),
+    NOW(),
+    NOW(),
+    NOW(),
+    '{"provider": "email", "providers": ["email"]}',
+    '{"full_name": "Admin Sistema"}',
+    false,
+    'authenticated'
+)
+ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    updated_at = NOW();
+
+COMMIT;

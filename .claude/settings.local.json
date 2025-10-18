@@ -72,7 +72,11 @@
       "Bash(node scripts/test-stripe-payment.js:*)",
       "Bash(export VITE_SUPABASE_URL:*)",
       "Bash(export:*)",
-      "Bash(move \"src\\pages\\patient-portal\\MessagesPage.tsx\" \"pages\\patient-portal\\MessagesPage.tsx\")"
+      "Bash(move \"src\\pages\\patient-portal\\MessagesPage.tsx\" \"pages\\patient-portal\\MessagesPage.tsx\")",
+      "Bash(vercel --version)",
+      "Bash(vercel env ls)",
+      "Bash(vercel ls --max-age 1d)",
+      "Bash(vercel ls)"
     ]
   },
   "enableAllProjectMcpServers": true,
