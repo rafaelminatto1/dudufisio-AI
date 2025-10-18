@@ -28,18 +28,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
   Eye,
   Filter,
   Download,
   Users,
   TrendingUp,
   UserX,
-  UserCheck
+  UserCheck,
+  AlertCircle
 } from 'lucide-react';
 
 export const PatientListModern: React.FC = () => {

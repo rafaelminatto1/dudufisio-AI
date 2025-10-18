@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useExercise } from '../../contexts/ExerciseContext';
 import { usePatient } from '../../contexts/PatientContext';
 import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
