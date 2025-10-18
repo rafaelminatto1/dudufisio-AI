@@ -1,0 +1,65 @@
+{
+  "tests": [
+    {
+      "id": "perf-001",
+      "name": "Bundle Size Validation",
+      "description": "Verificar se bundle size esta abaixo de 3MB",
+      "type": "performance",
+      "assertions": [
+        "Bundle total < 3MB",
+        "Maior chunk individual < 500KB"
+      ]
+    },
+    {
+      "id": "perf-002",
+      "name": "Initial Load Time",
+      "description": "Verificar tempo de carregamento inicial",
+      "type": "performance",
+      "assertions": [
+        "First Contentful Paint < 1.5s",
+        "Time to Interactive < 3s"
+      ]
+    },
+    {
+      "id": "perf-003",
+      "name": "Code Splitting Validation",
+      "description": "Verificar se code splitting esta funcionando",
+      "type": "performance",
+      "assertions": [
+        "Chunks carregam na ordem correta",
+        "React core carrega antes de React libraries"
+      ]
+    },
+    {
+      "id": "perf-004",
+      "name": "Lazy Loading Validation",
+      "description": "Verificar se lazy loading esta funcionando corretamente",
+      "type": "performance",
+      "assertions": [
+        "Paginas sao carregadas sob demanda",
+        "Chunks de pagina nao sao carregados ate navegacao"
+      ]
+    },
+    {
+      "id": "perf-005",
+      "name": "Chunk Count Validation",
+      "description": "Verificar se ha 15+ chunks separados",
+      "type": "performance",
+      "assertions": [
+        "Numero de chunks >= 15",
+        "Chunks estao organizados por prioridade"
+      ]
+    },
+    {
+      "id": "perf-006",
+      "name": "Memory Usage Validation",
+      "description": "Verificar uso de memoria",
+      "type": "performance",
+      "assertions": [
+        "Uso de memoria < 100MB no carregamento inicial",
+        "Uso de memoria < 200MB apos navegacao completa"
+      ]
+    }
+  ]
+}
+

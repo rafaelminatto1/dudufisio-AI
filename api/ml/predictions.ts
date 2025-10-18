@@ -9,10 +9,24 @@ import Anthropic from '@anthropic-ai/sdk';
 import { supabase } from '../../lib/supabase';
 import { logger } from '../../lib/logger';
 
+type PatientData = {
+  [key: string]: unknown;
+  age?: number;
+  condition?: string;
+  severity?: number;
+  medical_history?: string;
+  treatment_plan?: string;
+  planned_sessions?: number;
+  frequency?: string;
+  adherence_history?: string;
+};
+
+type SymptomDatum = Record<string, unknown>;
+
 /**
  * Analisar paciente com Claude AI
  */
-export async function analyzePatientWithClaude(patientData: any) {
+export async function analyzePatientWithClaude(patientData: PatientData) {
   const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY || '',
   });
@@ -70,7 +84,7 @@ Responda APENAS com JSON válido, sem markdown.
 /**
  * Gerar predição de outcome usando Claude
  */
-export async function predictOutcomeWithAI(patientId: string, patientData: any) {
+export async function predictOutcomeWithAI(patientId: string, patientData: PatientData) {
   try {
     const analysis = await analyzePatientWithClaude(patientData);
 
@@ -105,7 +119,7 @@ export async function predictOutcomeWithAI(patientId: string, patientData: any) 
 /**
  * Analisar tendência de sintomas com IA
  */
-export async function analyzeSymptomTrends(patientId: string, symptomData: any[]) {
+export async function analyzeSymptomTrends(patientId: string, symptomData: SymptomDatum[]) {
   const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY || '',
   });

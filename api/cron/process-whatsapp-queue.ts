@@ -98,8 +98,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(summary);
 
-  } catch (error: any) {
-    log(`❌ Erro ao processar fila: ${error.message}`);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    log(`❌ Erro ao processar fila: ${message}`);
     
     // Notificar erro crítico
     await notifyError(error);
@@ -118,7 +119,7 @@ export async function GET(req: NextRequest) {
 /**
  * Helper: Log com timestamp
  */
-function log(message: string, data?: any) {
+function log(message: string, data?: unknown) {
   if (!CONFIG.logEnabled) return;
 
   const timestamp = new Date().toISOString();

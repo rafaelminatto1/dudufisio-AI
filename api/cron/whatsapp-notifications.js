@@ -3,6 +3,7 @@
  * Vercel Cron Function
  * DuduFisio-AI
  */
+const { logger } = require('../../lib/logger');
 
 export default async function handler(req, res) {
   // Verificar authorization (Vercel Cron envia automaticamente)
@@ -10,13 +11,11 @@ export default async function handler(req, res) {
   const cronSecret = process.env.CRON_SECRET;
 
   if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    const { logger } = require('../../lib/logger');
     logger.error('❌ Unauthorized cron request');
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {
-    const { logger } = require('../../lib/logger');
     logger.info('🚀 Iniciando cron job de notificações WhatsApp');
     logger.info(`📅 Data/Hora: ${new Date().toISOString()}`);
 
@@ -33,7 +32,6 @@ export default async function handler(req, res) {
     if (clinicsError) throw clinicsError;
 
     if (!clinics || clinics.length === 0) {
-      const { logger } = require('../../lib/logger');
       logger.info('⚠️  Nenhuma clínica ativa encontrada');
       return res.status(200).json({
         success: true,
@@ -42,14 +40,12 @@ export default async function handler(req, res) {
       });
     }
 
-    const { logger } = require('../../lib/logger');
     logger.info(`📊 Processando ${clinics.length} clínica(s)...`);
 
     const notificationService = getWhatsAppNotificationService();
     const results = [];
 
     for (const clinic of clinics) {
-      const { logger } = require('../../lib/logger');
       logger.info(`\n🏥 Processando clínica: ${clinic.name} (${clinic.id})`);
       
       try {
@@ -61,10 +57,8 @@ export default async function handler(req, res) {
           status: 'success',
         });
 
-        const { logger } = require('../../lib/logger');
         logger.info(`✅ Notificações enviadas para ${clinic.name}`);
       } catch (error) {
-        const { logger } = require('../../lib/logger');
         logger.error(`❌ Erro ao processar ${clinic.name}:`, { data: error });
         
         results.push({
@@ -79,7 +73,6 @@ export default async function handler(req, res) {
     const successCount = results.filter(r => r.status === 'success').length;
     const errorCount = results.filter(r => r.status === 'error').length;
 
-    const { logger } = require('../../lib/logger');
     logger.info('\n📊 Resumo da execução:');
     logger.info(`✅ Sucesso: ${successCount}`);
     logger.info(`❌ Erros: ${errorCount}`);
@@ -95,7 +88,6 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    const { logger } = require('../../lib/logger');
     logger.error('❌ Erro fatal no cron job:', { data: error });
     
     return res.status(500).json({

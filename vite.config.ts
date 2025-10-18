@@ -153,22 +153,18 @@ export default defineConfig({
         return false;
       },
       output: {
-        // Estratégia agressiva de code splitting com ordem de carregamento garantida
-        manualChunks: (id) => {
-          // PRIORIDADE 1: React Core Foundation (carrega primeiro)
-          if (id.includes('node_modules/react/') && !id.includes('node_modules/react-router') && !id.includes('node_modules/react-dom')) {
-            return 'vendor-react-core';
-          }
-          
-          if (id.includes('node_modules/react-dom/') || 
+        // Code splitting DESABILITADO - Vite ordena chunks de forma inconsistente
+        // TODO: Implementar code splitting com estratégia diferente ou aguardar correção do Vite
+        manualChunks: undefined,
+        /* manualChunks: (id) => {
+          // CONSOLIDAR TODO O REACT EM UM ÚNICO CHUNK
+          // Isso garante que não há problemas de ordem de carregamento
+          if (id.includes('node_modules/react/') || 
+              id.includes('node_modules/react-dom/') ||
               id.includes('node_modules/scheduler/') ||
-              id.includes('node_modules/use-sync-external-store/')) {
-            return 'vendor-react-dom';
-          }
-          
-          // PRIORIDADE 2: React Router (carrega depois do core)
-          if (id.includes('node_modules/react-router')) {
-            return 'vendor-router';
+              id.includes('node_modules/use-sync-external-store/') ||
+              id.includes('node_modules/react-router')) {
+            return 'vendor-react';
           }
           
           // PRIORIDADE 3: React Libraries (dependem do core)
@@ -238,35 +234,9 @@ export default defineConfig({
           if (id.includes('/components/ui/') || id.includes('/components/layout/')) {
             return 'app-ui-components';
           }
-        },
+        }, */
         entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: (chunkInfo) => {
-          const name = chunkInfo.name;
-          
-          // Ordem de prioridade com prefixos alfanuméricos
-          const priorityMap: Record<string, string> = {
-            'vendor-react-core': '00-',
-            'vendor-react-dom': '01-',
-            'vendor-router': '02-',
-            'vendor-tanstack': '03-',
-            'vendor-radix': '04-',
-            'vendor-forms': '05-',
-            'vendor-backend': '06-',
-            'vendor-ui': '07-',
-            'vendor-date': '08-',
-            'vendor-crypto': '09-',
-            'lib-editor': '10-',
-            'lib-pdf': '11-',
-            'vendor-charts': '12-',
-            'vendor-aws': '13-',
-            'vendor-monitoring': '14-',
-            'vendor-misc': '15-',
-            'app-ui-components': '16-'
-          };
-          
-          const prefix = priorityMap[name] || '';
-          return `assets/${prefix}${name}-[hash].js`;
-        },
+        chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]'
       },
       // Tree shaking agressivo - OTIMIZADO
