@@ -217,7 +217,7 @@ CREATE POLICY "Admins can view logs"
 -- 6. GRANTS
 -- =====================================================
 
-GRANT EXECUTE ON FUNCTION create_notification TO authenticated;
+GRANT EXECUTE ON FUNCTION create_notification(UUID, TEXT, TEXT, TEXT, JSONB, TIMESTAMPTZ, TEXT[]) TO authenticated;
 GRANT EXECUTE ON FUNCTION mark_notification_read TO authenticated;
 GRANT EXECUTE ON FUNCTION mark_all_notifications_read TO authenticated;
 GRANT EXECUTE ON FUNCTION get_unread_count TO authenticated;
