@@ -11,7 +11,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ScrollArea } from '../ui/scroll-area';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { formatDistanceToNow } from 'date-fns';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { ptBR } from 'date-fns/locale';
 import { LeadDetailPanel } from './LeadDetailPanel';
 

@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { format, addDays, startOfWeek, addMonths, subMonths, startOfMonth, endOfMonth, setHours, setMinutes } from 'date-fns';
+import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
+import startOfWeek from 'date-fns/startOfWeek';
+import addMonths from 'date-fns/addMonths';
+import subMonths from 'date-fns/subMonths';
+import startOfMonth from 'date-fns/startOfMonth';
+import endOfMonth from 'date-fns/endOfMonth';
+import setHours from 'date-fns/setHours';
+import setMinutes from 'date-fns/setMinutes';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, ArrowLeft } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';

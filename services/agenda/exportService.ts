@@ -1,5 +1,5 @@
 import { EnrichedAppointment, Patient, Therapist } from '../../types';
-import { format } from 'date-fns';
+import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 
 interface ExportOptions {

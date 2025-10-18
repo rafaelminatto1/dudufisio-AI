@@ -7,7 +7,7 @@ import * as notificationService from '../services/notificationService';
 import { useToast } from '../contexts/ToastContext';
 import { Bell, Send, CheckCheck, Loader, MessageSquare, Inbox, CalendarClock, ClipboardList, Megaphone, Dumbbell } from 'lucide-react';
 import { Skeleton } from '../components/ui/skeleton';
-import TiptapEditor from '../components/ui/TiptapEditor';
+import TiptapEditorLazy from '../components/ui/TiptapEditorLazy';
 
 // A simple time ago function for display
 const timeAgo = (date: Date): string => {
@@ -80,7 +80,7 @@ const BroadcastForm: React.FC<{ onSent: () => void }> = ({ onSent }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
                 <label htmlFor="broadcast-message" className="block text-sm font-medium text-slate-700">Mensagem</label>
-                <TiptapEditor
+                <TiptapEditorLazy
                     value={message}
                     onChange={setMessage}
                     minHeight="120px"

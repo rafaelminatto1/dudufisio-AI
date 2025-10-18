@@ -10,7 +10,13 @@ import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Progress } from '../ui/progress';
 import { Target, Plus, Edit, Trash2, Calendar, Clock, CheckCircle, Pause, X } from 'lucide-react';
-import { format, differenceInDays, differenceInWeeks, differenceInMonths, differenceInYears, isAfter, isBefore } from 'date-fns';
+import format from 'date-fns/format';
+import differenceInDays from 'date-fns/differenceInDays';
+import differenceInWeeks from 'date-fns/differenceInWeeks';
+import differenceInMonths from 'date-fns/differenceInMonths';
+import differenceInYears from 'date-fns/differenceInYears';
+import isAfter from 'date-fns/isAfter';
+import isBefore from 'date-fns/isBefore';
 import { ptBR } from 'date-fns/locale';
 
 interface PatientGoalsManagerProps {

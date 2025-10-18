@@ -1,5 +1,9 @@
 import React from 'react';
-import { format, addDays, startOfWeek, isSameDay, isToday } from 'date-fns';
+import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
+import startOfWeek from 'date-fns/startOfWeek';
+import isSameDay from 'date-fns/isSameDay';
+import isToday from 'date-fns/isToday';
 import { ptBR } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { EnrichedAppointment, Therapist } from '../../types';

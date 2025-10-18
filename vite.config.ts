@@ -255,14 +255,9 @@ export default defineConfig({
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]'
       },
-      // Tree shaking agressivo
+      // Tree shaking agressivo - OTIMIZADO
       treeshake: {
-        moduleSideEffects: (id) => {
-          // Preserve side effects apenas onde necessário
-          return id.includes('index.css') ||
-                 id.includes('.css') ||
-                 id.includes('react-toastify');
-        },
+        moduleSideEffects: false,
         propertyReadSideEffects: false,
         tryCatchDeoptimization: false,
       }

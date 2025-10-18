@@ -6,7 +6,9 @@
 
 import { supabase } from '@/lib/supabase';
 import { getMetaWhatsAppService } from './MetaWhatsAppService';
-import { format, addDays, parse } from 'date-fns';
+import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
+import parse from 'date-fns/parse';
 import { ptBR } from 'date-fns/locale';
 
 export interface SchedulingRequest {

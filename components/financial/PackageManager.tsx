@@ -26,7 +26,8 @@ import {
   RefreshCw,
   Download
 } from 'lucide-react';
-import { format, differenceInDays } from 'date-fns';
+import format from 'date-fns/format';
+import differenceInDays from 'date-fns/differenceInDays';
 import { ptBR } from 'date-fns/locale';
 
 interface PatientPackage {

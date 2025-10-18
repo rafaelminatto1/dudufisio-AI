@@ -1,6 +1,6 @@
 import React from 'react';
 import { EnrichedAppointment } from '../../types';
-import { format } from 'date-fns';
+import format from 'date-fns/format';
 import { Card } from '../ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';

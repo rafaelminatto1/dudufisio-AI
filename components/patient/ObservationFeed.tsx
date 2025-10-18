@@ -18,7 +18,11 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import type { SessionObservation, ObservationFilters } from '../../types';
 import { getPatientObservations } from '../../services/patientTrackingService';
-import { format, parseISO, isToday, isYesterday, differenceInDays } from 'date-fns';
+import format from 'date-fns/format';
+import parseISO from 'date-fns/parseISO';
+import isToday from 'date-fns/isToday';
+import isYesterday from 'date-fns/isYesterday';
+import differenceInDays from 'date-fns/differenceInDays';
 import { ptBR } from 'date-fns/locale';
 
 interface ObservationFeedProps {

@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { format } from 'date-fns';
+import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 import { Clock, User, AlertCircle, CheckCircle2, Circle } from 'lucide-react';
 import { Card } from '../ui/card';

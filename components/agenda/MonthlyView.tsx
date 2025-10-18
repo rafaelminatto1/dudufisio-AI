@@ -1,5 +1,12 @@
 import React from 'react';
-import { format, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, isToday, startOfWeek, endOfWeek } from 'date-fns';
+import format from 'date-fns/format';
+import isSameDay from 'date-fns/isSameDay';
+import startOfMonth from 'date-fns/startOfMonth';
+import endOfMonth from 'date-fns/endOfMonth';
+import eachDayOfInterval from 'date-fns/eachDayOfInterval';
+import isToday from 'date-fns/isToday';
+import startOfWeek from 'date-fns/startOfWeek';
+import endOfWeek from 'date-fns/endOfWeek';
 import { ptBR } from 'date-fns/locale';
 import { Card, CardContent } from '../ui/card';
 import { EnrichedAppointment, Therapist } from '../../types';

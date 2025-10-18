@@ -37,7 +37,10 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { BodyPoint, BodyMapAnalytics } from '../../../types';
-import { format, subDays, startOfDay, endOfDay } from 'date-fns';
+import format from 'date-fns/format';
+import subDays from 'date-fns/subDays';
+import startOfDay from 'date-fns/startOfDay';
+import endOfDay from 'date-fns/endOfDay';
 import { ptBR } from 'date-fns/locale';
 
 /**

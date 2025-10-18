@@ -12,7 +12,7 @@ import * as reportService from '../services/reportService';
 import PageHeader from '../components/PageHeader';
 import PageLoader from '../components/ui/PageLoader';
 import InfoCard from '../components/ui/InfoCard';
-import TiptapEditor from '../components/ui/TiptapEditor';
+import TiptapEditorLazy from '../components/ui/TiptapEditorLazy';
 import { useToast } from '../contexts/ToastContext';
 import { User, Sparkles, Save, FileCheck, ChevronLeft, Loader, FileText } from 'lucide-react';
 
@@ -205,7 +205,7 @@ const MedicalReportPage: React.FC = () => {
                             <p className="mt-4 text-slate-600">A IA está analisando os dados do paciente e gerando o relatório...</p>
                         </div>
                            ) : report ? (
-                               <TiptapEditor 
+                               <TiptapEditorLazy 
                                    value={content} 
                                    onChange={setContent} 
                                    minHeight="600px"

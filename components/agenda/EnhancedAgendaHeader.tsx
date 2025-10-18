@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { format, addDays, subDays, startOfWeek, endOfWeek } from 'date-fns';
+import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
+import subDays from 'date-fns/subDays';
+import startOfWeek from 'date-fns/startOfWeek';
+import endOfWeek from 'date-fns/endOfWeek';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';

@@ -20,7 +20,7 @@ import PageLoader from '../components/ui/PageLoader';
 import InfoCard from '../components/ui/InfoCard';
 import PainScale from '../components/PainScale';
 import { aiOrchestratorService } from '../services/ai/aiOrchestratorService';
-import TiptapEditor from '../components/ui/TiptapEditor';
+import TiptapEditorLazy from '../components/ui/TiptapEditorLazy';
 import { Progress } from '../components/ui/progress';
 import {
   attendanceFormSchema,
@@ -391,7 +391,7 @@ const AtendimentoPage: React.FC = () => {
                                     {formData.subjective.length} / 5000
                                 </span>
                             </div>
-                            <TiptapEditor
+                            <TiptapEditorLazy
                                 value={formData.subjective}
                                 onChange={(value) => setValue('subjective', value, { shouldDirty: true })}
                                 minHeight="80px"
@@ -415,7 +415,7 @@ const AtendimentoPage: React.FC = () => {
                                     {formData.objective.length} / 5000
                                 </span>
                             </div>
-                            <TiptapEditor
+                            <TiptapEditorLazy
                                 value={formData.objective}
                                 onChange={(value) => setValue('objective', value, { shouldDirty: true })}
                                 minHeight="80px"
@@ -451,7 +451,7 @@ const AtendimentoPage: React.FC = () => {
                                     {formData.assessment.length} / 5000
                                 </span>
                             </div>
-                            <TiptapEditor
+                            <TiptapEditorLazy
                                 value={formData.assessment}
                                 onChange={(value) => setValue('assessment', value, { shouldDirty: true })}
                                 minHeight="80px"
@@ -475,7 +475,7 @@ const AtendimentoPage: React.FC = () => {
                                     {formData.plan.length} / 5000
                                 </span>
                             </div>
-                            <TiptapEditor
+                            <TiptapEditorLazy
                                 value={formData.plan}
                                 onChange={(value) => setValue('plan', value, { shouldDirty: true })}
                                 minHeight="80px"

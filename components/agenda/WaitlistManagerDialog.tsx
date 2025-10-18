@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { WaitlistEntry, Patient, Therapist } from '../../types';
-import { format } from 'date-fns';
+import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '../../lib/utils';
 

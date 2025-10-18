@@ -6,7 +6,7 @@ import { useToast } from '../contexts/ToastContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { format } from 'date-fns';
+import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 import PatientInfoCard from './agenda/PatientInfoCard';
 

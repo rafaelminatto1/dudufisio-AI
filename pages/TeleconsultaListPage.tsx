@@ -12,7 +12,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
 import PageHeader from '../components/PageHeader';
-import { format } from 'date-fns';
+import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 
 const TeleconsultaListPage: React.FC = () => {

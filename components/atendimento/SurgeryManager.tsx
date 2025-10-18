@@ -8,7 +8,11 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Calendar, CalendarDays, Edit, Plus, Trash2, User, MapPin, AlertTriangle } from 'lucide-react';
-import { format, differenceInDays, differenceInWeeks, differenceInMonths, differenceInYears } from 'date-fns';
+import format from 'date-fns/format';
+import differenceInDays from 'date-fns/differenceInDays';
+import differenceInWeeks from 'date-fns/differenceInWeeks';
+import differenceInMonths from 'date-fns/differenceInMonths';
+import differenceInYears from 'date-fns/differenceInYears';
 import { ptBR } from 'date-fns/locale';
 
 interface SurgeryManagerProps {

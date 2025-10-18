@@ -25,7 +25,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useWhatsAppRealtime, useWhatsAppConversations } from '../../hooks/useWhatsAppRealtime';
-import { formatDistanceToNow } from 'date-fns';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { ptBR } from 'date-fns/locale';
 
 export default function UnifiedInbox() {

@@ -67,7 +67,11 @@
       "Bash(node scripts/test-notifications.js:*)",
       "Bash(node scripts/create-test-user.js:*)",
       "Bash(node scripts/check-users.js:*)",
-      "Bash(node scripts/sync-auth-users.js:*)"
+      "Bash(node scripts/sync-auth-users.js:*)",
+      "Bash(git push:*)",
+      "Bash(node scripts/test-stripe-payment.js:*)",
+      "Bash(export VITE_SUPABASE_URL:*)",
+      "Bash(export:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

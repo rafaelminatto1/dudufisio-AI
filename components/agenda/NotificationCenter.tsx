@@ -4,7 +4,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { EnrichedAppointment, WaitlistEntry } from '../../types';
 import { cn } from '../../lib/utils';
-import { format } from 'date-fns';
+import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 
 interface Notification {

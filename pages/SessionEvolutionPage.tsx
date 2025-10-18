@@ -8,7 +8,7 @@ import { Loader, Sparkles, Clipboard, Check } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { Skeleton } from '../components/ui/skeleton';
 import MarkdownRenderer from '../components/ui/MarkdownRenderer';
-import TiptapEditor from '../components/ui/TiptapEditor';
+import TiptapEditorLazy from '../components/ui/TiptapEditorLazy';
 
 const initialFormData: Partial<SessionEvolutionFormData> = {
     numero_sessao: '',
@@ -34,7 +34,7 @@ const FormTextarea = memo<{label: string, name: keyof SessionEvolutionFormData, 
     ({label, name, value, onChange, placeholder, rows=2}) => (
     <div className="sm:col-span-2">
         <label htmlFor={name} className="block text-sm font-medium text-slate-700">{label}</label>
-        <TiptapEditor
+        <TiptapEditorLazy
             value={value}
             onChange={onChange}
             placeholder={placeholder}

@@ -24,7 +24,10 @@ import {
   exportReportToPDF,
   copyReportToClipboard
 } from '../../utils/exportUtils';
-import { format, parseISO, subMonths, subWeeks } from 'date-fns';
+import format from 'date-fns/format';
+import parseISO from 'date-fns/parseISO';
+import subMonths from 'date-fns/subMonths';
+import subWeeks from 'date-fns/subWeeks';
 import { ptBR } from 'date-fns/locale';
 
 interface EvolutionReportProps {

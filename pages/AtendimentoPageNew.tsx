@@ -51,7 +51,7 @@ import PageLoader from '../components/ui/PageLoader';
 import InfoCard from '../components/ui/InfoCard';
 import PainScale from '../components/PainScale';
 import { aiOrchestratorService } from '../services/ai/aiOrchestratorService';
-import TiptapEditor from '../components/ui/TiptapEditor';
+import TiptapEditorLazy from '../components/ui/TiptapEditorLazy';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
@@ -586,7 +586,7 @@ const AtendimentoPageNew: React.FC = () => {
                                     <label className="text-sm font-medium text-slate-700">
                                         Subjetivo (S)
                                     </label>
-                                    <TiptapEditor
+                                    <TiptapEditorLazy
                                         value={subjective}
                                         onChange={setSubjective}
                                         placeholder="Como o paciente se sente? Quais são as queixas principais?"
@@ -599,7 +599,7 @@ const AtendimentoPageNew: React.FC = () => {
                                     <label className="text-sm font-medium text-slate-700">
                                         Objetivo (O)
                                     </label>
-                                    <TiptapEditor
+                                    <TiptapEditorLazy
                                         value={objective}
                                         onChange={setObjective}
                                         placeholder="Achados objetivos, testes realizados, observações clínicas..."
@@ -612,7 +612,7 @@ const AtendimentoPageNew: React.FC = () => {
                                     <label className="text-sm font-medium text-slate-700">
                                         Avaliação (A)
                                     </label>
-                                    <TiptapEditor
+                                    <TiptapEditorLazy
                                         value={assessment}
                                         onChange={setAssessment}
                                         placeholder="Diagnóstico clínico, análise dos achados..."
@@ -625,7 +625,7 @@ const AtendimentoPageNew: React.FC = () => {
                                     <label className="text-sm font-medium text-slate-700">
                                         Plano (P)
                                     </label>
-                                    <TiptapEditor
+                                    <TiptapEditorLazy
                                         value={plan}
                                         onChange={setPlanState}
                                         placeholder="Plano de tratamento, próximos passos, exercícios prescritos..."

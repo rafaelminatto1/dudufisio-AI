@@ -3,7 +3,7 @@ import { User, Phone, Mail, Calendar, Clock } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '../ui/badge';
 import { Patient } from '../../types';
-import { format } from 'date-fns';
+import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '../../lib/utils';
 
