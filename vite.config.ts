@@ -58,14 +58,16 @@ export default defineConfig({
     }
   },
   resolve: {
-    dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
+    dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime', 'scheduler', 'use-sync-external-store'],
     extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'],
     alias: {
-      // 🔥 FIX: Força uso de apenas uma instância do React
+      // 🔥 FIX: Força uso de apenas uma instância do React - ABSOLUTO
       'react': path.resolve(__dirname, './node_modules/react'),
       'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
       'react/jsx-runtime': path.resolve(__dirname, './node_modules/react/jsx-runtime'),
       'react/jsx-dev-runtime': path.resolve(__dirname, './node_modules/react/jsx-dev-runtime'),
+      'scheduler': path.resolve(__dirname, './node_modules/scheduler'),
+      'use-sync-external-store': path.resolve(__dirname, './node_modules/use-sync-external-store'),
       
       // Aliases do projeto
       '@': path.resolve(__dirname, '.'),
@@ -84,6 +86,8 @@ export default defineConfig({
       'react-dom',
       'react/jsx-runtime',
       'react/jsx-dev-runtime',
+      'scheduler',
+      'use-sync-external-store',
       'react-router-dom',
       'framer-motion',
       'lucide-react',
@@ -131,16 +135,14 @@ export default defineConfig({
     sourcemap: true,
     reportCompressedSize: true,
     rollupOptions: {
+      // NUNCA externalizar React - sempre incluir no bundle
+      // Isso previne múltiplas instâncias do React
       external: (id) => {
-        // Previne múltiplas instâncias do React
-        if (id.includes('react') && !id.startsWith('./') && !id.startsWith('../')) {
-          return false;
-        }
-        // Exclui scripts de build
+        // Excluir scripts de build
         if (id.includes('/scripts/') || id.includes('\\scripts\\')) {
           return true;
         }
-        // Exclui pacotes backend que foram removidos
+        // Excluir pacotes backend que foram removidos
         if (id.includes('whatsapp-web.js') ||
             id.includes('nodemailer') ||
             id.includes('express') ||
@@ -151,108 +153,120 @@ export default defineConfig({
         return false;
       },
       output: {
-        // Code splitting otimizado - CONSOLIDADO para reduzir número de chunks
+        // Estratégia agressiva de code splitting com ordem de carregamento garantida
         manualChunks: (id) => {
-          // 🔥 FIX: React e TODAS as suas dependências em um único chunk
-          // Isso garante que o React esteja disponível antes de qualquer biblioteca que dependa dele
-          if (id.includes('node_modules/react') || 
-              id.includes('node_modules/react-dom') ||
-              id.includes('node_modules/scheduler') ||
-              id.includes('node_modules/react-router') ||
-              id.includes('node_modules/@tanstack') ||
-              id.includes('node_modules/@floating-ui') ||
-              id.includes('node_modules/react-toastify') ||
-              id.includes('node_modules/@radix-ui')) {
-            return 'vendor-react';
+          // PRIORIDADE 1: React Core Foundation (carrega primeiro)
+          if (id.includes('node_modules/react/') && !id.includes('node_modules/react-router') && !id.includes('node_modules/react-dom')) {
+            return 'vendor-react-core';
           }
-
-          // 🔥 FIX: Consolidar Supabase PRIMEIRO para evitar dependências circulares
-          if (id.includes('node_modules/@supabase')) {
-            return 'vendor-supabase';
+          
+          if (id.includes('node_modules/react-dom/') || 
+              id.includes('node_modules/scheduler/') ||
+              id.includes('node_modules/use-sync-external-store/')) {
+            return 'vendor-react-dom';
           }
-
-          // UI libraries
-          if (id.includes('node_modules/lucide-react') || id.includes('node_modules/framer-motion')) {
-            return 'vendor-ui';
+          
+          // PRIORIDADE 2: React Router (carrega depois do core)
+          if (id.includes('node_modules/react-router')) {
+            return 'vendor-router';
           }
-
-          // Forms
+          
+          // PRIORIDADE 3: React Libraries (dependem do core)
+          if (id.includes('node_modules/@tanstack/react')) {
+            return 'vendor-tanstack';
+          }
+          
+          if (id.includes('node_modules/@radix-ui')) {
+            return 'vendor-radix';
+          }
+          
           if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform')) {
             return 'vendor-forms';
           }
-
-          // Charts
-          if (id.includes('node_modules/recharts')) {
-            return 'vendor-charts';
-          }
-
-          // Heavy libraries - Editor
+          
+          // Heavy Libraries - Separar em chunks individuais
           if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror')) {
             return 'lib-editor';
           }
-
-          // Heavy libraries - PDF
-          if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas')) {
+          
+          if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas') || id.includes('node_modules/html2pdf')) {
             return 'lib-pdf';
           }
-
-          // Date utilities
+          
+          if (id.includes('node_modules/recharts')) {
+            return 'vendor-charts';
+          }
+          
+          // Supabase & Auth
+          if (id.includes('node_modules/@supabase') || id.includes('node_modules/@stripe')) {
+            return 'vendor-backend';
+          }
+          
+          // UI Libraries
+          if (id.includes('node_modules/lucide-react') || id.includes('node_modules/framer-motion')) {
+            return 'vendor-ui';
+          }
+          
+          // Utilities
           if (id.includes('node_modules/date-fns')) {
             return 'vendor-date';
           }
-
-          // Monitoring & Observability (Sentry + OpenTelemetry)
-          if (id.includes('node_modules/@sentry') ||
-              id.includes('node_modules/@opentelemetry')) {
-            return 'vendor-monitoring';
-          }
-
-          // AWS SDK & Dependencies (@aws-sdk, @smithy)
-          if (id.includes('node_modules/@aws-sdk') ||
-              id.includes('node_modules/@smithy')) {
-            return 'vendor-aws';
-          }
-
-          // Crypto & Security (@noble, uuid, crypto-js)
-          if (id.includes('node_modules/@noble') ||
-              id.includes('node_modules/uuid') ||
-              id.includes('node_modules/crypto-js')) {
+          
+          // Crypto & Security
+          if (id.includes('node_modules/@noble') || id.includes('node_modules/uuid') || id.includes('node_modules/crypto-js') || id.includes('node_modules/jsonwebtoken')) {
             return 'vendor-crypto';
           }
-
-          // CONSOLIDAR todos os outros node_modules em um único chunk
+          
+          // AWS & Monitoring
+          if (id.includes('node_modules/@aws-sdk') || id.includes('node_modules/@smithy')) {
+            return 'vendor-aws';
+          }
+          
+          if (id.includes('node_modules/@sentry') || id.includes('node_modules/@opentelemetry')) {
+            return 'vendor-monitoring';
+          }
+          
+          // Consolidar resto dos vendors
           if (id.includes('node_modules')) {
             return 'vendor-misc';
           }
-
-          // NÃO consolidar páginas - deixar React Lazy Loading fazer o trabalho
-          // Páginas serão code-split automaticamente via React.lazy()
-
-          // 🔥 FIX: NÃO consolidar serviços - deixar lazy loading gerenciar
-          // Isso evita problemas de dependência circular e ordem de inicialização
-          if (id.includes('/services/')) {
-            // Retornar undefined para permitir code splitting automático
-            return;
-          }
-
-          // CONSOLIDAR apenas componentes UI PEQUENOS (não páginas ou features)
-          if (id.includes('/components/')) {
-            // Componentes pesados ficam separados
-            if (id.includes('BodyMapContainer') ||
-                id.includes('TiptapEditor') ||
-                id.includes('ConsolidatedAITools') ||
-                id.includes('MedicalRecordsDashboard') ||
-                id.includes('ClinicalReportsGenerator')) {
-              return; // Não consolidar - permitir lazy loading
-            }
-            // Apenas componentes UI pequenos
-            if (id.includes('/components/ui/') || id.includes('/components/layout/')) {
-              return 'app-ui-components';
-            }
+          
+          // NÃO consolidar páginas - deixar React.lazy() gerenciar
+          // NÃO consolidar serviços - permitir tree shaking
+          
+          // Consolidar apenas componentes UI pequenos
+          if (id.includes('/components/ui/') || id.includes('/components/layout/')) {
+            return 'app-ui-components';
           }
         },
         entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: (chunkInfo) => {
+          const name = chunkInfo.name;
+          
+          // Ordem de prioridade com prefixos alfanuméricos
+          const priorityMap: Record<string, string> = {
+            'vendor-react-core': '00-',
+            'vendor-react-dom': '01-',
+            'vendor-router': '02-',
+            'vendor-tanstack': '03-',
+            'vendor-radix': '04-',
+            'vendor-forms': '05-',
+            'vendor-backend': '06-',
+            'vendor-ui': '07-',
+            'vendor-date': '08-',
+            'vendor-crypto': '09-',
+            'lib-editor': '10-',
+            'lib-pdf': '11-',
+            'vendor-charts': '12-',
+            'vendor-aws': '13-',
+            'vendor-monitoring': '14-',
+            'vendor-misc': '15-',
+            'app-ui-components': '16-'
+          };
+          
+          const prefix = priorityMap[name] || '';
+          return `assets/${prefix}${name}-[hash].js`;
+        },
         assetFileNames: 'assets/[name]-[hash].[ext]'
       },
       // Tree shaking agressivo - OTIMIZADO

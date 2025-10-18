@@ -2,17 +2,17 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:5175",
+  "localEndpoint": "http://localhost:4173",
   "loginUser": "admin@dudufisio.com",
   "loginPassword": "demo123456",
   "executionArgs": {
-    "projectName": "dudufisio-AI",
-    "projectPath": "/home/rafael/Documentos/projetos/gemini/dudufisio-AI",
+    "projectName": "dudufisio-ai",
+    "projectPath": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "Analisar e corrigir problemas de TypeScript, React hooks e integração com Supabase. Focar em melhorias de performance e correção de erros de linting.",
+    "additionalInstruction": "",
     "envs": {
-      "API_KEY": "sk-user-a8gtX33nCfJJFVROyJfnjR_oA9et6uE_m35XXVKC6oWBoddZ9cnG4nxZC50vibGwcFOnhiv3HYau0Ce6ZiliGEUsD0qoviKHGvSk2YUMvbv0mSINfdMIUwXId8V5qRAZVNY"
+      "API_KEY": "sk-user-8bMuKGfFoUIqX4t6ssw0xomOk6IV_HwEsApfdFk6dKdt9VPWsfekx6ge2QgANJyDuJqx8YqFAdjprxq5X_3Q2zFH6fc-rKwMqPACaMgJCt_jXILdR2OZYzCuap6y0uLjI58"
     }
   },
-  "proxy": "http://dec1d116-ba53-4471-8d27-4048bae8ea53:CVY2scKRmU7MT4tu741c0TYcW22KfSfB@tun.testsprite.com:8080"
+  "proxy": "http://cb7c9b6b-673b-4a62-8301-859d60fdedad:DuDUw4Tkcw8W6552ElyucGOAZeewoWHv@tun.testsprite.com:8080"
 }

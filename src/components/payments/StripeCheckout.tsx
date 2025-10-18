@@ -1,21 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
-import {
-  Elements,
-  PaymentElement,
-  useStripe,
-  useElements,
-} from '@stripe/react-stripe-js';
-import { supabase } from '@/lib/supabase';
+import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle, CreditCard } from 'lucide-react';
 
-// Inicializar Stripe (fora do componente para não recriar)
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
+// Inicializar Stripe
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
-interface CheckoutFormProps {
+interface StripeCheckoutProps {
   amount: number;
   paymentId: string;
   patientEmail: string;
@@ -24,115 +18,145 @@ interface CheckoutFormProps {
   onError?: (error: string) => void;
 }
 
-// Componente interno do formulário (precisa estar dentro de <Elements>)
-function CheckoutForm({ amount, paymentId, patientEmail, description, onSuccess, onError }: CheckoutFormProps) {
+// Componente de formulário de pagamento
+function CheckoutForm({ amount, paymentId, patientEmail, description, onSuccess, onError }: StripeCheckoutProps) {
   const stripe = useStripe();
   const elements = useElements();
-  const [processing, setProcessing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
 
     if (!stripe || !elements) {
-      setError('Stripe não foi carregado corretamente.');
       return;
     }
 
-    setProcessing(true);
+    setLoading(true);
     setError(null);
 
     try {
-      // Confirmar o pagamento com Stripe
-      const { error: submitError } = await elements.submit();
-      if (submitError) {
-        throw new Error(submitError.message);
-      }
-
-      // Obter client secret do nosso backend
-      const { data, error: backendError } = await supabase.functions.invoke('stripe-payment', {
-        body: {
-          action: 'create_payment_intent',
-          amount,
+      // Criar Payment Intent no backend
+      const response = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: Math.round(amount * 100), // Converter para centavos
           currency: 'brl',
           payment_id: paymentId,
-          customer_email: patientEmail,
-        },
+          patient_email: patientEmail,
+          description: description,
+        }),
       });
 
-      if (backendError || !data.success) {
-        throw new Error(data?.error || 'Erro ao processar pagamento');
+      const { clientSecret } = await response.json();
+
+      if (!clientSecret) {
+        throw new Error('Não foi possível criar a sessão de pagamento');
       }
 
-      // Confirmar o pagamento
-      const { error: confirmError } = await stripe.confirmPayment({
-        elements,
-        clientSecret: data.client_secret,
-        confirmParams: {
-          return_url: `${window.location.origin}/payments/success`,
+      // Confirmar pagamento com Stripe
+      const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement)!,
+          billing_details: {
+            email: patientEmail,
+          },
         },
-        redirect: 'if_required',
       });
 
       if (confirmError) {
-        throw new Error(confirmError.message);
+        throw new Error(confirmError.message || 'Erro ao processar pagamento');
       }
 
-      // Sucesso!
-      setSuccess(true);
-      onSuccess?.();
+      if (paymentIntent.status === 'succeeded') {
+        setSuccess(true);
+        
+        // Atualizar status do pagamento no banco
+        await fetch(`/api/payments/${paymentId}/confirm`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            stripe_payment_intent_id: paymentIntent.id,
+            status: 'succeeded',
+          }),
+        });
 
-      // Aguardar 2s e fechar
-      setTimeout(() => {
-        window.location.href = '/financial';
-      }, 2000);
+        // Callback de sucesso
+        if (onSuccess) {
+          setTimeout(() => onSuccess(), 2000);
+        }
+      }
     } catch (err: any) {
-      const errorMessage = err.message || 'Erro desconhecido ao processar pagamento';
+      const errorMessage = err.message || 'Erro ao processar pagamento';
       setError(errorMessage);
-      onError?.(errorMessage);
+      if (onError) {
+        onError(errorMessage);
+      }
     } finally {
-      setProcessing(false);
+      setLoading(false);
     }
+  };
+
+  const cardElementOptions = {
+    style: {
+      base: {
+        fontSize: '16px',
+        color: '#424770',
+        '::placeholder': {
+          color: '#aab7c4',
+        },
+      },
+      invalid: {
+        color: '#9e2146',
+      },
+    },
   };
 
   if (success) {
     return (
-      <Alert className="border-green-500 bg-green-50">
-        <CheckCircle className="h-4 w-4 text-green-600" />
-        <AlertDescription className="text-green-800">
-          <div className="font-semibold">Pagamento confirmado!</div>
-          <div className="text-sm mt-1">Redirecionando...</div>
-        </AlertDescription>
-      </Alert>
+      <Card className="border-green-200 bg-green-50">
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <CheckCircle2 className="h-16 w-16 text-green-600 mb-4" />
+          <h3 className="text-xl font-semibold text-green-900 mb-2">Pagamento Realizado!</h3>
+          <p className="text-green-700">Redirecionando...</p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Resumo do pagamento */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-gray-600">Descrição:</span>
-          <span className="font-medium">{description}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-600">Valor:</span>
-          <span className="text-2xl font-bold text-blue-600">
-            {new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            }).format(amount)}
-          </span>
-        </div>
-      </div>
+      {/* Informações do Pagamento */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <CreditCard className="h-5 w-5" />
+            Dados do Cartão
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Elemento do cartão Stripe */}
+          <div className="border border-gray-300 rounded-lg p-4 bg-white">
+            <CardElement options={cardElementOptions} />
+          </div>
 
-      {/* Stripe Payment Element */}
-      <div className="border rounded-lg p-4">
-        <PaymentElement />
-      </div>
+          {/* Valor Total */}
+          <div className="flex justify-between items-center pt-4 border-t">
+            <span className="text-gray-600 font-medium">Total a Pagar:</span>
+            <span className="text-2xl font-bold text-gray-900">
+              R$ {amount.toFixed(2)}
+            </span>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Mensagem de erro */}
+      {/* Mensagem de Erro */}
       {error && (
         <Alert variant="destructive">
           <XCircle className="h-4 w-4" />
@@ -140,134 +164,67 @@ function CheckoutForm({ amount, paymentId, patientEmail, description, onSuccess,
         </Alert>
       )}
 
-      {/* Botão de submit */}
+      {/* Botão de Pagamento */}
       <Button
         type="submit"
-        disabled={!stripe || processing}
-        className="w-full"
-        size="lg"
+        disabled={!stripe || loading}
+        className="w-full h-12 text-lg"
       >
-        {processing ? (
+        {loading ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processando pagamento...
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            Processando...
           </>
         ) : (
-          <>Pagar {new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          }).format(amount)}</>
+          <>
+            <CreditCard className="mr-2 h-5 w-5" />
+            Pagar R$ {amount.toFixed(2)}
+          </>
         )}
       </Button>
 
-      <p className="text-xs text-gray-500 text-center">
-        Pagamento seguro processado via Stripe. Seus dados estão protegidos.
-      </p>
+      {/* Informações de Segurança */}
+      <div className="text-center text-sm text-gray-500">
+        <p>🔒 Seus dados estão protegidos com criptografia SSL</p>
+        <p className="mt-1">Processado de forma segura pelo Stripe</p>
+      </div>
     </form>
   );
 }
 
-// Componente principal exportado
-export interface StripeCheckoutProps {
-  amount: number;
-  paymentId: string;
-  patientEmail: string;
-  description: string;
-  onSuccess?: () => void;
-  onError?: (error: string) => void;
-}
-
+// Componente principal
 export function StripeCheckout(props: StripeCheckoutProps) {
-  const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [stripeLoaded, setStripeLoaded] = useState(false);
 
-  // Criar Payment Intent ao montar o componente
-  useState(() => {
-    const createPaymentIntent = async () => {
-      try {
-        const { data, error: backendError } = await supabase.functions.invoke('stripe-payment', {
-          body: {
-            action: 'create_payment_intent',
-            amount: props.amount,
-            currency: 'brl',
-            payment_id: props.paymentId,
-            customer_email: props.patientEmail,
-          },
-        });
+  useEffect(() => {
+    // Verificar se a chave pública do Stripe está configurada
+    const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+    
+    if (!stripeKey) {
+      console.warn('⚠️ VITE_STRIPE_PUBLISHABLE_KEY não está configurada');
+    } else {
+      setStripeLoaded(true);
+    }
+  }, []);
 
-        if (backendError || !data.success) {
-          throw new Error(data?.error || 'Erro ao inicializar pagamento');
-        }
-
-        setClientSecret(data.client_secret);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    createPaymentIntent();
-  });
-
-  if (loading) {
+  if (!stripeLoaded) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle>Processando Pagamento</CardTitle>
-          <CardDescription>Preparando checkout seguro...</CardDescription>
-        </CardHeader>
-        <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Erro ao Inicializar Pagamento</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Alert variant="destructive">
-            <XCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <Alert>
+            <AlertDescription>
+              ⚠️ Configuração do Stripe não encontrada. 
+              Configure a variável VITE_STRIPE_PUBLISHABLE_KEY no arquivo .env.local
+            </AlertDescription>
           </Alert>
         </CardContent>
       </Card>
     );
   }
 
-  if (!clientSecret) {
-    return null;
-  }
-
-  const options = {
-    clientSecret,
-    appearance: {
-      theme: 'stripe' as const,
-      variables: {
-        colorPrimary: '#3b82f6',
-      },
-    },
-  };
-
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Checkout Seguro</CardTitle>
-        <CardDescription>
-          Complete o pagamento usando seu cartão de crédito ou débito
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Elements stripe={stripePromise} options={options}>
-          <CheckoutForm {...props} />
-        </Elements>
-      </CardContent>
-    </Card>
+    <Elements stripe={stripePromise}>
+      <CheckoutForm {...props} />
+    </Elements>
   );
 }

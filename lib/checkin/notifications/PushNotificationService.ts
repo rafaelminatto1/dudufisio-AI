@@ -14,22 +14,6 @@ interface DeviceToken {
   lastUsed: Date;
 }
 
-interface NotificationTemplate {
-  title: string;
-  body: string;
-  data?: Record<string, any>;
-  badge?: number;
-  sound?: string;
-  icon?: string;
-  actions?: NotificationAction[];
-}
-
-interface NotificationAction {
-  action: string;
-  title: string;
-  icon?: string;
-}
-
 interface NotificationSchedule {
   id: string;
   patientId: PatientId;
@@ -395,7 +379,7 @@ export class PushNotificationService {
   }
 
   // Firebase v1 requires all data values to be strings
-  private convertDataToStrings(data: Record<string, any>): Record<string, string> {
+  private convertDataToStrings(data: Record<string, unknown>): Record<string, string> {
     const stringData: Record<string, string> = {};
     for (const [key, value] of Object.entries(data)) {
       stringData[key] = typeof value === 'string' ? value : JSON.stringify(value);
@@ -467,11 +451,13 @@ export class PushNotificationService {
   }
 
   private async getUnreadCount(patientId: PatientId): Promise<number> {
-    // Mock implementation - in production, this would query the database
-    return Math.floor(Math.random() * 5); // Random number between 0-4
+    // Mock implementation - use deterministic hash for stability
+    const hash = Array.from(patientId).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    return hash % 5;
   }
 
   private async getLastQueueUpdate(patientId: PatientId): Promise<{ position: number; waitTime: number } | null> {
+    void patientId;
     // Mock implementation - in production, this would be stored in database/cache
     return null;
   }
@@ -566,7 +552,7 @@ export class PushNotificationService {
 
   async cancelScheduledNotification(notificationId: string): Promise<boolean> {
     const schedule = this.scheduledNotifications.get(notificationId);
-    if (schedule && schedule.status === 'scheduled') {
+    if (schedule?.status === 'scheduled') {
       schedule.status = 'cancelled';
       return true;
     }

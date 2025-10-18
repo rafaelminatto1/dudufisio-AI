@@ -1,7 +1,7 @@
 // components/whatsapp/WhatsappChatInterface.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot } from 'lucide-react';
-import { useAuth } from "@/contexts/AppContext";
+import { useSupabaseAuth } from "@/contexts/SupabaseAuthContext";
 import * as treatmentService from '../../services/treatmentService';
 import * as whatsappService from '../../services/whatsappService';
 import { Patient } from '../../types';
@@ -19,7 +19,7 @@ const WhatsappChatInterface: React.FC = () => {
     const [conversationState, setConversationState] = useState('initial');
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const { user } = useAuth(); // We'll use the logged-in user as the "patient"
+    const { user } = useSupabaseAuth(); // We'll use the logged-in user as the "patient"
     const mockPatient: Partial<Patient> = {
         ...(user?.id && { id: user.id }),
         ...(user?.name && { name: user.name }),

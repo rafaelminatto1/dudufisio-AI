@@ -42,24 +42,25 @@ function handleWebhookVerification(req, res) {
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  console.log('🔍 Verificação do webhook:', {
+  const { logger } = require('../lib/logger');
+  logger.info('🔍 Verificação do webhook:', { data: {
     mode,
     token,
     expectedToken: verifyToken,
     challenge
-  });
+  } });
 
   // Verificar se é uma solicitação de verificação
   if (mode === 'subscribe' && token === verifyToken) {
-    console.log('✅ Webhook verificado com sucesso!');
+    logger.info('✅ Webhook verificado com sucesso!');
     return res.status(200).send(challenge);
   }
 
-  console.error('❌ Falha na verificação do webhook:', {
+  logger.error('❌ Falha na verificação do webhook:', { data: {
     mode,
     token,
     expectedToken: verifyToken
-  });
+  } });
   return res.status(403).json({ error: 'Forbidden' });
 }
 
@@ -69,7 +70,8 @@ function handleWebhookVerification(req, res) {
 async function handleIncomingWebhook(req, res) {
   try {
     // Log para debug
-    console.log('📨 Webhook recebido:', JSON.stringify(req.body, null, 2));
+    const { logger } = require('../lib/logger');
+    logger.info('📨 Webhook recebido:', { data: req.body });
 
     // Meta envia no formato JSON
     const webhookData = req.body;
@@ -99,7 +101,8 @@ async function handleIncomingWebhook(req, res) {
     return res.status(200).json({ success: true });
 
   } catch (error) {
-    console.error('❌ Erro ao processar webhook:', error);
+    const { logger } = require('../lib/logger');
+    logger.error('❌ Erro ao processar webhook:', { data: error });
     
     // Sempre retornar 200 para não fazer Meta retentar
     return res.status(200).json({ 
@@ -114,7 +117,8 @@ async function handleIncomingWebhook(req, res) {
  */
 async function handleMetaMessage(message, metadata) {
   try {
-    console.log('✅ Mensagem recebida:', message.from, message.text?.body);
+    const { logger } = require('../lib/logger');
+    logger.info('✅ Mensagem recebida:', { data: { from: message.from, body: message.text?.body } });
     
     // Importar serviço WhatsApp
     const { getMetaWhatsAppService } = require('../services/whatsapp/MetaWhatsAppService');
@@ -126,9 +130,10 @@ async function handleMetaMessage(message, metadata) {
     // Processar mensagem
     await whatsappService.processIncomingMessage(message, metadata, clinicId);
     
-    console.log('✅ Mensagem processada com sucesso');
+    logger.info('✅ Mensagem processada com sucesso');
   } catch (error) {
-    console.error('❌ Erro ao processar mensagem:', error);
+    const { logger } = require('../lib/logger');
+    logger.error('❌ Erro ao processar mensagem:', { data: error });
   }
 }
 
@@ -137,7 +142,8 @@ async function handleMetaMessage(message, metadata) {
  */
 async function handleMetaStatus(status) {
   try {
-    console.log('✅ Status recebido:', status.id, status.status);
+    const { logger } = require('../lib/logger');
+    logger.info('✅ Status recebido:', { data: { id: status.id, status: status.status } });
     
     // Importar serviço WhatsApp
     const { getMetaWhatsAppService } = require('../services/whatsapp/MetaWhatsAppService');
@@ -146,8 +152,9 @@ async function handleMetaStatus(status) {
     // Processar status
     await whatsappService.processMessageStatus(status);
     
-    console.log('✅ Status atualizado com sucesso');
+    logger.info('✅ Status atualizado com sucesso');
   } catch (error) {
-    console.error('❌ Erro ao processar status:', error);
+    const { logger } = require('../lib/logger');
+    logger.error('❌ Erro ao processar status:', { data: error });
   }
 }

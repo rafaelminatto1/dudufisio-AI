@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getRateLimiter } from '../../services/whatsapp/rateLimiter';
+import { logger } from '../../lib/logger';
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -123,9 +124,9 @@ function log(message: string, data?: any) {
   const timestamp = new Date().toISOString();
   
   if (data) {
-    console.log(`[${timestamp}] ${message}`, JSON.stringify(data, null, 2));
+    logger.info(`[${timestamp}] ${message}`, { data });
   } else {
-    console.log(`[${timestamp}] ${message}`);
+    logger.info(`[${timestamp}] ${message}`);
   }
 }
 
@@ -156,7 +157,7 @@ async function notifyHighFailureRate(failed: number, total: number) {
       body: JSON.stringify(message)
     });
   } catch (error) {
-    console.error('Erro ao enviar notificação Slack:', error);
+    logger.error('Erro ao enviar notificação Slack:', { data: error as Error });
   }
 }
 
@@ -186,7 +187,7 @@ async function notifyError(error: Error) {
       body: JSON.stringify(message)
     });
   } catch (err) {
-    console.error('Erro ao enviar notificação Slack:', err);
+    logger.error('Erro ao enviar notificação Slack:', { data: err as Error });
   }
 }
 

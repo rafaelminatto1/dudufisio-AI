@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, X, AlertCircle, Info, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
+import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 
 interface Notification {
   id: string;
@@ -21,7 +21,7 @@ interface NotificationBellProps {
 }
 
 const NotificationBell: React.FC<NotificationBellProps> = ({ isCollapsed = false }) => {
-  const { user } = useAuth();
+  const { user } = useSupabaseAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);

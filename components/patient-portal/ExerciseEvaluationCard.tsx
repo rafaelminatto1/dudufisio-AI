@@ -2,7 +2,7 @@
 // components/patient-portal/ExerciseEvaluationCard.tsx
 import React, { useState, useEffect } from 'react';
 import { Exercise, ExercisePrescription, ExerciseEvaluation } from '../../types';
-import { useAuth } from "@/contexts/AppContext";
+import { useSupabaseAuth } from "@/contexts/SupabaseAuthContext";
 import PainScale from '../PainScale';
 import { Save, Loader, CheckCircle, Smile, Meh, Frown } from 'lucide-react';
 
@@ -26,7 +26,7 @@ const ExerciseEvaluationCard: React.FC<ExerciseEvaluationCardProps> = ({ exercis
     const [painLevel, setPainLevel] = useState<number | undefined>(todaysEvaluation?.painLevel);
     const [comments, setComments] = useState(todaysEvaluation?.comments || '');
     const [isSaving, setIsSaving] = useState(false);
-    const { user } = useAuth();
+    const { user } = useSupabaseAuth();
 
     useEffect(() => {
         setRating(todaysEvaluation?.rating);

@@ -7,6 +7,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import { supabase } from '../../lib/supabase';
+import { logger } from '../../lib/logger';
 
 /**
  * Analisar paciente com Claude AI
@@ -61,7 +62,7 @@ Responda APENAS com JSON válido, sem markdown.
 
     throw new Error('Resposta inválida da API');
   } catch (error) {
-    console.error('Erro ao analisar com Claude:', error);
+    logger.error('Erro ao analisar com Claude:', { data: error as Error });
     throw error;
   }
 }
@@ -96,7 +97,7 @@ export async function predictOutcomeWithAI(patientId: string, patientData: any) 
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Erro na predição com IA:', error);
+    logger.error('Erro na predição com IA:', { data: error as Error });
     throw error;
   }
 }
@@ -139,4 +140,5 @@ Responda em JSON com estrutura clara.
 
   throw new Error('Resposta inválida');
 }
+
 

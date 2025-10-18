@@ -1,4 +1,3 @@
- 
 import {
   CheckIn,
   QueueEntry,
@@ -7,14 +6,20 @@ import {
 } from '../../../types/checkin';
 import { logger } from '../../logger';
 
+/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
+type Comparator<T> = (pair: [T, T]) => number;
+
 class PriorityQueue<T> {
   private items: T[] = [];
+  private readonly compareFn: Comparator<T>;
 
-  constructor(private compareFn: (a: T, b: T) => number) {}
+  constructor(compareFn: Comparator<T>) {
+    this.compareFn = compareFn;
+  }
 
   enqueue(item: T): void {
     this.items.push(item);
-    this.items.sort(this.compareFn);
+    this.items.sort((first, second) => this.compareFn([first, second]));
   }
 
   dequeue(): T | undefined {
@@ -47,13 +52,6 @@ class PriorityQueue<T> {
   }
 }
 
-export class QueuePositionImpl implements QueuePosition {
-  constructor(
-    public position: number,
-    public estimatedWaitTime: number
-  ) {}
-}
-
 class WaitTimePredictor {
   private historicalData: HistoricalSession[];
 
@@ -66,6 +64,9 @@ class WaitTimePredictor {
 
     // Base calculation: sum of estimated durations for patients ahead
     let totalWaitTime = 0;
+
+    // Incorporate current patient's estimated duration
+    totalWaitTime += estimatedDuration;
 
     // Add buffer for processing between patients (5 minutes)
     const processingBuffer = 5;
@@ -138,7 +139,7 @@ export class QueueManager {
 
   constructor(config: QueueConfig) {
     this.config = config;
-    this.queue = new PriorityQueue((a, b) => this.calculatePriority(b) - this.calculatePriority(a));
+    this.queue = new PriorityQueue(([first, second]) => this.calculatePriority(second) - this.calculatePriority(first));
     this.waitTimePredictor = new WaitTimePredictor(config.historicalData);
   }
 
@@ -162,7 +163,7 @@ export class QueueManager {
     // Notify patient about position
     await this.notifyPatientPosition(checkIn.patientId, position, estimatedWaitTime);
 
-    return new QueuePositionImpl(position, estimatedWaitTime);
+    return { position, estimatedWaitTime };
   }
 
   async removeFromQueue(patientId: PatientId): Promise<boolean> {
@@ -382,4 +383,3 @@ interface QueueStatus {
     checkInTime: Date;
   }[];
 }
-/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */

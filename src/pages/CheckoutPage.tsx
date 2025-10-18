@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
-// import { StripeCheckout } from '@/components/payments/StripeCheckout';
+import { StripeCheckout } from '../components/payments/StripeCheckout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -172,25 +172,14 @@ export default function CheckoutPage() {
         </Card>
 
         {/* Componente de Checkout */}
-        {/* TODO: Implementar componente StripeCheckout */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg">Valor a Pagar</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8">
-              <p className="text-3xl font-bold text-gray-900 mb-4">
-                R$ {payment.amount.toFixed(2)}
-              </p>
-              <p className="text-gray-600 mb-6">{payment.description}</p>
-              <Alert>
-                <AlertDescription>
-                  Componente de pagamento Stripe em desenvolvimento.
-                </AlertDescription>
-              </Alert>
-            </div>
-          </CardContent>
-        </Card>
+        <StripeCheckout
+          amount={payment.amount}
+          paymentId={payment.id}
+          patientEmail={payment.patient_email}
+          description={payment.description}
+          onSuccess={handleSuccess}
+          onError={handleError}
+        />
 
         {/* Informações de Segurança */}
         <div className="mt-6 text-center">

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
 import {
   CheckInData,
   CheckInResult,
@@ -14,6 +15,9 @@ interface OfflineQueueItem {
   maxRetries: number;
   priority: 'low' | 'normal' | 'high' | 'critical';
 }
+
+type StoredCheckIn = Record<string, unknown> & { id?: string; syncStatus?: string };
+type SyncStatusCallback = (syncStatus: SyncStatus) => void;
 
 interface SyncStatus {
   isOnline: boolean;
@@ -46,7 +50,7 @@ export class OfflineManager {
   private lastSyncTime: Date | null = null;
   private cachedData: CachedData;
   private config: OfflineConfig;
-  private syncCallbacks = new Set<(status: SyncStatus) => void>();
+  private syncCallbacks = new Set<SyncStatusCallback>();
 
   constructor(config: Partial<OfflineConfig> = {}) {
     this.config = {
@@ -229,7 +233,7 @@ export class OfflineManager {
     });
   }
 
-  async getCachedPatient(patientId: PatientId): Promise<any | null> {
+  async getCachedPatient(patientId: PatientId): Promise<unknown | null> {
     const patient = this.cachedData.patients.get(patientId);
     if (patient && this.isCacheValid(patient.cachedAt)) {
       return patient;
@@ -237,7 +241,7 @@ export class OfflineManager {
     return null;
   }
 
-  async getCachedAppointment(appointmentId: string): Promise<any | null> {
+  async getCachedAppointment(appointmentId: string): Promise<unknown | null> {
     const appointment = this.cachedData.appointments.get(appointmentId);
     if (appointment && this.isCacheValid(appointment.cachedAt)) {
       return appointment;
@@ -419,7 +423,8 @@ export class OfflineManager {
     };
   }
 
-  private async performOfflineFaceRecognition(photo: ImageData): Promise<PatientId | null> {
+  private async performOfflineFaceRecognition(_photo: ImageData): Promise<PatientId | null> {
+    void _photo;
     // Mock offline face recognition using cached encodings
     const cachedEncodings = Array.from(this.cachedData.faceEncodings.entries());
 
@@ -435,18 +440,22 @@ export class OfflineManager {
   }
 
   private async searchCachedPatients(searchCriteria: unknown): Promise<PatientId | null> {
+    const criteria = searchCriteria as { name?: string; phoneNumber?: string };
+
     for (const [patientId, patient] of this.cachedData.patients.entries()) {
-      if (searchCriteria.name && patient.name?.toLowerCase().includes(searchCriteria.name.toLowerCase())) {
+      const record = patient as { name?: string; phoneNumber?: string };
+
+      if (criteria.name && record.name?.toLowerCase().includes(criteria.name.toLowerCase())) {
         return patientId;
       }
-      if (searchCriteria.phoneNumber && patient.phoneNumber === searchCriteria.phoneNumber) {
+      if (criteria.phoneNumber && record.phoneNumber === criteria.phoneNumber) {
         return patientId;
       }
     }
     return null;
   }
 
-  private async findPatientAppointment(patientId: PatientId): Promise<any | null> {
+  private async findPatientAppointment(patientId: PatientId): Promise<unknown | null> {
     const today = new Date().toDateString();
 
     for (const appointment of this.cachedData.appointments.values()) {
@@ -464,14 +473,14 @@ export class OfflineManager {
     return offlineCheckIns.length + 1;
   }
 
-  private async getOfflineCheckIns(): Promise<unknown[]> {
+  private async getOfflineCheckIns(): Promise<StoredCheckIn[]> {
     const stored = localStorage.getItem('offline_checkins');
-    return stored ? JSON.parse(stored) : [];
+    return stored ? (JSON.parse(stored) as StoredCheckIn[]) : [];
   }
 
   private async storeOfflineCheckIn(checkIn: unknown): Promise<void> {
     const existing = await this.getOfflineCheckIns();
-    existing.push(checkIn);
+    existing.push(checkIn as StoredCheckIn);
     localStorage.setItem('offline_checkins', JSON.stringify(existing));
   }
 
@@ -586,8 +595,8 @@ export class OfflineManager {
 
   private async decompressData(data: unknown): Promise<unknown> {
     const maybe = data as { compressed?: boolean; data?: string };
-    if (!maybe || !maybe.compressed) return data;
-    return JSON.parse(maybe.data || 'null');
+    if (!maybe?.compressed) return data;
+    return JSON.parse(maybe.data ?? 'null');
   }
 
   private startPeriodicSync(): void {
@@ -609,7 +618,7 @@ export class OfflineManager {
     };
   }
 
-  onStatusChange(callback: (status: SyncStatus) => void): () => void {
+  onStatusChange(callback: SyncStatusCallback): () => void {
     this.syncCallbacks.add(callback);
     return () => this.syncCallbacks.delete(callback);
   }
