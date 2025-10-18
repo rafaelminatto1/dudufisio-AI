@@ -92,6 +92,8 @@ const InactivePatientEmailPage = createLazyComponent(() => import('./InactivePat
 const HepGeneratorPage = createLazyComponent(() => import('./HepGeneratorPage'));
 const AgendaSettingsPage = createLazyComponent(() => import('./AgendaSettingsPage'));
 const CheckoutPage = createLazyComponent(() => import('../src/pages/CheckoutPage'));
+const TeleconsultaRoomPage = createLazyComponent(() => import('../src/pages/TeleconsultaRoomPage'));
+const TeleconsultasListPage = createLazyComponent(() => import('../src/pages/TeleconsultasListPage'));
 const AuditLogPage = createLazyComponent(() => import('./AuditLogPage'));
 const BackupManagementPage = createLazyComponent(() => import('./BackupManagementPage'));
 const MentoriaPageOld = createLazyComponent(() => import('./MentoriaPage'));
@@ -450,8 +452,9 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/session-view/:sessionId" element={LazyElement(SessionViewPage, 'Visualizar Sessão')} />
                 <Route path="/atendimento/:appointmentId" element={LazyElement(AtendimentoPage, 'Atendimento')} />
                 <Route path="/atendimento-demo" element={LazyElement(AtendimentoPageDemo, 'Demo Atendimento')} />
-                <Route path="/teleconsulta" element={LazyElement(TeleconsultaListPage, 'Teleconsultas')} />
-                <Route path="/teleconsulta/:appointmentId" element={LazyElement(TeleconsultaPage, 'Teleconsulta')} />
+                <Route path="/teleconsultas" element={LazyElement(TeleconsultasListPage, 'Teleconsultas')} />
+                <Route path="/teleconsulta/:teleconsultaId" element={LazyElement(TeleconsultaRoomPage, 'Sala de Teleconsulta')} />
+                <Route path="/teleconsulta-old/:appointmentId" element={LazyElement(TeleconsultaPage, 'Teleconsulta Antiga')} />
                 <Route path="/treatments" element={LazyElement(TreatmentPage, 'Tratamentos')} />
                 
                 {/* Analytics & Reports */}
