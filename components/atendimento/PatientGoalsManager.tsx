@@ -412,9 +412,9 @@ const PatientGoalsManager: React.FC<PatientGoalsManagerProps> = ({
                           {goal.description && (
                             <p className="text-sm text-slate-600 mt-1">{goal.description}</p>
                           )}
-                          {goal.completedAt && (
+                          {goal.achievedAt && (
                             <p className="text-sm text-green-600 mt-1">
-                              Concluído em {format(new Date(goal.completedAt), 'dd/MM/yyyy', { locale: ptBR })}
+                              Concluído em {format(new Date(goal.achievedAt), 'dd/MM/yyyy', { locale: ptBR })}
                             </p>
                           )}
                         </div>
