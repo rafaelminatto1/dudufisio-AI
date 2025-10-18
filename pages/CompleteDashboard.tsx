@@ -459,6 +459,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/ai-analytics" element={LazyElement(AiAnalyticsPage)} />
                 <Route path="/financials" element={LazyElement(FinancialDashboardPage)} />
                 <Route path="/financial-dashboard" element={LazyElement(FinancialDashboardPage)} />
+                <Route path="/checkout" element={LazyElement(CheckoutPage, 'Pagamento')} />
                 <Route path="/reports" element={LazyElement(ReportsPage)} />
                 <Route path="/reports/consolidated" element={LazyElement(ConsolidatedReportsDashboard)} />
                 <Route path="/advanced-reports" element={LazyElement(AdvancedReportsPage)} />
