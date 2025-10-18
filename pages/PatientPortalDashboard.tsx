@@ -1,7 +1,7 @@
 import React, { useState, Suspense } from 'react';
 import {
     Home, Calendar, Dumbbell, FileText, TrendingUp, Gift,
-    Target, Award, Settings, LogOut, Users
+    Target, Award, Settings, LogOut, Users, MessageSquare
 } from 'lucide-react';
 import { createLazyComponent } from '../lib/lazyLoading';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -17,6 +17,7 @@ const MyVouchersPage = createLazyComponent(() => import('./patient-portal/MyVouc
 const VoucherStorePage = createLazyComponent(() => import('./patient-portal/VoucherStorePage'));
 const GamificationPage = createLazyComponent(() => import('./patient-portal/GamificationPage'));
 const PatientPainDiaryPage = createLazyComponent(() => import('./patient-portal/PatientPainDiaryPage'));
+const MessagesPage = createLazyComponent(() => import('./patient-portal/MessagesPage'));
 
 // Loading component
 const PageLoader = () => <PageSkeleton />;
@@ -33,6 +34,7 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
     const menuItems = [
         { id: 'dashboard', icon: Home, label: 'Início', group: 'main' },
         { id: 'appointments', icon: Calendar, label: 'Consultas', group: 'main' },
+        { id: 'messages', icon: MessageSquare, label: 'Mensagens', group: 'main' },
         { id: 'exercises', icon: Dumbbell, label: 'Exercícios', group: 'main' },
         { id: 'pain-diary', icon: FileText, label: 'Diário da Dor', group: 'health' },
         { id: 'progress', icon: TrendingUp, label: 'Progresso', group: 'health' },
@@ -96,6 +98,12 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
                 return (
                     <Suspense fallback={<PageLoader />}>
                         <GamificationPage />
+                    </Suspense>
+                );
+            case 'messages':
+                return (
+                    <Suspense fallback={<PageLoader />}>
+                        <MessagesPage />
                     </Suspense>
                 );
             default:
