@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import { CheckInEngine } from '../core/CheckInEngine';
 import { logger } from '../../logger';
 import {
@@ -1062,4 +1063,3 @@ export class TabletInterface {
     }
   }
 }
-/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */

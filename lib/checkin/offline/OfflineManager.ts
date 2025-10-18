@@ -1,9 +1,9 @@
 import {
   CheckInData,
   CheckInResult,
-  PatientId,
-  DeviceId
+  PatientId
 } from '../../../types/checkin';
+import { logger } from '../../logger';
 
 interface OfflineQueueItem {
   id: string;
@@ -155,8 +155,8 @@ export class OfflineManager {
       // Create offline check-in record
       const offlineCheckIn = {
         id: offlineCheckInId,
-        patientId: validationResult.patientId!,
-        appointmentId: validationResult.appointmentId!,
+        patientId: (validationResult.patientId || 'unknown') as PatientId,
+        appointmentId: (validationResult.appointmentId || 'unknown'),
         checkInTime: new Date(),
         method: (checkInData.photo ? 'facial_recognition' : 'manual_search') as 'facial_recognition' | 'manual_search' | 'qr_code' | 'phone_number',
         deviceId: checkInData.deviceId,

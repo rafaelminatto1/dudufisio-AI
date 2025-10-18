@@ -71,7 +71,8 @@
       "Bash(git push:*)",
       "Bash(node scripts/test-stripe-payment.js:*)",
       "Bash(export VITE_SUPABASE_URL:*)",
-      "Bash(export:*)"
+      "Bash(export:*)",
+      "Bash(move \"src\\pages\\patient-portal\\MessagesPage.tsx\" \"pages\\patient-portal\\MessagesPage.tsx\")"
     ]
   },
   "enableAllProjectMcpServers": true,

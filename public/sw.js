@@ -87,7 +87,13 @@ self.addEventListener('fetch', (event) => {
   // Skip Vite HMR and dev server special requests
   if (url.pathname.includes('/@vite/') ||
       url.pathname.includes('/@id/') ||
+      url.pathname.includes('/@react-refresh') ||
       url.pathname.includes('/__vite') ||
+      url.pathname.includes('node_modules') ||
+      url.pathname.endsWith('.tsx') ||
+      url.pathname.endsWith('.ts') ||
+      url.pathname.endsWith('.jsx') ||
+      url.pathname.endsWith('.js') ||
       url.search.includes('?v=') ||
       url.search.includes('html-proxy') ||
       url.search.includes('direct')) {
@@ -133,15 +139,6 @@ self.addEventListener('fetch', (event) => {
       } else if (ESSENTIAL_RESOURCES.includes(url.pathname)) {
         // Recursos essenciais - Cache First
         event.respondWith(cacheFirstStrategy(request));
-      } else if (url.pathname.includes('/node_modules/') ||
-                 url.pathname.includes('/src/') ||
-                 url.pathname.endsWith('.js') ||
-                 url.pathname.endsWith('.ts') ||
-                 url.pathname.endsWith('.tsx') ||
-                 url.pathname.endsWith('.jsx') ||
-                 url.pathname.endsWith('.css')) {
-        // Module files and dev resources - Network Only (no caching during development)
-        event.respondWith(fetch(request));
       } else {
         // Outros recursos - Stale While Revalidate
         event.respondWith(staleWhileRevalidateStrategy(request));
@@ -339,20 +336,14 @@ async function staleWhileRevalidateStrategy(request) {
           // Cache in background without blocking
           caches.open(CACHE_NAME)
             .then(cache => cache.put(request, responseToCache))
-            .catch(err => {
+            .catch(() => {
               // Silently fail cache writes - not critical
-              if (process.env.NODE_ENV === 'development') {
-                console.warn('Cache put error:', err.message);
-              }
             });
         }
         return networkResponse;
       })
-      .catch((err) => {
-        // Network error - only log in development
-        if (process.env.NODE_ENV === 'development') {
-          console.warn('Fetch error:', err.message);
-        }
+      .catch(() => {
+        // Network error - silently fail
         // Return null on error, will be handled below
         return null;
       });
@@ -378,7 +369,7 @@ async function staleWhileRevalidateStrategy(request) {
 
     return response;
   } catch (error) {
-    console.error('Stale-while-revalidate strategy error:', error);
+    // Silently fail - don't log errors that might spam the console
     // Return a proper error response
     return new Response('Internal Error', {
       status: 500,

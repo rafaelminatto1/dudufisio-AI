@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
 import {
   PatientId,
   FaceRecognitionConfig,
@@ -449,4 +450,3 @@ export class FaceRecognitionService {
     }
   }
 }
-/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars */
