@@ -91,7 +91,8 @@ export class PushNotificationService {
       this.deviceTokens.set(patientId, []);
     }
 
-    const userTokens = this.deviceTokens.get(patientId)!;
+    const userTokens = this.deviceTokens.get(patientId) || [];
+    this.deviceTokens.set(patientId, userTokens);
 
     // Remove existing token for same platform or update if exists
     const existingIndex = userTokens.findIndex(t => t.token === token);

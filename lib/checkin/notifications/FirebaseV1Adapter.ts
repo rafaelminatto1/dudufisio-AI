@@ -282,7 +282,7 @@ export function convertToFirebaseV1Message(
   token: string,
   title: string,
   body: string,
-  data?: Record<string, any>,
+  data?: Record<string, unknown>,
   options?: {
     icon?: string;
     badge?: number;

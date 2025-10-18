@@ -91,6 +91,7 @@ const WhatsAppPage = createLazyComponent(() => import('./WhatsAppPage'));
 const InactivePatientEmailPage = createLazyComponent(() => import('./InactivePatientEmailPage'));
 const HepGeneratorPage = createLazyComponent(() => import('./HepGeneratorPage'));
 const AgendaSettingsPage = createLazyComponent(() => import('./AgendaSettingsPage'));
+const CheckoutPage = createLazyComponent(() => import('../src/pages/CheckoutPage'));
 const AuditLogPage = createLazyComponent(() => import('./AuditLogPage'));
 const BackupManagementPage = createLazyComponent(() => import('./BackupManagementPage'));
 const MentoriaPageOld = createLazyComponent(() => import('./MentoriaPage'));
