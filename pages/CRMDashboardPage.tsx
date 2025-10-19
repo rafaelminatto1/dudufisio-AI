@@ -29,23 +29,23 @@ export const CRMDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-fisio-neutral-50">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 shadow">
+      <div className="bg-white border-b border-fisio-neutral-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 className="text-2xl font-bold text-fisio-neutral-800">
               CRM - Gestão de Leads
             </h1>
 
-            {/* Navegação de views */}
-            <div className="flex gap-2">
+            {/* Navegação de views - Responsiva */}
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide">
               <button
                 onClick={() => setView('dashboard')}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition-all ${
                   view === 'dashboard'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    ? 'bg-fisio-primary-DEFAULT text-white shadow-sm'
+                    : 'bg-fisio-neutral-100 text-fisio-neutral-700 hover:bg-fisio-neutral-200'
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4" />
@@ -53,10 +53,10 @@ export const CRMDashboardPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setView('kanban')}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition-all ${
                   view === 'kanban'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    ? 'bg-fisio-primary-DEFAULT text-white shadow-sm'
+                    : 'bg-fisio-neutral-100 text-fisio-neutral-700 hover:bg-fisio-neutral-200'
                 }`}
               >
                 <Users className="w-4 h-4" />
@@ -64,10 +64,10 @@ export const CRMDashboardPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setView('analytics')}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 whitespace-nowrap transition-all ${
                   view === 'analytics'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    ? 'bg-fisio-primary-DEFAULT text-white shadow-sm'
+                    : 'bg-fisio-neutral-100 text-fisio-neutral-700 hover:bg-fisio-neutral-200'
                 }`}
               >
                 <TrendingUp className="w-4 h-4" />
@@ -83,8 +83,8 @@ export const CRMDashboardPage: React.FC = () => {
         {view === 'dashboard' && (
           <div className="space-y-6">
             <DashboardMetrics clinicId={clinicId} />
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-              <h2 className="text-lg font-semibold mb-4">Pipeline de Leads</h2>
+            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-fisio-neutral-200">
+              <h2 className="text-lg font-semibold text-fisio-neutral-800 mb-4">Pipeline de Leads</h2>
               <LeadsKanban clinicId={clinicId} onLeadClick={handleLeadClick} />
             </div>
           </div>
@@ -95,9 +95,9 @@ export const CRMDashboardPage: React.FC = () => {
         )}
 
         {view === 'analytics' && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">Analytics Avançado</h2>
-            <p className="text-gray-600 dark:text-gray-400">
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-fisio-neutral-200">
+            <h2 className="text-lg font-semibold text-fisio-neutral-800 mb-4">Analytics Avançado</h2>
+            <p className="text-fisio-neutral-600">
               Gráficos de performance, funil de conversão, ROI por canal...
             </p>
             {/* TODO: Implementar componente de analytics */}
