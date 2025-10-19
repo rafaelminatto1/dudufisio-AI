@@ -3,7 +3,7 @@
  * Script para testar as novas funcionalidades implementadas
  */
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 
 async function testDatabaseConnectivity() {
   console.log('🔍 Testando conectividade com Supabase...');

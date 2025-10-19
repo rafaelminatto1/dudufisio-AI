@@ -22,7 +22,7 @@ import {
   Download,
   RefreshCw,
 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import { getMetaWhatsAppService } from '@/services/whatsapp/MetaWhatsAppService';
 
 interface WhatsAppMessage {

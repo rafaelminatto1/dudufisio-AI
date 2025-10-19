@@ -7,7 +7,7 @@
 
 import { useEffect, useRef } from 'react';
 import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { useQueryClient } from '@tanstack/react-query';
 
 export interface UseRealtimeSubscriptionOptions {

@@ -4,7 +4,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { riskStratificationServiceSupabase } from '../../../services/clinical/riskStratificationServiceSupabase';
-import { supabase } from '../../../lib/supabase';
+import { supabase } from '../../../lib/supabaseClient';
 
 describe('RiskStratificationService', () => {
   beforeEach(() => {

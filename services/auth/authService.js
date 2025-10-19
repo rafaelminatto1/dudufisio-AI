@@ -1,4 +1,4 @@
-import { supabase, handleSupabaseError } from '../../lib/supabase';
+import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
 class AuthService {
     // Sign in with email and password
     async signIn({ email, password }) {

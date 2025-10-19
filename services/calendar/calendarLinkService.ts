@@ -3,7 +3,7 @@
  * Gerencia geração e armazenamento de links de calendário
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import { Appointment } from '../../types';
 import {
   generateICS,

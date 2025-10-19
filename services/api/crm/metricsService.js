@@ -2,7 +2,7 @@
  * Metrics Service - Serviço de métricas e KPIs do CRM
  * Activity Fisioterapia Integration - Fase 1
  */
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 export class MetricsService {
     /**
      * Obter métricas do dashboard principal

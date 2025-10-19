@@ -1,5 +1,5 @@
 // services/taskSupplyIntegrationService.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { 
   TaskSupplyUsed,
   CreateTaskSupplyUsedData,

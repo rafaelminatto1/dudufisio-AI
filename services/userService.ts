@@ -1,5 +1,5 @@
 // services/userService.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import type { Database } from '../types/database';
 import { mockUsers } from '../data/mockData';
 import { Role } from '../types';
@@ -69,6 +69,16 @@ class UserService {
   }
 
   async getUserById(id: string): Promise<UserProfile | null> {
+    // ✅ Detectar IDs mock e não fazer query ao Supabase
+    if (id.startsWith('mock-')) {
+      console.log(`🎭 Usando autenticação mock para usuário ${id}`);
+      const mockUser = this.getMockUsers().find(u => u.id === id);
+      if (mockUser) {
+        return mockUser;
+      }
+      return null;
+    }
+
     try {
       const { data, error } = await supabase
         .from('users')

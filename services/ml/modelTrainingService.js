@@ -2,7 +2,7 @@
  * Model Training Service
  * Serviço para treinar e atualizar modelos de ML
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class ModelTrainingService {
     /**
      * Coletar dados de treinamento

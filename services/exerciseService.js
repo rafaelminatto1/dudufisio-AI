@@ -1,5 +1,5 @@
 // services/exerciseService.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 class ExerciseService {
     // Exercise CRUD operations
     async getAllExercises() {

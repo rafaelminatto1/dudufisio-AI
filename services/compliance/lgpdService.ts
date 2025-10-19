@@ -1,4 +1,4 @@
-import { supabase, handleSupabaseError } from '../../lib/supabase';
+import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
 
 export interface DataProcessingPurpose {
   id: string;

@@ -2,7 +2,7 @@
  * Wearable Integration Service
  * Serviço base para integração com dispositivos wearables
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class WearableIntegrationService {
     /**
      * Verificar conexões de wearables do paciente

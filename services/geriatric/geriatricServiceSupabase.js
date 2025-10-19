@@ -2,7 +2,7 @@
  * Geriatric Care Service - Supabase Implementation
  * Serviço para módulo de cuidados geriátricos
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class GeriatricServiceSupabase {
     /**
      * Buscar avaliações geriátricas de um paciente

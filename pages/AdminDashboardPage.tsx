@@ -382,22 +382,22 @@ const AdminDashboardPage: React.FC = () => {
                 xKey="month"
                 areas={[
                   {
-                    yAxisId: "revenue",
                     type: "monotone",
                     dataKey: "revenue",
                     stroke: "#3b82f6",
                     fill: "#3b82f6",
                     fillOpacity: 0.1,
-                    strokeWidth: 2
+                    strokeWidth: 2,
+                    name: "Receita"
                   },
                   {
-                    yAxisId: "sessions",
                     type: "monotone",
                     dataKey: "sessions",
                     stroke: "#10b981",
                     fill: "#10b981",
                     fillOpacity: 0.1,
-                    strokeWidth: 2
+                    strokeWidth: 2,
+                    name: "Sessões"
                   }
                 ]}
                 height={256}

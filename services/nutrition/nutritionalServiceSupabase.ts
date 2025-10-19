@@ -3,7 +3,7 @@
  * Serviço para orientação nutricional integrada
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 
 export interface NutritionalAssessment {
   id: string;

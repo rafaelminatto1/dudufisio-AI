@@ -2,7 +2,7 @@
  * Automation Service - Serviço de automações e campanhas
  * Activity Fisioterapia Integration - Fase 2
  */
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import { getWhatsAppService } from '@/services/whatsapp/WhatsAppService';
 export class AutomationService {
     /**

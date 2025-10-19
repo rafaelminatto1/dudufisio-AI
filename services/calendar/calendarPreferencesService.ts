@@ -3,7 +3,7 @@
  * Gerencia preferências de calendário dos pacientes
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import { CalendarPreferences } from '../../types';
 
 export class CalendarPreferencesService {

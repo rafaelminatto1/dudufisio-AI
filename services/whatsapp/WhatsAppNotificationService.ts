@@ -4,7 +4,7 @@
  * DuduFisio-AI
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import { getMetaWhatsAppService } from './MetaWhatsAppService';
 import format from 'date-fns/format';
 import addDays from 'date-fns/addDays';

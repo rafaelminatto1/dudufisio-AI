@@ -7,7 +7,7 @@
  * Execute com: npm test tests/services/userService.test.ts
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import { userService, UserProfile, CreateUserRequest, UpdateUserRequest } from '../../services/userService';
 
 describe('UserService Integration Tests', () => {

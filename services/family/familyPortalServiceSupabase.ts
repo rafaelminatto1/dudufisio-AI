@@ -3,7 +3,7 @@
  * Serviço do Portal da Família com Integração Supabase
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import {
   FamilyMember,
   AccessPermission,

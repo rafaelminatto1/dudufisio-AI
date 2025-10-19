@@ -1,5 +1,5 @@
 // services/paymentService.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import type { Database } from '../types/database';
 
 type Payment = Database['public']['Tables']['payments']['Row'];

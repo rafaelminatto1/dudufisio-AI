@@ -2,7 +2,7 @@
  * Predictive Analytics Service - Supabase Integration
  * Serviço de Análise Preditiva com IA
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class PredictiveAnalyticsServiceSupabase {
     /**
      * Prediz outcome de tratamento para um paciente

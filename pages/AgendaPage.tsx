@@ -27,7 +27,6 @@ import WaitlistCompactBanner from '../components/agenda/WaitlistCompactBanner';
 import WaitlistModal from '../components/agenda/WaitlistModal';
 import SimpleWaitlistModal from '../components/agenda/SimpleWaitlistModal';
 import WaitlistManagerDialog from '../components/agenda/WaitlistManagerDialog';
-import LoadingAnnouncer from '../components/ui/LoadingAnnouncer';
 import WaitlistEditDialog from '../components/agenda/WaitlistEditDialog';
 import ScheduleBlocksManager from '../components/agenda/ScheduleBlocksManager';
 import AgendaStats from '../components/agenda/AgendaStats';
@@ -609,10 +608,6 @@ export default function AgendaPage() {
 
     return (
         <main className="flex flex-col h-full bg-slate-50/50" data-testid="agenda-page" role="main">
-            <LoadingAnnouncer 
-                isLoading={isLoading} 
-                message="Carregando agenda..."
-            />
             {/* Compact Professional Header */}
             <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
                 <ResponsiveContainer className="py-3">

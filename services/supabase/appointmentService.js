@@ -1,4 +1,4 @@
-import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabase';
+import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabaseClient';
 // Local date helpers to avoid external dependencies during build
 function formatDate(date) {
     const year = date.getFullYear();

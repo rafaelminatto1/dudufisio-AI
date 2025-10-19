@@ -2,7 +2,7 @@
  * Nutritional Service - Supabase Implementation
  * Serviço para orientação nutricional integrada
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class NutritionalServiceSupabase {
     /**
      * Buscar avaliações nutricionais

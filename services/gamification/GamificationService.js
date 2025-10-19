@@ -2,7 +2,7 @@
  * Gamification Service - Sistema de Gamificação
  * Activity Fisioterapia Integration - Fase 4
  */
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 export class GamificationService {
     /**
      * Adicionar pontos ao paciente

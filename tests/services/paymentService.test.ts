@@ -7,7 +7,7 @@
  * Execute com: npm test tests/services/paymentService.test.ts
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import paymentService from '../../services/paymentService';
 import { Payment, PaymentStatus, PaymentMethod } from '../../services/paymentService';
 

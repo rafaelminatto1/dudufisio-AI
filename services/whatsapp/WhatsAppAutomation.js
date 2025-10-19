@@ -4,7 +4,7 @@
  * DuduFisio-AI
  */
 import { getMetaWhatsAppService } from './MetaWhatsAppService';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 export class WhatsAppAutomation {
     constructor() {
         this.whatsappService = getMetaWhatsAppService();

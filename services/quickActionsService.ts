@@ -3,7 +3,7 @@
  * Serviço para gerenciar ações rápidas da sessão de atendimento
  */
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 
 export interface QuickActionPhoto {
   id: string;

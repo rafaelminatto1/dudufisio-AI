@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class LGPDComplianceService {
     constructor() {
         // Finalidades de tratamento predefinidas

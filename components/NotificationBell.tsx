@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, X, AlertCircle, Info, CheckCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 
 interface Notification {
@@ -53,6 +53,11 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isCollapsed = false
     if (!user) return;
 
     async function setupRealtime() {
+      // Skip Supabase query for mock users
+      if (user.id.startsWith('mock-')) {
+        return;
+      }
+
       const { data: userData } = await supabase
         .from('users')
         .select('id')
@@ -124,6 +129,12 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isCollapsed = false
 
   async function loadUnreadCount() {
     if (!user) return;
+    
+    // Skip Supabase query for mock users
+    if (user.id.startsWith('mock-')) {
+      return;
+    }
+    
     try {
       const { data: userData } = await supabase
         .from('users')
@@ -143,6 +154,12 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isCollapsed = false
 
   async function markAsRead(notificationId: string) {
     if (!user) return;
+    
+    // Skip Supabase query for mock users
+    if (user.id.startsWith('mock-')) {
+      return;
+    }
+    
     try {
       const { data: userData } = await supabase
         .from('users')

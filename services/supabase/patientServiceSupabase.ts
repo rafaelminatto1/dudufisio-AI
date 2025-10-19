@@ -1,4 +1,4 @@
-import { supabase, handleSupabaseError } from '../../lib/supabase';
+import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
 import { Patient, PatientStatus } from '../../types';
 import type { SupabaseRealtimePayload } from '../../types/realtime';
 import type { Database } from '../../types/database';

@@ -3,7 +3,7 @@
  * Serviço de Reabilitação Esportiva com Integração Real ao Supabase
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import {
   AthleteProfile,
   ReturnToSportCriteria,

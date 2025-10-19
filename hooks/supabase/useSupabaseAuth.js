@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import authService from '../../services/auth/authService';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 export const useSupabaseAuth = () => {
     const [authState, setAuthState] = useState({
         user: null,

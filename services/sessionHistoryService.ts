@@ -3,7 +3,7 @@
  * Serviço para gerenciar histórico de sessões e ações relacionadas
  */
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { SoapNote, Appointment } from '../types';
 
 export interface SessionHistory {

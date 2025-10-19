@@ -17,7 +17,7 @@ import { riskStratificationServiceSupabase } from '../services/clinical/riskStra
 import { RiskAssessment, RiskProfile, RiskType } from '../types/riskTypes';
 import { Patient } from '../types';
 import { toast } from 'react-toastify';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 
 export const RiskStratificationPage: React.FC = () => {
   const { patientId } = useParams<{ patientId: string }>();

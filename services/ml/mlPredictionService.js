@@ -2,7 +2,7 @@
  * Machine Learning Prediction Service
  * Serviço para predições usando modelos de ML
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class MLPredictionService {
     /**
      * Gerar predição de outcome de tratamento

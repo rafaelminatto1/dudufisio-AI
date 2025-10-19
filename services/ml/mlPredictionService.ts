@@ -3,7 +3,7 @@
  * Serviço para predições usando modelos de ML
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 
 export interface MLModel {
   id: string;

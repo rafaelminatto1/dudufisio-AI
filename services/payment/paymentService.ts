@@ -3,7 +3,7 @@
  * Activity Fisioterapia Integration - Fase 4
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 
 export interface PaymentLink {
   url: string;

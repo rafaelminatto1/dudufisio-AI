@@ -2,7 +2,7 @@
  * Lead Service - Serviço de gerenciamento de leads
  * Activity Fisioterapia Integration - Fase 1
  */
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 export class LeadService {
     /**
      * Criar novo lead

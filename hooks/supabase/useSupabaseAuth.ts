@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { User } from '@supabase/supabase-js';
 import authService, { UserProfile, LoginCredentials, SignUpData } from '../../services/auth/authService';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 
 export interface AuthState {
   user: User | null;

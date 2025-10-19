@@ -22,7 +22,7 @@ import {
   SportTrainingSession 
 } from '../types/sportsRehabTypes';
 import { toast } from 'react-toastify';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 
 export const SportsRehabilitationPage: React.FC = () => {
   const { patientId } = useParams<{ patientId: string }>();

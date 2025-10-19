@@ -3,7 +3,7 @@
  * Activity Fisioterapia Integration - Fase 1
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import {
   DashboardMetrics,
   ConversionFunnel,

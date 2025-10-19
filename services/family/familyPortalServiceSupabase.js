@@ -2,7 +2,7 @@
  * Family Portal Service - Supabase Integration
  * Serviço do Portal da Família com Integração Supabase
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class FamilyPortalServiceSupabase {
     /**
      * Cria membro da família com acesso ao portal

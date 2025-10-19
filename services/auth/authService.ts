@@ -1,4 +1,4 @@
-import { supabase, handleSupabaseError } from '../../lib/supabase';
+import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
 import type { User } from '@supabase/supabase-js';
 
 export interface LoginCredentials {

@@ -1,5 +1,5 @@
 // services/alertService.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 // Re-export supply alert functions from suppliesService
 export { getSupplyAlerts, markAlertAsRead, resolveAlert } from './suppliesService';
 // ============================================================================

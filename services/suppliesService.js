@@ -1,5 +1,5 @@
 // services/suppliesService.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { MovementType } from '../types';
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
 // Mapeamento de dados do Supabase para tipos da aplicação

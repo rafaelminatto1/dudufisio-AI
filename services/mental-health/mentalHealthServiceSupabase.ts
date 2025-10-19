@@ -3,7 +3,7 @@
  * Serviço para integração com saúde mental
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 
 export interface MentalHealthScreening {
   id: string;

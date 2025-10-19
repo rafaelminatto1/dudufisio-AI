@@ -1,5 +1,5 @@
 // services/reportsService.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import type { Database } from '../types/database';
 import type { StockValuationReport } from '../types';
 

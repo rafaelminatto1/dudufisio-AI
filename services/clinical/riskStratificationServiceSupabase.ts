@@ -3,7 +3,7 @@
  * Serviço de Estratificação de Risco com Integração Real ao Supabase
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import {
   RiskAssessment,
   RiskType,

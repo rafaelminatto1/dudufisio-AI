@@ -3,7 +3,7 @@
  * Activity Fisioterapia Integration - Fase 3
  */
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 export class RecommendationEngine {
     constructor() {
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';

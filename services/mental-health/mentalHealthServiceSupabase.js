@@ -2,7 +2,7 @@
  * Mental Health Service - Supabase Implementation
  * Serviço para integração com saúde mental
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class MentalHealthServiceSupabase {
     /**
      * Buscar triagens de saúde mental

@@ -5,7 +5,7 @@
  */
 
 import { getMetaWhatsAppService } from './MetaWhatsAppService';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 
 export interface AutomationRule {
   id: string;

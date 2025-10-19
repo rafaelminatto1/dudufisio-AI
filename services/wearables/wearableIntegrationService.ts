@@ -3,7 +3,7 @@
  * Serviço base para integração com dispositivos wearables
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 
 export interface WearableData {
   id?: string;

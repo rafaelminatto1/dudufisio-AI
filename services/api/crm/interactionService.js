@@ -2,7 +2,7 @@
  * Interaction Service - Serviço de gerenciamento de interações com leads
  * Activity Fisioterapia Integration - Fase 1
  */
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 export class InteractionService {
     /**
      * Registrar nova interação

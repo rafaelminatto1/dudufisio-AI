@@ -3,7 +3,7 @@
  * Serviço de Garantia de Qualidade e Compliance
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import {
   ComplianceStandard,
   AuditLogEntry,

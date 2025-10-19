@@ -3,7 +3,7 @@
  * Serviço de Análise Preditiva com IA
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import {
   PredictionModel,
   PredictionResult,

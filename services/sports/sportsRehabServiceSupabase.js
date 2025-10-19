@@ -2,7 +2,7 @@
  * Sports Rehabilitation Service - Supabase Integration
  * Serviço de Reabilitação Esportiva com Integração Real ao Supabase
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class SportsRehabServiceSupabase {
     /**
      * Cria ou atualiza perfil de atleta

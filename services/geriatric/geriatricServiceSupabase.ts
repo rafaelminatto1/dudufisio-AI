@@ -3,7 +3,7 @@
  * Serviço para módulo de cuidados geriátricos
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 
 export interface GeriatricAssessment {
   id: string;

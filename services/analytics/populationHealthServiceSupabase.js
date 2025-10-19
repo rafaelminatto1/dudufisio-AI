@@ -2,7 +2,7 @@
  * Population Health Service - Supabase Integration
  * Serviço de Análise de Saúde Populacional com Supabase
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class PopulationHealthServiceSupabase {
     /**
      * Busca demografia da população de pacientes

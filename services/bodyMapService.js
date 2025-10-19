@@ -320,7 +320,7 @@ export const getPainEvolution = async (patientId) => {
 /*
 TODO: Implementar com Supabase real
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 
 export const getBodyPointsByPatientId = async (patientId: string): Promise<BodyPoint[]> => {
     const { data, error } = await supabase

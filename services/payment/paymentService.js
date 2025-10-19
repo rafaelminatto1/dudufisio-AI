@@ -2,7 +2,7 @@
  * Payment Service - Serviço de pagamentos online
  * Activity Fisioterapia Integration - Fase 4
  */
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 export class PaymentService {
     constructor() {
         this.stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';

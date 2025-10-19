@@ -1,5 +1,5 @@
 // services/exerciseService.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { Exercise } from '../types';
 import { EXERCISES_LIBRARY } from '../data/exercisesLibraryData';
 

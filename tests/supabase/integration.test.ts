@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import authService from '../../services/auth/authService';
 import patientService from '../../services/supabase/patientService';
 import appointmentService from '../../services/supabase/appointmentService';

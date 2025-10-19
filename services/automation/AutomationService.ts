@@ -3,7 +3,7 @@
  * Activity Fisioterapia Integration - Fase 2
  */
 
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 import { getWhatsAppService } from '@/services/whatsapp/WhatsAppService';
 import { LeadService } from '@/services/api/crm/leadService';
 

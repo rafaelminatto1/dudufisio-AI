@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class RealtimeService {
     constructor() {
         this.channels = new Map();

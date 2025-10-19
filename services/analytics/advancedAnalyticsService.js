@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class AdvancedAnalyticsService {
     constructor() {
         this.eventQueue = [];

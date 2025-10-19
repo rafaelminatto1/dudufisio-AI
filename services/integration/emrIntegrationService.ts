@@ -3,7 +3,7 @@
  * Serviço para integração com sistemas externos via HL7 FHIR
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import axios from 'axios';
 
 export interface ExternalSystem {

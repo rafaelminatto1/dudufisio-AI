@@ -1,4 +1,4 @@
-import { supabase, handleSupabaseError } from '../../lib/supabase';
+import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
 import { User, Role } from '../../types';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 

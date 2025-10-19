@@ -4,20 +4,8 @@
  * Handles all agenda-related database operations using Supabase
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../../lib/supabaseClient';
 import type { Appointment, Patient, Therapist, WaitlistEntry } from '../../types';
-
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase environment variables not configured');
-}
-
-const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
 
 /**
  * Supabase Agenda Service Class

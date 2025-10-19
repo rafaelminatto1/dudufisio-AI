@@ -2,7 +2,7 @@
  * Symptom Tracker Service - Supabase Implementation
  * Serviço para rastreamento avançado de sintomas
  */
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 class SymptomTrackerServiceSupabase {
     /**
      * Buscar entradas do diário de sintomas

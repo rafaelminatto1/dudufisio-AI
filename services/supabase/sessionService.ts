@@ -1,4 +1,4 @@
-import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabase';
+import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabaseClient';
 import type { Database } from '../../types/database';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 

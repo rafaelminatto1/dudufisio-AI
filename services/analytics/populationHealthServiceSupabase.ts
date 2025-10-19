@@ -3,7 +3,7 @@
  * Serviço de Análise de Saúde Populacional com Supabase
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 import {
   PopulationDemographics,
   HealthTrend,

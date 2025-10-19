@@ -1,4 +1,4 @@
-import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabase';
+import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabaseClient';
 class PatientService {
     // Get all patients
     async getPatients(filters) {

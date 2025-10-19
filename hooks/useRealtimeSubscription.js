@@ -5,7 +5,7 @@
  * Baseado nas melhores práticas do Supabase Context7
  */
 import { useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { useQueryClient } from '@tanstack/react-query';
 /**
  * Hook para subscription real-time do Supabase

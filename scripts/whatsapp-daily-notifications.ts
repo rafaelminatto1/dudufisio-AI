@@ -7,7 +7,7 @@
  */
 
 import { getWhatsAppNotificationService } from '../services/whatsapp/WhatsAppNotificationService';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 
 async function runDailyNotifications() {
   console.log('🚀 Iniciando envio de notificações diárias WhatsApp...');

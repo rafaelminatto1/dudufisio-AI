@@ -3,7 +3,7 @@
  * Serviço para rastreamento avançado de sintomas
  */
 
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabaseClient';
 
 export interface SymptomEntry {
   id: string;

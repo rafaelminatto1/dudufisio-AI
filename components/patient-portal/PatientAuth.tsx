@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { Phone, Lock, ArrowRight } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabaseClient';
 
 export const PatientAuth: React.FC = () => {
   const [phone, setPhone] = useState('');

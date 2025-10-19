@@ -1,5 +1,5 @@
 // services/paymentService.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 class PaymentService {
     // Payment CRUD operations
     async getAllPayments(filters) {
