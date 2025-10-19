@@ -184,12 +184,12 @@ export default function PatientTable({ onView }: { onView: (p: Patient) => void 
       </div>
 
       <div className="rounded-md border">
-        <Table>
+        <Table role="table" aria-label="Lista de pacientes">
           <TableHeader>
             {table.getHeaderGroups().map((hg) => (
               <TableRow key={hg.id}>
                 {hg.headers.map((h) => (
-                  <TableHead key={h.id}>{h.isPlaceholder ? null : flexRender(h.column.columnDef.header, h.getContext())}</TableHead>
+                  <TableHead key={h.id} scope="col">{h.isPlaceholder ? null : flexRender(h.column.columnDef.header, h.getContext())}</TableHead>
                 ))}
               </TableRow>
             ))}

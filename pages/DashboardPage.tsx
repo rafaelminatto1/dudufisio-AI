@@ -27,6 +27,7 @@ import FeatureCard from '../components/ui/FeatureCard';
 import AnimatedContainer from '../components/ui/AnimatedContainer';
 import ScrollReveal from '../components/ui/ScrollReveal';
 import PageTransition from '../components/ui/PageTransition';
+import LoadingAnnouncer from '../components/ui/LoadingAnnouncer';
 
 const isToday = (someDate: Date) => {
     const today = new Date();
@@ -142,6 +143,10 @@ const DashboardPage: React.FC = () => {
 
     return (
         <PageTransition>
+            <LoadingAnnouncer 
+                isLoading={isLoading || isPatientsLoading || isAppointmentsLoading} 
+                message="Carregando dados do dashboard..."
+            />
             <ResponsiveContainer className="space-responsive" role="main">
                 {/* Welcome Header with Gradient Background */}
                 <AnimatedContainer animation="fadeInUp" className="mb-8">
