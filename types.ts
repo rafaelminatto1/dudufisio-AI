@@ -1883,7 +1883,12 @@ export enum InventoryAlertType {
     LowStock = 'LowStock',
     OutOfStock = 'OutOfStock',
     Expiring = 'Expiring',
-    Expired = 'Expired'
+    Expired = 'Expired',
+    OverdueOrder = 'OverdueOrder',
+    HighConsumption = 'HighConsumption',
+    LowTurnover = 'LowTurnover',
+    PriceChange = 'PriceChange',
+    SupplierDelay = 'SupplierDelay'
 }
 
 export interface InventoryAlert {
