@@ -153,10 +153,8 @@ export default defineConfig({
         return false;
       },
       output: {
-        // Code splitting DESABILITADO - Vite ordena chunks de forma inconsistente
-        // TODO: Implementar code splitting com estratégia diferente ou aguardar correção do Vite
-        manualChunks: undefined,
-        /* manualChunks: (id) => {
+        // Code splitting HABILITADO - Estratégia de chunks por funcionalidade
+        manualChunks: (id) => {
           // CONSOLIDAR TODO O REACT EM UM ÚNICO CHUNK
           // Isso garante que não há problemas de ordem de carregamento
           if (id.includes('node_modules/react/') || 
@@ -234,7 +232,7 @@ export default defineConfig({
           if (id.includes('/components/ui/') || id.includes('/components/layout/')) {
             return 'app-ui-components';
           }
-        }, */
+        },
         entryFileNames: 'assets/[name]-[hash].js',
         chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]'

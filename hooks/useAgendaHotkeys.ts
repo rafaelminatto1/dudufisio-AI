@@ -9,6 +9,9 @@ export interface AgendaHotkeysConfig {
   onCloseModal?: () => void;
   onToggleFilters?: () => void;
   onViewWaitlist?: () => void;
+  onManageBlocks?: () => void;
+  onShowHelp?: () => void;
+  onViewChange?: (view: 'daily' | 'weekly' | 'monthly' | 'list') => void;
   enabled?: boolean;
 }
 
@@ -17,13 +20,15 @@ export interface AgendaHotkeysConfig {
  * 
  * Atalhos disponíveis:
  * - N: Novo agendamento
- * - F: Focar busca
+ * - F ou /: Focar busca
  * - T: Ir para hoje
  * - ←: Período anterior
  * - →: Próximo período
  * - Esc: Fechar modais
- * - /: Toggle filtros
  * - W: Ver lista de espera
+ * - B: Gerenciar bloqueios
+ * - 1-4: Alternar visualizações (diária, semanal, mensal, lista)
+ * - ?: Mostrar ajuda de atalhos
  */
 export const useAgendaHotkeys = ({
   onNewAppointment,
@@ -34,6 +39,9 @@ export const useAgendaHotkeys = ({
   onCloseModal,
   onToggleFilters,
   onViewWaitlist,
+  onManageBlocks,
+  onShowHelp,
+  onViewChange,
   enabled = true
 }: AgendaHotkeysConfig) => {
   useEffect(() => {
@@ -92,10 +100,10 @@ export const useAgendaHotkeys = ({
         return;
       }
 
-      // / - Toggle filtros
+      // / - Focar busca
       if (event.key === '/' && !event.shiftKey) {
         event.preventDefault();
-        onToggleFilters?.();
+        onSearch?.();
         return;
       }
 
@@ -103,6 +111,29 @@ export const useAgendaHotkeys = ({
       if (event.key === 'w' || event.key === 'W') {
         event.preventDefault();
         onViewWaitlist?.();
+        return;
+      }
+
+      // B - Gerenciar bloqueios
+      if (event.key === 'b' || event.key === 'B') {
+        event.preventDefault();
+        onManageBlocks?.();
+        return;
+      }
+
+      // ? - Mostrar ajuda
+      if (event.key === '?') {
+        event.preventDefault();
+        onShowHelp?.();
+        return;
+      }
+
+      // 1-4 - Alternar visualizações
+      if (event.key >= '1' && event.key <= '4') {
+        event.preventDefault();
+        const views = ['daily', 'weekly', 'monthly', 'list'] as const;
+        const viewIndex = parseInt(event.key) - 1;
+        onViewChange?.(views[viewIndex]);
         return;
       }
     };
@@ -121,7 +152,10 @@ export const useAgendaHotkeys = ({
     onNext,
     onCloseModal,
     onToggleFilters,
-    onViewWaitlist
+    onViewWaitlist,
+    onManageBlocks,
+    onShowHelp,
+    onViewChange
   ]);
 };
 

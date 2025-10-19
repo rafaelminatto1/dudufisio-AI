@@ -1,10 +1,11 @@
-import { Appointment, EnrichedAppointment } from '../../types';
+import { Appointment, EnrichedAppointment, ScheduleBlock } from '../../types';
 
 export interface Conflict {
-  type: 'same_patient' | 'same_therapist' | 'min_interval' | 'workload_exceeded';
+  type: 'same_patient' | 'same_therapist' | 'min_interval' | 'workload_exceeded' | 'schedule_block' | 'room_conflict';
   severity: 'warning' | 'error';
   message: string;
-  conflictingAppointments: Appointment[];
+  conflictingAppointments?: Appointment[];
+  conflictingBlocks?: ScheduleBlock[];
 }
 
 export interface ConflictCheckResult {
@@ -21,7 +22,8 @@ export const conflictDetectionService = {
    */
   async checkConflicts(
     appointment: Appointment,
-    allAppointments: EnrichedAppointment[]
+    allAppointments: EnrichedAppointment[],
+    scheduleBlocks: ScheduleBlock[] = []
   ): Promise<ConflictCheckResult> {
     const conflicts: Conflict[] = [];
 
@@ -30,25 +32,31 @@ export const conflictDetectionService = {
       a => a.id !== appointment.id && a.status !== 'canceled'
     );
 
-    // 1. Verificar mesmo paciente em horário sobreposto
+    // 1. Verificar conflitos com bloqueios de agenda
+    const blockConflicts = this.checkScheduleBlockConflicts(appointment, scheduleBlocks);
+    if (blockConflicts) {
+      conflicts.push(blockConflicts);
+    }
+
+    // 2. Verificar mesmo paciente em horário sobreposto
     const samePatientConflicts = this.checkSamePatientConflicts(appointment, activeAppointments);
     if (samePatientConflicts) {
       conflicts.push(samePatientConflicts);
     }
 
-    // 2. Verificar mesmo terapeuta com múltiplos agendamentos simultâneos
+    // 3. Verificar mesmo terapeuta com múltiplos agendamentos simultâneos
     const sameTherapistConflicts = this.checkSameTherapistConflicts(appointment, activeAppointments);
     if (sameTherapistConflicts) {
       conflicts.push(sameTherapistConflicts);
     }
 
-    // 3. Verificar intervalo mínimo entre sessões do mesmo paciente
+    // 4. Verificar intervalo mínimo entre sessões do mesmo paciente
     const minIntervalConflicts = this.checkMinIntervalConflicts(appointment, activeAppointments);
     if (minIntervalConflicts) {
       conflicts.push(minIntervalConflicts);
     }
 
-    // 4. Verificar carga horária do terapeuta
+    // 5. Verificar carga horária do terapeuta
     const workloadConflicts = this.checkWorkloadConflicts(appointment, activeAppointments);
     if (workloadConflicts) {
       conflicts.push(workloadConflicts);
@@ -57,6 +65,30 @@ export const conflictDetectionService = {
     return {
       hasConflicts: conflicts.length > 0,
       conflicts
+    };
+  },
+
+  /**
+   * Verifica se o horário está bloqueado (férias, almoço, etc)
+   */
+  checkScheduleBlockConflicts(
+    appointment: Appointment,
+    scheduleBlocks: ScheduleBlock[]
+  ): Conflict | null {
+    const conflicts = scheduleBlocks.filter(block => 
+      block.therapistId === appointment.therapistId &&
+      block.startTime < appointment.endTime &&
+      block.endTime > appointment.startTime
+    );
+
+    if (conflicts.length === 0) return null;
+
+    const blockTypes = conflicts.map(b => b.blockType).join(', ');
+    return {
+      type: 'schedule_block',
+      severity: 'error',
+      message: `Horário está bloqueado (${blockTypes})`,
+      conflictingBlocks: conflicts
     };
   },
 
@@ -213,6 +245,68 @@ export const conflictDetectionService = {
       hasConflict: conflicts.length > 0,
       conflictReason: conflicts.map(c => c.message).join('; ')
     };
+  },
+
+  /**
+   * Sugere horários alternativos próximos ao horário desejado
+   */
+  suggestAlternativeTimes(
+    desiredTime: Date,
+    durationMinutes: number,
+    allAppointments: EnrichedAppointment[],
+    scheduleBlocks: ScheduleBlock[] = [],
+    therapistId: string,
+    maxSuggestions: number = 5
+  ): Date[] {
+    const suggestions: Date[] = [];
+    const durationMs = durationMinutes * 60 * 1000;
+
+    // Tentar horários próximos (±30min, ±1h, ±2h, ±3h)
+    const offsets = [
+      -3 * 60 * 60 * 1000,  // -3h
+      -2 * 60 * 60 * 1000,  // -2h
+      -60 * 60 * 1000,      // -1h
+      -30 * 60 * 1000,      // -30min
+      30 * 60 * 1000,       // +30min
+      60 * 60 * 1000,       // +1h
+      2 * 60 * 60 * 1000,   // +2h
+      3 * 60 * 60 * 1000    // +3h
+    ];
+
+    for (const offset of offsets) {
+      if (suggestions.length >= maxSuggestions) break;
+
+      const suggestedStart = new Date(desiredTime.getTime() + offset);
+      const suggestedEnd = new Date(suggestedStart.getTime() + durationMs);
+
+      // Criar um agendamento temporário para validação
+      const tempAppointment: Appointment = {
+        ...allAppointments[0], // Usar um agendamento existente como base
+        startTime: suggestedStart,
+        endTime: suggestedEnd,
+        therapistId
+      };
+
+      // Verificar se o horário sugerido está disponível
+      const hasAppointmentConflict = allAppointments.some(a =>
+        a.therapistId === therapistId &&
+        a.startTime < suggestedEnd &&
+        a.endTime > suggestedStart &&
+        a.status !== 'canceled'
+      );
+
+      const hasBlockConflict = scheduleBlocks.some(block =>
+        block.therapistId === therapistId &&
+        block.startTime < suggestedEnd &&
+        block.endTime > suggestedStart
+      );
+
+      if (!hasAppointmentConflict && !hasBlockConflict) {
+        suggestions.push(suggestedStart);
+      }
+    }
+
+    return suggestions;
   }
 };
 

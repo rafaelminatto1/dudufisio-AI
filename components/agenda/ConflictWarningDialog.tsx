@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, User, Clock, Calendar, XCircle } from 'lucide-react';
+import { AlertTriangle, User, Clock, Calendar, XCircle, Lightbulb } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,7 +11,10 @@ import {
   AlertDialogTitle,
 } from '../ui/alert-dialog';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import { Conflict } from '../../services/scheduling/conflictDetectionService';
+import format from 'date-fns/format';
+import { ptBR } from 'date-fns/locale';
 
 interface ConflictWarningDialogProps {
   isOpen: boolean;
@@ -20,6 +23,7 @@ interface ConflictWarningDialogProps {
   conflicts: Conflict[];
   patientName?: string;
   therapistName?: string;
+  alternativeTimes?: Date[];
 }
 
 const ConflictWarningDialog: React.FC<ConflictWarningDialogProps> = ({
@@ -28,8 +32,14 @@ const ConflictWarningDialog: React.FC<ConflictWarningDialogProps> = ({
   onConfirm,
   conflicts,
   patientName,
-  therapistName
+  therapistName,
+  alternativeTimes = []
 }) => {
+  const handleUseAlternativeTime = (time: Date) => {
+    // TODO: Implementar lógica para usar o horário alternativo
+    console.log('Usar horário alternativo:', time);
+    onClose();
+  };
   const getConflictIcon = (type: Conflict['type']) => {
     switch (type) {
       case 'same_patient':
@@ -120,6 +130,35 @@ const ConflictWarningDialog: React.FC<ConflictWarningDialogProps> = ({
             );
           })}
         </div>
+
+        {/* Alternative Times Suggestions */}
+        {alternativeTimes.length > 0 && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+            <div className="flex items-start gap-2 mb-3">
+              <Lightbulb className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-green-800">
+                <p className="font-medium">Horários Alternativos Disponíveis</p>
+                <p className="text-xs text-green-700 mt-1">
+                  Sugerimos estes horários próximos sem conflitos:
+                </p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {alternativeTimes.slice(0, 3).map((time, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleUseAlternativeTime(time)}
+                  className="w-full justify-start bg-white hover:bg-green-50 border-green-300 text-green-700"
+                >
+                  <Clock className="w-3 h-3 mr-2" />
+                  {format(time, "EEEE, dd/MM 'às' HH:mm", { locale: ptBR })}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
           <div className="flex items-start gap-2">

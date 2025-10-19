@@ -9,6 +9,7 @@ import { Button } from './ui/button';
 import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 import PatientInfoCard from './agenda/PatientInfoCard';
+import * as appointmentService from '../services/appointmentService';
 
 interface AppointmentDetailModalProps {
   appointment: EnrichedAppointment | null;
@@ -43,6 +44,8 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
   const [isEditingValue, setIsEditingValue] = useState(false);
   const [localValue, setLocalValue] = useState(appointment?.value || 0);
   const [activeTab, setActiveTab] = useState('details');
+  const [historyAppointments, setHistoryAppointments] = useState<Appointment[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,6 +53,33 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
     setIsEditingValue(false);
     setActiveTab('details');
   }, [appointment]);
+
+  // Carregar histórico de sessões quando a aba de histórico for aberta
+  useEffect(() => {
+    if (activeTab === 'history' && appointment?.patientId && historyAppointments.length === 0) {
+      loadHistory();
+    }
+  }, [activeTab, appointment?.patientId]);
+
+  const loadHistory = async () => {
+    if (!appointment?.patientId) return;
+    
+    setIsLoadingHistory(true);
+    try {
+      const appointments = await appointmentService.getAppointmentsByPatientId(appointment.patientId);
+      // Filtrar apenas sessões anteriores à atual e ordenar por data (mais recente primeiro)
+      const filtered = appointments
+        .filter(app => app.id !== appointment.id && app.startTime < appointment.startTime)
+        .sort((a, b) => b.startTime.getTime() - a.startTime.getTime())
+        .slice(0, 10); // Últimas 10 sessões
+      setHistoryAppointments(filtered);
+    } catch (error) {
+      console.error('Erro ao carregar histórico:', error);
+      showToast('Falha ao carregar histórico de sessões', 'error');
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
 
   if (!appointment) {
     return null;
@@ -227,11 +257,60 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
                 <div className="text-sm text-slate-600">
                   Histórico de sessões deste paciente
                 </div>
-                <div className="text-center py-8 text-slate-500">
-                  <History className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                  <p>Histórico em desenvolvimento</p>
-                  <p className="text-xs mt-2">Aqui serão exibidas as sessões anteriores</p>
-                </div>
+                
+                {isLoadingHistory ? (
+                  <div className="text-center py-8 text-slate-500">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-sky-600"></div>
+                    <p className="mt-2">Carregando histórico...</p>
+                  </div>
+                ) : historyAppointments.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">
+                    <History className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                    <p>Nenhuma sessão anterior encontrada</p>
+                    <p className="text-xs mt-2">Este parece ser o primeiro atendimento do paciente</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {historyAppointments.map((app) => (
+                      <div
+                        key={app.id}
+                        className="p-3 bg-white border border-slate-200 rounded-lg hover:border-sky-300 transition cursor-pointer"
+                        onClick={() => {
+                          onClose();
+                          navigate(`/agenda`);
+                        }}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge className={getStatusColor(app.status)}>
+                                {app.status}
+                              </Badge>
+                              <span className="text-sm font-medium text-slate-900">{app.type}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-sm text-slate-600">
+                              <Calendar className="w-4 h-4" />
+                              <span>{format(app.startTime, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</span>
+                            </div>
+                            {app.observations && (
+                              <p className="text-xs text-slate-500 mt-2 line-clamp-2">
+                                {app.observations}
+                              </p>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-semibold text-slate-900">
+                              R$ {app.value.toFixed(2)}
+                            </div>
+                            <div className={`text-xs ${app.paymentStatus === 'paid' ? 'text-green-600' : 'text-slate-500'}`}>
+                              {app.paymentStatus === 'paid' ? 'Pago' : 'Pendente'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </TabsContent>
 

@@ -8,7 +8,6 @@ import {
   SupplyCategory,
   TaskCostSummary
 } from '../../types';
-import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -414,128 +413,146 @@ class SupplyReportsService {
   }
 
   /**
-   * Exportar relatório para Excel
+   * Exportar relatório para CSV
+   * Substitui exportToExcel devido a vulnerabilidades no pacote xlsx
    */
-  async exportToExcel(data: any, reportType: string): Promise<Blob> {
-    const workbook = XLSX.utils.book_new();
+  async exportToCSV(data: any, reportType: string): Promise<Blob> {
+    let csvContent = '';
 
     switch (reportType) {
       case 'consumption':
-        this.addConsumptionSheets(workbook, data as ConsumptionByPeriodReport);
+        csvContent = this.generateConsumptionCSV(data as ConsumptionByPeriodReport);
         break;
       case 'procedure':
-        this.addProcedureSheets(workbook, data as ProcedureCostAnalysis);
+        csvContent = this.generateProcedureCSV(data as ProcedureCostAnalysis);
         break;
       case 'movement':
-        this.addMovementSheets(workbook, data as SupplyMovementReport);
+        csvContent = this.generateMovementCSV(data as SupplyMovementReport);
         break;
       default:
-        // Folha genérica
-        const worksheet = XLSX.utils.json_to_sheet([data]);
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Dados');
+        // CSV genérico
+        csvContent = this.objectToCSV([data]);
     }
 
-    // Gerar arquivo Excel
-    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    return new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    // Gerar arquivo CSV com BOM para Excel
+    return new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
   }
 
-  private addConsumptionSheets(workbook: XLSX.WorkBook, report: ConsumptionByPeriodReport) {
+  private generateConsumptionCSV(report: ConsumptionByPeriodReport): string {
+    let csv = 'RELATÓRIO DE CONSUMO DE INSUMOS\n\n';
+    
     // Resumo
-    const summaryData = [
-      { Campo: 'Período', Valor: `${report.period.startDate} a ${report.period.endDate}` },
-      { Campo: 'Total Consumido', Valor: report.totalConsumed },
-      { Campo: 'Custo Total', Valor: `R$ ${report.totalCost.toFixed(2)}` },
-      { Campo: 'Itens Diferentes', Valor: report.itemsCount }
-    ];
-    const summarySheet = XLSX.utils.json_to_sheet(summaryData);
-    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Resumo');
+    csv += 'RESUMO\n';
+    csv += 'Campo,Valor\n';
+    csv += `Período,"${report.period.startDate} a ${report.period.endDate}"\n`;
+    csv += `Total Consumido,${report.totalConsumed}\n`;
+    csv += `Custo Total,R$ ${report.totalCost.toFixed(2)}\n`;
+    csv += `Itens Diferentes,${report.itemsCount}\n\n`;
 
     // Top Insumos
-    const topSheet = XLSX.utils.json_to_sheet(report.topSupplies.map(item => ({
-      'Insumo': item.name,
-      'Categoria': item.category,
-      'Quantidade': item.quantityConsumed,
-      'Custo Total': `R$ ${item.totalCost.toFixed(2)}`,
-      '% do Total': `${item.percentageOfTotal.toFixed(1)}%`
-    })));
-    XLSX.utils.book_append_sheet(workbook, topSheet, 'Top Insumos');
+    csv += 'TOP INSUMOS MAIS CONSUMIDOS\n';
+    csv += 'Insumo,Categoria,Quantidade,Custo Total,% do Total\n';
+    report.topSupplies.forEach(item => {
+      csv += `"${item.name}",${item.category},${item.quantityConsumed},"R$ ${item.totalCost.toFixed(2)}",${item.percentageOfTotal.toFixed(1)}%\n`;
+    });
+    csv += '\n';
 
     // Consumo Diário
-    const dailySheet = XLSX.utils.json_to_sheet(report.dailyConsumption.map(item => ({
-      'Data': item.date,
-      'Quantidade': item.quantity,
-      'Custo': `R$ ${item.cost.toFixed(2)}`
-    })));
-    XLSX.utils.book_append_sheet(workbook, dailySheet, 'Consumo Diário');
+    csv += 'CONSUMO DIÁRIO\n';
+    csv += 'Data,Quantidade,Custo\n';
+    report.dailyConsumption.forEach(item => {
+      csv += `${item.date},${item.quantity},"R$ ${item.cost.toFixed(2)}"\n`;
+    });
+    csv += '\n';
 
     // Por Categoria
-    const categorySheet = XLSX.utils.json_to_sheet(report.categoryBreakdown.map(item => ({
-      'Categoria': item.category,
-      'Quantidade': item.quantity,
-      'Custo': `R$ ${item.cost.toFixed(2)}`,
-      'Percentual': `${item.percentage.toFixed(1)}%`
-    })));
-    XLSX.utils.book_append_sheet(workbook, categorySheet, 'Por Categoria');
+    csv += 'CONSUMO POR CATEGORIA\n';
+    csv += 'Categoria,Quantidade,Custo,Percentual\n';
+    report.categoryBreakdown.forEach(item => {
+      csv += `${item.category},${item.quantity},"R$ ${item.cost.toFixed(2)}",${item.percentage.toFixed(1)}%\n`;
+    });
+
+    return csv;
   }
 
-  private addProcedureSheets(workbook: XLSX.WorkBook, report: ProcedureCostAnalysis) {
+  private generateProcedureCSV(report: ProcedureCostAnalysis): string {
+    let csv = 'ANÁLISE DE CUSTOS POR PROCEDIMENTO\n\n';
+    
     // Resumo
-    const summaryData = [
-      { Campo: 'Tipo de Procedimento', Valor: report.procedureType },
-      { Campo: 'Quantidade de Procedimentos', Valor: report.procedureCount },
-      { Campo: 'Custo Médio por Procedimento', Valor: `R$ ${report.averageSupplyCost.toFixed(2)}` },
-      { Campo: 'Custo Total', Valor: `R$ ${report.totalSupplyCost.toFixed(2)}` }
-    ];
-    const summarySheet = XLSX.utils.json_to_sheet(summaryData);
-    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Resumo');
+    csv += 'RESUMO\n';
+    csv += 'Campo,Valor\n';
+    csv += `Tipo de Procedimento,"${report.procedureType}"\n`;
+    csv += `Quantidade de Procedimentos,${report.procedureCount}\n`;
+    csv += `Custo Médio por Procedimento,"R$ ${report.averageSupplyCost.toFixed(2)}"\n`;
+    csv += `Custo Total,"R$ ${report.totalSupplyCost.toFixed(2)}"\n\n`;
 
     // Insumos Utilizados
-    const suppliesSheet = XLSX.utils.json_to_sheet(report.supplies.map(item => ({
-      'Insumo': item.name,
-      'Quantidade Média': item.averageQuantity.toFixed(2),
-      'Custo Médio': `R$ ${item.averageCost.toFixed(2)}`,
-      'Frequência de Uso': `${item.frequency.toFixed(1)}%`
-    })));
-    XLSX.utils.book_append_sheet(workbook, suppliesSheet, 'Insumos');
+    csv += 'INSUMOS UTILIZADOS\n';
+    csv += 'Insumo,Quantidade Média,Custo Médio,Frequência de Uso\n';
+    report.supplies.forEach(item => {
+      csv += `"${item.name}",${item.averageQuantity.toFixed(2)},"R$ ${item.averageCost.toFixed(2)}",${item.frequency.toFixed(1)}%\n`;
+    });
+    csv += '\n';
 
     // Tendências
-    const trendsSheet = XLSX.utils.json_to_sheet(report.trends.map(item => ({
-      'Mês': item.month,
-      'Quantidade': item.count,
-      'Custo Total': `R$ ${item.cost.toFixed(2)}`,
-      'Custo Médio': `R$ ${(item.count > 0 ? item.cost / item.count : 0).toFixed(2)}`
-    })));
-    XLSX.utils.book_append_sheet(workbook, trendsSheet, 'Tendências');
+    csv += 'TENDÊNCIAS MENSAlS\n';
+    csv += 'Mês,Quantidade,Custo Total,Custo Médio\n';
+    report.trends.forEach(item => {
+      const avgCost = item.count > 0 ? item.cost / item.count : 0;
+      csv += `${item.month},${item.count},"R$ ${item.cost.toFixed(2)}","R$ ${avgCost.toFixed(2)}"\n`;
+    });
+
+    return csv;
   }
 
-  private addMovementSheets(workbook: XLSX.WorkBook, report: SupplyMovementReport) {
+  private generateMovementCSV(report: SupplyMovementReport): string {
+    let csv = 'RELATÓRIO DE MOVIMENTAÇÃO DE ESTOQUE\n\n';
+    
     // Resumo
-    const summaryData = [
-      { Campo: 'Insumo', Valor: report.supply.name },
-      { Campo: 'Período', Valor: `${report.period.startDate} a ${report.period.endDate}` },
-      { Campo: 'Estoque Inicial', Valor: report.openingStock },
-      { Campo: 'Estoque Final', Valor: report.closingStock },
-      { Campo: 'Total Recebido', Valor: report.totalReceived },
-      { Campo: 'Total Consumido', Valor: report.totalConsumed },
-      { Campo: 'Giro de Estoque', Valor: report.stockTurnover.toFixed(2) },
-      { Campo: 'Valor Inicial', Valor: `R$ ${report.valueAnalysis.openingValue.toFixed(2)}` },
-      { Campo: 'Valor Final', Valor: `R$ ${report.valueAnalysis.closingValue.toFixed(2)}` }
-    ];
-    const summarySheet = XLSX.utils.json_to_sheet(summaryData);
-    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Resumo');
+    csv += 'RESUMO\n';
+    csv += 'Campo,Valor\n';
+    csv += `Insumo,"${report.supply.name}"\n`;
+    csv += `Período,"${report.period.startDate} a ${report.period.endDate}"\n`;
+    csv += `Estoque Inicial,${report.openingStock}\n`;
+    csv += `Estoque Final,${report.closingStock}\n`;
+    csv += `Total Recebido,${report.totalReceived}\n`;
+    csv += `Total Consumido,${report.totalConsumed}\n`;
+    csv += `Giro de Estoque,${report.stockTurnover.toFixed(2)}\n`;
+    csv += `Valor Inicial,"R$ ${report.valueAnalysis.openingValue.toFixed(2)}"\n`;
+    csv += `Valor Final,"R$ ${report.valueAnalysis.closingValue.toFixed(2)}"\n\n`;
 
     // Movimentações
-    const movementsSheet = XLSX.utils.json_to_sheet(report.movements.map(m => ({
-      'Data': new Date(m.createdAt).toLocaleDateString('pt-BR'),
-      'Tipo': m.movementType,
-      'Quantidade': m.quantity,
-      'Custo Unitário': m.unitCost ? `R$ ${m.unitCost.toFixed(2)}` : '-',
-      'Custo Total': m.totalCost ? `R$ ${m.totalCost.toFixed(2)}` : '-',
-      'Motivo': m.reason || '-',
-      'Documento': m.referenceDocument || '-'
-    })));
-    XLSX.utils.book_append_sheet(workbook, movementsSheet, 'Movimentações');
+    csv += 'MOVIMENTAÇÕES\n';
+    csv += 'Data,Tipo,Quantidade,Custo Unitário,Custo Total,Motivo,Documento\n';
+    report.movements.forEach(m => {
+      const date = new Date(m.createdAt).toLocaleDateString('pt-BR');
+      const unitCost = m.unitCost ? `R$ ${m.unitCost.toFixed(2)}` : '-';
+      const totalCost = m.totalCost ? `R$ ${m.totalCost.toFixed(2)}` : '-';
+      const reason = m.reason || '-';
+      const doc = m.referenceDocument || '-';
+      csv += `${date},${m.movementType},${m.quantity},"${unitCost}","${totalCost}","${reason}","${doc}"\n`;
+    });
+
+    return csv;
+  }
+
+  private objectToCSV(data: any[]): string {
+    if (data.length === 0) return '';
+    
+    const headers = Object.keys(data[0]);
+    let csv = headers.join(',') + '\n';
+    
+    data.forEach(row => {
+      const values = headers.map(header => {
+        const value = row[header];
+        if (value === null || value === undefined) return '';
+        if (typeof value === 'string') return `"${value.replace(/"/g, '""')}"`;
+        return value;
+      });
+      csv += values.join(',') + '\n';
+    });
+    
+    return csv;
   }
 
   /**

@@ -1,625 +1,250 @@
-
-
-// services/notificationService.ts
-import { User, Role, AppointmentStatus } from '../types';
-
-// Temporary interface definition
-interface Notification {
-  id: string;
-  userId: string;
-  message: string;
-  isRead: boolean;
-  createdAt: Date;
-  type: 'task_assigned' | 'announcement' | 'appointment_reminder' | 'exercise_reminder' | 'alert' | 'push_fallback';
-}
-import { mockNotifications, mockAppointments, mockUsers, mockPatients } from '../data/mockData';
-import * as treatmentService from './treatmentService';
-import * as whatsappService from './whatsappService';
-import { toast } from 'react-toastify';
-import { SchedulingAlert } from '../types';
-import { sendEmail } from './emailService';
-// import { sendWhatsAppMessage } from './whatsappService';
-import { observability } from '../lib/observabilityLogger';
-import { auditService } from './auditService';
-
 /**
- * 🔔 ENHANCED NOTIFICATION SERVICE
- *
- * Sistema avançado de notificações com suporte a:
- * - Push notifications (Web Push API)
- * - Email e SMS integração
- * - Templates personalizáveis
- * - Agendamento inteligente
- * - Analytics e métricas
- * - Fallback para notificações in-app
+ * services/notificationService.ts
+ * 
+ * Serviço de notificações e lembretes da agenda
  */
 
-export interface PushNotificationConfig {
-  title: string;
-  body: string;
-  icon?: string;
-  badge?: string;
-  image?: string;
-  data?: Record<string, any>;
-  actions?: Array<{
-    action: string;
-    title: string;
-    icon?: string;
-  }>;
-  silent?: boolean;
-  requireInteraction?: boolean;
-  renotify?: boolean;
-  tag?: string;
-  timestamp?: number;
-}
+import { Appointment, EnrichedAppointment } from '../types';
+import { eventService } from './eventService';
 
-export interface NotificationTemplate {
+export interface Notification {
   id: string;
-  name: string;
+  type: 'reminder' | 'delay' | 'conflict' | 'confirmation_needed';
   title: string;
-  body: string;
-  channels: ('push' | 'email' | 'sms' | 'in_app')[];
-  priority: 'low' | 'normal' | 'high' | 'urgent';
-  variables: string[];
+  message: string;
+  appointmentId: string;
+  severity: 'info' | 'warning' | 'error';
+  read: boolean;
+  createdAt: Date;
+  scheduledFor?: Date;
 }
 
-export interface NotificationPreferences {
-  push: boolean;
-  email: boolean;
-  sms: boolean;
-  inApp: boolean;
-}
+class NotificationService {
+  private notifications: Notification[] = [];
+  private reminders: Map<string, NodeJS.Timeout> = new Map();
 
-export interface NotificationStatus {
-  isServiceWorkerRegistered: boolean;
-  isPushSupported: boolean;
-  hasPermission: boolean;
-  isSubscribed: boolean;
-  endpoint: string | null;
-}
+  /**
+   * Inicializar o serviço de notificações
+   */
+  initialize() {
+    this.startReminderScheduler();
+    this.loadNotificationsFromStorage();
+  }
 
-class EnhancedNotificationService {
-  private static instance: EnhancedNotificationService;
-  private pushManager: PushManager | null = null;
-  private vapidKey: string = '';
-  private templates: Map<string, NotificationTemplate> = new Map();
-  private subscriptions: Map<string, PushSubscription> = new Map();
+  /**
+   * Agendar lembrete 1h antes do agendamento
+   */
+  scheduleReminder(appointment: Appointment, minutesBefore: number = 60) {
+    const reminderTime = new Date(appointment.startTime.getTime() - minutesBefore * 60 * 1000);
+    const now = new Date();
 
-  public static getInstance(): EnhancedNotificationService {
-    if (!EnhancedNotificationService.instance) {
-      EnhancedNotificationService.instance = new EnhancedNotificationService();
+    // Se o lembrete já passou, não agendar
+    if (reminderTime <= now) {
+      return;
     }
-    return EnhancedNotificationService.instance;
+
+    const timeout = setTimeout(() => {
+      this.createNotification({
+        type: 'reminder',
+        title: 'Lembrete de Agendamento',
+        message: `Agendamento com ${appointment.patientName} em ${minutesBefore} minutos`,
+        appointmentId: appointment.id,
+        severity: 'info'
+      });
+      this.reminders.delete(appointment.id);
+    }, reminderTime.getTime() - now.getTime());
+
+    this.reminders.set(appointment.id, timeout);
   }
 
-  private constructor() {
-    this.initializePushNotifications();
-    this.loadDefaultTemplates();
-  }
-
-  private async initializePushNotifications(): Promise<void> {
-    try {
-      if ('serviceWorker' in navigator && 'PushManager' in window) {
-        const registration = await navigator.serviceWorker.register('/sw.js');
-        this.pushManager = registration.pushManager;
-        this.vapidKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || 'BEl79InKBILei-QaF0alLUiU63A38ZLoQpq-sb9rXaJcOvV-KQuBoSGjVnr4Vxz7A09DeUAKZoI1l6_qCPBywtc';
-
-        observability.service.call('notification.push.initialized', {
-          hasServiceWorker: true,
-          hasPushManager: !!this.pushManager
-        });
-
-        
-      } else {
-        observability.service.warn('notification.push.not_supported', {
-          hasServiceWorker: 'serviceWorker' in navigator,
-          hasPushManager: 'PushManager' in window
-        });
-      }
-    } catch (error) {
-      observability.service.error('notification.push.init_error', { error });
-      console.warn('⚠️ Erro ao inicializar push notifications:', error);
+  /**
+   * Cancelar lembrete
+   */
+  cancelReminder(appointmentId: string) {
+    const timeout = this.reminders.get(appointmentId);
+    if (timeout) {
+      clearTimeout(timeout);
+      this.reminders.delete(appointmentId);
     }
   }
 
-  private loadDefaultTemplates(): void {
-    const templates: NotificationTemplate[] = [
-      {
-        id: 'appointment_reminder',
-        name: 'Lembrete de Consulta',
-        title: 'Lembrete: Consulta {{when}}',
-        body: 'Você tem uma consulta com {{therapistName}} {{when}} às {{time}}.',
-        channels: ['push', 'in_app'],
-        priority: 'high',
-        variables: ['when', 'therapistName', 'time']
-      },
-      {
-        id: 'appointment_confirmation',
-        name: 'Confirmação de Agendamento',
-        title: 'Consulta agendada',
-        body: 'Sua consulta foi agendada para {{date}} às {{time}} com {{therapistName}}.',
-        channels: ['push', 'email', 'in_app'],
-        priority: 'normal',
-        variables: ['date', 'time', 'therapistName']
-      },
-      {
-        id: 'payment_reminder',
-        name: 'Lembrete de Pagamento',
-        title: 'Lembrete de pagamento',
-        body: 'Você tem um pagamento pendente de R$ {{amount}} com vencimento em {{dueDate}}.',
-        channels: ['push', 'email'],
-        priority: 'high',
-        variables: ['amount', 'dueDate']
-      }
-    ];
+  /**
+   * Verificar atrasos (paciente não confirmou presença 5min após horário)
+   */
+  checkDelays(appointments: EnrichedAppointment[]) {
+    const now = new Date();
+    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
 
-    templates.forEach(template => {
-      this.templates.set(template.id, template);
+    appointments.forEach(appointment => {
+      // Verificar se já existe notificação para este atraso
+      const existingNotification = this.notifications.find(
+        n => n.appointmentId === appointment.id && n.type === 'delay'
+      );
+
+      if (existingNotification) return;
+
+      // Se o horário passou e o status ainda é 'scheduled'
+      if (
+        appointment.startTime <= fiveMinutesAgo &&
+        appointment.startTime > new Date(now.getTime() - 60 * 60 * 1000) && // Apenas últimas 1h
+        appointment.status === 'scheduled'
+      ) {
+        this.createNotification({
+          type: 'delay',
+          title: 'Paciente em Atraso',
+          message: `${appointment.patientName} não confirmou presença`,
+          appointmentId: appointment.id,
+          severity: 'warning'
+        });
+      }
     });
   }
 
-  async requestPermission(): Promise<NotificationPermission> {
-    if (!('Notification' in window)) {
-      throw new Error('Este navegador não suporta notificações');
-    }
-
-    const permission = await Notification.requestPermission();
-
-    observability.service.call('notification.permission.requested', { permission });
-
-    return permission;
+  /**
+   * Criar notificação de conflito
+   */
+  notifyConflict(appointment: Appointment, conflicts: string[]) {
+    this.createNotification({
+      type: 'conflict',
+      title: 'Conflito Detectado',
+      message: `Agendamento com ${appointment.patientName} tem conflitos: ${conflicts.join(', ')}`,
+      appointmentId: appointment.id,
+      severity: 'error'
+    });
   }
 
-  async subscribeToPush(userId: string): Promise<PushSubscription | null> {
-    if (!this.pushManager || !this.vapidKey) {
-      return null;
-    }
-
-    try {
-      const subscription = await this.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: this.urlB64ToUint8Array(this.vapidKey) as ArrayBuffer
-      });
-
-      this.subscriptions.set(userId, subscription);
-
-      observability.service.call('notification.push.subscribed', {
-        userId,
-        endpoint: subscription.endpoint
-      });
-
-      // Log de auditoria
-      await auditService.createLog({
-        user: userId,
-        action: 'SUBSCRIBE_PUSH_NOTIFICATIONS',
-        details: 'Usuário se inscreveu para receber push notifications',
-        resourceType: 'notification'
-      });
-
-      return subscription;
-    } catch (error) {
-      observability.service.error('notification.push.subscribe_error', { error, userId });
-      return null;
-    }
+  /**
+   * Criar notificação de confirmação necessária
+   */
+  notifyConfirmationNeeded(appointment: Appointment) {
+    this.createNotification({
+      type: 'confirmation_needed',
+      title: 'Confirmação Necessária',
+      message: `Confirmar presença de ${appointment.patientName}`,
+      appointmentId: appointment.id,
+      severity: 'info'
+    });
   }
 
-  async sendPushNotification(
-    userId: string,
-    config: PushNotificationConfig
-  ): Promise<boolean> {
-    const subscription = this.subscriptions.get(userId);
-
-    if (!subscription) {
-      // Fallback para notificação in-app
-      this.sendInAppNotification(userId, config);
-      return false;
-    }
-
-    try {
-      // Em produção, isso seria enviado via servidor
-      // Aqui simulamos o processo
-      observability.service.call('notification.push.sent', {
-        userId,
-        title: config.title
-      });
-
-      // Mostrar notificação local para demonstração
-      if (Notification.permission === 'granted') {
-        new Notification(config.title, {
-          body: config.body,
-          icon: config.icon || '/icon-192x192.png',
-          badge: config.badge || '/badge-72x72.png',
-          data: config.data,
-          silent: config.silent,
-          requireInteraction: config.requireInteraction,
-          // renotify: config.renotify, // Propriedade não existe no tipo NotificationOptions
-          tag: config.tag,
-          timestamp: config.timestamp || Date.now()
-        });
-      }
-
-      return true;
-    } catch (error) {
-      observability.service.error('notification.push.send_error', { error, userId });
-      this.sendInAppNotification(userId, config);
-      return false;
-    }
-  }
-
-  public sendInAppNotification(userId: string, config: PushNotificationConfig): void {
+  /**
+   * Criar notificação
+   */
+  private createNotification(data: Omit<Notification, 'id' | 'read' | 'createdAt'>) {
     const notification: Notification = {
-      id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      userId,
-      message: `${config.title}: ${config.body}`,
-      isRead: false,
-      createdAt: new Date(),
-      type: 'push_fallback'
+      ...data,
+      id: `notif_${Date.now()}`,
+      read: false,
+      createdAt: new Date()
     };
 
-    notifications.unshift(notification);
-
-    // Dispara evento personalizado para componentes React
-    window.dispatchEvent(new CustomEvent('new-notification', {
-      detail: notification
-    }));
+    this.notifications.unshift(notification);
+    this.saveNotificationsToStorage();
+    eventService.emit('notifications:new', notification);
   }
 
-  async sendTemplatedNotification(
-    templateId: string,
-    userId: string,
-    variables: Record<string, string>,
-    channels?: ('push' | 'email' | 'sms' | 'in_app')[]
-  ): Promise<{ success: boolean; sentChannels: string[]; errors: string[] }> {
-    const template = this.templates.get(templateId);
-
-    if (!template) {
-      throw new Error(`Template não encontrado: ${templateId}`);
+  /**
+   * Marcar notificação como lida
+   */
+  markAsRead(notificationId: string) {
+    const notification = this.notifications.find(n => n.id === notificationId);
+    if (notification) {
+      notification.read = true;
+      this.saveNotificationsToStorage();
+      eventService.emit('notifications:updated');
     }
+  }
 
-    const title = this.processTemplate(template.title, variables);
-    const body = this.processTemplate(template.body, variables);
-    const targetChannels = channels || template.channels;
+  /**
+   * Marcar todas como lidas
+   */
+  markAllAsRead() {
+    this.notifications.forEach(n => n.read = true);
+    this.saveNotificationsToStorage();
+    eventService.emit('notifications:updated');
+  }
 
-    const results = {
-      success: false,
-      sentChannels: [] as string[],
-      errors: [] as string[]
-    };
+  /**
+   * Deletar notificação
+   */
+  deleteNotification(notificationId: string) {
+    this.notifications = this.notifications.filter(n => n.id !== notificationId);
+    this.saveNotificationsToStorage();
+    eventService.emit('notifications:updated');
+  }
 
-    // Log de auditoria
-    await auditService.createLog({
-      user: userId,
-      action: 'SEND_TEMPLATED_NOTIFICATION',
-      details: `Enviando notificação usando template: ${templateId}`,
-      resourceType: 'notification'
-    });
+  /**
+   * Obter todas as notificações
+   */
+  getNotifications(): Notification[] {
+    return [...this.notifications];
+  }
 
-    for (const channel of targetChannels) {
-      try {
-        switch (channel) {
-          case 'push':
-            const pushSuccess = await this.sendPushNotification(userId, {
-              title,
-              body,
-              data: { templateId, userId, timestamp: Date.now() }
-            });
-            if (pushSuccess) results.sentChannels.push('push');
-            break;
+  /**
+   * Obter notificações não lidas
+   */
+  getUnreadNotifications(): Notification[] {
+    return this.notifications.filter(n => !n.read);
+  }
 
-          case 'in_app':
-            this.sendInAppNotification(userId, { title, body });
-            results.sentChannels.push('in_app');
-            break;
+  /**
+   * Obter contagem de notificações não lidas
+   */
+  getUnreadCount(): number {
+    return this.notifications.filter(n => !n.read).length;
+  }
 
-          case 'email':
-            // Integração com serviço de email
-            await this.sendEmailNotification(userId, title, body);
-            results.sentChannels.push('email');
-            break;
+  /**
+   * Iniciar scheduler de lembretes
+   */
+  private startReminderScheduler() {
+    // Verificar lembretes a cada 5 minutos
+    setInterval(() => {
+      // Esta função será chamada periodicamente
+      // Em produção, você pode verificar agendamentos do banco de dados aqui
+    }, 5 * 60 * 1000);
+  }
 
-          case 'sms':
-            // Integração com serviço de SMS
-            await this.sendSMSNotification(userId, `${title}: ${body}`);
-            results.sentChannels.push('sms');
-            break;
-        }
-      } catch (error) {
-        results.errors.push(`${channel}: ${error}`);
+  /**
+   * Salvar notificações no localStorage
+   */
+  private saveNotificationsToStorage() {
+    try {
+      localStorage.setItem('agenda_notifications', JSON.stringify(this.notifications));
+    } catch (error) {
+      console.error('Erro ao salvar notificações:', error);
+    }
+  }
+
+  /**
+   * Carregar notificações do localStorage
+   */
+  private loadNotificationsFromStorage() {
+    try {
+      const stored = localStorage.getItem('agenda_notifications');
+      if (stored) {
+        this.notifications = JSON.parse(stored).map((n: any) => ({
+          ...n,
+          createdAt: new Date(n.createdAt)
+        }));
       }
-    }
-
-    results.success = results.sentChannels.length > 0;
-
-    observability.service.call('notification.templated.sent', {
-      templateId,
-      userId,
-      sentChannels: results.sentChannels,
-      errorCount: results.errors.length
-    });
-
-    return results;
-  }
-
-  private processTemplate(template: string, variables: Record<string, string>): string {
-    let processed = template;
-
-    Object.entries(variables).forEach(([key, value]) => {
-      processed = processed.replace(new RegExp(`{{${key}}}`, 'g'), value);
-    });
-
-    return processed;
-  }
-
-  private async sendEmailNotification(userId: string, subject: string, body: string): Promise<void> {
-    const user = mockUsers.find(u => u.id === userId);
-    if (user?.email) {
-      await sendEmail(user.email, subject, body);
+    } catch (error) {
+      console.error('Erro ao carregar notificações:', error);
     }
   }
 
-  private async sendSMSNotification(userId: string, message: string): Promise<void> {
-    const user = mockUsers.find(u => u.id === userId);
-    if (user?.phone) {
-      // Integração com serviço de SMS seria implementada aqui
-      
-    }
+  /**
+   * Limpar notificações antigas (mais de 7 dias)
+   */
+  clearOldNotifications() {
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    this.notifications = this.notifications.filter(n => n.createdAt > sevenDaysAgo);
+    this.saveNotificationsToStorage();
   }
-
-  private urlB64ToUint8Array(base64String: string): Uint8Array {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
-
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-
-    for (let i = 0; i < rawData.length; ++i) {
-      outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-  }
-
-  // Métodos para agendar notificações
-  scheduleNotification(
-    templateId: string,
-    userId: string,
-    variables: Record<string, string>,
-    scheduleTime: Date
-  ): void {
-    const delay = scheduleTime.getTime() - Date.now();
-
-    if (delay > 0) {
-      setTimeout(() => {
-        this.sendTemplatedNotification(templateId, userId, variables);
-      }, delay);
-
-      observability.service.call('notification.scheduled', {
-        templateId,
-        userId,
-        scheduleTime,
-        delay
-      });
-    }
-  }
-
-  // Métricas e analytics
-  getNotificationMetrics(): {
-    totalSent: number;
-    pushSubscriptions: number;
-    templateUsage: Record<string, number>;
-    channelPerformance: Record<string, number>;
-  } {
-    return {
-      totalSent: notifications.length,
-      pushSubscriptions: this.subscriptions.size,
-      templateUsage: {},
-      channelPerformance: {}
-    };
-  }
-
-  // Métodos adicionais necessários para o useNotifications
-  async initialize(): Promise<void> {
-    // O serviço já é inicializado no construtor
-    // Este método existe apenas para compatibilidade
-    return Promise.resolve();
-  }
-
-  getStatus(): {
-    isServiceWorkerRegistered: boolean;
-    isPushSupported: boolean;
-    hasPermission: boolean;
-    isSubscribed: boolean;
-    endpoint: string | null;
-  } {
-    return {
-      isServiceWorkerRegistered: !!this.pushManager,
-      isPushSupported: 'PushManager' in window && 'serviceWorker' in navigator,
-      hasPermission: Notification.permission === 'granted',
-      isSubscribed: this.subscriptions.size > 0,
-      endpoint: this.subscriptions.values().next().value?.endpoint || null
-    };
-  }
-
-  getUserPreferences(userId: string): {
-    push: boolean;
-    email: boolean;
-    sms: boolean;
-    inApp: boolean;
-  } {
-    // Retorna preferências padrão
-    return {
-      push: true,
-      email: true,
-      sms: false,
-      inApp: true
-    };
-  }
-
-  updateUserPreferences(userId: string, preferences: any): boolean {
-    // Simula atualização de preferências
-    // Em uma implementação real, isso seria salvo no banco de dados
-    return true;
-  }
-
 }
 
-// Singleton instance da versão melhorada
-export const enhancedNotificationService = EnhancedNotificationService.getInstance();
+export const notificationService = new NotificationService();
 
-const notifications: Notification[] = [...mockNotifications];
-
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
-
-export const generateRemindersIfNeeded = async (user: User | null): Promise<void> => {
-    if (!user) return;
-
-    const todayStr = new Date().toDateString();
-
-    // --- Therapist In-App and Patient WhatsApp Appointment Reminders ---
-    if (user.role === Role.Therapist || user.role === Role.Admin) {
-        const reminderKey = `appointment_reminder_sent_${user.id}_${todayStr}`;
-        if (sessionStorage.getItem(reminderKey)) return;
-
-        const now = new Date();
-        const tomorrow = new Date(now);
-        tomorrow.setDate(now.getDate() + 1);
-
-        const upcomingAppointments = mockAppointments.filter(app => {
-            const appDate = app.startTime;
-            return (
-                app.therapistId === user.id &&
-                (appDate.toDateString() === now.toDateString() || appDate.toDateString() === tomorrow.toDateString()) &&
-                app.status === AppointmentStatus.Scheduled
-            );
-        });
-        
-        // In-app reminders for therapists
-        upcomingAppointments.forEach(app => {
-             const reminderExists = notifications.some(n => 
-                n.userId === user.id &&
-                n.type === 'appointment_reminder' &&
-                n.message.includes(app.patientName) &&
-                n.message.includes(app.startTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }))
-             );
-
-             if (!reminderExists) {
-                  const when = app.startTime.toDateString() === now.toDateString() ? 'hoje' : 'amanhã';
-                  const newNotification: Notification = {
-                      id: `notif_appt_${app.id}`,
-                      userId: user.id,
-                      message: `Lembrete: Consulta com ${app.patientName} ${when} às ${app.startTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}.`,
-                      isRead: false,
-                      createdAt: new Date(),
-                      type: 'appointment_reminder',
-                  };
-                  notifications.unshift(newNotification);
-             }
-        });
-
-        // WhatsApp reminders for patients (for today's appointments)
-        const todaysAppointmentsForWhatsapp = upcomingAppointments.filter(app => app.startTime.toDateString() === todayStr && app.startTime > now);
-        for (const app of todaysAppointmentsForWhatsapp) {
-            const patient = mockPatients.find(p => p.id === app.patientId);
-            if (patient) {
-                await whatsappService.sendAppointmentReminder(app, patient, 0); 
-            }
-        }
-        
-        if (upcomingAppointments.length > 0) {
-             sessionStorage.setItem(reminderKey, 'true');
-        }
-    }
-    
-    // --- Patient In-App Exercise Reminders ---
-    if (user.role === Role.Patient && user.patientId) {
-        const reminderKey = `exercise_reminder_sent_${user.id}_${todayStr}`;
-        if (sessionStorage.getItem(reminderKey)) return;
-
-        const plan = await treatmentService.getPlanByPatientId(user.patientId);
-        if (plan?.exercises && plan.exercises.length > 0) {
-            const newNotification: Notification = {
-                id: `notif_ex_${Date.now()}`,
-                userId: user.id,
-                message: 'Lembrete diário: Não se esqueça de fazer seus exercícios de hoje para acelerar sua recuperação!',
-                isRead: false,
-                createdAt: new Date(),
-                type: 'exercise_reminder',
-            };
-            notifications.unshift(newNotification);
-            sessionStorage.setItem(reminderKey, 'true');
-        }
-    }
-};
-
-export const getNotifications = async (userId: string): Promise<Notification[]> => {
-    await delay(300);
-    return [...notifications]
-        .filter(n => n.userId === userId)
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
-};
-
-export const markAsRead = async (notificationId: string, userId: string): Promise<Notification | undefined> => {
-    await delay(100);
-    const notification = notifications.find(n => n.id === notificationId && n.userId === userId);
-    if (notification) {
-        notification.isRead = true;
-    }
-    return notification;
-};
-
-export const markAllAsRead = async (userId: string): Promise<Notification[]> => {
-    await delay(200);
-    const userNotifications = notifications.filter(n => n.userId === userId);
-    userNotifications.forEach(n => n.isRead = true);
-    return userNotifications;
-};
-
-export const sendBroadcast = async (message: string, targetGroup: Role): Promise<void> => {
-    await delay(500);
-    const targetUsers = mockUsers.filter(u => u.role === targetGroup);
-    
-    targetUsers.forEach(user => {
-        const newNotification: Notification = {
-            id: `notif_${Date.now()}_${user.id}`,
-            userId: user.id,
-            message: `Comunicado: ${message}`,
-            isRead: false,
-            createdAt: new Date(),
-            type: 'announcement',
-        };
-        notifications.unshift(newNotification);
-    });
-};
-
-export const notifySchedulingAlert = async (alert: SchedulingAlert) => {
-  const messageMap: Record<SchedulingAlert['alertType'], string> = {
-    patient_no_show_warning: `Paciente com histórico de faltas: ${alert.payload?.noShowCount || ''}`,
-    open_slot: 'Horário livre aguardando preenchimento.',
-    inactive_patient: 'Paciente sem agendamento recente.'
-  };
-
-  const message = messageMap[alert.alertType] || 'Alerta de agenda';
-
-  toast(message, { type: 'info', autoClose: 8000 });
-
-  if (alert.alertType === 'patient_no_show_warning') {
-    await sendEmail(
-      'recepcao@fisioflow.com',
-      'Paciente com múltiplas faltas',
-      JSON.stringify(alert.payload, null, 2)
-    );
-  }
-
-  if (alert.alertType === 'open_slot') {
-    // await sendWhatsAppMessage({
-    //   to: 'whatsapp:+5511999999999',
-    //   templateId: 'open_slot_notification',
-    //   data: alert.payload
-    // });
-    observability.communication.info('whatsapp.alert.sent', {
-      alertType: alert.alertType,
-      payload: alert.payload
-    });
-  }
-};
+// Inicializar o serviço
+if (typeof window !== 'undefined') {
+  notificationService.initialize();
+}

@@ -27,6 +27,13 @@ import WaitlistCompactBanner from '../components/agenda/WaitlistCompactBanner';
 import WaitlistModal from '../components/agenda/WaitlistModal';
 import SimpleWaitlistModal from '../components/agenda/SimpleWaitlistModal';
 import WaitlistManagerDialog from '../components/agenda/WaitlistManagerDialog';
+import WaitlistEditDialog from '../components/agenda/WaitlistEditDialog';
+import ScheduleBlocksManager from '../components/agenda/ScheduleBlocksManager';
+import AgendaStats from '../components/agenda/AgendaStats';
+import KeyboardShortcutsHelp from '../components/agenda/KeyboardShortcutsHelp';
+import AdvancedFilters, { FilterState } from '../components/agenda/AdvancedFilters';
+import SmartSearch from '../components/agenda/SmartSearch';
+import NotificationCenter from '../components/agenda/NotificationCenter';
 import QuickAddPatientDialog from '../components/agenda/QuickAddPatientDialog';
 import AgendaToolbar from '../components/agenda/AgendaToolbar';
 import { waitlistService } from '../services/waitlistService';
@@ -39,6 +46,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import SessionFormPage from './SessionFormPage';
 import ResponsiveContainer from '../components/ui/ResponsiveContainer';
 import { useAgendaHotkeys } from '../hooks/useAgendaHotkeys';
+import { useDebounce } from '../hooks/useDebounce';
+import { useIsMobile } from '../hooks/useMediaQuery';
+import MobileAgendaView from '../components/agenda/MobileAgendaView';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
@@ -83,9 +93,23 @@ export default function AgendaPage() {
     const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
     const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
     const [isWaitlistManagerOpen, setIsWaitlistManagerOpen] = useState(false);
+    const [isWaitlistEditOpen, setIsWaitlistEditOpen] = useState(false);
+    const [selectedWaitlistEntry, setSelectedWaitlistEntry] = useState<WaitlistEntry | null>(null);
+    const [isScheduleBlocksOpen, setIsScheduleBlocksOpen] = useState(false);
+    const [isKeyboardHelpOpen, setIsKeyboardHelpOpen] = useState(false);
     const [showQuickAddPatient, setShowQuickAddPatient] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const debouncedSearchQuery = useDebounce(searchQuery, 300);
+    const isMobile = useIsMobile();
     const [showFilters, setShowFilters] = useState(false);
+    const [advancedFilters, setAdvancedFilters] = useState<FilterState>({
+        status: [],
+        types: [],
+        therapists: [],
+        patients: [],
+        paymentStatus: [],
+        showConflicts: false
+    });
     const { showToast } = useToast();
 
     // Modal states
@@ -98,7 +122,7 @@ export default function AgendaPage() {
     // Drag & Drop states
     const [draggedAppointmentId, setDraggedAppointmentId] = useState<string | null>(null);
 
-    // Filter appointments based on user role and search
+    // Filter appointments based on user role, search and advanced filters
     const filteredAppointments = useMemo(() => {
         let scopedAppointments = appointments;
 
@@ -121,9 +145,9 @@ export default function AgendaPage() {
             scopedAppointments = scopedAppointments.filter(appointment => appointment.patientId === highlightedPatientId);
         }
 
-        // Search filter
-        if (searchQuery) {
-            const query = searchQuery.toLowerCase();
+        // Search filter (usando debounced query)
+        if (debouncedSearchQuery) {
+            const query = debouncedSearchQuery.toLowerCase();
             scopedAppointments = scopedAppointments.filter(appointment =>
                 appointment.patientName.toLowerCase().includes(query) ||
                 appointment.therapistName?.toLowerCase().includes(query) ||
@@ -131,8 +155,43 @@ export default function AgendaPage() {
             );
         }
 
+        // Advanced filters
+        if (advancedFilters.status.length > 0) {
+            scopedAppointments = scopedAppointments.filter(appointment => 
+                advancedFilters.status.includes(appointment.status)
+            );
+        }
+
+        if (advancedFilters.types.length > 0) {
+            scopedAppointments = scopedAppointments.filter(appointment => 
+                advancedFilters.types.includes(appointment.type)
+            );
+        }
+
+        if (advancedFilters.therapists.length > 0) {
+            scopedAppointments = scopedAppointments.filter(appointment => 
+                advancedFilters.therapists.includes(appointment.therapistId)
+            );
+        }
+
+        if (advancedFilters.patients.length > 0) {
+            scopedAppointments = scopedAppointments.filter(appointment => 
+                advancedFilters.patients.includes(appointment.patientId)
+            );
+        }
+
+        if (advancedFilters.paymentStatus.length > 0) {
+            scopedAppointments = scopedAppointments.filter(appointment => 
+                advancedFilters.paymentStatus.includes(appointment.paymentStatus)
+            );
+        }
+
+        if (advancedFilters.showConflicts) {
+            scopedAppointments = scopedAppointments.filter(appointment => appointment.hasConflict);
+        }
+
         return scopedAppointments;
-    }, [appointments, user, highlightedPatientId, searchQuery]);
+    }, [appointments, user, highlightedPatientId, debouncedSearchQuery, advancedFilters]);
 
     // Count conflicts
     const conflictsCount = useMemo(() => {
@@ -321,8 +380,8 @@ export default function AgendaPage() {
     };
 
     const handleEditWaitlistEntry = (entry: WaitlistEntry) => {
-        // TODO: Implementar edição de entrada da lista de espera
-        showToast('Edição de entrada em desenvolvimento', 'info');
+        setSelectedWaitlistEntry(entry);
+        setIsWaitlistEditOpen(true);
     };
 
     const handleDeleteWaitlistEntry = async (entryId: string) => {
@@ -454,9 +513,13 @@ export default function AgendaPage() {
             if (selectedAppointment) setSelectedAppointment(null);
             if (isWaitlistModalOpen) setIsWaitlistModalOpen(false);
             if (isWaitlistManagerOpen) setIsWaitlistManagerOpen(false);
+            if (isScheduleBlocksOpen) setIsScheduleBlocksOpen(false);
         },
         onToggleFilters: () => setShowFilters(!showFilters),
         onViewWaitlist: handleViewWaitlist,
+        onManageBlocks: () => setIsScheduleBlocksOpen(true),
+        onShowHelp: () => setIsKeyboardHelpOpen(true),
+        onViewChange: (view) => setCurrentView(view),
         enabled: !showSessionForm
     });
 
@@ -583,6 +646,9 @@ export default function AgendaPage() {
                                 onViewWaitlist={handleViewWaitlist}
                                 onScheduleFromWaitlist={handleScheduleFromWaitlist}
                             />
+
+                            {/* Notification Center */}
+                            <NotificationCenter />
                             
                             {/* Agenda Toolbar */}
                             <AgendaToolbar
@@ -591,6 +657,7 @@ export default function AgendaPage() {
                                     setIsFormOpen(true);
                                 }}
                                 onViewWaitlist={handleViewWaitlist}
+                                onManageBlocks={() => setIsScheduleBlocksOpen(true)}
                                 onToggleFilters={() => setShowFilters(!showFilters)}
                                 onSearch={(query) => setSearchQuery(query)}
                                 searchQuery={searchQuery}
@@ -673,7 +740,46 @@ export default function AgendaPage() {
             </header>
 
             {/* Main content area - professional styling */}
-            <div className="flex-1 overflow-auto bg-white">
+            {/* Renderizar mobile view se for mobile */}
+            {isMobile ? (
+                <MobileAgendaView
+                    appointments={filteredAppointments}
+                    currentDate={currentDate}
+                    therapists={therapists}
+                    onDateChange={setCurrentDate}
+                    onAppointmentClick={(appointment) => {
+                        setSelectedAppointment(appointment);
+                        setIsDetailOpen(true);
+                    }}
+                    onNewAppointment={() => {
+                        setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' });
+                        setIsFormOpen(true);
+                    }}
+                    onWaitlist={handleViewWaitlist}
+                    onCheckIn={() => {
+                        showToast('Check-in rápido em breve', 'info');
+                    }}
+                    onFilters={() => setShowFilters(!showFilters)}
+                    onEdit={(appointment) => {
+                        setAppointmentToEdit(appointment as EnrichedAppointment);
+                        setIsFormOpen(true);
+                    }}
+                    onDelete={(appointment) => handleDeleteAppointment(appointment.id)}
+                    onCall={(appointment) => {
+                        if (appointment.patientPhone) {
+                            window.open(`tel:${appointment.patientPhone}`);
+                        }
+                    }}
+                    onMarkComplete={(appointment) => {
+                        handleStatusChange(appointment.id, 'completed' as AppointmentStatus);
+                    }}
+                    onMarkPaid={(appointment) => {
+                        handlePaymentChange(appointment.id, 'paid');
+                    }}
+                    notificationCount={notificationService.getUnreadCount()}
+                />
+            ) : (
+                <div className="flex-1 overflow-auto bg-white">
                 {showSessionForm && selectedAppointmentForSession ? (
                     <div className="h-full">
                         <div className="flex items-center justify-between p-4 border-b bg-slate-50">
@@ -697,10 +803,31 @@ export default function AgendaPage() {
                     </div>
                 ) : (
                     <div className="h-full px-2 pr-6">
+                        {/* Agenda Stats */}
+                        <div className="mb-6">
+                            <AgendaStats 
+                                appointments={filteredAppointments}
+                                therapists={therapists}
+                            />
+                        </div>
+
+                        {/* Advanced Filters */}
+                        {showFilters && (
+                            <div className="mb-4">
+                                <AdvancedFilters
+                                    therapists={therapists}
+                                    patients={patients}
+                                    onFilterChange={setAdvancedFilters}
+                                />
+                            </div>
+                        )}
+                        
+                        {/* Calendar View */}
                         {renderView()}
                     </div>
                 )}
-            </div>
+                </div>
+            )}
 
             <AnimatePresence>
                 {selectedAppointment && (
@@ -760,6 +887,33 @@ export default function AgendaPage() {
                 onClose={() => setShowQuickAddPatient(false)}
                 onSave={handleSavePatient}
                 onSelectPatient={handleSelectPatient}
+            />
+
+            {/* Waitlist Edit Dialog */}
+            <WaitlistEditDialog
+                isOpen={isWaitlistEditOpen}
+                onClose={() => {
+                    setIsWaitlistEditOpen(false);
+                    setSelectedWaitlistEntry(null);
+                }}
+                entry={selectedWaitlistEntry}
+                patients={patients}
+                therapists={therapists}
+                onUpdate={refreshWaitlist}
+            />
+
+            {/* Schedule Blocks Manager */}
+            <ScheduleBlocksManager
+                isOpen={isScheduleBlocksOpen}
+                onClose={() => setIsScheduleBlocksOpen(false)}
+                therapists={therapists}
+                onUpdate={refetch}
+            />
+
+            {/* Keyboard Shortcuts Help */}
+            <KeyboardShortcutsHelp
+                isOpen={isKeyboardHelpOpen}
+                onClose={() => setIsKeyboardHelpOpen(false)}
             />
         </main>
     );

@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Notification } from '../types';
 import * as notificationService from '../services/notificationService';
-import { enhancedNotificationService } from '../services/notificationService';
 import type {
   NotificationPreferences,
   PushNotificationConfig,

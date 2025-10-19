@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Filter, Calendar, AlertTriangle, Search, Users } from 'lucide-react';
+import { Plus, Filter, Calendar, AlertTriangle, Search, Users, Lock } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
@@ -8,6 +8,7 @@ import { cn } from '../../lib/utils';
 interface AgendaToolbarProps {
   onNewAppointment?: () => void;
   onViewWaitlist?: () => void;
+  onManageBlocks?: () => void;
   onToggleFilters?: () => void;
   onSearch?: (query: string) => void;
   searchQuery?: string;
@@ -21,6 +22,7 @@ interface AgendaToolbarProps {
 const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
   onNewAppointment,
   onViewWaitlist,
+  onManageBlocks,
   onToggleFilters,
   onSearch,
   searchQuery = '',
@@ -92,6 +94,18 @@ const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
             <Filter className="w-4 h-4 mr-2" />
             <span className="hidden sm:inline">Filtros</span>
           </Button>
+
+          {onManageBlocks && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onManageBlocks}
+              className="border-fisio-neutral-200"
+            >
+              <Lock className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Bloqueios</span>
+            </Button>
+          )}
 
           {onNewAppointment && (
             <Button

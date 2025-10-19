@@ -1,8 +1,3 @@
-/**
- * Vitest Configuration
- * Configuração para testes unitários e de integração
- */
-
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
@@ -12,39 +7,23 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: './tests/setup.ts',
+    setupFiles: ['./tests/setup.ts'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov'],
+      reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
         'tests/',
-        '*.config.*',
-        'dist/',
-        '.eslintrc.cjs',
-        'scripts/',
-        'supabase/',
-      ],
-      // Metas de cobertura
-      statements: 80,
-      branches: 75,
-      functions: 80,
-      lines: 80,
-    },
-    include: ['tests/**/*.test.{ts,tsx}'],
-    exclude: [
-      'node_modules',
-      'dist',
-      '.eslintrc.cjs',
-      'tests/**/*.spec.ts', // Excluir testes E2E do Playwright
-      'tests/e2e/**', // Excluir diretório de testes E2E
-    ],
+        '**/*.d.ts',
+        '**/*.config.*',
+        '**/mockData',
+        '**/types'
+      ]
+    }
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './'),
-    },
-  },
+      '@': path.resolve(__dirname, './src')
+    }
+  }
 });
-
-

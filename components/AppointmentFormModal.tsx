@@ -18,6 +18,7 @@ import { conflictDetectionService, Conflict } from '../services/scheduling/confl
 import ConflictWarningDialog from './agenda/ConflictWarningDialog';
 import { generateRecurrences } from '../services/scheduling/recurrenceService';
 import { schedulingSettingsService } from '../services/schedulingSettingsService';
+import { validateAppointment, formatValidationErrors } from '../lib/validators/agendaValidators';
 
 interface AppointmentFormModalProps {
   isOpen: boolean;
@@ -47,6 +48,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   const [conflicts, setConflicts] = useState<Conflict[]>([]);
   const [showConflictDialog, setShowConflictDialog] = useState(false);
   const [pendingAppointment, setPendingAppointment] = useState<Appointment | null>(null);
+  const [alternativeTimes, setAlternativeTimes] = useState<Date[]>([]);
   
   const { showToast } = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -136,15 +138,36 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       seriesId: recurrenceRule ? (appointmentToEdit?.seriesId || `series_${Date.now()}`) : '',
     };
     
+    // Validar agendamento
+    const validation = validateAppointment(baseAppointment);
+    if (!validation.valid) {
+      const errorMessage = formatValidationErrors(validation.errors);
+      showToast(errorMessage, 'error');
+      setIsSaving(false);
+      return;
+    }
+    
     const appointmentsToSave = generateRecurrences(baseAppointment);
     
-    // Verificar conflitos usando o novo serviço
+    // Verificar conflitos usando o novo serviço (incluindo bloqueios)
     const conflictCheck = await conflictDetectionService.checkConflicts(
       baseAppointment,
-      allAppointments
+      allAppointments,
+      availableBlocks
     );
 
     if (conflictCheck.hasConflicts) {
+      // Sugerir horários alternativos
+      const suggestions = conflictDetectionService.suggestAlternativeTimes(
+        baseAppointment.startTime,
+        duration,
+        allAppointments,
+        availableBlocks,
+        baseAppointment.therapistId,
+        5
+      );
+      setAlternativeTimes(suggestions);
+      
       setConflicts(conflictCheck.conflicts);
       setPendingAppointment(baseAppointment);
       setShowConflictDialog(true);
@@ -390,11 +413,13 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           setShowConflictDialog(false);
           setConflicts([]);
           setPendingAppointment(null);
+          setAlternativeTimes([]);
         }}
         onConfirm={handleConfirmConflict}
         conflicts={conflicts}
         patientName={pendingAppointment?.patientName}
         therapistName={therapists.find(t => t.id === pendingAppointment?.therapistId)?.name}
+        alternativeTimes={alternativeTimes}
       />
     </div>
   );
