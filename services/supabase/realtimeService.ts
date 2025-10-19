@@ -330,7 +330,7 @@ export const subscriptions = {
   // Subscribe to appointment changes for a therapist
   therapistAppointments: (therapistId: string, callback: (payload: any) => void) => {
     return realtimeService.subscribeToFiltered(
-      'appointments',
+      'appointments' as any,
       { column: 'therapist_id', operator: 'eq', value: therapistId },
       callback
     );
@@ -344,7 +344,7 @@ export const subscriptions = {
   // Subscribe to new notifications for a user
   userNotifications: (userId: string, callback: (payload: any) => void) => {
     return realtimeService.subscribeToFiltered(
-      'notifications',
+      'notifications' as any,
       { column: 'user_id', operator: 'eq', value: userId },
       callback,
       ['INSERT']
@@ -354,7 +354,7 @@ export const subscriptions = {
   // Subscribe to new messages for a user
   userMessages: (userId: string, callback: (payload: any) => void) => {
     return realtimeService.subscribeToFiltered(
-      'messages',
+      'messages' as any,
       { column: 'to_id', operator: 'eq', value: userId },
       callback,
       ['INSERT']
@@ -364,7 +364,7 @@ export const subscriptions = {
   // Subscribe to session updates for a patient
   patientSessions: (patientId: string, callback: (payload: any) => void) => {
     return realtimeService.subscribeToMultipleTables(
-      ['appointments'],
+      ['appointments' as any],
       (table, payload) => {
         // Filter for patient's data
         if (table === 'appointments' && (payload.new as any)?.patient_id === patientId) {
@@ -391,7 +391,7 @@ export const subscriptions = {
   // Subscribe to clinic-wide updates (admin only)
   clinicDashboard: (callback: (table: string, payload: any) => void) => {
     return realtimeService.subscribeToMultipleTables(
-      ['appointments', 'patients'],
+      ['appointments' as any, 'patients'],
       callback
     );
   },
