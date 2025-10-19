@@ -5,29 +5,29 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fisio-primary-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:shadow-md",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default: "bg-fisio-primary-DEFAULT text-white hover:bg-fisio-primary-600 shadow-sm",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-fisio-error-DEFAULT text-white hover:bg-fisio-error-600 shadow-sm",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border-2 border-fisio-primary-DEFAULT bg-white text-fisio-primary-DEFAULT hover:bg-fisio-primary-50",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        // Health variants
-        success: "bg-health-success-500 text-white hover:bg-health-success-600",
-        warning: "bg-health-warning-500 text-white hover:bg-health-warning-600",
-        info: "bg-health-info-500 text-white hover:bg-health-info-600",
-        danger: "bg-health-danger-500 text-white hover:bg-health-danger-600",
+          "bg-fisio-secondary-DEFAULT text-white hover:bg-fisio-secondary-600 shadow-sm",
+        ghost: "hover:bg-fisio-neutral-100 text-fisio-neutral-700",
+        link: "text-fisio-primary-DEFAULT underline-offset-4 hover:underline",
+        // FisioFlow variants
+        success: "bg-fisio-secondary-DEFAULT text-white hover:bg-fisio-secondary-600 shadow-sm",
+        warning: "bg-fisio-warning-DEFAULT text-white hover:bg-fisio-warning-600 shadow-sm",
+        info: "bg-fisio-primary-400 text-white hover:bg-fisio-primary-500 shadow-sm",
+        danger: "bg-fisio-error-DEFAULT text-white hover:bg-fisio-error-600 shadow-sm",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
+        sm: "h-9 rounded-lg px-3 text-xs",
+        lg: "h-12 rounded-lg px-8 text-base",
         icon: "h-10 w-10",
       },
     },

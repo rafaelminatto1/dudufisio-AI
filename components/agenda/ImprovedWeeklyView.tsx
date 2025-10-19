@@ -150,37 +150,38 @@ const MultiTherapistAppointmentCard: React.FC<{
   const height = Math.max(durationInMinutes * pixelsPerMinute, 28); // Reduzido de 40 para 28
 
   const getAppointmentStyle = (color: string, status: AppointmentStatus) => {
+    // Nova paleta FisioFlow com gradientes vibrantes
     const baseStyles = {
-      purple: 'bg-gradient-to-br from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 shadow-lg border-purple-400',
-      emerald: 'bg-gradient-to-br from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 shadow-lg border-emerald-400',
-      blue: 'bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 shadow-lg border-blue-400',
-      amber: 'bg-gradient-to-br from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 shadow-lg border-amber-400',
-      red: 'bg-gradient-to-br from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 shadow-lg border-red-400',
-      indigo: 'bg-gradient-to-br from-indigo-500 to-indigo-700 hover:from-indigo-600 hover:to-indigo-800 shadow-lg border-indigo-400',
-      teal: 'bg-gradient-to-br from-teal-500 to-teal-700 hover:from-teal-600 hover:to-teal-800 shadow-lg border-teal-400',
-      sky: 'bg-gradient-to-br from-sky-500 to-sky-700 hover:from-sky-600 hover:to-sky-800 shadow-lg border-sky-400',
-      pink: 'bg-gradient-to-br from-pink-500 to-pink-700 hover:from-pink-600 hover:to-pink-800 shadow-lg border-pink-400',
-      rose: 'bg-gradient-to-br from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 shadow-lg border-rose-400',
-      cyan: 'bg-gradient-to-br from-cyan-500 to-cyan-700 hover:from-cyan-600 hover:to-cyan-800 shadow-lg border-cyan-400',
+      purple: 'bg-gradient-to-br from-fisio-primary-500 to-fisio-primary-700 hover:from-fisio-primary-600 hover:to-fisio-primary-800 shadow-lg border-fisio-primary-400',
+      emerald: 'bg-gradient-to-br from-fisio-secondary-500 to-fisio-secondary-700 hover:from-fisio-secondary-600 hover:to-fisio-secondary-800 shadow-lg border-fisio-secondary-400',
+      blue: 'bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-600 hover:from-fisio-primary-500 hover:to-fisio-primary-700 shadow-lg border-fisio-primary-300',
+      amber: 'bg-gradient-to-br from-fisio-warning-500 to-fisio-warning-700 hover:from-fisio-warning-600 hover:to-fisio-warning-800 shadow-lg border-fisio-warning-400',
+      red: 'bg-gradient-to-br from-fisio-error-500 to-fisio-error-700 hover:from-fisio-error-600 hover:to-fisio-error-800 shadow-lg border-fisio-error-400',
+      indigo: 'bg-gradient-to-br from-fisio-primary-600 to-fisio-primary-800 hover:from-fisio-primary-700 hover:to-fisio-primary-900 shadow-lg border-fisio-primary-500',
+      teal: 'bg-gradient-to-br from-fisio-secondary-400 to-fisio-secondary-600 hover:from-fisio-secondary-500 hover:to-fisio-secondary-700 shadow-lg border-fisio-secondary-300',
+      sky: 'bg-gradient-to-br from-fisio-primary-300 to-fisio-primary-500 hover:from-fisio-primary-400 hover:to-fisio-primary-600 shadow-lg border-fisio-primary-200',
+      pink: 'bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-600 hover:from-fisio-primary-500 hover:to-fisio-primary-700 shadow-lg border-fisio-primary-300',
+      rose: 'bg-gradient-to-br from-fisio-error-400 to-fisio-error-600 hover:from-fisio-error-500 hover:to-fisio-error-700 shadow-lg border-fisio-error-300',
+      cyan: 'bg-gradient-to-br from-fisio-secondary-300 to-fisio-secondary-500 hover:from-fisio-secondary-400 hover:to-fisio-secondary-600 shadow-lg border-fisio-secondary-200',
     };
 
-    // Map status enum values to CSS classes - com gradientes vibrantes
+    // Map status enum values to CSS classes - com gradientes vibrantes usando paleta FisioFlow
     const getStatusStyle = (status: AppointmentStatus): string => {
       switch (status) {
         case AppointmentStatus.Scheduled:
           return ''; // Default style - cores vivas com gradiente
         case AppointmentStatus.Completed:
-          return 'bg-gradient-to-br from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 border-green-400'; // Verde vibrante
+          return 'bg-gradient-to-br from-fisio-secondary-500 to-fisio-secondary-700 hover:from-fisio-secondary-600 hover:to-fisio-secondary-800 border-fisio-secondary-400'; // Verde vibrante
         case AppointmentStatus.Canceled:
-          return 'bg-gradient-to-br from-gray-500 to-gray-700 hover:from-gray-600 hover:to-gray-800 border-gray-400'; // Cinza sólido
+          return 'bg-gradient-to-br from-fisio-neutral-500 to-fisio-neutral-700 hover:from-fisio-neutral-600 hover:to-fisio-neutral-800 border-fisio-neutral-400'; // Cinza sólido
         case AppointmentStatus.NoShow:
-          return 'bg-gradient-to-br from-orange-500 to-orange-700 hover:from-orange-600 hover:to-orange-800 border-orange-400'; // Laranja vibrante
+          return 'bg-gradient-to-br from-fisio-warning-400 to-fisio-warning-600 hover:from-fisio-warning-500 hover:to-fisio-warning-700 border-fisio-warning-300'; // Laranja vibrante
         default:
           return '';
       }
     };
 
-    const colorStyle = baseStyles[color as keyof typeof baseStyles] || 'bg-gradient-to-br from-slate-500 to-slate-700 hover:from-slate-600 hover:to-slate-800 shadow-lg border-slate-400';
+    const colorStyle = baseStyles[color as keyof typeof baseStyles] || 'bg-gradient-to-br from-fisio-neutral-500 to-fisio-neutral-700 hover:from-fisio-neutral-600 hover:to-fisio-neutral-800 shadow-lg border-fisio-neutral-400';
     const statusStyle = getStatusStyle(status);
 
     return statusStyle || colorStyle;
@@ -299,19 +300,19 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
               <Card key={day.toISOString()} className={cn(
                 "p-3 transition-all duration-200 hover:shadow-md",
                 isToday(day)
-                  ? "border-2 border-sky-500 bg-gradient-to-br from-sky-50 to-blue-50 shadow-md"
-                  : "border border-slate-200 bg-gradient-to-br from-white to-slate-50 hover:border-slate-300"
+                  ? "border-2 border-fisio-primary-DEFAULT bg-gradient-to-br from-fisio-primary-50 to-fisio-primary-100 shadow-md"
+                  : "border border-fisio-neutral-200 bg-gradient-to-br from-white to-fisio-neutral-50 hover:border-fisio-neutral-300"
               )} data-testid="day-header">
                 <div className="text-center">
                   <div className={cn(
                     "text-base font-bold mb-1",
-                    isToday(day) ? "text-sky-700" : "text-slate-800"
+                    isToday(day) ? "text-fisio-primary-700" : "text-fisio-neutral-800"
                   )}>
                     {format(day, 'd')}
                   </div>
                   <div className={cn(
                     "text-xs font-semibold uppercase tracking-wide mb-1",
-                    isToday(day) ? "text-sky-600" : "text-slate-600"
+                    isToday(day) ? "text-fisio-primary-600" : "text-fisio-neutral-600"
                   )}>
                     {format(day, 'EEE', { locale: ptBR }).slice(0, 3)}
                   </div>
@@ -320,7 +321,7 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                       variant={isToday(day) ? "default" : "secondary"}
                       className={cn(
                         "text-xs h-5 px-2 font-semibold shadow-sm",
-                        isToday(day) && "bg-sky-600 hover:bg-sky-700"
+                        isToday(day) && "bg-fisio-primary-DEFAULT hover:bg-fisio-primary-600"
                       )}
                     >
                       {dayAppointments.length} {dayAppointments.length === 1 ? 'consulta' : 'consultas'}

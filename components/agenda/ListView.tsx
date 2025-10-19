@@ -61,15 +61,15 @@ const ListView: React.FC<ListViewProps> = ({
   const getStatusColor = (status: AppointmentStatus) => {
     switch (status) {
       case AppointmentStatus.Scheduled:
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-fisio-primary-100 text-fisio-primary-800 border-fisio-primary-200';
       case AppointmentStatus.Completed:
-        return 'bg-green-100 text-green-800';
+        return 'bg-fisio-secondary-100 text-fisio-secondary-800 border-fisio-secondary-200';
       case AppointmentStatus.Canceled:
-        return 'bg-red-100 text-red-800';
+        return 'bg-fisio-error-100 text-fisio-error-800 border-fisio-error-200';
       case AppointmentStatus.NoShow:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-fisio-warning-100 text-fisio-warning-800 border-fisio-warning-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-fisio-neutral-100 text-fisio-neutral-800 border-fisio-neutral-200';
     }
   };
 
