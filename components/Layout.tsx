@@ -16,15 +16,11 @@ type MenuGroup = 'main' | 'clinical' | 'management';
 // Interface mantida para compatibilidade temporária
 
 const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
-<<<<<<< Current (Your changes)
-    
-=======
     console.log('🔍 [LAYOUT] Usando novo ResponsiveLayout:', {
         hasUser: !!user,
         userId: user?.id,
         userRole: user?.role
     });
->>>>>>> Incoming (Background Agent changes)
     
     // Usar o novo componente ResponsiveLayout
     return <ResponsiveLayout user={user} onLogout={onLogout}>{children}</ResponsiveLayout>;
