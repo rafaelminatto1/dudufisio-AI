@@ -1,6 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Cores Primárias FisioFlow */
+    --fisio-primary: 0 123 255; /* #007BFF */
+    --fisio-secondary: 40 167 69; /* #28A745 */
+    
+    /* Cores Neutras */
+    --fisio-neutral-50: 248 249 250; /* #F8F9FA */
+    --fisio-neutral-100: 243 244 246; /* #F3F4F6 */
+    --fisio-neutral-200: 233 236 239; /* #E9ECEF */
+    --fisio-neutral-500: 108 117 125; /* #6C757D */
+    --fisio-neutral-800: 51 51 51; /* #333333 */
+    
+    /* Cores de Feedback */
+    --fisio-error: 220 53 69; /* #DC3545 */
+    --fisio-warning: 255 193 7; /* #FFC107 */
+    --fisio-success: 40 167 69; /* #28A745 */
+    
+    /* Variáveis de espaçamento */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    
+    /* Raios de borda */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 
 /* Custom styles */
 html, body, #root {
@@ -10,9 +59,73 @@ html, body, #root {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 
+    'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @apply text-fisio-neutral-800 bg-fisio-neutral-50;
+}
+
+/* Responsividade Mobile-First */
+@layer components {
+  .container-mobile {
+    @apply w-full px-4 mx-auto;
+  }
+  
+  @screen sm {
+    .container-mobile {
+      @apply max-w-screen-sm;
+    }
+  }
+  
+  @screen md {
+    .container-mobile {
+      @apply max-w-screen-md;
+    }
+  }
+  
+  @screen lg {
+    .container-mobile {
+      @apply max-w-screen-lg;
+    }
+  }
+  
+  @screen xl {
+    .container-mobile {
+      @apply max-w-screen-xl;
+    }
+  }
+}
+
+/* Animações suaves para transições */
+@layer utilities {
+  .transition-responsive {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .hover-scale {
+    @apply transition-transform hover:scale-105;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-fisio-primary-500 focus:ring-offset-2;
+  }
+}
+
+/* Scrollbar customizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-fisio-neutral-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-fisio-neutral-400 rounded-lg;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-fisio-neutral-500;
 }
