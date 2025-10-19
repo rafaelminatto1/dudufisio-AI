@@ -3,6 +3,14 @@
  * Tipos para Análise de Saúde da População
  */
 
+// Tendência de saúde (para gráficos)
+export interface HealthTrend {
+  period: string;
+  value: number;
+  change: number;
+  patientCount: number;
+}
+
 // Tipos de análise populacional
 export enum PopulationMetricType {
   Demographics = 'demographics',
