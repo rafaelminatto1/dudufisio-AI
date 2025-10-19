@@ -267,6 +267,22 @@ export type PatientInput = Omit<Patient, 'id' | 'code' | 'age' | 'bmi' | 'create
 export type PatientUpdate = Partial<PatientInput>;
 export type PatientSupabase = Patient; // Alias para compatibilidade
 
+export interface PatientFilters {
+  status?: PatientStatus | PatientStatus[];
+  search?: string;
+  therapistId?: string;
+  registrationDateFrom?: string;
+  registrationDateTo?: string;
+  lastVisitFrom?: string;
+  lastVisitTo?: string;
+  tags?: string[];
+  hasAlerts?: boolean;
+  insuranceType?: string;
+  minAge?: number;
+  maxAge?: number;
+  gender?: string;
+}
+
 export type PatientAlertType = 'abandonment' | 'highRisk' | 'attention';
 
 export interface AlertPatient extends Patient {
@@ -397,8 +413,10 @@ export interface Appointment {
   endTime: Date;
   appointment_date?: Date; // Alias Supabase
   scheduledTime?: string; // ISO string
+  scheduled_at?: string; // ISO timestamp combinado (date + time)
   duration?: number; // Duração em minutos
   duration_minutes?: number; // Alias Supabase
+  appointment_type?: string; // Tipo de agendamento (ex: "Consulta", "Retorno")
   
   // === Detalhes ===
   title: string;
@@ -406,6 +424,8 @@ export interface Appointment {
   type: AppointmentType;
   status: AppointmentStatus;
   location?: string;
+  is_virtual?: boolean; // Se é consulta virtual/teleconsulta
+  meeting_url?: string; // URL da reunião virtual (Zoom, Google Meet, etc.)
   
   // === Financeiro ===
   value: number;
