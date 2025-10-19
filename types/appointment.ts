@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { PatientSummary } from './patient';
+import type { PatientSummary } from '../types';
 
 // Enums for Appointment
 export const AppointmentStatus = {

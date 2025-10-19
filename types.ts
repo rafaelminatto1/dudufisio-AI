@@ -3376,6 +3376,8 @@ export interface MandatoryAssessment {
 export interface AssessmentChartData {
   date: string;
   value: number;
+  fieldName?: string; // Nome da métrica/campo
+  unit?: string; // Unidade de medida
   sessionNumber?: number;
   timing?: string;
   notes?: string;
