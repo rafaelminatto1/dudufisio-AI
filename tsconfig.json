@@ -102,11 +102,11 @@
     "workers/**/*",
     "components/auth/AuthProvider.tsx",
     "components/auth/UserMenu.tsx",
-    "components/pacientes/PatientList.tsx",
     "lib/actions/**/*",
     "lib/auth.ts",
-    "middleware.ts",
+    "middleware.ts.disabled",
     "next.config.js",
-    "next.config.mjs"
+    "next.config.mjs",
+    "api/**/*"
   ]
 }
