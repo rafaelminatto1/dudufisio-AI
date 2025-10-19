@@ -225,7 +225,7 @@ export class WhatsAppSchedulingService {
           type: 'consultation',
           notes: 'Agendado via WhatsApp - Aguardando confirmação da equipe',
           created_via: 'whatsapp',
-        });
+        } as any);
 
       if (error) throw error;
 
@@ -336,7 +336,7 @@ export class WhatsAppSchedulingService {
           status: 'confirmed',
           therapist_id: therapistId,
           confirmed_at: new Date().toISOString(),
-        })
+        } as any)
         .eq('id', appointmentId)
         .select(`
           *,
@@ -396,7 +396,7 @@ export class WhatsAppSchedulingService {
           status: 'cancelled',
           cancellation_reason: reason,
           cancelled_at: new Date().toISOString(),
-        })
+        } as any)
         .eq('id', appointmentId);
 
       if (error) throw error;

@@ -140,7 +140,7 @@ export class RateLimiterService {
         scheduled_for: item.scheduled_for.toISOString(),
         status: item.status || 'pending',
         retry_count: item.retry_count || 0
-      })
+      } as any)
       .select('id')
       .single();
 
@@ -182,7 +182,7 @@ export class RateLimiterService {
       .update({
         status: 'sent',
         sent_at: new Date().toISOString()
-      })
+      } as any)
       .eq('id', queueId);
   }
 
@@ -207,7 +207,7 @@ export class RateLimiterService {
           status: 'failed',
           error_message: error,
           failed_at: new Date().toISOString()
-        })
+        } as any)
         .eq('id', queueId);
     } else {
       // Reagendar com exponential backoff
@@ -222,7 +222,7 @@ export class RateLimiterService {
           retry_count: retryCount,
           scheduled_for: nextTry.toISOString(),
           error_message: error
-        })
+        } as any)
         .eq('id', queueId);
     }
   }
@@ -323,7 +323,7 @@ export class RateLimiterService {
           if (msg.id && canSend.retryAfter) {
             await supabase
               .from('whatsapp_message_queue')
-              .update({ scheduled_for: canSend.retryAfter.toISOString() })
+              .update({ scheduled_for: canSend.retryAfter.toISOString() } as any)
               .eq('id', msg.id);
           }
           continue;

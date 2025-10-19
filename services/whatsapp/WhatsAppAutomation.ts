@@ -347,7 +347,7 @@ export class WhatsAppAutomation {
 
         await supabase
           .from('appointments')
-          .update({ status: 'confirmed' })
+          .update({ status: 'confirmed' } as any)
           .match({
             clinic_id: clinicId,
             'patient.phone': phone,
