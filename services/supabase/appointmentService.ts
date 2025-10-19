@@ -158,7 +158,7 @@ class AppointmentService {
 
       const { data, error } = await supabase
         .from('appointments')
-        .insert(appointment)
+        .insert(appointment as any)
         .select()
         .single();
 
@@ -196,7 +196,7 @@ class AppointmentService {
         .update({
           ...updates,
           updated_at: new Date().toISOString(),
-        })
+        } as any)
         .eq('id', id)
         .select()
         .single();
@@ -219,7 +219,7 @@ class AppointmentService {
           cancelled_by: cancelledBy,
           cancelled_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-        })
+        } as any)
         .eq('id', id)
         .select()
         .single();
@@ -239,7 +239,7 @@ class AppointmentService {
         .update({
           status: 'completed',
           updated_at: new Date().toISOString(),
-        })
+        } as any)
         .eq('id', id)
         .select()
         .single();
@@ -259,7 +259,7 @@ class AppointmentService {
         .update({
           status: 'no_show',
           updated_at: new Date().toISOString(),
-        })
+        } as any)
         .eq('id', id)
         .select()
         .single();
@@ -491,7 +491,7 @@ class AppointmentService {
       // Create all appointments
       const { data, error } = await supabase
         .from('appointments')
-        .insert(appointments)
+        .insert(appointments as any)
         .select();
 
       if (error) throw error;
