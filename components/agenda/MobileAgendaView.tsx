@@ -171,3 +171,4 @@ const MobileAgendaView: React.FC<MobileAgendaViewProps> = ({
 
 export default MobileAgendaView;
 
+

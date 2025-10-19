@@ -17,16 +17,28 @@ export async function generateBodyMapPDF(data: BodyMapPDFData): Promise<Blob> {
     // Preparar HTML do relatório
     const html = generateReportHTML(data);
 
-    // Criar PDF a partir do HTML
-    // Opção 1: Usar html2pdf.js (cliente)
-    // Opção 2: Usar API de conversão (servidor)
-    // Opção 3: Usar jsPDF + html2canvas
-
-    // Por ora, retornar HTML como PDF simulado
-    // TODO: Implementar conversão real para PDF
-    const blob = new Blob([html], { type: 'text/html' });
-    
-    return blob;
+    // Dynamic import de jsPDF apenas quando necessário
+    try {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+      
+      // Usar html() para renderizar HTML no PDF
+      await doc.html(html, {
+        callback: (doc) => {
+          return doc.output('blob');
+        },
+        x: 0,
+        y: 0,
+        width: 210, // A4 width in mm
+        windowWidth: 800
+      });
+      
+      return doc.output('blob');
+    } catch (pdfError) {
+      console.warn('PDF generation failed, using HTML fallback:', pdfError);
+      // Fallback para HTML se PDF falhar
+      return new Blob([html], { type: 'text/html' });
+    }
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw new Error('Falha ao gerar PDF do relatório');

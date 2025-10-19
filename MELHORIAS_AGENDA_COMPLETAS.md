@@ -249,3 +249,4 @@ A página de Agenda foi completamente redesenhada com foco em **responsividade m
 **Commit:** feat: Melhorias finais na Agenda  
 **Push para GitHub:** ✅ Sucesso  
 
+

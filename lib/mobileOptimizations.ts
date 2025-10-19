@@ -106,3 +106,4 @@ export const optimizeScrollPerformance = (element: HTMLElement) => {
   element.style.transform = 'translateZ(0)';
 };
 
+

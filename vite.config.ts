@@ -202,6 +202,11 @@ export default defineConfig({
             return 'vendor-charts';
           }
           
+          // Google AI - separar em chunk próprio
+          if (id.includes('node_modules/@google/generative-ai') || id.includes('node_modules/@google/genai')) {
+            return 'vendor-google-ai';
+          }
+          
           // Supabase & Auth
           if (id.includes('node_modules/@supabase') || id.includes('node_modules/@stripe')) {
             return 'vendor-backend';
@@ -256,6 +261,36 @@ export default defineConfig({
             // HTTP & Fetch
             if (id.includes('axios') || id.includes('node-fetch') || id.includes('ky')) {
               return 'vendor-http';
+            }
+            
+            // Lodash / Utilities
+            if (id.includes('lodash') || id.includes('ramda')) {
+              return 'vendor-utilities';
+            }
+            
+            // Moment / Dayjs / Date libraries
+            if (id.includes('moment') || id.includes('dayjs') || id.includes('luxon')) {
+              return 'vendor-dates';
+            }
+            
+            // Validation libraries
+            if (id.includes('joi') || id.includes('yup') || id.includes('class-validator')) {
+              return 'vendor-validation';
+            }
+            
+            // File processing
+            if (id.includes('multer') || id.includes('formidable') || id.includes('busboy')) {
+              return 'vendor-files';
+            }
+            
+            // Database drivers
+            if (id.includes('pg') || id.includes('mysql2') || id.includes('mongodb')) {
+              return 'vendor-database';
+            }
+            
+            // WebRTC / Media
+            if (id.includes('simple-peer') || id.includes('mediasoup')) {
+              return 'vendor-media';
             }
             
             // Consolidar resto dos vendors

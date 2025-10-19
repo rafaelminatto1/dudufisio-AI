@@ -344,3 +344,4 @@ O Service Worker já estava implementado, apenas atualizamos os nomes de cache e
 
 **Implementação realizada com sucesso!** 🚀
 
+

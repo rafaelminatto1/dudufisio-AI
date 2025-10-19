@@ -6,6 +6,7 @@ interface LazyImageProps {
   alt: string;
   className?: string;
   placeholder?: string;
+  fallback?: string; // Fallback para navegadores que não suportam WebP
   onLoad?: () => void;
   onError?: () => void;
 }
@@ -15,6 +16,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   alt,
   className = '',
   placeholder,
+  fallback,
   onLoad,
   onError
 }) => {
@@ -51,8 +53,20 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   };
 
   const handleError = () => {
-    setHasError(true);
-    onError?.();
+    // Se tem fallback, tentar carregar fallback
+    if (fallback && !hasError) {
+      setHasError(true); // Marca como erro para mostrar placeholder
+      // Tentar carregar fallback
+      const img = new Image();
+      img.onload = () => {
+        setHasError(false);
+        setIsLoaded(true);
+      };
+      img.src = fallback;
+    } else {
+      setHasError(true);
+      onError?.();
+    }
   };
 
   return (

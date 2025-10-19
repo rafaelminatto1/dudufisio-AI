@@ -18,6 +18,7 @@ import {
 } from './lib/lazyLoading';
 import { initializeLazyLoading } from './lib/advancedLazyLoading';
 import { PerformanceProfiler } from './lib/performanceOptimizations';
+import { initializeIntelligentPreloading } from './lib/intelligentPreloading';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
@@ -237,6 +238,9 @@ const AppContent: React.FC = memo(() => {
 
     logger.debug('Inicializando sistema avançado de lazy loading.', { context: LOG_CONTEXT });
     initializeLazyLoading();
+
+    logger.debug('Inicializando preloading inteligente.', { context: LOG_CONTEXT });
+    initializeIntelligentPreloading(user?.role);
 
     if (user?.role) {
       logger.debug(`Preloading específico para o perfil ${user.role}.`, { context: LOG_CONTEXT });

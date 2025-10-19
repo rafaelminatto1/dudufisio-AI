@@ -19,6 +19,7 @@ import ConflictWarningDialog from './agenda/ConflictWarningDialog';
 import { generateRecurrences } from '../services/scheduling/recurrenceService';
 import { schedulingSettingsService } from '../services/schedulingSettingsService';
 import { validateAppointment, formatValidationErrors } from '../lib/validators/agendaValidators';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 interface AppointmentFormModalProps {
   isOpen: boolean;
@@ -52,6 +53,13 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   
   const { showToast } = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Focus trap para acessibilidade
+  const containerRef = useFocusTrap({ 
+    enabled: isOpen,
+    initialFocus: closeButtonRef.current 
+  });
   
   const slotDate = useMemo(() => appointmentToEdit?.startTime || initialData?.date || new Date(), [appointmentToEdit, initialData]);
   const [slotTime, setSlotTime] = useState(useMemo(() => format(slotDate, 'HH:mm'), [slotDate]));
@@ -266,11 +274,27 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   const title = appointmentToEdit ? 'Editar Agendamento' : 'Novo Agendamento';
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div ref={modalRef} className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
+    >
+      <div 
+        ref={containerRef}
+        className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col"
+      >
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-xl font-semibold">{title}</h2>
-          <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded-full transition"><X className="w-5 h-5" /></button>
+          <h2 id="modal-title" className="text-xl font-semibold">{title}</h2>
+          <button 
+            ref={closeButtonRef}
+            onClick={onClose} 
+            className="p-1 hover:bg-slate-100 rounded-full transition"
+            aria-label="Fechar modal"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
         
         <div className="bg-sky-50 px-4 py-3 flex items-center gap-4 text-sm">
@@ -280,7 +304,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           </div>
         </div>
         
-        <div className="p-4 space-y-4 overflow-y-auto">
+        <div id="modal-description" className="p-4 space-y-4 overflow-y-auto">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">Paciente *</label>
             <PatientSearchInput

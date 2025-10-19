@@ -47,6 +47,8 @@
     "seed": "ts-node scripts/seed-new-modules.ts",
     "seed:modules": "ts-node scripts/seed-new-modules.ts",
     "generate:icons": "node scripts/generate-pwa-icons.cjs",
+    "generate:icons:from-logo": "node scripts/generate-pwa-icons-from-logo.js",
+    "convert:webp": "node scripts/convert-images-to-webp.js",
     "maintenance": "node scripts/maintenance.js --health",
     "maintenance:update": "node scripts/maintenance.js --update",
     "maintenance:full": "node scripts/maintenance.js --health --update",
