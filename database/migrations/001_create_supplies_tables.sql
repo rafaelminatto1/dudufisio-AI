@@ -224,7 +224,26 @@ CREATE INDEX idx_supply_batches_status ON supply_batches(status);
 CREATE UNIQUE INDEX idx_supply_batches_unique ON supply_batches(supply_id, batch_number);
 
 -- ============================================================================
--- 10. TABELA DE CONFIGURAÇÕES DE REPOSIÇÃO AUTOMÁTICA
+-- 10. TABELA DE APROVAÇÕES DE PEDIDOS
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS purchase_approvals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  purchase_order_id UUID REFERENCES purchase_orders(id) ON DELETE CASCADE NOT NULL,
+  approver_id UUID REFERENCES auth.users(id),
+  approval_level INTEGER NOT NULL CHECK (approval_level IN (1, 2, 3)),
+  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  comments TEXT,
+  approved_at TIMESTAMP WITH TIME ZONE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Índices para aprovações
+CREATE INDEX idx_purchase_approvals_order ON purchase_approvals(purchase_order_id);
+CREATE INDEX idx_purchase_approvals_status ON purchase_approvals(status);
+CREATE INDEX idx_purchase_approvals_approver ON purchase_approvals(approver_id);
+
+-- ============================================================================
+-- 11. TABELA DE CONFIGURAÇÕES DE REPOSIÇÃO AUTOMÁTICA
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS auto_replenishment_rules (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
