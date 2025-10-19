@@ -52,7 +52,7 @@ const ConsolidatedReportsDashboard: React.FC = () => {
   const [exportFormat, setExportFormat] = useState('pdf');
 
   const handleExport = (reportType: string) => {
-    console.log(`Exporting ${reportType} as ${exportFormat}`);
+    
     // Implementar lógica de exportação
   };
 

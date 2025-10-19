@@ -212,30 +212,24 @@ export function useExercises() {
   // Computed values for UI with safety checks
   const categories = useMemo(() => {
     const cats = getCategories();
-    console.log('🔍 getCategories result:', cats);
+    
     return Array.isArray(cats) ? cats : [];
   }, [state.exercises]);
   
   const uniqueBodyParts = useMemo(() => {
     const parts = getMuscleGroups();
-    console.log('🔍 getMuscleGroups result:', parts);
+    
     return Array.isArray(parts) ? parts : [];
   }, [state.exercises]);
   
   const uniqueEquipment = useMemo(() => {
     const equip = getEquipment();
-    console.log('🔍 getEquipment result:', equip);
+    
     return Array.isArray(equip) ? equip : [];
   }, [state.exercises]);
   
   // Debug logs to understand what's happening
-  console.log('🔍 useExercises debug:', {
-    exercisesCount: state.exercises.length,
-    categories: categories.length,
-    uniqueBodyParts: uniqueBodyParts.length,
-    uniqueEquipment: uniqueEquipment.length,
-    isLoading: state.loading
-  });
+  
 
   return {
     exercises: state.exercises,
@@ -251,19 +245,19 @@ export function useExercises() {
     deleteExercise: (id: string) => deleteExercise(id),
     addCategory: (name: string) => {
       // Mock implementation for now
-      console.log('Adding category:', name);
+      
     },
     updateCategory: (oldName: string, newName: string) => {
       // Mock implementation for now
-      console.log('Updating category:', oldName, 'to', newName);
+      
     },
     copyCategory: (name: string) => {
       // Mock implementation for now
-      console.log('Copying category:', name);
+      
     },
     deleteCategory: (name: string) => {
       // Mock implementation for now
-      console.log('Deleting category:', name);
+      
     },
     getExerciseById,
     searchExercises,

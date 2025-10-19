@@ -130,11 +130,11 @@ const ProtocolEditPage: React.FC = () => {
 
       if (isNewProtocol) {
         const newProtocol = await createProtocol(protocolData);
-        console.log('✅ Protocolo criado:', newProtocol);
+        
         navigate('/protocols');
       } else if (id) {
         const updated = await updateProtocol(id, protocolData);
-        console.log('✅ Protocolo atualizado:', updated);
+        
         navigate('/protocols');
       }
     } catch (error) {

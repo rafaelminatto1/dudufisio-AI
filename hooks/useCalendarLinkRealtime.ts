@@ -27,7 +27,7 @@ export function useCalendarLinkRealtime(appointmentId: string) {
           filter: `appointment_id=eq.${appointmentId}`
         },
         (payload) => {
-          console.log('📅 Calendar link updated:', payload);
+          
           
           if (payload.new.link_accessed) {
             setLinkAccessed(true);

@@ -70,11 +70,11 @@ export class IntegratedExerciseService {
   private async loadClinicalExercises() {
     try {
       const clinicalData = getExercises();
-      console.log('📊 Dados brutos carregados:', clinicalData.length, 'exercícios');
-      console.log('📝 Primeiro exercício raw:', clinicalData[0]);
+      
+      
       this.clinicalExercises = clinicalData.map(convertClinicalExerciseToSystemFormat);
-      console.log('✅ Exercícios clínicos carregados:', this.clinicalExercises.length);
-      console.log('📝 Primeiro exercício convertido:', this.clinicalExercises[0]);
+      
+      
     } catch (error) {
       console.error('❌ Erro ao carregar exercícios clínicos:', error);
       this.clinicalExercises = [];
@@ -84,7 +84,7 @@ export class IntegratedExerciseService {
   private async loadSystemExercises() {
     try {
       this.systemExercises = exerciseService.getMockExercises();
-      console.log('✅ Exercícios do sistema carregados:', this.systemExercises.length);
+      
     } catch (error) {
       console.error('❌ Erro ao carregar exercícios do sistema:', error);
       this.systemExercises = [];

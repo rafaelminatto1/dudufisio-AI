@@ -22,7 +22,7 @@ const NewSoapNoteModal: React.FC<NewSoapNoteModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement save logic
-    console.log('Saving SOAP note for patient:', patientId, formData);
+    
     onClose();
   };
 

@@ -341,7 +341,7 @@ export class CalendarMonitor {
     });
     */
 
-    console.log('Calendar Integration Metrics:', metrics);
+    
   }
 
   // Send alert notifications

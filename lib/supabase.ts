@@ -25,13 +25,13 @@ if (!supabaseUrl) {
   // Log detalhado com checklist de solução
   console.group('❌ ERRO: Variáveis de ambiente não encontradas');
   console.error('%cVITE_SUPABASE_URL não definida', 'color: red; font-weight: bold;');
-  console.log('\n📋 Checklist de solução:');
-  console.log('1. ✓ Arquivo .env.local existe na raiz do projeto?');
-  console.log('2. ✓ Servidor foi reiniciado após criar/editar .env.local?');
+  
+  
+  
   console.log('3. ✓ Variáveis usam prefixo VITE_ (não NEXT_PUBLIC_)?');
   console.log('4. ✓ Cache do Vite foi limpo? (deletar node_modules/.vite)');
-  console.log('\n📚 Documentação completa: TROUBLESHOOTING.md');
-  console.log('🔧 Execute: npm run check:env para diagnóstico automático');
+  
+  
   console.groupEnd();
   
   logger.error('[SUPABASE] VITE_SUPABASE_URL não encontrada!', { context: 'supabase.env' });
@@ -50,15 +50,15 @@ if (!supabaseAnonKey) {
   // Log detalhado com checklist de solução
   console.group('❌ ERRO: Variáveis de ambiente não encontradas');
   console.error('%cVITE_SUPABASE_ANON_KEY não definida', 'color: red; font-weight: bold;');
-  console.log('\n📋 Checklist de solução:');
-  console.log('1. ✓ Arquivo .env.local existe na raiz do projeto?');
-  console.log('2. ✓ Servidor foi reiniciado após criar/editar .env.local?');
+  
+  
+  
   console.log('3. ✓ Variáveis usam prefixo VITE_ (não NEXT_PUBLIC_)?');
   console.log('4. ✓ Cache do Vite foi limpo? (deletar node_modules/.vite)');
-  console.log('\n🔑 Pegue sua chave em:');
-  console.log('   https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo/settings/api');
-  console.log('\n📚 Documentação completa: TROUBLESHOOTING.md');
-  console.log('🔧 Execute: npm run check:env para diagnóstico automático');
+  
+  
+  
+  
   console.groupEnd();
   
   logger.error('[SUPABASE] VITE_SUPABASE_ANON_KEY não encontrada!', { context: 'supabase.env' });

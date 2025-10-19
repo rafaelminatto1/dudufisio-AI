@@ -211,12 +211,12 @@ export const useBodyMapPro = (
 
     undoLastAction: () => {
       // Placeholder for undo functionality
-      console.log('Undo functionality would be implemented here');
+      
     },
 
     redoLastAction: () => {
       // Placeholder for redo functionality
-      console.log('Redo functionality would be implemented here');
+      
     }
   }), [patientId, showToast, fetchData]);
 

@@ -55,7 +55,7 @@ export class SupabaseIntegrationManager {
       this.isSupabaseAvailable = true;
       // observability.database.query('supabase.connection.success', { message: 'Conexão com Supabase estabelecida com sucesso' }); // TODO: Add query method
 
-      console.log('✅ Supabase conectado - Usando serviços de produção');
+      
     } catch (error) {
       this.isSupabaseAvailable = false;
       observability.database.warn('supabase.connection.failed', {
@@ -63,7 +63,7 @@ export class SupabaseIntegrationManager {
         message: 'Fallback para serviços mock devido à falha na conexão'
       });
 
-      console.log('⚠️ Supabase indisponível - Usando serviços mock');
+      
     } finally {
       this.connectionChecked = true;
     }
@@ -353,7 +353,7 @@ export class SupabaseIntegrationManager {
     try {
       // Migrar pacientes
       const mockPatients = await mockPatientService.getAllPatients();
-      console.log(`Migrando ${mockPatients.length} pacientes...`);
+      
 
       for (const patient of mockPatients) {
         try {
@@ -365,7 +365,7 @@ export class SupabaseIntegrationManager {
 
       // Migrar consultas
       const mockAppointments = await mockAppointmentService.getAppointments();
-      console.log(`Migrando ${mockAppointments.length} consultas...`);
+      
 
       for (const appointment of mockAppointments) {
         try {
@@ -380,7 +380,7 @@ export class SupabaseIntegrationManager {
         appointments: mockAppointments.length
       });
 
-      console.log('✅ Migração concluída com sucesso!');
+      
     } catch (error) {
       observability.service.call('supabase.migration.error', { error });
       throw new Error(`Erro durante migração: ${error}`);

@@ -359,7 +359,7 @@ export class GamificationService {
         clinic_id: clinicId,
       });
 
-      console.log(`🏆 Conquista desbloqueada para paciente ${patientId}:`, achievementId);
+      
 
       // TODO: Enviar notificação ao paciente
     } catch (error) {

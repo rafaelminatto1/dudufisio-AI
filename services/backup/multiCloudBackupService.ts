@@ -742,13 +742,13 @@ class MultiCloudBackupService {
   private async uploadToS3(provider: BackupProvider, fileName: string, data: ArrayBuffer): Promise<void> {
     // Implementation for AWS S3 upload
     // This would require AWS SDK integration
-    console.log(`Would upload ${fileName} to S3 bucket ${provider.credentials.bucket}`);
+    
   }
 
   private async uploadToGCS(provider: BackupProvider, fileName: string, data: ArrayBuffer): Promise<void> {
     // Implementation for Google Cloud Storage upload
     // This would require Google Cloud SDK integration
-    console.log(`Would upload ${fileName} to GCS bucket ${provider.credentials.bucket}`);
+    
   }
 
   private async downloadFromProvider(backupId: string): Promise<ArrayBuffer> {
@@ -788,27 +788,27 @@ class MultiCloudBackupService {
   private async performDryRunRestore(request: RestoreRequest): Promise<void> {
     // Simulate restore without actually modifying data
     request.progress = 100;
-    console.log(`Dry run completed for restore request ${request.id}`);
+    
   }
 
   private async verifyBackupIntegrity(backupId: string): Promise<void> {
     // Verify backup file integrity
-    console.log(`Verifying integrity for backup ${backupId}`);
+    
   }
 
   private async testTargetConnection(environment: string): Promise<void> {
     // Test connection to target environment
-    console.log(`Testing connection to ${environment} environment`);
+    
   }
 
   private async performFullRestore(data: string, request: RestoreRequest): Promise<void> {
     // Perform full system restore
-    console.log(`Performing full restore for request ${request.id}`);
+    
   }
 
   private async performPartialRestore(data: string, request: RestoreRequest): Promise<void> {
     // Perform partial restore of specific tables/files
-    console.log(`Performing partial restore for request ${request.id}`);
+    
   }
 
   private async getDisasterRecoveryPlan(planId: string): Promise<DisasterRecoveryPlan> {

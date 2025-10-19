@@ -153,7 +153,7 @@ export async function populateDemoData(): Promise<DemoDataStats> {
     therapists: 0,
   };
 
-  console.log('🌱 Iniciando população de dados de demonstração...');
+  
 
   // 1. Popular pacientes
   for (const patientData of samplePatients) {
@@ -163,17 +163,17 @@ export async function populateDemoData(): Promise<DemoDataStats> {
       if (existing.length === 0) {
         await supabasePatientService.createPatient(patientData as any);
         stats.patients++;
-        console.log(`✅ Paciente criado: ${patientData.name}`);
+        
       } else {
-        console.log(`⚠️ Paciente já existe: ${patientData.name}`);
+        
       }
     } catch (error: any) {
       console.error(`❌ Erro ao criar paciente ${patientData.name}:`, error.message);
     }
   }
 
-  console.log(`✨ Dados de demonstração populados com sucesso!`);
-  console.log(`📊 Estatísticas: ${stats.patients} pacientes criados`);
+  
+  
 
   return stats;
 }
@@ -188,7 +188,7 @@ export async function clearDemoData(): Promise<DemoDataStats> {
     therapists: 0,
   };
 
-  console.log('🗑️ Iniciando limpeza de dados de demonstração...');
+  
 
   try {
     // 1. Buscar todos os pacientes de demonstração
@@ -200,14 +200,14 @@ export async function clearDemoData(): Promise<DemoDataStats> {
       try {
         await supabasePatientService.deletePatient(patient.id);
         stats.patients++;
-        console.log(`✅ Paciente removido: ${patient.name}`);
+        
       } catch (error: any) {
         console.error(`❌ Erro ao remover paciente ${patient.name}:`, error.message);
       }
     }
 
-    console.log(`✨ Dados de demonstração removidos com sucesso!`);
-    console.log(`📊 Estatísticas: ${stats.patients} pacientes removidos`);
+    
+    
   } catch (error: any) {
     console.error('❌ Erro ao limpar dados de demonstração:', error.message);
     throw error;

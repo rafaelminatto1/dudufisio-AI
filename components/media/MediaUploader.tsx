@@ -90,7 +90,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       // Callback
       onUpload(result.url, result.thumbnailUrl);
 
-      console.log('✅ Upload concluído:', result);
+      
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer upload');
       console.error('❌ Erro no upload:', err);

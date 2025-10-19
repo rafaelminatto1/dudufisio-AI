@@ -81,9 +81,9 @@ const PatientDetailPage: React.FC = () => {
       setBodyMapError(null);
       
       try {
-        console.log('📊 Carregando histórico de mapa corporal para paciente:', patient.id);
+        
         const sessions = await bodyMapService.getPatientBodyMapHistory(patient.id);
-        console.log('✅ Sessões carregadas:', sessions.length);
+        
         setBodyMapSessions(sessions);
       } catch (error: any) {
         console.error('❌ Erro ao carregar sessões de mapa corporal:', error);
@@ -501,13 +501,13 @@ const PatientDetailPage: React.FC = () => {
                 <BodyMapManager
                   patient={patient as any}
                   onSessionSaved={async (session) => {
-                    console.log('✅ Sessão salva com sucesso:', session);
+                    
                     try {
                       // Recarregar sessões
                       setBodyMapLoading(true);
                       const sessions = await bodyMapService.getPatientBodyMapHistory(patient.id);
                       setBodyMapSessions(sessions);
-                      console.log('✅ Histórico atualizado:', sessions.length, 'sessões');
+                      
                     } catch (error: any) {
                       console.error('❌ Erro ao recarregar histórico:', error);
                       setBodyMapError('Erro ao atualizar histórico');

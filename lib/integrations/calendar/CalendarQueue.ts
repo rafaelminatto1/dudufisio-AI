@@ -84,7 +84,7 @@ class MockQueue {
       const result = await processor(job);
 
       if (result.success) {
-        console.log(`Job ${jobId} completed successfully in ${result.duration}ms`);
+        
         this.jobs.delete(jobId);
       } else if (result.retryable && job.attempts < 3) {
         // Retry with exponential backoff

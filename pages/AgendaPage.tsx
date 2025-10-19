@@ -259,7 +259,7 @@ export default function AgendaPage() {
     };
 
     const handleStartSession = useCallback((appointment: EnrichedAppointment) => {
-        console.log('🚀 Iniciando sessão para appointment:', appointment.id);
+        
         setSelectedAppointment(null); // Fecha o modal
         navigate(`/atendimento/${appointment.id}`);
     }, [navigate]);

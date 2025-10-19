@@ -137,7 +137,7 @@ export function useWhatsAppRealtime(options: UseWhatsAppRealtimeOptions = {}) {
                 })
                 .eq('id', newMessage.id)
                 .then(() => {
-                  console.log('✅ Mensagem marcada como lida');
+                  
                 });
             }
           }
@@ -169,10 +169,10 @@ export function useWhatsAppRealtime(options: UseWhatsAppRealtimeOptions = {}) {
       // Subscribe ao canal
       channel.subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          console.log('✅ Conectado ao realtime WhatsApp');
+          
           setIsConnected(true);
         } else if (status === 'CLOSED') {
-          console.log('❌ Desconectado do realtime WhatsApp');
+          
           setIsConnected(false);
         } else if (status === 'CHANNEL_ERROR') {
           console.error('❌ Erro no canal realtime');

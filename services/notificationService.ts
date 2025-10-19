@@ -109,7 +109,7 @@ class EnhancedNotificationService {
           hasPushManager: !!this.pushManager
         });
 
-        console.log('✅ Push notifications inicializadas');
+        
       } else {
         observability.service.warn('notification.push.not_supported', {
           hasServiceWorker: 'serviceWorker' in navigator,
@@ -361,7 +361,7 @@ class EnhancedNotificationService {
     const user = mockUsers.find(u => u.id === userId);
     if (user?.phone) {
       // Integração com serviço de SMS seria implementada aqui
-      console.log(`📱 SMS para ${user.phone}: ${message}`);
+      
     }
   }
 

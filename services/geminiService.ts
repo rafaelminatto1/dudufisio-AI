@@ -248,7 +248,7 @@ async function tryGoogleAIVideoAPI(prompt: string): Promise<VideoOperation | nul
 
     if (response.ok) {
       const data = await response.json();
-      console.log('🌟 [GEMINI API] Resposta da API:', data);
+      
       
       // Se a API retornar algo útil, processar aqui
       // Por enquanto, a API Gemini não suporta geração de vídeo
@@ -257,7 +257,7 @@ async function tryGoogleAIVideoAPI(prompt: string): Promise<VideoOperation | nul
     
     return null;
   } catch (error) {
-    console.log('ℹ️ [GEMINI API] API de vídeo não disponível, usando simulação');
+    
     return null;
   }
 }
@@ -447,26 +447,26 @@ export async function generateExerciseVideo(prompt: string): Promise<VideoOperat
       throw new Error('Prompt não pode estar vazio');
     }
 
-    console.log('📹 [GEMINI VEO] Iniciando geração de vídeo...');
-    console.log('📝 [GEMINI VEO] Prompt:', prompt);
+    
+    
     console.log('🔑 [GEMINI VEO] API Key:', `${GEMINI_API_KEY.substring(0, 10)}...`);
 
     // Tentar API real primeiro
     const realAPIResult = await tryGoogleAIVideoAPI(prompt);
     if (realAPIResult) {
-      console.log('🌟 [GEMINI VEO] Usando API real do Google!');
+      
       return realAPIResult;
     }
 
     // FALLBACK: Simulação inteligente baseada no prompt
-    console.log('🎭 [GEMINI VEO] Usando simulação inteligente baseada no prompt');
+    
     
     // Simular delay de processamento inicial
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     // Selecionar vídeo baseado no conteúdo do prompt
     const selectedVideo = selectVideoBasedOnPrompt(prompt);
-    console.log('🎬 [GEMINI VEO] Vídeo selecionado baseado no prompt:', selectedVideo.title);
+    
 
     return {
       done: false,
@@ -493,7 +493,7 @@ export async function generateExerciseVideo(prompt: string): Promise<VideoOperat
  */
 export async function getVideosOperation(operation: VideoOperation): Promise<VideoOperation> {
   try {
-    console.log('🔄 [GEMINI VEO] Verificando status da operação...');
+    
 
     // IMPLEMENTAÇÃO TEMPORÁRIA: Simular progresso
     // Quando a API Gemini Veo 2.0 estiver disponível, substituir por:
@@ -508,7 +508,7 @@ export async function getVideosOperation(operation: VideoOperation): Promise<Vid
 
     // Marcar como completo quando chegar a 100%
     if (newProgress >= 100) {
-      console.log('✅ [GEMINI VEO] Geração completa!');
+      
       return {
         ...operation,
         done: true,
@@ -516,7 +516,7 @@ export async function getVideosOperation(operation: VideoOperation): Promise<Vid
       };
     }
 
-    console.log(`📊 [GEMINI VEO] Progresso: ${newProgress}%`);
+    
     return {
       ...operation,
       done: false,
@@ -535,7 +535,7 @@ export async function getVideosOperation(operation: VideoOperation): Promise<Vid
  */
 export async function fetchVideoFromUri(uri: string): Promise<Blob> {
   try {
-    console.log('📥 [GEMINI VEO] Baixando vídeo de:', uri);
+    
 
     // Lista de vídeos de exemplo para simulação
     const videoUrls = [
@@ -566,7 +566,7 @@ export async function fetchVideoFromUri(uri: string): Promise<Blob> {
       throw new Error('Vídeo retornado está vazio');
     }
 
-    console.log('✅ [GEMINI VEO] Vídeo baixado com sucesso:', blob.size, 'bytes');
+    
     
     return blob;
   } catch (error) {

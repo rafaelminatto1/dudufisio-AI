@@ -584,32 +584,32 @@ class FamilyPortalService {
     request: FamilyAccessRequest
   ): Promise<void> {
     // Implementar notificação real
-    console.log(`Notificando paciente ${patientId} sobre solicitação de acesso`);
+    
   }
 
   private async notifyFamilyMemberOfApproval(familyMember: FamilyMember): Promise<void> {
-    console.log(`Notificando ${familyMember.email} sobre aprovação de acesso`);
+    
   }
 
   private async notifyFamilyMembersOfUpdate(
     members: FamilyMember[],
     update: ProgressUpdate
   ): Promise<void> {
-    console.log(`Notificando ${members.length} familiares sobre atualização`);
+    
   }
 
   private async notifyTherapistOfMessage(
     therapistId: string,
     message: FamilyMessage
   ): Promise<void> {
-    console.log(`Notificando terapeuta ${therapistId} sobre nova mensagem`);
+    
   }
 
   private async notifyFamilyMemberOfRevocation(
     familyMember: FamilyMember,
     reason: string
   ): Promise<void> {
-    console.log(`Notificando ${familyMember.email} sobre revogação de acesso`);
+    
   }
 
   // Data helpers
@@ -650,7 +650,7 @@ class FamilyPortalService {
     reason: string
   ): Promise<void> {
     // Log de auditoria
-    console.log(`Access change logged: ${action} - ${reason}`);
+    
   }
 }
 

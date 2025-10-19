@@ -219,7 +219,7 @@ class AuditService {
     if (confirm('Tem certeza que deseja limpar TODOS os logs de auditoria?')) {
       this.logs = [];
       this.saveLogs();
-      console.log('🗑️ Todos os logs de auditoria foram removidos');
+      
     }
   }
 }

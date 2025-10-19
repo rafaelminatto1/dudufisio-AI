@@ -21,13 +21,7 @@ const RouterDebugger: React.FC<RouterDebuggerProps> = ({ enabled = true }) => {
   }
 
   useEffect(() => {
-    console.log('🧭 Router Debug - Current location:', {
-      pathname: location.pathname,
-      search: location.search,
-      hash: location.hash,
-      state: location.state,
-      key: location.key
-    });
+    
   }, [location]);
 
   useEffect(() => {

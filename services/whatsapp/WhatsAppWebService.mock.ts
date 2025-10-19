@@ -12,22 +12,22 @@ export class WhatsAppWebService {
   }
 
   async initialize(): Promise<void> {
-    console.log('⚠️  WhatsApp Web Service em modo MOCK - funcionalidade desabilitada');
+    
     return Promise.resolve();
   }
 
   async sendMessage(to: string, message: string): Promise<any> {
-    console.log('⚠️  WhatsApp Web Service MOCK - mensagem não enviada:', { to, message });
+    
     return Promise.resolve({ success: false, mock: true });
   }
 
   async sendTemplateMessage(to: string, templateName: string, params: any[]): Promise<any> {
-    console.log('⚠️  WhatsApp Web Service MOCK - template não enviado:', { to, templateName, params });
+    
     return Promise.resolve({ success: false, mock: true });
   }
 
   async sendMediaMessage(to: string, mediaUrl: string, caption: string): Promise<any> {
-    console.log('⚠️  WhatsApp Web Service MOCK - mídia não enviada:', { to, mediaUrl, caption });
+    
     return Promise.resolve({ success: false, mock: true });
   }
 
@@ -39,7 +39,7 @@ export class WhatsAppWebService {
   }
 
   async disconnect(): Promise<void> {
-    console.log('⚠️  WhatsApp Web Service MOCK - desconexão simulada');
+    
     return Promise.resolve();
   }
 }

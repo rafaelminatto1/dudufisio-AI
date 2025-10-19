@@ -255,7 +255,7 @@ export class WhatsAppAutomation {
         .eq('status', 'confirmed');
 
       if (!appointments || appointments.length === 0) {
-        console.log('Nenhuma consulta para enviar lembretes');
+        
         return;
       }
 
@@ -273,7 +273,7 @@ export class WhatsAppAutomation {
           clinicId
         );
 
-        console.log(`✅ Lembrete enviado para ${appointment.patient.name}`);
+        
       }
 
     } catch (error) {
@@ -304,7 +304,7 @@ export class WhatsAppAutomation {
         .eq('status', 'scheduled');
 
       if (!appointments || appointments.length === 0) {
-        console.log('Nenhuma consulta para enviar confirmação');
+        
         return;
       }
 
@@ -321,7 +321,7 @@ export class WhatsAppAutomation {
           clinicId
         );
 
-        console.log(`✅ Confirmação enviada para ${appointment.patient.name}`);
+        
       }
 
     } catch (error) {
@@ -354,7 +354,7 @@ export class WhatsAppAutomation {
             date: tomorrow.toISOString().split('T')[0],
           });
 
-        console.log(`✅ Consulta confirmada para ${phone}`);
+        
       } catch (error) {
         console.error('Erro ao confirmar consulta:', error);
       }

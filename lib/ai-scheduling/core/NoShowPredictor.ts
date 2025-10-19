@@ -122,7 +122,7 @@ export class NoShowPredictor {
     appointment: Appointment
   ): Promise<NoShowPrediction> {
     try {
-      console.log(`🔮 Predizendo no-show para agendamento ${appointmentId}`);
+      
       
       // Extrair features do agendamento e paciente
       const features = await this.extractFeatures(appointmentId, patientId, appointment);
@@ -162,7 +162,7 @@ export class NoShowPredictor {
    */
   async trainModel(trainingData: NoShowFeatures[]): Promise<NoShowModel> {
     try {
-      console.log('🎓 Iniciando treinamento do modelo de no-show...');
+      
       
       // Preparar dados de treinamento
       const { features, labels } = this.prepareTrainingData(trainingData);

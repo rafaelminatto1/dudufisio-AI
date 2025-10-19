@@ -23,7 +23,7 @@ export class ReportGenerator {
 
   async generateReport(request: ReportRequest): Promise<Report> {
     try {
-      console.log(`📋 Gerando relatório: ${request.title}`);
+      
 
       const reportId = `report_${Date.now()}`;
       const sections: ReportSection[] = [];
@@ -61,7 +61,7 @@ export class ReportGenerator {
         generatedBy: 'Sistema BI'
       };
 
-      console.log(`✅ Relatório gerado com sucesso: ${sections.length} seções`);
+      
       return report;
 
     } catch (error) {
@@ -565,8 +565,8 @@ ${recommendations.length > 0 ?
     format: 'pdf' | 'excel' | 'html';
   }[]): Promise<void> {
     // In a real implementation, this would integrate with a job scheduler
-    console.log('📅 Agendamento de relatórios automatizados configurado');
-    console.log(`Configurados ${schedules.length} relatórios automáticos`);
+    
+    
 
     // Store schedule configuration in database
     for (const schedule of schedules) {
@@ -604,6 +604,6 @@ ${recommendations.length > 0 ?
 
   async executeScheduledReport(scheduleId: string): Promise<void> {
     // Implementation for executing a scheduled report
-    console.log(`🔄 Executando relatório agendado: ${scheduleId}`);
+    
   }
 }

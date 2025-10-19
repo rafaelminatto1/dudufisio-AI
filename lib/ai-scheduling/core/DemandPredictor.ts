@@ -85,7 +85,7 @@ export class DemandPredictor {
     features?: Partial<DemandFeatures>
   ): Promise<DemandPrediction[]> {
     try {
-      console.log('🔮 Iniciando previsão de demanda...');
+      
       
       // Carregar dados históricos
       await this.loadHistoricalData(startDate, endDate);
@@ -99,7 +99,7 @@ export class DemandPredictor {
         currentDate.setDate(currentDate.getDate() + 1);
       }
       
-      console.log(`✅ Previsão concluída para ${predictions.length} dias`);
+      
       return predictions;
       
     } catch (error) {

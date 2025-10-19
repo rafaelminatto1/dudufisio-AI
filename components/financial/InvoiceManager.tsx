@@ -152,7 +152,7 @@ export function InvoiceManager() {
 
       if (response.ok) {
         // Show success message
-        console.log('Invoice sent successfully');
+        
       }
     } catch (error) {
       console.error('Error sending invoice:', error);

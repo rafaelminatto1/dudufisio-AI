@@ -130,7 +130,7 @@ const SessionTrackingPage: React.FC = () => {
       isCompleted: true,
     };
 
-    console.log('✅ Sessão registrada:', sessionData);
+    
     // Aqui você implementaria a gravação real
     navigate('/assignments');
   };

@@ -26,6 +26,7 @@ const AdminDashboardPage = LazyPages.AdminDashboardPage; // ✅ FIX: Usar LazyPa
 const ReportsPage = LazyPages.ReportsPage;
 const AiAnalyticsPage = LazyPages.AiAnalyticsPage;
 const InventoryPage = LazyPages.InventoryPage;
+const SuppliesPage = LazyPages.SuppliesPage;
 const UserManagementPage = LazyPages.UserManagementPage;
 const DashboardPage = LazyPages.DashboardPage;
 const TherapistDashboard = LazyPages.TherapistDashboard; // ✅ FIX: Usar LazyPages centralizado
@@ -377,11 +378,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
     // ✅ Estado para controlar dashboard moderno vs clássico
     const [isModernDashboard, setIsModernDashboard] = useState(false);
     
-    console.log('🔍 [COMPLETE_DASHBOARD] Componente renderizando:', {
-        hasUser: !!user,
-        userId: user?.id,
-        userRole: user?.role
-    });
+    
     
     return (
         <ErrorBoundary>
@@ -479,10 +476,12 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/specialty-assessments" element={LazyElement(SpecialtyAssessmentsPage, 'Avaliações Especializadas')} />
                 <Route path="/evaluations" element={LazyElement(SpecialtyAssessmentsPage, 'Avaliações')} />
                 
-                {/* Inventory */}
+                {/* Inventory & Supplies */}
                 <Route path="/inventory" element={LazyElement(InventoryPage)} />
                 <Route path="/estoque" element={LazyElement(InventoryPage)} />
                 <Route path="/inventory-dashboard" element={<Navigate to="/inventory" replace />} />
+                <Route path="/supplies" element={LazyElement(SuppliesPage, 'Gestão de Insumos')} />
+                <Route path="/insumos" element={<Navigate to="/supplies" replace />} />
                 
                 {/* Events */}
                 <Route path="/events" element={LazyElement(EventsListPage)} />

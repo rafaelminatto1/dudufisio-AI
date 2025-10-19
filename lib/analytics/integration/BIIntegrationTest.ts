@@ -38,17 +38,17 @@ export class BIIntegrationTest {
         supabaseUrl.includes('supabase.co');
 
       if (!hasValidCredentials) {
-        console.log('⚠️ No valid Supabase credentials found. Running in demo mode.');
+        
         return false;
       }
 
-      console.log('🚀 Initializing BI System with Supabase...');
+      
       this.biSystem = new BusinessIntelligenceSystem(supabaseUrl, supabaseKey);
       this.demo = new BISystemDemo(supabaseUrl, supabaseKey);
 
       // Test basic connection
       await this.biSystem.initialize();
-      console.log('✅ BI System initialized successfully with Supabase!');
+      
 
       return true;
     } catch (error) {
@@ -76,7 +76,7 @@ export class BIIntegrationTest {
     };
 
     if (!this.biSystem) {
-      console.log('❌ BI System not initialized');
+      
       return results;
     }
 
@@ -87,34 +87,34 @@ export class BIIntegrationTest {
 
     try {
       // Health Check
-      console.log('🔍 Running health check...');
+      
       const health = await this.biSystem.healthCheck();
       results.healthCheck = health.status !== 'error';
-      console.log(`${results.healthCheck ? '✅' : '❌'} Health Check: ${health.status}`);
+      
 
       // Dashboard
-      console.log('📊 Testing dashboard generation...');
+      
       const dashboard = await this.biSystem.generateExecutiveDashboard(period);
       results.dashboard = !!dashboard && !!dashboard.financial;
-      console.log(`${results.dashboard ? '✅' : '❌'} Dashboard Generation`);
+      
 
       // Charts
-      console.log('📈 Testing chart generation...');
+      
       const charts = await this.biSystem.generateCharts('financial', period);
       results.charts = Array.isArray(charts);
-      console.log(`${results.charts ? '✅' : '❌'} Chart Generation`);
+      
 
       // Anomalies
-      console.log('🔍 Testing anomaly detection...');
+      
       const anomalies = await this.biSystem.detectAnomalies(period);
       results.anomalies = Array.isArray(anomalies);
-      console.log(`${results.anomalies ? '✅' : '❌'} Anomaly Detection`);
+      
 
       // Reports
-      console.log('📋 Testing report generation...');
+      
       const report = await this.biSystem.generateCompleteReport(period);
       results.reports = !!report && !!report.id;
-      console.log(`${results.reports ? '✅' : '❌'} Report Generation`);
+      
 
     } catch (error) {
       console.error('❌ Basic verification failed:', error);
@@ -128,14 +128,14 @@ export class BIIntegrationTest {
    */
   async runCompleteDemo(): Promise<boolean> {
     if (!this.demo) {
-      console.log('⚠️ Demo not available - no valid Supabase credentials');
+      
       return false;
     }
 
     try {
-      console.log('🎯 Running complete BI system demonstration...');
+      
       await this.demo.runCompleteDemo();
-      console.log('✅ Complete demo finished successfully!');
+      
       return true;
     } catch (error) {
       console.error('❌ Complete demo failed:', error);
@@ -151,7 +151,7 @@ export class BIIntegrationTest {
     performanceMetrics.startOperation(testId);
 
     try {
-      console.log('🔄 Testing ETL pipeline...');
+      
 
       if (!this.biSystem) {
         return { success: false, metrics: null };
@@ -171,7 +171,7 @@ export class BIIntegrationTest {
         results: metrics.etlMetrics
       });
 
-      console.log('✅ ETL test passed');
+      
       return { success: true, metrics: metrics.etlMetrics };
     } catch (error) {
       performanceMetrics.endOperation(testId, 'etl', false);
@@ -188,7 +188,7 @@ export class BIIntegrationTest {
     performanceMetrics.startOperation(testId);
 
     try {
-      console.log('🗄️ Testing Data Warehouse...');
+      
 
       if (!this.biSystem) {
         return { success: false, recordCount: 0 };
@@ -209,7 +209,7 @@ export class BIIntegrationTest {
         results: { health }
       });
 
-      console.log(`${success ? '✅' : '❌'} Data Warehouse test ${success ? 'passed' : 'failed'}`);
+      
       return { success, recordCount: 0 };
     } catch (error) {
       performanceMetrics.endOperation(testId, 'query', false);
@@ -226,7 +226,7 @@ export class BIIntegrationTest {
     performanceMetrics.startOperation(testId);
 
     try {
-      console.log('🤖 Testing ML Models...');
+      
 
       if (!this.biSystem) {
         return { success: false, predictions: 0 };
@@ -255,7 +255,7 @@ export class BIIntegrationTest {
         results: { anomaliesCount: anomalies.length, noShowPrediction }
       });
 
-      console.log(`${success ? '✅' : '❌'} ML Models test ${success ? 'passed' : 'failed'}`);
+      
       return { success, predictions: anomalies.length + 1 };
     } catch (error) {
       performanceMetrics.endOperation(testId, 'ml', false);
@@ -272,7 +272,7 @@ export class BIIntegrationTest {
     performanceMetrics.startOperation(testId);
 
     try {
-      console.log('📊 Testing Chart Generation...');
+      
 
       if (!this.biSystem) {
         return { success: false, chartsGenerated: 0 };
@@ -321,7 +321,7 @@ export class BIIntegrationTest {
     performanceMetrics.startOperation(testId);
 
     try {
-      console.log('📤 Testing Export functionality...');
+      
 
       if (!this.biSystem) {
         return { success: false, formats: [] };
@@ -368,7 +368,7 @@ export class BIIntegrationTest {
     const testId = `performance_test_${Date.now()}`;
     
     try {
-      console.log('⚡ Testing Performance...');
+      
 
       const period = {
         start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
@@ -402,7 +402,7 @@ export class BIIntegrationTest {
         results: report
       });
 
-      console.log(`${success ? '✅' : '❌'} Performance test ${success ? 'passed' : 'failed'}`);
+      
       return { success, metrics: report };
     } catch (error) {
       console.error('❌ Performance test failed:', error);
@@ -463,7 +463,7 @@ export class BIIntegrationTest {
     performanceMetrics.startOperation(testId);
 
     try {
-      console.log('🔍 Validating Data Quality...');
+      
 
       const issues: string[] = [];
 
@@ -490,7 +490,7 @@ export class BIIntegrationTest {
         results: { issues }
       });
 
-      console.log(`${isValid ? '✅' : '❌'} Data quality ${isValid ? 'valid' : 'has issues'}`);
+      
       return { isValid, issues };
     } catch (error) {
       performanceMetrics.endOperation(testId, 'query', false);
@@ -585,35 +585,35 @@ export const biIntegrationTest = new BIIntegrationTest();
 
 // Auto-initialize function for browser console
 (window as any).testBIIntegration = async () => {
-  console.log('🎯 DuduFisio BI Integration Test');
-  console.log('================================');
+  
+  
 
   const initialized = await biIntegrationTest.initializeBI();
 
   if (initialized) {
-    console.log('\\n🧪 Running basic verification...');
+    
     const results = await biIntegrationTest.runBasicVerification();
 
-    console.log('\\n📊 Verification Results:');
+    
     Object.entries(results).forEach(([test, passed]) => {
-      console.log(`${passed ? '✅' : '❌'} ${test}`);
+      
     });
 
     const allPassed = Object.values(results).every(Boolean);
 
     if (allPassed) {
-      console.log('\\n🎉 All tests passed! BI system is fully functional.');
-      console.log('\\n🚀 You can run a complete demo with:');
+      
+      
       console.log('testBIDemo()');
     } else {
-      console.log('\\n⚠️ Some tests failed. Check Supabase configuration.');
+      
     }
   } else {
     console.log('\\n⚠️ BI System running in demo mode (no Supabase credentials).');
-    console.log('\\nTo test with Supabase:');
-    console.log('1. Configure VITE_SUPABASE_URL in .env.local');
-    console.log('2. Configure VITE_SUPABASE_ANON_KEY in .env.local');
-    console.log('3. Reload the application');
+    
+    
+    
+    
   }
 
   return biIntegrationTest.getIntegrationStatus();
@@ -623,7 +623,7 @@ export const biIntegrationTest = new BIIntegrationTest();
 (window as any).testBIDemo = async () => {
   const success = await biIntegrationTest.runCompleteDemo();
   if (!success) {
-    console.log('💡 Complete demo requires valid Supabase credentials.');
+    
   }
   return success;
 };

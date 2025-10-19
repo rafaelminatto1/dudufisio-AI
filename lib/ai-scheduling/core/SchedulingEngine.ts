@@ -121,7 +121,7 @@ export class SchedulingEngine {
    */
   async scheduleAppointment(request: SmartSchedulingRequest): Promise<SmartSchedulingResponse> {
     try {
-      console.log(`🎯 Iniciando agendamento inteligente para ${request.patient.name}`);
+      
       
       // 1. Prever demanda para o período
       const demandPrediction = await this.predictDemand(request);
@@ -194,7 +194,7 @@ export class SchedulingEngine {
     requests: SmartSchedulingRequest[]
   ): Promise<SmartSchedulingResponse[]> {
     try {
-      console.log(`🎯 Agendando ${requests.length} consultas em lote`);
+      
       
       // Ordenar por prioridade e urgência
       const sortedRequests = this.sortRequestsByPriority(requests);
@@ -222,7 +222,7 @@ export class SchedulingEngine {
         }
       }
       
-      console.log(`✅ Agendamento em lote concluído: ${responses.length}/${requests.length} sucessos`);
+      
       return responses;
       
     } catch (error) {
@@ -238,7 +238,7 @@ export class SchedulingEngine {
     appointmentIds: string[]
   ): Promise<ResourceOptimization[]> {
     try {
-      console.log(`🎯 Otimizando ${appointmentIds.length} agendamentos existentes`);
+      
       
       const optimizations: ResourceOptimization[] = [];
       
@@ -275,7 +275,7 @@ export class SchedulingEngine {
         }
       }
       
-      console.log(`✅ Otimização concluída: ${optimizations.length}/${appointmentIds.length} sucessos`);
+      
       return optimizations;
       
     } catch (error) {

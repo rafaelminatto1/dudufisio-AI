@@ -77,8 +77,8 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
       const allEquipment = integratedExerciseService.getEquipment();
       const stats = integratedExerciseService.getStatistics();
 
-      console.log('🔍 DEBUG - Total exercícios carregados:', allExercises.length);
-      console.log('🔍 DEBUG - Categorias:', allCategories);
+      
+      
       console.log('🔍 DEBUG - Exercícios por categoria:', allCategories.map(cat => ({
         categoria: cat,
         quantidade: allExercises.filter(ex => ex.category === cat).length
@@ -174,7 +174,7 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
 
   const handleSaveExercise = async (data: Omit<Exercise, 'id'> & { id?: string }) => {
     // Implementar salvamento
-    console.log('Salvando exercício:', data);
+    
     handleCloseExerciseModal();
     // Recarregar dados após salvar
     await loadData();
@@ -182,7 +182,7 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
   
   const handleDeleteExercise = (exercise: Exercise) => {
     if(window.confirm(`Tem certeza que deseja excluir o exercício "${exercise.name}"?`)) {
-      console.log('Excluindo exercício:', exercise.id);
+      
       // Implementar exclusão
       loadData();
     }
@@ -194,13 +194,13 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
   };
 
   const handleSaveGroup = async (newName: string) => {
-    console.log('Salvando grupo:', newName);
+    
     setIsGroupModalOpen(false);
   };
   
   const handleDeleteCategory = (name: string) => {
     if(window.confirm(`Tem certeza que deseja excluir o grupo "${name}" e todos os seus exercícios? Esta ação não pode ser desfeita.`)) {
-      console.log('Excluindo categoria:', name);
+      
       loadData();
     }
   };

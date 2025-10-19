@@ -231,7 +231,7 @@ export class WhatsAppService {
     try {
       // Buscar interação pelo message_id
       // Atualizar status na tabela lead_interactions
-      console.log('Status de mensagem recebido:', status);
+      
     } catch (error) {
       console.error('Erro ao processar status:', error);
     }
@@ -248,7 +248,7 @@ export class WhatsAppService {
   ): Promise<void> {
     // Implementação com Bull/BullMQ
     // Por enquanto, placeholder
-    console.log(`Mensagem agendada para ${to} em ${scheduledAt}`);
+    
     
     // TODO: Adicionar à fila de mensagens
   }

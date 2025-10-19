@@ -13,7 +13,7 @@ export class BISystemTests {
     results: Record<string, { passed: boolean; error?: string; duration: number }>;
     summary: { total: number; passed: number; failed: number };
   }> {
-    console.log('🧪 Iniciando testes do Sistema de Business Intelligence...');
+    
 
     const testResults: Record<string, { passed: boolean; error?: string; duration: number }> = {};
     const testPeriod: DateRange = {
@@ -141,15 +141,15 @@ export class BISystemTests {
     const summary = { total, passed, failed };
     const success = failed === 0;
 
-    console.log('\n📊 Resumo dos Testes:');
-    console.log(`✅ Passou: ${passed}/${total}`);
-    console.log(`❌ Falhou: ${failed}/${total}`);
+    
+    
+    
     console.log(`📈 Taxa de Sucesso: ${((passed / total) * 100).toFixed(1)}%`);
 
     if (success) {
-      console.log('\n🎉 Todos os testes passaram! Sistema BI totalmente funcional.');
+      
     } else {
-      console.log('\n⚠️ Alguns testes falharam. Verifique os detalhes acima.');
+      
     }
 
     return { success, results: testResults, summary };
@@ -163,7 +163,7 @@ export class BISystemTests {
     const startTime = Date.now();
 
     try {
-      console.log(`🧪 Executando: ${testName}...`);
+      
       await testFunction();
 
       const duration = Date.now() - startTime;
@@ -185,7 +185,7 @@ export class BISystemTests {
     exportTime: number;
     etlTime: number;
   }> {
-    console.log('⚡ Executando testes de performance...');
+    
 
     const testPeriod: DateRange = {
       start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
@@ -205,9 +205,9 @@ export class BISystemTests {
     try {
       await this.biSystem.generateExecutiveDashboard(testPeriod);
       performance.dashboardGenerationTime = Date.now() - dashboardStart;
-      console.log(`📊 Dashboard: ${performance.dashboardGenerationTime}ms`);
+      
     } catch (error) {
-      console.log(`❌ Dashboard test failed: ${error}`);
+      
     }
 
     // Report performance
@@ -215,7 +215,7 @@ export class BISystemTests {
     try {
       const report = await this.biSystem.generateCompleteReport(testPeriod);
       performance.reportGenerationTime = Date.now() - reportStart;
-      console.log(`📋 Relatório: ${performance.reportGenerationTime}ms`);
+      
 
       // Export performance
       const exportStart = Date.now();
@@ -225,9 +225,9 @@ export class BISystemTests {
         includeRawData: false
       });
       performance.exportTime = Date.now() - exportStart;
-      console.log(`📤 Exportação: ${performance.exportTime}ms`);
+      
     } catch (error) {
-      console.log(`❌ Report/Export test failed: ${error}`);
+      
     }
 
     // Chart performance
@@ -235,9 +235,9 @@ export class BISystemTests {
     try {
       await this.biSystem.generateCharts('financial', testPeriod);
       performance.chartGenerationTime = Date.now() - chartStart;
-      console.log(`📈 Gráficos: ${performance.chartGenerationTime}ms`);
+      
     } catch (error) {
-      console.log(`❌ Chart test failed: ${error}`);
+      
     }
 
     // ETL performance
@@ -245,17 +245,17 @@ export class BISystemTests {
     try {
       await this.biSystem.runETL(true);
       performance.etlTime = Date.now() - etlStart;
-      console.log(`🔄 ETL: ${performance.etlTime}ms`);
+      
     } catch (error) {
-      console.log(`❌ ETL test failed: ${error}`);
+      
     }
 
-    console.log('\n⚡ Resultados de Performance:');
-    console.log(`📊 Dashboard: ${performance.dashboardGenerationTime}ms`);
-    console.log(`📋 Relatório: ${performance.reportGenerationTime}ms`);
-    console.log(`📈 Gráficos: ${performance.chartGenerationTime}ms`);
-    console.log(`📤 Exportação: ${performance.exportTime}ms`);
-    console.log(`🔄 ETL: ${performance.etlTime}ms`);
+    
+    
+    
+    
+    
+    
 
     return performance;
   }
@@ -266,7 +266,7 @@ export class BISystemTests {
     indexPerformance: boolean;
     referentialIntegrity: boolean;
   }> {
-    console.log('🔍 Executando testes de qualidade de dados...');
+    
 
     const results = {
       warehouseIntegrity: false,
@@ -279,46 +279,46 @@ export class BISystemTests {
     try {
       const health = await this.biSystem.healthCheck();
       results.warehouseIntegrity = health.components.warehouse === 'ok';
-      console.log(`🏗️ Integridade do Warehouse: ${results.warehouseIntegrity ? '✅' : '❌'}`);
+      
     } catch (error) {
-      console.log(`❌ Teste de integridade falhou: ${error}`);
+      
     }
 
     // Test data consistency (mock implementation)
     try {
       // In a real implementation, would run consistency checks
       results.dataConsistency = true;
-      console.log(`📊 Consistência de Dados: ${results.dataConsistency ? '✅' : '❌'}`);
+      
     } catch (error) {
-      console.log(`❌ Teste de consistência falhou: ${error}`);
+      
     }
 
     // Test index performance (mock implementation)
     try {
       // In a real implementation, would check index usage and performance
       results.indexPerformance = true;
-      console.log(`⚡ Performance de Índices: ${results.indexPerformance ? '✅' : '❌'}`);
+      
     } catch (error) {
-      console.log(`❌ Teste de índices falhou: ${error}`);
+      
     }
 
     // Test referential integrity (mock implementation)
     try {
       // In a real implementation, would verify foreign key relationships
       results.referentialIntegrity = true;
-      console.log(`🔗 Integridade Referencial: ${results.referentialIntegrity ? '✅' : '❌'}`);
+      
     } catch (error) {
-      console.log(`❌ Teste de integridade referencial falhou: ${error}`);
+      
     }
 
     const allPassed = Object.values(results).every(Boolean);
-    console.log(`\n🔍 Qualidade de Dados: ${allPassed ? '✅ APROVADO' : '❌ NECESSITA ATENÇÃO'}`);
+    
 
     return results;
   }
 
   async generateTestReport(): Promise<string> {
-    console.log('📋 Gerando relatório de testes...');
+    
 
     const functionalTests = await this.runAllTests();
     const performanceTests = await this.runPerformanceTests();
@@ -397,7 +397,7 @@ ${functionalTests.success && Object.values(dataQualityTests).every(Boolean) ?
 *Relatório gerado automaticamente pelo sistema de testes do BI*
     `;
 
-    console.log('✅ Relatório de testes gerado com sucesso!');
+    
     return report.trim();
   }
 }

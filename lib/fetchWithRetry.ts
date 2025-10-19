@@ -88,7 +88,7 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
  *   retryDelay: 2000,
  *   timeout: 10000,
  *   onRetry: (attempt, error) => {
- *     console.log(`Tentativa ${attempt} falhou:`, error.message);
+ *     
  *   }
  * });
  * ```
@@ -110,7 +110,7 @@ export async function fetchWithRetry<T = any>(
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      console.log(`🔵 [FETCH] Tentativa ${attempt + 1}/${retries + 1}: ${url}`);
+      
 
       // Fazer request com timeout
       const fetchPromise = fetch(url, fetchOptions);
@@ -138,7 +138,7 @@ export async function fetchWithRetry<T = any>(
         data = (await response.blob()) as unknown as T;
       }
 
-      console.log(`✅ [FETCH] Sucesso: ${url}`);
+      
       return data;
 
     } catch (error: any) {

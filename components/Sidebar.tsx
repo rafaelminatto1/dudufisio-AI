@@ -132,7 +132,8 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
           managementNav: [
             { to: '/user-management', icon: Users2, label: 'Gestão de Usuários' },
             { to: '/groups', icon: Users2, label: 'Grupos' },
-            { to: '/inventory', icon: Package, label: 'Estoque/Insumos' },
+            { to: '/supplies', icon: Package, label: 'Gestão de Insumos' },
+            { to: '/inventory', icon: Package, label: 'Estoque/Inventário' },
             { to: '/inventory-dashboard', icon: Monitor, label: 'Dashboard de Estoque' },
             { to: '/events', icon: Ticket, label: 'Eventos' },
             { to: '/events-list', icon: Calendar, label: 'Lista de Eventos' },
@@ -264,7 +265,7 @@ const Sidebar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   
   // 🔍 DEBUG: Logs para investigar problema do sidebar
-  console.log('🔍 [SIDEBAR] Componente Sidebar renderizando...');
+  
   
   let user, logout;
   let unreadCount = 0;
@@ -303,10 +304,7 @@ const Sidebar: React.FC = () => {
 
   // Get filtered navigation based on user role - memoizado
   const navigation = useMemo(() => {
-    console.log('🔍 [SIDEBAR] Calculando navegação:', { 
-      hasUser: !!user, 
-      userRole: user?.role 
-    });
+    
     
     const nav = user ? getFilteredNavigation(user.role, unreadCount) : {
       mainNav: [],
@@ -317,14 +315,7 @@ const Sidebar: React.FC = () => {
       systemNav: []
     };
     
-    console.log('🔍 [SIDEBAR] Navegação calculada:', {
-      mainNavCount: nav.mainNav.length,
-      clinicalNavCount: nav.clinicalNav?.length || 0,
-      aiToolsNavCount: nav.aiToolsNav.length,
-      managementNavCount: nav.managementNav.length,
-      analyticsNavCount: nav.analyticsNav?.length || 0,
-      systemNavCount: nav.systemNav?.length || 0
-    });
+    
     
     return nav;
   }, [user?.role, unreadCount]);

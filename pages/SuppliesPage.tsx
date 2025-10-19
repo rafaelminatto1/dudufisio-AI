@@ -31,7 +31,7 @@ const SuppliesPage: React.FC = () => {
   };
 
   const handleDeleteSupply = (supply: Supply) => {
-    console.log('Deletar insumo:', supply.name);
+    
     // Implementar lógica de exclusão
   };
 
@@ -63,12 +63,12 @@ const SuppliesPage: React.FC = () => {
 
   const handleNavigateToAlerts = () => {
     // Implementar navegação para alertas
-    console.log('Navegar para alertas');
+    
   };
 
   const handleNavigateToOrders = () => {
     // Implementar navegação para pedidos
-    console.log('Navegar para pedidos');
+    
   };
 
   const renderContent = () => {

@@ -231,7 +231,7 @@ class BackupService {
     }
 
     if (!this.config.enabled) {
-      console.log('⏸️ Backup desabilitado');
+      
       return;
     }
 
@@ -240,12 +240,12 @@ class BackupService {
       this.checkBackupSchedule();
     }, 60 * 60 * 1000); // 1 hora
 
-    console.log('⏰ Agendador de backup inicializado');
+    
   }
 
   private async checkBackupSchedule(): Promise<void> {
     if (this.isRunning) {
-      console.log('⏳ Backup já em execução, pulando agendamento');
+      
       return;
     }
 
@@ -255,14 +255,14 @@ class BackupService {
 
     // Verificar se precisa de backup completo (semanal)
     if (this.shouldRunFullBackup(lastFullBackup, now)) {
-      console.log('🔄 Iniciando backup completo agendado');
+      
       await this.createBackup('full', true);
       return;
     }
 
     // Verificar se precisa de backup incremental
     if (this.shouldRunIncrementalBackup(lastIncrementalBackup, now)) {
-      console.log('📝 Iniciando backup incremental agendado');
+      
       await this.createBackup('incremental', true);
       return;
     }
@@ -317,7 +317,7 @@ class BackupService {
       this.currentBackup = metadata;
       metadata.status = 'running';
 
-      console.log(`🚀 Iniciando backup ${type}...`);
+      
 
       const startTime = Date.now();
 
@@ -328,13 +328,13 @@ class BackupService {
       let finalData = dataToBackup;
       if (this.config.compression.enabled) {
         finalData = await this.compressData(dataToBackup);
-        console.log('🗜️ Dados comprimidos');
+        
       }
 
       // 3. Criptografar dados se habilitado
       if (this.config.encryption.enabled) {
         finalData = await this.encryptData(finalData);
-        console.log('🔐 Dados criptografados');
+        
       }
 
       // 4. Calcular checksum
@@ -350,7 +350,7 @@ class BackupService {
         try {
           await this.saveToDestination(finalData, metadata, destination);
           metadata.destination = destination.id;
-          console.log(`✅ Backup salvo em: ${destination.name}`);
+          
         } catch (error) {
           console.error(`❌ Falha ao salvar em ${destination.name}:`, error);
           continue; // Tentar próximo destino
@@ -363,7 +363,7 @@ class BackupService {
         if (!isValid) {
           throw new Error('Falha na verificação de integridade');
         }
-        console.log('✅ Integridade verificada');
+        
       }
 
       // 7. Finalizar backup
@@ -384,7 +384,7 @@ class BackupService {
         resourceType: 'backup'
       });
 
-      console.log(`✅ Backup ${type} concluído em ${metadata.duration}ms`);
+      
 
       return metadata;
 
@@ -500,7 +500,7 @@ class BackupService {
 
   private async encryptData(data: ArrayBuffer): Promise<ArrayBuffer> {
     // Implementação simplificada - em produção usar Web Crypto API
-    console.log('🔐 Simulando criptografia AES-256-GCM');
+    
     return data;
   }
 
@@ -572,12 +572,12 @@ class BackupService {
 
   private async saveToSupabase(data: ArrayBuffer, filename: string, config: any): Promise<void> {
     // Implementação para Supabase Storage
-    console.log(`🔄 Salvando backup no Supabase: ${filename}`);
+    
 
     // Simular salvamento (implementar com Supabase client real)
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log(`✅ Backup salvo no Supabase: ${filename}`);
+        
         resolve();
       }, 1000);
     });
@@ -615,10 +615,10 @@ class BackupService {
    */
   public async restoreBackup(options: RestoreOptions): Promise<boolean> {
     try {
-      console.log(`🔄 Iniciando restauração do backup: ${options.backupId}`);
+      
 
       if (options.dryRun) {
-        console.log('🧪 Modo dry-run ativado - apenas simulação');
+        
       }
 
       const backup = this.getBackupById(options.backupId);
@@ -659,7 +659,7 @@ class BackupService {
         resourceType: 'backup'
       });
 
-      console.log('✅ Restauração concluída com sucesso');
+      
       return true;
 
     } catch (error) {
@@ -733,13 +733,13 @@ class BackupService {
 
   private async decryptData(data: ArrayBuffer): Promise<ArrayBuffer> {
     // Implementação simplificada
-    console.log('🔓 Simulando descriptografia');
+    
     return data;
   }
 
   private async decompressData(data: ArrayBuffer): Promise<ArrayBuffer> {
     // Implementação simplificada
-    console.log('📦 Simulando descompressão');
+    
     return data;
   }
 
@@ -753,24 +753,24 @@ class BackupService {
     // Restaurar seletivamente
     if (selective.includePatients && data.patients) {
       localStorage.setItem('patients', JSON.stringify(data.patients));
-      console.log(`✅ ${data.patients.length} pacientes restaurados`);
+      
     }
 
     if (selective.includeAppointments && data.appointments) {
       localStorage.setItem('appointments', JSON.stringify(data.appointments));
-      console.log(`✅ ${data.appointments.length} consultas restauradas`);
+      
     }
 
     if (selective.includeClinicalNotes && data.clinicalNotes) {
       localStorage.setItem('clinical-notes', JSON.stringify(data.clinicalNotes));
-      console.log(`✅ ${data.clinicalNotes.length} anotações clínicas restauradas`);
+      
     }
 
     if (selective.includeSettings && data.settings) {
       Object.keys(data.settings).forEach(key => {
         localStorage.setItem(key, JSON.stringify(data.settings[key]));
       });
-      console.log('✅ Configurações restauradas');
+      
     }
   }
 
@@ -781,7 +781,7 @@ class BackupService {
       if (data[category]) {
         const key = category === 'clinicalNotes' ? 'clinical-notes' : category;
         localStorage.setItem(key, JSON.stringify(data[category]));
-        console.log(`✅ ${category} restaurado`);
+        
       }
     }
 
@@ -789,7 +789,7 @@ class BackupService {
       Object.keys(data.settings).forEach(key => {
         localStorage.setItem(key, JSON.stringify(data.settings[key]));
       });
-      console.log('✅ Configurações restauradas');
+      
     }
   }
 
@@ -797,7 +797,7 @@ class BackupService {
    * 🧹 LIMPEZA DE BACKUPS ANTIGOS
    */
   private async cleanupOldBackups(): Promise<void> {
-    console.log('🧹 Iniciando limpeza de backups antigos...');
+    
 
     const { retention } = this.config;
     const now = new Date();
@@ -845,7 +845,7 @@ class BackupService {
     for (const backupId of toDelete) {
       try {
         await this.deleteBackup(backupId);
-        console.log(`🗑️ Backup antigo removido: ${backupId}`);
+        
       } catch (error) {
         console.error(`❌ Erro ao remover backup ${backupId}:`, error);
       }
@@ -855,7 +855,7 @@ class BackupService {
     this.backupHistory = this.backupHistory.filter(b => !toDelete.includes(b.id));
     this.saveBackupHistory();
 
-    console.log(`✅ Limpeza concluída: ${toDelete.length} backups removidos`);
+    
   }
 
   private async deleteBackup(backupId: string): Promise<void> {
@@ -911,7 +911,7 @@ class BackupService {
 
   private async deleteFromSupabase(backupId: string): Promise<void> {
     // Implementar com Supabase client real
-    console.log(`🔄 Simulando deleção do Supabase: ${backupId}`);
+    
   }
 
   /**
@@ -1026,18 +1026,18 @@ class BackupService {
     if (this.scheduleTimer) {
       clearInterval(this.scheduleTimer);
       this.scheduleTimer = null;
-      console.log('⏸️ Agendador de backup pausado');
+      
     }
   }
 
   public async resumeScheduler(): Promise<void> {
     this.initializeScheduler();
-    console.log('▶️ Agendador de backup retomado');
+    
   }
 
   public async testBackupSystem(): Promise<boolean> {
     try {
-      console.log('🧪 Testando sistema de backup...');
+      
 
       // Criar backup de teste
       const testBackup = await this.createBackup('incremental', false);
@@ -1053,7 +1053,7 @@ class BackupService {
         throw new Error('Falha na verificação de integridade');
       }
 
-      console.log('✅ Sistema de backup funcionando corretamente');
+      
       return true;
 
     } catch (error) {

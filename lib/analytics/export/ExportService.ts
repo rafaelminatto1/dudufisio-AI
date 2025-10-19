@@ -4,7 +4,7 @@ export class ExportService {
 
   async exportReport(report: Report, options: ExportOptions): Promise<string> {
     try {
-      console.log(`📤 Exportando relatório em formato ${options.format}...`);
+      
 
       switch (options.format) {
         case 'pdf':
@@ -26,7 +26,7 @@ export class ExportService {
   }
 
   private async exportToPDF(report: Report, options: ExportOptions): Promise<string> {
-    console.log('📄 Gerando relatório em PDF...');
+    
 
     // In a real implementation, this would use a PDF library like jsPDF or Puppeteer
     const htmlContent = this.generateHTMLReport(report, options);
@@ -92,13 +92,13 @@ startxref
 
     // In production, this would save the file and return the path
     const fileName = `relatorio_${report.id}_${Date.now()}.pdf`;
-    console.log(`✅ PDF gerado: ${fileName}`);
+    
 
     return pdfContent;
   }
 
   private async exportToExcel(report: Report, options: ExportOptions): Promise<string> {
-    console.log('📊 Gerando relatório em Excel...');
+    
 
     // In a real implementation, this would use a library like ExcelJS or SheetJS
     const workbookData: {
@@ -174,12 +174,12 @@ startxref
     const excelContent = JSON.stringify(workbookData, null, 2);
     const fileName = `relatorio_${report.id}_${Date.now()}.xlsx`;
 
-    console.log(`✅ Excel gerado: ${fileName}`);
+    
     return excelContent;
   }
 
   private async exportToCSV(report: Report, options: ExportOptions): Promise<string> {
-    console.log('📋 Gerando relatório em CSV...');
+    
 
     let csvContent = '';
 
@@ -231,13 +231,13 @@ startxref
     }
 
     const fileName = `relatorio_${report.id}_${Date.now()}.csv`;
-    console.log(`✅ CSV gerado: ${fileName}`);
+    
 
     return csvContent;
   }
 
   private exportToJSON(report: Report, options: ExportOptions): string {
-    console.log('🔧 Gerando relatório em JSON...');
+    
 
     const jsonData: any = {
       metadata: {
@@ -264,7 +264,7 @@ startxref
     }
 
     const fileName = `relatorio_${report.id}_${Date.now()}.json`;
-    console.log(`✅ JSON gerado: ${fileName}`);
+    
 
     return JSON.stringify(jsonData, null, 2);
   }
@@ -473,7 +473,7 @@ startxref
   }
 
   async compressExport(content: string, format: ExportFormat): Promise<string> {
-    console.log('🗜️ Comprimindo arquivo exportado...');
+    
 
     // In a real implementation, this would use a compression library
     // For now, just return the content with compression info
@@ -485,7 +485,7 @@ startxref
       timestamp: new Date().toISOString()
     };
 
-    console.log(`✅ Arquivo comprimido: ${compressionInfo.compressionRatio * 100}% de redução`);
+    
 
     // Return compression metadata (in reality, would return compressed content)
     return JSON.stringify({
@@ -538,9 +538,9 @@ ${Object.entries(summary.formatDistribution).map(([format, count]) =>
     schedule: string,
     recipients: string[]
   ): Promise<void> {
-    console.log(`📅 Agendando exportação automática: ${reportId} em formato ${format}`);
+    
     console.log(`📧 Destinatários: ${recipients.join(', ')}`);
-    console.log(`⏰ Cronograma: ${schedule}`);
+    
 
     // In a real implementation, this would integrate with a job scheduler
     const scheduleConfig = {
@@ -587,7 +587,7 @@ ${Object.entries(summary.formatDistribution).map(([format, count]) =>
 
     const hasPermission = allowedFormats.includes(format);
 
-    console.log(`🔐 Validação de permissão - Usuário: ${userId}, Formato: ${format}, Permitido: ${hasPermission}`);
+    
 
     return hasPermission;
   }

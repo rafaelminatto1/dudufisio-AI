@@ -427,7 +427,7 @@ Responda como um assistente especializado em fisioterapia, mantendo tom profissi
 
   public async logUsage(context: string, provider: string, success: boolean, responseTime: number): Promise<void> {
     // Em produção, salvaria no banco de dados
-    console.log(`AI Usage Log: ${context} | ${provider} | Success: ${success} | Time: ${responseTime}ms`);
+    
   }
 }
 

@@ -50,7 +50,7 @@ const complianceManager = createComplianceManager();
  * Exemplo 1: Agendamento com verificação de compliance
  */
 export async function exemploAgendamentoComCompliance() {
-  console.log('🔒 Exemplo 1: Agendamento com Compliance');
+  
   
   const request: SmartSchedulingRequest = {
     patient: {
@@ -102,7 +102,7 @@ export async function exemploAgendamentoComCompliance() {
   
   try {
     // 1. Registrar consentimento LGPD primeiro
-    console.log('📝 Registrando consentimento LGPD...');
+    
     const lgpdService = complianceManager.getLGPDService();
     
     const consent = await lgpdService.registerConsent('patient_123', {
@@ -121,10 +121,10 @@ export async function exemploAgendamentoComCompliance() {
       retentionPeriod: 2555 // 7 anos
     });
     
-    console.log('✅ Consentimento registrado:', consent.id);
+    
     
     // 2. Registrar supervisão COFFITO
-    console.log('🏥 Registrando supervisão COFFITO...');
+    
     const coffitoService = complianceManager.getCOFFITOService();
     
     const supervision = await coffitoService.registerSupervision(
@@ -141,15 +141,15 @@ export async function exemploAgendamentoComCompliance() {
       }
     );
     
-    console.log('✅ Supervisão registrada:', supervision.id);
+    
     
     // 3. Agendar consulta (compliance será verificado automaticamente)
-    console.log('🎯 Agendando consulta com verificação de compliance...');
+    
     const response = await aiSchedulingService.scheduleAppointment(request);
     
-    console.log('✅ Agendamento realizado com sucesso!');
-    console.log('📅 Agendamento:', response.appointment);
-    console.log('🔒 Status de compliance: Conforme');
+    
+    
+    
     
     return response;
     
@@ -163,7 +163,7 @@ export async function exemploAgendamentoComCompliance() {
  * Exemplo 2: Processamento de prompt com compliance
  */
 export async function exemploPromptComCompliance() {
-  console.log('🧠 Exemplo 2: Prompt com Compliance');
+  
   
   const request: PromptRequest = {
     type: 'clinical_analysis',
@@ -195,7 +195,7 @@ export async function exemploPromptComCompliance() {
   
   try {
     // Verificar se há consentimento para processamento de dados pessoais
-    console.log('🔒 Verificando consentimento para processamento de IA...');
+    
     const lgpdService = complianceManager.getLGPDService();
     
     const hasConsent = await lgpdService.hasValidConsent(
@@ -205,7 +205,7 @@ export async function exemploPromptComCompliance() {
     );
     
     if (!hasConsent) {
-      console.log('📝 Registrando consentimento para IA...');
+      
       await lgpdService.registerConsent('patient_123', {
         consentType: 'data_processing',
         purpose: 'Processamento de dados pessoais por IA para análise clínica',
@@ -224,12 +224,12 @@ export async function exemploPromptComCompliance() {
     }
     
     // Processar prompt (compliance será verificado automaticamente)
-    console.log('🧠 Processando prompt com verificação de compliance...');
+    
     const response = await aiSchedulingService.processPrompt(request);
     
-    console.log('✅ Prompt processado com sucesso!');
-    console.log('📝 Conteúdo:', response.content);
-    console.log('🔒 Status de compliance: Conforme');
+    
+    
+    
     
     return response;
     
@@ -243,50 +243,40 @@ export async function exemploPromptComCompliance() {
  * Exemplo 3: Monitoramento de compliance em tempo real
  */
 export async function exemploMonitoramentoCompliance() {
-  console.log('📊 Exemplo 3: Monitoramento de Compliance');
+  
   
   try {
     // Iniciar monitoramento de compliance
-    console.log('🔍 Iniciando monitoramento de compliance...');
+    
     await aiSchedulingService.startComplianceMonitoring();
     
     // Obter status de compliance
-    console.log('📊 Obtendo status de compliance...');
+    
     const status = await aiSchedulingService.getComplianceStatus();
     
     if (status) {
-      console.log('✅ Status de compliance:', {
-        overall: status.overall,
-        lgpd: status.lgpd.status,
-        coffito: status.coffito.status
-      });
+      
     }
     
     // Obter dashboard de compliance
-    console.log('📈 Obtendo dashboard de compliance...');
+    
     const dashboard = await aiSchedulingService.getComplianceDashboard();
     
     if (dashboard) {
-      console.log('📊 Dashboard de compliance:', {
-        totalConsents: dashboard.metrics.totalConsents,
-        activeConsents: dashboard.metrics.activeConsents,
-        dataBreaches: dashboard.metrics.dataBreaches,
-        ethicsViolations: dashboard.metrics.ethicsViolations,
-        recommendations: dashboard.recommendations.length
-      });
+      
     }
     
     // Simular algumas operações para testar monitoramento
-    console.log('🔄 Simulando operações para testar monitoramento...');
+    
     
     // Aguardar um pouco para ver o monitoramento em ação
     await new Promise(resolve => setTimeout(resolve, 10000));
     
     // Parar monitoramento
-    console.log('🛑 Parando monitoramento...');
+    
     await aiSchedulingService.stopComplianceMonitoring();
     
-    console.log('✅ Monitoramento de compliance concluído');
+    
     
   } catch (error) {
     console.error('❌ Erro no monitoramento de compliance:', error);
@@ -298,7 +288,7 @@ export async function exemploMonitoramentoCompliance() {
  * Exemplo 4: Relatório de conformidade
  */
 export async function exemploRelatorioConformidade() {
-  console.log('📋 Exemplo 4: Relatório de Conformidade');
+  
   
   try {
     const period = {
@@ -307,49 +297,28 @@ export async function exemploRelatorioConformidade() {
     };
     
     // Gerar relatório LGPD
-    console.log('📊 Gerando relatório LGPD...');
+    
     const lgpdService = complianceManager.getLGPDService();
     const lgpdReport = await lgpdService.getComplianceReport(period);
     
-    console.log('✅ Relatório LGPD:', {
-      totalConsents: lgpdReport.totalConsents,
-      activeConsents: lgpdReport.activeConsents,
-      withdrawnConsents: lgpdReport.withdrawnConsents,
-      dataBreaches: lgpdReport.dataBreaches,
-      complianceScore: lgpdReport.complianceScore
-    });
+    
     
     // Gerar relatório COFFITO
-    console.log('🏥 Gerando relatório COFFITO...');
+    
     const coffitoService = complianceManager.getCOFFITOService();
     const coffitoReport = await coffitoService.getComplianceReport('therapist_1', period);
     
-    console.log('✅ Relatório COFFITO:', {
-      overallScore: coffitoReport.overallScore,
-      grade: coffitoReport.grade,
-      supervisions: coffitoReport.supervisions,
-      documentations: coffitoReport.documentations,
-      ethicsViolations: coffitoReport.ethicsViolations,
-      status: coffitoReport.status
-    });
+    
     
     // Gerar relatório combinado
-    console.log('📋 Gerando relatório combinado...');
+    
     const combinedReport = await complianceManager.generateComplianceReport(
       'combined',
       period,
       'system'
     );
     
-    console.log('✅ Relatório combinado:', {
-      id: combinedReport.id,
-      type: combinedReport.type,
-      overallScore: combinedReport.summary.overallScore,
-      status: combinedReport.summary.status,
-      totalIssues: combinedReport.summary.totalIssues,
-      recommendations: combinedReport.recommendations.length,
-      actionPlan: combinedReport.actionPlan.length
-    });
+    
     
     return {
       lgpdReport,
@@ -367,11 +336,11 @@ export async function exemploRelatorioConformidade() {
  * Exemplo 5: Gestão de alertas de compliance
  */
 export async function exemploGestaoAlertas() {
-  console.log('🚨 Exemplo 5: Gestão de Alertas de Compliance');
+  
   
   try {
     // Criar alerta de compliance
-    console.log('🚨 Criando alerta de compliance...');
+    
     const alert = await complianceManager.createAlert({
       type: 'lgpd',
       severity: 'high',
@@ -383,21 +352,21 @@ export async function exemploGestaoAlertas() {
       isResolved: false
     });
     
-    console.log('✅ Alerta criado:', alert.id);
+    
     
     // Listar alertas ativos
-    console.log('📋 Listando alertas ativos...');
+    
     const dashboard = await complianceManager.getComplianceDashboard();
     
     if (dashboard) {
-      console.log('🚨 Alertas ativos:', dashboard.alerts.length);
+      
       dashboard.alerts.forEach((alert: { title: string; severity: string; type: string }) => {
         console.log(`- ${alert.title}: ${alert.severity} (${alert.type})`);
       });
     }
     
     // Resolver alerta
-    console.log('✅ Resolvendo alerta...');
+    
     const resolved = await complianceManager.resolveAlert(
       alert.id,
       'admin',
@@ -405,7 +374,7 @@ export async function exemploGestaoAlertas() {
     );
     
     if (resolved) {
-      console.log('✅ Alerta resolvido com sucesso');
+      
     }
     
     return {
@@ -423,7 +392,7 @@ export async function exemploGestaoAlertas() {
  * Função principal para executar todos os exemplos de compliance
  */
 export async function executarExemplosCompliance() {
-  console.log('🔒 Iniciando exemplos de Compliance LGPD/COFFITO');
+  
   console.log('=' .repeat(80));
   
   try {
@@ -447,7 +416,7 @@ export async function executarExemplosCompliance() {
     await exemploGestaoAlertas();
     
     console.log('\n' + '='.repeat(80));
-    console.log('✅ Todos os exemplos de compliance executados com sucesso!');
+    
     
   } catch (error) {
     console.error('❌ Erro na execução dos exemplos de compliance:', error);

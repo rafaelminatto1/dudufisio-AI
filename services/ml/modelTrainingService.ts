@@ -26,7 +26,7 @@ class ModelTrainingService {
    * Coletar dados de treinamento
    */
   async collectTrainingData(predictionType: string): Promise<TrainingData> {
-    console.log(`[ML] Coletando dados para ${predictionType}...`);
+    
 
     let features: any[] = [];
     let labels: any[] = [];
@@ -48,7 +48,7 @@ class ModelTrainingService {
         throw new Error(`Tipo de predição não suportado: ${predictionType}`);
     }
 
-    console.log(`[ML] Coletados ${features.length} exemplos`);
+    
 
     return {
       features,
@@ -69,7 +69,7 @@ class ModelTrainingService {
     predictionType: string,
     algorithm: string = 'random_forest'
   ): Promise<TrainingResult> {
-    console.log(`[ML] Iniciando treinamento de ${modelName}...`);
+    
 
     // 1. Coletar dados
     const trainingData = await this.collectTrainingData(predictionType);
@@ -106,7 +106,7 @@ class ModelTrainingService {
       // 5. Atualizar modelo com novas métricas
       await this.updateModelMetrics(modelName, results);
 
-      console.log(`[ML] Treinamento completo! Accuracy: ${results.accuracy}`);
+      
 
       return results;
     } catch (error) {
@@ -127,7 +127,7 @@ class ModelTrainingService {
    * Monitorar performance do modelo em produção
    */
   async monitorModel(modelId: string) {
-    console.log(`[ML] Monitorando modelo ${modelId}...`);
+    
 
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -141,7 +141,7 @@ class ModelTrainingService {
       .gte('created_at', thirtyDaysAgo.toISOString());
 
     if (!predictions || predictions.length === 0) {
-      console.log('[ML] Sem dados suficientes para monitoramento');
+      
       return null;
     }
 

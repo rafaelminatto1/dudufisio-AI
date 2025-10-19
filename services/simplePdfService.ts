@@ -60,7 +60,7 @@ export class SimplePDFService {
         URL.revokeObjectURL(url);
       }, 1000);
       
-      console.log('PDF gerado e baixado com sucesso!');
+      
       
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);

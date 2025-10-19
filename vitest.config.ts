@@ -31,8 +31,14 @@ export default defineConfig({
       functions: 80,
       lines: 80,
     },
-    include: ['tests/**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['node_modules', 'dist', '.eslintrc.cjs'],
+    include: ['tests/**/*.test.{ts,tsx}'],
+    exclude: [
+      'node_modules',
+      'dist',
+      '.eslintrc.cjs',
+      'tests/**/*.spec.ts', // Excluir testes E2E do Playwright
+      'tests/e2e/**', // Excluir diretório de testes E2E
+    ],
   },
   resolve: {
     alias: {

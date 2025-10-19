@@ -230,7 +230,7 @@ class APMService {
     // Load alerts configuration
     this.loadAlerts();
 
-    console.log('APM Service initialized');
+    
   }
 
   private generateSessionId(): string {
@@ -735,22 +735,22 @@ class APMService {
 
   private async sendEmailAlert(alert: Alert, event: AlertEvent): Promise<void> {
     // Implementation for email notifications
-    console.log(`Sending email alert: ${event.message}`);
+    
   }
 
   private async sendSlackAlert(alert: Alert, event: AlertEvent): Promise<void> {
     // Implementation for Slack notifications
-    console.log(`Sending Slack alert: ${event.message}`);
+    
   }
 
   private async sendWebhookAlert(alert: Alert, event: AlertEvent): Promise<void> {
     // Implementation for webhook notifications
-    console.log(`Sending webhook alert: ${event.message}`);
+    
   }
 
   private async sendSMSAlert(alert: Alert, event: AlertEvent): Promise<void> {
     // Implementation for SMS notifications
-    console.log(`Sending SMS alert: ${event.message}`);
+    
   }
 
   private checkErrorRateAlerts(): void {

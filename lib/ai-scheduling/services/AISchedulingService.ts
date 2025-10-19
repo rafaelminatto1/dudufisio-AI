@@ -207,7 +207,7 @@ export class AISchedulingService {
   async scheduleMultipleAppointments(
     requests: SmartSchedulingRequest[]
   ): Promise<SmartSchedulingResponse[]> {
-    console.log(`🤖 Processando ${requests.length} agendamentos em lote`);
+    
     
     const responses: SmartSchedulingResponse[] = [];
     const batchSize = Math.min(5, this.config.maxConcurrentRequests); // Processar em lotes
@@ -225,7 +225,7 @@ export class AISchedulingService {
       responses.push(...batchResponses.filter(response => response !== null));
     }
     
-    console.log(`✅ Processamento em lote concluído: ${responses.length}/${requests.length} sucessos`);
+    
     return responses;
   }
 
@@ -331,7 +331,7 @@ export class AISchedulingService {
    */
   clearCache(): void {
     this.cache.clear();
-    console.log('🗑️ Cache limpo');
+    
   }
 
   /**
@@ -339,7 +339,7 @@ export class AISchedulingService {
    */
   updateConfig(newConfig: Partial<AISchedulingConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    console.log('⚙️ Configuração atualizada:', newConfig);
+    
   }
 
   /**
@@ -542,7 +542,7 @@ export class AISchedulingService {
       }
       
       if (cleaned > 0) {
-        console.log(`🧹 Cache limpo: ${cleaned} entradas removidas`);
+        
       }
     }, 5 * 60 * 1000); // A cada 5 minutos
   }

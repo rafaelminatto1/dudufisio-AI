@@ -22,10 +22,10 @@ const SessionViewPage: React.FC = () => {
 
   // 🚀 Função de carregamento memoizada
   const loadSessionData = useCallback(async () => {
-    console.log('SessionViewPage: Carregando dados da sessão, sessionId:', sessionId);
+    
 
     if (!sessionId) {
-      console.log('SessionViewPage: ID da sessão não fornecido, redirecionando para agenda');
+      
       showToast('ID da sessão não fornecido', 'error');
       navigate('/agenda');
       return;
@@ -33,18 +33,18 @@ const SessionViewPage: React.FC = () => {
 
     try {
       setIsLoading(true);
-      console.log('SessionViewPage: Buscando sessão com ID:', sessionId);
+      
 
           // Carregar dados da sessão
           // Converter sessionId numérico para formato esperado (note1, note2, etc.)
           const formattedSessionId = sessionId.startsWith('note') ? sessionId : `note${sessionId}`;
-          console.log('SessionViewPage: ID formatado:', formattedSessionId);
+          
 
           const sessionData = await getSoapNoteById(formattedSessionId);
-          console.log('SessionViewPage: Dados da sessão encontrados:', sessionData);
+          
 
       if (!sessionData) {
-        console.log('SessionViewPage: Sessão não encontrada, redirecionando para agenda');
+        
         showToast('Sessão não encontrada', 'error');
         navigate('/agenda');
         return;
@@ -52,9 +52,9 @@ const SessionViewPage: React.FC = () => {
       setSession(sessionData);
 
       // Carregar dados do paciente
-      console.log('SessionViewPage: Buscando dados do paciente:', sessionData.patientId);
+      
       const patientData = await getPatientById(sessionData.patientId);
-      console.log('SessionViewPage: Dados do paciente encontrados:', patientData);
+      
       setPatient(patientData || null);
 
     } catch (error) {

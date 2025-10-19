@@ -206,7 +206,7 @@ export class AutomationService {
         next_action_at: new Date().toISOString(), // Imediatamente
       });
 
-      console.log(`✅ Lead ${leadId} adicionado à campanha ${campaignId}`);
+      
     } catch (error) {
       console.error('Erro ao adicionar lead à campanha:', error);
     }
@@ -416,7 +416,7 @@ export class AutomationService {
       ],
     });
 
-    console.log('✅ Campanhas padrão criadas com sucesso!');
+    
   }
 
   /**

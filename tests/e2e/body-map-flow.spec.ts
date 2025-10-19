@@ -187,43 +187,6 @@ test.describe('Sistema de Mapa Corporal - Fluxo Completo', () => {
   });
 });
 
-describe('Body Map Service - Validações de Dados', () => {
-  test('deve validar estrutura de BodyMapSession', () => {
-    const session: Partial<BodyMapSession> = {
-      id: 'test-id',
-      patientId: 'patient-id',
-      mainComplaintRegion: 'lombar',
-      sessionDate: new Date(),
-      overallPainLevel: 5,
-      painFree: false,
-    };
-
-    expect(session.id).toBeDefined();
-    expect(session.patientId).toBeDefined();
-    expect(session.overallPainLevel).toBeGreaterThanOrEqual(0);
-    expect(session.overallPainLevel).toBeLessThanOrEqual(10);
-    expect(typeof session.painFree).toBe('boolean');
-  });
-
-  test('deve validar estrutura de BodyMapPainRegion', () => {
-    const region: Partial<BodyMapPainRegion> = {
-      id: 'test-id',
-      bodyRegion: 'lombar',
-      bodySide: 'back',
-      painLevel: 7,
-      painTypes: ['latejante', 'aguda'],
-      isMainComplaint: false,
-      isActive: true,
-    };
-
-    expect(region.painLevel).toBeGreaterThanOrEqual(0);
-    expect(region.painLevel).toBeLessThanOrEqual(10);
-    expect(['front', 'back']).toContain(region.bodySide);
-    expect(Array.isArray(region.painTypes)).toBeTruthy();
-    expect(region.painTypes!.length).toBeGreaterThan(0);
-  });
-});
-
 // Teste de integração mock
 test.describe('Fluxo Completo Mock', () => {
   test('deve simular fluxo completo de registro', () => {

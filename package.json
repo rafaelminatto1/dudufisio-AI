@@ -141,6 +141,7 @@
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
     "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.545.0",
     "next-themes": "^0.4.6",
     "react": "^18.3.1",
@@ -158,6 +159,7 @@
     "tailwind-merge": "^2.6.0",
     "use-debounce": "^10.0.6",
     "uuid": "^13.0.0",
+    "xlsx": "^0.18.5",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -179,12 +181,14 @@
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.16",
+    "chrome-launcher": "^1.1.0",
     "dotenv": "^17.2.3",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
     "globals": "^16.4.0",
     "husky": "^9.1.7",
     "jsdom": "^27.0.0",
+    "lighthouse": "^12.0.0",
     "rollup-plugin-visualizer": "^6.0.5",
     "shadcn": "^3.4.0",
     "sharp": "^0.34.4",
@@ -194,8 +198,6 @@
     "typescript": "^5.7.2",
     "vite": "^7.1.9",
     "vitest": "^3.2.4",
-    "lighthouse": "^12.0.0",
-    "chrome-launcher": "^1.1.0",
     "web-vitals": "^4.0.0"
   },
   "resolutions": {

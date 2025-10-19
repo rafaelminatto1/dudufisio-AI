@@ -82,7 +82,7 @@ export class AIPromptManager {
    */
   async processPrompt(request: PromptRequest): Promise<PromptResponse> {
     try {
-      console.log(`🧠 Processando prompt ${request.type}...`);
+      
       
       const startTime = Date.now();
       
@@ -108,7 +108,7 @@ export class AIPromptManager {
         timestamp: new Date()
       };
       
-      console.log(`✅ Prompt ${request.type} processado em ${processingTime}ms`);
+      
       
       return {
         ...response,

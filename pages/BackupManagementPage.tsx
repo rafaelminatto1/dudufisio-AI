@@ -40,7 +40,7 @@ const BackupManagementPage: React.FC = () => {
       resourceType: 'backup'
     });
 
-    console.log('✅ Backup criado via interface administrativa:', backup);
+    
   };
 
   const handleConfigChanged = async (newConfig: BackupConfig) => {
@@ -52,7 +52,7 @@ const BackupManagementPage: React.FC = () => {
       resourceType: 'backup-config'
     });
 
-    console.log('⚙️ Configuração de backup alterada:', newConfig);
+    
   };
 
   const getSystemHealthStatus = () => {

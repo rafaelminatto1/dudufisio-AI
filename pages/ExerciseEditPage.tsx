@@ -166,11 +166,11 @@ const ExerciseEditPage: React.FC = () => {
     try {
       if (isNewExercise) {
         const newExercise = await createExercise(data);
-        console.log('✅ Exercício criado:', newExercise);
+        
         navigate('/exercises');
       } else if (id) {
         const updated = await updateExercise(id, data);
-        console.log('✅ Exercício atualizado:', updated);
+        
         navigate('/exercises');
       }
     } catch (error) {

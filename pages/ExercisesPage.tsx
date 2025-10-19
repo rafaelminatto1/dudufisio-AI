@@ -101,7 +101,7 @@ const ExercisesPage: React.FC = () => {
         await deleteExerciseHook(exerciseToDelete.id);
         setShowDeleteDialog(false);
         setExerciseToDelete(null);
-        console.log('✅ Exercício excluído com sucesso');
+        
       } catch (error) {
         console.error('❌ Erro ao excluir exercício:', error);
       }
@@ -110,7 +110,7 @@ const ExercisesPage: React.FC = () => {
 
   const handleDuplicateExercise = async (exercise: Exercise) => {
     try {
-      console.log('🔄 Duplicando exercício:', exercise.name);
+      
       // Funcionalidade de duplicação será implementada em versão futura
       alert('Funcionalidade de duplicação em desenvolvimento');
     } catch (error) {

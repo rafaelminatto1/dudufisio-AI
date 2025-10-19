@@ -204,7 +204,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
     try {
       // 1. Iniciar geração com Gemini Veo 2.0
       setLoadingMessage(loadingMessages[0]);
-      console.log('🚀 [VIDEO GEN] Iniciando geração de vídeo...');
+      
       
       const operation = await generateExerciseVideo(realPrompt);
       
@@ -212,7 +212,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
         throw new Error('Operação de geração não foi iniciada corretamente');
       }
       
-      console.log('✅ [VIDEO GEN] Operação iniciada:', operation);
+      
       
       // 2. Polling loop - verificar status a cada 3 segundos (mais rápido para UX)
       let currentOp = operation;
@@ -229,7 +229,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
         const opProgress = currentOp.progress || 0;
         setGenerationProgress(Math.min(opProgress, 95));
         
-        console.log(`🔄 [VIDEO GEN] Poll ${pollCount + 1}/${maxPolls} - Progresso: ${opProgress}%`);
+        
         
         // Aguardar 3 segundos antes de verificar novamente
         await new Promise(resolve => setTimeout(resolve, 3000));
@@ -265,7 +265,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
         });
       }
       
-      console.log('📥 [VIDEO GEN] Baixando vídeo de:', downloadLink);
+      
       
       const videoBlob = await fetchVideoFromUri(downloadLink);
       
@@ -274,7 +274,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
       }
       
       const videoUrl = URL.createObjectURL(videoBlob);
-      console.log('✅ [VIDEO GEN] Vídeo convertido para URL:', videoUrl);
+      
       
       // 4. Gerar thumbnail (placeholder por enquanto)
       const seed = `${values.exerciseName.toLowerCase()}-${values.modality}-gemini`;
@@ -294,7 +294,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
       setGenerationProgress(100);
       setLoadingMessage('✅ Vídeo gerado com sucesso!');
       
-      console.log('🎉 [VIDEO GEN] Geração completa com sucesso!');
+      
       
       // Transição para tela de vídeo pronto
       setTimeout(() => {

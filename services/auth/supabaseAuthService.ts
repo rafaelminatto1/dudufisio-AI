@@ -39,7 +39,7 @@ class SupabaseAuthService {
 
   private async initializeAuth() {
     try {
-      console.log('🔐 Initializing Supabase authentication...');
+      
 
       // Set a timeout for initialization to prevent infinite loading
       const initTimeout = setTimeout(() => {
@@ -49,7 +49,7 @@ class SupabaseAuthService {
 
       try {
         // Get initial session
-        console.log('🔍 Getting initial session...');
+        
         const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
         if (sessionError) {
@@ -58,12 +58,12 @@ class SupabaseAuthService {
         }
 
         if (session?.user) {
-          console.log('✅ Found active session, mapping user...');
+          
           const user = await this.mapSupabaseUserToUser(session.user);
           this.updateState({ user, session, loading: false });
-          console.log('🎉 User authenticated:', user.email);
+          
         } else {
-          console.log('ℹ️ No active session found, using mock authentication for development');
+          
           // Use mock authentication for development
           const mockUser = this.getMockUser();
           this.updateState({ user: mockUser, session: null, loading: false });
@@ -73,9 +73,9 @@ class SupabaseAuthService {
         clearTimeout(initTimeout);
 
         // Listen for auth changes
-        console.log('👂 Setting up auth state change listener...');
+        
         supabase.auth.onAuthStateChange(async (event, session) => {
-          console.log('🔄 Auth state changed:', event);
+          
           try {
             if (event === 'SIGNED_IN' && session?.user) {
               // Check if this is a new OAuth user and create profile if needed
@@ -94,14 +94,14 @@ class SupabaseAuthService {
           }
         });
 
-        console.log('✅ Auth initialization completed successfully');
+        
       } catch (error) {
         clearTimeout(initTimeout);
         throw error;
       }
     } catch (error) {
       console.error('❌ Auth initialization error:', error);
-      console.log('🔄 Falling back to unauthenticated state with mock auth support');
+      
 
       // Always complete initialization, even on error
       this.updateState({ user: null, session: null, loading: false });
@@ -122,10 +122,10 @@ class SupabaseAuthService {
       try {
         const parsed = JSON.parse(storedMockSession);
         if (parsed.expiresAt > Date.now()) {
-          console.log('🔄 Restaurando sessão mock do localStorage:', parsed.user.email);
+          
           return parsed.user;
         } else {
-          console.log('⏰ Sessão mock expirada, removendo do localStorage');
+          
           localStorage.removeItem('mock_session');
         }
       } catch (e) {
@@ -168,7 +168,7 @@ class SupabaseAuthService {
   }
 
   private mockLogin(credentials: LoginCredentials): User {
-    console.log('🎭 Using mock authentication for development');
+    
     
     const mockUsers: Record<string, User> = {
       'admin@dudufisio.com': {
@@ -229,7 +229,7 @@ class SupabaseAuthService {
       expiresAt: Date.now() + (8 * 60 * 60 * 1000)
     };
     localStorage.setItem('mock_session', JSON.stringify(sessionData));
-    console.log('💾 Sessão mock persistida após login:', user.email);
+    
 
     // Update state with mock user and session
     this.updateState({ user, session: mockSession, loading: false });
@@ -321,7 +321,7 @@ class SupabaseAuthService {
     try {
       // Limpar sessão mock do localStorage
       localStorage.removeItem('mock_session');
-      console.log('🗑️ Sessão mock removida do localStorage');
+      
       
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
@@ -498,7 +498,7 @@ class SupabaseAuthService {
         .single();
 
       if (!existingProfile) {
-        console.log('🆕 Creating profile for new OAuth user:', supabaseUser.email);
+        
         
         // Create profile for OAuth user
         const { error: profileError } = await supabase
@@ -524,7 +524,7 @@ class SupabaseAuthService {
           console.error('Error creating OAuth user profile:', profileError);
           // Don't throw here as the user was authenticated successfully
         } else {
-          console.log('✅ OAuth user profile created successfully');
+          
         }
       }
     } catch (error) {

@@ -226,7 +226,7 @@ class VideoCallService {
 
       this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
 
-      console.log('✅ Mídia inicializada com sucesso');
+      
 
       this.emit('mediaInitialized', { stream: this.localStream });
 
@@ -302,7 +302,7 @@ class VideoCallService {
       resourceType: 'videocall-session'
     });
 
-    console.log('📹 Sessão de videochamada criada:', session.id);
+    
     this.emit('sessionCreated', { session });
 
     return session;
@@ -373,7 +373,7 @@ class VideoCallService {
         resourceType: 'videocall-session'
       });
 
-      console.log(`👤 ${userRole} entrou na sessão:`, sessionId);
+      
       this.emit('participantJoined', { session, participant });
 
       return true;
@@ -421,7 +421,7 @@ class VideoCallService {
         resourceType: 'videocall-session'
       });
 
-      console.log(`👤 Usuário saiu da sessão:`, sessionId);
+      
       this.emit('participantLeft', { session, participant });
 
       return true;
@@ -480,7 +480,7 @@ class VideoCallService {
         resourceType: 'videocall-session'
       });
 
-      console.log('📹 Sessão finalizada:', sessionId);
+      
       this.emit('sessionEnded', { session });
 
       return true;
@@ -519,7 +519,7 @@ class VideoCallService {
     };
 
     peerConnection.ontrack = (event) => {
-      console.log('📹 Stream remoto recebido');
+      
       this.emit('remoteStream', {
         sessionId,
         participantId,
@@ -528,7 +528,7 @@ class VideoCallService {
     };
 
     peerConnection.onconnectionstatechange = () => {
-      console.log('🔗 Estado da conexão:', peerConnection.connectionState);
+      
       this.emit('connectionStateChange', {
         sessionId,
         participantId,
@@ -729,7 +729,7 @@ class VideoCallService {
         resourceType: 'videocall-recording'
       });
 
-      console.log('🎬 Gravação iniciada:', recordingId);
+      
       this.emit('recordingStarted', { sessionId, recordingId });
 
       return recordingId;
@@ -756,7 +756,7 @@ class VideoCallService {
         session.recording.duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
         session.recording.endTime = endTime.toISOString();
 
-        console.log('⏹️ Gravação parada:', session.recording.id);
+        
         this.emit('recordingStopped', { sessionId, recording: session.recording });
 
         return true;
@@ -812,7 +812,7 @@ class VideoCallService {
             resourceType: 'videocall-recording'
           });
 
-          console.log('✅ Gravação processada:', recordingId);
+          
           this.emit('recordingCompleted', { sessionId, recording: session.recording });
         }
       }, 2000);
@@ -868,7 +868,7 @@ class VideoCallService {
         this.stopScreenShare(sessionId);
       };
 
-      console.log('🖥️ Compartilhamento de tela iniciado');
+      
       this.emit('screenShareStarted', { sessionId });
 
       return true;
@@ -910,7 +910,7 @@ class VideoCallService {
 
       this.screenStream = null;
 
-      console.log('🖥️ Compartilhamento de tela parado');
+      
       this.emit('screenShareStopped', { sessionId });
 
       return true;
@@ -942,7 +942,7 @@ class VideoCallService {
 
       session.chatHistory.push(chatMessage);
 
-      console.log('💬 Mensagem enviada:', chatMessage.id);
+      
       this.emit('chatMessage', { sessionId, message: chatMessage });
 
       return true;
@@ -974,7 +974,7 @@ class VideoCallService {
           }
         }
 
-        console.log(`🎤 Áudio ${audioTrack.enabled ? 'ligado' : 'desligado'}`);
+        
         this.emit('audioToggled', { sessionId, userId, enabled: audioTrack.enabled });
 
         return true;
@@ -1006,7 +1006,7 @@ class VideoCallService {
           }
         }
 
-        console.log(`📹 Vídeo ${videoTrack.enabled ? 'ligado' : 'desligado'}`);
+        
         this.emit('videoToggled', { sessionId, userId, enabled: videoTrack.enabled });
 
         return true;
@@ -1060,7 +1060,7 @@ class VideoCallService {
         localStorage.setItem(key, JSON.stringify(history));
       }
 
-      console.log('💾 Dados da sessão salvos:', session.id);
+      
     } catch (error) {
       console.error('❌ Erro ao salvar dados da sessão:', error);
     }
@@ -1136,7 +1136,7 @@ class VideoCallService {
     // Limpar listeners
     this.eventListeners.clear();
 
-    console.log('🧹 VideoCallService cleanup concluído');
+    
   }
 }
 

@@ -212,10 +212,10 @@ class SupabaseAgendaAdapter implements IAgendaDataAdapter {
  */
 export const createAgendaAdapter = (): IAgendaDataAdapter => {
   if (USE_SUPABASE) {
-    console.log('Using Supabase adapter for agenda data');
+    
     return new SupabaseAgendaAdapter();
   } else {
-    console.log('Using Mock adapter for agenda data');
+    
     return new MockAgendaAdapter();
   }
 };

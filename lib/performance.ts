@@ -136,7 +136,7 @@ export function lazyWithRetry<T extends React.ComponentType<any>>(
  * @example
  * ```typescript
  * reportWebVitals((metric) => {
- *   console.log(metric);
+ *   
  *   sendToAnalytics(metric);
  * });
  * ```

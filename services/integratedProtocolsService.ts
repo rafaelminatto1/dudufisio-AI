@@ -106,7 +106,7 @@ export class IntegratedProtocolsService {
     try {
       const clinicalData = getClinicalProtocols();
       this.clinicalProtocols = clinicalData.map(convertClinicalProtocolToSystemFormat);
-      console.log('✅ Protocolos clínicos carregados:', this.clinicalProtocols.length);
+      
     } catch (error) {
       console.error('❌ Erro ao carregar protocolos clínicos:', error);
       this.clinicalProtocols = [];
@@ -116,7 +116,7 @@ export class IntegratedProtocolsService {
   private async loadSystemProtocols() {
     try {
       this.systemProtocols = await getSystemProtocols();
-      console.log('✅ Protocolos do sistema carregados:', this.systemProtocols.length);
+      
     } catch (error) {
       console.error('❌ Erro ao carregar protocolos do sistema:', error);
       this.systemProtocols = [];

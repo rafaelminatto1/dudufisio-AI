@@ -95,7 +95,7 @@ export const RiskStratificationPage: React.FC = () => {
       
       // Se não existir perfil, criar um com mock para demonstração
       if (!profile) {
-        console.log('Perfil de risco não encontrado, usando serviço mock para gerar dados');
+        
         const mockProfile = await riskStratificationService.getPatientRiskProfile(mappedPatient);
         setRiskProfile(mockProfile);
       } else {

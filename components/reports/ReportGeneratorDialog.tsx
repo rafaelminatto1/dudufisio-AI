@@ -73,7 +73,7 @@ export function ReportGeneratorDialog({ type = 'patient', patientId, therapistId
       }
 
       toast.success('Relatório gerado com sucesso!');
-      console.log('Relatório gerado:', report);
+      
       setIsOpen(false);
     } catch (error: any) {
       console.error('Erro ao gerar relatório:', error);

@@ -63,7 +63,7 @@ const whatsappIntegration = createWhatsAppBusinessIntegration(whatsappConfig, bi
  * Exemplo 1: Agendar consulta com IA
  */
 export async function exemploAgendamentoIA() {
-  console.log('🎯 Exemplo 1: Agendamento com IA');
+  
   
   const request: SmartSchedulingRequest = {
     patient: {
@@ -116,15 +116,15 @@ export async function exemploAgendamentoIA() {
   try {
     const response = await aiSchedulingService.scheduleAppointment(request);
     
-    console.log('✅ Agendamento realizado com sucesso!');
-    console.log('📅 Agendamento:', response.appointment);
-    console.log('🔮 Previsão de demanda:', response.predictions.demand);
-    console.log('🚫 Previsão de no-show:', response.predictions.noShow);
-    console.log('🎯 Otimização de recursos:', response.optimization);
-    console.log('💡 Insights de IA:', response.aiInsights);
-    console.log('📋 Recomendações:', response.recommendations);
-    console.log('🎯 Confiança geral:', response.confidence);
-    console.log('🔄 Alternativas:', response.alternatives);
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     return response;
     
@@ -138,7 +138,7 @@ export async function exemploAgendamentoIA() {
  * Exemplo 2: Processar prompt especializado
  */
 export async function exemploPromptEspecializado() {
-  console.log('🧠 Exemplo 2: Prompt Especializado');
+  
   
   const request: PromptRequest = {
     type: PROMPT_TYPES.CLINICAL_ANALYSIS,
@@ -171,12 +171,12 @@ export async function exemploPromptEspecializado() {
   try {
     const response = await aiSchedulingService.processPrompt(request);
     
-    console.log('✅ Prompt processado com sucesso!');
-    console.log('📝 Conteúdo:', response.content);
-    console.log('🎯 Confiança:', response.confidence);
-    console.log('🧠 Raciocínio:', response.reasoning);
-    console.log('💡 Sugestões:', response.suggestions);
-    console.log('📊 Metadados:', response.metadata);
+    
+    
+    
+    
+    
+    
     
     return response;
     
@@ -190,7 +190,7 @@ export async function exemploPromptEspecializado() {
  * Exemplo 3: Integração WhatsApp Business
  */
 export async function exemploWhatsAppBusiness() {
-  console.log('📱 Exemplo 3: WhatsApp Business');
+  
   
   const appointment = {
     id: 'app_123',
@@ -225,7 +225,7 @@ export async function exemploWhatsAppBusiness() {
     );
     
     if (confirmationSent) {
-      console.log('✅ Confirmação de agendamento enviada via WhatsApp');
+      
     }
     
     // Enviar lembrete (24h antes)
@@ -236,7 +236,7 @@ export async function exemploWhatsAppBusiness() {
     );
     
     if (reminderSent) {
-      console.log('✅ Lembrete de agendamento enviado via WhatsApp');
+      
     }
     
     // Enviar mensagem personalizada
@@ -247,12 +247,12 @@ export async function exemploWhatsAppBusiness() {
     );
     
     if (customMessageSent) {
-      console.log('✅ Mensagem personalizada enviada via WhatsApp');
+      
     }
     
     // Obter analytics
     const analytics = whatsappIntegration.getAnalytics();
-    console.log('📊 Analytics do WhatsApp:', analytics);
+    
     
     return {
       confirmationSent,
@@ -271,7 +271,7 @@ export async function exemploWhatsAppBusiness() {
  * Exemplo 4: Agendamento em lote
  */
 export async function exemploAgendamentoLote() {
-  console.log('🎯 Exemplo 4: Agendamento em Lote');
+  
   
   const requests: SmartSchedulingRequest[] = [
     {
@@ -315,15 +315,10 @@ export async function exemploAgendamentoLote() {
   try {
     const responses = await aiSchedulingService.scheduleMultipleAppointments(requests);
     
-    console.log(`✅ ${responses.length} agendamentos processados em lote`);
+    
     
     responses.forEach((response: any, index: number) => {
-      console.log(`📅 Agendamento ${index + 1}:`, {
-        paciente: response.appointment.patientName,
-        tipo: response.appointment.type,
-        confiança: response.confidence,
-        eficiência: response.optimization.efficiency
-      });
+      
     });
     
     return responses;
@@ -338,20 +333,20 @@ export async function exemploAgendamentoLote() {
  * Exemplo 5: Monitoramento e métricas
  */
 export async function exemploMonitoramento() {
-  console.log('📊 Exemplo 5: Monitoramento e Métricas');
+  
   
   try {
     // Obter métricas do AI Scheduling
     const aiMetrics = aiSchedulingService.getMetrics();
-    console.log('🤖 Métricas do AI Scheduling:', aiMetrics);
+    
     
     // Obter estatísticas de cache
     const cacheStats = aiSchedulingService.getCacheStats();
-    console.log('💾 Estatísticas de Cache:', cacheStats);
+    
     
     // Obter analytics do WhatsApp
     const whatsappAnalytics = whatsappIntegration.getAnalytics();
-    console.log('📱 Analytics do WhatsApp:', whatsappAnalytics);
+    
     
     return {
       aiMetrics,
@@ -369,7 +364,7 @@ export async function exemploMonitoramento() {
  * Exemplo 6: Processamento de webhook WhatsApp
  */
 export async function exemploWebhookWhatsApp() {
-  console.log('🔗 Exemplo 6: Webhook WhatsApp');
+  
   
   const webhookEvent = {
     object: 'whatsapp_business_account' as const,
@@ -413,7 +408,7 @@ export async function exemploWebhookWhatsApp() {
   
   try {
     await whatsappIntegration.processWebhook(webhookEvent);
-    console.log('✅ Webhook processado com sucesso');
+    
     
   } catch (error) {
     console.error('❌ Erro no processamento de webhook:', error);
@@ -425,7 +420,7 @@ export async function exemploWebhookWhatsApp() {
  * Função principal para executar todos os exemplos
  */
 export async function executarTodosExemplos() {
-  console.log('🚀 Iniciando todos os exemplos do Sistema de Agendamento Inteligente');
+  
   console.log('=' .repeat(80));
   
   try {
@@ -453,7 +448,7 @@ export async function executarTodosExemplos() {
     await exemploWebhookWhatsApp();
     
     console.log('\n' + '='.repeat(80));
-    console.log('✅ Todos os exemplos executados com sucesso!');
+    
     
   } catch (error) {
     console.error('❌ Erro na execução dos exemplos:', error);

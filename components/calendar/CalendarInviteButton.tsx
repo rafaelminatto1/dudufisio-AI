@@ -63,17 +63,17 @@ export function CalendarInviteButton({ appointment, onSent }: CalendarInviteButt
       if (channel === 'whatsapp') {
         message = CALENDAR_INVITE_TEMPLATES.whatsapp(templateData);
         // TODO: Integrar com sistema de WhatsApp
-        console.log('[WhatsApp]', message);
+        
         showToast('Convite enviado via WhatsApp!', 'success');
       } else if (channel === 'email') {
         const emailData = CALENDAR_INVITE_TEMPLATES.email(templateData);
         // TODO: Integrar com sistema de Email
-        console.log('[Email]', emailData);
+        
         showToast('Convite enviado via Email!', 'success');
       } else if (channel === 'sms') {
         message = CALENDAR_INVITE_TEMPLATES.sms(templateData);
         // TODO: Integrar com sistema de SMS
-        console.log('[SMS]', message);
+        
         showToast('Convite enviado via SMS!', 'success');
       }
 

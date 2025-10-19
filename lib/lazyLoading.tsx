@@ -231,7 +231,7 @@ export const preloadCriticalComponents = () => {
   if ('requestIdleCallback' in window) {
     requestIdleCallback(() => {
       if (import.meta.env.DEV) {
-        console.log('🔵 [PRELOAD] Iniciando preload de componentes críticos...');
+        
       }
       Promise.all([
         import('../pages/CompleteDashboard'),
@@ -240,7 +240,7 @@ export const preloadCriticalComponents = () => {
       ])
       .then(() => {
         if (import.meta.env.DEV) {
-          console.log('✅ [PRELOAD] Componentes críticos carregados com sucesso');
+          
         }
       })
       .catch((error) => {
@@ -260,7 +260,7 @@ export const preloadCriticalComponents = () => {
       ])
       .then(() => {
         if (import.meta.env.DEV) {
-          console.log('✅ [PRELOAD] Componentes críticos carregados com sucesso');
+          
         }
       })
       .catch((error) => {
@@ -275,7 +275,7 @@ export const preloadUserRoleComponents = (userRole: string) => {
   // Usar requestIdleCallback para preload quando o browser estiver ocioso
   const doPreload = () => {
     if (import.meta.env.DEV) {
-      console.log(`🔵 [PRELOAD] Carregando componentes para role: ${userRole}`);
+      
     }
     
     switch (userRole) {
@@ -288,7 +288,7 @@ export const preloadUserRoleComponents = (userRole: string) => {
         ])
         .then(() => {
           if (import.meta.env.DEV) {
-            console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+            
           }
         })
         .catch((error) => {
@@ -303,7 +303,7 @@ export const preloadUserRoleComponents = (userRole: string) => {
         ])
         .then(() => {
           if (import.meta.env.DEV) {
-            console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+            
           }
         })
         .catch((error) => {
@@ -317,7 +317,7 @@ export const preloadUserRoleComponents = (userRole: string) => {
         ])
         .then(() => {
           if (import.meta.env.DEV) {
-            console.log(`✅ [PRELOAD] Componentes de ${userRole} carregados`);
+            
           }
         })
         .catch((error) => {

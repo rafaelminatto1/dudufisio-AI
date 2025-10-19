@@ -115,7 +115,7 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({
       if (!response.ok) throw new Error('Failed to save preferences');
 
       // Show success message
-      console.log('Calendar preferences saved successfully');
+      
     } catch (error) {
       console.error('Error saving preferences:', error);
     } finally {

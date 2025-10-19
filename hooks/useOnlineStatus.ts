@@ -12,7 +12,7 @@ export function useOnlineStatus() {
 
   useEffect(() => {
     const handleOnline = () => {
-      console.log('🟢 Conexão restaurada');
+      
       setIsOnline(true);
       setWasOffline(true);
 
@@ -24,7 +24,7 @@ export function useOnlineStatus() {
     };
 
     const handleOffline = () => {
-      console.log('🔴 Conexão perdida');
+      
       setIsOnline(false);
 
       // Dispara evento personalizado

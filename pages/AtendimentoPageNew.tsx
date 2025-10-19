@@ -70,7 +70,7 @@ const AtendimentoPageNew: React.FC = () => {
     const navigate = ReactRouterDOM.useNavigate();
     const { showToast } = useToast();
     
-    console.log('🎯 AtendimentoPageNew carregada com appointmentId:', appointmentId);
+    
 
     // Data states
     const [appointment, setAppointment] = useState<Appointment | null>(null);
@@ -112,7 +112,7 @@ const AtendimentoPageNew: React.FC = () => {
         
         try {
             // Para teste, usar dados mock
-            console.log('🎭 Usando dados mock para teste');
+            
             
             const mockAppointment = {
                 id: currentAppointmentId,
@@ -291,7 +291,7 @@ const AtendimentoPageNew: React.FC = () => {
     };
 
     if (!appointmentId) {
-        console.log('⚠️ appointmentId não fornecido, usando ID de teste');
+        
         // Para teste, usar um ID fixo
         const testAppointmentId = 'test-123';
         // return <Navigate to="/agenda" replace />;
@@ -537,7 +537,7 @@ const AtendimentoPageNew: React.FC = () => {
                                                 patientId={patient.id}
                                                 sessionNumber={3}
                                                 onSessionRepeated={(newSessionId) => {
-                                                    console.log('Nova sessão criada:', newSessionId);
+                                                    
                                                     showToast('Nova sessão criada com sucesso!', 'success');
                                                 }}
                                             />
@@ -679,11 +679,11 @@ const AtendimentoPageNew: React.FC = () => {
                             sessionId={appointmentId || 'test-123'}
                             patientId={patient.id}
                             onPhotoAdded={(photo) => {
-                                console.log('Foto adicionada:', photo);
+                                
                                 showToast('Foto adicionada à sessão!', 'success');
                             }}
                             onDocumentAttached={(document) => {
-                                console.log('Documento anexado:', document);
+                                
                                 showToast('Documento anexado à sessão!', 'success');
                             }}
                         />

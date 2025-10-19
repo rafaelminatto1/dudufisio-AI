@@ -312,11 +312,11 @@ export class SupabaseConfigManager {
     const info = this.getDebugInfo();
 
     console.group('🔧 Supabase Configuration Summary');
-    console.log('Environment:', info.environment);
-    console.log('Valid credentials:', info.validation.isValid);
-    console.log('Connection string:', info.connectionString);
-    console.log('Features enabled:', info.config.features);
-    console.log('Performance settings:', info.config.performance);
+    
+    
+    
+    
+    
 
     if (!info.validation.isValid) {
       console.warn('Configuration errors:', info.validation.errors);

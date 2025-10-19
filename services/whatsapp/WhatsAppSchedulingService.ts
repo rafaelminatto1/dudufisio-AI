@@ -229,7 +229,7 @@ export class WhatsAppSchedulingService {
 
       if (error) throw error;
 
-      console.log(`✅ Agendamento provisório criado para ${phone}`);
+      
     } catch (error) {
       console.error('Erro ao criar agendamento provisório:', error);
       throw error;
@@ -314,7 +314,7 @@ export class WhatsAppSchedulingService {
 
       if (error) throw error;
 
-      console.log(`✅ Equipe notificada sobre agendamento de ${phone}`);
+      
     } catch (error) {
       console.error('Erro ao notificar equipe:', error);
     }
@@ -361,7 +361,7 @@ export class WhatsAppSchedulingService {
         );
       }
 
-      console.log(`✅ Agendamento confirmado: ${appointmentId}`);
+      
     } catch (error) {
       console.error('Erro ao confirmar agendamento:', error);
       throw error;
@@ -415,7 +415,7 @@ export class WhatsAppSchedulingService {
         );
       }
 
-      console.log(`✅ Agendamento cancelado: ${appointmentId}`);
+      
     } catch (error) {
       console.error('Erro ao cancelar agendamento:', error);
       throw error;

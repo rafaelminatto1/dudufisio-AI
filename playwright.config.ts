@@ -5,6 +5,10 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  /* Only run .spec.ts files (E2E tests), ignore .test.ts files (unit tests) */
+  testMatch: /.*\.spec\.ts$/,
+  /* Global setup file */
+  globalSetup: './tests/playwright-setup.ts',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

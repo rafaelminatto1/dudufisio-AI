@@ -235,7 +235,7 @@ const PartnerDashboard: React.FC = () => {
       resourceType: undefined
     });
     // Implementar modal de detalhes
-    console.log('Viewing referral details:', referral);
+    
   };
 
   const handleContactClinic = async () => {

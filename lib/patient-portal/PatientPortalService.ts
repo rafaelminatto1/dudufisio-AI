@@ -337,11 +337,11 @@ class MockMessageService implements MessageService {
   }
 
   async markAsRead(messageId: string): Promise<void> {
-    console.log(`Message ${messageId} marked as read`);
+    
   }
 
   async sendMessage(patientId: PatientId, message: string): Promise<void> {
-    console.log(`Message sent from patient ${patientId}: ${message}`);
+    
   }
 }
 

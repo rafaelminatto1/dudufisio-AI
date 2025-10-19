@@ -125,7 +125,7 @@ export class ResourceOptimizer {
    */
   async optimizeResources(request: OptimizationRequest): Promise<ResourceOptimization> {
     try {
-      console.log(`🎯 Otimizando recursos para agendamento ${request.appointment.id}`);
+      
       
       // Carregar recursos disponíveis
       const availableResources = await this.getAvailableResources(request);
@@ -179,7 +179,7 @@ export class ResourceOptimizer {
     requests: OptimizationRequest[]
   ): Promise<ResourceOptimization[]> {
     try {
-      console.log(`🎯 Otimizando ${requests.length} agendamentos simultaneamente`);
+      
       
       // Ordenar por prioridade e urgência
       const sortedRequests = this.sortRequestsByPriority(requests);
@@ -213,7 +213,7 @@ export class ResourceOptimizer {
         });
       }
       
-      console.log(`✅ Otimização em lote concluída para ${optimizations.length} agendamentos`);
+      
       return optimizations;
       
     } catch (error) {

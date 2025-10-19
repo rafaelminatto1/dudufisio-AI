@@ -191,25 +191,25 @@ const AtendimentoPageDemo: React.FC = () => {
     const handleStartSession = () => {
         setIsSessionActive(true);
         setSessionStartTime(new Date());
-        console.log('🎉 Sessão iniciada!');
+        
     };
 
     const handlePauseSession = () => {
         setIsSessionActive(false);
-        console.log('⏸️ Sessão pausada');
+        
     };
 
     const handleStopSession = () => {
         setIsSessionActive(false);
         setSessionStartTime(null);
         setSessionDuration(0);
-        console.log('⏹️ Sessão finalizada');
+        
     };
 
     const handleResumeSession = () => {
         setIsSessionActive(true);
         setSessionStartTime(new Date(Date.now() - sessionDuration * 1000));
-        console.log('▶️ Sessão retomada');
+        
     };
 
     const formatDuration = (seconds: number) => {
@@ -223,7 +223,7 @@ const AtendimentoPageDemo: React.FC = () => {
         setSaveStatus('saving');
         setTimeout(() => {
             setSaveStatus('saved');
-            console.log('💾 Nota salva!');
+            
         }, 1000);
     };
 
@@ -233,7 +233,7 @@ const AtendimentoPageDemo: React.FC = () => {
             setAssessment('Paciente apresenta melhora na amplitude de movimento. Dor reduzida de 8/10 para 5/10 na escala visual.');
             setPlanState('Continuar exercícios de fortalecimento. Próxima sessão em 3 dias. Prescrever gelo local.');
             setIsAiLoading(false);
-            console.log('🤖 Assistência IA aplicada!');
+            
         }, 2000);
     };
 
@@ -241,7 +241,7 @@ const AtendimentoPageDemo: React.FC = () => {
         setIsFinishing(true);
         setTimeout(() => {
             setIsFinishing(false);
-            console.log('✅ Sessão finalizada!');
+            
         }, 1000);
     };
 
@@ -254,7 +254,7 @@ const AtendimentoPageDemo: React.FC = () => {
             updatedAt: new Date().toISOString()
         };
         setSurgeries(prev => [...prev, newSurgery]);
-        console.log('🏥 Cirurgia adicionada:', newSurgery);
+        
     };
 
     const handleUpdateSurgery = (id: string, updates: Partial<Surgery>) => {
@@ -263,12 +263,12 @@ const AtendimentoPageDemo: React.FC = () => {
                 ? { ...surgery, ...updates, updatedAt: new Date().toISOString() }
                 : surgery
         ));
-        console.log('🏥 Cirurgia atualizada:', id, updates);
+        
     };
 
     const handleDeleteSurgery = (id: string) => {
         setSurgeries(prev => prev.filter(surgery => surgery.id !== id));
-        console.log('🏥 Cirurgia removida:', id);
+        
     };
 
     // Goals CRUD functions
@@ -281,7 +281,7 @@ const AtendimentoPageDemo: React.FC = () => {
             updatedAt: new Date().toISOString()
         };
         setGoals(prev => [...prev, newGoal]);
-        console.log('🎯 Objetivo adicionado:', newGoal);
+        
     };
 
     const handleUpdateGoal = (id: string, updates: Partial<PatientGoal>) => {
@@ -290,12 +290,12 @@ const AtendimentoPageDemo: React.FC = () => {
                 ? { ...goal, ...updates, updatedAt: new Date().toISOString() }
                 : goal
         ));
-        console.log('🎯 Objetivo atualizado:', id, updates);
+        
     };
 
     const handleDeleteGoal = (id: string) => {
         setGoals(prev => prev.filter(goal => goal.id !== id));
-        console.log('🎯 Objetivo removido:', id);
+        
     };
 
     // Pain Points CRUD functions
@@ -305,19 +305,19 @@ const AtendimentoPageDemo: React.FC = () => {
             id: Date.now().toString()
         };
         setPainPoints(prev => [...prev, newPoint]);
-        console.log('🩹 Ponto de dor adicionado:', newPoint);
+        
     };
 
     const handleUpdatePainPoint = (id: string, updates: Partial<PainPoint>) => {
         setPainPoints(prev => prev.map(point => 
             point.id === id ? { ...point, ...updates } : point
         ));
-        console.log('🩹 Ponto de dor atualizado:', id, updates);
+        
     };
 
     const handleDeletePainPoint = (id: string) => {
         setPainPoints(prev => prev.filter(point => point.id !== id));
-        console.log('🩹 Ponto de dor removido:', id);
+        
     };
 
     return (
@@ -555,7 +555,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                                     size="sm" 
                                                     className="text-green-600 border-green-200 hover:bg-green-50"
                                                     onClick={() => {
-                                                        console.log('🔄 Repetindo sessão #3...');
+                                                        
                                                         // Here you would duplicate the session
                                                     }}
                                                 >
@@ -567,7 +567,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                                     size="sm" 
                                                     className="text-purple-600 border-purple-200 hover:bg-purple-50"
                                                     onClick={() => {
-                                                        console.log('👁️ Visualizando sessão #3...');
+                                                        
                                                         // Here you would open session details
                                                     }}
                                                 >
@@ -751,7 +751,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                         input.onchange = (e) => {
                                             const file = (e.target as HTMLInputElement).files?.[0];
                                             if (file) {
-                                                console.log('📸 Foto adicionada:', file.name);
+                                                
                                                 // Here you would handle file upload
                                             }
                                         };
@@ -771,7 +771,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                         input.onchange = (e) => {
                                             const file = (e.target as HTMLInputElement).files?.[0];
                                             if (file) {
-                                                console.log('📄 Documento anexado:', file.name);
+                                                
                                                 // Here you would handle file upload
                                             }
                                         };
@@ -785,7 +785,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                     variant="outline" 
                                     className="w-full justify-start"
                                     onClick={() => {
-                                        console.log('📊 Abrindo relatórios...');
+                                        
                                         // Here you would navigate to reports page
                                     }}
                                 >
@@ -796,7 +796,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                     variant="outline" 
                                     className="w-full justify-start"
                                     onClick={() => {
-                                        console.log('📚 Abrindo histórico completo...');
+                                        
                                         // Here you would navigate to patient history
                                     }}
                                 >

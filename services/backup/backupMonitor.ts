@@ -139,7 +139,7 @@ class BackupMonitorService {
     }
 
     this.isMonitoring = true;
-    console.log('🔍 Monitor de backup iniciado');
+    
 
     // Primeira verificação imediata
     this.performHealthCheck();
@@ -156,7 +156,7 @@ class BackupMonitorService {
       this.monitorTimer = null;
     }
     this.isMonitoring = false;
-    console.log('⏹️ Monitor de backup parado');
+    
   }
 
   private restartMonitoring(): void {
@@ -171,7 +171,7 @@ class BackupMonitorService {
    */
   private async performHealthCheck(): Promise<void> {
     try {
-      console.log('🔍 Executando verificação de saúde do backup...');
+      
 
       const stats = backupService.getBackupStats();
       const config = backupService.getConfig();
@@ -191,7 +191,7 @@ class BackupMonitorService {
       // Auto-resolver alertas quando aplicável
       await this.autoResolveAlerts(health);
 
-      console.log(`✅ Verificação concluída - Status: ${health.overallHealth}`);
+      
 
     } catch (error) {
       console.error('❌ Erro na verificação de saúde:', error);
@@ -362,7 +362,7 @@ class BackupMonitorService {
             label: 'Limpar Backups Antigos',
             action: async () => {
               // Implementar limpeza manual se necessário
-              console.log('🧹 Iniciando limpeza manual de backups antigos...');
+              
             }
           }
         ]
@@ -397,7 +397,7 @@ class BackupMonitorService {
     );
 
     if (existingSimilar) {
-      console.log(`⚠️ Alerta similar já existe: ${alert.title}`);
+      
       return;
     }
 
@@ -492,7 +492,7 @@ class BackupMonitorService {
 
       if (shouldResolve) {
         alert.resolved = true;
-        console.log(`✅ Alerta auto-resolvido: ${alert.title}`);
+        
 
         await auditService.createLog({
           user: 'System',
@@ -550,7 +550,7 @@ class BackupMonitorService {
       resourceType: 'backup-alert'
     });
 
-    console.log(`✅ Alerta resolvido manualmente: ${alert.title}`);
+    
     return true;
   }
 
@@ -576,7 +576,7 @@ class BackupMonitorService {
         resourceType: 'backup-alert'
       });
 
-      console.log(`⚡ Ação de alerta executada: ${action.label}`);
+      
       return true;
     } catch (error) {
       console.error('❌ Erro ao executar ação de alerta:', error);
@@ -620,7 +620,7 @@ class BackupMonitorService {
 
   public destroy(): void {
     this.stopMonitoring();
-    console.log('🔍 Monitor de backup destruído');
+    
   }
 }
 

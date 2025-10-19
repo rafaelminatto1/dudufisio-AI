@@ -25,11 +25,7 @@ interface MenuItem {
 }
 
 const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
-    console.log('🔍 [LAYOUT] Componente renderizando:', {
-        hasUser: !!user,
-        userId: user?.id,
-        userRole: user?.role
-    });
+    
     
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

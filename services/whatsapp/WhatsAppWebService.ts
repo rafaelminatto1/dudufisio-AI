@@ -15,11 +15,11 @@ export class WhatsAppWebService {
   private isProcessingQueue = false;
 
   constructor() {
-    console.log('🚀 WhatsApp Web Service DESABILITADO temporariamente');
+    
   }
 
   async start(): Promise<void> {
-    console.log('⚠️  WhatsApp Web Service está desabilitado');
+    
   }
 
   async sendMessage(to: string, message: string): Promise<{
@@ -61,7 +61,7 @@ export class WhatsAppWebService {
   }
 
   async stop(): Promise<void> {
-    console.log('⚠️  WhatsApp Web Service está desabilitado');
+    
   }
 }
 

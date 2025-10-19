@@ -192,7 +192,7 @@ export class StripeGateway implements PaymentGateway {
           break;
         
         default:
-          console.log(`Unhandled Stripe webhook event: ${event.type}`);
+          
       }
 
     } catch (error) {
@@ -331,7 +331,7 @@ export class StripeGateway implements PaymentGateway {
   private async handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
     // This would typically update your database
     // For now, just log the event
-    console.log(`Payment succeeded: ${paymentIntent.id}`);
+    
     
     // You could emit an event here to update the transaction status
     // this.eventBus.emit('payment.succeeded', {
@@ -341,7 +341,7 @@ export class StripeGateway implements PaymentGateway {
   }
 
   private async handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    console.log(`Payment failed: ${paymentIntent.id}`);
+    
     
     // You could emit an event here to update the transaction status
     // this.eventBus.emit('payment.failed', {
@@ -352,7 +352,7 @@ export class StripeGateway implements PaymentGateway {
   }
 
   private async handleInvoicePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {
-    console.log(`Invoice payment succeeded: ${invoice.id}`);
+    
     
     // Handle recurring payment success
     // this.eventBus.emit('recurring_payment.succeeded', {
@@ -363,7 +363,7 @@ export class StripeGateway implements PaymentGateway {
   }
 
   private async handleInvoicePaymentFailed(invoice: Stripe.Invoice): Promise<void> {
-    console.log(`Invoice payment failed: ${invoice.id}`);
+    
     
     // Handle recurring payment failure
     // this.eventBus.emit('recurring_payment.failed', {

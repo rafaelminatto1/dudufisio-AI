@@ -207,7 +207,7 @@ export class PagarmeGateway implements PaymentGateway {
           break;
         
         default:
-          console.log(`Unhandled Pagar.me webhook event: ${event.type}`);
+          
       }
 
     } catch (error) {
@@ -477,7 +477,7 @@ export class PagarmeGateway implements PaymentGateway {
   }
 
   private async handleTransactionPaid(data: any): Promise<void> {
-    console.log(`Pagar.me transaction paid: ${data.id}`);
+    
     
     // Emit event to update transaction status
     // this.eventBus.emit('payment.succeeded', {
@@ -487,7 +487,7 @@ export class PagarmeGateway implements PaymentGateway {
   }
 
   private async handleTransactionRefused(data: any): Promise<void> {
-    console.log(`Pagar.me transaction refused: ${data.id}`);
+    
     
     // Emit event to update transaction status
     // this.eventBus.emit('payment.failed', {
@@ -498,7 +498,7 @@ export class PagarmeGateway implements PaymentGateway {
   }
 
   private async handleSubscriptionPaid(data: any): Promise<void> {
-    console.log(`Pagar.me subscription paid: ${data.id}`);
+    
     
     // Handle recurring payment success
     // this.eventBus.emit('recurring_payment.succeeded', {
@@ -508,7 +508,7 @@ export class PagarmeGateway implements PaymentGateway {
   }
 
   private async handleSubscriptionPaymentFailed(data: any): Promise<void> {
-    console.log(`Pagar.me subscription payment failed: ${data.id}`);
+    
     
     // Handle recurring payment failure
     // this.eventBus.emit('recurring_payment.failed', {

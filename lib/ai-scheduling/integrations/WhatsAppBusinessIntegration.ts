@@ -217,7 +217,7 @@ export class WhatsAppBusinessIntegration {
     patient: Patient
   ): Promise<boolean> {
     try {
-      console.log(`📱 Enviando confirmação de agendamento para ${patient.name}`);
+      
       
       const message: WhatsAppMessage = {
         to: this.formatPhoneNumber(patient.phone || ''),
@@ -374,7 +374,7 @@ export class WhatsAppBusinessIntegration {
     patient: Patient
   ): Promise<boolean> {
     try {
-      console.log(`📱 Enviando follow-up de no-show para ${patient.name}`);
+      
       
       const message: WhatsAppMessage = {
         to: this.formatPhoneNumber(patient.phone || ''),
@@ -447,7 +447,7 @@ export class WhatsAppBusinessIntegration {
    */
   async sendWelcomeMessage(patient: Patient): Promise<boolean> {
     try {
-      console.log(`📱 Enviando mensagem de boas-vindas para ${patient.name}`);
+      
       
       const message: WhatsAppMessage = {
         to: this.formatPhoneNumber(patient.phone || ''),
@@ -520,7 +520,7 @@ export class WhatsAppBusinessIntegration {
     interactive?: boolean
   ): Promise<boolean> {
     try {
-      console.log(`📱 Enviando mensagem personalizada para ${phoneNumber}`);
+      
       
       const whatsappMessage: WhatsAppMessage = {
         to: this.formatPhoneNumber(phoneNumber),
@@ -573,7 +573,7 @@ export class WhatsAppBusinessIntegration {
    */
   async processWebhook(event: WhatsAppWebhookEvent): Promise<void> {
     try {
-      console.log('📱 Processando webhook do WhatsApp Business');
+      
       
       for (const entry of event.entry) {
         for (const change of entry.changes) {
@@ -667,7 +667,7 @@ export class WhatsAppBusinessIntegration {
    * Processar mensagem recebida
    */
   private async processIncomingMessage(message: any): Promise<void> {
-    console.log(`📱 Mensagem recebida de ${message.from}: ${message.text?.body || 'Mídia'}`);
+    
     
     // Implementar lógica de processamento de mensagens recebidas
     // Ex: confirmação de presença, reagendamento, etc.
@@ -677,7 +677,7 @@ export class WhatsAppBusinessIntegration {
    * Processar status de entrega
    */
   private async processDeliveryStatus(status: any): Promise<void> {
-    console.log(`📱 Status de entrega: ${status.status} para ${status.recipient_id}`);
+    
     
     this.updateAnalytics(status.status);
   }

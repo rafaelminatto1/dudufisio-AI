@@ -106,13 +106,13 @@ export default function MedicalRecordsDashboard() {
   }, []);
 
   const handleAssessmentSubmit = async (data: any) => {
-    console.log('Assessment submitted:', data);
+    
     // Aqui seria a integração com o Supabase
     return Promise.resolve();
   };
 
   const handleEvolutionSubmit = async (data: any) => {
-    console.log('Evolution submitted:', data);
+    
     // Aqui seria a integração com o Supabase
     return Promise.resolve();
   };

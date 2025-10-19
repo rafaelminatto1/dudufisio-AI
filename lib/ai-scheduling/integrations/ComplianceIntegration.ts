@@ -63,7 +63,7 @@ export class ComplianceIntegration {
     request: SmartSchedulingRequest
   ): Promise<ComplianceCheckResult> {
     try {
-      console.log(`🔒 Verificando conformidade para agendamento de ${request.patient.name}`);
+      
       
       const violations: string[] = [];
       const requiredActions: string[] = [];
@@ -136,7 +136,7 @@ export class ComplianceIntegration {
         await this.logComplianceCheck(request, isCompliant, violations);
       }
       
-      console.log(`✅ Verificação de conformidade concluída: ${isCompliant ? 'Conforme' : 'Não conforme'}`);
+      
       
       return {
         isCompliant,
@@ -160,7 +160,7 @@ export class ComplianceIntegration {
     request: PromptRequest
   ): Promise<ComplianceCheckResult> {
     try {
-      console.log(`🔒 Verificando conformidade para prompt ${request.type}`);
+      
       
       const violations: string[] = [];
       const requiredActions: string[] = [];
@@ -234,11 +234,11 @@ export class ComplianceIntegration {
    */
   async startRealTimeMonitoring(): Promise<void> {
     if (this.isMonitoring) {
-      console.log('⚠️ Monitoramento em tempo real já está ativo');
+      
       return;
     }
     
-    console.log('🔍 Iniciando monitoramento de conformidade em tempo real');
+    
     this.isMonitoring = true;
     
     // Verificar conformidade a cada 5 minutos
@@ -268,7 +268,7 @@ export class ComplianceIntegration {
    * Parar monitoramento em tempo real
    */
   async stopRealTimeMonitoring(): Promise<void> {
-    console.log('🛑 Parando monitoramento de conformidade em tempo real');
+    
     this.isMonitoring = false;
   }
 
@@ -446,11 +446,11 @@ export class ComplianceIntegration {
     violations: string[],
     alerts: ComplianceAlert[]
   ): Promise<void> {
-    console.log('📧 Notificando violações de conformidade:', violations);
+    
     
     // Implementar notificação real (email, Slack, etc.)
     for (const alert of alerts) {
-      console.log(`🚨 Alerta: ${alert.title} - ${alert.description}`);
+      
     }
   }
 }

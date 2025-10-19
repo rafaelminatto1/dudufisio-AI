@@ -15,7 +15,7 @@ export class MLModels {
 
   async predictNoShow(appointmentId: string, features?: MLFeatures): Promise<NoShowPrediction> {
     try {
-      console.log(`🤖 Predição de no-show para consulta: ${appointmentId}`);
+      
 
       // If features not provided, extract them from appointment data
       const appointmentFeatures = features || await this.extractNoShowFeatures(appointmentId);
@@ -50,7 +50,7 @@ export class MLModels {
 
   async predictTreatmentOutcome(patientId: string, treatmentType: string): Promise<OutcomePrediction> {
     try {
-      console.log(`🎯 Predição de resultado para paciente: ${patientId}`);
+      
 
       const features = await this.extractOutcomeFeatures(patientId, treatmentType);
       const prediction = this.calculateOutcomeProbability(features);
@@ -88,7 +88,7 @@ export class MLModels {
     const anomalies: Anomaly[] = [];
 
     try {
-      console.log('🔍 Detectando anomalias no período...');
+      
 
       // Revenue anomalies
       const revenueAnomalies = await this.detectRevenueAnomalies(period);
@@ -106,7 +106,7 @@ export class MLModels {
       const cancellationAnomalies = await this.detectCancellationAnomalies(period);
       anomalies.push(...cancellationAnomalies);
 
-      console.log(`🔍 Detectadas ${anomalies.length} anomalias`);
+      
       return anomalies;
 
     } catch (error) {

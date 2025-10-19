@@ -372,22 +372,22 @@ export function useInventoryAlerts() {
 
   const markAsRead = (alertId: string) => {
     // Em produção, isso seria uma chamada para a API
-    console.log('Marking alert as read:', alertId);
+    
   };
 
   const markAllAsRead = () => {
     // Em produção, isso seria uma chamada para a API
-    console.log('Marking all alerts as read');
+    
   };
 
   const dismissAlert = (alertId: string) => {
     // Em produção, isso seria uma chamada para a API
-    console.log('Dismissing alert:', alertId);
+    
   };
 
   const exportAlerts = () => {
     // Em produção, isso exportaria os alertas para CSV/PDF
-    console.log('Exporting alerts');
+    
   };
 
   return {

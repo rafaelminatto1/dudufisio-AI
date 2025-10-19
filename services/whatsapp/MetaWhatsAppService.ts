@@ -121,7 +121,7 @@ export class MetaWhatsAppService {
         console.error('Erro ao registrar interação:', err);
       }
 
-      console.log(`✅ Mensagem enviada para ${to} - ID: ${messageId}`);
+      
       return messageId;
 
     } catch (error: any) {
@@ -165,7 +165,7 @@ export class MetaWhatsAppService {
       );
 
       const messageId = response.data.messages[0].id;
-      console.log(`✅ Template enviado para ${to} - ID: ${messageId}`);
+      
       return messageId;
 
     } catch (error: any) {
@@ -186,7 +186,7 @@ export class MetaWhatsAppService {
       const from = message.from;
       const messageBody = message.text?.body || '';
 
-      console.log(`📨 Processando mensagem de ${from}: ${messageBody}`);
+      
 
       // 1. Identificar ou criar lead
       let lead = await LeadService.findLeadByPhone(from, clinicId);
@@ -202,7 +202,7 @@ export class MetaWhatsAppService {
           urgency_level: 'media',
         });
 
-        console.log(`✅ Novo lead criado: ${lead.id}`);
+        
       }
 
       // 2. Registrar interação
@@ -272,7 +272,7 @@ export class MetaWhatsAppService {
    */
   async processMessageStatus(status: MetaWebhookStatus): Promise<void> {
     try {
-      console.log(`📊 Status atualizado: ${status.id} - ${status.status}`);
+      
 
       // Atualizar status no banco de dados
       // Implementar quando necessário
@@ -393,7 +393,7 @@ export class MetaWhatsAppService {
         message_id: messageId,
       });
 
-      console.log(`✅ Mensagem marcada como lida: ${messageId}`);
+      
     } catch (error: any) {
       console.error('Erro ao marcar mensagem como lida:', error.response?.data || error.message);
     }

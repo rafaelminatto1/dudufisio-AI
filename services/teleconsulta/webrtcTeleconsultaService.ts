@@ -196,7 +196,7 @@ class WebRTCTeleconsultaService {
     this.websocket = new WebSocket(wsUrl);
 
     this.websocket.onopen = () => {
-      console.log('WebSocket connected');
+      
     };
 
     this.websocket.onmessage = (event) => {
@@ -205,7 +205,7 @@ class WebRTCTeleconsultaService {
     };
 
     this.websocket.onclose = () => {
-      console.log('WebSocket disconnected');
+      
       // Attempt to reconnect after 3 seconds
       setTimeout(() => this.setupWebSocketConnection(), 3000);
     };
@@ -449,7 +449,7 @@ class WebRTCTeleconsultaService {
 
     // Handle connection state changes
     peerConnection.onconnectionstatechange = () => {
-      console.log(`Connection state with ${participantId}:`, peerConnection.connectionState);
+      
 
       if (peerConnection.connectionState === 'failed') {
         // Attempt to reconnect
@@ -1059,7 +1059,7 @@ class WebRTCTeleconsultaService {
   }
 
   private async reconnectPeer(participantId: string): Promise<void> {
-    console.log(`Attempting to reconnect to participant: ${participantId}`);
+    
 
     // Close existing connection
     const existingConnection = this.peerConnections.get(participantId);

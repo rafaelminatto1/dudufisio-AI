@@ -114,7 +114,7 @@ const TemplateEditPage: React.FC = () => {
       return;
     }
 
-    console.log('✅ Template:', { ...data, exercises: templateExercises });
+    
     navigate('/templates');
   };
 

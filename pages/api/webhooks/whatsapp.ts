@@ -41,16 +41,11 @@ function handleWebhookVerification(req: any, res: any) {
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  console.log('🔍 Verificação do webhook:', {
-    mode,
-    token,
-    expectedToken: verifyToken,
-    challenge
-  });
+  
 
   // Verificar se é uma solicitação de verificação
   if (mode === 'subscribe' && token === verifyToken) {
-    console.log('✅ Webhook verificado com sucesso!');
+    
     return res.status(200).send(challenge);
   }
 
@@ -135,7 +130,7 @@ async function handleMetaMessage(message: any, metadata: any) {
 
     await whatsappService.processIncomingMessage(messageData, clinicId);
 
-    console.log('✅ Mensagem processada:', message.from);
+    
   } catch (error) {
     console.error('❌ Erro ao processar mensagem:', error);
     throw error;
@@ -155,7 +150,7 @@ async function handleMetaStatus(status: any) {
       timestamp: new Date(parseInt(status.timestamp) * 1000).toISOString(),
     });
 
-    console.log('✅ Status atualizado:', status.id, status.status);
+    
   } catch (error) {
     console.error('❌ Erro ao processar status:', error);
     throw error;

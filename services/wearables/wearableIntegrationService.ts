@@ -92,7 +92,7 @@ class WearableIntegrationService {
    * Sincronizar dados de dispositivo
    */
   async syncDevice(patientId: string, deviceType: string): Promise<number> {
-    console.log(`[Wearables] Sincronizando ${deviceType} para paciente ${patientId}`);
+    
 
     const connection = await this.getDeviceConnection(patientId, deviceType);
     
@@ -125,7 +125,7 @@ class WearableIntegrationService {
       .update({ last_sync_at: new Date().toISOString() })
       .eq('id', connection.id);
 
-    console.log(`[Wearables] ${syncedCount} registros sincronizados`);
+    
 
     return syncedCount;
   }
@@ -195,7 +195,7 @@ class WearableIntegrationService {
   private async syncAppleHealth(patientId: string, connection: WearableConnection): Promise<number> {
     // Em produção: usar HealthKit API
     // Por enquanto: simulação
-    console.log('[Apple Health] Sincronizando dados...');
+    
     
     const mockData: WearableData[] = [
       {
@@ -227,7 +227,7 @@ class WearableIntegrationService {
    * Sincronizar Google Fit (placeholder)
    */
   private async syncGoogleFit(patientId: string, connection: WearableConnection): Promise<number> {
-    console.log('[Google Fit] Sincronizando dados...');
+    
     
     // Em produção: usar Google Fit API
     const mockData: WearableData[] = [
@@ -252,7 +252,7 @@ class WearableIntegrationService {
    * Sincronizar Fitbit (placeholder)
    */
   private async syncFitbit(patientId: string, connection: WearableConnection): Promise<number> {
-    console.log('[Fitbit] Sincronizando dados...');
+    
     
     // Em produção: usar Fitbit Web API
     const mockData: WearableData[] = [
@@ -278,7 +278,7 @@ class WearableIntegrationService {
    * Sincronizar Garmin (placeholder)
    */
   private async syncGarmin(patientId: string, connection: WearableConnection): Promise<number> {
-    console.log('[Garmin] Sincronizando dados...');
+    
     
     // Em produção: usar Garmin Connect API
     const mockData: WearableData[] = [

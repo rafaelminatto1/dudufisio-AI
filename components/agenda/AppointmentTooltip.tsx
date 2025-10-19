@@ -129,7 +129,7 @@ const AppointmentTooltip: React.FC<AppointmentTooltipProps> = ({
           className="flex-1 text-xs h-7"
           onClick={() => {
             // TODO: Implementar ação de visualizar detalhes
-            console.log('Ver detalhes:', appointment.id);
+            
           }}
         >
           Ver Detalhes
@@ -140,7 +140,7 @@ const AppointmentTooltip: React.FC<AppointmentTooltipProps> = ({
             className="flex-1 text-xs h-7"
             onClick={() => {
               // TODO: Implementar ação de iniciar sessão
-              console.log('Iniciar sessão:', appointment.id);
+              
             }}
           >
             Iniciar

@@ -56,7 +56,7 @@ export default function PatientForm({ isOpen, onClose }: PatientFormProps) {
     setIsSubmitting(true);
     try {
         // TODO: Implementar createPatient function
-        console.log('Creating patient:', data);
+        
         alert('Paciente criado com sucesso!'); // Em um app real, usaríamos um toast
         onClose();
         form.reset();

@@ -300,7 +300,7 @@ export class BusinessIntelligenceSystem {
     report: Report;
   }> {
     try {
-      console.log('🔍 Executando análise abrangente...');
+      
 
       // Generate dashboard
       const dashboard = await this.generateExecutiveDashboard(period);
@@ -326,7 +326,7 @@ export class BusinessIntelligenceSystem {
       // Generate comprehensive report
       const report = await this.generateCompleteReport(period, 'Análise Abrangente do Período');
 
-      console.log('✅ Análise abrangente concluída');
+      
       return { dashboard, charts, anomalies, report };
 
     } catch (error) {
@@ -338,7 +338,7 @@ export class BusinessIntelligenceSystem {
   // Automated Workflows
   async setupAutomatedReports(): Promise<void> {
     try {
-      console.log('📅 Configurando relatórios automatizados...');
+      
 
       const schedules = [
         {
@@ -362,7 +362,7 @@ export class BusinessIntelligenceSystem {
       ];
 
       await this.reportGenerator.scheduleAutomatedReports(schedules);
-      console.log('✅ Relatórios automatizados configurados');
+      
 
     } catch (error) {
       console.error('❌ Erro ao configurar relatórios automatizados:', error);
@@ -379,12 +379,7 @@ export class BusinessIntelligenceSystem {
 
   private async storeETLLog(result: any): Promise<void> {
     // In a real implementation, this would store the ETL execution log
-    console.log('📝 Log de ETL armazenado:', {
-      success: result.success,
-      recordsProcessed: result.recordsProcessed,
-      duration: result.duration,
-      timestamp: result.timestamp
-    });
+    
   }
 
   // System Configuration
@@ -394,7 +389,7 @@ export class BusinessIntelligenceSystem {
     anomalyThreshold: number;
     autoExport: boolean;
   }>): Promise<void> {
-    console.log('⚙️ Atualizando configuração do sistema:', config);
+    
     // In a real implementation, this would update system configuration in database
   }
 
@@ -440,24 +435,24 @@ export class BusinessIntelligenceSystem {
     rebuildIndexes?: boolean;
   }): Promise<void> {
     try {
-      console.log('🧹 Executando limpeza do sistema...');
+      
 
       if (options.deleteOldReports) {
-        console.log('🗑️ Removendo relatórios antigos...');
+        
         // Implementation would delete old reports
       }
 
       if (options.optimizeWarehouse) {
-        console.log('⚡ Otimizando Data Warehouse...');
+        
         await this.warehouse.optimizePerformance();
       }
 
       if (options.rebuildIndexes) {
-        console.log('🔧 Reconstruindo índices...');
+        
         // Implementation would rebuild database indexes
       }
 
-      console.log('✅ Limpeza do sistema concluída');
+      
     } catch (error) {
       console.error('❌ Erro na limpeza do sistema:', error);
       throw error;

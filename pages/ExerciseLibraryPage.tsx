@@ -34,15 +34,7 @@ const ExerciseLibraryPage: React.FC = () => {
   const { exercises, categories, isLoading, addExercise, updateExercise, deleteExercise, addCategory, updateCategory, copyCategory, deleteCategory, uniqueBodyParts, uniqueEquipment } = useExercises();
   
   // Debug logs to understand what's being returned
-  console.log('🔍 ExerciseLibraryPage debug:', {
-    exercises: exercises?.length || 0,
-    categories: categories?.length || 0,
-    uniqueBodyParts: uniqueBodyParts?.length || 0,
-    uniqueEquipment: uniqueEquipment?.length || 0,
-    isLoading,
-    uniqueBodyPartsType: typeof uniqueBodyParts,
-    uniqueBodyPartsValue: uniqueBodyParts
-  });
+  
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);

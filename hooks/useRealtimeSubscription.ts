@@ -75,7 +75,7 @@ export function useRealtimeSubscription(options: UseRealtimeSubscriptionOptions)
           filter,
         },
         (payload: RealtimePostgresChangesPayload<any>) => {
-          console.log(`[Realtime] ${table} - ${payload.eventType}:`, payload);
+          
 
           // Invalidar cache do React Query
           if (queryKey) {
@@ -108,7 +108,7 @@ export function useRealtimeSubscription(options: UseRealtimeSubscriptionOptions)
 
     // Cleanup ao desmontar
     return () => {
-      console.log(`[Realtime] Unsubscribing from ${table}`);
+      
       channel.unsubscribe();
     };
   }, [table, filter, event, schema, JSON.stringify(queryKey)]);
@@ -147,13 +147,13 @@ export function usePresence(roomName: string, userId: string, userMetadata?: any
     presenceChannel
       .on('presence', { event: 'sync' }, () => {
         const state = presenceChannel.presenceState();
-        console.log('[Presence] Sync:', state);
+        
       })
       .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        console.log('[Presence] User joined:', key, newPresences);
+        
       })
       .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-        console.log('[Presence] User left:', key, leftPresences);
+        
       })
       .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {
@@ -210,7 +210,7 @@ export function useBroadcast<T = any>(
         config: { broadcast: { self: true } },
       })
       .on('broadcast', { event: 'message' }, ({ payload }) => {
-        console.log('[Broadcast] Message received:', payload);
+        
         onMessage?.(payload as T);
       })
       .subscribe();

@@ -211,7 +211,7 @@ class MediaService {
     });
 
     localStorage.setItem('exerciseMedia', JSON.stringify(filtered));
-    console.log(`🗑️ Mídias antigas removidas. Mantidas: ${filtered.length}`);
+    
   }
 
   /**

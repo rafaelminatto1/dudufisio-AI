@@ -334,7 +334,7 @@ class PopulationHealthServiceSupabase {
 
       // Se não há dados suficientes, usar mock data rico
       if (demographics.totalPatients < 10 || insights.length === 0) {
-        console.log('Dados insuficientes, usando dados mock para demonstração');
+        
         return this.getRichMockDashboardData();
       }
 

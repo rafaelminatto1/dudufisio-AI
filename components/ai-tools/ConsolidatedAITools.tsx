@@ -70,7 +70,7 @@ const ConsolidatedAITools: React.FC = () => {
         setActiveModals(prev => ({ ...prev, economicAI: true }));
         break;
       default:
-        console.log(`Navegando para: ${tool}`);
+        
     }
   };
 

@@ -27,7 +27,7 @@ export class WhatsAppNotificationService {
       const tomorrow = addDays(new Date(), 1);
       const tomorrowStr = format(tomorrow, 'yyyy-MM-dd');
 
-      console.log(`📅 Enviando lembretes para consultas de ${tomorrowStr}`);
+      
 
       const { data: appointments } = await supabase
         .from('appointments')
@@ -44,7 +44,7 @@ export class WhatsAppNotificationService {
         .order('time');
 
       if (!appointments || appointments.length === 0) {
-        console.log('✅ Nenhuma consulta para enviar lembretes');
+        
         return;
       }
 
@@ -78,14 +78,14 @@ export class WhatsAppNotificationService {
           );
 
           sent++;
-          console.log(`✅ Lembrete enviado para ${appointment.patient.name}`);
+          
         } catch (error) {
           failed++;
           console.error(`❌ Erro ao enviar para ${appointment.patient.name}:`, error);
         }
       }
 
-      console.log(`📊 Lembretes enviados: ${sent} sucesso, ${failed} falhas`);
+      
     } catch (error) {
       console.error('❌ Erro ao enviar lembretes diários:', error);
       throw error;
@@ -100,7 +100,7 @@ export class WhatsAppNotificationService {
       const targetDate = addDays(new Date(), 2);
       const targetDateStr = format(targetDate, 'yyyy-MM-dd');
 
-      console.log(`📱 Enviando confirmações para consultas de ${targetDateStr}`);
+      
 
       const { data: appointments } = await supabase
         .from('appointments')
@@ -116,7 +116,7 @@ export class WhatsAppNotificationService {
         .order('time');
 
       if (!appointments || appointments.length === 0) {
-        console.log('✅ Nenhuma consulta para solicitar confirmação');
+        
         return;
       }
 
@@ -146,14 +146,14 @@ export class WhatsAppNotificationService {
           );
 
           sent++;
-          console.log(`✅ Confirmação enviada para ${appointment.patient.name}`);
+          
         } catch (error) {
           failed++;
           console.error(`❌ Erro ao enviar para ${appointment.patient.name}:`, error);
         }
       }
 
-      console.log(`📊 Confirmações enviadas: ${sent} sucesso, ${failed} falhas`);
+      
     } catch (error) {
       console.error('❌ Erro ao enviar confirmações:', error);
       throw error;
@@ -168,7 +168,7 @@ export class WhatsAppNotificationService {
       const thirtyDaysAgo = subDays(new Date(), 30);
       const thirtyDaysAgoStr = format(thirtyDaysAgo, 'yyyy-MM-dd');
 
-      console.log(`🔄 Enviando lembretes de retorno para pacientes inativos`);
+      
 
       const { data: inactivePatients } = await supabase
         .from('patients')
@@ -184,7 +184,7 @@ export class WhatsAppNotificationService {
         .limit(50);
 
       if (!inactivePatients || inactivePatients.length === 0) {
-        console.log('✅ Nenhum paciente para enviar lembrete de retorno');
+        
         return;
       }
 
@@ -215,14 +215,14 @@ export class WhatsAppNotificationService {
           );
 
           sent++;
-          console.log(`✅ Lembrete de retorno enviado para ${patient.name}`);
+          
         } catch (error) {
           failed++;
           console.error(`❌ Erro ao enviar para ${patient.name}:`, error);
         }
       }
 
-      console.log(`📊 Lembretes de retorno enviados: ${sent} sucesso, ${failed} falhas`);
+      
     } catch (error) {
       console.error('❌ Erro ao enviar lembretes de retorno:', error);
       throw error;
@@ -234,7 +234,7 @@ export class WhatsAppNotificationService {
    */
   async sendPaymentReminders(clinicId: string): Promise<void> {
     try {
-      console.log(`💰 Enviando lembretes de pagamento pendente`);
+      
 
       const { data: pendingPayments } = await supabase
         .from('financial_transactions')
@@ -250,7 +250,7 @@ export class WhatsAppNotificationService {
         .limit(50);
 
       if (!pendingPayments || pendingPayments.length === 0) {
-        console.log('✅ Nenhum pagamento pendente para enviar lembrete');
+        
         return;
       }
 
@@ -288,7 +288,7 @@ export class WhatsAppNotificationService {
         }
       }
 
-      console.log(`📊 Lembretes de pagamento enviados: ${sent} sucesso, ${failed} falhas`);
+      
     } catch (error) {
       console.error('❌ Erro ao enviar lembretes de pagamento:', error);
       throw error;
@@ -326,7 +326,7 @@ export class WhatsAppNotificationService {
    * Executar todas as notificações diárias
    */
   async runDailyNotifications(clinicId: string): Promise<void> {
-    console.log('🚀 Iniciando envio de notificações diárias...');
+    
 
     try {
       // 1. Lembretes de consulta (1 dia antes)
@@ -341,7 +341,7 @@ export class WhatsAppNotificationService {
       // 4. Lembretes de pagamento
       await this.sendPaymentReminders(clinicId);
 
-      console.log('✅ Notificações diárias concluídas com sucesso!');
+      
     } catch (error) {
       console.error('❌ Erro ao executar notificações diárias:', error);
       throw error;

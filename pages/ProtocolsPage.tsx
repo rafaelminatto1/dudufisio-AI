@@ -113,7 +113,7 @@ const ProtocolsPage: React.FC = () => {
 
   const handleDuplicateProtocol = async (protocol: ExerciseProtocol) => {
     // Implementar duplicação de protocolo
-    console.log('Duplicar protocolo:', protocol.name);
+    
   };
 
   // Estatísticas

@@ -395,7 +395,7 @@ export function getMemoryUsage() {
 export function initPerformanceMonitoring() {
   if (typeof window === 'undefined') return;
 
-  console.log('[Performance] Initializing monitoring...');
+  
 
   // Core Web Vitals
   initWebVitalsMonitoring();
@@ -407,11 +407,11 @@ export function initPerformanceMonitoring() {
   setInterval(() => {
     const memory = getMemoryUsage();
     if (memory) {
-      console.log('[Performance] Memory usage:', memory);
+      
     }
   }, 30000);
 
-  console.log('[Performance] Monitoring initialized');
+  
 }
 
 // Auto-inicializar em produção
