@@ -1,4 +1,6 @@
-import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
+import { handleSupabaseError } from '../../lib/middleware/errorHandler';
+import realtimeService from './realtimeService';
 import type { Database } from '../../types/database';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
@@ -399,7 +401,7 @@ class SessionService {
 
   // Subscribe to session changes
   subscribeToSessionChanges(callback: (payload: RealtimePostgresChangesPayload<Session>) => void) {
-    return subscribeToTable('sessions', callback);
+    return realtimeService.subscribeToTable('sessions', callback);
   }
 
   // Subscribe to patient sessions

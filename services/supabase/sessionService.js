@@ -1,4 +1,6 @@
-import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
+import { handleSupabaseError } from '../../lib/middleware/errorHandler';
+import realtimeService from './realtimeService';
 class SessionService {
     // Get sessions with filters
     async getSessions(filters) {
@@ -334,7 +336,7 @@ class SessionService {
     }
     // Subscribe to session changes
     subscribeToSessionChanges(callback) {
-        return subscribeToTable('sessions', callback);
+        return realtimeService.subscribeToTable('sessions', callback);
     }
     // Subscribe to patient sessions
     subscribeToPatientSessions(patientId, callback) {

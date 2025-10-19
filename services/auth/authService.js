@@ -1,4 +1,5 @@
-import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
+import { handleSupabaseError } from '../../lib/middleware/errorHandler';
 class AuthService {
     // Sign in with email and password
     async signIn({ email, password }) {

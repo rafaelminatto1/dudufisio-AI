@@ -1,4 +1,5 @@
-import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
+import { handleSupabaseError } from '../../lib/middleware/errorHandler';
 import { Appointment, AppointmentStatus, AppointmentType } from '../../types';
 import type { Database } from '../../types/database';
 

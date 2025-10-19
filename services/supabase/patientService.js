@@ -1,4 +1,6 @@
-import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
+import { handleSupabaseError } from '../../lib/middleware/errorHandler';
+import realtimeService from './realtimeService';
 class PatientService {
     // Get all patients
     async getPatients(filters) {
@@ -232,11 +234,11 @@ class PatientService {
     }
     // Subscribe to patient changes
     subscribeToPatientChanges(callback) {
-        return subscribeToTable('patients', callback);
+        return realtimeService.subscribeToTable('patients', callback);
     }
     // Subscribe to specific patient changes
     subscribeToPatientById(patientId, callback) {
-        return subscribeToTable('patients', callback, {
+        return realtimeService.subscribeToTable('patients', callback, {
             column: 'id',
             value: patientId,
         });

@@ -365,7 +365,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <aside 
-      className={`transition-all duration-300 ease-in-out bg-white border-r border-slate-200 flex flex-col ${isCollapsed ? 'w-14' : 'w-56'}`}
+      className={`h-screen transition-all duration-300 ease-in-out bg-white border-r border-slate-200 flex flex-col ${isCollapsed ? 'w-14' : 'w-56'}`}
       data-testid="sidebar"
       role="navigation"
       aria-label="Menu principal"

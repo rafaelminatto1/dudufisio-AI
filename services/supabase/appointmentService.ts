@@ -1,4 +1,6 @@
-import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
+import { handleSupabaseError } from '../../lib/middleware/errorHandler';
+import realtimeService from './realtimeService';
 import type { Database } from '../../types/database';
 // Local date helpers to avoid external dependencies during build
 function formatDate(date: Date): string {
@@ -503,12 +505,12 @@ class AppointmentService {
 
   // Subscribe to appointment changes
   subscribeToAppointmentChanges(callback: (payload: any) => void) {
-    return subscribeToTable('appointments', callback);
+    return realtimeService.subscribeToTable('appointments', callback);
   }
 
   // Subscribe to therapist appointments
   subscribeToTherapistAppointments(therapistId: string, callback: (payload: any) => void) {
-    return subscribeToTable('appointments', callback, {
+    return realtimeService.subscribeToTable('appointments', callback, {
       column: 'therapist_id',
       value: therapistId,
     });
@@ -516,7 +518,7 @@ class AppointmentService {
 
   // Subscribe to patient appointments
   subscribeToPatientAppointments(patientId: string, callback: (payload: any) => void) {
-    return subscribeToTable('appointments', callback, {
+    return realtimeService.subscribeToTable('appointments', callback, {
       column: 'patient_id',
       value: patientId,
     });

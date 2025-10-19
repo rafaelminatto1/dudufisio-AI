@@ -1,4 +1,5 @@
-import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
+import { handleSupabaseError } from '../../lib/middleware/errorHandler';
 import { PatientStatus } from '../../types';
 const sanitizeNullableString = (value) => {
     if (typeof value !== 'string') {

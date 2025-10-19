@@ -1,4 +1,6 @@
-import { supabase, handleSupabaseError, subscribeToTable } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
+import { handleSupabaseError } from '../../lib/middleware/errorHandler';
+import realtimeService from './realtimeService';
 // Local date helpers to avoid external dependencies during build
 function formatDate(date) {
     const year = date.getFullYear();
@@ -417,18 +419,18 @@ class AppointmentService {
     }
     // Subscribe to appointment changes
     subscribeToAppointmentChanges(callback) {
-        return subscribeToTable('appointments', callback);
+        return realtimeService.subscribeToTable('appointments', callback);
     }
     // Subscribe to therapist appointments
     subscribeToTherapistAppointments(therapistId, callback) {
-        return subscribeToTable('appointments', callback, {
+        return realtimeService.subscribeToTable('appointments', callback, {
             column: 'therapist_id',
             value: therapistId,
         });
     }
     // Subscribe to patient appointments
     subscribeToPatientAppointments(patientId, callback) {
-        return subscribeToTable('appointments', callback, {
+        return realtimeService.subscribeToTable('appointments', callback, {
             column: 'patient_id',
             value: patientId,
         });

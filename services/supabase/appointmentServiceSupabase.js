@@ -1,4 +1,5 @@
-import { supabase, handleSupabaseError } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
+import { handleSupabaseError } from '../../lib/middleware/errorHandler';
 import { AppointmentStatus } from '../../types';
 class SupabaseAppointmentService {
     mapRowToAppointment(row) {
