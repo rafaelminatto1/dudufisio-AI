@@ -63,33 +63,33 @@ const MetricCard: React.FC<MetricCardProps> = ({
     switch (variant) {
       case 'success':
         return {
-          container: 'border-l-4 border-l-green-500 bg-green-50/50',
-          value: 'text-green-700',
-          trend: 'text-green-600'
+          container: 'border-l-4 border-l-fisio-secondary-DEFAULT bg-fisio-secondary-50',
+          value: 'text-fisio-secondary-700',
+          trend: 'text-fisio-secondary-600'
         };
       case 'warning':
         return {
-          container: 'border-l-4 border-l-yellow-500 bg-yellow-50/50',
-          value: 'text-yellow-700',
-          trend: 'text-yellow-600'
+          container: 'border-l-4 border-l-fisio-warning-DEFAULT bg-fisio-warning-50',
+          value: 'text-fisio-warning-700',
+          trend: 'text-fisio-warning-600'
         };
       case 'error':
         return {
-          container: 'border-l-4 border-l-red-500 bg-red-50/50',
-          value: 'text-red-700',
-          trend: 'text-red-600'
+          container: 'border-l-4 border-l-fisio-error-DEFAULT bg-fisio-error-50',
+          value: 'text-fisio-error-700',
+          trend: 'text-fisio-error-600'
         };
       case 'info':
         return {
-          container: 'border-l-4 border-l-blue-500 bg-blue-50/50',
-          value: 'text-blue-700',
-          trend: 'text-blue-600'
+          container: 'border-l-4 border-l-fisio-primary-DEFAULT bg-fisio-primary-50',
+          value: 'text-fisio-primary-700',
+          trend: 'text-fisio-primary-600'
         };
       default:
         return {
           container: '',
-          value: 'text-slate-800',
-          trend: 'text-slate-600'
+          value: 'text-fisio-neutral-800',
+          trend: 'text-fisio-neutral-600'
         };
     }
   };
@@ -117,21 +117,21 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
   const cardContent = (
     <div className={cn(
-      'bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-default',
+      'bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-default border border-fisio-neutral-200',
       sizeClasses.container,
       variantClasses.container,
       className
     )}>
       <div className="flex items-start justify-between mb-2">
         <h3 className={cn(
-          'font-medium text-slate-500 truncate flex-1',
+          'font-medium text-fisio-neutral-600 truncate flex-1',
           sizeClasses.title
         )}>
           {title}
         </h3>
         {icon && (
           <div className={cn(
-            'text-slate-400 flex-shrink-0 ml-2',
+            'text-fisio-neutral-400 flex-shrink-0 ml-2',
             sizeClasses.icon
           )}>
             {icon}
@@ -149,7 +149,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
       {subtitle && (
         <p className={cn(
-          'text-slate-500 truncate mt-1',
+          'text-fisio-neutral-500 truncate mt-1',
           sizeClasses.subtitle
         )}>
           {subtitle}
@@ -160,7 +160,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         <div className={cn(
           'flex items-center mt-2 text-xs font-medium',
           variantClasses.trend,
-          trend.isPositive ? 'text-green-600' : 'text-red-600'
+          trend.isPositive ? 'text-fisio-secondary-600' : 'text-fisio-error-600'
         )}>
           <span className="truncate">{trend.label}</span>
         </div>
