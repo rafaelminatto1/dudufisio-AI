@@ -1,8 +1,7 @@
 // components/pacientes/PatientList.tsx
-'use client';
 
 import React, { useState, useTransition, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Plus, Search, Filter } from 'lucide-react';
 import PatientForm from './PatientForm';
 import { useDebounce } from '@/lib/hooks/use-debounce'; // Supondo que o hook existe
@@ -35,13 +34,13 @@ const PatientRowSkeleton = () => (
 
 
 export default function PatientList({ initialData }: PatientListProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const [patients, setPatients] = useState(initialData.items);
   const [nextCursor, setNextCursor] = useState(initialData.nextCursor);
-  
+
   const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '');
   const [status, setStatus] = useState(searchParams.get('status') || 'All');
   
@@ -65,9 +64,9 @@ export default function PatientList({ initialData }: PatientListProps) {
     params.delete('cursor'); // Reseta a paginação ao filtrar
     
     startTransition(() => {
-        router.replace(`/pacientes?${params.toString()}`);
+        navigate(`/pacientes?${params.toString()}`, { replace: true });
     });
-  }, [debouncedSearchTerm, status, router]);
+  }, [debouncedSearchTerm, status, navigate]);
 
   // Atualiza a lista quando os dados iniciais do server component mudam
   useEffect(() => {
@@ -130,7 +129,7 @@ export default function PatientList({ initialData }: PatientListProps) {
                 {!isPending && patients.map(patient => (
                     <div
                         key={patient.id}
-                        onClick={() => router.push(`/pacientes/${patient.id}`)}
+                        onClick={() => navigate(`/pacientes/${patient.id}`)}
                         className="flex items-center p-4 hover:bg-slate-50 cursor-pointer"
                     >
                         <img className="h-10 w-10 rounded-full object-cover" src={patient.avatarUrl || `https://i.pravatar.cc/150?u=${patient.id}`} alt={patient.name} />
