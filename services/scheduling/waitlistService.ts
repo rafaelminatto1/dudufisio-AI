@@ -101,6 +101,31 @@ export const waitlistService = {
     return entry;
   },
 
+  async updateEntry(entryId: string, updates: Partial<Omit<WaitlistEntry, 'id' | 'createdAt'>>): Promise<WaitlistEntry> {
+    const entry = db.getWaitlistEntryById?.(entryId);
+    if (!entry) {
+      throw new Error('Entrada da lista de espera não encontrada');
+    }
+
+    // Validações
+    if (updates.urgency !== undefined && (updates.urgency < 1 || updates.urgency > 5)) {
+      throw new Error('Urgência deve estar entre 1 e 5');
+    }
+
+    if (updates.noShowRisk !== undefined && (updates.noShowRisk < 0 || updates.noShowRisk > 10)) {
+      throw new Error('Risco de no-show deve estar entre 0 e 10');
+    }
+
+    const updatedEntry: WaitlistEntry = {
+      ...entry,
+      ...updates,
+      updatedAt: new Date(),
+    };
+
+    db.saveWaitlistEntry?.(updatedEntry);
+    return updatedEntry;
+  },
+
   async markEntry(entryId: string, status: WaitlistStatus, metadata?: Partial<WaitlistEntry>): Promise<void> {
     const entry = db.getWaitlistEntryById?.(entryId);
     if (!entry) return;

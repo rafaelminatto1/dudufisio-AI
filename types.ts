@@ -1860,6 +1860,8 @@ export interface InventoryItem {
   sku?: string;
 }
 
+// DEPRECATED: Use InventoryMovementType instead
+// This enum is kept for backward compatibility but should not be used in new code
 export enum MovementType {
   In = 'In',
   Out = 'Out',
@@ -1888,6 +1890,8 @@ export const MovementTypeUtils = {
   isSaida: (type: MovementType): boolean => type === MovementType.Out
 }
 
+// DEPRECATED: This interface is duplicated. Use the one at line 2924 instead.
+// This interface is kept for backward compatibility but should not be used in new code
 export interface StockMovement {
   id: string;
   itemId: string;
@@ -2925,7 +2929,7 @@ export interface StockMovement {
   id: string;
   supplyId: string;
   supply?: Supply;
-  movementType: MovementType;
+  movementType: InventoryMovementType;
   quantity: number;
   unitCost?: number;
   totalCost?: number;
@@ -3080,7 +3084,7 @@ export interface UpdateSupplyData extends Partial<CreateSupplyData> {
 
 export interface CreateStockMovementData {
   supplyId: string;
-  movementType: MovementType;
+  movementType: InventoryMovementType;
   quantity: number;
   unitCost?: number;
   reason?: string;
@@ -3114,7 +3118,7 @@ export interface SupplyFilters {
 
 export interface StockMovementFilters {
   supplyId?: string;
-  movementType?: MovementType;
+  movementType?: InventoryMovementType;
   dateFrom?: string;
   dateTo?: string;
   patientId?: string;

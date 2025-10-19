@@ -300,41 +300,38 @@ export const deleteSupply = async (id: string): Promise<void> => {
 
 export const getStockMovements = async (filters?: StockMovementFilters): Promise<StockMovement[]> => {
   try {
-    // DISABLED: Complex type mapping issues with stock_movements table
-    console.warn('Stock movements functionality temporarily disabled due to type mapping issues');
-    return [];
-    // let query = supabase
-    //   .from('stock_movements')
-    //   .select(`
-    //     *,
-    //     supply:supplies(*)
-    //   `);
+    let query = supabase
+      .from('stock_movements')
+      .select(`
+        *,
+        supply:supplies(*)
+      `);
 
-    // if (filters) {
-    //   if (filters.supplyId) {
-    //     query = query.eq('supply_id', filters.supplyId);
-    //   }
-    //   if (filters.movementType) {
-    //     query = query.eq('movement_type', filters.movementType);
-    //   }
-    //   if (filters.dateFrom) {
-    //     query = query.gte('created_at', filters.dateFrom);
-    //   }
-    //   if (filters.dateTo) {
-    //     query = query.lte('created_at', filters.dateTo);
-    //   }
-    //   if (filters.patientId) {
-    //     query = query.eq('patient_id', filters.patientId);
-    //   }
-    //   if (filters.taskId) {
-    //     query = query.eq('task_id', filters.taskId);
-    //   }
-    // }
+    if (filters) {
+      if (filters.supplyId) {
+        query = query.eq('supply_id', filters.supplyId);
+      }
+      if (filters.movementType) {
+        query = query.eq('movement_type', filters.movementType);
+      }
+      if (filters.dateFrom) {
+        query = query.gte('created_at', filters.dateFrom);
+      }
+      if (filters.dateTo) {
+        query = query.lte('created_at', filters.dateTo);
+      }
+      if (filters.patientId) {
+        query = query.eq('patient_id', filters.patientId);
+      }
+      if (filters.taskId) {
+        query = query.eq('task_id', filters.taskId);
+      }
+    }
 
-    // const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', { ascending: false });
 
-    // if (error) throw error;
-    // return data || [];
+    if (error) throw error;
+    return data || [];
   } catch (error) {
     console.error('Erro ao buscar movimentações:', error);
     throw error;
@@ -343,9 +340,55 @@ export const getStockMovements = async (filters?: StockMovementFilters): Promise
 
 export const createStockMovement = async (movementData: CreateStockMovementData): Promise<StockMovement> => {
   try {
-    // DISABLED: Complex type mapping issues with stock_movements table
-    console.warn('Stock movement creation temporarily disabled due to type mapping issues');
-    throw new Error('Stock movement creation temporarily disabled');
+    const { data: user } = await supabase.auth.getUser();
+    
+    const insertData = {
+      supply_id: movementData.supplyId,
+      movement_type: movementData.movementType,
+      quantity: movementData.quantity,
+      unit_cost: movementData.unitCost,
+      total_cost: movementData.unitCost ? movementData.unitCost * movementData.quantity : null,
+      reason: movementData.reason,
+      reference_document: movementData.referenceDocument,
+      moved_by: user.user?.id || movementData.patientId,
+      patient_id: movementData.patientId,
+      task_id: movementData.taskId,
+      batch_number: movementData.batchNumber,
+      expiration_date: movementData.expirationDate
+    };
+
+    const { data, error } = await supabase
+      .from('stock_movements')
+      .insert(insertData)
+      .select(`
+        *,
+        supply:supplies(*)
+      `)
+      .single();
+
+    if (error) throw error;
+
+    // Update supply stock
+    if (data) {
+      const { data: supply } = await supabase
+        .from('supplies')
+        .select('current_stock')
+        .eq('id', movementData.supplyId)
+        .single();
+
+      if (supply) {
+        const newStock = movementData.movementType === 'entrada' 
+          ? supply.current_stock + movementData.quantity
+          : supply.current_stock - movementData.quantity;
+
+        await supabase
+          .from('supplies')
+          .update({ current_stock: newStock })
+          .eq('id', movementData.supplyId);
+      }
+    }
+
+    return data;
   } catch (error) {
     console.error('Erro ao criar movimentação:', error);
     throw error;
@@ -358,42 +401,39 @@ export const createStockMovement = async (movementData: CreateStockMovementData)
 
 export const getPurchaseOrders = async (filters?: PurchaseOrderFilters): Promise<PurchaseOrder[]> => {
   try {
-    // DISABLED: Complex type mapping issues with purchase_orders table
-    console.warn('Purchase orders functionality temporarily disabled due to type mapping issues');
-    return [];
-    // let query = supabase
-    //   .from('purchase_orders')
-    //   .select(`
-    //     *,
-    //     supplier:suppliers(*),
-    //     items:purchase_order_items(
-    //       *,
-    //       supply:supplies(*)
-    //     )
-    //   `);
+    let query = supabase
+      .from('purchase_orders')
+      .select(`
+        *,
+        supplier:suppliers(*),
+        items:purchase_order_items(
+          *,
+          supply:supplies(*)
+        )
+      `);
 
-    // if (filters) {
-    //   if (filters.supplierId) {
-    //     query = query.eq('supplier_id', filters.supplierId);
-    //   }
-    //   if (filters.status) {
-    //     query = query.eq('status', filters.status);
-    //   }
-    //   if (filters.dateFrom) {
-    //     query = query.gte('order_date', filters.dateFrom);
-    //   }
-    //   if (filters.dateTo) {
-    //     query = query.lte('order_date', filters.dateTo);
-    //   }
-    //   if (filters.isAutoGenerated !== undefined) {
-    //     query = query.eq('is_auto_generated', filters.isAutoGenerated);
-    //   }
-    // }
+    if (filters) {
+      if (filters.supplierId) {
+        query = query.eq('supplier_id', filters.supplierId);
+      }
+      if (filters.status) {
+        query = query.eq('status', filters.status);
+      }
+      if (filters.dateFrom) {
+        query = query.gte('order_date', filters.dateFrom);
+      }
+      if (filters.dateTo) {
+        query = query.lte('order_date', filters.dateTo);
+      }
+      if (filters.isAutoGenerated !== undefined) {
+        query = query.eq('is_auto_generated', filters.isAutoGenerated);
+      }
+    }
 
-    // const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', { ascending: false });
 
-    // if (error) throw error;
-    // return data || [];
+    if (error) throw error;
+    return data || [];
   } catch (error) {
     console.error('Erro ao buscar pedidos:', error);
     throw error;
@@ -402,9 +442,64 @@ export const getPurchaseOrders = async (filters?: PurchaseOrderFilters): Promise
 
 export const createPurchaseOrder = async (orderData: CreatePurchaseOrderData): Promise<PurchaseOrder> => {
   try {
-    // DISABLED: Complex type mapping issues with purchase_orders table
-    console.warn('Purchase order creation temporarily disabled due to type mapping issues');
-    throw new Error('Purchase order creation temporarily disabled');
+    const { data: user } = await supabase.auth.getUser();
+    
+    // Calculate total amount
+    const totalAmount = orderData.items.reduce((sum, item) => {
+      return sum + (item.unitCost ? item.unitCost * item.quantityRequested : 0);
+    }, 0);
+
+    // Create purchase order
+    const { data: order, error: orderError } = await supabase
+      .from('purchase_orders')
+      .insert({
+        supplier_id: orderData.supplierId,
+        status: 'pending',
+        total_amount: totalAmount,
+        requested_by: user.user?.id,
+        order_date: new Date().toISOString(),
+        expected_delivery: orderData.expectedDelivery,
+        notes: orderData.notes,
+        is_auto_generated: false
+      })
+      .select()
+      .single();
+
+    if (orderError) throw orderError;
+
+    // Create purchase order items
+    const items = orderData.items.map(item => ({
+      purchase_order_id: order.id,
+      supply_id: item.supplyId,
+      quantity_requested: item.quantityRequested,
+      quantity_received: 0,
+      unit_cost: item.unitCost,
+      total_cost: item.unitCost ? item.unitCost * item.quantityRequested : 0
+    }));
+
+    const { error: itemsError } = await supabase
+      .from('purchase_order_items')
+      .insert(items);
+
+    if (itemsError) throw itemsError;
+
+    // Fetch complete order with relations
+    const { data: completeOrder, error: fetchError } = await supabase
+      .from('purchase_orders')
+      .select(`
+        *,
+        supplier:suppliers(*),
+        items:purchase_order_items(
+          *,
+          supply:supplies(*)
+        )
+      `)
+      .eq('id', order.id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    return completeOrder;
   } catch (error) {
     console.error('Erro ao criar pedido:', error);
     throw error;
@@ -432,9 +527,8 @@ export const updatePurchaseOrderStatus = async (id: string, status: string, appr
       `)
       .single();
 
-    // if (error) throw error;
-    // return data;
-    throw new Error('Function temporarily disabled due to type mapping issues');
+    if (error) throw error;
+    return data;
   } catch (error) {
     console.error('Erro ao atualizar pedido:', error);
     throw error;
@@ -447,25 +541,22 @@ export const updatePurchaseOrderStatus = async (id: string, status: string, appr
 
 export const getSupplyAlerts = async (unreadOnly: boolean = false): Promise<SupplyAlert[]> => {
   try {
-    // DISABLED: Complex type mapping issues with supply_alerts table
-    console.warn('Supply alerts functionality temporarily disabled due to type mapping issues');
-    return [];
-    // let query = supabase
-    //   .from('supply_alerts')
-    //   .select(`
-    //     *,
-    //     supply:supplies(*)
-    //   `)
-    //   .eq('is_resolved', false);
+    let query = supabase
+      .from('supply_alerts')
+      .select(`
+        *,
+        supply:supplies(*)
+      `)
+      .eq('is_resolved', false);
 
-    // if (unreadOnly) {
-    //   query = query.eq('is_read', false);
-    // }
+    if (unreadOnly) {
+      query = query.eq('is_read', false);
+    }
 
-    // const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('created_at', { ascending: false });
 
-    // if (error) throw error;
-    // return data || [];
+    if (error) throw error;
+    return data || [];
   } catch (error) {
     console.error('Erro ao buscar alertas:', error);
     throw error;
