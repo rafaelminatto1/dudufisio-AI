@@ -20,8 +20,8 @@ import {
 // Componente de loading para evitar timeout
 const LoadingSpinner = () => (
   <div className="flex items-center justify-center p-8">
-    <RefreshCw className="h-6 w-6 animate-spin text-sky-500" />
-    <span className="ml-2 text-gray-600">Carregando dados...</span>
+    <RefreshCw className="h-6 w-6 animate-spin text-fisio-primary-DEFAULT" />
+    <span className="ml-2 text-fisio-neutral-600">Carregando dados...</span>
   </div>
 );
 
@@ -39,40 +39,40 @@ const SimpleReportsDashboard = () => {
     <div className="space-y-6">
       {/* Métricas principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="border-fisio-neutral-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-fisio-neutral-800">Receita Total</CardTitle>
+            <DollarSign className="h-4 w-4 text-fisio-primary-DEFAULT" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">R$ 45.231,89</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-fisio-neutral-800">R$ 45.231,89</div>
+            <p className="text-xs text-fisio-neutral-500">
               +20.1% em relação ao mês passado
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-fisio-neutral-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pacientes Ativos</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-fisio-neutral-800">Pacientes Ativos</CardTitle>
+            <Users className="h-4 w-4 text-fisio-secondary-DEFAULT" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+2350</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-fisio-neutral-800">+2350</div>
+            <p className="text-xs text-fisio-neutral-500">
               +180.1% em relação ao mês passado
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-fisio-neutral-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sessões Realizadas</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-fisio-neutral-800">Sessões Realizadas</CardTitle>
+            <BarChart3 className="h-4 w-4 text-fisio-warning-DEFAULT" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+12,234</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-fisio-neutral-800">+12,234</div>
+            <p className="text-xs text-fisio-neutral-500">
               +19% em relação ao mês passado
             </p>
           </CardContent>

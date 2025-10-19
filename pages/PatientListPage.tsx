@@ -9,24 +9,24 @@ const PatientListPage: React.FC = () => {
   const handleViewPatient = (patient: { id: string }) => navigate(`/patients/${patient.id}`);
 
   return (
-    <main className="min-h-screen bg-slate-50 py-8" role="main">
+    <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
       <ResponsiveContainer>
         {/* Header */}
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="heading-lg-responsive font-bold text-slate-900 mb-2">
+            <h1 className="heading-lg-responsive font-bold text-fisio-neutral-800 mb-2">
               Lista de Pacientes
             </h1>
-            <p className="text-responsive text-slate-600">
+            <p className="text-responsive text-fisio-neutral-600">
               Gerencie todos os pacientes da clínica
             </p>
           </div>
           {/* Botão agora fica na toolbar do PatientTable */}
         </header>
 
-        {/* Estatísticas com Gradientes Vibrantes */}
+        {/* Estatísticas com Gradientes Vibrantes - Paleta FisioFlow */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <Card className="bg-gradient-to-br from-health-primary-500 to-health-primary-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+          <Card className="bg-gradient-to-br from-fisio-primary-500 to-fisio-primary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -42,7 +42,7 @@ const PatientListPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-health-success-500 to-health-success-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+          <Card className="bg-gradient-to-br from-fisio-secondary-500 to-fisio-secondary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -58,7 +58,7 @@ const PatientListPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-health-warning-500 to-health-warning-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+          <Card className="bg-gradient-to-br from-fisio-warning-500 to-fisio-warning-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -74,7 +74,7 @@ const PatientListPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-health-secondary-500 to-health-secondary-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+          <Card className="bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-500 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -92,7 +92,7 @@ const PatientListPage: React.FC = () => {
         </div>
 
         {/* Data Table (Supabase + shadcn) */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-fisio-neutral-200">
           <PatientTable onView={handleViewPatient} />
         </div>
       </ResponsiveContainer>
