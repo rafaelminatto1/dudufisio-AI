@@ -132,7 +132,8 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
           managementNav: [
             { to: '/user-management', icon: Users2, label: 'Gestão de Usuários' },
             { to: '/groups', icon: Users2, label: 'Grupos' },
-            { to: '/inventory', icon: Package, label: 'Estoque/Insumos' },
+            { to: '/supplies', icon: Package, label: 'Gestão de Insumos' },
+            { to: '/inventory', icon: Package, label: 'Estoque/Inventário' },
             { to: '/inventory-dashboard', icon: Monitor, label: 'Dashboard de Estoque' },
             { to: '/events', icon: Ticket, label: 'Eventos' },
             { to: '/events-list', icon: Calendar, label: 'Lista de Eventos' },
