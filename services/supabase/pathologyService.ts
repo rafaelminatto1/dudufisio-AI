@@ -26,7 +26,7 @@ export class PathologyService {
         description: data.description,
         treatment_plan: data.treatmentPlan,
         notes: data.notes
-      })
+      } as any)
       .select()
       .single();
 

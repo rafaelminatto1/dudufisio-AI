@@ -23,7 +23,7 @@ export class AssessmentTestService {
         frequency_days: data.frequencyDays,
         is_mandatory: data.isMandatory,
         notes: data.notes
-      })
+      } as any)
       .select()
       .single();
 
@@ -153,7 +153,7 @@ export class AssessmentTestService {
       .from('assessment_test_configs')
       .update({
         last_performed_date: today
-      })
+      } as any)
       .eq('id', configId);
 
     if (updateError) {
@@ -170,7 +170,7 @@ export class AssessmentTestService {
         .from('assessment_test_configs')
         .update({
           next_due_date: nextDate
-        })
+        } as any)
         .eq('id', configId);
     }
   }

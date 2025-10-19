@@ -127,7 +127,7 @@ export class SupabasePatientService {
     const { data: patient, error } = await supabase
       .from('patients')
       .update({
-        ...(data.name && { name: data.name }),
+        ...(data.name && { name: data.name } as any),
         ...(data.email && { email: data.email }),
         ...(data.phone && { phone: data.phone }),
         ...(data.phone2 !== undefined && { phone2: data.phone2 }),
@@ -164,7 +164,7 @@ export class SupabasePatientService {
       .update({ 
         deleted_at: new Date().toISOString(),
         updated_by: (await supabase.auth.getUser()).data.user?.id,
-      })
+      } as any)
       .eq('id', id);
     
     if (error) throw error;
@@ -299,7 +299,7 @@ export class SupabasePatientService {
       patient_id: patientId,
       ...event,
       created_by: (await supabase.auth.getUser()).data.user?.id,
-    });
+    } as any);
     
     if (error) throw error;
   }
@@ -369,7 +369,7 @@ export class SupabasePatientService {
         file_size: file.size,
         file_type: file.type,
         uploaded_by: (await supabase.auth.getUser()).data.user?.id,
-      })
+      } as any)
       .select()
       .single();
     
@@ -410,7 +410,7 @@ export class SupabasePatientService {
   async deleteDocument(documentId: string): Promise<void> {
     const { error } = await supabase
       .from('patient_documents')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as any)
       .eq('id', documentId);
     
     if (error) throw error;
@@ -439,7 +439,7 @@ export class SupabasePatientService {
         patient_id: patientId,
         ...note,
         created_by: (await supabase.auth.getUser()).data.user?.id,
-      })
+      } as any)
       .select()
       .single();
     

@@ -457,7 +457,7 @@ class SupabasePatientService {
     try {
       const { error } = await supabase
         .from('patients')
-        .update({ user_id: userId })
+        .update({ user_id: userId } as any)
         .eq('id', patientId);
 
       if (error) throw error;
@@ -470,7 +470,7 @@ class SupabasePatientService {
     try {
       const { error } = await supabase
         .from('patients')
-        .update({ user_id: null })
+        .update({ user_id: null } as any)
         .eq('id', patientId);
 
       if (error) throw error;

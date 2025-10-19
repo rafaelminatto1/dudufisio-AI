@@ -29,7 +29,7 @@ export class GoalsService {
         status: data.status,
         notes: data.notes,
         created_by: data.createdBy
-      })
+      } as any)
       .select()
       .single();
 
@@ -166,7 +166,7 @@ export class GoalsService {
         status: 'completed',
         current_progress: 100,
         achieved_at: new Date().toISOString()
-      })
+      } as any)
       .eq('id', id)
       .select()
       .single();

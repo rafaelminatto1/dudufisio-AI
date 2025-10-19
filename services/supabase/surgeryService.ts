@@ -25,7 +25,7 @@ export class SurgeryService {
         complications: data.complications,
         recovery_time_days: data.recoveryTimeDays,
         notes: data.notes
-      })
+      } as any)
       .select()
       .single();
 
