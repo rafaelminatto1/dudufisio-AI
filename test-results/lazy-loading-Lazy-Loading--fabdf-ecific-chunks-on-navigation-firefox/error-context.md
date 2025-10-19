@@ -352,8 +352,8 @@
                       - cell "Status" [ref=e548]
                       - cell [ref=e549]
                   - rowgroup [ref=e550]:
-                    - row "Nenhum resultado." [ref=e551]:
-                      - cell "Nenhum resultado." [ref=e552]
+                    - row "Carregando..." [ref=e551]:
+                      - cell "Carregando..." [ref=e552]
                 - generic [ref=e553]:
                   - generic [ref=e554]: 0 registro(s) • Página 1 de 1
                   - generic [ref=e555]:
@@ -370,4 +370,10 @@
             - text: Atualizar
           - button "Depois" [ref=e573] [cursor=pointer]
   - generic [ref=e574]: R$ 0k
+  - generic [ref=e575]:
+    - generic [ref=e576]:
+      - generic [ref=e577]: Nova versão disponível! 🎉
+      - generic [ref=e578]: Clique em atualizar para obter as últimas melhorias
+    - button "Atualizar" [ref=e579] [cursor=pointer]
+    - button "Depois" [ref=e580] [cursor=pointer]
 ```

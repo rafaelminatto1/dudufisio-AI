@@ -4,18 +4,53 @@
 interface WorkerMessage {
   type: string;
   id: string;
-  data: any;
+  data: unknown;
 }
 
 interface WorkerResponse {
   type: string;
   id: string;
-  result?: any;
+  result?: unknown;
   error?: string;
 }
 
 // Data processing functions
-const processPatientData = (patients: any[]) => {
+type Patient = {
+  dateOfBirth: string;
+  medicalHistory?: {
+    chronicConditions?: string[];
+    surgeries?: unknown[];
+    medications?: unknown[];
+  };
+  lifestyle?: {
+    smoking?: boolean;
+    alcohol?: 'none' | 'moderate' | 'heavy';
+    exercise?: 'sedentary' | 'active';
+  };
+  [key: string]: unknown;
+};
+
+type Appointment = {
+  id?: string;
+  therapistId?: string;
+  startTime: string;
+  endTime?: string;
+  status?: 'scheduled' | 'completed' | 'canceled' | string;
+  [key: string]: unknown;
+};
+
+type Transaction = {
+  createdAt: string;
+  status?: 'pending' | 'completed' | 'failed' | string;
+  amount: number;
+  paymentMethod?: string;
+  [key: string]: unknown;
+};
+
+type Exercise = { id: string } & Record<string, unknown>;
+type UserProgress = Record<string, unknown>;
+
+const processPatientData = (patients: Patient[]) => {
   return patients.map(patient => ({
     ...patient,
     age: calculateAge(patient.dateOfBirth),
@@ -24,7 +59,7 @@ const processPatientData = (patients: any[]) => {
   }));
 };
 
-const processAppointmentAnalytics = (appointments: any[]) => {
+const processAppointmentAnalytics = (appointments: Appointment[]) => {
   const now = new Date();
   const thisMonth = appointments.filter(apt =>
     new Date(apt.startTime).getMonth() === now.getMonth()
@@ -40,7 +75,7 @@ const processAppointmentAnalytics = (appointments: any[]) => {
   };
 };
 
-const processFinancialData = (transactions: any[]) => {
+const processFinancialData = (transactions: Transaction[]) => {
   const revenue = transactions
     .filter(t => t.status === 'completed')
     .reduce((sum, t) => sum + t.amount, 0);
@@ -57,7 +92,7 @@ const processFinancialData = (transactions: any[]) => {
   };
 };
 
-const processExerciseData = (exercises: any[], userProgress: any[]) => {
+const processExerciseData = (exercises: Exercise[], userProgress: UserProgress[]) => {
   return exercises.map(exercise => ({
     ...exercise,
     completionRate: calculateExerciseCompletionRate(exercise.id, userProgress),
@@ -67,7 +102,11 @@ const processExerciseData = (exercises: any[], userProgress: any[]) => {
   }));
 };
 
-const generateInsights = (data: any) => {
+const generateInsights = (data: {
+  revenue?: { monthlyRevenue: Array<{ revenue: number }> };
+  patients?: Array<{ riskScore: number }>;
+  appointments?: { cancellationRate: number };
+}) => {
   const insights = [];
 
   // Revenue insights
@@ -87,7 +126,7 @@ const generateInsights = (data: any) => {
 
   // Patient insights
   if (data.patients) {
-    const highRiskPatients = data.patients.filter((p: any) => p.riskScore > 7);
+    const highRiskPatients = data.patients.filter((p: { riskScore: number }) => p.riskScore > 7);
     if (highRiskPatients.length > 0) {
       insights.push({
         type: 'warning',
@@ -132,7 +171,7 @@ const calculateAge = (dateOfBirth: string): number => {
   return age;
 };
 
-const calculateRiskScore = (patient: any): number => {
+const calculateRiskScore = (patient: Patient): number => {
   let score = 0;
 
   // Age factor
@@ -153,7 +192,7 @@ const calculateRiskScore = (patient: any): number => {
   return Math.min(score, 10); // Cap at 10
 };
 
-const generateRecommendations = (patient: any): string[] => {
+const generateRecommendations = (patient: Patient): string[] => {
   const recommendations = [];
   const age = calculateAge(patient.dateOfBirth);
   const riskScore = calculateRiskScore(patient);
@@ -176,7 +215,7 @@ const generateRecommendations = (patient: any): string[] => {
   return recommendations;
 };
 
-const calculateAverageDuration = (appointments: any[]): number => {
+const calculateAverageDuration = (appointments: Appointment[]): number => {
   const completedAppointments = appointments.filter(apt => apt.status === 'completed');
   if (completedAppointments.length === 0) return 0;
 
@@ -189,13 +228,13 @@ const calculateAverageDuration = (appointments: any[]): number => {
   return totalDuration / completedAppointments.length / (1000 * 60); // Convert to minutes
 };
 
-const calculateCompletionRate = (appointments: any[]): number => {
+const calculateCompletionRate = (appointments: Appointment[]): number => {
   if (appointments.length === 0) return 0;
   const completed = appointments.filter(apt => apt.status === 'completed').length;
   return completed / appointments.length;
 };
 
-const analyzeBusyHours = (appointments: any[]) => {
+const analyzeBusyHours = (appointments: Appointment[]) => {
   const hourCounts = new Array(24).fill(0);
 
   appointments.forEach(apt => {
@@ -207,7 +246,7 @@ const analyzeBusyHours = (appointments: any[]) => {
     .sort((a, b) => b.count - a.count);
 };
 
-const analyzeTherapistUtilization = (appointments: any[]) => {
+const analyzeTherapistUtilization = (appointments: Appointment[]) => {
   const therapistStats = new Map();
 
   appointments.forEach(apt => {
@@ -234,7 +273,7 @@ const analyzeTherapistUtilization = (appointments: any[]) => {
   }));
 };
 
-const groupTransactionsByMonth = (transactions: any[]) => {
+const groupTransactionsByMonth = (transactions: Transaction[]) => {
   const monthlyData = new Map();
 
   transactions.forEach(transaction => {
@@ -257,7 +296,7 @@ const groupTransactionsByMonth = (transactions: any[]) => {
     .sort((a, b) => a.month.localeCompare(b.month));
 };
 
-const generateRevenueForecast = (monthlyRevenue: any[]) => {
+const generateRevenueForecast = (monthlyRevenue: Array<{ revenue: number }>) => {
   if (monthlyRevenue.length < 3) return [];
 
   // Simple linear regression for forecast
@@ -287,7 +326,7 @@ const generateRevenueForecast = (monthlyRevenue: any[]) => {
   return forecast;
 };
 
-const analyzePaymentMethods = (transactions: any[]) => {
+const analyzePaymentMethods = (transactions: Transaction[]) => {
   const methodCounts = new Map();
 
   transactions.forEach(transaction => {
@@ -300,7 +339,7 @@ const analyzePaymentMethods = (transactions: any[]) => {
     .sort((a, b) => b.count - a.count);
 };
 
-const calculateExerciseCompletionRate = (exerciseId: string, userProgress: any[]): number => {
+const calculateExerciseCompletionRate = (exerciseId: string, userProgress: UserProgress[]): number => {
   const exerciseProgress = userProgress.filter(p => p.exerciseId === exerciseId);
   if (exerciseProgress.length === 0) return 0;
 
@@ -308,7 +347,7 @@ const calculateExerciseCompletionRate = (exerciseId: string, userProgress: any[]
   return completed / exerciseProgress.length;
 };
 
-const calculateAverageRating = (exerciseId: string, userProgress: any[]): number => {
+const calculateAverageRating = (exerciseId: string, userProgress: UserProgress[]): number => {
   const ratings = userProgress
     .filter(p => p.exerciseId === exerciseId && p.rating)
     .map(p => p.rating);
@@ -317,7 +356,7 @@ const calculateAverageRating = (exerciseId: string, userProgress: any[]): number
   return ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
 };
 
-const suggestDifficultyAdjustment = (exercise: any, userProgress: any[]): string => {
+const suggestDifficultyAdjustment = (exercise: Exercise, userProgress: UserProgress[]): string => {
   const completionRate = calculateExerciseCompletionRate(exercise.id, userProgress);
   const averageRating = calculateAverageRating(exercise.id, userProgress);
 
@@ -330,7 +369,7 @@ const suggestDifficultyAdjustment = (exercise: any, userProgress: any[]): string
   return 'maintain';
 };
 
-const calculatePopularityScore = (exerciseId: string, userProgress: any[]): number => {
+const calculatePopularityScore = (exerciseId: string, userProgress: UserProgress[]): number => {
   const exerciseProgress = userProgress.filter(p => p.exerciseId === exerciseId);
   const uniqueUsers = new Set(exerciseProgress.map(p => p.userId)).size;
   const totalSessions = exerciseProgress.length;
@@ -338,7 +377,7 @@ const calculatePopularityScore = (exerciseId: string, userProgress: any[]): numb
   return uniqueUsers * 0.7 + totalSessions * 0.3; // Weighted score
 };
 
-const calculateGrowthRate = (monthlyData: any[]): number => {
+const calculateGrowthRate = (monthlyData: Array<{ revenue: number }>): number => {
   if (monthlyData.length < 2) return 0;
 
   const latest = monthlyData[monthlyData.length - 1];

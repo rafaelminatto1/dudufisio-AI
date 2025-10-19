@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const { logger } = require('./lib/logger');
 const app = express();
 const PORT = 3000;
 
@@ -18,31 +19,31 @@ app.get('/api/whatsapp', (req, res) => {
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  console.log('🔍 Verificação do webhook:', {
+  logger.info('🔍 Verificação do webhook:', { data: {
     mode,
     token,
     expectedToken: verifyToken,
     challenge
-  });
+  } });
 
   // Verificar se é uma solicitação de verificação
   if (mode === 'subscribe' && token === verifyToken) {
-    console.log('✅ Webhook verificado com sucesso!');
+    logger.info('✅ Webhook verificado com sucesso!');
     return res.status(200).send(challenge);
   }
 
-  console.error('❌ Falha na verificação do webhook:', {
+  logger.error('❌ Falha na verificação do webhook:', { data: {
     mode,
     token,
     expectedToken: verifyToken
-  });
+  } });
   return res.status(403).json({ error: 'Forbidden' });
 });
 
 // Rota POST para mensagens
 app.post('/api/whatsapp', (req, res) => {
   try {
-    console.log('📨 Webhook recebido:', JSON.stringify(req.body, null, 2));
+    logger.info('📨 Webhook recebido:', { data: req.body });
     
     // Meta envia no formato JSON
     const webhookData = req.body;
@@ -56,12 +57,12 @@ app.post('/api/whatsapp', (req, res) => {
             for (const value of change.value || []) {
               // Processar mensagens recebidas
               for (const message of value.messages || []) {
-                console.log('✅ Mensagem processada:', message.from, message.text?.body);
+                logger.info('✅ Mensagem processada:', { data: { from: message.from, body: message.text?.body } });
               }
               
               // Processar status de mensagens
               for (const status of value.statuses || []) {
-                console.log('✅ Status atualizado:', status.id, status.status);
+                logger.info('✅ Status atualizado:', { data: { id: status.id, status: status.status } });
               }
             }
           }
@@ -72,7 +73,7 @@ app.post('/api/whatsapp', (req, res) => {
     return res.status(200).json({ success: true });
 
   } catch (error) {
-    console.error('❌ Erro ao processar webhook:', error);
+    logger.error('❌ Erro ao processar webhook:', { data: error });
     return res.status(200).json({ 
       success: false, 
       error: error.message 
@@ -90,9 +91,9 @@ app.get('/test', (req, res) => {
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor webhook rodando na porta ${PORT}`);
-  console.log(`📡 Webhook URL: http://localhost:${PORT}/api/whatsapp`);
-  console.log(`🧪 Teste URL: http://localhost:${PORT}/test`);
+  logger.info(`🚀 Servidor webhook rodando na porta ${PORT}`);
+  logger.info(`📡 Webhook URL: http://localhost:${PORT}/api/whatsapp`);
+  logger.info(`🧪 Teste URL: http://localhost:${PORT}/test`);
 });
 
 module.exports = app;

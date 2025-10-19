@@ -1,18 +1,19 @@
+/* eslint-disable no-unused-vars */
 /**
  * Utilitário de Debounce
  * Para otimizar buscas e filtros em tempo real
  */
 
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
+export function debounce<TArgs extends unknown[], TReturn>(
+  func: (...fnArgs: TArgs) => TReturn,
   wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null;
+): (...args: TArgs) => void {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
-  return function executedFunction(...args: Parameters<T>) {
+  return function executedFunction(...fnArgs: TArgs) {
     const later = () => {
       timeout = null;
-      func(...args);
+      func(...fnArgs);
     };
 
     if (timeout) {
@@ -40,4 +41,5 @@ export function useDebounce<T>(value: T, delay: number): T {
 
 // Import React for the hook
 import React from 'react';
+
 

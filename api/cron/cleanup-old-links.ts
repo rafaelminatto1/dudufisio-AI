@@ -6,6 +6,8 @@
 
 export const config = { runtime: 'edge' };
 
+import { logger } from '../../lib/logger';
+
 export default async function handler(req: Request) {
   try {
     // Verificar auth secret do Vercel Cron
@@ -76,12 +78,12 @@ export default async function handler(req: Request) {
       }
     );
 
-  } catch (error: any) {
-    console.error('Error in cleanup-old-links cron:', error);
+  } catch (error: unknown) {
+    logger.error('Error in cleanup-old-links cron:', { data: error as Error });
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message
+        error: error instanceof Error ? error.message : 'Unknown error'
       }),
       {
         status: 500,

@@ -6,6 +6,8 @@
 
 export const config = { runtime: 'edge' };
 
+import { logger } from '../../lib/logger';
+
 export default async function handler(req: Request) {
   try {
     // Verificar auth secret do Vercel Cron
@@ -42,7 +44,7 @@ export default async function handler(req: Request) {
     const count = links?.length || 0;
 
     // Log para monitoramento
-    console.log(`[Sync Calendar Access] Found ${count} unaccessed links`);
+    logger.info(`[Sync Calendar Access] Found ${count} unaccessed links`);
 
     return new Response(
       JSON.stringify({
@@ -56,12 +58,12 @@ export default async function handler(req: Request) {
       }
     );
 
-  } catch (error: any) {
-    console.error('Error in sync-calendar-access cron:', error);
+  } catch (error: unknown) {
+    logger.error('Error in sync-calendar-access cron:', { data: error as Error });
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message
+        error: error instanceof Error ? error.message : 'Unknown error'
       }),
       {
         status: 500,

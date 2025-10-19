@@ -73,7 +73,10 @@
     "test:calendar": "node scripts/test-calendar.js",
     "generate:cron-secret": "node scripts/generate-cron-secret.js",
     "check:deployment": "node scripts/check-deployment.js",
-    "setup:complete": "npm run setup:auth && npm run check:deployment && npm run test:calendar"
+    "setup:complete": "npm run setup:auth && npm run check:deployment && npm run test:calendar",
+    "perf:local": "node scripts/lighthouse-performance.js http://localhost:4173",
+    "perf:prod": "node scripts/lighthouse-performance.js https://moocafisio.com.br",
+    "perf:staging": "node scripts/lighthouse-performance.js https://dudufisio-git-main-rafael-minattos-projects.vercel.app"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
@@ -171,7 +174,7 @@
     "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
-    "@vercel/node": "^3.0.21",
+    "@vercel/node": "^4.0.0",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
@@ -190,7 +193,10 @@
     "terser": "^5.44.0",
     "typescript": "^5.7.2",
     "vite": "^7.1.9",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "lighthouse": "^12.0.0",
+    "chrome-launcher": "^1.1.0",
+    "web-vitals": "^4.0.0"
   },
   "resolutions": {
     "react": "^18.3.1",

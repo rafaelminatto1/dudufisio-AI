@@ -7,6 +7,7 @@ import * as patientService from '../services/patientService';
 import * as appointmentService from '../services/appointmentService';
 import { safeAsync, safeLog } from '../lib/safety';
 import PageLoader from '../components/ui/PageLoader';
+import { logger } from '../lib/logger';
 
 interface AppContextType {
   // Auth state (from SupabaseAuthContext) - properly typed with safety
@@ -110,9 +111,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
 
     setDataLoading(false);
-    } catch (error: any) {
-      console.error('❌ Error in fetchData:', error);
-      setError(error.message || 'Erro ao carregar dados');
+    } catch (error: unknown) {
+      logger.error('❌ Error in fetchData:', { data: error as Error });
+      const message = error instanceof Error ? error.message : 'Erro ao carregar dados';
+      setError(message);
       setDataLoading(false);
     }
   }, [isAuthenticated, user]);
@@ -203,7 +205,7 @@ export const useAuth = () => {
     const { user, isAuthenticated, isLoading, login, logout } = useApp();
     return { user, isAuthenticated, isLoading, login, logout };
   } catch (error) {
-    console.error('useAuth hook error:', error);
+    logger.error('useAuth hook error:', { data: error as Error });
     // Return safe defaults
     return {
       user: null,
