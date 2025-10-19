@@ -23,6 +23,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState(src);
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -53,17 +54,15 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   };
 
   const handleError = () => {
-    // Se tem fallback, tentar carregar fallback
-    if (fallback && !hasError) {
-      setHasError(true); // Marca como erro para mostrar placeholder
-      // Tentar carregar fallback
-      const img = new Image();
-      img.onload = () => {
-        setHasError(false);
-        setIsLoaded(true);
-      };
-      img.src = fallback;
+    // Se tem fallback e ainda não tentou carregar, tentar fallback
+    if (fallback && currentSrc === src) {
+      console.log('WebP falhou, tentando fallback:', fallback);
+      setCurrentSrc(fallback);
+      setHasError(false); // Reset error state para tentar fallback
+      setIsLoaded(false); // Reset loaded state
     } else {
+      // Fallback também falhou ou não tem fallback
+      console.error('Erro ao carregar imagem:', currentSrc);
       setHasError(true);
       onError?.();
     }
@@ -86,7 +85,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
       {/* Actual image */}
       {isInView && (
         <img
-          src={src}
+          src={currentSrc}
           alt={alt}
           className={`w-full h-full object-cover transition-opacity duration-300 ${
             isLoaded ? 'opacity-100' : 'opacity-0'
