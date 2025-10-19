@@ -177,13 +177,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 }
 
 // Helper para montar email de resumo
+type Appointment = {
+  start_time: string;
+  appointment_type: string;
+  patients?: {
+    full_name: string;
+  };
+};
+
+type Patient = {
+  created_at: string;
+  full_name: string;
+};
+
 type Summary = {
   therapist_name: string;
   date: string;
   appointments_count: number;
-  appointments: Array<Record<string, unknown>>;
+  appointments: Appointment[];
   new_patients_count: number;
-  new_patients: Array<Record<string, unknown>>;
+  new_patients: Patient[];
 };
 
 function buildSummaryEmail(summary: Summary): string {
