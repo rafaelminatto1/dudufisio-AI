@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { OptimizedAvatar } from '@/components/ui/OptimizedAvatar';
 import { Patient, PatientStatus } from '@/types';
 import { supabasePatientService } from '@/services/supabase/patientServiceSupabase';
 import PatientFormDialog from './PatientFormDialog';
@@ -51,10 +51,12 @@ const buildColumns = (onView: (p: Patient) => void, onEdit: (p: Patient) => void
       const p = row.original;
       return (
         <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={p.avatarUrl} alt={p.name} />
-            <AvatarFallback className="text-xs">{getInitials(p.name)}</AvatarFallback>
-          </Avatar>
+          <OptimizedAvatar
+            src={p.avatarUrl}
+            alt={p.name}
+            size="sm"
+            initials={getInitials(p.name)}
+          />
           <div>
             <div className="font-medium">{p.name}</div>
             {p.cpf && <div className="text-xs text-muted-foreground">{p.cpf}</div>}
