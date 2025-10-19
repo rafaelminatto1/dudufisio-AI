@@ -1,0 +1,378 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - link "Pular para o conteúdo principal" [ref=e4]:
+        - /url: "#main-content"
+      - navigation "Menu principal" [ref=e5]:
+        - generic [ref=e6]:
+          - img [ref=e7]
+          - generic [ref=e11]: FisioFlow
+          - button "Recolher menu" [ref=e12] [cursor=pointer]:
+            - img [ref=e13]
+        - generic [ref=e16]:
+          - img [ref=e17]
+          - textbox "Buscar funcionalidades..." [ref=e20]
+        - navigation [ref=e21]:
+          - generic [ref=e22]:
+            - heading "Principal" [level=3] [ref=e23]
+            - generic [ref=e24]:
+              - link "Dashboard Geral" [ref=e25]:
+                - /url: /dashboard
+                - generic [ref=e26]:
+                  - img [ref=e27]
+                  - generic [ref=e32]: Dashboard Geral
+              - link "Dashboard Administrativo" [ref=e33]:
+                - /url: /admin-dashboard
+                - generic [ref=e34]:
+                  - img [ref=e35]
+                  - generic [ref=e37]: Dashboard Administrativo
+              - link "Notificações" [ref=e38]:
+                - /url: /notifications
+                - generic [ref=e39]:
+                  - img [ref=e40]
+                  - generic [ref=e43]: Notificações
+              - link "Quadro de Tarefas" [ref=e44]:
+                - /url: /tasks
+                - generic [ref=e45]:
+                  - img [ref=e46]
+                  - generic [ref=e49]: Quadro de Tarefas
+          - generic [ref=e50]:
+            - heading "Clínico" [level=3] [ref=e51]
+            - generic [ref=e52]:
+              - link "Pacientes" [ref=e53]:
+                - /url: /patients
+                - generic [ref=e54]:
+                  - img [ref=e55]
+                  - generic [ref=e60]: Pacientes
+              - link "Agenda" [ref=e61]:
+                - /url: /agenda
+                - generic [ref=e62]:
+                  - img [ref=e63]
+                  - generic [ref=e65]: Agenda
+              - link "Acompanhamento" [ref=e66]:
+                - /url: /acompanhamento
+                - generic [ref=e67]:
+                  - img [ref=e68]
+                  - generic [ref=e70]: Acompanhamento
+              - link "Evolução de Sessões" [ref=e71]:
+                - /url: /session-evolution
+                - generic [ref=e72]:
+                  - img [ref=e73]
+                  - generic [ref=e76]: Evolução de Sessões
+              - link "Teleconsulta" [ref=e77]:
+                - /url: /teleconsulta
+                - generic [ref=e78]:
+                  - img [ref=e79]
+                  - generic [ref=e81]: Teleconsulta
+              - link "Exercícios" [ref=e82]:
+                - /url: /exercises
+                - generic [ref=e83]:
+                  - img [ref=e84]
+                  - generic [ref=e90]: Exercícios
+              - link "Biblioteca de Exercícios" [ref=e91]:
+                - /url: /exercise-library
+                - generic [ref=e92]:
+                  - img [ref=e93]
+                  - generic [ref=e95]: Biblioteca de Exercícios
+              - link "Gerador Gemini Veo" [ref=e96]:
+                - /url: /free-video-generator
+                - generic [ref=e97]:
+                  - img [ref=e98]
+                  - generic [ref=e100]: Gerador Gemini Veo
+              - link "Protocolos Clínicos" [ref=e101]:
+                - /url: /protocols
+                - generic [ref=e102]:
+                  - img [ref=e103]
+                  - generic [ref=e106]: Protocolos Clínicos
+              - link "Avaliações Especializadas" [ref=e107]:
+                - /url: /specialty-assessments
+                - generic [ref=e108]:
+                  - img [ref=e109]
+                  - generic [ref=e112]: Avaliações Especializadas
+              - link "Biblioteca Clínica" [ref=e113]:
+                - /url: /clinical-library
+                - generic [ref=e114]:
+                  - img [ref=e115]
+                  - generic [ref=e118]: Biblioteca Clínica
+              - link "Materiais Clínicos" [ref=e119]:
+                - /url: /materials
+                - generic [ref=e120]:
+                  - img [ref=e121]
+                  - generic [ref=e124]: Materiais Clínicos
+              - link "Sistema de Mentoria" [ref=e125]:
+                - /url: /mentoria
+                - generic [ref=e126]:
+                  - img [ref=e127]
+                  - generic [ref=e139]: Sistema de Mentoria
+              - link "Base de Conhecimento" [ref=e140]:
+                - /url: /knowledge-base
+                - generic [ref=e141]:
+                  - img [ref=e142]
+                  - generic [ref=e144]: Base de Conhecimento
+          - generic [ref=e145]:
+            - heading "Analytics & BI" [level=3] [ref=e146]
+            - generic [ref=e147]:
+              - link "Dashboard de Relatórios" [ref=e148]:
+                - /url: /reports/consolidated
+                - generic [ref=e149]:
+                  - img [ref=e150]
+                  - generic [ref=e152]: Dashboard de Relatórios
+              - link "Analytics Clínicos" [ref=e153]:
+                - /url: /clinical-analytics
+                - generic [ref=e154]:
+                  - img [ref=e155]
+                  - generic [ref=e158]: Analytics Clínicos
+              - link "Analytics de IA" [ref=e159]:
+                - /url: /ai-analytics
+                - generic [ref=e160]:
+                  - img [ref=e161]
+                  - generic [ref=e173]: Analytics de IA
+              - link "Gestão Financeira" [ref=e174]:
+                - /url: /financials
+                - generic [ref=e175]:
+                  - img [ref=e176]
+                  - generic [ref=e178]: Gestão Financeira
+          - generic [ref=e179]:
+            - heading "Ferramentas IA" [level=3] [ref=e180]
+            - generic [ref=e181]:
+              - link "Ferramentas IA" [ref=e182]:
+                - /url: /ai-tools/consolidated
+                - generic [ref=e183]:
+                  - img [ref=e184]
+                  - generic [ref=e196]: Ferramentas IA
+              - link "Gerar Laudo" [ref=e197]:
+                - /url: /gerar-laudo
+                - generic [ref=e198]:
+                  - img [ref=e199]
+                  - generic [ref=e202]: Gerar Laudo
+              - link "Gerar Evolução" [ref=e203]:
+                - /url: /gerar-evolucao
+                - generic [ref=e204]:
+                  - img [ref=e205]
+                  - generic [ref=e210]: Gerar Evolução
+              - link "Gerar Plano (HEP)" [ref=e211]:
+                - /url: /hep-generator
+                - generic [ref=e212]:
+                  - img [ref=e213]
+                  - generic [ref=e219]: Gerar Plano (HEP)
+              - link "Análise de Risco" [ref=e220]:
+                - /url: /risk-analysis
+                - generic [ref=e221]:
+                  - img [ref=e222]
+                  - generic [ref=e224]: Análise de Risco
+              - link "IA Econômica" [ref=e225]:
+                - /url: /ia-economica
+                - generic [ref=e226]:
+                  - img [ref=e227]
+                  - generic [ref=e230]: IA Econômica
+          - generic [ref=e231]:
+            - heading "Gestão" [level=3] [ref=e232]
+            - generic [ref=e233]:
+              - link "Gestão de Usuários" [ref=e234]:
+                - /url: /user-management
+                - generic [ref=e235]:
+                  - img [ref=e236]
+                  - generic [ref=e240]: Gestão de Usuários
+              - link "Grupos" [ref=e241]:
+                - /url: /groups
+                - generic [ref=e242]:
+                  - img [ref=e243]
+                  - generic [ref=e247]: Grupos
+              - link "Estoque/Insumos" [ref=e248]:
+                - /url: /inventory
+                - generic [ref=e249]:
+                  - img [ref=e250]
+                  - generic [ref=e254]: Estoque/Insumos
+              - link "Dashboard de Estoque" [ref=e255]:
+                - /url: /inventory-dashboard
+                - generic [ref=e256]:
+                  - img [ref=e257]
+                  - generic [ref=e259]: Dashboard de Estoque
+              - link "Eventos" [ref=e260]:
+                - /url: /events
+                - generic [ref=e261]:
+                  - img [ref=e262]
+                  - generic [ref=e264]: Eventos
+              - link "Lista de Eventos" [ref=e265]:
+                - /url: /events-list
+                - generic [ref=e266]:
+                  - img [ref=e267]
+                  - generic [ref=e269]: Lista de Eventos
+              - link "Parcerias" [ref=e270]:
+                - /url: /partnerships
+                - generic [ref=e271]:
+                  - img [ref=e272]
+                  - generic [ref=e277]: Parcerias
+              - link "Assinaturas" [ref=e278]:
+                - /url: /subscriptions
+                - generic [ref=e279]:
+                  - img [ref=e280]
+                  - generic [ref=e282]: Assinaturas
+          - generic [ref=e283]:
+            - heading "Sistema" [level=3] [ref=e284]
+            - generic [ref=e285]:
+              - link "CRM & Leads" [ref=e286]:
+                - /url: /crm
+                - generic [ref=e287]:
+                  - img [ref=e288]
+                  - generic [ref=e292]: CRM & Leads
+              - link "WhatsApp Business" [ref=e293]:
+                - /url: /whatsapp
+                - generic [ref=e294]:
+                  - img [ref=e295]
+                  - generic [ref=e297]: WhatsApp Business
+              - link "Email para Inativos" [ref=e298]:
+                - /url: /email-inativos
+                - generic [ref=e299]:
+                  - img [ref=e300]
+                  - generic [ref=e303]: Email para Inativos
+              - link "Gerenciamento de Backup" [ref=e304]:
+                - /url: /backup-management
+                - generic [ref=e305]:
+                  - img [ref=e306]
+                  - generic [ref=e308]: Gerenciamento de Backup
+              - link "Config. Agenda" [ref=e309]:
+                - /url: /agenda-settings
+                - generic [ref=e310]:
+                  - img [ref=e311]
+                  - generic [ref=e312]: Config. Agenda
+              - link "Integrações" [ref=e313]:
+                - /url: /integrations
+                - generic [ref=e314]:
+                  - img [ref=e315]
+                  - generic [ref=e318]: Integrações
+              - link "Teste de Integrações" [ref=e319]:
+                - /url: /integrations-test
+                - generic [ref=e320]:
+                  - img [ref=e321]
+                  - generic [ref=e323]: Teste de Integrações
+              - link "Teste BI" [ref=e324]:
+                - /url: /bi-integration-test
+                - generic [ref=e325]:
+                  - img [ref=e326]
+                  - generic [ref=e329]: Teste BI
+              - link "Config. IA" [ref=e330]:
+                - /url: /ai-settings
+                - generic [ref=e331]:
+                  - img [ref=e332]
+                  - generic [ref=e333]: Config. IA
+              - link "Auditoria & Compliance" [ref=e334]:
+                - /url: /audit-log
+                - generic [ref=e335]:
+                  - img [ref=e336]
+                  - generic [ref=e339]: Auditoria & Compliance
+              - link "Log de Auditoria" [ref=e340]:
+                - /url: /audit-log-page
+                - generic [ref=e341]:
+                  - img [ref=e342]
+                  - generic [ref=e346]: Log de Auditoria
+              - link "Legal" [ref=e347]:
+                - /url: /legal
+                - generic [ref=e348]:
+                  - img [ref=e349]
+                  - generic [ref=e352]: Legal
+              - link "Configurações" [ref=e353]:
+                - /url: /settings
+                - generic [ref=e354]:
+                  - img [ref=e355]
+                  - generic [ref=e366]: Configurações
+        - generic [ref=e368]:
+          - 'link "Administrador Perfil: Admin Administrador 👑 Admin" [ref=e369]':
+            - /url: /settings
+            - generic [ref=e370]:
+              - img "Administrador" [ref=e371]
+              - 'generic "Perfil: Admin" [ref=e372]'
+            - generic [ref=e373]:
+              - paragraph [ref=e374]: Administrador
+              - generic [ref=e376]: 👑 Admin
+          - generic [ref=e377]:
+            - button "Notificações" [ref=e379] [cursor=pointer]:
+              - img [ref=e380]
+            - button "Sair do sistema" [ref=e383] [cursor=pointer]:
+              - img [ref=e384]
+      - main "Conteúdo principal" [ref=e388]:
+        - generic [ref=e389]:
+          - navigation "Breadcrumb" [ref=e390]:
+            - link "Ir para página inicial" [ref=e391]:
+              - /url: /dashboard
+              - img [ref=e392]
+            - img [ref=e395]
+            - link "Início" [ref=e397]:
+              - /url: /dashboard
+            - img [ref=e398]
+            - generic [ref=e400]: Pacientes
+          - button "Moderno" [ref=e402] [cursor=pointer]:
+            - img
+            - generic [ref=e403]: Moderno
+          - main [ref=e404]:
+            - generic [ref=e405]:
+              - generic [ref=e407]:
+                - heading "Lista de Pacientes" [level=1] [ref=e408]
+                - paragraph [ref=e409]: Gerencie todos os pacientes da clínica
+              - generic [ref=e410]:
+                - generic [ref=e413]:
+                  - generic [ref=e414]:
+                    - paragraph [ref=e415]: Total de Pacientes
+                    - paragraph [ref=e416]: —
+                  - img [ref=e418]
+                - generic [ref=e422]:
+                  - generic [ref=e423]:
+                    - paragraph [ref=e424]: Pacientes Ativos
+                    - paragraph [ref=e425]: —
+                  - img [ref=e427]
+                - generic [ref=e431]:
+                  - generic [ref=e432]:
+                    - paragraph [ref=e433]: Pacientes Inativos
+                    - paragraph [ref=e434]: —
+                  - img [ref=e436]
+                - generic [ref=e440]:
+                  - generic [ref=e441]:
+                    - paragraph [ref=e442]: Pacientes com Alta
+                    - paragraph [ref=e443]: —
+                  - img [ref=e445]
+              - generic [ref=e448]:
+                - generic [ref=e449]:
+                  - generic [ref=e450]:
+                    - textbox "Filtrar pacientes..." [ref=e451]
+                    - combobox [ref=e452] [cursor=pointer]:
+                      - generic: Todos
+                      - img [ref=e453]
+                  - button "Novo paciente" [ref=e455] [cursor=pointer]:
+                    - img
+                    - text: Novo paciente
+                - table [ref=e458]:
+                  - rowgroup [ref=e459]:
+                    - row "Nome Email Telefone Status" [ref=e460]:
+                      - cell "Nome" [ref=e461]
+                      - cell "Email" [ref=e462]
+                      - cell "Telefone" [ref=e463]
+                      - cell "Status" [ref=e464]
+                      - cell [ref=e465]
+                  - rowgroup [ref=e466]:
+                    - row "Nenhum resultado." [ref=e467]:
+                      - cell "Nenhum resultado." [ref=e468]
+                - generic [ref=e469]:
+                  - generic [ref=e470]: 0 registro(s) • Página 1 de 1
+                  - generic [ref=e471]:
+                    - button "Anterior" [disabled]
+                    - button "Próximo" [disabled]
+    - generic [ref=e474]:
+      - img [ref=e475]
+      - generic [ref=e477]:
+        - paragraph [ref=e478]: Atualização disponível
+        - paragraph [ref=e479]: Uma nova versão do aplicativo está disponível
+        - generic [ref=e480]:
+          - button "Atualizar" [ref=e481] [cursor=pointer]:
+            - img [ref=e482]
+            - text: Atualizar
+          - button "Depois" [ref=e487] [cursor=pointer]
+  - generic [ref=e488]:
+    - generic [ref=e489]:
+      - generic [ref=e490]: Nova versão disponível! 🎉
+      - generic [ref=e491]: Clique em atualizar para obter as últimas melhorias
+    - button "Atualizar" [ref=e492] [cursor=pointer]
+    - button "Depois" [ref=e493] [cursor=pointer]
+```

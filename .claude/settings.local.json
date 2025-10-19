@@ -76,7 +76,10 @@
       "Bash(vercel --version)",
       "Bash(vercel env ls)",
       "Bash(vercel ls --max-age 1d)",
-      "Bash(vercel ls)"
+      "Bash(vercel ls)",
+      "Bash(npm run type-check)",
+      "Bash(npm run lint)",
+      "Bash(git checkout -b quick-wins/sprint-0)"
     ]
   },
   "enableAllProjectMcpServers": true,

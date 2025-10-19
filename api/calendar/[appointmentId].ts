@@ -6,6 +6,7 @@
  */
 
 import { generateICS } from '../../lib/calendar/icsGenerator';
+import { logger } from '../../lib/logger';
 
 // Edge Runtime = resposta global instantânea
 export const config = { runtime: 'edge' };
@@ -80,9 +81,10 @@ export default async function handler(req: Request) {
       }
     });
 
-  } catch (error: any) {
-    console.error('Error generating .ics file:', error);
-    return new Response(`Error: ${error.message}`, { status: 500 });
+  } catch (error: unknown) {
+    logger.error('Error generating .ics file:', { data: error as Error });
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return new Response(`Error: ${message}`, { status: 500 });
   }
 }
 

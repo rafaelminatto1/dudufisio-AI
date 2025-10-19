@@ -659,6 +659,16 @@ export interface MLRecommendation {
   createdAt: Date;
 }
 
+// Cenário de resultado (para visualização de predições)
+export interface OutcomeScenario {
+  scenarioName: string;
+  description: string;
+  probability: number; // 0-1
+  estimatedTimeframe: string;
+  expectedOutcome: string;
+  assumptions?: string[];
+}
+
 // Dashboard de análise preditiva
 export interface PredictiveAnalyticsDashboard {
   patient: {

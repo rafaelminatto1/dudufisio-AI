@@ -574,3 +574,27 @@ export async function fetchVideoFromUri(uri: string): Promise<Blob> {
     throw new Error(`Falha ao baixar vídeo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
   }
 }
+// ============================================================================
+// GEMINI SERVICE OBJECT - Para imports mais limpos
+// ============================================================================
+export const geminiService = {
+  generateText,
+  generateTreatmentProtocol,
+  generateSoapNote,
+  analyzePainPatterns,
+  parseProtocolForTreatmentPlan,
+  generateClinicalInsights,
+  generatePatientReport,
+  generateRiskAnalysis,
+  generatePainDiaryAnalysis,
+  generateEducationalContent,
+  generateRetentionSuggestion,
+  generateEvaluationReport,
+  generateSessionEvolution,
+  generateHep,
+  generatePatientProgressSummary,
+  generateAppointmentReminder,
+  generateInactivePatientEmail,
+  generateClinicalMaterialContent,
+  generatePatientClinicalSummary,
+};

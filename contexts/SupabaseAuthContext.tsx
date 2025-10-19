@@ -6,6 +6,7 @@ import authService, {
   RegisterData,
   TwoFactorSetup
 } from '../services/auth/supabaseAuthService';
+import { logger } from '../lib/logger';
 
 interface AuthContextType extends AuthState {
   // Basic auth methods
@@ -72,7 +73,7 @@ export const SupabaseAuthProvider: React.FC<{ children: ReactNode }> = ({ childr
       clearError();
       const result = await operation();
       if (successMessage) {
-        console.log(successMessage);
+        logger.info(successMessage);
       }
       return result;
     } catch (err: any) {

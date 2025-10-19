@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { ToastMessage, ToastContextType } from '../types';
 import { useDebug } from './DebugContext';
+import { logger } from '../lib/logger';
 
 // The full internal type for the context value, including all properties
 interface FullToastContextType {
@@ -46,7 +47,7 @@ export const useToast = (): ToastContextType => {
 
   if (!context) {
     const error = new Error('useToast must be used within a ToastProvider');
-    console.error('❌ Toast Context Error:', error.message);
+    logger.error('❌ Toast Context Error:', { data: error });
     throw error;
   }
 

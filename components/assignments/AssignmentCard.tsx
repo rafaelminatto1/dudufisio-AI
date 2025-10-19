@@ -12,11 +12,13 @@ import { Progress } from '../ui/progress';
 import { useNavigate } from 'react-router-dom';
 import {
   Calendar,
+  Clock,
   User,
   Activity,
   Play,
   Pause,
   CheckCircle,
+  XCircle,
   Edit,
   MoreHorizontal,
 } from 'lucide-react';

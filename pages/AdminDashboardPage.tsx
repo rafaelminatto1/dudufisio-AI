@@ -14,20 +14,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
-import { 
-  LineChart, 
-  Line, 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell
-} from 'recharts';
+import { LazyLineChart, LazyAreaChart, LazyPieChart } from '../components/charts/LazyCharts';
 
 interface AdminMetrics {
   totalUsers: number;
@@ -390,59 +377,31 @@ const AdminDashboardPage: React.FC = () => {
               <BarChart3 className="w-5 h-5 text-slate-400" />
             </div>
             <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis 
-                    dataKey="month" 
-                    stroke="#64748b"
-                    fontSize={12}
-                  />
-                  <YAxis 
-                    yAxisId="revenue"
-                    orientation="left"
-                    stroke="#64748b"
-                    fontSize={12}
-                    tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
-                  />
-                  <YAxis 
-                    yAxisId="sessions"
-                    orientation="right"
-                    stroke="#64748b"
-                    fontSize={12}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'white',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }}
-                    formatter={(value, name) => [
-                      name === 'revenue' ? `R$ ${value.toLocaleString()}` : value,
-                      name === 'revenue' ? 'Receita' : 'Sessões'
-                    ]}
-                  />
-                  <Area
-                    yAxisId="revenue"
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="#3b82f6"
-                    fill="#3b82f6"
-                    fillOpacity={0.1}
-                    strokeWidth={2}
-                  />
-                  <Area
-                    yAxisId="sessions"
-                    type="monotone"
-                    dataKey="sessions"
-                    stroke="#10b981"
-                    fill="#10b981"
-                    fillOpacity={0.1}
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              <LazyAreaChart 
+                data={revenueData}
+                xKey="month"
+                areas={[
+                  {
+                    yAxisId: "revenue",
+                    type: "monotone",
+                    dataKey: "revenue",
+                    stroke: "#3b82f6",
+                    fill: "#3b82f6",
+                    fillOpacity: 0.1,
+                    strokeWidth: 2
+                  },
+                  {
+                    yAxisId: "sessions",
+                    type: "monotone",
+                    dataKey: "sessions",
+                    stroke: "#10b981",
+                    fill: "#10b981",
+                    fillOpacity: 0.1,
+                    strokeWidth: 2
+                  }
+                ]}
+                height={256}
+              />
             </div>
           </div>
 
@@ -492,32 +451,12 @@ const AdminDashboardPage: React.FC = () => {
               <PieChart className="w-5 h-5 text-slate-400" />
             </div>
             <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsPieChart>
-                  <Pie
-                    data={sessionStatusData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {sessionStatusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'white',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }}
-                    formatter={(value, name) => [value, name]}
-                  />
-                </RechartsPieChart>
-              </ResponsiveContainer>
+              <LazyPieChart 
+                data={sessionStatusData}
+                dataKey="value"
+                colors={sessionStatusData.map(item => item.color)}
+                height={256}
+              />
             </div>
             <div className="flex justify-center space-x-6 mt-4">
               {sessionStatusData.map((item, index) => (
@@ -542,37 +481,19 @@ const AdminDashboardPage: React.FC = () => {
               <Users className="w-5 h-5 text-slate-400" />
             </div>
             <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={patientAgeData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis 
-                    dataKey="age" 
-                    stroke="#64748b"
-                    fontSize={12}
-                  />
-                  <YAxis 
-                    stroke="#64748b"
-                    fontSize={12}
-                  />
-                  <Tooltip 
-                    contentStyle={{
-                      backgroundColor: 'white',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }}
-                    formatter={(value) => [value, 'Pacientes']}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="count"
-                    stroke="#8b5cf6"
-                    strokeWidth={3}
-                    dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6, stroke: '#8b5cf6', strokeWidth: 2 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <LazyLineChart 
+                data={patientAgeData}
+                xKey="age"
+                lines={[{
+                  type: "monotone",
+                  dataKey: "count",
+                  stroke: "#8b5cf6",
+                  strokeWidth: 3,
+                  dot: { fill: '#8b5cf6', strokeWidth: 2, r: 4 },
+                  activeDot: { r: 6, stroke: '#8b5cf6', strokeWidth: 2 }
+                }]}
+                height={256}
+              />
             </div>
           </div>
         </div>

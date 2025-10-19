@@ -4,6 +4,8 @@
  * Envia lembretes para appointments nas próximas 24h
  */
 
+import { logger } from '../../lib/logger';
+
 export const config = { runtime: 'edge' };
 
 export default async function handler(req: Request) {
@@ -53,7 +55,7 @@ export default async function handler(req: Request) {
           await sendReminderWhatsApp(apt);
           sentCount++;
         } catch (error) {
-          console.error(`Failed to send reminder for appointment ${apt.id}:`, error);
+          logger.error(`Failed to send reminder for appointment ${apt.id}:`, { data: error as Error });
         }
       }
     }
@@ -71,12 +73,12 @@ export default async function handler(req: Request) {
       }
     );
 
-  } catch (error: any) {
-    console.error('Error in send-reminders cron:', error);
+  } catch (error: unknown) {
+    logger.error('Error in send-reminders cron:', { data: error as Error });
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message
+        error: error instanceof Error ? error.message : "Unknown error"
       }),
       {
         status: 500,
@@ -86,14 +88,23 @@ export default async function handler(req: Request) {
   }
 }
 
-async function sendReminderWhatsApp(appointment: any) {
+type ReminderAppointment = {
+  id: string;
+  start_time: string;
+  patient?: { name?: string; phone?: string };
+  therapist?: { full_name?: string };
+  location?: string;
+  calendar_link?: { google_link?: string };
+};
+
+async function sendReminderWhatsApp(appointment: ReminderAppointment) {
   const startTime = new Date(appointment.start_time);
   const formattedTime = formatTime(startTime);
   const formattedDate = formatDate(startTime);
   
   const message = `🔔 *Lembrete: Consulta Amanhã*
 
-Olá ${appointment.patient.name},
+Olá ${appointment.patient?.name},
 
 Sua consulta é amanhã (${formattedDate}) às ${formattedTime}.
 
@@ -101,7 +112,7 @@ Sua consulta é amanhã (${formattedDate}) às ${formattedTime}.
 📍 Local: ${appointment.location || 'Clínica DuduFisio'}
 
 📅 *Já adicionou ao seu calendário?*
-${appointment.calendar_link.google_link}
+${appointment.calendar_link?.google_link}
 
 _Se precisar reagendar ou cancelar, entre em contato conosco._
 
@@ -109,8 +120,8 @@ Clínica DuduFisio`;
 
   // Aqui você integraria com o sistema de WhatsApp existente
   // Por enquanto, apenas log
-  console.log(`[WhatsApp Reminder] To: ${appointment.patient.phone}`);
-  console.log(`[WhatsApp Reminder] Message: ${message}`);
+  logger.info(`[WhatsApp Reminder] To: ${appointment.patient?.phone}`);
+  logger.info(`[WhatsApp Reminder] Message: ${message}`);
   
   // TODO: Integrar com sistema de WhatsApp real
   // await sendWhatsAppMessage(appointment.patient.phone, message);
@@ -130,4 +141,5 @@ function formatDate(date: Date): string {
     month: 'long'
   });
 }
+
 

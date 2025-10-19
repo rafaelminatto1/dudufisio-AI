@@ -199,6 +199,8 @@ export interface Patient {
   weight?: number; // em kg
   bmi?: number; // Calculado automaticamente
   main_diagnosis?: string;
+  main_pathology?: string; // Patologia principal (ex: "Lesão de LCA", "Hérnia Discal")
+  main_pathology_region?: string; // Região afetada (ex: "knee", "spine", "shoulder")
   referring_doctor?: string;
   referring_doctor_crm?: string;
   allergies?: string;
@@ -1881,7 +1883,12 @@ export enum InventoryAlertType {
     LowStock = 'LowStock',
     OutOfStock = 'OutOfStock',
     Expiring = 'Expiring',
-    Expired = 'Expired'
+    Expired = 'Expired',
+    OverdueOrder = 'OverdueOrder',
+    HighConsumption = 'HighConsumption',
+    LowTurnover = 'LowTurnover',
+    PriceChange = 'PriceChange',
+    SupplierDelay = 'SupplierDelay'
 }
 
 export interface InventoryAlert {

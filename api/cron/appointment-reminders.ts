@@ -8,8 +8,9 @@
 // Configurado em vercel.json com schedule: "0 * * * *"
 // ==================================================
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { logger } from '../../lib/logger';
 
 // Tipos
 interface Appointment {
@@ -22,13 +23,7 @@ interface Appointment {
   status: string;
 }
 
-interface User {
-  id: string;
-  full_name: string;
-  email: string;
-  phone: string;
-  notification_preferences: any;
-}
+// User interface removida (não utilizada)
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Verificar autenticação do cron job
@@ -41,8 +36,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // Initialize Supabase client
-    const supabaseUrl = process.env.VITE_SUPABASE_URL!;
-    const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY!;
+    const supabaseUrl = process.env.VITE_SUPABASE_URL;
+    const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return res.status(500).json({ error: 'Missing Supabase configuration' });
+    }
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Buscar consultas nas próximas 24 horas e próximas 2 horas
@@ -88,8 +86,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           await sendReminder(supabase, appointment, '24h');
           results.processed_24h++;
           results.sent_notifications++;
-        } catch (error: any) {
-          results.errors.push(`24h reminder failed for ${appointment.id}: ${error.message}`);
+    } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : String(error);
+          results.errors.push(`24h reminder failed for ${appointment.id}: ${message}`);
         }
       }
     }
@@ -101,8 +100,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           await sendReminder(supabase, appointment, '2h');
           results.processed_2h++;
           results.sent_notifications++;
-        } catch (error: any) {
-          results.errors.push(`2h reminder failed for ${appointment.id}: ${error.message}`);
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : String(error);
+          results.errors.push(`2h reminder failed for ${appointment.id}: ${message}`);
         }
       }
     }
@@ -112,18 +112,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       timestamp: new Date().toISOString(),
       ...results,
     });
-  } catch (error: any) {
-    console.error('Cron job error:', error);
+  } catch (error: unknown) {
+    logger.error('Cron job error:', { data: error as Error });
     return res.status(500).json({
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 }
 
 // Helper function para enviar lembrete
 async function sendReminder(
-  supabase: any,
+  supabase: SupabaseClient,
   appointment: Appointment,
   reminderType: '24h' | '2h'
 ) {
@@ -150,7 +150,7 @@ async function sendReminder(
   }
 
   // Verificar preferências de notificação do paciente
-  const prefs = patient.notification_preferences || {};
+  const prefs = (patient.notification_preferences as Record<string, unknown>) || {};
   const notificationType = reminderType === '24h'
     ? 'appointment_reminder_24h'
     : 'appointment_reminder_2h';
@@ -231,8 +231,8 @@ async function sendReminder(
         text: message,
         notification_id: notificationId,
       });
-    } catch (emailError: any) {
-      console.error('Failed to send email:', emailError);
+    } catch (emailError: unknown) {
+      logger.error('Failed to send email:', { data: emailError as Error });
     }
   }
 
@@ -245,8 +245,8 @@ async function sendReminder(
         type: 'sms',
         notification_id: notificationId,
       });
-    } catch (smsError: any) {
-      console.error('Failed to send SMS:', smsError);
+    } catch (smsError: unknown) {
+      logger.error('Failed to send SMS:', { data: smsError as Error });
     }
   }
 
@@ -259,14 +259,18 @@ async function sendReminder(
         type: 'whatsapp',
         notification_id: notificationId,
       });
-    } catch (whatsappError: any) {
-      console.error('Failed to send WhatsApp:', whatsappError);
+    } catch (whatsappError: unknown) {
+      logger.error('Failed to send WhatsApp:', { data: whatsappError as Error });
     }
   }
 }
 
 // Helper para chamar Edge Functions
-async function callEdgeFunction(supabase: any, functionName: string, payload: any) {
+async function callEdgeFunction(
+  supabase: SupabaseClient,
+  functionName: string,
+  payload: Record<string, unknown>
+) {
   const { data, error } = await supabase.functions.invoke(functionName, {
     body: payload,
   });

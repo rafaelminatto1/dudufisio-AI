@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Bell, AlertTriangle, Users, Clock, CheckCircle, X } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { EnrichedAppointment, WaitlistEntry } from '../../types';
+import { AppointmentStatus, EnrichedAppointment, WaitlistEntry } from '../../types';
 import { cn } from '../../lib/utils';
 import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
@@ -74,9 +74,9 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
     // Pacientes atrasados (agendamentos passados não concluídos)
     const now = new Date();
-    const overdue = appointments.filter(a => 
-      a.startTime < now && 
-      a.status === 'scheduled'
+    const overdue = appointments.filter(a =>
+      a.startTime < now &&
+      a.status === AppointmentStatus.Scheduled
     );
     overdue.forEach(appointment => {
       notifs.push({
@@ -98,7 +98,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
     const upcoming = appointments.filter(a =>
       a.startTime > now &&
       a.startTime <= thirtyMinutesFromNow &&
-      a.status === 'scheduled'
+      a.status === AppointmentStatus.Scheduled
     );
     upcoming.forEach(appointment => {
       notifs.push({

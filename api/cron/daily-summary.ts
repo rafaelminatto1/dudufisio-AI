@@ -9,8 +9,9 @@
 // Configurado em vercel.json com schedule: "0 8 * * *"
 // ==================================================
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { logger } from '../../lib/logger';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Verificar autenticação do cron job
@@ -23,8 +24,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     // Initialize Supabase client
-    const supabaseUrl = process.env.VITE_SUPABASE_URL!;
-    const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY!;
+    const supabaseUrl = process.env.VITE_SUPABASE_URL;
+    const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return res.status(500).json({ error: 'Missing Supabase configuration' });
+    }
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Data de hoje
@@ -65,8 +69,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Verificar preferências
-        const prefs = user.notification_preferences || {};
-        if (prefs.system === false) {
+        const prefs = (user.notification_preferences as Record<string, unknown>) || {};
+        if (prefs['system'] === false) {
           continue; // Não quer receber notificações do sistema
         }
 
@@ -145,14 +149,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             });
 
             results.sent_emails++;
-          } catch (emailError: any) {
-            results.errors.push(`Email failed for ${user.email}: ${emailError.message}`);
+          } catch (emailError: unknown) {
+            const message = emailError instanceof Error ? emailError.message : String(emailError);
+            results.errors.push(`Email failed for ${user.email}: ${message}`);
           }
         }
 
         results.processed_therapists++;
-      } catch (error: any) {
-        results.errors.push(`Therapist ${therapist.id}: ${error.message}`);
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        results.errors.push(`Therapist ${therapist.id}: ${message}`);
       }
     }
 
@@ -161,17 +167,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       timestamp: new Date().toISOString(),
       ...results,
     });
-  } catch (error: any) {
-    console.error('Cron job error:', error);
+  } catch (error: unknown) {
+    logger.error('Cron job error:', { data: error as Error });
     return res.status(500).json({
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 }
 
 // Helper para montar email de resumo
-function buildSummaryEmail(summary: any): string {
+type Summary = {
+  therapist_name: string;
+  date: string;
+  appointments_count: number;
+  appointments: Array<Record<string, unknown>>;
+  new_patients_count: number;
+  new_patients: Array<Record<string, unknown>>;
+};
+
+function buildSummaryEmail(summary: Summary): string {
   let appointmentsList = '';
   if (summary.appointments_count > 0) {
     appointmentsList = '<ul>';
@@ -281,7 +296,11 @@ function buildSummaryEmail(summary: any): string {
 }
 
 // Helper para chamar Edge Functions
-async function callEdgeFunction(supabase: any, functionName: string, payload: any) {
+async function callEdgeFunction(
+  supabase: SupabaseClient,
+  functionName: string,
+  payload: Record<string, unknown>
+) {
   const { data, error } = await supabase.functions.invoke(functionName, {
     body: payload,
   });

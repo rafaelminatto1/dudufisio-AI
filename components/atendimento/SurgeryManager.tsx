@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-import { Calendar, CalendarDays, Edit, Plus, Trash2, User, MapPin, AlertTriangle } from 'lucide-react';
+import { Calendar, CalendarDays, Clock, Edit, Plus, Trash2, User, MapPin, AlertTriangle } from 'lucide-react';
 import format from 'date-fns/format';
 import differenceInDays from 'date-fns/differenceInDays';
 import differenceInWeeks from 'date-fns/differenceInWeeks';
@@ -38,7 +38,7 @@ const SurgeryManager: React.FC<SurgeryManagerProps> = ({
     surgeon: '',
     hospital: '',
     complications: '',
-    recoveryTime: ''
+    recoveryTimeDays: ''
   });
 
   const resetForm = () => {
@@ -49,7 +49,7 @@ const SurgeryManager: React.FC<SurgeryManagerProps> = ({
       surgeon: '',
       hospital: '',
       complications: '',
-      recoveryTime: ''
+      recoveryTimeDays: ''
     });
   };
 
@@ -63,7 +63,7 @@ const SurgeryManager: React.FC<SurgeryManagerProps> = ({
       surgeon: formData.surgeon || undefined,
       hospital: formData.hospital || undefined,
       complications: formData.complications || undefined,
-      recoveryTime: formData.recoveryTime ? parseInt(formData.recoveryTime) : undefined
+      recoveryTimeDays: formData.recoveryTimeDays ? parseInt(formData.recoveryTimeDays) : undefined
     });
 
     resetForm();
@@ -79,7 +79,7 @@ const SurgeryManager: React.FC<SurgeryManagerProps> = ({
       surgeon: surgery.surgeon || '',
       hospital: surgery.hospital || '',
       complications: surgery.complications || '',
-      recoveryTime: surgery.recoveryTime?.toString() || ''
+      recoveryTimeDays: surgery.recoveryTimeDays?.toString() || ''
     });
     setIsEditDialogOpen(true);
   };
@@ -94,7 +94,7 @@ const SurgeryManager: React.FC<SurgeryManagerProps> = ({
       surgeon: formData.surgeon || undefined,
       hospital: formData.hospital || undefined,
       complications: formData.complications || undefined,
-      recoveryTime: formData.recoveryTime ? parseInt(formData.recoveryTime) : undefined
+      recoveryTimeDays: formData.recoveryTimeDays ? parseInt(formData.recoveryTimeDays) : undefined
     });
 
     resetForm();
@@ -123,10 +123,10 @@ const SurgeryManager: React.FC<SurgeryManagerProps> = ({
   };
 
   const getRecoveryStatus = (surgery: Surgery) => {
-    if (!surgery.recoveryTime) return null;
-    
+    if (!surgery.recoveryTimeDays) return null;
+
     const daysSince = differenceInDays(new Date(), new Date(surgery.date));
-    const recoveryProgress = Math.min((daysSince / surgery.recoveryTime) * 100, 100);
+    const recoveryProgress = Math.min((daysSince / surgery.recoveryTimeDays) * 100, 100);
     
     if (recoveryProgress >= 100) {
       return { status: 'completed', text: 'Recuperação completa', color: 'bg-green-100 text-green-800' };
@@ -202,12 +202,12 @@ const SurgeryManager: React.FC<SurgeryManagerProps> = ({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="recoveryTime">Tempo de Recuperação (dias)</Label>
+                  <Label htmlFor="recoveryTimeDays">Tempo de Recuperação (dias)</Label>
                   <Input
-                    id="recoveryTime"
+                    id="recoveryTimeDays"
                     type="number"
-                    value={formData.recoveryTime}
-                    onChange={(e) => setFormData({ ...formData, recoveryTime: e.target.value })}
+                    value={formData.recoveryTimeDays}
+                    onChange={(e) => setFormData({ ...formData, recoveryTimeDays: e.target.value })}
                     placeholder="Ex: 30"
                   />
                 </div>
@@ -325,9 +325,9 @@ const SurgeryManager: React.FC<SurgeryManagerProps> = ({
                     </div>
                   )}
                   
-                  {surgery.recoveryTime && (
+                  {surgery.recoveryTimeDays && (
                     <div className="text-sm text-slate-600">
-                      <span className="font-medium">Tempo de recuperação estimado:</span> {surgery.recoveryTime} dias
+                      <span className="font-medium">Tempo de recuperação estimado:</span> {surgery.recoveryTimeDays} dias
                     </div>
                   )}
                 </div>
@@ -384,12 +384,12 @@ const SurgeryManager: React.FC<SurgeryManagerProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor="edit-recoveryTime">Tempo de Recuperação (dias)</Label>
+              <Label htmlFor="edit-recoveryTimeDays">Tempo de Recuperação (dias)</Label>
               <Input
-                id="edit-recoveryTime"
+                id="edit-recoveryTimeDays"
                 type="number"
-                value={formData.recoveryTime}
-                onChange={(e) => setFormData({ ...formData, recoveryTime: e.target.value })}
+                value={formData.recoveryTimeDays}
+                onChange={(e) => setFormData({ ...formData, recoveryTimeDays: e.target.value })}
                 placeholder="Ex: 30"
               />
             </div>

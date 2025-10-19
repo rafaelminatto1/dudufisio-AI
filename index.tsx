@@ -4,6 +4,17 @@ import './index.css';
 import AppRoutes from './AppRoutes';
 import { registerServiceWorker } from './lib/serviceWorkerRegistration';
 
+// Web Vitals monitoring (apenas em produção)
+if (import.meta.env.PROD) {
+  import('web-vitals').then(({ onCLS, onFCP, onLCP, onTTFB, onINP }) => {
+    onCLS(console.log);
+    onFCP(console.log);
+    onLCP(console.log);
+    onTTFB(console.log);
+    onINP(console.log);
+  });
+}
+
 console.log('🚀 Starting React application...');
 
 const rootElement = document.getElementById('root');
