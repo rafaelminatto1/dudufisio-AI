@@ -6,12 +6,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  ResponsiveContainer, Cell, PieChart, Pie, AreaChart, Area, ScatterChart,
-  Scatter, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, RadialBarChart,
-  RadialBar
-} from 'recharts';
+import { LazyLineChart, LazyBarChart, LazyPieChart, LazyAreaChart } from '../components/charts/LazyCharts';
 import PageHeader from '../components/PageHeader';
 import {
   HeartPulse, TrendingUp, TrendingDown, Activity, Users, Calendar,

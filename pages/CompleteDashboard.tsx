@@ -1,7 +1,7 @@
 import React, { Suspense, useState, useCallback, useMemo } from 'react';
 import { Routes, Route, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Calendar, Users, Activity, BarChart3, Download, RefreshCw, Star, FileText } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LazyBarChart } from '../components/charts/LazyCharts';
 import Layout from '../components/Layout';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { SectionErrorBoundary } from '../components/SectionErrorBoundary';
@@ -213,46 +213,24 @@ const DashboardContent = React.memo(() => {
                         </button>
                     </div>
                     <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart 
-                                data={[
-                                    { month: 'Jul', revenue: 18500 },
-                                    { month: 'Ago', revenue: 21000 },
-                                    { month: 'Set', revenue: 19500 },
-                                    { month: 'Out', revenue: 24500 },
-                                    { month: 'Nov', revenue: 23000 },
-                                    { month: 'Dez', revenue: 26500 },
-                                ]}
-                                margin={{ top: 5, right: 20, left: 20, bottom: 5 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                                <XAxis 
-                                    dataKey="month" 
-                                    stroke="#64748b"
-                                    style={{ fontSize: '12px' }}
-                                />
-                                <YAxis 
-                                    stroke="#64748b"
-                                    style={{ fontSize: '12px' }}
-                                    tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
-                                />
-                                <Tooltip 
-                                    formatter={(value: number) => [`R$ ${value.toLocaleString('pt-BR')}`, 'Receita']}
-                                    contentStyle={{ 
-                                        backgroundColor: 'white', 
-                                        border: '1px solid #e2e8f0', 
-                                        borderRadius: '8px',
-                                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                                    }}
-                                />
-                                <Bar 
-                                    dataKey="revenue" 
-                                    fill="#10b981" 
-                                    radius={[8, 8, 0, 0]}
-                                    maxBarSize={60}
-                                />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        <LazyBarChart 
+                            data={[
+                                { month: 'Jul', revenue: 18500 },
+                                { month: 'Ago', revenue: 21000 },
+                                { month: 'Set', revenue: 19500 },
+                                { month: 'Out', revenue: 24500 },
+                                { month: 'Nov', revenue: 23000 },
+                                { month: 'Dez', revenue: 26500 },
+                            ]}
+                            xKey="month"
+                            bars={[{
+                                dataKey: "revenue",
+                                fill: "#10b981",
+                                radius: [8, 8, 0, 0],
+                                maxBarSize: 60
+                            }]}
+                            height={256}
+                        />
                     </div>
                 </div>
 

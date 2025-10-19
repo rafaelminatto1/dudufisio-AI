@@ -6,10 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  PieChart, Pie, Cell, BarChart, Bar, AreaChart, Area
-} from 'recharts';
+import { LazyLineChart, LazyPieChart, LazyBarChart, LazyAreaChart } from '../components/charts/LazyCharts';
 import useFinancialData, { TimePeriod } from '../hooks/useFinancialData';
 import PageLoader from '../components/ui/PageLoader';
 import {
