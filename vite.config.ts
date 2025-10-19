@@ -135,6 +135,17 @@ export default defineConfig({
     sourcemap: true,
     reportCompressedSize: true,
     rollupOptions: {
+      // Suprimir warnings de bibliotecas externas
+      onwarn(warning, warn) {
+        // Suprimir warning de case duplicado em libs externas
+        if (warning.code === 'PLUGIN_WARNING' || warning.code === 'DUPLICATE_CASE') {
+          if (warning.message && warning.message.includes('case clause will never be evaluated')) {
+            return;
+          }
+        }
+        // Mostrar outros warnings
+        warn(warning);
+      },
       // NUNCA externalizar React - sempre incluir no bundle
       // Isso previne múltiplas instâncias do React
       external: (id) => {
@@ -220,8 +231,34 @@ export default defineConfig({
             return 'vendor-monitoring';
           }
           
-          // Consolidar resto dos vendors
+          // Dividir vendor-misc em chunks menores por categoria
           if (id.includes('node_modules')) {
+            // Google AI / Gemini
+            if (id.includes('@google/generative-ai') || id.includes('@google/genai')) {
+              return 'vendor-google-ai';
+            }
+            
+            // WhatsApp / Communication
+            if (id.includes('twilio') || id.includes('socket.io')) {
+              return 'vendor-communication';
+            }
+            
+            // PDF & Document processing
+            if (id.includes('pdf-lib') || id.includes('pdfmake') || id.includes('pdfjs-dist')) {
+              return 'vendor-pdf';
+            }
+            
+            // Image processing
+            if (id.includes('sharp') || id.includes('canvas') || id.includes('image-js')) {
+              return 'vendor-images';
+            }
+            
+            // HTTP & Fetch
+            if (id.includes('axios') || id.includes('node-fetch') || id.includes('ky')) {
+              return 'vendor-http';
+            }
+            
+            // Consolidar resto dos vendors
             return 'vendor-misc';
           }
           

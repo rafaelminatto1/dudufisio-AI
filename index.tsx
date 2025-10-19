@@ -1,8 +1,27 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import './index.css';
 import AppRoutes from './AppRoutes';
 import { registerServiceWorker } from './lib/serviceWorkerRegistration';
+
+// Configure React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutos
+      gcTime: 10 * 60 * 1000, // 10 minutos (antigo cacheTime)
+      refetchOnWindowFocus: false,
+      retry: 1,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 // Web Vitals monitoring (apenas em produção)
 if (import.meta.env.PROD) {
@@ -26,7 +45,10 @@ if (!rootElement) {
     const root = createRoot(rootElement);
     root.render(
       <React.StrictMode>
-        <AppRoutes />
+        <QueryClientProvider client={queryClient}>
+          <AppRoutes />
+          {!import.meta.env.PROD && <ReactQueryDevtools initialIsOpen={false} />}
+        </QueryClientProvider>
       </React.StrictMode>
     );
     console.log('🎉 React application rendered successfully!');

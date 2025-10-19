@@ -62,8 +62,21 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
 
     return (
         <div className="flex h-screen bg-fisio-neutral-50 overflow-hidden">
+            {/* Skip Links para acessibilidade */}
             <SkipToContent />
-            
+            <a 
+                href="#main-content" 
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-fisio-primary-DEFAULT focus:text-white focus:rounded-lg focus:shadow-lg focus:font-semibold transition-all"
+            >
+                Pular para conteúdo principal
+            </a>
+            <a 
+                href="#navigation" 
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-48 focus:z-[100] focus:px-4 focus:py-2 focus:bg-fisio-secondary-DEFAULT focus:text-white focus:rounded-lg focus:shadow-lg focus:font-semibold transition-all"
+            >
+                Pular para navegação
+            </a>
+
             {/* Overlay para mobile quando sidebar está aberta */}
             {isMobile && isSidebarOpen && (
                 <div
@@ -74,9 +87,10 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
             )}
 
             {/* Sidebar - Responsiva */}
-            <aside 
+            <aside
+                id="navigation"
                 className={`
-                    ${isMobile 
+                    ${isMobile
                         ? `fixed left-0 top-0 bottom-0 z-50 w-72 transform transition-transform duration-300 ease-in-out
                            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`
                         : 'relative'

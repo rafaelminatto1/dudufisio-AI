@@ -3,7 +3,7 @@ import PageHeader from '../components/PageHeader';
 import { useAuth } from "../contexts/AppContext";
 import { useNotifications } from '../hooks/useNotifications';
 import { Notification, Role } from '../types';
-import * as notificationService from '../services/notificationService';
+import { notificationService } from '../services/notificationService';
 import { useToast } from '../contexts/ToastContext';
 import { Bell, Send, CheckCheck, Loader, MessageSquare, Inbox, CalendarClock, ClipboardList, Megaphone, Dumbbell } from 'lucide-react';
 import { Skeleton } from '../components/ui/skeleton';

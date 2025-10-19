@@ -9,18 +9,19 @@
  * - Notificações interativas
  */
 
-const CACHE_NAME = 'dudufisio-ai-v1.1.0';
-const API_CACHE = 'dudufisio-api-v1.1.0';
+const CACHE_NAME = 'activity-fisio-v1.0.0';
+const API_CACHE = 'activity-fisio-api-v1.0.0';
 
-// Recursos essenciais para cache
+// Recursos essenciais para cache PWA
 const ESSENTIAL_RESOURCES = [
   '/',
   '/index.html',
   '/manifest.json',
   '/offline.html',
-  '/icon-192x192.png',
-  '/icon-512x512.png',
-  '/badge-72x72.png'
+  '/icon-192.png',
+  '/icon-512.png',
+  '/apple-touch-icon.png',
+  '/favicon-32.png'
 ];
 
 // URLs de API para cache

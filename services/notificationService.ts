@@ -240,6 +240,62 @@ class NotificationService {
     this.notifications = this.notifications.filter(n => n.createdAt > sevenDaysAgo);
     this.saveNotificationsToStorage();
   }
+
+  /**
+   * Gerar lembretes se necessário
+   */
+  async generateRemindersIfNeeded(user?: any) {
+    // Esta função pode ser expandida para gerar lembretes baseados em agendamentos
+    // Por enquanto, apenas retorna vazio
+    return Promise.resolve();
+  }
+
+  /**
+   * Obter notificações para um usuário específico
+   */
+  async getNotificationsForUser(userId: string): Promise<Notification[]> {
+    // Por enquanto, retorna todas as notificações
+    // Em produção, filtrar por userId
+    return [...this.notifications];
+  }
+
+  /**
+   * Marcar notificação como lida (com userId)
+   */
+  async markAsReadForUser(notificationId: string, userId: string) {
+    const notification = this.notifications.find(n => n.id === notificationId);
+    if (notification) {
+      notification.read = true;
+      this.saveNotificationsToStorage();
+      eventService.emit('notifications:updated');
+    }
+  }
+
+  /**
+   * Marcar todas como lidas (com userId)
+   */
+  async markAllAsReadForUser(userId: string) {
+    this.notifications.forEach(n => n.read = true);
+    this.saveNotificationsToStorage();
+    eventService.emit('notifications:updated');
+  }
+
+  /**
+   * Enviar comunicado para um grupo de usuários
+   */
+  async sendBroadcast(message: string, targetGroup: string) {
+    // Criar notificação de comunicado
+    this.createNotification({
+      type: 'confirmation_needed',
+      title: 'Comunicado',
+      message,
+      appointmentId: 'broadcast',
+      severity: 'info'
+    });
+    
+    // Em produção, aqui você enviaria para todos os usuários do grupo
+    return Promise.resolve();
+  }
 }
 
 export const notificationService = new NotificationService();

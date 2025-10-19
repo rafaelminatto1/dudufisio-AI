@@ -1,78 +1,57 @@
 {
-  "name": "DuduFisio-AI - Sistema de Gestão Clínica",
-  "short_name": "DuduFisio-AI",
-  "description": "Sistema inteligente de gestão para clínicas de fisioterapia com IA integrada",
+  "name": "Activity Fisioterapia - Gestão Completa",
+  "short_name": "Activity Fisio",
+  "description": "Sistema completo de gestão para clínicas de fisioterapia com IA integrada",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0ea5e9",
+  "background_color": "#000000",
+  "theme_color": "#00C8FF",
   "orientation": "portrait-primary",
   "scope": "/",
-  "lang": "pt-BR",
-  "dir": "ltr",
-  "categories": ["medical", "health", "productivity", "business"],
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "/icon-512x512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ],
+  "categories": ["health", "medical", "productivity"],
   "shortcuts": [
     {
-      "name": "Agenda",
-      "short_name": "Agenda",
-      "description": "Acessar agenda de consultas",
-      "url": "/agenda",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "name": "Nova Consulta",
+      "short_name": "Consulta",
+      "description": "Criar novo agendamento",
+      "url": "/agenda?action=new",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Pacientes",
-      "short_name": "Pacientes",
-      "description": "Gerenciar pacientes",
-      "url": "/patients",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "name": "Novo Paciente",
+      "short_name": "Paciente",
+      "description": "Cadastrar novo paciente",
+      "url": "/patients/new",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Dashboard",
       "short_name": "Dashboard",
-      "description": "Painel principal",
+      "description": "Ver dashboard principal",
       "url": "/dashboard",
-      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ],
-  "related_applications": [],
+  "screenshots": [],
   "prefer_related_applications": false,
-  "gcm_sender_id": "103953800507",
-  "features": [
-    "push-notifications",
-    "background-sync",
-    "offline-support",
-    "install-prompt"
-  ],
-  "protocol_handlers": [
-    {
-      "protocol": "web+dudufisio",
-      "url": "/?action=%s"
-    }
-  ]
+  "related_applications": []
 }
