@@ -254,7 +254,7 @@ export class WhatsAppAutomation {
         .eq('date', tomorrowStr)
         .eq('status', 'confirmed');
 
-      if (!appointments || appointments.length === 0) {
+      if (appointments?.length === 0) {
         
         return;
       }
@@ -303,7 +303,7 @@ export class WhatsAppAutomation {
         .eq('date', targetDateStr)
         .eq('status', 'scheduled');
 
-      if (!appointments || appointments.length === 0) {
+      if (appointments?.length === 0) {
         
         return;
       }

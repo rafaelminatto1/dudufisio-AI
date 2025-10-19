@@ -148,7 +148,7 @@ class MLPredictionService {
         // Por enquanto, simulação baseada em regras
         const confidence = 0.75 + (Math.random() * 0.20); // 0.75 - 0.95
         let outcome = 'positive';
-        let featureImportance = {};
+        const featureImportance = {};
         // Lógica simplificada baseada em features
         if (features.age > 65) {
             confidence -= 0.05;

@@ -117,7 +117,7 @@ class PredictiveAnalyticsServiceSupabase {
           },
         });
 
-      if (error && error.code !== '42P01') {
+      if (error?.code !== '42P01') {
         console.error('Erro ao salvar predição:', error);
       }
     } catch (error) {
@@ -266,7 +266,7 @@ class PredictiveAnalyticsServiceSupabase {
         .order('created_at', { ascending: false })
         .limit(10);
 
-      if (error && error.code !== '42P01') throw error;
+      if (error?.code !== '42P01') throw error;
 
       return data?.map(d => ({
         id: d.id,

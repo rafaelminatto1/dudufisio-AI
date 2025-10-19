@@ -528,7 +528,7 @@ class WebRTCTeleconsultaService {
       // Reduce video quality
       const senders = peerConnection.getSenders();
       const videoSender = senders.find(sender =>
-        sender.track && sender.track.kind === 'video'
+        sender.track?.kind === 'video'
       );
 
       if (videoSender?.track) {
@@ -554,7 +554,7 @@ class WebRTCTeleconsultaService {
   }
 
   async startRecording(sessionId: string, participantId: string): Promise<RecordingSession> {
-    if (!this.currentSession || this.currentSession.id !== sessionId) {
+    if (this.currentSession?.id !== sessionId) {
       throw new Error('No active session');
     }
 
@@ -693,7 +693,7 @@ class WebRTCTeleconsultaService {
         }
       });
 
-      if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+      if (this.mediaRecorder?.state === 'recording') {
         requestAnimationFrame(renderFrame);
       }
     };
@@ -799,7 +799,7 @@ class WebRTCTeleconsultaService {
       // Replace video track in peer connections
       for (const [peerId, peerConnection] of this.peerConnections) {
         const videoSender = peerConnection.getSenders().find(sender =>
-          sender.track && sender.track.kind === 'video'
+          sender.track?.kind === 'video'
         );
 
         if (videoSender) {
@@ -841,7 +841,7 @@ class WebRTCTeleconsultaService {
 
         for (const [peerId, peerConnection] of this.peerConnections) {
           const videoSender = peerConnection.getSenders().find(sender =>
-            sender.track && sender.track.kind === 'video'
+            sender.track?.kind === 'video'
           );
 
           if (videoSender && videoTrack) {
@@ -1171,7 +1171,7 @@ class WebRTCTeleconsultaService {
     this.remoteStreams.clear();
 
     // Stop recording if active
-    if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+    if (this.mediaRecorder?.state === 'recording') {
       this.mediaRecorder.stop();
     }
 
@@ -1263,7 +1263,7 @@ class WebRTCTeleconsultaService {
           // Replace track in peer connections
           for (const peerConnection of this.peerConnections.values()) {
             const sender = peerConnection.getSenders().find(s =>
-              s.track && s.track.kind === 'video'
+              s.track?.kind === 'video'
             );
             if (sender) {
               await sender.replaceTrack(newVideoTrack);

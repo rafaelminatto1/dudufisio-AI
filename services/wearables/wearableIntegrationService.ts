@@ -185,7 +185,7 @@ class WearableIntegrationService {
       .eq('device_type', deviceType)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error?.code !== 'PGRST116') throw error;
     return data;
   }
 

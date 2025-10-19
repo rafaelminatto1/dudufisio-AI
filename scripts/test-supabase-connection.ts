@@ -135,7 +135,7 @@ async function testConnection() {
         max_results: 10 
       });
     
-    if (!searchError || !searchError.message.includes('does not exist')) {
+    if (!searchError?.message.includes('does not exist')) {
       console.log('   ✅ search_patients existe');
       testsPassados++;
     } else {

@@ -573,7 +573,7 @@ export class FHIRValidator {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
 
-    if (!bundle || bundle.resourceType !== 'Bundle') {
+    if (bundle?.resourceType !== 'Bundle') {
       errors.push({
         path: 'root',
         message: 'Bundle must have resourceType "Bundle"',

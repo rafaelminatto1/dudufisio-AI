@@ -96,7 +96,7 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
-    if (selectedPatient && value !== selectedPatient.name) onSelectPatient(null);
+    if (value !== selectedPatient?.name) onSelectPatient(null);
   };
 
   return (

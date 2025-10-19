@@ -107,7 +107,7 @@ class SupplyReportsService {
   ): Promise<ConsumptionByPeriodReport> {
     try {
       // Buscar movimentações do período
-      let query = supabase
+      const query = supabase
         .from('stock_movements')
         .select(`
           *,

@@ -143,7 +143,7 @@ export const getTaskTypeSupplyTemplates = async (taskType: string): Promise<Task
 
     if (error) throw error;
 
-    if (!data || data.length === 0) {
+    if (data?.length === 0) {
       // Retornar templates padrão se não houver templates cadastrados
       
       return [];
@@ -508,7 +508,7 @@ export const initializeDefaultTemplates = async (): Promise<void> => {
       .from('supplies')
       .select('id, name');
 
-    if (!supplies || supplies.length === 0) {
+    if (supplies?.length === 0) {
       
       return;
     }

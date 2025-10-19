@@ -223,7 +223,7 @@ class FamilyPortalServiceSupabase {
         });
 
       // Se a tabela não existir, ignorar (não é crítico)
-      if (error && error.code !== '42P01') {
+      if (error?.code !== '42P01') {
         console.error('Erro ao registrar acesso:', error);
       }
     } catch (error) {

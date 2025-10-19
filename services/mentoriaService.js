@@ -3,12 +3,12 @@ import { InternStatus, CompetencyLevel } from '../types';
 import { mockInterns, mockEducationalCases, mockCompetencies, mockEducationalResources, mockLearningPaths, mockCertifications, mockMentorshipMetrics } from '../data/mockMentoriaData';
 import { mockTherapists } from '../data/mockData';
 // In-memory storage for development
-let interns = [...mockInterns];
-let cases = [...mockEducationalCases];
-let competencies = [...mockCompetencies];
-let resources = [...mockEducationalResources];
-let learningPaths = [...mockLearningPaths];
-let certifications = [...mockCertifications];
+const interns = [...mockInterns];
+const cases = [...mockEducationalCases];
+const competencies = [...mockCompetencies];
+const resources = [...mockEducationalResources];
+const learningPaths = [...mockLearningPaths];
+const certifications = [...mockCertifications];
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
 // ============================================================================
 // MENTORIA DATA - MAIN DASHBOARD

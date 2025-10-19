@@ -97,7 +97,7 @@ export function useExercises() {
         ),
       }));
 
-      if (selectedExercise && selectedExercise.id === id) {
+      if (selectedExercise?.id === id) {
         setSelectedExercise(updated);
       }
 

@@ -237,7 +237,7 @@ export const getTaskCost = async (taskId: string): Promise<TaskCost | undefined>
       .eq('task_id', taskId)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
+    if (error?.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
     return (data as any) ?? undefined;
   } catch (error) {
     console.error('Erro ao buscar custo da tarefa:', error);

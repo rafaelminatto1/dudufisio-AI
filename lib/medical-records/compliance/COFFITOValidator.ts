@@ -124,7 +124,7 @@ export class COFFITOValidator {
       }
 
       // Verificar se tem especialidade registrada
-      if (!therapist.specialties || therapist.specialties.length === 0) {
+      if (therapist.specialties?.length === 0) {
         violations.push(new ComplianceViolation(
           'COFFITO_005',
           'Therapist must have at least one COFFITO specialty registered',

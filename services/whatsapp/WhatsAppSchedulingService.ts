@@ -292,7 +292,7 @@ export class WhatsAppSchedulingService {
         .eq('clinic_id', clinicId)
         .in('role', ['admin', 'therapist']);
 
-      if (!staff || staff.length === 0) return;
+      if (staff?.length === 0) return;
 
       const date = parse(slot.date, 'yyyy-MM-dd', new Date());
       const formattedDate = format(date, "dd/MM/yyyy", { locale: ptBR });

@@ -1,12 +1,12 @@
 import { mockProtocols, mockProtocolAnalytics, mockProtocolPrescriptions, mockAssessmentTools, mockOutcomeMetrics, mockProtocolReferences } from '../data/mockProtocolsData';
 import { generateClinicalMaterialContent } from './geminiService';
 // In-memory storage for development
-let protocols = [...mockProtocols];
+const protocols = [...mockProtocols];
 let protocolAnalytics = [...mockProtocolAnalytics];
 let protocolPrescriptions = [...mockProtocolPrescriptions];
-let assessmentTools = [...mockAssessmentTools];
-let outcomeMetrics = [...mockOutcomeMetrics];
-let protocolReferences = [...mockProtocolReferences];
+const assessmentTools = [...mockAssessmentTools];
+const outcomeMetrics = [...mockOutcomeMetrics];
+const protocolReferences = [...mockProtocolReferences];
 const delay = (ms) => new Promise(res => setTimeout(res, ms));
 // ============================================================================
 // PROTOCOL LIBRARY MANAGEMENT

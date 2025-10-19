@@ -136,7 +136,7 @@ export class RoutePredictor {
 
   predictNextRoute(currentRoute: string): string | null {
     const patterns = this.patterns.get(currentRoute);
-    if (!patterns || patterns.size === 0) return null;
+    if (patterns?.size === 0) return null;
 
     // Retornar rota mais frequente
     let maxCount = 0;

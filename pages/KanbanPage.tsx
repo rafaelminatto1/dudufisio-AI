@@ -143,7 +143,7 @@ const KanbanPage: React.FC = () => {
 
         const taskToMove = tasks.find(t => t.id === taskId);
 
-        if (taskToMove && taskToMove.status !== newStatus && user) {
+        if (taskToMove?.status !== newStatus && user) {
             const originalTasks = tasks;
             const updatedTasks = tasks.map(t =>
                 t.id === taskId ? { ...t, status: newStatus } : t

@@ -95,7 +95,7 @@ export class CFMComplianceValidator {
       }
 
       // Verificar se o terapeuta tem especialidade adequada
-      if (!therapist.specialties || therapist.specialties.length === 0) {
+      if (therapist.specialties?.length === 0) {
         violations.push(new ComplianceViolation(
           'CFM_003',
           'Therapist must have at least one specialty registered',

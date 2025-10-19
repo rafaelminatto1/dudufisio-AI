@@ -269,7 +269,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
       
       const videoBlob = await fetchVideoFromUri(downloadLink);
       
-      if (!videoBlob || videoBlob.size === 0) {
+      if (videoBlob?.size === 0) {
         throw new Error('Vídeo baixado está vazio ou inválido');
       }
       

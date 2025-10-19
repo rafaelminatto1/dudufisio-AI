@@ -205,7 +205,7 @@ class ConditionEvaluator {
     operator: 'AND' | 'OR',
     context: RuleExecutionContext
   ): boolean {
-    if (!conditions || conditions.length === 0) return true;
+    if (conditions?.length === 0) return true;
 
     const results = conditions.map(condition => this.evaluateCondition(condition, context));
 

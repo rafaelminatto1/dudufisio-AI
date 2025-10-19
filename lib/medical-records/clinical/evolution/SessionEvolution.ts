@@ -649,14 +649,14 @@ export class SessionEvolution {
    * Valida técnica
    */
   private validateTechnique(technique: Technique): void {
-    if (!technique.name || technique.name.trim().length === 0) {
+    if (technique.name?.trim().length === 0) {
       throw new ValidationError(
         'Technique name is required',
         'technique.name'
       );
     }
 
-    if (!technique.duration || technique.duration.trim().length === 0) {
+    if (technique.duration?.trim().length === 0) {
       throw new ValidationError(
         'Technique duration is required',
         'technique.duration'
@@ -668,14 +668,14 @@ export class SessionEvolution {
    * Valida exercício
    */
   private validateExercise(exercise: Exercise): void {
-    if (!exercise.name || exercise.name.trim().length === 0) {
+    if (exercise.name?.trim().length === 0) {
       throw new ValidationError(
         'Exercise name is required',
         'exercise.name'
       );
     }
 
-    if (!exercise.description || exercise.description.trim().length === 0) {
+    if (exercise.description?.trim().length === 0) {
       throw new ValidationError(
         'Exercise description is required',
         'exercise.description'
@@ -702,7 +702,7 @@ export class SessionEvolution {
    */
   private validateBodyMapPoints(points: BodyMapPoint[]): void {
     for (const point of points) {
-      if (!point.id || point.id.trim().length === 0) {
+      if (point.id?.trim().length === 0) {
         throw new ValidationError(
           'Body map point ID is required',
           'bodyMapPoint.id'

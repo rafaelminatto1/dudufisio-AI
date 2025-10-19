@@ -70,7 +70,7 @@ class PerformanceMonitor {
 
   getReport(componentName: string): PerformanceReport | null {
     const metrics = this.metrics.get(componentName);
-    if (!metrics || metrics.length === 0) return null;
+    if (metrics?.length === 0) return null;
 
     const renderTimes = metrics.map(m => m.renderTime);
     const renderCounts = metrics.map(m => m.renderCount);

@@ -60,7 +60,7 @@ export function OTPLoginForm() {
   };
 
   const verifyOTP = async () => {
-    if (!otp || otp.length !== 6) {
+    if (otp?.length !== 6) {
       setError('Por favor, insira o código de 6 dígitos');
       return;
     }

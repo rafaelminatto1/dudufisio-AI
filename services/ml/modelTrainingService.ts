@@ -140,7 +140,7 @@ class ModelTrainingService {
       .eq('validated', true)
       .gte('created_at', thirtyDaysAgo.toISOString());
 
-    if (!predictions || predictions.length === 0) {
+    if (predictions?.length === 0) {
       
       return null;
     }

@@ -60,7 +60,7 @@ export class AutomationService {
         .eq('clinic_id', clinicId)
         .eq('is_active', true);
 
-      if (!campaigns || campaigns.length === 0) {
+      if (campaigns?.length === 0) {
         return;
       }
 
@@ -111,7 +111,7 @@ export class AutomationService {
       .lte('created_at', yesterday.toISOString())
       .is('last_contact_at', null);
 
-    if (!leads || leads.length === 0) return;
+    if (leads?.length === 0) return;
 
     // Adicionar leads à campanha
     for (const lead of leads) {
@@ -133,7 +133,7 @@ export class AutomationService {
       .eq('clinic_id', campaign.clinic_id)
       .gte('created_at', oneHourAgo.toISOString());
 
-    if (!appointments || appointments.length === 0) return;
+    if (appointments?.length === 0) return;
 
     // Adicionar à campanha
     for (const appointment of appointments) {
@@ -170,7 +170,7 @@ export class AutomationService {
       .eq('clinic_id', campaign.clinic_id)
       .gte('created_at', oneHourAgo.toISOString());
 
-    if (!leads || leads.length === 0) return;
+    if (leads?.length === 0) return;
 
     for (const lead of leads) {
       await this.addLeadToCampaign(campaign.id, lead.id);
@@ -230,7 +230,7 @@ export class AutomationService {
         .lte('next_action_at', new Date().toISOString())
         .limit(100);
 
-      if (!pendingActions || pendingActions.length === 0) {
+      if (pendingActions?.length === 0) {
         return;
       }
 

@@ -50,7 +50,7 @@ export const authOptions: AuthOptions = {
           where: { email: credentials.email }
         });
 
-        if (!user || !user.hashedPassword) {
+        if (!user?.hashedPassword) {
             await redis.incr(rateLimitKey);
             await redis.expire(rateLimitKey, ATTEMPTS_WINDOW_SECONDS);
             

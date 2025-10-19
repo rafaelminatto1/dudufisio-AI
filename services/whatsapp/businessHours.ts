@@ -276,7 +276,7 @@ export class BusinessHoursService {
    * Obter próximo dia útil
    */
   private getNextBusinessDay(from: Date): Date {
-    let next = new Date(from);
+    const next = new Date(from);
     next.setDate(next.getDate() + 1);
     next.setHours(8, 0, 0, 0); // Inicia às 8h do próximo dia
 

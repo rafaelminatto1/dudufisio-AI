@@ -93,7 +93,7 @@ class SessionService {
         .eq('appointment_id', appointmentId)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error?.code !== 'PGRST116') throw error;
       return data ?? null;
     } catch (error) {
       throw new Error(handleSupabaseError(error));

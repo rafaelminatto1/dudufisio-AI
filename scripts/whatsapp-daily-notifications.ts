@@ -22,7 +22,7 @@ async function runDailyNotifications() {
 
     if (error) throw error;
 
-    if (!clinics || clinics.length === 0) {
+    if (clinics?.length === 0) {
       console.log('⚠️  Nenhuma clínica ativa encontrada');
       return;
     }

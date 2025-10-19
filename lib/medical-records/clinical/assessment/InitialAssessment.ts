@@ -449,7 +449,7 @@ export class InitialAssessment {
    * Valida queixa principal
    */
   private static validateChiefComplaint(complaint: ChiefComplaint): void {
-    if (!complaint.description || complaint.description.trim().length === 0) {
+    if (complaint.description?.trim().length === 0) {
       throw new ValidationError(
         'Chief complaint description is required',
         'chiefComplaint.description'
@@ -482,14 +482,14 @@ export class InitialAssessment {
    * Valida exame físico
    */
   private static validatePhysicalExam(exam: PhysicalExam): void {
-    if (!exam.inspection || exam.inspection.trim().length === 0) {
+    if (exam.inspection?.trim().length === 0) {
       throw new ValidationError(
         'Inspection findings are required',
         'physicalExam.inspection'
       );
     }
 
-    if (!exam.palpation || exam.palpation.trim().length === 0) {
+    if (exam.palpation?.trim().length === 0) {
       throw new ValidationError(
         'Palpation findings are required',
         'physicalExam.palpation'
@@ -515,7 +515,7 @@ export class InitialAssessment {
    * Valida diagnóstico
    */
   private static validateDiagnosis(diagnosis: PhysiotherapyDiagnosis): void {
-    if (!diagnosis.primaryDiagnosis || diagnosis.primaryDiagnosis.trim().length === 0) {
+    if (diagnosis.primaryDiagnosis?.trim().length === 0) {
       throw new ValidationError(
         'Primary diagnosis is required',
         'diagnosis.primaryDiagnosis'
@@ -541,14 +541,14 @@ export class InitialAssessment {
    * Valida teste funcional
    */
   private validateFunctionalTest(test: FunctionalTest): void {
-    if (!test.name || test.name.trim().length === 0) {
+    if (test.name?.trim().length === 0) {
       throw new ValidationError(
         'Functional test name is required',
         'functionalTest.name'
       );
     }
 
-    if (!test.result || test.result.trim().length === 0) {
+    if (test.result?.trim().length === 0) {
       throw new ValidationError(
         'Functional test result is required',
         'functionalTest.result'
@@ -560,7 +560,7 @@ export class InitialAssessment {
    * Valida meta de tratamento
    */
   private validateTreatmentGoal(goal: TreatmentGoal): void {
-    if (!goal.description || goal.description.trim().length === 0) {
+    if (goal.description?.trim().length === 0) {
       throw new ValidationError(
         'Treatment goal description is required',
         'treatmentGoal.description'
@@ -600,28 +600,28 @@ export class InitialAssessment {
    * Valida plano de tratamento
    */
   private validateTreatmentPlan(plan: TreatmentPlan): void {
-    if (!plan.goals || plan.goals.length === 0) {
+    if (plan.goals?.length === 0) {
       throw new ValidationError(
         'Treatment plan must have at least one goal',
         'treatmentPlan.goals'
       );
     }
 
-    if (!plan.interventions || plan.interventions.length === 0) {
+    if (plan.interventions?.length === 0) {
       throw new ValidationError(
         'Treatment plan must have at least one intervention',
         'treatmentPlan.interventions'
       );
     }
 
-    if (!plan.frequency || plan.frequency.trim().length === 0) {
+    if (plan.frequency?.trim().length === 0) {
       throw new ValidationError(
         'Treatment frequency is required',
         'treatmentPlan.frequency'
       );
     }
 
-    if (!plan.duration || plan.duration.trim().length === 0) {
+    if (plan.duration?.trim().length === 0) {
       throw new ValidationError(
         'Treatment duration is required',
         'treatmentPlan.duration'

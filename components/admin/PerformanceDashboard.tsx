@@ -272,7 +272,7 @@ const PerformanceDashboard: React.FC = () => {
         </h2>
         
         <div className="space-y-2">
-          {webVitals?.lcp && webVitals.lcp.rating === 'poor' && (
+          {webVitals?.lcp?.rating === 'poor' && (
             <Card className="p-4 bg-red-50 border-l-4 border-red-500">
               <p className="text-sm font-medium text-red-800">
                 ⚠️ LCP precisa de atenção: Otimize imagens e recursos críticos
@@ -296,7 +296,7 @@ const PerformanceDashboard: React.FC = () => {
             </Card>
           )}
 
-          {(!webVitals?.lcp || webVitals.lcp.rating === 'good') &&
+          {(webVitals?.lcp?.rating === 'good') &&
            cacheMetrics && cacheMetrics.hitRate >= 0.7 &&
            !topSlowComponents.some(c => c.renderTime > 100) && (
             <Card className="p-4 bg-green-50 border-l-4 border-green-500">

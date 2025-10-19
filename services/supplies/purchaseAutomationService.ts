@@ -123,7 +123,7 @@ class PurchaseAutomationService {
 
       if (error) throw error;
 
-      if (!data || data.length === 0) {
+      if (data?.length === 0) {
         return {
           averageDailyConsumption: 0,
           monthlyConsumption: 0,
@@ -435,7 +435,7 @@ class PurchaseAutomationService {
         .order('approval_level', { ascending: true });
 
       if (fetchError) throw fetchError;
-      if (!pendingApprovals || pendingApprovals.length === 0) {
+      if (pendingApprovals?.length === 0) {
         return { success: false, message: 'Não há aprovações pendentes para este pedido' };
       }
 

@@ -30,7 +30,7 @@ class FamilyPortalService {
   ): Promise<FamilyDashboard> {
     // Verificar permissões
     const familyMember = await this.getFamilyMember(familyMemberId);
-    if (!familyMember || familyMember.patientId !== patientId) {
+    if (familyMember?.patientId !== patientId) {
       throw new Error('Acesso não autorizado');
     }
 

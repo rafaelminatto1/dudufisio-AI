@@ -343,7 +343,7 @@ export async function calculateAssessmentStatistics(
     throw new Error('Não foi possível calcular as estatísticas');
   }
 
-  if (!data || data.length === 0) {
+  if (data?.length === 0) {
     return {
       fieldName,
       unit: undefined,

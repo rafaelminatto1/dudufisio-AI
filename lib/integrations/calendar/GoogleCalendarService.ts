@@ -309,7 +309,7 @@ export class GoogleCalendarService extends CalendarService {
   }
 
   private generateGoogleRRule(recurrence: any): string | null {
-    if (!recurrence || recurrence.frequency !== 'weekly') {
+    if (recurrence?.frequency !== 'weekly') {
       return null;
     }
 

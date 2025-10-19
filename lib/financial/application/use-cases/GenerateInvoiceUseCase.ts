@@ -287,7 +287,7 @@ export class GenerateInvoiceUseCase {
       throw new DomainError('Patient ID is required');
     }
 
-    if (!command.transactionIds || command.transactionIds.length === 0) {
+    if (command.transactionIds?.length === 0) {
       throw new DomainError('At least one transaction ID is required');
     }
 

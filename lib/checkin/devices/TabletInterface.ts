@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
+/* eslint-disable no-unused-vars */
 import { CheckInEngine } from '../core/CheckInEngine';
 import { logger } from '../../logger';
 import {

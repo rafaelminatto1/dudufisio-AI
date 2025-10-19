@@ -430,7 +430,7 @@ export class DataLoader {
 
     for (const loaderConfig of config) {
       const data = dataSets[loaderConfig.name];
-      if (!data || data.length === 0) continue;
+      if (data?.length === 0) continue;
 
       let result: LoadResult;
 

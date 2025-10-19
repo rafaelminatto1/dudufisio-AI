@@ -439,7 +439,7 @@ class VideoCallService {
       }
 
       // Parar gravação se estiver ativa
-      if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+      if (this.mediaRecorder?.state === 'recording') {
         await this.stopRecording(sessionId);
       }
 
@@ -661,7 +661,7 @@ class VideoCallService {
       }
 
       // Verificar se já está gravando
-      if (session.recording && session.recording.status === 'recording') {
+      if (session.recording?.status === 'recording') {
         throw new Error('Gravação já em andamento');
       }
 
@@ -716,7 +716,7 @@ class VideoCallService {
 
       // Auto-parar após duração máxima
       setTimeout(() => {
-        if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+        if (this.mediaRecorder?.state === 'recording') {
           this.stopRecording(sessionId);
         }
       }, this.config.recording.maxDuration * 60 * 1000);
@@ -747,7 +747,7 @@ class VideoCallService {
         return false;
       }
 
-      if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+      if (this.mediaRecorder?.state === 'recording') {
         this.mediaRecorder.stop();
 
         // Atualizar duração
@@ -853,7 +853,7 @@ class VideoCallService {
           if (peerConnection) {
             const videoTrack = this.screenStream.getVideoTracks()[0];
             const sender = peerConnection.getSenders().find(s =>
-              s.track && s.track.kind === 'video'
+              s.track?.kind === 'video'
             );
 
             if (sender) {
@@ -897,7 +897,7 @@ class VideoCallService {
             if (peerConnection) {
               const videoTrack = this.localStream.getVideoTracks()[0];
               const sender = peerConnection.getSenders().find(s =>
-                s.track && s.track.kind === 'video'
+                s.track?.kind === 'video'
               );
 
               if (sender && videoTrack) {

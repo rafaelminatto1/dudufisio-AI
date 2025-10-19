@@ -171,7 +171,7 @@ class MLPredictionService {
       .limit(1)
       .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error?.code !== 'PGRST116') throw error;
     return data;
   }
 

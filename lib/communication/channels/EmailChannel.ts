@@ -302,7 +302,7 @@ export class EmailChannel extends BaseChannel {
     const config = this.config as EmailConfig;
 
     // Check subject line
-    if (!message.content.subject || message.content.subject.trim().length === 0) {
+    if (message.content.subject?.trim().length === 0) {
       warnings.push('Email subject line is empty');
     } else if (message.content.subject.length > 100) {
       warnings.push('Email subject line is very long and may be truncated');

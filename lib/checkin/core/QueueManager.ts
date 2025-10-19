@@ -6,7 +6,7 @@ import {
 } from '../../../types/checkin';
 import { logger } from '../../logger';
 
-/* eslint-disable @typescript-eslint/no-unused-vars, no-unused-vars */
+/* eslint-disable no-unused-vars */
 type Comparator<T> = (pair: [T, T]) => number;
 
 class PriorityQueue<T> {

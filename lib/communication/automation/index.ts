@@ -451,7 +451,7 @@ export class AutomationRuleBuilder {
     if (!this.rule.id) throw new Error('Rule ID is required');
     if (!this.rule.name) throw new Error('Rule name is required');
     if (!this.rule.trigger) throw new Error('Rule trigger is required');
-    if (!this.rule.actions || this.rule.actions.length === 0) {
+    if (this.rule.actions?.length === 0) {
       throw new Error('At least one action is required');
     }
 
@@ -720,7 +720,7 @@ export class AutomationRuleValidator {
     if (!rule.id) errors.push('Rule ID is required');
     if (!rule.name) errors.push('Rule name is required');
     if (!rule.trigger) errors.push('Rule trigger is required');
-    if (!rule.actions || rule.actions.length === 0) errors.push('At least one action is required');
+    if (rule.actions?.length === 0) errors.push('At least one action is required');
 
     // ID format validation
     if (rule.id && !/^[a-z0-9_]+$/.test(rule.id)) {
@@ -730,7 +730,7 @@ export class AutomationRuleValidator {
     // Trigger validation
     if (rule.trigger) {
       if (!rule.trigger.type) errors.push('Trigger type is required');
-      if (!rule.trigger.events || rule.trigger.events.length === 0) {
+      if (rule.trigger.events?.length === 0) {
         errors.push('At least one trigger event is required');
       }
 

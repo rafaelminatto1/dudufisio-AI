@@ -443,7 +443,7 @@ function selectVideoBasedOnPrompt(prompt: string): {
 export async function generateExerciseVideo(prompt: string): Promise<VideoOperation> {
   try {
     // Validar prompt
-    if (!prompt || prompt.trim().length === 0) {
+    if (prompt?.trim().length === 0) {
       throw new Error('Prompt não pode estar vazio');
     }
 

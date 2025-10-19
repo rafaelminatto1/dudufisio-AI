@@ -6,7 +6,7 @@ interface ClinicalHistoryTimelineProps {
 }
 
 const ClinicalHistoryTimeline: React.FC<ClinicalHistoryTimelineProps> = ({ notes }) => {
-  if (!notes || notes.length === 0) {
+  if (notes?.length === 0) {
     return (
       <div className="text-center py-8">
         <p className="text-slate-500">Nenhuma anotação clínica encontrada.</p>

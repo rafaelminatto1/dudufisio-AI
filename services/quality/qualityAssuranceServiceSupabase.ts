@@ -284,7 +284,7 @@ class QualityAssuranceServiceSupabase {
   }
 
   private generateCorrectiveActions(violations: any[]): string[] {
-    if (!violations || violations.length === 0) return [];
+    if (violations?.length === 0) return [];
 
     return violations.map(v => 
       `Corrigir: ${JSON.stringify(v)}`

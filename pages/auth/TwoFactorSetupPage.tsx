@@ -50,7 +50,7 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
   };
 
   const handleVerification = async () => {
-    if (!verificationCode || verificationCode.length !== 6) {
+    if (verificationCode?.length !== 6) {
       return;
     }
 

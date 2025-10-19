@@ -1,5 +1,5 @@
 // Mock data - em produção, isso viria do banco de dados
-let waitlistData = [
+const waitlistData = [
     {
         id: 'wait_1',
         patientId: 'patient_123',

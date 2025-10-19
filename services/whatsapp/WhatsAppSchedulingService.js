@@ -140,7 +140,7 @@ export class WhatsAppSchedulingService {
     async createProvisionalAppointment(phone, slot, clinicId) {
         try {
             // Buscar ou criar paciente
-            let patient = await this.findOrCreatePatient(phone, clinicId);
+            const patient = await this.findOrCreatePatient(phone, clinicId);
             // Criar agendamento com status "pendente"
             const { error } = await supabase
                 .from('appointments')

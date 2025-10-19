@@ -169,7 +169,7 @@ export class ICSService extends CalendarService {
   }
 
   private generateRRule(recurrence: any): string | null {
-    if (!recurrence || recurrence.frequency !== 'weekly') {
+    if (recurrence?.frequency !== 'weekly') {
       return null;
     }
 

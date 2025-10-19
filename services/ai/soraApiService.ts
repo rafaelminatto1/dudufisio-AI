@@ -152,7 +152,7 @@ export class SoraApiService {
    */
   async cancelVideo(videoId: string): Promise<boolean> {
     const video = this.videoQueue.get(videoId);
-    if (!video || video.status === 'completed') return false;
+    if (video?.status === 'completed') return false;
 
     video.status = 'failed';
     video.error = 'Cancelado pelo usuário';

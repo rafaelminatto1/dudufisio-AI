@@ -89,7 +89,7 @@ export const VideoUploader: React.FC<VideoUploaderProps> = ({
   // Handle file selection
   const handleFiles = useCallback(
     async (files: FileList | null) => {
-      if (!files || files.length === 0) return;
+      if (files?.length === 0) return;
 
       const newVideoFiles: VideoFile[] = [];
 

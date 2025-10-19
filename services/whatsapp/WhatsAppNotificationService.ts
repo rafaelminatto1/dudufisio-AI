@@ -43,7 +43,7 @@ export class WhatsAppNotificationService {
         .in('status', ['confirmed', 'scheduled'])
         .order('time');
 
-      if (!appointments || appointments.length === 0) {
+      if (appointments?.length === 0) {
         
         return;
       }
@@ -115,7 +115,7 @@ export class WhatsAppNotificationService {
         .eq('status', 'scheduled')
         .order('time');
 
-      if (!appointments || appointments.length === 0) {
+      if (appointments?.length === 0) {
         
         return;
       }
@@ -183,7 +183,7 @@ export class WhatsAppNotificationService {
         .lt('last_appointment.date', thirtyDaysAgoStr)
         .limit(50);
 
-      if (!inactivePatients || inactivePatients.length === 0) {
+      if (inactivePatients?.length === 0) {
         
         return;
       }
@@ -249,7 +249,7 @@ export class WhatsAppNotificationService {
         .lte('due_date', format(new Date(), 'yyyy-MM-dd'))
         .limit(50);
 
-      if (!pendingPayments || pendingPayments.length === 0) {
+      if (pendingPayments?.length === 0) {
         
         return;
       }

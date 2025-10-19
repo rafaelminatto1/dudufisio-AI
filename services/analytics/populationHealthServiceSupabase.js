@@ -98,7 +98,7 @@ class PopulationHealthServiceSupabase {
     async getHealthTrends(startDate, endDate, condition) {
         try {
             // Buscar dados de evolução de sessões
-            let query = supabase
+            const query = supabase
                 .from('session_evolutions')
                 .select('pain_level_before, pain_level_after, created_at')
                 .gte('created_at', startDate.toISOString())

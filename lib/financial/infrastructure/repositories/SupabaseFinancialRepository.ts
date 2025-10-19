@@ -279,7 +279,7 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
       .eq('id', id)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error?.code !== 'PGRST116') {
       throw new DomainError(`Failed to find transaction: ${error.message}`);
     }
 
@@ -363,7 +363,7 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
       .eq('id', id)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error?.code !== 'PGRST116') {
       throw new DomainError(`Failed to find package: ${error.message}`);
     }
 
@@ -452,7 +452,7 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
       .eq('id', id)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error?.code !== 'PGRST116') {
       throw new DomainError(`Failed to find invoice: ${error.message}`);
     }
 
@@ -560,7 +560,7 @@ export class SupabaseFinancialRepository implements IFinancialRepository {
       .eq('id', id)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error?.code !== 'PGRST116') {
       throw new DomainError(`Failed to find payment plan: ${error.message}`);
     }
 

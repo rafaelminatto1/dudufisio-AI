@@ -204,7 +204,7 @@ async function createRiskAssessments(patients: Patient[]) {
     .from('risk_assessments')
     .insert(assessments);
 
-  if (error && error.code !== '23505') {
+  if (error?.code !== '23505') {
     throw error;
   }
 }
@@ -228,7 +228,7 @@ async function createAthleteProfiles(patients: Patient[]) {
     .insert(profiles)
     .select();
 
-  if (profilesError && profilesError.code !== '23505') {
+  if (profilesError?.code !== '23505') {
     throw profilesError;
   }
 
@@ -251,7 +251,7 @@ async function createAthleteProfiles(patients: Patient[]) {
       .from('athlete_injuries')
       .insert(injuries);
 
-    if (injuriesError && injuriesError.code !== '23505') {
+    if (injuriesError?.code !== '23505') {
       throw injuriesError;
     }
 
@@ -281,7 +281,7 @@ async function createAthleteProfiles(patients: Patient[]) {
       .from('functional_tests')
       .insert(functionalTests);
 
-    if (testsError && testsError.code !== '23505') {
+    if (testsError?.code !== '23505') {
       throw testsError;
     }
   }
@@ -334,7 +334,7 @@ async function createFamilyMembers(patients: Patient[]) {
     .from('family_members')
     .insert(members);
 
-  if (error && error.code !== '23505') {
+  if (error?.code !== '23505') {
     throw error;
   }
 
@@ -395,7 +395,7 @@ async function createPredictions(patients: Patient[]) {
     .from('ai_predictions')
     .insert(predictions);
 
-  if (error && error.code !== '23505') {
+  if (error?.code !== '23505') {
     throw error;
   }
 }
@@ -444,7 +444,7 @@ async function createComplianceData() {
     .from('compliance_audits')
     .insert(auditData);
 
-  if (error && error.code !== '23505') {
+  if (error?.code !== '23505') {
     throw error;
   }
 
