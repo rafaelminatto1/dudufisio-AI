@@ -10,11 +10,11 @@ interface ExerciseCardProps {
 }
 
 const difficultyColors: Record<number, string> = {
-    1: 'bg-green-100 text-green-800',
-    2: 'bg-sky-100 text-sky-800',
-    3: 'bg-yellow-100 text-yellow-800',
-    4: 'bg-orange-100 text-orange-800',
-    5: 'bg-red-100 text-red-800',
+    1: 'bg-green-50 text-green-700 border-green-200',
+    2: 'bg-blue-50 text-blue-700 border-blue-200',
+    3: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+    4: 'bg-orange-50 text-orange-700 border-orange-200',
+    5: 'bg-red-50 text-red-700 border-red-200',
 };
 
 const formatDuration = (seconds: number) => {
@@ -39,7 +39,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onEdit, onDelete,
     return (
         <div 
             onClick={hasVideo ? onPlay : undefined} 
-            className={`bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col overflow-hidden group ${hasVideo ? 'cursor-pointer' : ''}`}
+            className={`bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex flex-col overflow-hidden group border border-slate-200 ${hasVideo ? 'cursor-pointer' : ''}`}
         >
             <div className="relative">
                 <img
@@ -72,7 +72,7 @@ const ExerciseCard: React.FC<ExerciseCardProps> = ({ exercise, onEdit, onDelete,
             <div className="p-4 flex-grow flex flex-col">
                 <div className="flex justify-between items-start">
                     <h3 className="text-lg font-bold text-slate-800 flex-1 pr-2">{name}</h3>
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${difficultyColors[difficulty]}`}>
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full border ${difficultyColors[difficulty]}`}>
                         Nível {difficulty}
                     </span>
                 </div>

@@ -12,12 +12,12 @@ interface EventCardProps {
 }
 
 const statusStyles: Record<EventStatus, { text: string; bg: string; dot: string; }> = {
-    [EventStatus.Draft]: { text: 'text-slate-700', bg: 'bg-slate-100', dot: 'bg-slate-400' },
-    [EventStatus.Published]: { text: 'text-blue-700', bg: 'bg-blue-100', dot: 'bg-blue-400' },
-    [EventStatus.Active]: { text: 'text-green-700', bg: 'bg-green-100', dot: 'bg-green-400' },
-    [EventStatus.InProgress]: { text: 'text-purple-700', bg: 'bg-purple-100', dot: 'bg-purple-400' },
-    [EventStatus.Completed]: { text: 'text-gray-700', bg: 'bg-gray-200', dot: 'bg-gray-500' },
-    [EventStatus.Cancelled]: { text: 'text-red-700', bg: 'bg-red-100', dot: 'bg-red-400' },
+    [EventStatus.Draft]: { text: 'text-slate-700', bg: 'bg-slate-50', dot: 'bg-slate-400' },
+    [EventStatus.Published]: { text: 'text-blue-700', bg: 'bg-blue-50', dot: 'bg-blue-400' },
+    [EventStatus.Active]: { text: 'text-green-700', bg: 'bg-green-50', dot: 'bg-green-400' },
+    [EventStatus.InProgress]: { text: 'text-purple-700', bg: 'bg-purple-50', dot: 'bg-purple-400' },
+    [EventStatus.Completed]: { text: 'text-gray-700', bg: 'bg-gray-100', dot: 'bg-gray-500' },
+    [EventStatus.Cancelled]: { text: 'text-red-700', bg: 'bg-red-50', dot: 'bg-red-400' },
 };
 
 const EventCard: React.FC<EventCardProps> = ({ event, onEdit }) => {
@@ -47,12 +47,12 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit }) => {
 
 
     return (
-        <div onClick={handleCardClick} className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col group overflow-hidden cursor-pointer">
+        <div onClick={handleCardClick} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex flex-col group overflow-hidden cursor-pointer border border-slate-200">
             {/* Image and Status */}
             <div className="relative">
                 <img src={event.bannerUrl || 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=1470'} alt={event.name} className="h-40 w-full object-cover" />
                 <div className="absolute top-3 right-3">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${bg} ${text} shadow`}>
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${bg} ${text}`}>
                         <span className={`w-2 h-2 mr-2 rounded-full ${dot}`}></span>
                         {event.status}
                     </span>
@@ -63,9 +63,9 @@ const EventCard: React.FC<EventCardProps> = ({ event, onEdit }) => {
             <div className="p-4 flex flex-col flex-grow">
                 <div className="flex items-start gap-4">
                      {/* Date Block */}
-                    <div className="flex-shrink-0 text-center bg-slate-50 border rounded-md p-2 w-16">
-                        <p className="text-xs font-bold text-red-500">{month}</p>
-                        <p className="text-2xl font-bold text-slate-800">{day}</p>
+                    <div className="flex-shrink-0 text-center bg-slate-50 border border-slate-200 rounded-lg p-2 w-16">
+                        <p className="text-xs font-bold text-red-600">{month}</p>
+                        <p className="text-2xl font-bold text-slate-900">{day}</p>
                     </div>
                     {/* Event Info */}
                     <div className="flex-1">

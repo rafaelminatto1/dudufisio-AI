@@ -34,15 +34,15 @@ const PatientInfoPanel: React.FC<PatientInfoPanelProps> = ({ patient }) => {
     }
 
     return (
-        <div className="space-y-4 text-sm text-slate-300 p-4">
-            <div className="p-3 bg-slate-700/50 rounded-lg">
-                <h3 className="font-bold text-lg flex items-center mb-2 text-slate-100">
-                    <UserCircle className="w-5 h-5 mr-2 text-teal-400" />
+        <div className="space-y-4 text-sm text-slate-600 p-4">
+            <div className="p-3 bg-white border border-slate-200 rounded-lg shadow-sm">
+                <h3 className="font-bold text-lg flex items-center mb-2 text-slate-900">
+                    <UserCircle className="w-5 h-5 mr-2 text-blue-600" />
                     Paciente
                 </h3>
-                <p><strong>Queixa:</strong> {patient.conditions?.[0]?.name || 'N/A'}</p>
+                <p className="text-slate-700"><strong>Queixa:</strong> {patient.conditions?.[0]?.name || 'N/A'}</p>
                  {patient.medicalAlerts && (
-                    <div className="mt-2 p-2 bg-amber-500/20 text-amber-200 rounded flex items-start">
+                    <div className="mt-2 p-2 bg-orange-50 border border-orange-200 text-orange-700 rounded flex items-start">
                          <AlertTriangle className="w-4 h-4 mr-2 mt-0.5 shrink-0" />
                         <p className="text-xs">{patient.medicalAlerts}</p>
                     </div>
@@ -50,22 +50,22 @@ const PatientInfoPanel: React.FC<PatientInfoPanelProps> = ({ patient }) => {
             </div>
             
              {plan && (
-                <div className="p-3 bg-slate-700/50 rounded-lg">
-                    <h3 className="font-bold flex items-center mb-2 text-slate-100">
-                        <Target className="w-5 h-5 mr-2 text-teal-400" />
+                <div className="p-3 bg-white border border-slate-200 rounded-lg shadow-sm">
+                    <h3 className="font-bold flex items-center mb-2 text-slate-900">
+                        <Target className="w-5 h-5 mr-2 text-blue-600" />
                         Objetivos
                     </h3>
-                    <p className="text-xs">{plan.treatmentGoals}</p>
+                    <p className="text-xs text-slate-600">{plan.treatmentGoals}</p>
                 </div>
             )}
 
             {lastNote && (
-                 <div className="p-3 bg-slate-700/50 rounded-lg">
-                    <h3 className="font-bold flex items-center mb-2 text-slate-100">
-                        <FileText className="w-5 h-5 mr-2 text-teal-400" />
+                 <div className="p-3 bg-white border border-slate-200 rounded-lg shadow-sm">
+                    <h3 className="font-bold flex items-center mb-2 text-slate-900">
+                        <FileText className="w-5 h-5 mr-2 text-blue-600" />
                         Última Sessão ({lastNote.date})
                     </h3>
-                    <div className="space-y-1 text-xs">
+                    <div className="space-y-1 text-xs text-slate-600">
                         <p><strong>S:</strong> {lastNote.subjective}</p>
                         <p><strong>A:</strong> {lastNote.assessment}</p>
                     </div>

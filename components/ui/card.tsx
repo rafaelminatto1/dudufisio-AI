@@ -10,7 +10,7 @@ const Card = ({ className, ref, ...props }: CardProps) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border border-fisio-neutral-200 bg-white text-fisio-neutral-800 shadow-sm hover:shadow-md transition-shadow duration-200",
+      "rounded-lg border border-slate-200 bg-white text-slate-900 shadow-md hover:shadow-lg transition-all duration-200",
       className
     )}
     {...props}

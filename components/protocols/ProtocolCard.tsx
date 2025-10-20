@@ -18,10 +18,10 @@ interface ProtocolCardProps {
 }
 
 const intensityColors: Record<string, string> = {
-  low: 'bg-green-100 text-green-800',
-  moderate: 'bg-blue-100 text-blue-800',
-  high: 'bg-orange-100 text-orange-800',
-  very_high: 'bg-red-100 text-red-800',
+  low: 'bg-green-50 text-green-700 border-green-200',
+  moderate: 'bg-blue-50 text-blue-700 border-blue-200',
+  high: 'bg-orange-50 text-orange-700 border-orange-200',
+  very_high: 'bg-red-50 text-red-700 border-red-200',
 };
 
 const intensityLabels: Record<string, string> = {
@@ -38,12 +38,12 @@ export const ProtocolCard: React.FC<ProtocolCardProps> = ({
   onDuplicate,
 }) => {
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-lg transition-all duration-200">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <CardTitle className="text-lg mb-1">{protocol.name}</CardTitle>
-            <p className="text-sm text-gray-600 line-clamp-2">
+            <p className="text-sm text-slate-600 line-clamp-2">
               {protocol.description}
             </p>
           </div>
@@ -59,8 +59,8 @@ export const ProtocolCard: React.FC<ProtocolCardProps> = ({
       <CardContent className="space-y-3">
         {/* Intensidade */}
         <div className="flex items-center gap-2">
-          <Zap className="h-4 w-4 text-gray-400" />
-          <Badge className={intensityColors[protocol.intensity]}>
+          <Zap className="h-4 w-4 text-slate-400" />
+          <Badge className={`border ${intensityColors[protocol.intensity]}`}>
             {intensityLabels[protocol.intensity]}
           </Badge>
         </div>
@@ -68,19 +68,19 @@ export const ProtocolCard: React.FC<ProtocolCardProps> = ({
         {/* Info Grid */}
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-600">
+            <Users className="h-4 w-4 text-slate-400" />
+            <span className="text-slate-600">
               {protocol.exercises.length} exercícios
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-600">
+            <Clock className="h-4 w-4 text-slate-400" />
+            <span className="text-slate-600">
               {protocol.duration} semanas
             </span>
           </div>
           <div className="col-span-2 flex items-center gap-2">
-            <span className="text-gray-600">
+            <span className="text-slate-600">
               {protocol.frequency}x por semana
             </span>
           </div>
@@ -89,7 +89,7 @@ export const ProtocolCard: React.FC<ProtocolCardProps> = ({
         {/* Condições Alvo */}
         {protocol.targetConditions.length > 0 && (
           <div>
-            <p className="text-xs text-gray-500 mb-1">Condições Alvo:</p>
+            <p className="text-xs text-slate-500 mb-1">Condições Alvo:</p>
             <div className="flex flex-wrap gap-1">
               {protocol.targetConditions.slice(0, 3).map((condition, idx) => (
                 <Badge key={idx} variant="outline" className="text-xs">

@@ -81,11 +81,11 @@ const ConsolidatedAITools: React.FC = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-green-600" />;
       case 'processing':
-        return <Clock className="w-4 h-4 text-yellow-500" />;
+        return <Clock className="w-4 h-4 text-yellow-600" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-500" />;
+        return <Clock className="w-4 h-4 text-slate-500" />;
     }
   };
 
@@ -93,8 +93,8 @@ const ConsolidatedAITools: React.FC = () => {
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Ferramentas de IA</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-slate-900">Ferramentas de IA</h1>
+          <p className="text-slate-600 mt-2">
             Acesso centralizado a todas as funcionalidades de Inteligência Artificial
           </p>
         </div>

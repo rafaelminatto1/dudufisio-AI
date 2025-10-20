@@ -11,9 +11,9 @@ interface TaskCardProps {
 }
 
 const priorityInfo = {
-    [TaskPriority.High]: { icon: <ChevronsUp className="w-4 h-4 text-red-500" />, color: 'bg-red-100 border-red-300' },
-    [TaskPriority.Medium]: { icon: <ChevronUp className="w-4 h-4 text-amber-500" />, color: 'bg-amber-100 border-amber-300' },
-    [TaskPriority.Low]: { icon: <ChevronsDown className="w-4 h-4 text-sky-500" />, color: 'bg-sky-100 border-sky-300' },
+    [TaskPriority.High]: { icon: <ChevronsUp className="w-4 h-4 text-red-600" />, color: 'bg-red-50 border-red-200' },
+    [TaskPriority.Medium]: { icon: <ChevronUp className="w-4 h-4 text-yellow-600" />, color: 'bg-yellow-50 border-yellow-200' },
+    [TaskPriority.Low]: { icon: <ChevronsDown className="w-4 h-4 text-blue-600" />, color: 'bg-blue-50 border-blue-200' },
 };
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, therapist, onClick, onDragStart }) => {
@@ -26,7 +26,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, therapist, onClick, onDragSta
             onClick={onClick}
             draggable="true"
             onDragStart={(e) => onDragStart(e, task.id)}
-            className="bg-white p-3 rounded-lg shadow-sm hover:shadow-md border border-slate-200 cursor-grab active:cursor-grabbing transition-shadow duration-200"
+            className="bg-white p-3 rounded-lg shadow-md hover:shadow-lg border border-slate-200 cursor-grab active:cursor-grabbing transition-all duration-200"
         >
             <h4 className="font-semibold text-slate-800 text-sm mb-1">{task.title}</h4>
             <p className="text-xs text-slate-500 mb-3">{task.description}</p>
@@ -35,7 +35,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, therapist, onClick, onDragSta
                     <div className={`p-1 rounded-md border ${color}`} title={`Prioridade: ${task.priority}`}>
                         {icon}
                     </div>
-                    <div className={`flex items-center text-xs px-2 py-0.5 rounded-full ${isOverdue ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
+                    <div className={`flex items-center text-xs px-2 py-0.5 rounded-full border ${isOverdue ? 'bg-red-50 text-red-700 border-red-200' : 'bg-slate-50 text-slate-600 border-slate-200'}`}>
                         <Calendar className="w-3 h-3 mr-1" />
                         {dueDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
                     </div>

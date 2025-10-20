@@ -150,41 +150,41 @@ const MultiTherapistAppointmentCard: React.FC<{
   const height = Math.max(durationInMinutes * pixelsPerMinute, 28); // Reduzido de 40 para 28
 
   const getAppointmentStyle = (color: string, status: AppointmentStatus) => {
-    // Nova paleta FisioFlow com gradientes vibrantes
-    const baseStyles = {
-      purple: 'bg-gradient-to-br from-fisio-primary-500 to-fisio-primary-700 hover:from-fisio-primary-600 hover:to-fisio-primary-800 shadow-lg border-fisio-primary-400',
-      emerald: 'bg-gradient-to-br from-fisio-secondary-500 to-fisio-secondary-700 hover:from-fisio-secondary-600 hover:to-fisio-secondary-800 shadow-lg border-fisio-secondary-400',
-      blue: 'bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-600 hover:from-fisio-primary-500 hover:to-fisio-primary-700 shadow-lg border-fisio-primary-300',
-      amber: 'bg-gradient-to-br from-fisio-warning-500 to-fisio-warning-700 hover:from-fisio-warning-600 hover:to-fisio-warning-800 shadow-lg border-fisio-warning-400',
-      red: 'bg-gradient-to-br from-fisio-error-500 to-fisio-error-700 hover:from-fisio-error-600 hover:to-fisio-error-800 shadow-lg border-fisio-error-400',
-      indigo: 'bg-gradient-to-br from-fisio-primary-600 to-fisio-primary-800 hover:from-fisio-primary-700 hover:to-fisio-primary-900 shadow-lg border-fisio-primary-500',
-      teal: 'bg-gradient-to-br from-fisio-secondary-400 to-fisio-secondary-600 hover:from-fisio-secondary-500 hover:to-fisio-secondary-700 shadow-lg border-fisio-secondary-300',
-      sky: 'bg-gradient-to-br from-fisio-primary-300 to-fisio-primary-500 hover:from-fisio-primary-400 hover:to-fisio-primary-600 shadow-lg border-fisio-primary-200',
-      pink: 'bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-600 hover:from-fisio-primary-500 hover:to-fisio-primary-700 shadow-lg border-fisio-primary-300',
-      rose: 'bg-gradient-to-br from-fisio-error-400 to-fisio-error-600 hover:from-fisio-error-500 hover:to-fisio-error-700 shadow-lg border-fisio-error-300',
-      cyan: 'bg-gradient-to-br from-fisio-secondary-300 to-fisio-secondary-500 hover:from-fisio-secondary-400 hover:to-fisio-secondary-600 shadow-lg border-fisio-secondary-200',
+    // Cores para borda esquerda (identificação do profissional)
+    const borderColors = {
+      purple: 'border-l-purple-400',
+      emerald: 'border-l-emerald-400',
+      blue: 'border-l-blue-400',
+      amber: 'border-l-amber-400',
+      red: 'border-l-red-400',
+      indigo: 'border-l-indigo-400',
+      teal: 'border-l-teal-400',
+      sky: 'border-l-sky-400',
+      pink: 'border-l-pink-400',
+      rose: 'border-l-rose-400',
+      cyan: 'border-l-cyan-400',
     };
 
-    // Map status enum values to CSS classes - com gradientes vibrantes usando paleta FisioFlow
+    // Backgrounds suaves para status
     const getStatusStyle = (status: AppointmentStatus): string => {
       switch (status) {
         case AppointmentStatus.Scheduled:
-          return ''; // Default style - cores vivas com gradiente
+          return 'bg-white'; // Card branco padrão
         case AppointmentStatus.Completed:
-          return 'bg-gradient-to-br from-fisio-secondary-500 to-fisio-secondary-700 hover:from-fisio-secondary-600 hover:to-fisio-secondary-800 border-fisio-secondary-400'; // Verde vibrante
+          return 'bg-green-50'; // Verde pastel
         case AppointmentStatus.Canceled:
-          return 'bg-gradient-to-br from-fisio-neutral-500 to-fisio-neutral-700 hover:from-fisio-neutral-600 hover:to-fisio-neutral-800 border-fisio-neutral-400'; // Cinza sólido
+          return 'bg-gray-100'; // Cinza suave
         case AppointmentStatus.NoShow:
-          return 'bg-gradient-to-br from-fisio-warning-400 to-fisio-warning-600 hover:from-fisio-warning-500 hover:to-fisio-warning-700 border-fisio-warning-300'; // Laranja vibrante
+          return 'bg-orange-50'; // Laranja pastel
         default:
-          return '';
+          return 'bg-white';
       }
     };
 
-    const colorStyle = baseStyles[color as keyof typeof baseStyles] || 'bg-gradient-to-br from-fisio-neutral-500 to-fisio-neutral-700 hover:from-fisio-neutral-600 hover:to-fisio-neutral-800 shadow-lg border-fisio-neutral-400';
-    const statusStyle = getStatusStyle(status);
+    const borderColor = borderColors[color as keyof typeof borderColors] || 'border-l-slate-400';
+    const statusBg = getStatusStyle(status);
 
-    return statusStyle || colorStyle;
+    return `${statusBg} ${borderColor}`;
   };
 
   return (
@@ -196,7 +196,7 @@ const MultiTherapistAppointmentCard: React.FC<{
         onDragStart={(e) => onDragStart(e, appointment)}
         onDragEnd={onDragEnd}
         className={cn(
-          "absolute p-2 rounded-lg text-white cursor-pointer transition-all overflow-hidden flex flex-col border-l-4 hover:shadow-xl hover:scale-[1.03] font-semibold",
+          "absolute p-2 rounded-lg cursor-pointer transition-all overflow-hidden flex flex-col border-l-4 shadow-md hover:shadow-lg hover:scale-[1.02] font-semibold",
           getAppointmentStyle(appointment.therapistColor, appointment.status),
           isBeingDragged && 'opacity-50 ring-4 ring-blue-400 scale-105',
           appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse'
@@ -212,25 +212,25 @@ const MultiTherapistAppointmentCard: React.FC<{
       >
         <div className="flex-grow min-h-0 flex flex-col justify-between">
           <div className="flex items-center justify-between gap-1 mb-1">
-            <div className="font-bold text-sm leading-tight truncate flex-1 drop-shadow-sm" data-testid="appointment-text">
+            <div className="font-bold text-sm leading-tight truncate flex-1 text-slate-900" data-testid="appointment-text">
               {appointment.patientName.split(' ')[0] || appointment.patientName}
             </div>
             <div className="flex items-center gap-1.5 flex-shrink-0">
               {appointment.hasConflict && (
-                <span className="text-yellow-200 text-base drop-shadow-md" title={appointment.conflictReason}>
+                <span className="text-orange-600 text-base" title={appointment.conflictReason}>
                   ⚠️
                 </span>
               )}
               {appointment.paymentStatus === 'paid' && (
-                <div className="w-2.5 h-2.5 bg-green-300 rounded-full flex-shrink-0 ring-2 ring-white shadow-md"></div>
+                <div className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0 shadow-sm"></div>
               )}
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <div className="text-xs leading-tight font-mono text-white/90 font-bold drop-shadow-sm">
+            <div className="text-xs leading-tight font-mono text-slate-700 font-bold">
               {format(appointment.startTime, 'HH:mm')}
             </div>
-            <div className="text-[10px] font-semibold text-white/80 uppercase tracking-wide">
+            <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
               {appointment.type.substring(0, 3)}
             </div>
           </div>

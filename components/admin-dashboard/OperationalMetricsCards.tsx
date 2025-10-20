@@ -38,21 +38,21 @@ const OperationalMetricsCards: React.FC<OperationalMetricsCardsProps> = ({ data,
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <Card className="hover:shadow-md transition-shadow">
+      <Card className="hover:shadow-lg transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Pacientes Ativos</CardTitle>
-          <div className="p-2 bg-green-100 rounded-lg">
-            <UserCheck className="h-4 w-4 text-green-600" />
+          <CardTitle className="text-sm font-medium text-slate-600">Pacientes Ativos</CardTitle>
+          <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+            <UserCheck className="h-5 w-5 text-green-600" />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-green-600 mb-1">
+          <div className="text-2xl font-bold text-slate-900 mb-1">
             {data.activePatients}
           </div>
-          <div className="text-sm text-gray-500 mb-2">
+          <div className="text-sm text-slate-500 mb-2">
             {activePercentage}% do total de pacientes
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-slate-200 rounded-full h-2">
             <div 
               className="bg-green-600 h-2 rounded-full transition-all duration-500"
               style={{ width: `${activePercentage}%` }}
@@ -61,18 +61,18 @@ const OperationalMetricsCards: React.FC<OperationalMetricsCardsProps> = ({ data,
         </CardContent>
       </Card>
 
-      <Card className="hover:shadow-md transition-shadow">
+      <Card className="hover:shadow-lg transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Pacientes Inativos</CardTitle>
-          <div className="p-2 bg-red-100 rounded-lg">
-            <UserX className="h-4 w-4 text-red-600" />
+          <CardTitle className="text-sm font-medium text-slate-600">Pacientes Inativos</CardTitle>
+          <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+            <UserX className="h-5 w-5 text-red-600" />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-red-600 mb-1">
+          <div className="text-2xl font-bold text-slate-900 mb-1">
             {data.inactivePatients}
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-slate-500">
             Sem sessões há 30+ dias
           </div>
           <div className="mt-2 flex items-center text-xs">
@@ -82,18 +82,18 @@ const OperationalMetricsCards: React.FC<OperationalMetricsCardsProps> = ({ data,
         </CardContent>
       </Card>
 
-      <Card className="hover:shadow-md transition-shadow">
+      <Card className="hover:shadow-lg transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Taxa de Abandono</CardTitle>
-          <div className="p-2 bg-yellow-100 rounded-lg">
-            <TrendingDown className="h-4 w-4 text-yellow-600" />
+          <CardTitle className="text-sm font-medium text-slate-600">Taxa de Abandono</CardTitle>
+          <div className="w-10 h-10 rounded-full bg-yellow-50 flex items-center justify-center">
+            <TrendingDown className="h-5 w-5 text-yellow-600" />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-yellow-600 mb-1">
+          <div className="text-2xl font-bold text-slate-900 mb-1">
             {data.abandonmentRate}%
           </div>
-          <div className="text-sm text-gray-500 mb-2">
+          <div className="text-sm text-slate-500 mb-2">
             Pacientes que abandonaram o tratamento
           </div>
           <div className="flex items-center text-xs">
@@ -117,21 +117,21 @@ const OperationalMetricsCards: React.FC<OperationalMetricsCardsProps> = ({ data,
         </CardContent>
       </Card>
 
-      <Card className="hover:shadow-md transition-shadow">
+      <Card className="hover:shadow-lg transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600">Média Sessões p/ Alta</CardTitle>
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <CalendarIcon className="h-4 w-4 text-blue-600" />
+          <CardTitle className="text-sm font-medium text-slate-600">Média Sessões p/ Alta</CardTitle>
+          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+            <CalendarIcon className="h-5 w-5 text-blue-600" />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-blue-600 mb-1">
+          <div className="text-2xl font-bold text-slate-900 mb-1">
             {data.averageSessionsUntilDischarge}
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-slate-500">
             sessões até alta médica
           </div>
-          <div className="mt-2 text-xs text-gray-400">
+          <div className="mt-2 text-xs text-slate-400">
             Média histórica da clínica
           </div>
         </CardContent>

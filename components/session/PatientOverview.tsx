@@ -11,10 +11,10 @@ interface PatientOverviewProps {
 const PatientOverview: React.FC<PatientOverviewProps> = ({ patient, className = '' }) => {
   const getConditionColor = (condition: Condition): string => {
     // Cores baseadas no tipo ou severidade da condição
-    if (condition.name.toLowerCase().includes('crônico')) return 'border-red-300 bg-red-50';
-    if (condition.name.toLowerCase().includes('agudo')) return 'border-orange-300 bg-orange-50';
-    if (condition.name.toLowerCase().includes('crônico')) return 'border-yellow-300 bg-yellow-50';
-    return 'border-blue-300 bg-blue-50';
+    if (condition.name.toLowerCase().includes('crônico')) return 'border-red-200 bg-red-50';
+    if (condition.name.toLowerCase().includes('agudo')) return 'border-orange-200 bg-orange-50';
+    if (condition.name.toLowerCase().includes('crônico')) return 'border-yellow-200 bg-yellow-50';
+    return 'border-blue-200 bg-blue-50';
   };
 
   const getSurgeryUrgency = (surgeryDate: string): { color: string; urgency: string } => {
@@ -23,10 +23,10 @@ const PatientOverview: React.FC<PatientOverviewProps> = ({ patient, className = 
     const diffTime = now.getTime() - surgery.getTime();
     const daysSince = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
-    if (daysSince < 30) return { color: 'border-red-300 bg-red-50', urgency: 'Recente' };
-    if (daysSince < 90) return { color: 'border-orange-300 bg-orange-50', urgency: 'Recuperação' };
-    if (daysSince < 180) return { color: 'border-yellow-300 bg-yellow-50', urgency: 'Estabilização' };
-    return { color: 'border-green-300 bg-green-50', urgency: 'Estável' };
+    if (daysSince < 30) return { color: 'border-red-200 bg-red-50', urgency: 'Recente' };
+    if (daysSince < 90) return { color: 'border-orange-200 bg-orange-50', urgency: 'Recuperação' };
+    if (daysSince < 180) return { color: 'border-yellow-200 bg-yellow-50', urgency: 'Estabilização' };
+    return { color: 'border-green-200 bg-green-50', urgency: 'Estável' };
   };
 
   const InfoCard: React.FC<{
@@ -35,9 +35,9 @@ const PatientOverview: React.FC<PatientOverviewProps> = ({ patient, className = 
     children: React.ReactNode;
     className?: string;
   }> = ({ icon: Icon, title, children, className = '' }) => (
-    <div className={`bg-white rounded-lg border border-slate-200 p-4 ${className}`}>
+    <div className={`bg-white rounded-lg border border-slate-200 p-4 shadow-sm ${className}`}>
       <div className="flex items-center mb-3">
-        <div className="p-2 bg-slate-100 rounded-lg mr-3">
+        <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center mr-3">
           <Icon className="w-5 h-5 text-slate-600" />
         </div>
         <h3 className="font-semibold text-slate-900">{title}</h3>

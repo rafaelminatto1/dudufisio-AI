@@ -17,10 +17,10 @@ interface PlanCardProps {
 
 const PlanCard: React.FC<PlanCardProps> = ({ plan }) => {
     return (
-        <div className={`rounded-2xl border-2 p-6 flex flex-col h-full transition-all duration-300 ${plan.popular ? 'border-sky-500 shadow-lg bg-white' : 'border-slate-200 bg-white'}`}>
+        <div className={`rounded-lg border-2 p-6 flex flex-col h-full transition-all duration-200 shadow-md hover:shadow-lg ${plan.popular ? 'border-blue-400 bg-white' : 'border-slate-200 bg-white'}`}>
              {plan.popular && (
                 <div className="flex justify-center mb-4">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-sky-100 text-sky-700">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200">
                         <Star className="w-4 h-4 mr-2" /> Mais Popular
                     </span>
                 </div>
@@ -36,13 +36,13 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan }) => {
             <ul className="space-y-3 text-slate-600 mb-8 flex-grow">
                 {plan.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
-                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                        <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
                         <span>{feature}</span>
                     </li>
                 ))}
             </ul>
             <button 
-                className={`w-full py-3 px-6 rounded-lg font-semibold text-center transition-colors ${plan.popular ? 'bg-sky-500 text-white hover:bg-sky-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+                className={`w-full py-3 px-6 rounded-lg font-semibold text-center transition-all duration-200 ${plan.popular ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
             >
                 {plan.price_monthly === 0 ? 'Começar Gratuitamente' : 'Assinar Plano'}
             </button>

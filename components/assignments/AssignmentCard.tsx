@@ -36,27 +36,27 @@ interface AssignmentCardProps {
 const statusConfig = {
   assigned: {
     label: 'Atribuído',
-    color: 'bg-blue-100 text-blue-800',
+    color: 'bg-blue-50 text-blue-700 border-blue-200',
     icon: Clock,
   },
   in_progress: {
     label: 'Em Progresso',
-    color: 'bg-yellow-100 text-yellow-800',
+    color: 'bg-yellow-50 text-yellow-700 border-yellow-200',
     icon: Play,
   },
   completed: {
     label: 'Concluído',
-    color: 'bg-green-100 text-green-800',
+    color: 'bg-green-50 text-green-700 border-green-200',
     icon: CheckCircle,
   },
   paused: {
     label: 'Pausado',
-    color: 'bg-gray-100 text-gray-800',
+    color: 'bg-gray-100 text-gray-700 border-gray-300',
     icon: Pause,
   },
   cancelled: {
     label: 'Cancelado',
-    color: 'bg-red-100 text-red-800',
+    color: 'bg-red-50 text-red-700 border-red-200',
     icon: XCircle,
   },
 };
@@ -77,11 +77,11 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({ assignment }) =>
   );
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-lg transition-all duration-200">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           {/* Icon */}
-          <div className={`p-3 rounded-lg ${config.color}`}>
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center border ${config.color}`}>
             <StatusIcon className="h-6 w-6" />
           </div>
 
@@ -90,10 +90,10 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({ assignment }) =>
             {/* Header */}
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-semibold text-gray-900 text-lg">
+                <h3 className="font-semibold text-slate-900 text-lg">
                   {assignment.exercise?.name}
                 </h3>
-                <div className="flex items-center gap-3 mt-1 text-sm text-gray-600">
+                <div className="flex items-center gap-3 mt-1 text-sm text-slate-600">
                   <div className="flex items-center gap-1">
                     <User className="h-4 w-4" />
                     <span>Paciente ID: {assignment.patientId.substring(0, 8)}</span>
@@ -111,7 +111,7 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({ assignment }) =>
 
               {/* Actions */}
               <div className="flex items-center gap-2">
-                <Badge className={config.color}>
+                <Badge className={`border ${config.color}`}>
                   {config.label}
                 </Badge>
                 <DropdownMenu>
@@ -144,7 +144,7 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({ assignment }) =>
 
             {/* Instructions */}
             {assignment.instructions && (
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-slate-600">
                 {assignment.instructions}
               </p>
             )}
@@ -153,7 +153,7 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({ assignment }) =>
             {totalSessions > 0 && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Progresso</span>
+                  <span className="text-slate-600">Progresso</span>
                   <span className="font-medium">
                     {completedSessions} / {totalSessions} sessões
                   </span>
@@ -163,7 +163,7 @@ export const AssignmentCard: React.FC<AssignmentCardProps> = ({ assignment }) =>
             )}
 
             {/* Footer Info */}
-            <div className="flex items-center gap-4 text-xs text-gray-500 pt-2 border-t">
+            <div className="flex items-center gap-4 text-xs text-slate-500 pt-2 border-t border-slate-200">
               <span>
                 Atribuído em: {new Date(assignment.assignedAt).toLocaleDateString()}
               </span>

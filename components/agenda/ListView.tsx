@@ -17,6 +17,23 @@ interface ListViewProps {
 type FilterStatus = 'all' | AppointmentStatus;
 type SortBy = 'date' | 'patient' | 'therapist' | 'status';
 
+const getTherapistColor = (color: string): string => {
+  const colorMap: { [key: string]: string } = {
+    purple: '#a855f7',
+    emerald: '#10b981',
+    blue: '#3b82f6',
+    amber: '#f59e0b',
+    red: '#ef4444',
+    indigo: '#6366f1',
+    teal: '#14b8a6',
+    sky: '#0ea5e9',
+    pink: '#ec4899',
+    rose: '#f43f5e',
+    cyan: '#06b6d4',
+  };
+  return colorMap[color] || '#64748b';
+};
+
 const ListView: React.FC<ListViewProps> = ({
   appointments,
   therapists,
@@ -176,7 +193,8 @@ const ListView: React.FC<ListViewProps> = ({
           filteredAndSortedAppointments.map((appointment) => (
             <Card
               key={appointment.id}
-              className="cursor-pointer hover:shadow-md transition-shadow"
+              className="cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4"
+              style={{ borderLeftColor: getTherapistColor(appointment.therapistColor) }}
               onClick={() => onAppointmentClick(appointment)}
             >
               <CardContent className="p-4">
@@ -226,11 +244,6 @@ const ListView: React.FC<ListViewProps> = ({
                       )}
                     </div>
                   </div>
-
-                  <div className={cn(
-                    "w-3 h-3 rounded-full flex-shrink-0 mt-2",
-                    `bg-${appointment.therapistColor}-500`
-                  )} />
                 </div>
               </CardContent>
             </Card>

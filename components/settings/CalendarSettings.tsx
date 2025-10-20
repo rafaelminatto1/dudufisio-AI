@@ -169,10 +169,10 @@ export const CalendarSettings: React.FC<CalendarSettingsProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'connected': return 'text-green-600';
-      case 'disconnected': return 'text-gray-600';
+      case 'disconnected': return 'text-slate-600';
       case 'error': return 'text-red-600';
       case 'testing': return 'text-blue-600';
-      default: return 'text-gray-600';
+      default: return 'text-slate-600';
     }
   };
 

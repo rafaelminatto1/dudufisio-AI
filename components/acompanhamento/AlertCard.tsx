@@ -49,13 +49,13 @@ const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, 
         }
     };
     const typeInfo = {
-        abandonment: { borderColor: 'border-red-500', bgColor: 'bg-red-50', textColor: 'text-red-700' },
-        highRisk: { borderColor: 'border-amber-500', bgColor: 'bg-amber-50', textColor: 'text-amber-700' },
-        attention: { borderColor: 'border-sky-500', bgColor: 'bg-sky-50', textColor: 'text-sky-700' },
+        abandonment: { borderColor: 'border-red-400', bgColor: 'bg-red-50', textColor: 'text-red-700' },
+        highRisk: { borderColor: 'border-orange-400', bgColor: 'bg-orange-50', textColor: 'text-orange-700' },
+        attention: { borderColor: 'border-blue-400', bgColor: 'bg-blue-50', textColor: 'text-blue-700' },
     };
     const currentTypeInfo = typeInfo[patient.alertType];
     return (
-        <div className={`bg-white rounded-2xl shadow-sm border-t-4 ${currentTypeInfo.borderColor} overflow-hidden flex flex-col h-full`}>
+        <div className={`bg-white rounded-lg shadow-md hover:shadow-lg border-t-4 ${currentTypeInfo.borderColor} overflow-hidden flex flex-col h-full transition-all duration-200`}>
             <div className="p-4 flex-grow">
                 <div className="flex items-start justify-between cursor-pointer" onClick={() => navigate(`/patients/${patient.id}`)}>
                     <div className="flex items-center">

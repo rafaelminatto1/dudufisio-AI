@@ -246,7 +246,7 @@ export const PatientListModern: React.FC = () => {
               {patients.map((patient) => (
                 <Card 
                   key={patient.id}
-                  className="hover:shadow-md transition-shadow cursor-pointer"
+                  className="hover:shadow-lg transition-all duration-200 cursor-pointer"
                   onClick={() => navigate(`/patients/${patient.id}`)}
                 >
                   <CardContent className="p-4">

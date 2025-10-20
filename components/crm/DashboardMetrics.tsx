@@ -38,9 +38,9 @@ export const DashboardMetrics: React.FC<DashboardMetricsProps> = ({ clinicId }) 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-          <div key={i} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow animate-pulse">
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+          <div key={i} className="bg-white p-6 rounded-lg shadow-md animate-pulse border border-slate-200">
+            <div className="h-4 bg-slate-200 rounded w-1/2 mb-4"></div>
+            <div className="h-8 bg-slate-200 rounded w-3/4"></div>
           </div>
         ))}
       </div>
@@ -49,8 +49,8 @@ export const DashboardMetrics: React.FC<DashboardMetricsProps> = ({ clinicId }) 
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-        <p className="text-red-600 dark:text-red-400">{error}</p>
+      <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+        <p className="text-red-600">{error}</p>
       </div>
     );
   }

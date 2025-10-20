@@ -9,12 +9,12 @@ interface MentoriaStatsProps {
 }
 
 const StatCard = ({ title, value, icon }: { title: string; value: string; icon: React.ReactNode }) => (
-    <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300">
+    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg border border-slate-200 transition-all duration-200">
       <div className="flex items-center">
-        <div className="bg-sky-100 text-sky-600 p-3 rounded-full mr-4">{icon}</div>
+        <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mr-4">{icon}</div>
         <div>
-          <p className="text-3xl font-bold text-slate-800">{value}</p>
-          <p className="text-sm font-medium text-slate-500">{title}</p>
+          <p className="text-3xl font-bold text-slate-900">{value}</p>
+          <p className="text-sm font-medium text-slate-600">{title}</p>
         </div>
       </div>
     </div>

@@ -49,10 +49,10 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({ patientId })
     return (
       <div className="p-6 space-y-6">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-6"></div>
+          <div className="h-8 bg-slate-200 rounded w-1/3 mb-6"></div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div key={i} className="h-32 bg-slate-200 rounded"></div>
             ))}
           </div>
         </div>
@@ -67,7 +67,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({ patientId })
   return (
     <div className="p-6 space-y-6">
       {/* Header com boas-vindas */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-lg shadow-md">
         <h1 className="text-3xl font-bold mb-2">Bem-vindo ao seu Portal! 👋</h1>
         <p className="text-blue-100">Acompanhe sua evolução e alcance suas metas</p>
       </div>
@@ -75,65 +75,65 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({ patientId })
       {/* Cards de métricas rápidas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {/* Nível */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Nível</span>
-            <Award className="w-5 h-5 text-yellow-500" />
+            <span className="text-sm text-slate-600">Nível</span>
+            <Award className="w-5 h-5 text-yellow-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="text-2xl font-bold text-slate-900">
             {level?.level_name || 'Iniciante'}
           </div>
           <div className="mt-2">
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div className="w-full bg-slate-200 rounded-full h-2">
               <div
                 className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all"
                 style={{ width: `${progressPercentage}%` }}
               ></div>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-xs text-slate-500 mt-1">
               {level?.points_to_next || 0} pontos para próximo nível
             </p>
           </div>
         </div>
 
         {/* Pontos */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Pontos</span>
-            <TrendingUp className="w-5 h-5 text-green-500" />
+            <span className="text-sm text-slate-600">Pontos</span>
+            <TrendingUp className="w-5 h-5 text-green-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="text-2xl font-bold text-slate-900">
             {points.toLocaleString()}
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Disponíveis para resgatar
           </p>
         </div>
 
         {/* Próxima Consulta */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Próxima Consulta</span>
-            <Calendar className="w-5 h-5 text-blue-500" />
+            <span className="text-sm text-slate-600">Próxima Consulta</span>
+            <Calendar className="w-5 h-5 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="text-2xl font-bold text-slate-900">
             Amanhã
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             14:00 - Dr. Eduardo
           </p>
         </div>
 
         {/* Exercícios */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Exercícios Hoje</span>
-            <Activity className="w-5 h-5 text-purple-500" />
+            <span className="text-sm text-slate-600">Exercícios Hoje</span>
+            <Activity className="w-5 h-5 text-purple-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="text-2xl font-bold text-slate-900">
             3/5
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             2 restantes
           </p>
         </div>
@@ -142,7 +142,7 @@ export const PatientDashboard: React.FC<PatientDashboardProps> = ({ patientId })
       {/* Seções principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Próximas Consultas */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5" />
             Próximas Consultas

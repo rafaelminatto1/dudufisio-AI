@@ -11,7 +11,7 @@ interface GroupCardProps {
 
 const GroupCard: React.FC<GroupCardProps> = ({ group, therapist, onEdit }) => {
     return (
-        <div className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col group">
+        <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 flex flex-col group border border-slate-200">
             <div className="p-5 flex-grow">
                 <div className="flex justify-between items-start">
                     <h3 className="text-lg font-bold text-slate-800 pr-2">{group.name}</h3>
@@ -37,7 +37,7 @@ const GroupCard: React.FC<GroupCardProps> = ({ group, therapist, onEdit }) => {
                     </div>
                 </div>
             </div>
-            <div className="p-4 bg-slate-50 rounded-b-2xl border-t border-slate-200">
+            <div className="p-4 bg-slate-50 rounded-b-lg border-t border-slate-200">
                 <div className="flex -space-x-2 overflow-hidden">
                     {group.members.slice(0, 5).map(member => (
                         <img key={member.patientId} className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src={member.avatarUrl || `https://i.pravatar.cc/150?u=${member.patientId}`} alt={member.patientName} title={member.patientName} />

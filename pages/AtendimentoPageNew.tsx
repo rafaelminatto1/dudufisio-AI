@@ -485,33 +485,41 @@ const AtendimentoPageNew: React.FC = () => {
 
                                 {/* Treatment Summary */}
                                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                    <div className="bg-blue-50 p-4 rounded-lg">
+                                    <div className="bg-white border border-blue-100 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                                         <div className="flex items-center space-x-2">
-                                            <Users className="h-4 w-4 text-blue-600" />
-                                            <span className="text-sm font-medium text-blue-800">Sessões Realizadas</span>
+                                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+                                                <Users className="h-4 w-4 text-blue-600" />
+                                            </div>
+                                            <span className="text-sm font-medium text-slate-700">Sessões Realizadas</span>
                                         </div>
-                                        <div className="text-2xl font-bold text-blue-900 mt-1">1</div>
+                                        <div className="text-2xl font-bold text-slate-900 mt-2">1</div>
                                     </div>
-                                    <div className="bg-green-50 p-4 rounded-lg">
+                                    <div className="bg-white border border-green-100 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                                         <div className="flex items-center space-x-2">
-                                            <Calendar className="h-4 w-4 text-green-600" />
-                                            <span className="text-sm font-medium text-green-800">Dias de Tratamento</span>
+                                            <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
+                                                <Calendar className="h-4 w-4 text-green-600" />
+                                            </div>
+                                            <span className="text-sm font-medium text-slate-700">Dias de Tratamento</span>
                                         </div>
-                                        <div className="text-2xl font-bold text-green-900 mt-1">0</div>
+                                        <div className="text-2xl font-bold text-slate-900 mt-2">0</div>
                                     </div>
-                                    <div className="bg-purple-50 p-4 rounded-lg">
+                                    <div className="bg-white border border-purple-100 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                                         <div className="flex items-center space-x-2">
-                                            <History className="h-4 w-4 text-purple-600" />
-                                            <span className="text-sm font-medium text-purple-800">Última Sessão</span>
+                                            <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center">
+                                                <History className="h-4 w-4 text-purple-600" />
+                                            </div>
+                                            <span className="text-sm font-medium text-slate-700">Última Sessão</span>
                                         </div>
-                                        <div className="text-sm font-bold text-purple-900 mt-1">07/01/2024</div>
+                                        <div className="text-sm font-bold text-slate-900 mt-2">07/01/2024</div>
                                     </div>
-                                    <div className="bg-orange-50 p-4 rounded-lg">
+                                    <div className="bg-white border border-orange-100 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                                         <div className="flex items-center space-x-2">
-                                            <TrendingUp className="h-4 w-4 text-orange-600" />
-                                            <span className="text-sm font-medium text-orange-800">Primeira Sessão</span>
+                                            <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center">
+                                                <TrendingUp className="h-4 w-4 text-orange-600" />
+                                            </div>
+                                            <span className="text-sm font-medium text-slate-700">Primeira Sessão</span>
                                         </div>
-                                        <div className="text-sm font-bold text-orange-900 mt-1">07/01/2024</div>
+                                        <div className="text-sm font-bold text-slate-900 mt-2">07/01/2024</div>
                                     </div>
                                 </div>
 
@@ -521,7 +529,7 @@ const AtendimentoPageNew: React.FC = () => {
                                         <History className="h-4 w-4" />
                                         <span>Histórico de Sessões (1)</span>
                                     </h3>
-                                    <div className="bg-slate-50 p-4 rounded-lg">
+                                    <div className="bg-white border border-slate-200 p-4 rounded-lg shadow-sm">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-3">
                                                 <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">

@@ -206,7 +206,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isCollapsed = false
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+        className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
         aria-label="Notificações"
       >
         <Bell className={isCollapsed ? "w-5 h-5" : "w-6 h-6"} />
@@ -218,10 +218,10 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isCollapsed = false
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-gray-200 z-50 max-h-[600px] overflow-hidden flex flex-col">
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Notificações</h3>
-            <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-gray-100 rounded">
+        <div className="absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-2xl border border-slate-200 z-50 max-h-[600px] overflow-hidden flex flex-col">
+          <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-slate-50">
+            <h3 className="text-lg font-semibold text-slate-900">Notificações</h3>
+            <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-slate-100 rounded">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -232,16 +232,16 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isCollapsed = false
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
             ) : notifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                <Bell className="w-12 h-12 mb-2 text-gray-300" />
+              <div className="flex flex-col items-center justify-center py-12 text-slate-500">
+                <Bell className="w-12 h-12 mb-2 text-slate-300" />
                 <p>Nenhuma notificação</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-slate-100">
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${
+                    className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer ${
                       !notification.read ? 'bg-blue-50' : ''
                     }`}
                     onClick={() => {
@@ -253,18 +253,18 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isCollapsed = false
                       <span className="text-2xl">{getNotificationIcon(notification.type)}</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <p className="text-sm font-medium text-gray-900 line-clamp-1">
+                          <p className="text-sm font-medium text-slate-900 line-clamp-1">
                             {notification.title}
                           </p>
                           {!notification.read && (
                             <span className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0 mt-1"></span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 line-clamp-2 mt-1">
+                        <p className="text-sm text-slate-600 line-clamp-2 mt-1">
                           {notification.message}
                         </p>
                         <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-slate-500">
                             {formatRelativeTime(notification.created_at)}
                           </span>
                           {notification.action_label && (
@@ -282,7 +282,7 @@ const NotificationBell: React.FC<NotificationBellProps> = ({ isCollapsed = false
           </div>
 
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-gray-200 bg-gray-50">
+            <div className="p-3 border-t border-slate-200 bg-slate-50">
               <a
                 href="/notifications"
                 className="block text-center text-sm text-blue-600 hover:text-blue-700 font-medium"

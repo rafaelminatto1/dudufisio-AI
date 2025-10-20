@@ -116,21 +116,21 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
   const getStatusColor = (status: AppointmentStatus) => {
     switch (status) {
       case AppointmentStatus.Completed:
-        return 'bg-green-100 text-green-700 border-green-200';
+        return 'bg-green-50 text-green-700 border-green-200';
       case AppointmentStatus.Canceled:
-        return 'bg-red-100 text-red-700 border-red-200';
+        return 'bg-gray-100 text-gray-700 border-gray-300';
       case AppointmentStatus.NoShow:
-        return 'bg-orange-100 text-orange-700 border-orange-200';
+        return 'bg-orange-50 text-orange-700 border-orange-200';
       default:
-        return 'bg-blue-100 text-blue-700 border-blue-200';
+        return 'bg-blue-50 text-blue-700 border-blue-200';
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
         {/* Header */}
-        <header className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-slate-50 to-slate-100 rounded-t-lg">
+        <header className="flex items-center justify-between p-4 border-b border-slate-200 bg-slate-50 rounded-t-lg">
           <div className="flex-1">
             <h2 className="font-bold text-slate-900 text-lg">
               {appointment.patientName}

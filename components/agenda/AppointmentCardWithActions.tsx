@@ -75,14 +75,14 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
   const getPaymentBadge = () => {
     if (appointment.paymentStatus === 'paid') {
       return (
-        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
           <CheckCircle2 className="w-3 h-3 mr-1" />
           Pago
         </Badge>
       );
     }
     return (
-      <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">
+      <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
         <Circle className="w-3 h-3 mr-1" />
         Pendente
       </Badge>
@@ -123,10 +123,10 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
             <Card
               className={cn(
                 'p-3 border-2 transition-all duration-200',
-                'bg-white dark:bg-slate-900',
+                'bg-white',
                 'hover:shadow-lg hover:scale-[1.02]',
                 appointment.hasConflict && 'border-red-500 border-opacity-75 animate-pulse',
-                !appointment.hasConflict && 'border-slate-200 dark:border-slate-700'
+                !appointment.hasConflict && 'border-slate-200'
               )}
               style={{
                 borderLeftColor: appointment.hasConflict ? undefined : therapistColor,
@@ -143,7 +143,7 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1">
-                      <p className="font-semibold text-sm text-slate-900 dark:text-slate-100 truncate">
+                      <p className="font-semibold text-sm text-slate-900 truncate">
                         {appointment.patientName.split(' ')[0] || appointment.patientName}
                       </p>
                       {isFirstVisit && (
@@ -172,7 +172,7 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
                       )}
                     </div>
                     {!compact && (
-                      <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
+                      <p className="text-xs text-slate-600 truncate">
                         {appointment.therapistName}
                       </p>
                     )}

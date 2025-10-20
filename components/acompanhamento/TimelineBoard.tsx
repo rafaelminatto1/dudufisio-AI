@@ -9,9 +9,9 @@ interface TimelineBoardProps {
 }
 
 const statusInfo: Record<PatientTimelineEntry['status'], { label: string; color: string; badge: string }> = {
-    abandonment: { label: 'Abandono', color: 'text-red-600', badge: 'bg-red-100 text-red-700' },
-    risk: { label: 'Risco', color: 'text-amber-600', badge: 'bg-amber-100 text-amber-700' },
-    on_track: { label: 'Regular', color: 'text-emerald-600', badge: 'bg-emerald-100 text-emerald-700' },
+    abandonment: { label: 'Abandono', color: 'text-red-600', badge: 'bg-red-50 text-red-700 border-red-200' },
+    risk: { label: 'Risco', color: 'text-orange-600', badge: 'bg-orange-50 text-orange-700 border-orange-200' },
+    on_track: { label: 'Regular', color: 'text-green-600', badge: 'bg-green-50 text-green-700 border-green-200' },
 };
 
 const TimelineBoard: React.FC<TimelineBoardProps> = ({ timeline }) => {
@@ -32,12 +32,12 @@ const TimelineBoard: React.FC<TimelineBoardProps> = ({ timeline }) => {
                             return (
                                 <div
                                     key={entry.patientId}
-                                    className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                                    className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
                                 >
                                     <div className="flex-1">
                                         <div className="flex items-center gap-3">
                                             <h3 className="text-base font-semibold text-slate-800">{entry.patientName}</h3>
-                                            <Badge variant="outline" className={status.badge}>
+                                            <Badge variant="outline" className={`border ${status.badge}`}>
                                                 {status.label}
                                             </Badge>
                                         </div>

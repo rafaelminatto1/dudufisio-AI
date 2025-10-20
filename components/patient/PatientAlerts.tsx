@@ -14,25 +14,25 @@ interface PatientAlertsProps {
 const alertConfig = {
   missing_test: {
     icon: AlertCircle,
-    colorClass: 'border-red-500 bg-red-50',
+    colorClass: 'border-red-400 bg-red-50',
     iconColor: 'text-red-600',
     badgeVariant: 'destructive' as const
   },
   regression: {
     icon: AlertTriangle,
-    colorClass: 'border-orange-500 bg-orange-50',
+    colorClass: 'border-orange-400 bg-orange-50',
     iconColor: 'text-orange-600',
     badgeVariant: 'destructive' as const
   },
   reminder: {
     icon: Info,
-    colorClass: 'border-blue-500 bg-blue-50',
+    colorClass: 'border-blue-400 bg-blue-50',
     iconColor: 'text-blue-600',
     badgeVariant: 'secondary' as const
   },
   milestone: {
     icon: CheckCircle,
-    colorClass: 'border-green-500 bg-green-50',
+    colorClass: 'border-green-400 bg-green-50',
     iconColor: 'text-green-600',
     badgeVariant: 'default' as const
   }
@@ -88,7 +88,7 @@ export const PatientAlerts: React.FC<PatientAlertsProps> = ({
         return (
           <Card
             key={alert.id}
-            className={`border-l-4 ${config.colorClass} transition-all hover:shadow-md`}
+            className={`border-l-4 ${config.colorClass} transition-all hover:shadow-lg`}
           >
             <CardContent className="py-3 px-4">
               <div className="flex items-start justify-between gap-3">
