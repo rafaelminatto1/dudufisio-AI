@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/check-env.js && vite",
+    "dev:clean": "powershell -ExecutionPolicy Bypass -File scripts/dev-clean.ps1",
     "dev:skip-check": "vite",
+    "kill:servers": "powershell -ExecutionPolicy Bypass -File scripts/kill-all-servers.ps1",
+    "kill:node": "powershell -ExecutionPolicy Bypass -File scripts/kill-node.ps1",
     "build": "vite build && node scripts/check-bundle-size.cjs",
     "build:fast": "vite build",
     "vercel-build": "vite build",

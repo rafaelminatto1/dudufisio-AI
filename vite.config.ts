@@ -90,7 +90,7 @@ export default defineConfig({
       interval: 100
     },
     cors: true,
-    strictPort: true,
+    strictPort: false, // Permite usar porta alternativa automaticamente se 5176 estiver ocupada
     headers: {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
