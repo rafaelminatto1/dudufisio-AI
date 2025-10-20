@@ -33,10 +33,10 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
   const colorClasses = {
-    primary: 'bg-gradient-primary',
-    success: 'bg-health-success',
-    warning: 'bg-health-warning',
-    error: 'bg-health-error',
+    primary: 'bg-blue-600',
+    success: 'bg-green-600',
+    warning: 'bg-yellow-600',
+    error: 'bg-red-600',
   };
 
   const sizeClasses = {
@@ -89,11 +89,11 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
             fill="none"
             strokeLinecap="round"
             className={cn(
-              'text-transparent bg-gradient-to-r from-primary-500 to-primary-600 bg-clip-text',
+              'text-blue-600',
               {
-                'text-health-success': color === 'success',
-                'text-health-warning': color === 'warning',
-                'text-health-error': color === 'error',
+                'text-green-600': color === 'success',
+                'text-yellow-600': color === 'warning',
+                'text-red-600': color === 'error',
               }
             )}
             style={{
@@ -133,8 +133,8 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                   className={cn(
                     'w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all duration-300',
                     {
-                      'bg-gradient-primary border-transparent text-white': step.completed,
-                      'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400': !step.completed,
+                      'bg-blue-600 border-transparent text-white': step.completed,
+                      'bg-white border-slate-300 text-slate-500': !step.completed,
                     }
                   )}
                 >
@@ -164,8 +164,8 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                     className={cn(
                       'absolute top-4 left-8 w-full h-0.5 transition-colors duration-300',
                       {
-                        'bg-gradient-primary': step.completed,
-                        'bg-gray-300 dark:bg-gray-600': !step.completed,
+                        'bg-blue-600': step.completed,
+                        'bg-slate-300': !step.completed,
                       }
                     )}
                   />
@@ -175,8 +175,8 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                 className={cn(
                   'mt-2 text-xs text-center max-w-20',
                   {
-                    'text-gray-900 dark:text-white font-medium': step.completed,
-                    'text-gray-500 dark:text-gray-400': !step.completed,
+                    'text-slate-900 font-medium': step.completed,
+                    'text-slate-500': !step.completed,
                   }
                 )}
               >
@@ -193,11 +193,11 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   return (
     <div className={cn('w-full', className)} {...props}>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <span className="text-sm font-medium text-slate-700">
           Progress
         </span>
         {showPercentage && (
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+          <span className="text-sm text-slate-500">
             {Math.round(percentage)}%
           </span>
         )}
@@ -205,7 +205,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
       
       <div
         className={cn(
-          'w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden',
+          'w-full bg-slate-200 rounded-full overflow-hidden',
           sizeClasses[size].linear
         )}
       >

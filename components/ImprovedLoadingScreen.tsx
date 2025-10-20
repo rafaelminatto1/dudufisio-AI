@@ -47,8 +47,8 @@ export const ImprovedLoadingScreen: React.FC<ImprovedLoadingScreenProps> = ({
 
   if (hasTimedOut) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-50 to-orange-50">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8 text-center">
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8 text-center border border-slate-200">
           <div className="mb-6">
             <svg
               className="w-16 h-16 text-red-500 mx-auto"
@@ -77,7 +77,7 @@ export const ImprovedLoadingScreen: React.FC<ImprovedLoadingScreenProps> = ({
           <div className="space-y-3">
             <button
               onClick={() => window.location.reload()}
-              className="w-full px-4 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors font-semibold"
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
             >
               🔄 Tentar Novamente
             </button>
@@ -103,10 +103,10 @@ export const ImprovedLoadingScreen: React.FC<ImprovedLoadingScreenProps> = ({
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="max-w-md w-full px-6">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-indigo-600 mb-2">
+          <h1 className="text-3xl font-bold text-blue-600 mb-2">
             DuduFisio-AI
           </h1>
           <p className="text-slate-600">Carregando sistema...</p>
@@ -116,22 +116,22 @@ export const ImprovedLoadingScreen: React.FC<ImprovedLoadingScreenProps> = ({
         <div className="mb-6">
           <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500 ease-out"
+              className="h-full bg-blue-600 transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
           <div className="flex justify-between items-center mt-2">
             <p className="text-sm text-slate-600">{stage}</p>
-            <p className="text-sm font-semibold text-indigo-600">{progress}%</p>
+            <p className="text-sm font-semibold text-blue-600">{progress}%</p>
           </div>
         </div>
 
         {/* Loading Animation */}
         <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
 
-        <p className="text-xs text-center text-slate-500 mt-6">
+        <p className="text-xs text-center text-slate-600 mt-6">
           Aguarde enquanto preparamos tudo para você...
         </p>
       </div>
