@@ -90,14 +90,14 @@ export function ReportGeneratorDialog({ type = 'patient', patientId, therapistId
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-health-primary-600 hover:bg-health-primary-700">
+        <Button className="bg-blue-600 hover:bg-blue-700 shadow-md">
           <FileText className="w-4 h-4 mr-2" />
           Gerar Relatório
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Gerar Relatório</DialogTitle>
+        <DialogHeader className="border-b border-slate-200 bg-slate-50 px-6 py-4">
+          <DialogTitle className="text-slate-900">Gerar Relatório</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">

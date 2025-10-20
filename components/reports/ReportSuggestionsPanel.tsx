@@ -64,9 +64,9 @@ export const ReportSuggestionsPanel: React.FC<ReportSuggestionsPanelProps> = ({
 
   const getRelevanceColor = (relevance: string) => {
     switch (relevance) {
-      case 'high': return 'bg-red-100 text-red-700 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-      default: return 'bg-blue-100 text-blue-700 border-blue-200';
+      case 'high': return 'bg-red-50 text-red-700 border-red-200';
+      case 'medium': return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+      default: return 'bg-blue-50 text-blue-700 border-blue-200';
     }
   };
 
@@ -88,9 +88,9 @@ export const ReportSuggestionsPanel: React.FC<ReportSuggestionsPanelProps> = ({
     <div className="space-y-4">
       {/* Insights Automáticos */}
       {insights.length > 0 && (
-        <Alert className="border-blue-500 bg-blue-50">
+        <Alert className="border-blue-200 bg-blue-50">
           <Sparkles className="h-5 w-5 text-blue-600" />
-          <AlertDescription className="text-blue-900">
+          <AlertDescription className="text-blue-800">
             <div className="font-medium mb-2">💡 Insights Automáticos:</div>
             <ul className="space-y-1 text-sm">
               {insights.map((insight, idx) => (
@@ -122,7 +122,7 @@ export const ReportSuggestionsPanel: React.FC<ReportSuggestionsPanelProps> = ({
             {suggestions.map((suggestion, index) => (
               <div
                 key={index}
-                className="p-4 border rounded-lg hover:border-blue-300 transition-colors"
+                className="p-4 border border-slate-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all duration-200 bg-white"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
