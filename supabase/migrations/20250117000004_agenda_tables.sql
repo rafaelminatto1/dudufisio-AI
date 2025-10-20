@@ -114,7 +114,7 @@ CREATE POLICY "Admins can view all waitlist entries"
         EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role = 'Admin'
+            AND users.role = 'admin'
         )
     );
 
@@ -126,7 +126,7 @@ CREATE POLICY "Therapists can view their waitlist entries"
         OR NOT EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role IN ('Admin', 'Fisioterapeuta')
+            AND users.role IN ('admin', 'therapist')
         )
     );
 
@@ -137,7 +137,7 @@ CREATE POLICY "Admins and therapists can create waitlist entries"
         EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role IN ('Admin', 'Fisioterapeuta')
+            AND users.role IN ('admin', 'therapist')
         )
     );
 
@@ -148,7 +148,7 @@ CREATE POLICY "Admins and therapists can update waitlist entries"
         EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role IN ('Admin', 'Fisioterapeuta')
+            AND users.role IN ('admin', 'therapist')
         )
     );
 
@@ -159,7 +159,7 @@ CREATE POLICY "Admins can delete waitlist entries"
         EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role = 'Admin'
+            AND users.role = 'admin'
         )
     );
 
@@ -179,7 +179,7 @@ CREATE POLICY "Admins can view all schedule blocks"
         EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role = 'Admin'
+            AND users.role = 'admin'
         )
     );
 
@@ -191,7 +191,7 @@ CREATE POLICY "Therapists can view their schedule blocks"
         OR NOT EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role IN ('Admin', 'Fisioterapeuta')
+            AND users.role IN ('admin', 'therapist')
         )
     );
 
@@ -202,7 +202,7 @@ CREATE POLICY "Admins and therapists can create schedule blocks"
         EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role IN ('Admin', 'Fisioterapeuta')
+            AND users.role IN ('admin', 'therapist')
         )
     );
 
@@ -213,7 +213,7 @@ CREATE POLICY "Admins and therapists can update schedule blocks"
         EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role IN ('Admin', 'Fisioterapeuta')
+            AND users.role IN ('admin', 'therapist')
         )
     );
 
@@ -224,7 +224,7 @@ CREATE POLICY "Admins can delete schedule blocks"
         EXISTS (
             SELECT 1 FROM public.users
             WHERE users.id = auth.uid()
-            AND users.role = 'Admin'
+            AND users.role = 'admin'
         )
     );
 
@@ -263,10 +263,10 @@ CREATE TRIGGER update_schedule_blocks_updated_at
 CREATE OR REPLACE VIEW public.waitlist_with_patient_info AS
 SELECT 
     w.*,
-    p.name as patient_name,
+    p.full_name as patient_name,
     p.phone as patient_phone,
     p.email as patient_email,
-    u.name as therapist_name
+    u.full_name as therapist_name
 FROM public.waitlist_entries w
 LEFT JOIN public.patients p ON w.patient_id = p.id
 LEFT JOIN public.users u ON w.therapist_id = u.id;
@@ -275,7 +275,7 @@ LEFT JOIN public.users u ON w.therapist_id = u.id;
 CREATE OR REPLACE VIEW public.schedule_blocks_with_therapist AS
 SELECT 
     s.*,
-    u.name as therapist_name,
+    u.full_name as therapist_name,
     u.email as therapist_email
 FROM public.schedule_blocks s
 LEFT JOIN public.users u ON s.therapist_id = u.id;
