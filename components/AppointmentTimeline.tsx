@@ -30,12 +30,12 @@ const AppointmentTimeline: React.FC<AppointmentTimelineProps> = ({ appointments,
     const now = new Date();
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200">
             <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-semibold text-slate-800 flex items-center">
-                    <CalendarDays className="mr-3 text-sky-500" /> Linha do Tempo de Atendimentos
+                <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+                    <CalendarDays className="mr-3 text-blue-600" /> Linha do Tempo de Atendimentos
                 </h3>
-                <button onClick={onAdd} title="Agendar nova consulta" className="p-2 rounded-full hover:bg-sky-100 text-sky-600">
+                <button onClick={onAdd} title="Agendar nova consulta" className="p-2 rounded-full hover:bg-blue-50 text-blue-600 transition-colors">
                     <Plus className="w-5 h-5" />
                 </button>
             </div>
@@ -55,8 +55,8 @@ const AppointmentTimeline: React.FC<AppointmentTimelineProps> = ({ appointments,
                                     </div>
                                     <div className="ml-8">
                                         <div className="flex items-center justify-between">
-                                            <p className="font-bold text-slate-800">{app.startTime.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
-                                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${statusInfo.color} text-white`}>{statusInfo.label}</span>
+                                            <p className="font-bold text-slate-900">{app.startTime.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                                            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${statusInfo.color} text-white`}>{statusInfo.label}</span>
                                         </div>
                                         <p className="text-sm text-slate-600">{app.type} - {app.title}</p>
                                         <p className="text-xs text-slate-500">{app.startTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} - {app.endTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</p>

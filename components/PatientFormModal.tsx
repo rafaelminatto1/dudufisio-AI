@@ -127,17 +127,17 @@ const PatientFormModal: React.FC<PatientFormModalProps> = ({ isOpen, onClose, on
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div ref={modalRef} className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
-        <header className="flex items-center justify-between p-5 border-b border-slate-200">
-          <h2 className="text-lg font-bold text-slate-800">{title}</h2>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100">
+      <div ref={modalRef} className="bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col border border-slate-200" onClick={e => e.stopPropagation()}>
+        <header className="flex items-center justify-between p-5 border-b border-slate-200 bg-slate-50">
+          <h2 className="text-lg font-bold text-slate-900">{title}</h2>
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-200 transition-colors">
             <X className="w-5 h-5 text-slate-600" />
           </button>
         </header>
 
         <main className="flex-1 overflow-y-auto p-6 space-y-6">
           <section>
-            <h3 className="text-md font-semibold text-sky-700 border-b pb-2 mb-4">Informações Pessoais</h3>
+            <h3 className="text-md font-semibold text-blue-700 border-b border-blue-200 pb-2 mb-4">Informações Pessoais</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
               <div>
                   <label className="text-sm font-medium text-slate-600">Nome Completo*</label>
@@ -163,7 +163,7 @@ const PatientFormModal: React.FC<PatientFormModalProps> = ({ isOpen, onClose, on
           </section>
 
           <section>
-             <h3 className="text-md font-semibold text-sky-700 border-b pb-2 mt-4 mb-4">Informações de Saúde</h3>
+             <h3 className="text-md font-semibold text-blue-700 border-b border-blue-200 pb-2 mt-4 mb-4">Informações de Saúde</h3>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                  <div>
                     <label className="text-sm font-medium text-slate-600">Alergias Conhecidas</label>
@@ -177,7 +177,7 @@ const PatientFormModal: React.FC<PatientFormModalProps> = ({ isOpen, onClose, on
           </section>
           
           <section>
-            <h3 className="md:col-span-2 text-md font-semibold text-sky-700 border-b pb-2 mt-4 mb-4">Endereço</h3>
+            <h3 className="md:col-span-2 text-md font-semibold text-blue-700 border-b border-blue-200 pb-2 mt-4 mb-4">Endereço</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                 <div>
                     <label className="text-sm font-medium text-slate-600">Rua</label>

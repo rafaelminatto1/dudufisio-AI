@@ -15,15 +15,15 @@ interface AppointmentCardProps {
 
 const getAppointmentStyle = (color: string) => {
     switch (color) {
-        case 'purple': return 'bg-fisio-primary-500 border-fisio-primary-700 shadow-sm hover:shadow-md';
-        case 'emerald': return 'bg-fisio-secondary-500 border-fisio-secondary-700 shadow-sm hover:shadow-md';
-        case 'blue': return 'bg-fisio-primary-400 border-fisio-primary-600 shadow-sm hover:shadow-md';
-        case 'amber': return 'bg-fisio-warning-500 border-fisio-warning-700 shadow-sm hover:shadow-md';
-        case 'red': return 'bg-fisio-error-500 border-fisio-error-700 shadow-sm hover:shadow-md';
-        case 'indigo': return 'bg-fisio-primary-600 border-fisio-primary-800 shadow-sm hover:shadow-md';
-        case 'teal': return 'bg-fisio-secondary-400 border-fisio-secondary-600 shadow-sm hover:shadow-md';
-        case 'sky': return 'bg-fisio-primary-300 border-fisio-primary-500 shadow-sm hover:shadow-md';
-        default: return 'bg-fisio-neutral-500 border-fisio-neutral-700 shadow-sm hover:shadow-md';
+        case 'purple': return 'bg-purple-500 border-purple-700 shadow-md hover:shadow-lg';
+        case 'emerald': return 'bg-emerald-500 border-emerald-700 shadow-md hover:shadow-lg';
+        case 'blue': return 'bg-blue-500 border-blue-700 shadow-md hover:shadow-lg';
+        case 'amber': return 'bg-amber-500 border-amber-700 shadow-md hover:shadow-lg';
+        case 'red': return 'bg-red-500 border-red-700 shadow-md hover:shadow-lg';
+        case 'indigo': return 'bg-indigo-500 border-indigo-700 shadow-md hover:shadow-lg';
+        case 'teal': return 'bg-teal-500 border-teal-700 shadow-md hover:shadow-lg';
+        case 'sky': return 'bg-sky-500 border-sky-700 shadow-md hover:shadow-lg';
+        default: return 'bg-slate-500 border-slate-700 shadow-md hover:shadow-lg';
     }
 };
 
@@ -68,10 +68,10 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, startHou
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={cn(
-          "absolute left-1 right-1 p-2 rounded-lg text-white text-xs z-10 cursor-pointer transition-all overflow-hidden flex flex-col group border-l-4",
+          "absolute left-1 right-1 p-2 rounded-lg text-white text-xs z-10 cursor-pointer transition-all duration-200 overflow-hidden flex flex-col group border-l-4",
           style,
           (isCompleted || isCancelled) && 'opacity-60 hover:opacity-100',
-          isBeingDragged && 'opacity-50 ring-2 ring-fisio-primary-400',
+          isBeingDragged && 'opacity-50 ring-2 ring-blue-400',
           !isBeingDragged && 'hover:scale-[1.02]'
       )}
       style={{ top: `${top}px`, height: `${height}px`, minHeight: '20px' }}
