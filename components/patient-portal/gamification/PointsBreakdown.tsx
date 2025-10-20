@@ -6,7 +6,7 @@ interface PointsBreakdownProps {
   items: GamificationPointsBreakdown[];
 }
 
-const palette = ['bg-teal-100 text-teal-700', 'bg-indigo-100 text-indigo-700', 'bg-amber-100 text-amber-700', 'bg-rose-100 text-rose-700'];
+const palette = ['bg-blue-50 text-blue-700', 'bg-purple-50 text-purple-700', 'bg-yellow-50 text-yellow-700', 'bg-orange-50 text-orange-700'];
 
 const PointsBreakdown: React.FC<PointsBreakdownProps> = ({ items }) => {
   if (!items.length) return null;
@@ -14,10 +14,10 @@ const PointsBreakdown: React.FC<PointsBreakdownProps> = ({ items }) => {
   const total = items.reduce((sum, item) => sum + item.points, 0) || 1;
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm">
+    <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-slate-800">Pontuação acumulada</h3>
-        <BarChart3 className="w-5 h-5 text-teal-500" />
+        <h3 className="text-lg font-semibold text-slate-900">Pontuação acumulada</h3>
+        <BarChart3 className="w-5 h-5 text-blue-600" />
       </div>
       <div className="space-y-3">
         {items.map((item, index) => {
