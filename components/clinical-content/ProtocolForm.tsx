@@ -53,15 +53,15 @@ export default function ProtocolForm({ protocol, onSave, onCancel }: ProtocolFor
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-y-auto">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full m-4 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full m-4 max-h-[90vh] overflow-y-auto border border-slate-200">
         <form onSubmit={handleSubmit} className="p-6">
-          <h2 className="text-2xl font-bold mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-slate-900">
             {protocol ? 'Editar Protocolo' : 'Novo Protocolo'}
           </h2>
 
           {/* Título */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Título *
             </label>
             <input
@@ -69,21 +69,21 @@ export default function ProtocolForm({ protocol, onSave, onCancel }: ProtocolFor
               required
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           {/* Especialidade e Nível de Evidência */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Especialidade *
               </label>
               <select
                 required
                 value={formData.specialty}
                 onChange={e => setFormData({ ...formData, specialty: e.target.value as FisioSpecialty })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="esportiva">Esportiva</option>
                 <option value="pos-operatoria">Pós-Operatória</option>
