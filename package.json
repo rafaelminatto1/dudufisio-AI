@@ -81,6 +81,7 @@
     "perf:staging": "node scripts/lighthouse-performance.js https://dudufisio-git-main-rafael-minattos-projects.vercel.app"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.67.0",
     "@google/generative-ai": "^0.21.0",
     "@hookform/resolvers": "^3.10.0",
     "@modelcontextprotocol/sdk": "^1.20.0",

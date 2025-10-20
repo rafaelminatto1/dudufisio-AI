@@ -215,7 +215,7 @@ export class WhatsAppAutomation {
         .select('*')
         .eq('clinic_id', clinicId)
         .eq('trigger_type', 'keyword')
-        .eq('is_active', true);
+        .eq('is_active', true) as { data: AutomationRule[] | null };
 
       if (customAutomations) {
         for (const automation of customAutomations) {
