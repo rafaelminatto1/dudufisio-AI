@@ -114,7 +114,7 @@ export class WhatsAppNotificationService {
         .eq('clinic_id', clinicId)
         .eq('date', targetDateStr)
         .eq('status', 'scheduled')
-        .order('time');
+        .order('time') as { data: AppointmentWithPatient[] | null };
 
       if (appointments?.length === 0) {
         
@@ -182,7 +182,12 @@ export class WhatsAppNotificationService {
         .eq('clinic_id', clinicId)
         .eq('status', 'active')
         .lt('last_appointment.date', thirtyDaysAgoStr)
-        .limit(50);
+        .limit(50) as { data: Array<{
+          id: string;
+          name: string;
+          phone: string;
+          last_appointment: { date: string } | null;
+        }> | null };
 
       if (inactivePatients?.length === 0) {
         
@@ -319,7 +324,7 @@ export class WhatsAppNotificationService {
       
       await supabase
         .from('whatsapp_messages')
-        .insert(messageData);
+        .insert(messageData as any);
     } catch (error) {
       console.error('Erro ao registrar notificação:', error);
     }

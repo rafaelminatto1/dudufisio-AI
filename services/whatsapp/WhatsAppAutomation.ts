@@ -17,6 +17,19 @@ export interface AutomationRule {
   is_active: boolean;
 }
 
+interface AppointmentWithPatient {
+  id: string;
+  date: string;
+  time: string;
+  patient: {
+    name: string;
+    phone: string;
+  } | null;
+  therapist?: {
+    name: string;
+  } | null;
+}
+
 export class WhatsAppAutomation {
   private whatsappService;
 
@@ -252,7 +265,7 @@ export class WhatsAppAutomation {
         `)
         .eq('clinic_id', clinicId)
         .eq('date', tomorrowStr)
-        .eq('status', 'confirmed');
+        .eq('status', 'confirmed') as { data: AppointmentWithPatient[] | null };
 
       if (appointments?.length === 0) {
         
@@ -301,7 +314,7 @@ export class WhatsAppAutomation {
         `)
         .eq('clinic_id', clinicId)
         .eq('date', targetDateStr)
-        .eq('status', 'scheduled');
+        .eq('status', 'scheduled') as { data: AppointmentWithPatient[] | null };
 
       if (appointments?.length === 0) {
         
@@ -347,7 +360,7 @@ export class WhatsAppAutomation {
 
         await supabase
           .from('appointments')
-          .update({ status: 'confirmed' } as any)
+          .update({ status: 'confirmed' })
           .match({
             clinic_id: clinicId,
             'patient.phone': phone,

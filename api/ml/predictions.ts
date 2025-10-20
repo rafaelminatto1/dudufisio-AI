@@ -104,7 +104,7 @@ export async function predictOutcomeWithAI(patientId: string, patientData: Patie
       created_by: 'claude_ai',
     };
     
-    const { data, error } = await supabase.from('ai_predictions').insert(predictionData).select().single();
+    const { data, error } = await supabase.from('ai_predictions').insert(predictionData as any).select().single();
 
     if (error) throw error;
     return data;
