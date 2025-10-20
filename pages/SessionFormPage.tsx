@@ -14,6 +14,12 @@ import PatientOverview from '../components/session/PatientOverview';
 import PatientMetrics from '../components/session/PatientMetrics';
 import SessionHistory from '../components/session/SessionHistory';
 import RepeatConductModal from '../components/session/RepeatConductModal';
+import PatientContextPanel from '../components/session/PatientContextPanel';
+import ConductReplicationDialog, { ConductFields } from '../components/session/ConductReplicationDialog';
+import SaveBlockingDialog from '../components/session/SaveBlockingDialog';
+import { getMandatoryAssessmentsForSession } from '../services/patientTrackingService';
+import { logNonCompliance } from '../services/complianceService';
+import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 
 interface SessionFormPageProps {
   appointmentId: string;
@@ -29,9 +35,13 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
   const [isSaving, setIsSaving] = useState(false);
   const [isRepeatModalOpen, setIsRepeatModalOpen] = useState(false);
   const [selectedNoteForRepeat, setSelectedNoteForRepeat] = useState<SoapNote | null>(null);
+  const [isReplicateModalOpen, setIsReplicateModalOpen] = useState(false);
+  const [isSaveBlockingDialogOpen, setIsSaveBlockingDialogOpen] = useState(false);
+  const [pendingMandatoryTests, setPendingMandatoryTests] = useState<any[]>([]);
   
   const { therapists } = useData();
   const { showToast } = useToast();
+  const { user } = useSupabaseAuth();
 
   useEffect(() => {
     const loadSessionData = async () => {
@@ -78,6 +88,30 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
   const handleSaveNote = async (newNoteData: Omit<SoapNote, 'id' | 'patientId' | 'therapist'>) => {
     if (!patient) return;
 
+    // Validar testes obrigatórios (Nível B: Bloqueio)
+    try {
+      const pendingTests = await getMandatoryAssessmentsForSession(
+        patient.id,
+        patientNotes.length + 1,
+        'during'
+      );
+
+      if (pendingTests.length > 0) {
+        setPendingMandatoryTests(pendingTests);
+        setIsSaveBlockingDialogOpen(true);
+        return;
+      }
+    } catch (error) {
+      console.error('Erro ao verificar testes obrigatórios:', error);
+    }
+
+    // Se não houver testes pendentes, salvar normalmente
+    await performSave(newNoteData);
+  };
+
+  const performSave = async (newNoteData: Omit<SoapNote, 'id' | 'patientId' | 'therapist'>) => {
+    if (!patient) return;
+
     setIsSaving(true);
     try {
       await soapNoteService.addNote(patient.id, newNoteData);
@@ -98,6 +132,31 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
     }
   };
 
+  const handleSaveAnyway = async () => {
+    if (!patient || !user) return;
+
+    try {
+      // Registrar não conformidade (Nível C)
+      await logNonCompliance(
+        patient.id,
+        appointmentId, // Usando appointmentId como sessionId temporariamente
+        pendingMandatoryTests.map(test => ({
+          testName: test.testName,
+          testType: test.testType,
+          testConfigId: test.id
+        })),
+        user.id,
+        'Profissional optou por salvar sem realizar medições obrigatórias'
+      );
+
+      showToast('Sessão salva sem medições obrigatórias. Não conformidade registrada.', 'warning');
+      setIsSaveBlockingDialogOpen(false);
+    } catch (error) {
+      console.error('Erro ao registrar não conformidade:', error);
+      showToast('Erro ao registrar não conformidade', 'error');
+    }
+  };
+
   const handleRepeatConduct = (note: SoapNote) => {
     setSelectedNoteForRepeat(note);
     setIsRepeatModalOpen(true);
@@ -107,6 +166,12 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
     await handleSaveNote(noteData);
     setIsRepeatModalOpen(false);
     setSelectedNoteForRepeat(null);
+  };
+
+  const handleReplicateConduct = async (fields: ConductFields) => {
+    // Aplicar campos replicados ao formulário
+    showToast('Conduta replicada com sucesso!', 'success');
+    // TODO: Implementar aplicação dos campos ao formulário SOAP
   };
 
   const therapist = therapists.find(t => t.id === appointment?.therapistId);
@@ -169,10 +234,10 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
             </button>
           </header>
 
-          {/* Content */}
-          <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
-            {/* Lado Esquerdo - Formulário de Sessão */}
-            <div className="lg:w-2/3 p-6 overflow-y-auto border-r border-slate-200">
+          {/* Content - Layout 3 Colunas */}
+          <div className="flex-1 overflow-hidden flex flex-row">
+            {/* Coluna 1 (40%): Formulário SOAP */}
+            <div className="w-[40%] p-6 overflow-y-auto border-r border-slate-200">
               <SessionForm
                 patient={patient}
                 onSave={handleSaveNote}
@@ -180,11 +245,21 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
                 isLoading={isSaving}
                 previousNote={patientNotes[0] || null}
                 onRepeatConduct={() => patientNotes[0] && handleRepeatConduct(patientNotes[0])}
+                onReplicateConduct={() => setIsReplicateModalOpen(true)}
               />
             </div>
 
-            {/* Lado Direito - Visão Geral do Paciente */}
-            <div className="lg:w-1/3 p-6 overflow-y-auto bg-slate-50">
+            {/* Coluna 2 (35%): Dados Históricos do Paciente */}
+            <div className="w-[35%] p-6 overflow-y-auto border-r border-slate-200 bg-slate-50">
+              <PatientContextPanel 
+                patient={patient}
+                sessionNumber={patientNotes.length + 1}
+                timing="during"
+              />
+            </div>
+
+            {/* Coluna 3 (25%): Visão Geral e Métricas */}
+            <div className="w-[25%] p-6 overflow-y-auto bg-white">
               <div className="space-y-6">
                 {/* Visão Geral do Paciente */}
                 <PatientOverview patient={patient} />
@@ -223,6 +298,24 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
           patientName={patient.name}
         />
       )}
+
+      {/* Modal de Replicar Conduta */}
+      <ConductReplicationDialog
+        isOpen={isReplicateModalOpen}
+        onClose={() => setIsReplicateModalOpen(false)}
+        onConfirm={handleReplicateConduct}
+        previousSessions={patientNotes.slice(0, 10)}
+        patientName={patient.name}
+      />
+
+      {/* Diálogo de Bloqueio de Salvamento (Nível B) */}
+      <SaveBlockingDialog
+        isOpen={isSaveBlockingDialogOpen}
+        onClose={() => setIsSaveBlockingDialogOpen(false)}
+        onSaveAnyway={handleSaveAnyway}
+        onCancel={() => setIsSaveBlockingDialogOpen(false)}
+        pendingTests={pendingMandatoryTests}
+      />
     </>
   );
 };

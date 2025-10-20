@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Save, BrainCircuit, Target, ListChecks, FileText, Plus, X } from 'lucide-react';
+import { Save, BrainCircuit, Target, ListChecks, FileText, Plus, X, Copy } from 'lucide-react';
 import { useToast } from '../../contexts/ToastContext';
 import { Patient, SoapNote } from '../../types';
 import RichTextEditor from '../ui/RichTextEditor';
+import { Button } from '../ui/button';
 
 interface SessionFormProps {
   patient: Patient;
@@ -11,6 +12,7 @@ interface SessionFormProps {
   isLoading?: boolean;
   previousNote?: SoapNote | null;
   onRepeatConduct?: () => void;
+  onReplicateConduct?: () => void;
 }
 
 interface SessionFormData {
@@ -28,7 +30,8 @@ const SessionForm: React.FC<SessionFormProps> = ({
   onCancel,
   isLoading = false,
   previousNote,
-  onRepeatConduct
+  onRepeatConduct,
+  onReplicateConduct
 }) => {
   const { showToast } = useToast();
   const [formData, setFormData] = useState<SessionFormData>({
@@ -174,15 +177,30 @@ const SessionForm: React.FC<SessionFormProps> = ({
             {patient.name} - {new Date().toLocaleDateString('pt-BR')}
           </p>
         </div>
-        {onRepeatConduct && previousNote && (
-          <button
-            onClick={onRepeatConduct}
-            className="flex items-center px-4 py-2 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Repetir Conduta
-          </button>
-        )}
+        <div className="flex gap-2">
+          {onReplicateConduct && previousNote && (
+            <Button
+              onClick={onReplicateConduct}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Copy className="w-4 h-4" />
+              Replicar Conduta
+            </Button>
+          )}
+          {onRepeatConduct && previousNote && (
+            <Button
+              onClick={onRepeatConduct}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2 bg-green-50 text-green-700 hover:bg-green-100"
+            >
+              <Plus className="w-4 h-4" />
+              Repetir Conduta
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-6">

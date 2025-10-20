@@ -153,6 +153,10 @@ export default defineConfig({
     reportCompressedSize: true,
     // Garantir que os entry points sejam preservados para ordem de carregamento correta
     preserveEntrySignatures: 'strict',
+    // Configurar ordem de carregamento dos chunks
+    modulePreload: {
+      polyfill: true,
+    },
     rollupOptions: {
       // Suprimir warnings de bibliotecas externas
       onwarn(warning, warn) {
@@ -183,18 +187,21 @@ export default defineConfig({
         return false;
       },
       output: {
+        // Garantir ordem de carregamento dos chunks
+        // O chunk vendor-react-core deve ser carregado ANTES de todos os outros
+        experimentalMinChunkSize: 20000,
         // Code splitting HABILITADO - Estratégia de chunks por funcionalidade
         manualChunks: (id) => {
-          // CONSOLIDAR TODO O REACT + RADIX UI EM UM ÚNICO CHUNK
-          // Isso garante que não há problemas de ordem de carregamento
-          // Radix UI DEPENDE do React, então devem estar juntos
+          // 🔥 PRIORIDADE MÁXIMA: React Core + Dependências Diretas
+          // Consolidar React, React-DOM, Scheduler, React Router e Radix UI em um único chunk
+          // Isso garante ordem de carregamento correta e previne erros de createContext
           if (id.includes('node_modules/react/') || 
               id.includes('node_modules/react-dom/') ||
               id.includes('node_modules/scheduler/') ||
               id.includes('node_modules/use-sync-external-store/') ||
               id.includes('node_modules/react-router') ||
               id.includes('node_modules/@radix-ui')) {
-            return 'vendor-react';
+            return 'vendor-react-core';
           }
           
           // PRIORIDADE 3: React Libraries (dependem do core)
@@ -322,8 +329,6 @@ export default defineConfig({
             return 'app-ui-components';
           }
         },
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]'
       },
       // Tree shaking agressivo - OTIMIZADO
