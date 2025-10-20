@@ -64,12 +64,12 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onClose, onSubmit }
   const [loading, setLoading] = useState(false);
 
   const roleOptions = [
-    { value: 'admin', label: 'Administrador' },
-    { value: 'therapist', label: 'Fisioterapeuta' },
-    { value: 'manager', label: 'Gerente' },
-    { value: 'educator_fisico', label: 'Educador Físico' },
-    { value: 'receptionist', label: 'Recepcionista' },
-    { value: 'patient', label: 'Paciente' },
+    { value: 'admin', label: 'Administrador', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+    { value: 'therapist', label: 'Fisioterapeuta', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+    { value: 'manager', label: 'Gerente', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+    { value: 'educator_fisico', label: 'Educador Físico', color: 'bg-green-50 text-green-700 border-green-200' },
+    { value: 'receptionist', label: 'Recepcionista', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+    { value: 'patient', label: 'Paciente', color: 'bg-gray-100 text-gray-700 border-gray-300' },
   ];
 
   const permissionOptions = [

@@ -61,12 +61,12 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-slate-200">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center space-x-4">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
-              user.is_active ? 'bg-teal-100 text-teal-600' : 'bg-gray-100 text-gray-400'
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center border-2 ${
+              user.is_active ? 'bg-green-50 text-green-600 border-green-200' : 'bg-gray-100 text-gray-400 border-gray-300'
             }`}>
               {profileSettings.avatar_url ? (
                 <img
@@ -81,19 +81,19 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({ user, onClose }) => {
               )}
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">{user.full_name}</h2>
-              <p className="text-gray-600">{user.email}</p>
+              <h2 className="text-2xl font-semibold text-slate-900">{user.full_name}</h2>
+              <p className="text-slate-600">{user.email}</p>
               <div className="flex items-center space-x-2 mt-2">
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  user.role === 'admin' ? 'bg-purple-100 text-purple-700' :
-                  user.role === 'therapist' ? 'bg-teal-100 text-teal-700' :
-                  user.role === 'manager' ? 'bg-blue-100 text-blue-700' :
-                  'bg-gray-100 text-gray-700'
+                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${
+                  user.role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                  user.role === 'therapist' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                  user.role === 'manager' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                  'bg-gray-100 text-gray-700 border-gray-300'
                 }`}>
                   {roleLabels[user.role as keyof typeof roleLabels]}
                 </span>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  user.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                <span className={`px-3 py-1 rounded-full text-sm font-medium border ${
+                  user.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'
                 }`}>
                   {user.is_active ? 'Ativo' : 'Inativo'}
                 </span>

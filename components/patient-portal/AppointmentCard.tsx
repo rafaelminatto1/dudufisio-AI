@@ -13,24 +13,24 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, therapis
     const isPast = appointment.startTime < new Date();
     
     const statusInfo = {
-        [AppointmentStatus.Scheduled]: { text: 'Agendado', icon: <Clock className="w-4 h-4 text-blue-500" />, color: 'text-blue-700 bg-blue-100' },
-        [AppointmentStatus.Completed]: { text: 'Realizado', icon: <CheckCircle className="w-4 h-4 text-green-500" />, color: 'text-green-700 bg-green-100' },
-        [AppointmentStatus.Canceled]: { text: 'Cancelado', icon: <XCircle className="w-4 h-4 text-red-500" />, color: 'text-red-700 bg-red-100' },
-        [AppointmentStatus.NoShow]: { text: 'Faltou', icon: <XCircle className="w-4 h-4 text-yellow-500" />, color: 'text-yellow-700 bg-yellow-100' },
+        [AppointmentStatus.Scheduled]: { text: 'Agendado', icon: <Clock className="w-4 h-4 text-blue-600" />, color: 'text-blue-700 bg-blue-50 border-blue-200' },
+        [AppointmentStatus.Completed]: { text: 'Realizado', icon: <CheckCircle className="w-4 h-4 text-green-600" />, color: 'text-green-700 bg-green-50 border-green-200' },
+        [AppointmentStatus.Canceled]: { text: 'Cancelado', icon: <XCircle className="w-4 h-4 text-red-600" />, color: 'text-red-700 bg-red-50 border-red-200' },
+        [AppointmentStatus.NoShow]: { text: 'Faltou', icon: <XCircle className="w-4 h-4 text-orange-600" />, color: 'text-orange-700 bg-orange-50 border-orange-200' },
     };
 
     const currentStatus = statusInfo[appointment.status];
     
     return (
-        <div className={`bg-white p-4 rounded-xl shadow-sm border-l-4 ${isPast ? 'border-slate-300' : 'border-teal-500'}`}>
+        <div className={`bg-white p-4 rounded-lg shadow-md border-l-4 hover:shadow-lg transition-all duration-200 ${isPast ? 'border-slate-300' : 'border-blue-500'}`}>
             <div className="flex justify-between items-start">
                 <div>
-                    <p className={`font-bold text-slate-800 ${isPast ? 'text-slate-600' : ''}`}>
+                    <p className={`font-bold text-slate-900 ${isPast ? 'text-slate-600' : ''}`}>
                         {appointment.type}
                     </p>
-                    <p className="text-sm text-slate-500">{appointment.title}</p>
+                    <p className="text-sm text-slate-600">{appointment.title}</p>
                 </div>
-                <div className={`flex items-center px-2 py-1 rounded-full text-xs font-semibold ${currentStatus.color}`}>
+                <div className={`flex items-center px-2 py-1 rounded-full text-xs font-semibold border ${currentStatus.color}`}>
                     {currentStatus.icon}
                     <span className="ml-1.5">{currentStatus.text}</span>
                 </div>
