@@ -78,8 +78,8 @@ const FinancialReport: React.FC<FinancialReportProps> = ({ appointments, therapi
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                <div className="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-4">Faturamento (Últimos 30 dias)</h3>
+                <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Faturamento (Últimos 30 dias)</h3>
                     <div className="h-72">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={revenueByDay} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
@@ -92,8 +92,8 @@ const FinancialReport: React.FC<FinancialReportProps> = ({ appointments, therapi
                         </ResponsiveContainer>
                     </div>
                 </div>
-                 <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-4">Faturamento por Fisioterapeuta</h3>
+                 <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Faturamento por Fisioterapeuta</h3>
                     <div className="h-72">
                          <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={revenueByTherapist} layout="vertical" margin={{ left: 20 }}>
@@ -110,28 +110,28 @@ const FinancialReport: React.FC<FinancialReportProps> = ({ appointments, therapi
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm">
-                 <h3 className="text-lg font-semibold text-slate-800 mb-4">Últimas Transações</h3>
+            <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                 <h3 className="text-lg font-semibold text-slate-900 mb-4">Últimas Transações</h3>
                  <div className="overflow-x-auto">
                     <table className="min-w-full">
                         <thead className="bg-slate-50">
                             <tr>
-                                <th className="p-3 text-left text-xs font-medium text-slate-500 uppercase">Paciente</th>
-                                <th className="p-3 text-left text-xs font-medium text-slate-500 uppercase">Data</th>
-                                <th className="p-3 text-left text-xs font-medium text-slate-500 uppercase">Tipo</th>
-                                <th className="p-3 text-right text-xs font-medium text-slate-500 uppercase">Valor</th>
-                                <th className="p-3 text-center text-xs font-medium text-slate-500 uppercase">Status Pag.</th>
+                                <th className="p-3 text-left text-xs font-medium text-slate-600 uppercase">Paciente</th>
+                                <th className="p-3 text-left text-xs font-medium text-slate-600 uppercase">Data</th>
+                                <th className="p-3 text-left text-xs font-medium text-slate-600 uppercase">Tipo</th>
+                                <th className="p-3 text-right text-xs font-medium text-slate-600 uppercase">Valor</th>
+                                <th className="p-3 text-center text-xs font-medium text-slate-600 uppercase">Status Pag.</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200">
                             {appointments.filter(a => a.status === 'Realizado').slice(0, 10).map(app => (
-                                <tr key={app.id}>
-                                    <td className="p-3 text-sm font-medium text-slate-800">{app.patientName}</td>
-                                    <td className="p-3 text-sm text-slate-500">{app.startTime.toLocaleDateString('pt-BR')}</td>
-                                    <td className="p-3 text-sm text-slate-500">{app.type}</td>
-                                    <td className="p-3 text-sm text-slate-800 font-semibold text-right">{formatCurrency(app.value)}</td>
+                                <tr key={app.id} className="hover:bg-slate-50 transition-colors">
+                                    <td className="p-3 text-sm font-medium text-slate-900">{app.patientName}</td>
+                                    <td className="p-3 text-sm text-slate-600">{app.startTime.toLocaleDateString('pt-BR')}</td>
+                                    <td className="p-3 text-sm text-slate-600">{app.type}</td>
+                                    <td className="p-3 text-sm text-slate-900 font-semibold text-right">{formatCurrency(app.value)}</td>
                                     <td className="p-3 text-center">
-                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${app.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                        <span className={`px-2 py-1 text-xs font-semibold rounded-full border ${app.paymentStatus === 'paid' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'}`}>
                                             {app.paymentStatus === 'paid' ? 'Pago' : 'Pendente'}
                                         </span>
                                     </td>

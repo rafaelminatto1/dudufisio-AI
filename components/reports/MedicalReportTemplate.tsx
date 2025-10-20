@@ -70,9 +70,9 @@ export const MedicalReportTemplate: React.FC<MedicalReportTemplateProps> = ({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'improved': return 'bg-green-100 text-green-700 border-green-200';
-      case 'declined': return 'bg-red-100 text-red-700 border-red-200';
-      default: return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+      case 'improved': return 'bg-green-50 text-green-700 border-green-200';
+      case 'declined': return 'bg-red-50 text-red-700 border-red-200';
+      default: return 'bg-yellow-50 text-yellow-700 border-yellow-200';
     }
   };
 
@@ -88,7 +88,7 @@ export const MedicalReportTemplate: React.FC<MedicalReportTemplateProps> = ({
     <div className="space-y-6">
       {/* Cabeçalho */}
       <Card>
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+        <CardHeader className="bg-slate-50 border-b border-slate-200">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-2xl font-bold text-slate-900 mb-2">

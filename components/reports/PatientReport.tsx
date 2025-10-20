@@ -79,8 +79,8 @@ const PatientReport: React.FC<PatientReportProps> = ({ patients }) => {
             </div>
             
              <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                <div className="lg:col-span-3 bg-white p-6 rounded-2xl shadow-sm">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-4">Novos Pacientes (Últimos 6 meses)</h3>
+                <div className="lg:col-span-3 bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Novos Pacientes (Últimos 6 meses)</h3>
                     <div className="h-72">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={newPatientsByMonth} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
@@ -93,8 +93,8 @@ const PatientReport: React.FC<PatientReportProps> = ({ patients }) => {
                         </ResponsiveContainer>
                     </div>
                 </div>
-                <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-4">Distribuição por Status</h3>
+                <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow-md border border-slate-200">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Distribuição por Status</h3>
                     <div className="h-72">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
