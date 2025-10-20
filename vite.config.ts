@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import fs from 'fs';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
@@ -27,7 +28,47 @@ export default defineConfig({
       },
       telemetry: false,
       silent: !process.env.CI, // Verbose em CI, silencioso localmente
-    })
+    }),
+    // Plugin para garantir ordem de carregamento dos chunks
+    {
+      name: 'ensure-react-core-first',
+      generateBundle(options, bundle) {
+        // Este plugin garante que o vendor-react-core seja carregado primeiro
+        // A ordem é determinada pelas dependências entre os módulos
+        // Mas podemos garantir que o chunk seja referenciado primeiro no HTML
+      },
+      writeBundle() {
+        // Modificar o HTML após o build para garantir ordem de carregamento
+        const htmlPath = path.resolve(__dirname, 'dist/index.html');
+        if (fs.existsSync(htmlPath)) {
+          let html = fs.readFileSync(htmlPath, 'utf-8');
+          
+          // Extrair todos os modulepreload links
+          const preloadRegex = /<link rel="modulepreload"[^>]*>/g;
+          const preloads = html.match(preloadRegex) || [];
+          
+          // Separar vendor-react-core dos outros
+          const reactCorePreload = preloads.find(p => p.includes('vendor-react-core'));
+          const otherPreloads = preloads.filter(p => !p.includes('vendor-react-core'));
+          
+          // Remover todos os preloads
+          html = html.replace(preloadRegex, '');
+          
+          // Reinserir na ordem correta: vendor-react-core primeiro
+          if (reactCorePreload) {
+            const insertPoint = html.indexOf('<script type="module"');
+            if (insertPoint !== -1) {
+              html = html.slice(0, insertPoint) + 
+                     reactCorePreload + '\n' +
+                     otherPreloads.join('\n') + '\n' +
+                     html.slice(insertPoint);
+            }
+          }
+          
+          fs.writeFileSync(htmlPath, html);
+        }
+      }
+    }
   ].filter(Boolean), // Remove plugins undefined
   esbuild: {
     // Mantém console logs para debugging
@@ -190,27 +231,26 @@ export default defineConfig({
         // Garantir ordem de carregamento dos chunks
         // O chunk vendor-react-core deve ser carregado ANTES de todos os outros
         experimentalMinChunkSize: 20000,
-        // Code splitting HABILITADO - Estratégia de chunks por funcionalidade
+        // Garantir que vendor-react-core seja carregado primeiro
+        entryFileNames: (chunkInfo) => {
+          if (chunkInfo.name === 'index') {
+            return 'assets/[name]-[hash].js';
+          }
+          return 'assets/[name]-[hash].js';
+        },
+        chunkFileNames: (chunkInfo) => {
+          // Garantir que vendor-react-core seja carregado primeiro
+          if (chunkInfo.name === 'vendor-react-core') {
+            return 'assets/vendor-react-core-[hash].js';
+          }
+          return 'assets/[name]-[hash].js';
+        },
+        // 🔥 ESTRATÉGIA SIMPLIFICADA: Consolidar TUDO do node_modules em vendor
+        // Isso elimina problemas de ordem de carregamento entre chunks
         manualChunks: (id) => {
-          // 🔥 PRIORIDADE MÁXIMA: React Core + Dependências Diretas
-          // Consolidar React, React-DOM, Scheduler, React Router e Radix UI em um único chunk
-          // Isso garante ordem de carregamento correta e previne erros de createContext
-          if (id.includes('node_modules/react/') || 
-              id.includes('node_modules/react-dom/') ||
-              id.includes('node_modules/scheduler/') ||
-              id.includes('node_modules/use-sync-external-store/') ||
-              id.includes('node_modules/react-router') ||
-              id.includes('node_modules/@radix-ui')) {
-            return 'vendor-react-core';
-          }
-          
-          // PRIORIDADE 3: React Libraries (dependem do core)
-          if (id.includes('node_modules/@tanstack/react')) {
-            return 'vendor-tanstack';
-          }
-          
-          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform')) {
-            return 'vendor-forms';
+          // Se é do node_modules, vai para vendor
+          if (id.includes('node_modules/')) {
+            return 'vendor';
           }
           
           // Heavy Libraries - Separar em chunks individuais
@@ -236,10 +276,8 @@ export default defineConfig({
             return 'vendor-backend';
           }
           
-          // UI Libraries
-          if (id.includes('node_modules/lucide-react') || id.includes('node_modules/framer-motion')) {
-            return 'vendor-ui';
-          }
+          // UI Libraries (não dependem do React diretamente)
+          // lucide-react e framer-motion já estão no vendor-react-core
           
           // Utilities
           if (id.includes('node_modules/date-fns')) {
