@@ -23,9 +23,9 @@ const NavLinkComponent = withMemoization(({ to, icon: Icon, label, isCollapsed, 
       to={to}
       data-testid={`nav-${to.replace(/\//g, '-')}`}
       className={({ isActive }) =>
-        `flex items-center p-1.5 rounded-lg transition-colors duration-200 ${
+        `flex items-center p-1.5 rounded-lg transition-all duration-200 ${
           isActive
-            ? 'bg-sky-50 text-sky-600 font-semibold'
+            ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200 shadow-sm'
             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
         } ${isCollapsed ? 'justify-center' : ''}`
       }
@@ -40,7 +40,7 @@ const NavLinkComponent = withMemoization(({ to, icon: Icon, label, isCollapsed, 
             )}
             
             {!isCollapsed && badgeCount && badgeCount > 0 ? (
-                <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white shrink-0">
+                <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white shrink-0 border border-red-600">
                     {badgeCount > 9 ? '9+' : badgeCount}
                 </span>
             ) : null}
