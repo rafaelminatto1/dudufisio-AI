@@ -27,15 +27,10 @@ const GlassCard: React.FC<GlassCardProps> = ({
   ...props
 }) => {
   const baseClasses = cn(
-    'relative overflow-hidden rounded-xl transition-all duration-300',
+    'relative overflow-hidden rounded-lg transition-all duration-200 bg-white shadow-md',
     {
-      'glass-card': variant === 'default',
-      'glass-card-dark': variant === 'dark',
-      'bg-gradient-primary': variant === 'colored',
-    },
-    {
-      'hover-lift': hover,
-      'hover-glow': glow,
+      'hover:shadow-lg': hover,
+      'border border-slate-200': variant !== 'colored',
     },
     className
   );
@@ -49,30 +44,19 @@ const GlassCard: React.FC<GlassCardProps> = ({
 
   return (
     <div className={baseClasses} {...props}>
-      {/* Subtle gradient overlay for extra depth */}
-      {variant !== 'colored' && (
-        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-      )}
-      
       {/* Header */}
       {header && (
         <div className={cn(
-          'relative border-b border-white/10',
+          'relative border-b border-slate-200 bg-slate-50',
           padding === 'none' ? 'px-4 py-3 sm:px-5 sm:py-4' : paddingClasses
         )}>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className={cn(
-                "text-base sm:text-lg font-semibold",
-                variant === 'colored' ? 'text-white' : 'text-gray-900 dark:text-white'
-              )}>
+              <CardTitle className="text-base sm:text-lg font-semibold text-slate-900">
                 {header.title}
               </CardTitle>
               {header.subtitle && (
-                <p className={cn(
-                  "text-sm mt-1",
-                  variant === 'colored' ? 'text-white/80' : 'text-gray-600 dark:text-gray-300'
-                )}>
+                <p className="text-sm mt-1 text-slate-600">
                   {header.subtitle}
                 </p>
               )}
@@ -90,11 +74,6 @@ const GlassCard: React.FC<GlassCardProps> = ({
       )}>
         {children}
       </div>
-      
-      {/* Shimmer effect on hover */}
-      {hover && (
-        <div className="absolute inset-0 -top-10 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 hover:opacity-100 hover:animate-shimmer transition-opacity duration-300 pointer-events-none" />
-      )}
     </div>
   );
 };

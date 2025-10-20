@@ -26,13 +26,10 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
 
   return (
     <motion.div
-      className="group relative overflow-hidden rounded-xl bg-white p-6 shadow-md transition-all duration-300 hover:shadow-xl"
+      className="group relative overflow-hidden rounded-lg bg-white p-6 shadow-md transition-all duration-200 hover:shadow-lg border border-slate-200"
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Background gradient on hover */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-5`}></div>
-
       {/* Content */}
       <div className="relative z-10">
         {/* Header */}
@@ -51,18 +48,18 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
 
           {/* Icon */}
           <motion.div
-            className={`rounded-lg bg-gradient-to-br ${gradient} p-3 text-white shadow-md`}
+            className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center border-2 border-blue-200"
             whileHover={{ rotate: 360 }}
             transition={{ duration: 0.6 }}
           >
-            <Icon className="w-6 h-6" />
+            <Icon className="w-6 h-6 text-blue-600" />
           </motion.div>
         </div>
 
         {/* Change indicator */}
         {change && (
           <div className="flex items-center space-x-2">
-            <span className={`inline-flex items-center rounded-full ${trendBg} px-2.5 py-1 text-xs font-semibold ${trendColor}`}>
+            <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${trendColor}`}>
               {trend === 'up' ? (
                 <TrendingUp className="w-3 h-3 mr-1" />
               ) : (
@@ -73,16 +70,6 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
             <span className="text-sm text-slate-600">vs. mês anterior</span>
           </div>
         )}
-      </div>
-
-      {/* Decorative dot pattern */}
-      <div className="absolute top-0 right-0 -mt-4 -mr-4 h-24 w-24 opacity-5">
-        <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
-          <pattern id={`pattern-${title}`} x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="2" fill="currentColor" />
-          </pattern>
-          <rect width="100%" height="100%" fill={`url(#pattern-${title})`} />
-        </svg>
       </div>
     </motion.div>
   );

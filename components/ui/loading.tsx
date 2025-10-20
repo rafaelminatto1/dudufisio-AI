@@ -103,14 +103,14 @@ export const LoadingPage: React.FC<LoadingPageProps> = ({
 }) => {
   return (
     <div className={cn(
-      'flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50',
+      'flex items-center justify-center min-h-screen bg-white',
       className
     )}>
       <div className="text-center space-y-6">
         {logo && (
           <div className="flex items-center justify-center mb-6">
-            <div className="bg-white p-4 rounded-full shadow-lg">
-              <Stethoscope className="w-12 h-12 text-primary-500" />
+            <div className="bg-blue-50 p-4 rounded-full shadow-md border-2 border-blue-200">
+              <Stethoscope className="w-12 h-12 text-blue-600" />
             </div>
           </div>
         )}
@@ -118,9 +118,9 @@ export const LoadingPage: React.FC<LoadingPageProps> = ({
         <div className="space-y-3">
           <LoadingSpinner size="lg" />
           <div className="space-y-1">
-            <p className="text-lg font-medium text-foreground">{message}</p>
+            <p className="text-lg font-medium text-slate-900">{message}</p>
             {submessage && (
-              <p className="text-sm text-muted-foreground">{submessage}</p>
+              <p className="text-sm text-slate-600">{submessage}</p>
             )}
           </div>
         </div>

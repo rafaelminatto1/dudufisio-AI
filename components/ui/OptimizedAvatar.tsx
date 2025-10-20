@@ -44,7 +44,7 @@ export const OptimizedAvatar: React.FC<OptimizedAvatarProps> = ({
     return (
       <div
         className={cn(
-          'rounded-full bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-600 flex items-center justify-center text-white font-semibold',
+          'rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-semibold border-2 border-blue-200',
           sizeClasses[size],
           textSizeClasses[size],
           className

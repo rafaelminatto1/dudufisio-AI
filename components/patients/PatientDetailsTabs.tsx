@@ -101,10 +101,10 @@ export const PatientDetailsTabs: React.FC = () => {
               <img 
                 src={patient.avatarUrl} 
                 alt={patient.name}
-                className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-lg"
+                className="w-20 h-20 rounded-full object-cover border-4 border-slate-200 shadow-md"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+              <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-2xl font-bold shadow-md border-4 border-slate-200">
                 {patient.name.charAt(0)}
               </div>
             )}
@@ -136,7 +136,7 @@ export const PatientDetailsTabs: React.FC = () => {
                 <p className="text-sm text-slate-600">Total de Sessões</p>
                 <p className="text-2xl font-bold text-slate-900">{kpis?.total_sessions || 0}</p>
               </div>
-              <Activity className="w-8 h-8 text-sky-500" />
+              <Activity className="w-8 h-8 text-blue-600" />
             </div>
           </CardContent>
         </Card>

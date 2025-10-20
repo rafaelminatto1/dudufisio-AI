@@ -41,13 +41,13 @@ const PendingTasks: React.FC = () => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm flex flex-col h-full max-h-96">
+        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200 flex flex-col h-full max-h-96">
             <div className="flex justify-between items-center mb-4">
-                 <h3 className="text-lg font-semibold text-slate-800 flex items-center">
-                    <ClipboardList className="w-5 h-5 mr-2 text-sky-500" />
+                 <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+                    <ClipboardList className="w-5 h-5 mr-2 text-blue-600" />
                     Tarefas Pendentes
                 </h3>
-                <a href="#/tasks" onClick={(e) => { e.preventDefault(); navigate('/tasks'); }} className="text-sm font-semibold text-sky-600 hover:underline">
+                <a href="#/tasks" onClick={(e) => { e.preventDefault(); navigate('/tasks'); }} className="text-sm font-semibold text-blue-600 hover:underline">
                     Ver todas
                 </a>
             </div>
@@ -60,12 +60,12 @@ const PendingTasks: React.FC = () => {
             ) : tasks.length > 0 ? (
                 <div className="space-y-2 overflow-y-auto flex-1 -mr-2 pr-2">
                     {tasks.map(task => (
-                        <div key={task.id} onClick={() => navigate('/tasks')} className="p-2.5 rounded-lg flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-colors">
+                        <div key={task.id} onClick={() => navigate('/tasks')} className="p-2.5 rounded-lg flex items-center justify-between hover:shadow-sm cursor-pointer transition-all border border-slate-200 bg-white">
                             <div className="flex items-center gap-3">
                                 <div title={`Prioridade ${task.priority}`}>{priorityIcons[task.priority]}</div>
-                                <p className="font-medium text-sm text-slate-800">{task.title}</p>
+                                <p className="font-medium text-sm text-slate-900">{task.title}</p>
                             </div>
-                             <p className="text-xs text-slate-500">{new Date(task.dueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</p>
+                             <p className="text-xs text-slate-600">{new Date(task.dueDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</p>
                         </div>
                     ))}
                 </div>

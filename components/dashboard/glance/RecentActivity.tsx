@@ -43,9 +43,9 @@ const RecentActivity: React.FC = () => {
     }, []);
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm flex flex-col h-full max-h-96">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-                <Activity className="w-5 h-5 mr-2 text-sky-500" />
+        <div className="bg-white p-6 rounded-lg shadow-md border border-slate-200 flex flex-col h-full max-h-96">
+            <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                <Activity className="w-5 h-5 mr-2 text-blue-600" />
                 Atividade Recente
             </h3>
             {isLoading ? (
@@ -57,13 +57,13 @@ const RecentActivity: React.FC = () => {
             ) : activities.length > 0 ? (
                 <div className="space-y-2 overflow-y-auto flex-1 -mr-2 pr-2">
                     {activities.map(act => (
-                        <div key={act.id} onClick={() => navigate(`/patients/${act.patientId}`)} className="p-2.5 rounded-lg flex items-center gap-3 hover:bg-slate-50 cursor-pointer transition-colors">
-                             <div className="p-2 bg-slate-100 rounded-full">{activityIcons[act.type]}</div>
+                        <div key={act.id} onClick={() => navigate(`/patients/${act.patientId}`)} className="p-2.5 rounded-lg flex items-center gap-3 hover:shadow-sm cursor-pointer transition-all border border-slate-200 bg-white">
+                             <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center border-2 border-slate-200">{activityIcons[act.type]}</div>
                              <div className="flex-1">
-                                <p className="font-medium text-sm text-slate-800">{act.patientName}</p>
-                                <p className="text-xs text-slate-500">{act.summary}</p>
+                                <p className="font-medium text-sm text-slate-900">{act.patientName}</p>
+                                <p className="text-xs text-slate-600">{act.summary}</p>
                              </div>
-                             <p className="text-xs text-slate-400 self-start">{timeAgo(act.timestamp)}</p>
+                             <p className="text-xs text-slate-500 self-start">{timeAgo(act.timestamp)}</p>
                         </div>
                     ))}
                 </div>

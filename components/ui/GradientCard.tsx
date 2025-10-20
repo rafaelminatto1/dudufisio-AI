@@ -19,17 +19,17 @@ export const GradientCard: React.FC<GradientCardProps> = ({
 }) => {
   return (
     <motion.div
-      className={`relative overflow-hidden rounded-2xl bg-white shadow-lg ${className}`}
+      className={`relative overflow-hidden rounded-lg bg-white shadow-md hover:shadow-lg border border-slate-200 ${className}`}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
     >
-      {/* Gradient Header */}
-      <div className={`bg-gradient-to-r ${gradient} p-6 text-white`}>
+      {/* Header */}
+      <div className="bg-slate-50 p-6 border-b border-slate-200">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">{title}</h3>
+          <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
           {Icon && (
-            <div className="rounded-full bg-white/20 backdrop-blur-sm p-2">
-              <Icon className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center border-2 border-blue-200">
+              <Icon className="w-5 h-5 text-blue-600" />
             </div>
           )}
         </div>
@@ -39,9 +39,6 @@ export const GradientCard: React.FC<GradientCardProps> = ({
       <div className="p-6">
         {children}
       </div>
-
-      {/* Decorative gradient accent */}
-      <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${gradient}`}></div>
     </motion.div>
   );
 };

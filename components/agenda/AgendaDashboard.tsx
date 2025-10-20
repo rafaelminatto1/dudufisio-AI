@@ -56,7 +56,7 @@ const AgendaDashboard: React.FC<AgendaDashboardProps> = ({ appointments, therapi
       {/* KPIs Principais */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {/* Ocupação */}
-        <Card className="p-4">
+        <Card className="p-4 shadow-md hover:shadow-lg transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-slate-600">Taxa de Ocupação</p>
@@ -64,14 +64,14 @@ const AgendaDashboard: React.FC<AgendaDashboardProps> = ({ appointments, therapi
                 {therapists.length > 0 ? Math.round((totalAppointments / (therapists.length * 14)) * 100) : 0}%
               </p>
             </div>
-            <div className="p-3 bg-blue-100 rounded-lg">
+            <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center border-2 border-blue-200">
               <TrendingUp className="w-6 h-6 text-blue-600" />
             </div>
           </div>
         </Card>
 
         {/* Receita */}
-        <Card className="p-4">
+        <Card className="p-4 shadow-md hover:shadow-lg transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-slate-600">Receita Prevista</p>
@@ -79,33 +79,33 @@ const AgendaDashboard: React.FC<AgendaDashboardProps> = ({ appointments, therapi
                 R$ {totalRevenue.toFixed(2)}
               </p>
             </div>
-            <div className="p-3 bg-green-100 rounded-lg">
+            <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center border-2 border-green-200">
               <DollarSign className="w-6 h-6 text-green-600" />
             </div>
           </div>
         </Card>
 
         {/* Pacientes */}
-        <Card className="p-4">
+        <Card className="p-4 shadow-md hover:shadow-lg transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-slate-600">Pacientes Únicos</p>
               <p className="text-2xl font-bold text-slate-900">{uniquePatients}</p>
             </div>
-            <div className="p-3 bg-purple-100 rounded-lg">
+            <div className="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center border-2 border-purple-200">
               <Users className="w-6 h-6 text-purple-600" />
             </div>
           </div>
         </Card>
 
         {/* Agendamentos */}
-        <Card className="p-4">
+        <Card className="p-4 shadow-md hover:shadow-lg transition-all duration-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-slate-600">Total Hoje</p>
               <p className="text-2xl font-bold text-slate-900">{totalAppointments}</p>
             </div>
-            <div className="p-3 bg-orange-100 rounded-lg">
+            <div className="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center border-2 border-orange-200">
               <Calendar className="w-6 h-6 text-orange-600" />
             </div>
           </div>
