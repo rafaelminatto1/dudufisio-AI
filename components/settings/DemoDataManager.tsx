@@ -86,9 +86,9 @@ const DemoDataManager: React.FC = () => {
 
       <div className="grid gap-4 sm:grid-cols-2">
         {/* Botão Popular Dados */}
-        <div className="rounded-lg border-2 border-dashed border-blue-200 bg-blue-50/50 p-4 hover:border-blue-300 hover:bg-blue-50 transition-all">
+        <div className="bg-white rounded-lg border-2 border-dashed border-blue-200 p-4 hover:border-blue-300 hover:shadow-md transition-all duration-200">
           <div className="flex flex-col items-center text-center space-y-3">
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center border-2 border-blue-200">
               <Database className="h-6 w-6 text-blue-600" />
             </div>
             <div>
@@ -100,7 +100,7 @@ const DemoDataManager: React.FC = () => {
             <Button
               onClick={handlePopulate}
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white shadow-md"
               size="sm"
             >
               {loading ? (
@@ -119,9 +119,9 @@ const DemoDataManager: React.FC = () => {
         </div>
 
         {/* Botão Limpar Dados */}
-        <div className="rounded-lg border-2 border-dashed border-red-200 bg-red-50/50 p-4 hover:border-red-300 hover:bg-red-50 transition-all">
+        <div className="bg-white rounded-lg border-2 border-dashed border-red-200 p-4 hover:border-red-300 hover:shadow-md transition-all duration-200">
           <div className="flex flex-col items-center text-center space-y-3">
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center border-2 border-red-200">
               <Trash2 className="h-6 w-6 text-red-600" />
             </div>
             <div>
@@ -134,7 +134,7 @@ const DemoDataManager: React.FC = () => {
               onClick={handleClear}
               disabled={loading || !hasDemoData}
               variant="destructive"
-              className="w-full"
+              className="w-full shadow-md"
               size="sm"
             >
               {loading ? (
@@ -153,8 +153,8 @@ const DemoDataManager: React.FC = () => {
         </div>
       </div>
 
-      <Alert className="border-amber-200 bg-amber-50">
-        <AlertDescription className="text-sm text-amber-800">
+      <Alert className="border-yellow-200 bg-yellow-50">
+        <AlertDescription className="text-sm text-yellow-800">
           <strong>⚠️ Atenção:</strong> Os dados de demonstração funcionam tanto em desenvolvimento quanto em produção.
           Use o botão "Limpar Tudo" para remover todos os registros de uma só vez quando terminar os testes.
         </AlertDescription>

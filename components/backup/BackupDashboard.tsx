@@ -156,13 +156,13 @@ const BackupDashboard: React.FC<BackupDashboardProps> = ({
   const getStatusColor = (status: BackupMetadata['status']) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-50 text-green-700 border-green-200';
       case 'running':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-50 text-blue-700 border-blue-200';
       case 'failed':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-50 text-red-700 border-red-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-700 border-gray-300';
     }
   };
 
@@ -170,8 +170,8 @@ const BackupDashboard: React.FC<BackupDashboardProps> = ({
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="flex items-center gap-3">
-          <RefreshCw className="w-6 h-6 animate-spin text-sky-600" />
-          <span className="text-lg text-gray-600">Carregando sistema de backup...</span>
+          <RefreshCw className="w-6 h-6 animate-spin text-blue-600" />
+          <span className="text-lg text-slate-600">Carregando sistema de backup...</span>
         </div>
       </div>
     );
@@ -180,15 +180,15 @@ const BackupDashboard: React.FC<BackupDashboardProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-md border border-slate-200 p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-sky-100 rounded-lg">
-              <HardDrive className="w-8 h-8 text-sky-600" />
+            <div className="p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
+              <HardDrive className="w-8 h-8 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Sistema de Backup</h1>
-              <p className="text-gray-600">Gerencie backups automáticos e restaurações</p>
+              <h1 className="text-2xl font-bold text-slate-900">Sistema de Backup</h1>
+              <p className="text-slate-600">Gerencie backups automáticos e restaurações</p>
             </div>
           </div>
 
@@ -196,7 +196,7 @@ const BackupDashboard: React.FC<BackupDashboardProps> = ({
             <button
               onClick={handleTestSystem}
               disabled={isTestingSystem}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all duration-200 shadow-md disabled:opacity-50"
             >
               {isTestingSystem ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />
@@ -208,7 +208,7 @@ const BackupDashboard: React.FC<BackupDashboardProps> = ({
 
             <button
               onClick={() => setShowCreateBackup(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-md"
             >
               <Upload className="w-4 h-4" />
               Criar Backup
@@ -220,7 +220,7 @@ const BackupDashboard: React.FC<BackupDashboardProps> = ({
           <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-600" />
-              <span className="text-red-800">{error}</span>
+              <span className="text-red-700">{error}</span>
             </div>
           </div>
         )}
@@ -229,50 +229,50 @@ const BackupDashboard: React.FC<BackupDashboardProps> = ({
       {/* Status Cards */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-md hover:shadow-lg border border-slate-200 p-6 transition-all duration-200">
             <div className="flex items-center">
-              <div className="p-3 bg-green-100 rounded-lg">
+              <div className="p-3 bg-green-50 rounded-lg border-2 border-green-200">
                 <Archive className="w-6 h-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total de Backups</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalBackups}</p>
+                <p className="text-sm font-medium text-slate-600">Total de Backups</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.totalBackups}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-md hover:shadow-lg border border-slate-200 p-6 transition-all duration-200">
             <div className="flex items-center">
-              <div className="p-3 bg-blue-100 rounded-lg">
+              <div className="p-3 bg-blue-50 rounded-lg border-2 border-blue-200">
                 <Database className="w-6 h-6 text-blue-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Tamanho Total</p>
-                <p className="text-2xl font-bold text-gray-900">{formatFileSize(stats.totalSize)}</p>
+                <p className="text-sm font-medium text-slate-600">Tamanho Total</p>
+                <p className="text-2xl font-bold text-slate-900">{formatFileSize(stats.totalSize)}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-md hover:shadow-lg border border-slate-200 p-6 transition-all duration-200">
             <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-lg">
+              <div className="p-3 bg-purple-50 rounded-lg border-2 border-purple-200">
                 <TrendingUp className="w-6 h-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Taxa de Sucesso</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.successRate.toFixed(1)}%</p>
+                <p className="text-sm font-medium text-slate-600">Taxa de Sucesso</p>
+                <p className="text-2xl font-bold text-slate-900">{stats.successRate.toFixed(1)}%</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-lg shadow-md hover:shadow-lg border border-slate-200 p-6 transition-all duration-200">
             <div className="flex items-center">
-              <div className="p-3 bg-yellow-100 rounded-lg">
+              <div className="p-3 bg-yellow-50 rounded-lg border-2 border-yellow-200">
                 <Clock className="w-6 h-6 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Último Backup</p>
-                <p className="text-sm font-bold text-gray-900">
+                <p className="text-sm font-medium text-slate-600">Último Backup</p>
+                <p className="text-sm font-bold text-slate-900">
                   {stats.lastBackup ?
                     new Date(stats.lastBackup).toLocaleDateString('pt-BR') :
                     'Nunca'
@@ -286,28 +286,28 @@ const BackupDashboard: React.FC<BackupDashboardProps> = ({
 
       {/* Current Backup Status */}
       {currentBackup && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-lg shadow-md border border-blue-200 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <RefreshCw className="w-6 h-6 text-blue-600 animate-spin" />
               <div>
-                <h3 className="font-semibold text-gray-900">Backup em Andamento</h3>
-                <p className="text-gray-600">
+                <h3 className="font-semibold text-slate-900">Backup em Andamento</h3>
+                <p className="text-slate-600">
                   {currentBackup.type === 'full' ? 'Backup Completo' : 'Backup Incremental'} - {currentBackup.id}
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-500">Iniciado em</p>
-              <p className="font-medium">{new Date(currentBackup.timestamp).toLocaleString('pt-BR')}</p>
+              <p className="text-sm text-slate-500">Iniciado em</p>
+              <p className="font-medium text-slate-900">{new Date(currentBackup.timestamp).toLocaleString('pt-BR')}</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="border-b border-gray-200">
+      <div className="bg-white rounded-lg shadow-md border border-slate-200">
+        <div className="border-b border-slate-200">
           <nav className="flex space-x-8 px-6">
             {[
               { id: 'overview', label: 'Visão Geral', icon: TrendingUp },
@@ -320,8 +320,8 @@ const BackupDashboard: React.FC<BackupDashboardProps> = ({
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
-                    ? 'border-sky-500 text-sky-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
