@@ -64,14 +64,14 @@ export const PatientAuth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+      <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md border border-slate-200">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">
             Portal do Paciente
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-slate-600">
             Acesse com seu telefone
           </p>
         </div>
@@ -80,27 +80,27 @@ export const PatientAuth: React.FC = () => {
         {step === 'phone' && (
           <form onSubmit={handleSendOTP} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Número de Telefone
               </label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="(11) 99999-9999"
-                  className="w-full pl-10 pr-4 py-3 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Enviaremos um código por SMS
               </p>
             </div>
 
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -108,7 +108,7 @@ export const PatientAuth: React.FC = () => {
             <button
               type="submit"
               disabled={loading || phone.length < 10}
-              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
+              className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 font-medium shadow-md transition-all duration-200"
             >
               {loading ? 'Enviando...' : 'Enviar Código'}
               <ArrowRight className="w-5 h-5" />
@@ -120,28 +120,28 @@ export const PatientAuth: React.FC = () => {
         {step === 'otp' && (
           <form onSubmit={handleVerifyOTP} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-700 mb-2">
                 Código de Verificação
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                   placeholder="000000"
                   maxLength={6}
-                  className="w-full pl-10 pr-4 py-3 border dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-center text-2xl tracking-widest focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 Código enviado para {phone}
               </p>
             </div>
 
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -150,14 +150,14 @@ export const PatientAuth: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setStep('phone')}
-                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="flex-1 px-4 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-all duration-200"
               >
                 Voltar
               </button>
               <button
                 type="submit"
                 disabled={loading || otp.length < 6}
-                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium"
+                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium shadow-md transition-all duration-200"
               >
                 {loading ? 'Verificando...' : 'Entrar'}
               </button>
@@ -167,7 +167,7 @@ export const PatientAuth: React.FC = () => {
               type="button"
               onClick={handleSendOTP}
               disabled={loading}
-              className="w-full text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="w-full text-sm text-blue-600 hover:underline transition-colors"
             >
               Reenviar código
             </button>
@@ -175,13 +175,13 @@ export const PatientAuth: React.FC = () => {
         )}
 
         {/* Footer */}
-        <div className="mt-8 text-center text-xs text-gray-500 dark:text-gray-400">
+        <div className="mt-8 text-center text-xs text-slate-500">
           <p>Ao fazer login, você concorda com nossos</p>
-          <a href="/termos" className="text-blue-600 dark:text-blue-400 hover:underline">
+          <a href="/termos" className="text-blue-600 hover:underline">
             Termos de Uso
           </a>{' '}
           e{' '}
-          <a href="/privacidade" className="text-blue-600 dark:text-blue-400 hover:underline">
+          <a href="/privacidade" className="text-blue-600 hover:underline">
             Política de Privacidade
           </a>
         </div>
