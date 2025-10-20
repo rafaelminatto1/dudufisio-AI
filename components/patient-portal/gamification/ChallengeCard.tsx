@@ -22,10 +22,10 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
   const isExpired = status === 'expired';
 
   const badgeColor = isCompleted
-    ? 'bg-green-100 text-green-700 border-green-200'
+    ? 'bg-green-50 text-green-700 border-green-200'
     : isExpired
-      ? 'bg-slate-100 text-slate-500 border-slate-200'
-      : 'bg-amber-100 text-amber-700 border-amber-200';
+      ? 'bg-gray-100 text-gray-500 border-gray-300'
+      : 'bg-yellow-50 text-yellow-700 border-yellow-200';
 
   const statusLabel = isCompleted
     ? 'Concluído'
@@ -34,11 +34,11 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({ challenge }) => {
       : 'Em andamento';
 
   return (
-    <div className={`p-5 rounded-2xl border shadow-sm flex flex-col gap-3 ${isCompleted ? 'border-green-200 bg-green-50/60' : 'border-slate-200 bg-white'}`}>
+    <div className={`p-5 rounded-lg border shadow-md hover:shadow-lg flex flex-col gap-3 transition-all duration-200 ${isCompleted ? 'border-green-200 bg-green-50' : 'border-slate-200 bg-white'}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h4 className="text-base font-semibold text-slate-800">{title}</h4>
-          <p className="text-sm text-slate-500 mt-1">{description}</p>
+          <h4 className="text-base font-semibold text-slate-900">{title}</h4>
+          <p className="text-sm text-slate-600 mt-1">{description}</p>
         </div>
         <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${badgeColor}`}>{statusLabel}</span>
       </div>
