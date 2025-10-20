@@ -3605,3 +3605,69 @@ export interface BodyMapComparison {
   resolvedRegions: string[];
   overallChange: number; // percentual
 }
+
+// --- WhatsApp Service Types ---
+
+// Tipos para queries com joins do Supabase
+export interface AppointmentWithPatient {
+  id: string;
+  date: string;
+  time: string;
+  patient: {
+    name: string;
+    phone: string;
+  };
+  therapist: {
+    name: string;
+  };
+}
+
+export interface PaymentWithPatient {
+  id: string;
+  amount: number;
+  due_date: string;
+  patient: {
+    name: string;
+    phone: string;
+  };
+}
+
+// Tipos para operações do Supabase
+export interface WhatsAppMessageInsert {
+  clinic_id: string;
+  phone: string;
+  direction: string;
+  message_type: string;
+  content: string;
+  status: string;
+  sent_at: string;
+  metadata: {
+    notification_type: string;
+  };
+}
+
+export interface AIPredictionInsert {
+  patient_id: string;
+  prediction_type: string;
+  outcome_prediction: string;
+  confidence_score: number;
+  confidence_level: string;
+  input_features: any;
+  features_used: string[];
+  model_version: string;
+  prediction_date: string;
+  actual_outcome?: string;
+  accuracy_score?: number;
+  notes?: string;
+  created_by: string;
+}
+
+// Tipos para Meta WhatsApp API
+export interface CreateLeadInput {
+  name: string;
+  phone: string;
+  email?: string;
+  message?: string;
+  source?: string;
+  // Removido 'status' que não existe no tipo original
+}

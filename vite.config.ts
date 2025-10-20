@@ -91,20 +91,37 @@ export default defineConfig({
       'react-router-dom',
       'framer-motion',
       'lucide-react',
+      // Radix UI - todos os pacotes principais
       '@radix-ui/react-slot',
-      'clsx',
-      'tailwind-merge',
-      'recharts',
       '@radix-ui/react-tabs',
-      'react-hook-form',
-      '@hookform/resolvers/zod',
-      'zod',
-      'react-icons/md',
       '@radix-ui/react-scroll-area',
       '@radix-ui/react-slider',
       '@radix-ui/react-select',
       '@radix-ui/react-label',
       '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-tooltip',
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-alert-dialog',
+      '@radix-ui/react-avatar',
+      '@radix-ui/react-checkbox',
+      '@radix-ui/react-collapsible',
+      '@radix-ui/react-context-menu',
+      '@radix-ui/react-hover-card',
+      '@radix-ui/react-navigation-menu',
+      '@radix-ui/react-progress',
+      '@radix-ui/react-radio-group',
+      '@radix-ui/react-separator',
+      '@radix-ui/react-switch',
+      '@radix-ui/react-toast',
+      'clsx',
+      'tailwind-merge',
+      'recharts',
+      'react-hook-form',
+      '@hookform/resolvers/zod',
+      'zod',
+      'react-icons/md',
       'react-toastify',
       // Tiptap extensions para evitar conflitos de bundling
       '@tiptap/react',
@@ -134,6 +151,8 @@ export default defineConfig({
     target: 'es2020',
     sourcemap: true,
     reportCompressedSize: true,
+    // Garantir que os entry points sejam preservados para ordem de carregamento correta
+    preserveEntrySignatures: 'strict',
     rollupOptions: {
       // Suprimir warnings de bibliotecas externas
       onwarn(warning, warn) {
@@ -166,23 +185,21 @@ export default defineConfig({
       output: {
         // Code splitting HABILITADO - Estratégia de chunks por funcionalidade
         manualChunks: (id) => {
-          // CONSOLIDAR TODO O REACT EM UM ÚNICO CHUNK
+          // CONSOLIDAR TODO O REACT + RADIX UI EM UM ÚNICO CHUNK
           // Isso garante que não há problemas de ordem de carregamento
+          // Radix UI DEPENDE do React, então devem estar juntos
           if (id.includes('node_modules/react/') || 
               id.includes('node_modules/react-dom/') ||
               id.includes('node_modules/scheduler/') ||
               id.includes('node_modules/use-sync-external-store/') ||
-              id.includes('node_modules/react-router')) {
+              id.includes('node_modules/react-router') ||
+              id.includes('node_modules/@radix-ui')) {
             return 'vendor-react';
           }
           
           // PRIORIDADE 3: React Libraries (dependem do core)
           if (id.includes('node_modules/@tanstack/react')) {
             return 'vendor-tanstack';
-          }
-          
-          if (id.includes('node_modules/@radix-ui')) {
-            return 'vendor-radix';
           }
           
           if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform')) {

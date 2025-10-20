@@ -11,6 +11,7 @@ import addDays from 'date-fns/addDays';
 import subDays from 'date-fns/subDays';
 import parse from 'date-fns/parse';
 import { ptBR } from 'date-fns/locale';
+import type { AppointmentWithPatient, PaymentWithPatient, WhatsAppMessageInsert } from '@/types';
 
 export class WhatsAppNotificationService {
   private whatsappService;
@@ -41,7 +42,7 @@ export class WhatsAppNotificationService {
         .eq('clinic_id', clinicId)
         .eq('date', tomorrowStr)
         .in('status', ['confirmed', 'scheduled'])
-        .order('time');
+        .order('time') as { data: AppointmentWithPatient[] | null };
 
       if (appointments?.length === 0) {
         
@@ -247,7 +248,7 @@ export class WhatsAppNotificationService {
         .eq('clinic_id', clinicId)
         .eq('status', 'pending')
         .lte('due_date', format(new Date(), 'yyyy-MM-dd'))
-        .limit(50);
+        .limit(50) as { data: PaymentWithPatient[] | null };
 
       if (pendingPayments?.length === 0) {
         
@@ -305,18 +306,20 @@ export class WhatsAppNotificationService {
     status: string
   ): Promise<void> {
     try {
+      const messageData: WhatsAppMessageInsert = {
+        clinic_id: clinicId,
+        phone: phone,
+        direction: 'outbound',
+        message_type: 'notification',
+        content: `Notificação automática: ${type}`,
+        status: status,
+        sent_at: new Date().toISOString(),
+        metadata: { notification_type: type },
+      };
+      
       await supabase
         .from('whatsapp_messages')
-        .insert({
-          clinic_id: clinicId,
-          phone: phone,
-          direction: 'outbound',
-          message_type: 'notification',
-          content: `Notificação automática: ${type}`,
-          status: status,
-          sent_at: new Date().toISOString(),
-          metadata: { notification_type: type },
-        });
+        .insert(messageData);
     } catch (error) {
       console.error('Erro ao registrar notificação:', error);
     }

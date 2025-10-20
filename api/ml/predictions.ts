@@ -8,6 +8,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { supabase } from '../../lib/supabaseClient';
 import { logger } from '../../lib/logger';
+import type { AIPredictionInsert } from '../../types';
 
 type PatientData = {
   [key: string]: unknown;
@@ -89,7 +90,7 @@ export async function predictOutcomeWithAI(patientId: string, patientData: Patie
     const analysis = await analyzePatientWithClaude(patientData);
 
     // Salvar predição no banco
-    const { data, error } = await supabase.from('ai_predictions').insert({
+    const predictionData: AIPredictionInsert = {
       patient_id: patientId,
       prediction_type: 'treatment_outcome',
       outcome_prediction: analysis.probabilidade_sucesso > 70 ? 'positive' : 'moderate',
@@ -97,16 +98,13 @@ export async function predictOutcomeWithAI(patientId: string, patientData: Patie
       confidence_level: analysis.confianca,
       input_features: patientData,
       features_used: Object.keys(patientData),
-      factors_analyzed: [...analysis.fatores_risco, ...analysis.fatores_protetores],
-      risk_factors: analysis.fatores_risco,
-      protective_factors: analysis.fatores_protetores,
-      recommendations: analysis.recomendacoes,
-      alternative_scenarios: analysis.cenarios_alternativos,
-      explanation: analysis.justificativa_clinica,
-      model_name: 'claude-3-5-sonnet',
       model_version: '20241022',
+      prediction_date: new Date().toISOString(),
+      notes: `Análise: ${analysis.justificativa_clinica}`,
       created_by: 'claude_ai',
-    }).select().single();
+    };
+    
+    const { data, error } = await supabase.from('ai_predictions').insert(predictionData).select().single();
 
     if (error) throw error;
     return data;

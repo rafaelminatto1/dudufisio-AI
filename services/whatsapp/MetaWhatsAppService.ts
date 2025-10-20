@@ -198,7 +198,6 @@ export class MetaWhatsAppService {
           name: from, // Será atualizado depois
           phone: from,
           source: 'whatsapp',
-          status: 'novo',
           urgency_level: 'media',
         });
 

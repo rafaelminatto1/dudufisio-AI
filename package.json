@@ -78,9 +78,13 @@
     "setup:complete": "npm run setup:auth && npm run check:deployment && npm run test:calendar",
     "perf:local": "node scripts/lighthouse-performance.js http://localhost:4173",
     "perf:prod": "node scripts/lighthouse-performance.js https://moocafisio.com.br",
-    "perf:staging": "node scripts/lighthouse-performance.js https://dudufisio-git-main-rafael-minattos-projects.vercel.app"
+    "perf:staging": "node scripts/lighthouse-performance.js https://dudufisio-git-main-rafael-minattos-projects.vercel.app",
+    "fix:radix": "bash scripts/fix-radix-ui-build.sh",
+    "fix:radix:win": "powershell -ExecutionPolicy Bypass -File scripts/fix-radix-ui-build.ps1",
+    "fix:build": "powershell -ExecutionPolicy Bypass -File scripts/fix-build-simple.ps1"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.67.0",
     "@google/generative-ai": "^0.21.0",
     "@hookform/resolvers": "^3.10.0",
     "@modelcontextprotocol/sdk": "^1.20.0",

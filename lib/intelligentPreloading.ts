@@ -66,7 +66,7 @@ export async function preloadComponent(componentPath: string): Promise<void> {
   }
 
   try {
-    await import(`../${componentPath}`);
+    await import(`../${componentPath}.tsx`);
     preloadedComponents.add(componentPath);
     console.log(`✅ Preloaded: ${componentPath}`);
   } catch (error) {
