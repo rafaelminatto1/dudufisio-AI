@@ -1,498 +1,326 @@
 /**
- * 🔧 SERVICE WORKER - DUDUFISIO-AI
- *
- * Service Worker completo para DuduFisio-AI com suporte a:
- * - Push notifications
- * - Cache inteligente
- * - Offline functionality
- * - Background sync
- * - Notificações interativas
+ * Service Worker para DuduFisio-AI PWA
+ * Implementa cache strategies, offline mode e push notifications
  */
 
-const CACHE_NAME = 'activity-fisio-v1.0.0';
-const API_CACHE = 'activity-fisio-api-v1.0.0';
+const CACHE_VERSION = 'v1.0.0';
+const CACHE_NAME = `dudufisio-ai-${CACHE_VERSION}`;
 
-// Recursos essenciais para cache PWA
-const ESSENTIAL_RESOURCES = [
+// Recursos para cache imediato (App Shell)
+const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/offline.html',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/apple-touch-icon.png',
-  '/favicon-32.png'
+  '/favicon.ico',
+  '/logo-192.png',
+  '/logo-512.png'
 ];
 
-// URLs de API para cache
-const API_URLS = [
-  '/api/patients',
-  '/api/appointments',
-  '/api/therapists'
+// Padrões de URLs que devem ser sempre buscados da rede
+const NETWORK_FIRST_PATTERNS = [
+  /\/api\//,
+  /supabase/,
+  /\.json$/
 ];
 
-// 🚀 INSTALAÇÃO DO SERVICE WORKER
+// Padrões de URLs que podem usar cache primeiro
+const CACHE_FIRST_PATTERNS = [
+  /\.js$/,
+  /\.css$/,
+  /\.woff2?$/,
+  /\.png$/,
+  /\.jpg$/,
+  /\.svg$/
+];
+
+// Instalação do Service Worker
 self.addEventListener('install', (event) => {
-  console.log('📦 Service Worker instalando...');
-
+  console.log('[SW] Instalando Service Worker...');
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('✅ Cache criado, adicionando recursos essenciais');
-        return cache.addAll(ESSENTIAL_RESOURCES);
+        console.log('[SW] Pré-cache dos recursos do App Shell');
+        return cache.addAll(PRECACHE_URLS);
+      })
+      .then(() => {
+        console.log('[SW] Service Worker instalado com sucesso');
+        return self.skipWaiting();
       })
       .catch((error) => {
-        console.error('❌ Erro ao criar cache:', error);
+        console.error('[SW] Erro ao instalar Service Worker:', error);
       })
   );
-
-  // Força ativação imediata
-  self.skipWaiting();
 });
 
-// 🔄 ATIVAÇÃO DO SERVICE WORKER
+// Ativação do Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('🔄 Service Worker ativando...');
-
+  console.log('[SW] Ativando Service Worker...');
+  
   event.waitUntil(
-    Promise.all([
-      // Limpar caches antigos
-      caches.keys().then((cacheNames) => {
+    caches.keys()
+      .then((cacheNames) => {
         return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME && cacheName !== API_CACHE) {
-              console.log('🗑️ Removendo cache antigo:', cacheName);
+          cacheNames
+            .filter((cacheName) => {
+              // Remove caches antigas
+              return cacheName.startsWith('dudufisio-ai-') && cacheName !== CACHE_NAME;
+            })
+            .map((cacheName) => {
+              console.log('[SW] Removendo cache antiga:', cacheName);
               return caches.delete(cacheName);
-            }
-          })
+            })
         );
-      }),
-      // Assumir controle de todas as páginas
-      self.clients.claim()
-    ])
+      })
+      .then(() => {
+        console.log('[SW] Service Worker ativado');
+        return self.clients.claim();
+      })
   );
-
-  console.log('✅ Service Worker ativado');
 });
 
-// 🌐 INTERCEPTAÇÃO DE REQUESTS
+// Estratégia de cache para requisições
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip chrome-extension, webpack-internal, and other special protocols
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+  // Ignora requisições de outros domínios (exceto APIs conhecidas)
+  if (url.origin !== location.origin && !url.href.includes('supabase')) {
     return;
   }
 
-  // Skip Vite HMR and dev server special requests
-  if (url.pathname.includes('/@vite/') ||
-      url.pathname.includes('/@id/') ||
-      url.pathname.includes('/@react-refresh') ||
-      url.pathname.includes('/__vite') ||
-      url.pathname.includes('node_modules') ||
-      url.pathname.endsWith('.tsx') ||
-      url.pathname.endsWith('.ts') ||
-      url.pathname.endsWith('.jsx') ||
-      url.pathname.endsWith('.js') ||
-      url.search.includes('?v=') ||
-      url.search.includes('html-proxy') ||
-      url.search.includes('direct')) {
+  // Network First: APIs e dados dinâmicos
+  if (NETWORK_FIRST_PATTERNS.some(pattern => pattern.test(request.url))) {
+    event.respondWith(networkFirst(request));
     return;
   }
 
-  // Skip WebSocket connections
-  if (request.headers.get('upgrade') === 'websocket') {
+  // Cache First: Assets estáticos
+  if (CACHE_FIRST_PATTERNS.some(pattern => pattern.test(request.url))) {
+    event.respondWith(cacheFirst(request));
     return;
   }
 
-  // Skip requests to external domains that might cause issues
-  if (url.hostname.includes('dummy.supabase.co') ||
-      url.hostname.includes('mock.supabase.local') ||
-      (url.hostname !== 'localhost' && url.hostname !== '127.0.0.1')) {
-
-    // For mock Supabase URLs, return a mock response to prevent CORS errors
-    if (url.hostname.includes('mock.supabase.local') || url.hostname.includes('dummy.supabase.co')) {
-      event.respondWith(new Response(JSON.stringify({
-        error: 'Mock mode - no real connection',
-        message: 'Using mock data for development',
-        data: []
-      }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-        }
-      }));
-    }
-
-    return; // Let the browser handle other external requests normally
-  }
-
-  // Estratégias diferentes baseadas no tipo de resource
-  if (request.method === 'GET') {
-    try {
-      if (url.pathname.includes('/api/')) {
-        // API requests - Network First com fallback para cache
-        event.respondWith(networkFirstStrategy(request));
-      } else if (ESSENTIAL_RESOURCES.includes(url.pathname)) {
-        // Recursos essenciais - Cache First
-        event.respondWith(cacheFirstStrategy(request));
-      } else {
-        // Outros recursos - Stale While Revalidate
-        event.respondWith(staleWhileRevalidateStrategy(request));
-      }
-    } catch (error) {
-      console.error('❌ Service Worker fetch error:', error);
-      // Don't respond with anything, let the browser handle it
-    }
-  }
+  // Stale While Revalidate: Páginas HTML
+  event.respondWith(staleWhileRevalidate(request));
 });
 
-// 📱 PUSH NOTIFICATIONS
-self.addEventListener('push', (event) => {
-  console.log('📱 Push notification recebida');
-
-  if (!event.data) {
-    console.warn('⚠️ Push event sem dados');
-    return;
-  }
-
+/**
+ * Network First Strategy
+ * Tenta buscar da rede, fallback para cache se offline
+ */
+async function networkFirst(request) {
   try {
-    const data = event.data.json();
-    console.log('📋 Dados da push notification:', data);
-
-    const options = {
-      body: data.body || 'Você tem uma nova notificação',
-      icon: data.icon || '/icon-192x192.png',
-      badge: data.badge || '/badge-72x72.png',
-      image: data.image,
-      data: data.data || {},
-      actions: data.actions || [
-        {
-          action: 'open',
-          title: 'Abrir',
-          icon: '/icon-open.png'
-        },
-        {
-          action: 'dismiss',
-          title: 'Dispensar',
-          icon: '/icon-close.png'
-        }
-      ],
-      tag: data.tag || 'dudufisio-notification',
-      requireInteraction: data.requireInteraction || false,
-      silent: data.silent || false,
-      timestamp: data.timestamp || Date.now(),
-      vibrate: [200, 100, 200], // Padrão de vibração
-      dir: 'ltr',
-      lang: 'pt-BR'
-    };
-
-    event.waitUntil(
-      self.registration.showNotification(
-        data.title || 'DuduFisio-AI',
-        options
-      ).then(() => {
-        console.log('✅ Notificação exibida com sucesso');
-
-        // Registrar analytics
-        trackNotificationEvent('displayed', data);
-      }).catch((error) => {
-        console.error('❌ Erro ao exibir notificação:', error);
-      })
-    );
-
-  } catch (error) {
-    console.error('❌ Erro ao processar push notification:', error);
-
-    // Fallback para notificação simples
-    event.waitUntil(
-      self.registration.showNotification('DuduFisio-AI', {
-        body: 'Você tem uma nova notificação',
-        icon: '/icon-192x192.png',
-        badge: '/badge-72x72.png'
-      })
-    );
-  }
-});
-
-// 🖱️ CLIQUES EM NOTIFICAÇÕES
-self.addEventListener('notificationclick', (event) => {
-  console.log('🖱️ Notificação clicada:', event.action);
-
-  const { notification, action } = event;
-  const data = notification.data || {};
-
-  event.notification.close();
-
-  // Registrar analytics
-  trackNotificationEvent('clicked', { action, ...data });
-
-  event.waitUntil(
-    handleNotificationClick(action, data)
-  );
-});
-
-// 🔕 FECHAMENTO DE NOTIFICAÇÕES
-self.addEventListener('notificationclose', (event) => {
-  console.log('🔕 Notificação fechada');
-
-  const data = event.notification.data || {};
-  trackNotificationEvent('closed', data);
-});
-
-// 🔄 BACKGROUND SYNC
-self.addEventListener('sync', (event) => {
-  console.log('🔄 Background sync:', event.tag);
-
-  if (event.tag === 'background-sync-appointments') {
-    event.waitUntil(syncAppointments());
-  } else if (event.tag === 'background-sync-notifications') {
-    event.waitUntil(syncNotifications());
-  }
-});
-
-// 📡 ESTRATÉGIAS DE CACHE
-
-// Network First - Prioriza rede, fallback para cache
-async function networkFirstStrategy(request) {
-  try {
-    const networkResponse = await fetch(request);
-
-    if (networkResponse.ok) {
-      const cache = await caches.open(API_CACHE);
-      // Clone the response before caching to avoid "body already used" error
-      const responseClone = networkResponse.clone();
-      cache.put(request, responseClone);
+    const response = await fetch(request);
+    
+    // Se a resposta for bem-sucedida, atualiza o cache
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
     }
-
-    return networkResponse;
+    
+    return response;
   } catch (error) {
-    console.log('🌐 Network falhou, buscando no cache:', request.url);
-
+    console.log('[SW] Rede falhou, buscando do cache:', request.url);
     const cachedResponse = await caches.match(request);
+    
     if (cachedResponse) {
       return cachedResponse;
     }
-
-    // Retornar resposta offline para APIs
-    return new Response(
-      JSON.stringify({
-        error: 'Offline',
-        message: 'Dados não disponíveis offline'
-      }),
-      {
-        status: 503,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    
+    // Retorna página offline se disponível
+    return caches.match('/offline.html') || new Response('Offline', {
+      status: 503,
+      statusText: 'Service Unavailable'
+    });
   }
 }
 
-// Cache First - Prioriza cache, fallback para rede
-async function cacheFirstStrategy(request) {
+/**
+ * Cache First Strategy
+ * Busca do cache primeiro, fallback para rede
+ */
+async function cacheFirst(request) {
   const cachedResponse = await caches.match(request);
-
+  
   if (cachedResponse) {
     return cachedResponse;
   }
-
+  
   try {
-    const networkResponse = await fetch(request);
-
-    if (networkResponse.ok) {
+    const response = await fetch(request);
+    
+    if (response.ok) {
       const cache = await caches.open(CACHE_NAME);
-      // Clone the response before caching to avoid "body already used" error
-      const responseClone = networkResponse.clone();
-      cache.put(request, responseClone);
+      cache.put(request, response.clone());
     }
-
-    return networkResponse;
+    
+    return response;
   } catch (error) {
-    // Fallback para página offline
-    if (request.destination === 'document') {
-      return caches.match('/offline.html');
-    }
+    console.error('[SW] Erro ao buscar recurso:', error);
+    return new Response('Resource not available', {
+      status: 404,
+      statusText: 'Not Found'
+    });
+  }
+}
 
+/**
+ * Stale While Revalidate Strategy
+ * Retorna cache imediatamente, atualiza em background
+ */
+async function staleWhileRevalidate(request) {
+  const cachedResponse = await caches.match(request);
+  
+  const fetchPromise = fetch(request).then((response) => {
+    if (response.ok) {
+      const cache = caches.open(CACHE_NAME);
+      cache.then(c => c.put(request, response.clone()));
+    }
+    return response;
+  }).catch(() => {
+    // Silenciosamente falha se offline
+    return cachedResponse;
+  });
+  
+  return cachedResponse || fetchPromise;
+}
+
+// Push Notifications
+self.addEventListener('push', (event) => {
+  console.log('[SW] Push notification recebida');
+  
+  const options = {
+    body: event.data ? event.data.text() : 'Nova notificação do DuduFisio-AI',
+    icon: '/logo-192.png',
+    badge: '/badge-72.png',
+    vibrate: [200, 100, 200],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1
+    },
+    actions: [
+      {
+        action: 'explore',
+        title: 'Abrir',
+        icon: '/check-icon.png'
+      },
+      {
+        action: 'close',
+        title: 'Fechar',
+        icon: '/close-icon.png'
+      }
+    ]
+  };
+  
+  event.waitUntil(
+    self.registration.showNotification('DuduFisio-AI', options)
+  );
+});
+
+// Notification Click
+self.addEventListener('notificationclick', (event) => {
+  console.log('[SW] Notificação clicada:', event.action);
+  
+  event.notification.close();
+  
+  if (event.action === 'explore') {
+    event.waitUntil(
+      clients.openWindow('/')
+    );
+  }
+});
+
+// Background Sync
+self.addEventListener('sync', (event) => {
+  console.log('[SW] Background sync:', event.tag);
+  
+  if (event.tag === 'sync-appointments') {
+    event.waitUntil(syncAppointments());
+  }
+  
+  if (event.tag === 'sync-notes') {
+    event.waitUntil(syncNotes());
+  }
+});
+
+/**
+ * Sincroniza agendamentos offline
+ */
+async function syncAppointments() {
+  try {
+    const cache = await caches.open('offline-data');
+    const offlineAppointments = await cache.match('/offline/appointments');
+    
+    if (offlineAppointments) {
+      const data = await offlineAppointments.json();
+      
+      // Envia dados para API
+      await fetch('/api/appointments/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      
+      // Limpa dados offline após sincronização
+      await cache.delete('/offline/appointments');
+      
+      console.log('[SW] Agendamentos sincronizados com sucesso');
+    }
+  } catch (error) {
+    console.error('[SW] Erro ao sincronizar agendamentos:', error);
+    throw error; // Re-throw para retry automático
+  }
+}
+
+/**
+ * Sincroniza notas offline
+ */
+async function syncNotes() {
+  try {
+    const cache = await caches.open('offline-data');
+    const offlineNotes = await cache.match('/offline/notes');
+    
+    if (offlineNotes) {
+      const data = await offlineNotes.json();
+      
+      await fetch('/api/notes/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      
+      await cache.delete('/offline/notes');
+      
+      console.log('[SW] Notas sincronizadas com sucesso');
+    }
+  } catch (error) {
+    console.error('[SW] Erro ao sincronizar notas:', error);
     throw error;
   }
 }
 
-// Stale While Revalidate - Retorna cache e atualiza em background
-async function staleWhileRevalidateStrategy(request) {
-  try {
-    const cachedResponse = await caches.match(request);
-
-    // Create fetch promise with proper error handling
-    const fetchPromise = fetch(request)
-      .then((networkResponse) => {
-        // Only cache successful responses
-        if (networkResponse && networkResponse.ok && networkResponse.status < 400) {
-          // Clone BEFORE any other operation to avoid "body already used" error
-          const responseToCache = networkResponse.clone();
-
-          // Cache in background without blocking
-          caches.open(CACHE_NAME)
-            .then(cache => cache.put(request, responseToCache))
-            .catch(() => {
-              // Silently fail cache writes - not critical
-            });
-        }
-        return networkResponse;
+// Mensagens do cliente
+self.addEventListener('message', (event) => {
+  console.log('[SW] Mensagem recebida:', event.data);
+  
+  if (event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  
+  if (event.data.type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => caches.delete(cacheName))
+        );
       })
-      .catch(() => {
-        // Network error - silently fail
-        // Return null on error, will be handled below
-        return null;
-      });
-
-    // Se tem cache, retorna imediatamente
-    if (cachedResponse) {
-      // Atualiza em background (não bloqueia)
-      fetchPromise.catch(() => {});
-      return cachedResponse;
-    }
-
-    // Se não tem cache, aguarda a rede
-    const response = await fetchPromise;
-
-    // Se a rede também falhou, retorna erro 503
-    if (!response) {
-      return new Response('Service Unavailable', {
-        status: 503,
-        statusText: 'Service Unavailable',
-        headers: { 'Content-Type': 'text/plain' }
-      });
-    }
-
-    return response;
-  } catch (error) {
-    // Silently fail - don't log errors that might spam the console
-    // Return a proper error response
-    return new Response('Internal Error', {
-      status: 500,
-      statusText: 'Internal Server Error',
-      headers: { 'Content-Type': 'text/plain' }
-    });
+    );
   }
-}
-
-// 🎯 HANDLERS DE NOTIFICAÇÃO
-
-async function handleNotificationClick(action, data) {
-  const clients = await self.clients.matchAll({
-    type: 'window',
-    includeUncontrolled: true
-  });
-
-  // URL para abrir baseada na ação
-  let urlToOpen = '/';
-
-  if (action === 'open' || action === undefined) {
-    if (data.actionUrl) {
-      urlToOpen = data.actionUrl;
-    } else if (data.appointmentId) {
-      urlToOpen = `/appointments/${data.appointmentId}`;
-    } else if (data.patientId) {
-      urlToOpen = `/patients/${data.patientId}`;
-    }
-  } else if (action === 'dismiss') {
-    // Apenas fechar - não abrir nada
-    return;
+  
+  if (event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({ version: CACHE_VERSION });
   }
-
-  // Verificar se já existe uma janela aberta
-  const existingClient = clients.find(client =>
-    client.url.includes(new URL(urlToOpen, self.location.origin).pathname)
-  );
-
-  if (existingClient) {
-    // Focar na janela existente
-    await existingClient.focus();
-
-    // Navegar para a URL se necessário
-    if (existingClient.navigate) {
-      await existingClient.navigate(urlToOpen);
-    }
-  } else {
-    // Abrir nova janela
-    await self.clients.openWindow(urlToOpen);
-  }
-}
-
-// 📊 ANALYTICS E TRACKING
-
-function trackNotificationEvent(eventType, data) {
-  // Em produção, enviar para serviço de analytics
-  console.log(`📊 Notification ${eventType}:`, data);
-
-  // Armazenar no IndexedDB para sync posterior
-  if ('indexedDB' in self) {
-    const event = {
-      type: eventType,
-      timestamp: Date.now(),
-      data: data,
-      userAgent: navigator.userAgent
-    };
-
-    // Implementar storage no IndexedDB aqui se necessário
-  }
-}
-
-// 🔄 SYNC FUNCTIONS
-
-async function syncAppointments() {
-  try {
-    console.log('🔄 Sincronizando appointments...');
-
-    // Implementar sync de appointments
-    const response = await fetch('/api/appointments/sync', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.ok) {
-      console.log('✅ Appointments sincronizados');
-    }
-  } catch (error) {
-    console.error('❌ Erro ao sincronizar appointments:', error);
-    throw error; // Re-schedule sync
-  }
-}
-
-async function syncNotifications() {
-  try {
-    console.log('🔄 Sincronizando notifications...');
-
-    // Implementar sync de notifications
-    const response = await fetch('/api/notifications/sync', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (response.ok) {
-      console.log('✅ Notifications sincronizadas');
-    }
-  } catch (error) {
-    console.error('❌ Erro ao sincronizar notifications:', error);
-    throw error; // Re-schedule sync
-  }
-}
-
-// 🚨 ERROR HANDLING
-self.addEventListener('error', (event) => {
-  console.error('❌ Service Worker error:', event.error);
 });
 
-self.addEventListener('unhandledrejection', (event) => {
-  console.error('❌ Service Worker unhandled rejection:', event.reason);
-});
-
-console.log('🚀 Service Worker DuduFisio-AI carregado');
+console.log('[SW] Service Worker carregado');

@@ -10,14 +10,18 @@ import {
   FileText,
   Calendar,
   User,
-  AlertCircle
+  AlertCircle,
+  Upload
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import AdvancedMaterialEditor from '../components/clinical-materials/AdvancedMaterialEditor';
 import { clinicalMaterialService, MaterialCreateData, MaterialUpdateData } from '../services/clinicalMaterialService';
-import { Material, MaterialCategory } from '../types';
+import { Material, MaterialCategory, MaterialLink } from '../types';
+import TagManager from '../components/clinical-materials/TagManager';
+import WikiLinkManager from '../components/clinical-materials/WikiLinkManager';
+import MediaUploadManager from '../components/clinical-materials/MediaUploadManager';
 import { useToast } from '../hooks/useToast';
 import PageHeader from '../components/PageHeader';
 import { Button } from '../components/ui/button';
@@ -50,6 +54,8 @@ const MaterialEditorPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [content, setContent] = useState('');
   const [tags, setTags] = useState<string[]>([]);
+  const [links, setLinks] = useState<MaterialLink[]>([]);
+  const [media, setMedia] = useState<any[]>([]);
   const [newTag, setNewTag] = useState('');
   const [linkedMaterials, setLinkedMaterials] = useState<string[]>([]);
 
@@ -85,6 +91,13 @@ const MaterialEditorPage: React.FC = () => {
             setMaterial(materialData);
             setContent(materialData.content || '');
             setTags(materialData.tags || []);
+            setLinks(materialData.linkedMaterials?.map(linkId => ({
+              id: `link-${linkId}`,
+              fromMaterialId: materialData.id,
+              toMaterialId: linkId,
+              linkText: `Link para ${linkId}`,
+              createdAt: new Date().toISOString()
+            })) || []);
             setLinkedMaterials(materialData.linkedMaterials || []);
             
             // Populate form
@@ -379,39 +392,43 @@ const MaterialEditorPage: React.FC = () => {
                 <Tag className="w-5 h-5 mr-2" />
                 Tags
               </h3>
+              
+              <TagManager
+                selectedTags={tags}
+                onTagsChange={(newTags) => {
+                  setTags(newTags);
+                  setValue('tags', newTags);
+                }}
+                materialId={material?.id}
+                categoryId={watch('categoryId')}
+              />
+            </div>
 
-              <div className="space-y-3">
-                <div className="flex space-x-2">
-                  <Input
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Adicionar tag..."
-                    className="flex-1"
-                  />
-                  <Button onClick={handleAddTag} size="sm">
-                    Adicionar
-                  </Button>
-                </div>
+            {/* Wiki Links */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <LinkIcon className="w-5 h-5 mr-2" />
+                Links Wiki
+              </h3>
+              
+              <WikiLinkManager
+                materialId={material?.id || 'new'}
+                links={links}
+                onLinksChange={setLinks}
+              />
+            </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="flex items-center space-x-1 px-2 py-1"
-                    >
-                      <span>{tag}</span>
-                      <button
-                        onClick={() => handleRemoveTag(tag)}
-                        className="ml-1 text-gray-500 hover:text-red-500"
-                      >
-                        ×
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-              </div>
+            {/* Media Upload */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Upload className="w-5 h-5 mr-2" />
+                Mídia e Arquivos
+              </h3>
+              
+              <MediaUploadManager
+                materialId={material?.id || 'new'}
+                onMediaChange={setMedia}
+              />
             </div>
 
             {/* Material Info */}

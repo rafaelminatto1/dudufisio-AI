@@ -2,6 +2,7 @@ import { Extension } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
+import { mediaUploadService } from '../../services/mediaUploadService';
 import { MediaUploadNode } from '../components/tiptap/MediaUploadNode';
 import { MediaAttachment } from '../../types';
 
