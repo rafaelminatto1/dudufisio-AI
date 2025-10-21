@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { materialTaskService, TaskSearchParams } from '../services/materialTaskService';
 import { MaterialTask } from '../types';
-import { useToast } from '../hooks/useToast';
+import { useToast } from '../contexts/ToastContext';
 import PageHeader from '../components/PageHeader';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';

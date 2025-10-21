@@ -22,7 +22,7 @@ import { Material, MaterialCategory, MaterialLink } from '../types';
 import TagManager from '../components/clinical-materials/TagManager';
 import WikiLinkManager from '../components/clinical-materials/WikiLinkManager';
 import MediaUploadManager from '../components/clinical-materials/MediaUploadManager';
-import { useToast } from '../hooks/useToast';
+import { useToast } from '../contexts/ToastContext';
 import PageHeader from '../components/PageHeader';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';

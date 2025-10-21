@@ -20,7 +20,7 @@ import { clinicalMaterialService } from '../services/clinicalMaterialService';
 import { materialLinkService } from '../services/materialLinkService';
 import { mediaUploadService } from '../services/mediaUploadService';
 import { Material, MaterialLink } from '../types';
-import { useToast } from '../hooks/useToast';
+import { useToast } from '../contexts/ToastContext';
 import PageHeader from '../components/PageHeader';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
