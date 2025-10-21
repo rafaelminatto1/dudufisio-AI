@@ -54,6 +54,8 @@ const EventDetailPage = createLazyComponent(() => import('./EventDetailPage'));
 const EventsListPage = createLazyComponent(() => import('./EventsListPage'));
 const MaterialDetailPage = createLazyComponent(() => import('./MaterialDetailPage'));
 const MaterialsPage = createLazyComponent(() => import('./MaterialsPage'));
+const MaterialEditorPage = createLazyComponent(() => import('./MaterialEditorPage'));
+const MaterialTasksPage = createLazyComponent(() => import('./MaterialTasksPage'));
 const GerarLaudoPage = createLazyComponent(() => import('./GerarLaudoPage'));
 
 // Páginas de Exercícios - Sistema Completo
@@ -465,13 +467,16 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/exercise-library" element={<EnhancedExerciseLibraryPage />} />
                 <Route path="/exercise-library-test" element={<ExerciseLibraryTestPage />} />
                 <Route path="/materials" element={<MaterialsPage />} />
+                <Route path="/materials/new" element={<MaterialEditorPage />} />
+                <Route path="/materials/:id/edit" element={<MaterialEditorPage />} />
+                <Route path="/material-tasks" element={<MaterialTasksPage />} />
                 <Route path="/clinical-library" element={<ClinicalLibraryPage />} />
                 <Route path="/clinical-content" element={<ClinicalContentPage />} />
             <Route path="/enhanced-protocols" element={<EnhancedProtocolsPage />} />
             <Route path="/enhanced-assessments" element={<EnhancedAssessmentsPage />} />
             {/* ✅ ÚNICA ROTA DE VÍDEO MANTIDA */}
             <Route path="/free-video-generator" element={<FreeVideoGeneratorReal />} />
-                <Route path="/material-detail" element={LazyElement(MaterialDetailPage)} />
+                <Route path="/material-detail/:id" element={LazyElement(MaterialDetailPage)} />
                 <Route path="/protocols" element={LazyElement(ProtocolsPage, 'Protocolos Clínicos')} />
                 <Route path="/specialty-assessments" element={LazyElement(SpecialtyAssessmentsPage, 'Avaliações Especializadas')} />
                 <Route path="/evaluations" element={LazyElement(SpecialtyAssessmentsPage, 'Avaliações')} />

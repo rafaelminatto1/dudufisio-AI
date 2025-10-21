@@ -293,17 +293,30 @@ class SupabasePatientService {
 
   async searchPatients(query: string): Promise<Patient[]> {
     try {
+      // Sanitizar query para evitar caracteres problemáticos
+      const sanitizedQuery = query.trim().replace(/[%_]/g, '\\$&');
+      
+      if (sanitizedQuery.length < 2) {
+        return [];
+      }
+      
       const { data, error } = await supabase
         .from('patients')
         .select('*')
-        .or(`name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%,cpf.ilike.%${query}%`)
-        .order('name', { ascending: true });
+        .or(`name.ilike.%${sanitizedQuery}%,email.ilike.%${sanitizedQuery}%,phone.ilike.%${sanitizedQuery}%,cpf.ilike.%${sanitizedQuery}%`)
+        .order('name', { ascending: true })
+        .limit(50);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase search error:', error);
+        throw error;
+      }
 
       return (data ?? []).map(this.mapRowToPatient.bind(this));
     } catch (error: unknown) {
-      throw new Error(handleSupabaseError(error));
+      const errorMsg = handleSupabaseError(error);
+      console.error('Erro detalhado em searchPatients:', { query, error, errorMsg });
+      throw new Error(errorMsg);
     }
   }
 

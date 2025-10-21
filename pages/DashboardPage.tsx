@@ -2,7 +2,7 @@
 import React, { useMemo, useEffect, memo } from 'react';
 import PageHeader from '../components/PageHeader';
 import KPICards from '../components/dashboard/KPICards';
-import RevenueChart from '../components/dashboard/RevenueChart';
+import RevenueChart from '../components/financial/RevenueChart';
 import PatientFlowChart from '../components/dashboard/PatientFlowChart';
 import TeamProductivityChart from '../components/dashboard/TeamProductivityChart';
 import AppointmentHeatmap from '../components/dashboard/AppointmentHeatmap';

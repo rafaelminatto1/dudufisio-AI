@@ -1,8 +1,46 @@
-import { Patient, PatientAttachment, PatientSummary, PatientStatus } from '../types';
+import { Patient, PatientAttachment, PatientSummary, PatientStatus, TrackedMetric } from '../types';
 import { db } from './mockDb';
 import { eventService } from './eventService';
 import { supabasePatientService } from './supabase/patientServiceSupabase';
 import { SupabaseConfigManager } from '../lib/supabaseConfig';
+
+// Mock data para desenvolvimento
+const MOCK_PATIENT_TRACKING_DATA = {
+  'patient_001': {
+    id: 'patient_001',
+    name: 'Maria Silva Santos',
+    email: 'maria.silva@email.com',
+    trackedMetrics: [
+      {
+        id: 'metric_001',
+        name: 'Escala de Dor (EVA)',
+        type: 'pain_scale',
+        unit: '',
+        isActive: true,
+        color: '#ef4444',
+        targetValue: 3
+      },
+      {
+        id: 'metric_002',
+        name: 'Amplitude de Movimento',
+        type: 'range_of_motion',
+        unit: 'graus',
+        isActive: true,
+        color: '#3b82f6',
+        targetValue: 90
+      },
+      {
+        id: 'metric_003',
+        name: 'Força Muscular',
+        type: 'muscle_strength',
+        unit: 'kg',
+        isActive: true,
+        color: '#10b981',
+        targetValue: 15
+      }
+    ]
+  }
+};
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -36,31 +74,52 @@ export const getAllPatients = async (): Promise<Patient[]> => {
     return sortedPatients;
 };
 
-export const searchPatients = async (term: string): Promise<PatientSummary[]> => {
-    if (isSupabaseEnabled) {
-        if (term.length < 2) return [];
-        const results = await supabasePatientService.searchPatients(term);
-        return results.map(mapPatientToSummary).slice(0, 10);
-    }
-
-    await delay(300);
+export const searchPatients = async (term: string, retryCount = 0): Promise<PatientSummary[]> => {
     if (term.length < 2) return [];
     
+    const MAX_RETRIES = 2;
+    const TIMEOUT_MS = 10000;
+    
+    if (isSupabaseEnabled) {
+        try {
+            // Implementar timeout
+            const timeoutPromise = new Promise<never>((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout na busca')), TIMEOUT_MS)
+            );
+            
+            const searchPromise = supabasePatientService.searchPatients(term);
+            const results = await Promise.race([searchPromise, timeoutPromise]);
+            
+            return results.map(mapPatientToSummary).slice(0, 10);
+        } catch (error) {
+            console.error('Erro ao buscar pacientes no Supabase:', error);
+            
+            // Retry automático
+            if (retryCount < MAX_RETRIES) {
+                await delay(500 * (retryCount + 1)); // Backoff exponencial
+                return searchPatients(term, retryCount + 1);
+            }
+            
+            // Fallback para busca local nos dados mock
+            console.warn('Fallback para busca local após falhas no Supabase');
+            const lowerTerm = term.toLowerCase();
+            const allPatients = db.getPatients();
+            
+            return allPatients
+                .filter(p => p.name.toLowerCase().includes(lowerTerm) || p.cpf.includes(lowerTerm))
+                .map(mapPatientToSummary)
+                .slice(0, 10);
+        }
+    }
+    
+    // Busca mock (código existente mantido)
+    await delay(300);
     const lowerTerm = term.toLowerCase();
     const allPatients = db.getPatients();
     
     return allPatients
         .filter(p => p.name.toLowerCase().includes(lowerTerm) || p.cpf.includes(lowerTerm))
-        .map(p => ({
-            id: p.id,
-            name: p.name,
-            email: p.email,
-            phone: p.phone,
-            status: p.status,
-            lastVisit: p.lastVisit,
-            avatarUrl: p.avatarUrl,
-            cpf: p.cpf,
-        }))
+        .map(mapPatientToSummary)
         .slice(0, 10); // Return top 10 matches
 };
 
@@ -207,6 +266,11 @@ export const getPatientById = async (id: string): Promise<Patient | undefined> =
     if (isSupabaseEnabled) {
         try {
             const patient = await supabasePatientService.getPatientById(id);
+            // Adicionar dados de tracking mock se disponível
+            const mockData = MOCK_PATIENT_TRACKING_DATA[id as keyof typeof MOCK_PATIENT_TRACKING_DATA];
+            if (mockData && patient) {
+                patient.trackedMetrics = mockData.trackedMetrics;
+            }
             return patient ?? undefined;
         } catch (error) {
             console.warn('[patientService] Falha ao buscar paciente no Supabase, tentando dados mock.', error);
@@ -215,7 +279,13 @@ export const getPatientById = async (id: string): Promise<Patient | undefined> =
     }
 
     await delay(300);
-    return db.getPatientById(id);
+    const patient = db.getPatientById(id);
+    // Adicionar dados de tracking mock se disponível
+    const mockData = MOCK_PATIENT_TRACKING_DATA[id as keyof typeof MOCK_PATIENT_TRACKING_DATA];
+    if (mockData && patient) {
+        patient.trackedMetrics = mockData.trackedMetrics;
+    }
+    return patient;
 };
 
 export const addPatient = async (patientData: Omit<Patient, 'id' | 'lastVisit'>): Promise<Patient> => {

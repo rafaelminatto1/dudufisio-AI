@@ -39,7 +39,7 @@ import AgendaToolbar from '../components/agenda/AgendaToolbar';
 import { waitlistService } from '../services/waitlistService';
 // Removido: listActiveAlerts - não usamos mais alertas
 import DailyView from '../components/agenda/DailyView';
-import ImprovedWeeklyView from '../components/agenda/ImprovedWeeklyView';
+import NewWeeklyView from '../components/agenda/NewWeeklyView';
 import MonthlyView from '../components/agenda/MonthlyView';
 import ListView from '../components/agenda/ListView';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -571,7 +571,7 @@ export default function AgendaPage() {
                 );
             case 'weekly':
                 return (
-                    <ImprovedWeeklyView
+                    <NewWeeklyView
                         {...commonProps}
                         currentDate={currentDate}
                         onSlotClick={handleSlotClick}

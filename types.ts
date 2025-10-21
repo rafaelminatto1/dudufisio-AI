@@ -1306,12 +1306,86 @@ export interface RecentActivity {
 export interface Material {
   id: string;
   name: string;
+  description?: string;
+  type: string;
+  category: MaterialCategory;
+  updatedAt: string;
+  // Campos avançados
+  content?: string; // HTML do Tiptap
+  tags?: string[];
+  linkedMaterials?: string[]; // IDs de materiais relacionados
+  mentions?: MaterialMention[];
+  mediaAttachments?: MediaAttachment[];
+  createdBy?: string; // User ID
+  updatedBy?: string; // User ID
+  version?: number;
+  publishedAt?: string;
+  status?: 'draft' | 'published' | 'archived';
+  // Metadados de colaboração
+  collaborators?: string[]; // User IDs
+  lastEditedAt?: string;
+  editCount?: number;
 }
 
 export interface MaterialCategory {
   id: string;
   name: string;
   materials: Material[];
+}
+
+export interface MaterialMention {
+  id: string;
+  userId: string;
+  userName: string;
+  position: number; // Posição no texto
+  status: 'pending' | 'in_progress' | 'completed';
+  taskId?: string;
+  createdAt: string;
+}
+
+export interface MediaAttachment {
+  id: string;
+  type: 'image' | 'video' | 'gif' | 'document';
+  url: string;
+  thumbnailUrl?: string;
+  filename: string;
+  size: number;
+  alt?: string;
+  caption?: string;
+  position?: number; // Posição no texto
+}
+
+export interface MaterialVersion {
+  id: string;
+  materialId: string;
+  version: number;
+  content: string;
+  changes: string; // Descrição das mudanças
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface MaterialTask {
+  id: string;
+  materialId: string;
+  mentionedUserId: string;
+  mentionedUserName: string;
+  content: string; // Contexto da menção
+  status: 'pending' | 'in_progress' | 'completed';
+  priority: 'low' | 'medium' | 'high';
+  dueDate?: string;
+  assignedAt: string;
+  completedAt?: string;
+  notes?: string;
+}
+
+export interface MaterialLink {
+  id: string;
+  fromMaterialId: string;
+  toMaterialId: string;
+  linkText: string; // Texto do link [[...]]
+  position?: number; // Posição no texto
+  createdAt: string;
 }
 
 // --- Specialty Assessment Types ---

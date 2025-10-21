@@ -9,14 +9,17 @@ import { eventService } from './eventService';
 
 export interface Notification {
   id: string;
-  type: 'reminder' | 'delay' | 'conflict' | 'confirmation_needed';
+  type: 'reminder' | 'delay' | 'conflict' | 'confirmation_needed' | 'material_mention';
   title: string;
   message: string;
-  appointmentId: string;
+  appointmentId?: string;
+  materialId?: string;
+  taskId?: string;
   severity: 'info' | 'warning' | 'error';
   read: boolean;
   createdAt: Date;
   scheduledFor?: Date;
+  metadata?: any;
 }
 
 class NotificationService {

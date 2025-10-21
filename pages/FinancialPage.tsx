@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { LazyLineChart, LazyPieChart, LazyBarChart, LazyAreaChart } from '../components/charts/LazyCharts';
+import RevenueChart from '../components/financial/RevenueChart';
 import useFinancialData, { TimePeriod } from '../hooks/useFinancialData';
 import PageLoader from '../components/ui/PageLoader';
 import {
@@ -560,6 +561,11 @@ const FinancialDashboardPage: React.FC = () => {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-responsive">
+            {/* Novo Componente RevenueChart */}
+            <div className="mb-8">
+              <RevenueChart />
+            </div>
+
             <ResponsiveGrid 
               cols={{ base: 1, lg: 3 }}
               gap="lg"

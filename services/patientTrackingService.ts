@@ -10,6 +10,44 @@ import type {
   EvolutionReportData
 } from '../types';
 
+// Mock data para desenvolvimento
+const MOCK_PATIENT_DATA = {
+  'patient_001': {
+    id: 'patient_001',
+    name: 'Maria Silva Santos',
+    email: 'maria.silva@email.com',
+    trackedMetrics: [
+      {
+        id: 'metric_001',
+        name: 'Escala de Dor (EVA)',
+        type: 'pain_scale',
+        unit: '',
+        isActive: true,
+        color: '#ef4444',
+        targetValue: 3
+      },
+      {
+        id: 'metric_002',
+        name: 'Amplitude de Movimento',
+        type: 'range_of_motion',
+        unit: 'graus',
+        isActive: true,
+        color: '#3b82f6',
+        targetValue: 90
+      },
+      {
+        id: 'metric_003',
+        name: 'Força Muscular',
+        type: 'muscle_strength',
+        unit: 'kg',
+        isActive: true,
+        color: '#10b981',
+        targetValue: 15
+      }
+    ]
+  }
+};
+
 /**
  * Serviço para gerenciamento de observações e avaliações de pacientes
  */

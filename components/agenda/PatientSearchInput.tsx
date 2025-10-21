@@ -58,8 +58,13 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
           setShowDropdown(true);
           setShowQuickRegister(data.length === 0 && debouncedSearchTerm.length >= 3);
         } catch (error) {
-          showToast('Erro ao buscar pacientes.', 'error');
+          console.error('Erro na busca de pacientes:', error);
+          // Mostrar erro mas permitir cadastro rápido
+          setSearchResults([]);
+          setShowQuickRegister(debouncedSearchTerm.length >= 3);
+          showToast('Erro ao buscar pacientes. Você pode cadastrar um novo.', 'warning');
         } finally {
+          // Garantir que loading sempre para
           setIsSearching(false);
         }
     };
@@ -143,7 +148,12 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
             )}
             
             {debouncedSearchTerm.length >= 2 && searchResults.length === 0 && !showQuickRegister && !isSearching && (
-              <div className="p-4 text-center text-sm text-gray-500">Nenhum paciente encontrado.</div>
+              <div className="p-4 text-center">
+                <p className="text-sm text-gray-500">Nenhum paciente encontrado.</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Digite pelo menos 3 caracteres para cadastrar novo paciente.
+                </p>
+              </div>
             )}
           </motion.div>
         )}
