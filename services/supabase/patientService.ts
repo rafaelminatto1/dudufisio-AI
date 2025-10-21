@@ -202,7 +202,7 @@ export class SupabasePatientService {
     }
     
     if (filters?.searchQuery) {
-      query = query.or(`name.ilike.%${filters.searchQuery}%,email.ilike.%${filters.searchQuery}%,cpf.ilike.%${filters.searchQuery}%,phone.ilike.%${filters.searchQuery}%`);
+      query = query.or(`full_name.ilike.%${filters.searchQuery}%,email.ilike.%${filters.searchQuery}%,cpf.ilike.%${filters.searchQuery}%,phone.ilike.%${filters.searchQuery}%`);
     }
     
     if (filters?.gender && filters.gender.length > 0) {

@@ -2,6 +2,7 @@ import React, { memo, useMemo, useCallback } from 'react';
 import { EnrichedAppointment, AppointmentStatus } from '../types';
 import { cn } from '../lib/utils';
 import { Repeat } from 'lucide-react';
+import Tooltip from './ui/tooltip';
 
 interface AppointmentCardProps {
   appointment: EnrichedAppointment;
@@ -77,7 +78,17 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, startHou
       style={{ top: `${top}px`, height: `${height}px`, minHeight: '20px' }}
     >
       <div className="flex-grow min-h-0">
-        <p className={cn("font-bold truncate text-sm", isCancelled && "line-through")}>{appointment.patientName}</p>
+        <Tooltip 
+          content={`${appointment.patientName}${appointment.therapistName ? ` - ${appointment.therapistName}` : ''}`}
+          side="top"
+          delayDuration={200}
+        >
+          <p className={cn("font-bold text-sm min-w-0", isCancelled && "line-through")}>
+            <span className="truncate block">
+              {appointment.patientName.split(' ').slice(0, 2).join(' ')}
+            </span>
+          </p>
+        </Tooltip>
         <p className="truncate text-xs opacity-90 font-medium">{appointment.type}</p>
         {appointment.therapistName && (
           <p className="truncate text-xs opacity-75 mt-0.5">{appointment.therapistName}</p>

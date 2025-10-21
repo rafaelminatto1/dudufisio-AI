@@ -72,20 +72,35 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
   }, [debouncedSearchTerm, showToast]);
   
   const handleQuickRegister = async () => {
-    if (!searchTerm || searchTerm.length < 3) return;
+    if (!searchTerm || searchTerm.length < 3) {
+      showToast('Nome deve ter pelo menos 3 caracteres', 'error');
+      return;
+    }
+    
     setIsRegistering(true);
+    console.log('🔄 Iniciando cadastro rápido:', searchTerm);
+    
     try {
       const newPatient = await patientService.quickAddPatient(searchTerm.trim());
+      console.log('✅ Paciente criado:', newPatient);
+      
+      // Garantir que o paciente é selecionado
+      console.log('🔄 Chamando onSelectPatient com:', newPatient);
       onSelectPatient(newPatient);
       setSearchTerm(newPatient.name);
       setShowDropdown(false);
-      showToast(`Paciente "${newPatient.name}" cadastrado!`, 'success');
+      setShowQuickRegister(false);
+      
+      showToast(`Paciente "${newPatient.name}" cadastrado com sucesso!`, 'success');
+      
       if (inputRef.current) {
         inputRef.current.classList.add('animate-pulse-green');
         setTimeout(() => inputRef.current?.classList.remove('animate-pulse-green'), 1000);
       }
-    } catch (error) {
-      showToast('Erro ao cadastrar paciente.', 'error');
+    } catch (error: any) {
+      console.error('❌ Erro ao cadastrar paciente:', error);
+      const errorMessage = error?.message || 'Erro ao cadastrar paciente. Tente novamente.';
+      showToast(errorMessage, 'error');
     } finally {
       setIsRegistering(false);
     }

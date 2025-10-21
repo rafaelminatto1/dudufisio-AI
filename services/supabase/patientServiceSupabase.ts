@@ -235,7 +235,7 @@ class SupabasePatientService {
       if (q && q.trim()) {
         const term = q.trim();
         query = query.or(
-          `name.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`
+          `full_name.ilike.%${term}%,email.ilike.%${term}%,phone.ilike.%${term}%`
         );
       }
 
@@ -303,8 +303,8 @@ class SupabasePatientService {
       const { data, error } = await supabase
         .from('patients')
         .select('*')
-        .or(`name.ilike.%${sanitizedQuery}%,email.ilike.%${sanitizedQuery}%,phone.ilike.%${sanitizedQuery}%,cpf.ilike.%${sanitizedQuery}%`)
-        .order('name', { ascending: true })
+        .or(`full_name.ilike.%${sanitizedQuery}%,email.ilike.%${sanitizedQuery}%,phone.ilike.%${sanitizedQuery}%,cpf.ilike.%${sanitizedQuery}%`)
+        .order('full_name', { ascending: true })
         .limit(50);
 
       if (error) {

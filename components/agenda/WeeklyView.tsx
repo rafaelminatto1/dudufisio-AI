@@ -100,7 +100,7 @@ const ImprovedAppointmentCard: React.FC<{
         getAppointmentStyle(appointment.therapistColor),
         isBeingDragged && 'opacity-50 ring-2 ring-sky-400 scale-105'
       )}
-      style={{ top: `${top}px`, height: `${height}px`, zIndex: 20 }}
+      style={{ top: `${top}px`, height: `${height}px`, zIndex: 10 }}
     >
       <div className="flex-grow min-h-0 flex flex-col">
         <div className="font-semibold text-sm truncate leading-tight">

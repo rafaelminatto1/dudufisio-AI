@@ -13,6 +13,7 @@ import { Badge } from '../ui/badge';
 import { EnrichedAppointment, Therapist } from '../../types';
 import { cn } from '../../lib/utils';
 import { ChevronLeft, ChevronRight, AlertCircle, CheckCircle } from 'lucide-react';
+import Tooltip from '../ui/tooltip';
 
 interface MonthlyViewProps {
   currentDate: Date;
@@ -99,7 +100,7 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
             ))}
           </div>
 
-          <div className="grid grid-cols-7" style={{ minHeight: '600px' }}>
+          <div className="grid grid-cols-7 gap-0.5 sm:gap-1" style={{ minHeight: '600px' }}>
             {calendarDays.map((date) => {
               const dayAppointments = getAppointmentsForDay(date);
               const isCurrentMonth = date >= monthStart && date <= monthEnd;
@@ -111,7 +112,7 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
                 <div
                   key={date.toISOString()}
                   className={cn(
-                    "p-2 border-r border-b cursor-pointer transition-colors min-h-[100px]",
+                    "p-1 sm:p-2 border-r border-b cursor-pointer transition-colors min-h-[80px] sm:min-h-[100px]",
                     !isCurrentMonth && "text-slate-400 bg-slate-50/50",
                     isCurrentDay && "bg-sky-50 border-sky-200",
                     isHovered && "bg-blue-50 border-blue-200",
@@ -156,20 +157,27 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
 
                   <div className="space-y-1">
                     {dayAppointments.slice(0, 3).map((appointment) => (
-                      <div
+                      <Tooltip
                         key={appointment.id}
-                        className={cn(
-                          "text-xs p-1 rounded text-white truncate cursor-pointer hover:opacity-80 transition-opacity",
-                          `bg-${appointment.therapistColor}-500`
-                        )}
-                        title={`${appointment.patientName} - ${format(appointment.startTime, 'HH:mm')}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onAppointmentClick?.(appointment);
-                        }}
+                        content={`${appointment.patientName} - ${format(appointment.startTime, 'HH:mm')}${appointment.therapistName ? ` (${appointment.therapistName})` : ''}`}
+                        side="top"
+                        delayDuration={200}
                       >
-                        {format(appointment.startTime, 'HH:mm')} {appointment.patientName}
-                      </div>
+                        <div
+                          className={cn(
+                            "text-xs p-1 rounded text-white cursor-pointer hover:opacity-80 transition-opacity min-w-0",
+                            `bg-${appointment.therapistColor}-500`
+                          )}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onAppointmentClick?.(appointment);
+                          }}
+                        >
+                          <div className="truncate">
+                            {format(appointment.startTime, 'HH:mm')} {appointment.patientName.split(' ').slice(0, 2).join(' ')}
+                          </div>
+                        </div>
+                      </Tooltip>
                     ))}
                     {dayAppointments.length > 3 && (
                       <div className="text-xs text-slate-500 font-medium">

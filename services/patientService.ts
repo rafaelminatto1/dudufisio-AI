@@ -124,24 +124,41 @@ export const searchPatients = async (term: string, retryCount = 0): Promise<Pati
 };
 
 export const quickAddPatient = async (name: string): Promise<Patient> => {
+    if (!name || name.trim().length < 3) {
+        throw new Error('Nome deve ter pelo menos 3 caracteres');
+    }
+    
     if (isSupabaseEnabled) {
-        const quickPatient: Omit<Patient, 'id'> = {
-            name: name.trim(),
-            cpf: '',
-            birthDate: '',
-            phone: '',
-            email: '',
-            emergencyContact: { name: '', phone: '' },
-            address: { street: '', city: '', state: '', zip: '' },
-            status: PatientStatus.Active,
-            lastVisit: new Date().toISOString(),
-            registrationDate: new Date().toISOString(),
-            avatarUrl: '',
-            consentGiven: true,
-            whatsappConsent: 'opt-out',
-        };
+        try {
+            // Gerar telefone temporário para satisfazer constraint NOT NULL
+            const tempPhone = `temp_${Date.now()}`;
+            
+            const quickPatient: Omit<Patient, 'id'> = {
+                name: name.trim(),
+                cpf: '',
+                birthDate: '',
+                phone: tempPhone, // Adicionar telefone temporário
+                email: '',
+                emergencyContact: { name: '', phone: '' },
+                address: { street: '', city: '', state: '', zip: '' },
+                status: PatientStatus.Active,
+                lastVisit: new Date().toISOString(),
+                registrationDate: new Date().toISOString(),
+                avatarUrl: '',
+                consentGiven: true,
+                whatsappConsent: 'opt-out',
+            };
 
-        return supabasePatientService.createPatient(quickPatient);
+            console.log('📝 Cadastrando paciente rápido:', quickPatient);
+            const createdPatient = await supabasePatientService.createPatient(quickPatient);
+            console.log('✅ Paciente cadastrado com sucesso:', createdPatient);
+            return createdPatient;
+        } catch (error: any) {
+            console.error('❌ Erro ao criar paciente no Supabase:', error);
+            // FIX: Garantir que a mensagem de erro seja extraída corretamente
+            const errorMessage = error?.message || error?.toString() || 'Erro desconhecido ao cadastrar paciente';
+            throw new Error(`Falha ao cadastrar paciente: ${errorMessage}`);
+        }
     }
 
     await delay(500);

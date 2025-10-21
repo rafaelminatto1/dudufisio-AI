@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { EnrichedAppointment, Therapist } from '../../types';
 import AppointmentCard from '../AppointmentCard';
 import { cn } from '../../lib/utils';
+import Tooltip from '../ui/tooltip';
 
 interface DailyViewProps {
   selectedDate: Date;
@@ -89,19 +90,21 @@ const DailyView: React.FC<DailyViewProps> = ({
         </p>
       </div>
 
-      <div className="flex gap-4 h-full overflow-auto">
+      <div className="flex gap-2 sm:gap-4 h-full overflow-auto">
         {therapists.map((therapist) => {
           const therapistAppointments = dayAppointments.filter(app => app.therapistId === therapist.id);
 
           return (
-            <Card key={therapist.id} className="flex-1 min-w-[280px]">
+            <Card key={therapist.id} className="flex-1 min-w-[240px] sm:min-w-[280px] lg:min-w-[320px]">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
+                <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                   <div
                     className={cn("w-3 h-3 rounded-full", `bg-${therapist.color}-500`)}
                   />
-                  {therapist.name}
-                  <span className="text-sm font-normal text-slate-500">
+                  <Tooltip content={therapist.name} side="top">
+                    <span className="truncate">{therapist.name}</span>
+                  </Tooltip>
+                  <span className="text-xs sm:text-sm font-normal text-slate-500 flex-shrink-0">
                     ({therapistAppointments.length})
                   </span>
                 </CardTitle>

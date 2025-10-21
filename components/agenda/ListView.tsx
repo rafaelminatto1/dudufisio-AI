@@ -7,6 +7,7 @@ import { Button } from '../ui/button';
 import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
 import { Filter, Calendar, Clock, User, DollarSign } from 'lucide-react';
+import Tooltip from '../ui/tooltip';
 
 interface ListViewProps {
   appointments: EnrichedAppointment[];
@@ -201,15 +202,23 @@ const ListView: React.FC<ListViewProps> = ({
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-lg text-slate-900">
-                        {appointment.patientName}
-                      </h3>
+                      <Tooltip 
+                        content={`${appointment.patientName}${appointment.therapistName ? ` - ${appointment.therapistName}` : ''}`}
+                        side="top"
+                        delayDuration={200}
+                      >
+                        <h3 className="font-semibold text-base sm:text-lg text-slate-900 min-w-0">
+                          <span className="truncate block">
+                            {appointment.patientName.split(' ').slice(0, 2).join(' ')}
+                          </span>
+                        </h3>
+                      </Tooltip>
                       <Badge className={cn("text-xs", getStatusColor(appointment.status))}>
                         {getStatusLabel(appointment.status)}
                       </Badge>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-slate-600">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 text-sm text-slate-600">
                       <div className="flex items-center gap-2">
                         <Calendar size={16} />
                         <span>{format(appointment.startTime, "d 'de' MMM, yyyy", { locale: ptBR })}</span>

@@ -10,8 +10,8 @@ import { Badge } from '../ui/badge';
 import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
 import AppointmentContextMenu from './AppointmentContextMenu';
-import AppointmentTooltip from './AppointmentTooltip';
 import HolidayIndicator from './HolidayIndicator';
+import Tooltip from '../ui/tooltip';
 
 interface NewWeeklyViewProps {
   currentDate: Date;
@@ -136,61 +136,69 @@ const AppointmentCard: React.FC<{
   };
 
   return (
-    <AppointmentTooltip appointment={appointment}>
-      <div
-        onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
-        onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); onRightClick(appointment, e); }}
-        draggable="true"
-        onDragStart={(e) => onDragStart(e, appointment)}
-        onDragEnd={onDragEnd}
-        className={cn(
-          "absolute rounded-lg cursor-pointer transition-all duration-200 overflow-hidden flex flex-col border-2 shadow-lg hover:shadow-xl hover:scale-[1.02] font-semibold",
-          getStatusStyle(appointment.status),
-          isBeingDragged && 'opacity-50 ring-4 ring-blue-400 scale-105',
-          appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse'
-        )}
-        data-testid="appointment-block"
-        style={{
-          top: `${top}px`,
-          height: `${height}px`,
-          left: `${therapistIndex * 33.33}%`,
-          width: `${33.33}%`,
-          zIndex: 50,
-          borderLeftColor: therapistColor.border,
-          borderLeftWidth: '4px',
-          backgroundColor: appointment.status === AppointmentStatus.Completed ? '#F0FDF4' : 
-                          appointment.status === AppointmentStatus.Canceled ? '#F9FAFB' :
-                          appointment.status === AppointmentStatus.NoShow ? '#FFF7ED' : '#FFFFFF',
-          opacity: isBeingDragged ? 0.5 : 1
-        }}
-      >
-        <div className="flex-grow min-h-0 flex flex-col justify-between p-2">
-          <div className="flex items-center justify-between gap-1 mb-1">
-            <div className="font-bold text-sm leading-tight truncate flex-1 text-slate-900">
-              {appointment.patientName.split(' ')[0] || appointment.patientName}
+    <div
+      onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
+      onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); onRightClick(appointment, e); }}
+      draggable="true"
+      onDragStart={(e) => onDragStart(e, appointment)}
+      onDragEnd={onDragEnd}
+      className={cn(
+        "absolute rounded-lg cursor-pointer transition-all duration-200 overflow-hidden flex flex-col border-2 shadow-md hover:shadow-lg hover:scale-[1.01] font-semibold",
+        getStatusStyle(appointment.status),
+        isBeingDragged && 'opacity-50 ring-4 ring-blue-400 scale-105',
+        appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse',
+        "hover:border-opacity-60"
+      )}
+      data-testid="appointment-block"
+      style={{
+        top: `${top}px`,
+        height: `${height}px`,
+        left: `calc(${therapistIndex * 33.33}% + ${therapistIndex * 0.125}rem)`,
+        width: `calc(33.33% - 0.25rem)`,
+        zIndex: 10,
+        minWidth: '140px',
+        borderLeftColor: therapistColor.border,
+        borderLeftWidth: '4px',
+        backgroundColor: appointment.status === AppointmentStatus.Completed ? '#F0FDF4' : 
+                        appointment.status === AppointmentStatus.Canceled ? '#F9FAFB' :
+                        appointment.status === AppointmentStatus.NoShow ? '#FFF7ED' : '#FFFFFF',
+        opacity: isBeingDragged ? 0.5 : 1
+      }}
+    >
+      <div className="flex-grow min-h-0 flex flex-col justify-between p-2">
+        <div className="flex items-center justify-between gap-1 mb-1">
+          <Tooltip 
+            content={`${appointment.patientName}${appointment.therapistName ? ` - ${appointment.therapistName}` : ''}`}
+            side="top"
+            delayDuration={200}
+          >
+            <div className="font-bold text-sm leading-tight flex-1 text-slate-900 min-w-0">
+              <div className="truncate font-semibold">
+                {appointment.patientName.split(' ').slice(0, 2).join(' ')}
+              </div>
             </div>
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              {appointment.hasConflict && (
-                <span className="text-orange-600 text-base" title={appointment.conflictReason}>
-                  ⚠️
-                </span>
-              )}
-              {appointment.paymentStatus === 'paid' && (
-                <div className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0 shadow-sm"></div>
-              )}
-            </div>
+          </Tooltip>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            {appointment.hasConflict && (
+              <span className="text-orange-600 text-base" title={appointment.conflictReason}>
+                ⚠️
+              </span>
+            )}
+            {appointment.paymentStatus === 'paid' && (
+              <div className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0 shadow-sm"></div>
+            )}
           </div>
-          <div className="flex items-center justify-between">
-            <div className="text-xs leading-tight font-mono text-slate-700 font-bold">
-              {format(appointment.startTime, 'HH:mm')}
-            </div>
-            <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
-              {appointment.type.substring(0, 3)}
-            </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="text-xs leading-tight font-mono text-slate-700 font-bold">
+            {format(appointment.startTime, 'HH:mm')}
+          </div>
+          <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
+            {appointment.type.substring(0, 3)}
           </div>
         </div>
       </div>
-    </AppointmentTooltip>
+    </div>
   );
 };
 
@@ -236,19 +244,19 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header com informações dos dias */}
       <div className="mb-4">
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-6 gap-0.5 sm:gap-1 md:gap-2 lg:gap-3">
           {weekDays.map(day => {
             const dayAppointments = appointments.filter(app => isSameDay(app.startTime, day));
             return (
               <Card key={day.toISOString()} className={cn(
-                "p-3 transition-all duration-200 hover:shadow-md",
+                "p-2 sm:p-3 transition-all duration-200 hover:shadow-md",
                 isToday(day)
                   ? "border-2 border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-md"
                   : "border border-slate-200 bg-white hover:border-slate-300"
               )}>
                 <div className="text-center">
                   <div className={cn(
-                    "text-lg font-bold mb-1",
+                    "text-sm sm:text-lg font-bold mb-1",
                     isToday(day) ? "text-blue-700" : "text-slate-800"
                   )}>
                     {format(day, 'd')}
@@ -281,7 +289,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
       {/* Grid principal do calendário */}
       <div className="flex-1 flex overflow-hidden rounded-lg shadow-lg border border-slate-200">
         {/* Coluna de horários */}
-        <div className="w-20 flex-shrink-0 border-r-2 border-slate-300 bg-gradient-to-b from-slate-50 to-slate-100">
+        <div className="w-16 sm:w-20 flex-shrink-0 border-r-2 border-slate-300 bg-gradient-to-b from-slate-50 to-slate-100">
           <div className="h-12 text-center text-sm font-bold text-slate-700 py-3 bg-gradient-to-r from-slate-200 to-slate-300 shadow-sm border-b border-slate-300">
             Hora
           </div>
@@ -296,7 +304,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
         </div>
 
         {/* Grid dos dias - Design sólido sem transparência */}
-        <div className="flex-1 grid grid-cols-6 bg-slate-100 overflow-auto">
+        <div className="flex-1 grid grid-cols-6 bg-slate-100 overflow-auto lg:gap-1 xl:gap-2">
           {weekDays.map((day) => {
             const dayAppointments = appointments.filter(app => isSameDay(app.startTime, day));
 
@@ -323,7 +331,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                 {/* Área de slots para cada terapeuta */}
                 <div className="relative" style={{ height: `${(END_HOUR - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }}>
                   {/* Grid de terapeutas */}
-                  <div className="absolute inset-0 grid grid-cols-3">
+                  <div className="absolute inset-0 grid grid-cols-3 gap-0.5 lg:gap-1">
                     {therapists.slice(0, 3).map((therapist, therapistIndex) => (
                       <div
                         key={therapist.id}

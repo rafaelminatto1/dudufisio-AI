@@ -10,8 +10,8 @@ import { Badge } from '../ui/badge';
 import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
 import AppointmentContextMenu from './AppointmentContextMenu';
-import AppointmentTooltip from './AppointmentTooltip';
 import HolidayIndicator from './HolidayIndicator';
+import Tooltip from '../ui/tooltip';
 
 interface ImprovedWeeklyViewProps {
   currentDate: Date;
@@ -188,59 +188,67 @@ const MultiTherapistAppointmentCard: React.FC<{
   };
 
   return (
-    <AppointmentTooltip appointment={appointment}>
-      <div
-        onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
-        onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); onRightClick(appointment, e); }}
-        draggable="true"
-        onDragStart={(e) => onDragStart(e, appointment)}
-        onDragEnd={onDragEnd}
-        className={cn(
-          "absolute p-2 rounded-lg cursor-pointer transition-all overflow-hidden flex flex-col border-l-4 shadow-md hover:shadow-lg hover:scale-[1.02] font-semibold border border-slate-200",
-          getAppointmentStyle(appointment.therapistColor, appointment.status),
-          isBeingDragged && 'opacity-50 ring-4 ring-blue-400 scale-105',
-          appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse'
-        )}
-        data-testid="appointment-block"
-        style={{
-          top: `${top}px`,
-          height: `${height}px`,
-          width: `${width}%`,
-          left: `${leftOffset}%`,
-          zIndex: 50,
-          backgroundColor: appointment.status === AppointmentStatus.Completed ? '#f0fdf4' : 
-                          appointment.status === AppointmentStatus.Canceled ? '#f3f4f6' :
-                          appointment.status === AppointmentStatus.NoShow ? '#fff7ed' : '#ffffff',
-          opacity: isBeingDragged ? 0.5 : 1
-        }}
-      >
-        <div className="flex-grow min-h-0 flex flex-col justify-between">
-          <div className="flex items-center justify-between gap-1 mb-1">
-            <div className="font-bold text-sm leading-tight truncate flex-1 text-slate-900" data-testid="appointment-text">
-              {appointment.patientName.split(' ')[0] || appointment.patientName}
+    <div
+      onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
+      onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); onRightClick(appointment, e); }}
+      draggable="true"
+      onDragStart={(e) => onDragStart(e, appointment)}
+      onDragEnd={onDragEnd}
+      className={cn(
+        "absolute p-2 rounded-lg cursor-pointer transition-all overflow-hidden flex flex-col border-l-4 shadow-sm hover:shadow-md hover:scale-[1.01] font-semibold border border-slate-200",
+        getAppointmentStyle(appointment.therapistColor, appointment.status),
+        isBeingDragged && 'opacity-50 ring-4 ring-blue-400 scale-105',
+        appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse',
+        "hover:border-opacity-60"
+      )}
+      data-testid="appointment-block"
+      style={{
+        top: `${top}px`,
+        height: `${height}px`,
+        width: `${width}%`,
+        left: `${leftOffset}%`,
+        zIndex: 10,
+        minWidth: '140px',
+        backgroundColor: appointment.status === AppointmentStatus.Completed ? '#f0fdf4' : 
+                        appointment.status === AppointmentStatus.Canceled ? '#f3f4f6' :
+                        appointment.status === AppointmentStatus.NoShow ? '#fff7ed' : '#ffffff',
+        opacity: isBeingDragged ? 0.5 : 1
+      }}
+    >
+      <div className="flex-grow min-h-0 flex flex-col justify-between">
+        <div className="flex items-center justify-between gap-1 mb-1">
+          <Tooltip 
+            content={`${appointment.patientName}${appointment.therapistName ? ` - ${appointment.therapistName}` : ''}`}
+            side="top"
+            delayDuration={200}
+          >
+            <div className="font-bold text-sm leading-tight flex-1 text-slate-900 min-w-0" data-testid="appointment-text">
+              <div className="truncate">
+                {appointment.patientName.split(' ').slice(0, 2).join(' ')}
+              </div>
             </div>
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              {appointment.hasConflict && (
-                <span className="text-orange-600 text-base" title={appointment.conflictReason}>
-                  ⚠️
-                </span>
-              )}
-              {appointment.paymentStatus === 'paid' && (
-                <div className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0 shadow-sm"></div>
-              )}
-            </div>
+          </Tooltip>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            {appointment.hasConflict && (
+              <span className="text-orange-600 text-base" title={appointment.conflictReason}>
+                ⚠️
+              </span>
+            )}
+            {appointment.paymentStatus === 'paid' && (
+              <div className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0 shadow-sm"></div>
+            )}
           </div>
-          <div className="flex items-center justify-between">
-            <div className="text-xs leading-tight font-mono text-slate-700 font-bold">
-              {format(appointment.startTime, 'HH:mm')}
-            </div>
-            <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
-              {appointment.type.substring(0, 3)}
-            </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="text-xs leading-tight font-mono text-slate-700 font-bold">
+            {format(appointment.startTime, 'HH:mm')}
+          </div>
+          <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
+            {appointment.type.substring(0, 3)}
           </div>
         </div>
       </div>
-    </AppointmentTooltip>
+    </div>
   );
 };
 
@@ -297,19 +305,19 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header with day info - Modern design with gradients */}
       <div className="mb-4">
-        <div className="grid grid-cols-6 gap-1 ml-2">
+        <div className="grid grid-cols-6 gap-0.5 sm:gap-1 md:gap-2 lg:gap-3 ml-2">
           {weekDays.map(day => {
             const dayAppointments = appointments.filter(app => isSameDay(app.startTime, day));
             return (
               <Card key={day.toISOString()} className={cn(
-                "p-3 transition-all duration-200 hover:shadow-md",
+                "p-2 sm:p-3 transition-all duration-200 hover:shadow-md",
                 isToday(day)
                   ? "border-2 border-fisio-primary-DEFAULT bg-gradient-to-br from-fisio-primary-50 to-fisio-primary-100 shadow-md"
                   : "border border-fisio-neutral-200 bg-gradient-to-br from-white to-fisio-neutral-50 hover:border-fisio-neutral-300"
               )} data-testid="day-header">
                 <div className="text-center">
                   <div className={cn(
-                    "text-base font-bold mb-1",
+                    "text-sm sm:text-base font-bold mb-1",
                     isToday(day) ? "text-fisio-primary-700" : "text-fisio-neutral-800"
                   )}>
                     {format(day, 'd')}
@@ -342,7 +350,7 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
       {/* Main calendar grid */}
       <div className="flex-1 flex overflow-hidden rounded-lg shadow-md">
         {/* Time column - Modern design */}
-        <div className="w-20 flex-shrink-0 border-r-2 border-slate-300 bg-gradient-to-b from-slate-50 to-slate-100 ml-2">
+        <div className="w-16 sm:w-20 flex-shrink-0 border-r-2 border-slate-300 bg-gradient-to-b from-slate-50 to-slate-100 ml-2">
           <div className="h-10 text-center text-xs font-bold text-slate-700 py-2 bg-gradient-to-r from-slate-200 to-slate-300 shadow-sm">
             Hora
           </div>
@@ -357,7 +365,7 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
         </div>
 
         {/* Days grid - Modern design with better contrast */}
-        <div className="flex-1 grid grid-cols-6 gap-1 bg-slate-200 overflow-auto scroll-smooth ml-2 p-1 rounded-r-lg" data-testid="calendar-grid">
+        <div className="flex-1 grid grid-cols-6 gap-1 lg:gap-2 xl:gap-3 bg-slate-200 overflow-auto scroll-smooth ml-2 p-1 rounded-r-lg" data-testid="calendar-grid">
           {weekDays.map((day) => {
             const dayAppointments = appointments.filter(app => isSameDay(app.startTime, day));
             const groupedAppointments = groupOverlappingAppointments(dayAppointments);
@@ -382,7 +390,7 @@ const ImprovedWeeklyView: React.FC<ImprovedWeeklyViewProps> = ({
                 {/* Time slots with improved drop zones */}
                 <div className="relative" style={{ height: `${(END_HOUR - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }}>
                   {/* Drop zones para cada terapeuta */}
-                  <div className="absolute inset-0 grid grid-cols-3">
+                  <div className="absolute inset-0 grid grid-cols-3 gap-0.5 lg:gap-1">
                     {therapists.slice(0, 3).map((therapist, therapistIndex) => (
                       <div
                         key={therapist.id}

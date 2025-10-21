@@ -36,6 +36,11 @@ interface AppointmentFormModalProps {
 
 const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onClose, onSave, onDelete: _onDelete, appointment: _appointment, appointmentToEdit, initialData, patients = [], therapists = [], allAppointments = [] }) => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | PatientSummary | null>(null);
+  
+  // Log para debug
+  useEffect(() => {
+    console.log('🔍 AppointmentFormModal - selectedPatient atualizado:', selectedPatient);
+  }, [selectedPatient]);
   const [appointmentType, setAppointmentType] = useState(AppointmentType.Session);
   const [duration, setDuration] = useState(60);
   const [notes, setNotes] = useState('');
@@ -115,11 +120,15 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   }, [onClose, isOpen]);
 
   const handleSaveClick = async () => {
+    console.log('🔍 Validando agendamento - Paciente selecionado:', selectedPatient);
+    
     if (!selectedPatient) {
+      console.warn('⚠️ Nenhum paciente selecionado');
       showToast('Selecione um paciente para agendar.', 'error');
       return;
     }
     
+    console.log('✅ Paciente válido, iniciando salvamento');
     setIsSaving(true);
     
     const startTime = new Date(slotDate);
@@ -422,7 +431,11 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           <button
             onClick={handleSaveClick}
             disabled={!selectedPatient || isSaving}
-            className="px-4 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center text-sm"
+            className={`px-4 py-2 rounded-md transition flex items-center text-sm ${
+              !selectedPatient || isSaving
+                ? 'opacity-50 cursor-not-allowed bg-gray-400 text-gray-200'
+                : 'bg-sky-500 text-white hover:bg-sky-600'
+            }`}
           >
             <Save className="w-4 h-4 mr-2"/>
             {isSaving ? 'Salvando...' : 'Confirmar Agendamento'}

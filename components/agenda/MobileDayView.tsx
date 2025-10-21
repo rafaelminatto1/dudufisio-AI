@@ -49,7 +49,7 @@ const MobileDayView: React.FC<MobileDayViewProps> = ({
       {hours.map((hour) => (
         <div key={hour} className="space-y-2">
           {/* Hour Header */}
-          <div className="sticky top-16 z-10 py-2 bg-white border-b border-slate-200">
+          <div className="py-2 bg-white border-b border-slate-200">
             <h3 className="text-sm font-semibold text-slate-700">{hour}</h3>
           </div>
 

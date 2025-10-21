@@ -609,7 +609,7 @@ export default function AgendaPage() {
     return (
         <main className="flex flex-col h-full bg-slate-50/50" data-testid="agenda-page" role="main">
             {/* Compact Professional Header */}
-            <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
+            <header className="bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
                 <ResponsiveContainer className="py-3">
                     <div className="flex flex-col space-y-3">
                         {/* Top Row: Title and Navigation */}
