@@ -196,7 +196,7 @@ const MultiTherapistAppointmentCard: React.FC<{
         onDragStart={(e) => onDragStart(e, appointment)}
         onDragEnd={onDragEnd}
         className={cn(
-          "absolute p-2 rounded-lg cursor-pointer transition-all overflow-hidden flex flex-col border-l-4 shadow-md hover:shadow-lg hover:scale-[1.02] font-semibold",
+          "absolute p-2 rounded-lg cursor-pointer transition-all overflow-hidden flex flex-col border-l-4 shadow-md hover:shadow-lg hover:scale-[1.02] font-semibold border border-slate-200",
           getAppointmentStyle(appointment.therapistColor, appointment.status),
           isBeingDragged && 'opacity-50 ring-4 ring-blue-400 scale-105',
           appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse'
@@ -207,7 +207,11 @@ const MultiTherapistAppointmentCard: React.FC<{
           height: `${height}px`,
           width: `${width}%`,
           left: `${leftOffset}%`,
-          zIndex: 50
+          zIndex: 50,
+          backgroundColor: appointment.status === AppointmentStatus.Completed ? '#f0fdf4' : 
+                          appointment.status === AppointmentStatus.Canceled ? '#f3f4f6' :
+                          appointment.status === AppointmentStatus.NoShow ? '#fff7ed' : '#ffffff',
+          opacity: isBeingDragged ? 0.5 : 1
         }}
       >
         <div className="flex-grow min-h-0 flex flex-col justify-between">
