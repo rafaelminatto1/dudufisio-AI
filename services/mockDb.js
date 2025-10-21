@@ -19,15 +19,23 @@ export const db = {
         patients = patients.map(p => p.id === updatedPatient.id ? updatedPatient : p);
     },
     // Appointments
-    getAppointments: () => [...appointments],
+    getAppointments: () => {
+        console.log('📋 mockDb.getAppointments - Retornando agendamentos:', appointments);
+        return [...appointments];
+    },
     saveAppointment: (appointmentData) => {
+        console.log('💾 mockDb.saveAppointment - Dados recebidos:', appointmentData);
         const index = appointments.findIndex(a => a.id === appointmentData.id);
         if (index > -1) {
+            console.log('🔄 Atualizando agendamento existente no índice:', index);
             appointments[index] = appointmentData;
         }
         else {
+            console.log('➕ Adicionando novo agendamento');
             appointments.push(appointmentData);
         }
+        console.log('📋 Total de agendamentos após salvar:', appointments.length);
+        console.log('📋 Agendamentos atuais:', appointments);
     },
     deleteAppointment: (id) => {
         appointments = appointments.filter(a => a.id !== id);

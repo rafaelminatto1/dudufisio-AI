@@ -20,6 +20,16 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
   
   const { patients, therapists } = useData();
   
+  const clearCache = useCallback(() => {
+      if (!startDate || !endDate) return;
+      const cacheKey = `appointments_cache_${startDate.toISOString()}_${endDate.toISOString()}`;
+      try {
+          sessionStorage.removeItem(cacheKey);
+      } catch (e) {
+          console.error("Failed to clear appointment cache", e);
+      }
+  }, [startDate, endDate]);
+
   const fetchAppointments = useCallback(async () => {
       if (!startDate || !endDate) {
           setIsLoading(false);
@@ -50,7 +60,9 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
 
       // Revalidate: Always fetch fresh data from the network.
       try {
+          console.log('🔄 Buscando agendamentos do serviço...');
           const fetchedAppointments = await appointmentService.getAppointments(startDate, endDate);
+          console.log('📋 Agendamentos recebidos:', fetchedAppointments);
           setAppointments(fetchedAppointments); // Update state with the fresh data.
           setError(null);
           
@@ -74,12 +86,18 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
   useEffect(() => {
       fetchAppointments();
       
-      eventService.on('appointments:changed', fetchAppointments);
+      const handleAppointmentsChanged = () => {
+          console.log('📢 Evento appointments:changed recebido, limpando cache e refazendo fetch');
+          clearCache();
+          fetchAppointments();
+      };
+      
+      eventService.on('appointments:changed', handleAppointmentsChanged);
       
       return () => {
-          eventService.off('appointments:changed', fetchAppointments);
+          eventService.off('appointments:changed', handleAppointmentsChanged);
       };
-  }, [fetchAppointments]);
+  }, [fetchAppointments, clearCache]);
 
   const enrichedAppointments = useMemo((): EnrichedAppointment[] => {
     const patientMap = new Map<string, Patient>(patients.map(p => [p.id, p]));

@@ -67,7 +67,15 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   });
   
   const slotDate = useMemo(() => appointmentToEdit?.startTime || initialData?.date || new Date(), [appointmentToEdit, initialData]);
-  const [slotTime, setSlotTime] = useState(useMemo(() => format(slotDate, 'HH:mm'), [slotDate]));
+  const [slotTime, setSlotTime] = useState(useMemo(() => {
+    if (appointmentToEdit) {
+      return format(appointmentToEdit.startTime, 'HH:mm');
+    }
+    if (initialData?.date) {
+      return format(initialData.date, 'HH:mm');
+    }
+    return format(new Date(), 'HH:mm');
+  }, [appointmentToEdit, initialData]));
   const [therapistId, setTherapistId] = useState(appointmentToEdit?.therapistId || initialData?.therapistId || therapists[0]?.id || '');
   
   useEffect(() => {
@@ -151,8 +159,8 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       observations: notes,
       value: appointmentToEdit?.value || 120,
       paymentStatus: appointmentToEdit?.paymentStatus || 'pending',
-      recurrenceRule: recurrenceRule || { frequency: 'weekly', days: [], until: '' },
-      seriesId: recurrenceRule ? (appointmentToEdit?.seriesId || `series_${Date.now()}`) : '',
+      recurrenceRule: recurrenceRule,
+      seriesId: recurrenceRule ? (appointmentToEdit?.seriesId || `series_${Date.now()}`) : undefined,
     };
     
     // Validar agendamento
@@ -165,6 +173,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     }
     
     const appointmentsToSave = generateRecurrences(baseAppointment);
+    console.log('🔄 Agendamentos gerados para salvar:', appointmentsToSave);
     
     // Verificar conflitos usando o novo serviço (incluindo bloqueios)
     const conflictCheck = await conflictDetectionService.checkConflicts(
@@ -195,7 +204,9 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     // In a real scenario, this might be a single batch API call
     let success = true;
     for (const app of appointmentsToSave) {
+        console.log('💾 Salvando agendamento via onSave:', app);
         const result = await onSave(app);
+        console.log('✅ Resultado do onSave:', result);
         if(!result) {
             success = false;
             break;
@@ -203,7 +214,10 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     }
 
     if (success) {
+      console.log('🎉 Todos os agendamentos salvos com sucesso, fechando modal');
       onClose();
+    } else {
+      console.error('❌ Falha ao salvar alguns agendamentos');
     }
     setIsSaving(false);
   };

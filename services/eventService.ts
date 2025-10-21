@@ -19,14 +19,17 @@ class EventService {
       this.events[eventName] = [];
     }
     this.events[eventName].push(listener);
+    console.log(`👂 eventService.on - Evento: ${eventName}, Total listeners: ${this.events[eventName].length}`);
   }
 
   off(eventName: string, listener: Listener) {
     if (!this.events[eventName]) return;
     this.events[eventName] = this.events[eventName].filter(l => l !== listener);
+    console.log(`👋 eventService.off - Evento: ${eventName}, Total listeners: ${this.events[eventName].length}`);
   }
 
   emit(eventName: string, ...args: any[]) {
+    console.log(`📢 eventService.emit - Evento: ${eventName}, Listeners: ${this.events[eventName]?.length || 0}`);
     if (!this.events[eventName]) return;
     this.events[eventName].forEach(listener => listener(...args));
   }

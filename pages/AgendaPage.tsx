@@ -249,8 +249,11 @@ export default function AgendaPage() {
     
     const handleSaveAppointment = async (appointmentData: Appointment): Promise<boolean> => {
         try {
+            console.log('🔍 Salvando agendamento:', appointmentData);
             await appointmentService.saveAppointment(appointmentData);
+            console.log('✅ Agendamento salvo com sucesso');
             showToast('Consulta salva com sucesso!', 'success');
+            console.log('🔄 Refazendo fetch dos agendamentos');
             refetch();
             refreshWaitlist();
             setIsFormOpen(false);

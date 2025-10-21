@@ -5,13 +5,15 @@ const DEFAULT_MAX_OCCURRENCES = 200;
 
 const cloneWithDate = (appointment: Appointment, startTime: Date, duration: number, seriesId: string): Appointment => {
     const endTime = new Date(startTime.getTime() + duration);
-    return {
+    const result = {
         ...appointment,
         id: `app_recurr_${seriesId}_${startTime.getTime()}`,
         startTime,
         endTime,
         seriesId,
     };
+    console.log('🔄 cloneWithDate - Clonando agendamento:', result);
+    return result;
 };
 
 const getUntilDate = (rule: RecurrenceRule | undefined, baseStart: Date): Date => {
@@ -82,7 +84,8 @@ const createFromDaysOfWeek = (
                 baseStart.getMilliseconds()
             );
 
-            appointments.push(cloneWithDate(appointment, startTime, duration, seriesId));
+            const clonedAppointment = cloneWithDate(appointment, startTime, duration, seriesId);
+            appointments.push(clonedAppointment);
         }
     }
 
@@ -104,7 +107,8 @@ const createDaily = (
 
     while (occurrenceDate <= untilDate && !shouldStop(appointments.length, maxOccurrences)) {
         const startTime = new Date(occurrenceDate);
-        appointments.push(cloneWithDate(appointment, startTime, duration, seriesId));
+        const clonedAppointment = cloneWithDate(appointment, startTime, duration, seriesId);
+        appointments.push(clonedAppointment);
         occurrenceDate = addDays(occurrenceDate, interval);
     }
 
@@ -153,7 +157,8 @@ const createMonthly = (
                     baseStart.getMilliseconds()
                 );
 
-                appointments.push(cloneWithDate(appointment, startTime, duration, seriesId));
+                const clonedAppointment = cloneWithDate(appointment, startTime, duration, seriesId);
+            appointments.push(clonedAppointment);
             }
         }
 
@@ -171,10 +176,13 @@ const createMonthly = (
  */
 export const generateRecurrences = (initialAppointment: Appointment): Appointment[] => {
     const { recurrenceRule } = initialAppointment;
+    console.log('🔄 generateRecurrences - Agendamento inicial:', initialAppointment);
+    console.log('🔄 generateRecurrences - Regra de recorrência:', recurrenceRule);
 
     if (!recurrenceRule) {
         const singleAppointment = { ...initialAppointment };
         delete singleAppointment.recurrenceRule;
+        console.log('🔄 generateRecurrences - Sem recorrência, retornando agendamento único:', singleAppointment);
         return [singleAppointment];
     }
 
@@ -201,5 +209,7 @@ export const generateRecurrences = (initialAppointment: Appointment): Appointmen
         }
     })();
 
-    return occurrences.length > 0 ? occurrences : [baseAppointment];
+    const result = occurrences.length > 0 ? occurrences : [baseAppointment];
+    console.log('🔄 generateRecurrences - Resultado final:', result);
+    return result;
 };
