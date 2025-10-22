@@ -51,8 +51,8 @@ export const OfflineIndicator: React.FC = memo(() => {
         </Card>
       )}
 
-      {/* Prompt de Atualização */}
-      {showUpdatePrompt && (
+      {/* Prompt de Atualização - DESABILITADO */}
+      {/* {showUpdatePrompt && (
         <Card className="bg-blue-50 border-2 border-blue-500 shadow-lg p-4 animate-slide-in-bottom">
           <div className="flex items-center gap-3">
             <AlertCircle className="w-6 h-6 text-blue-600" />
@@ -81,7 +81,7 @@ export const OfflineIndicator: React.FC = memo(() => {
             </div>
           </div>
         </Card>
-      )}
+      )} */}
     </div>
   );
 });

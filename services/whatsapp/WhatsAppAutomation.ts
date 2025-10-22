@@ -357,16 +357,25 @@ export class WhatsAppAutomation {
       try {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-        await supabase
-          .from('appointments')
-          .update({ status: 'confirmed' })
-          .match({
-            clinic_id: clinicId,
-            'patient.phone': phone,
-            date: tomorrow.toISOString().split('T')[0],
-          });
+        // Primeiro, buscar o paciente pelo telefone
+        const { data: patient } = await supabase
+          .from('patients')
+          .select('id')
+          .eq('phone', phone)
+          .eq('clinic_id', clinicId)
+          .single();
 
+        if (patient) {
+          // Atualizar o agendamento
+          await supabase
+            .from('appointments')
+            .update({ status: 'confirmed' })
+            .eq('clinic_id', clinicId)
+            .eq('patient_id', patient.id)
+            .eq('date', tomorrowStr);
+        }
         
       } catch (error) {
         console.error('Erro ao confirmar consulta:', error);

@@ -52,8 +52,8 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
                 logger.info('Nova versão do service worker disponível.', { context: 'serviceWorkerRegistration.updateFound' });
                 config?.onUpdate?.(registration);
 
-                // Notificar usuário
-                showUpdateNotification(registration);
+                // Notificar usuário - DESABILITADO
+                // showUpdateNotification(registration);
               } else {
                 // Service worker instalado pela primeira vez
                 logger.info('Service worker instalado com sucesso.', { context: 'serviceWorkerRegistration.install' });
