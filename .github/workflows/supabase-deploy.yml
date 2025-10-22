@@ -1,0 +1,58 @@
+name: Deploy to Supabase
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Install Supabase CLI
+      run: npm install -g supabase
+      
+    - name: Setup Supabase
+      run: |
+        supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        supabase db push
+      env:
+        SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        
+    - name: Run migrations
+      run: |
+        supabase db push
+        supabase db seed
+      env:
+        SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        
+    - name: Deploy Edge Functions (if any)
+      run: |
+        if [ -d "supabase/functions" ]; then
+          supabase functions deploy
+        fi
+      env:
+        SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        
+    - name: Notify deployment status
+      if: always()
+      run: |
+        if [ ${{ job.status }} == 'success' ]; then
+          echo "✅ Deploy para Supabase realizado com sucesso!"
+        else
+          echo "❌ Falha no deploy para Supabase"
+        fi
