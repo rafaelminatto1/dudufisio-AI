@@ -2,6 +2,8 @@
 
 Para que o deploy automático funcione, você precisa configurar os secrets no GitHub.
 
+> **📋 INSTRUÇÕES DETALHADAS**: Veja [SETUP_SECRETS_MANUAL.md](./SETUP_SECRETS_MANUAL.md) para instruções passo-a-passo com screenshots.
+
 ## 📋 Secrets Necessários
 
 ### 1. `SUPABASE_ACCESS_TOKEN`
@@ -15,11 +17,12 @@ Para que o deploy automático funcione, você precisa configurar os secrets no G
 
 ### 2. `SUPABASE_PROJECT_REF`
 - **O que é**: ID do seu projeto Supabase
+- **Valor identificado**: `urfxniitfbbvsaskicfo`
 - **Como obter**:
   1. Acesse [Supabase Dashboard](https://supabase.com/dashboard)
   2. Selecione seu projeto
   3. Vá em **Settings** → **General**
-  4. Copie o **Reference ID** (algo como `abcdefghijklmnop`)
+  4. Copie o **Reference ID** (já identificado: `urfxniitfbbvsaskicfo`)
 
 ## 🛠️ Como Configurar no GitHub
 
@@ -68,7 +71,7 @@ gh secret set SUPABASE_PROJECT_REF --body "seu_project_ref_aqui"
 ```bash
 # Secrets configurados no GitHub:
 SUPABASE_ACCESS_TOKEN = "sbp_1234567890abcdef..."
-SUPABASE_PROJECT_REF = "abcdefghijklmnop"
+SUPABASE_PROJECT_REF = "urfxniitfbbvsaskicfo"
 ```
 
 ## ✅ Checklist de Configuração
