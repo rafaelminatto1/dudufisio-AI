@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from '../ui/avatar';
 import Tooltip from '../ui/tooltip';
 import { cn } from '../../lib/utils';
 import { EnrichedAppointment, AppointmentStatus } from '../../types';
-import { Clock, AlertCircle, CheckCircle2, Circle } from 'lucide-react';
+import { Clock, AlertCircle, CheckCircle2, Circle, User } from 'lucide-react';
 
 interface OptimizedAppointmentCardProps {
   appointment: EnrichedAppointment;
@@ -143,7 +143,32 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
         <div className="flex-grow min-h-0 flex flex-col justify-between p-1.5">
           <div className="flex items-start justify-between gap-1 mb-0.5">
             <Tooltip 
-              content={`${appointment.patientName}${appointment.therapistName ? ` - ${appointment.therapistName}` : ''}`}
+              content={
+                <div className="space-y-1">
+                  <p className="font-semibold">{appointment.patientName}</p>
+                  {appointment.therapistName && (
+                    <p className="text-xs text-slate-600 flex items-center gap-1">
+                      <User className="w-3 h-3" />
+                      {appointment.therapistName}
+                    </p>
+                  )}
+                  <p className="text-xs text-slate-600 flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {format(appointment.startTime, 'HH:mm', { locale: ptBR })} - {format(appointment.endTime, 'HH:mm', { locale: ptBR })}
+                  </p>
+                  {appointment.observations && (
+                    <p className="text-xs text-slate-600 mt-1">
+                      {appointment.observations}
+                    </p>
+                  )}
+                  {appointment.hasConflict && (
+                    <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {appointment.conflictReason}
+                    </p>
+                  )}
+                </div>
+              }
               side="top"
               delayDuration={200}
             >
