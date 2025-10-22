@@ -57,7 +57,7 @@ CREATE POLICY "Therapists can view insights of their patients"
     auth.uid() IN (
       SELECT therapist_id FROM appointments WHERE patient_id = medical_insights.patient_id
     )
-    OR auth.uid() IN (SELECT id FROM users WHERE role = 'Admin')
+    OR auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
 
 -- Policy: Sistema pode criar insights (via service account ou authenticated users)
@@ -73,7 +73,7 @@ CREATE POLICY "Only admins can delete medical insights"
   ON medical_insights
   FOR DELETE
   USING (
-    auth.uid() IN (SELECT id FROM users WHERE role = 'Admin')
+    auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
 
 -- View para insights agregados por paciente

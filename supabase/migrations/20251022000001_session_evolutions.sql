@@ -68,7 +68,7 @@ CREATE POLICY "Users can view session evolutions of their patients"
   FOR SELECT
   USING (
     auth.uid() = therapist_id
-    OR auth.uid() IN (SELECT id FROM users WHERE role = 'Admin')
+    OR auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
 
 -- Policy: Terapeutas podem criar evoluções
@@ -77,7 +77,7 @@ CREATE POLICY "Therapists can create session evolutions"
   FOR INSERT
   WITH CHECK (
     auth.uid() = therapist_id
-    OR auth.uid() IN (SELECT id FROM users WHERE role IN ('Admin', 'Fisioterapeuta'))
+    OR auth.uid() IN (SELECT id FROM users WHERE role IN ('admin', 'therapist', 'manager'))
   );
 
 -- Policy: Terapeutas podem atualizar suas próprias evoluções
@@ -86,7 +86,7 @@ CREATE POLICY "Therapists can update their own session evolutions"
   FOR UPDATE
   USING (
     auth.uid() = therapist_id
-    OR auth.uid() IN (SELECT id FROM users WHERE role = 'Admin')
+    OR auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
 
 -- Policy: Apenas Admin pode deletar
@@ -94,7 +94,7 @@ CREATE POLICY "Only admins can delete session evolutions"
   ON session_evolutions
   FOR DELETE
   USING (
-    auth.uid() IN (SELECT id FROM users WHERE role = 'Admin')
+    auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
 
 -- Comentários na tabela

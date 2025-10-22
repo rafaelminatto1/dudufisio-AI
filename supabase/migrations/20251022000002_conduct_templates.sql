@@ -51,7 +51,7 @@ CREATE POLICY "Users can view conduct templates of their patients"
   FOR SELECT
   USING (
     auth.uid() = created_by
-    OR auth.uid() IN (SELECT id FROM users WHERE role = 'Admin')
+    OR auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
 
 -- Policy: Terapeutas podem criar templates
@@ -59,7 +59,7 @@ CREATE POLICY "Therapists can create conduct templates"
   ON conduct_templates
   FOR INSERT
   WITH CHECK (
-    auth.uid() IN (SELECT id FROM users WHERE role IN ('Admin', 'Fisioterapeuta'))
+    auth.uid() IN (SELECT id FROM users WHERE role IN ('admin', 'therapist', 'manager'))
   );
 
 -- Policy: Apenas criador ou Admin pode atualizar
@@ -68,7 +68,7 @@ CREATE POLICY "Creators and admins can update conduct templates"
   FOR UPDATE
   USING (
     auth.uid() = created_by
-    OR auth.uid() IN (SELECT id FROM users WHERE role = 'Admin')
+    OR auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
 
 -- Policy: Apenas criador ou Admin pode deletar
@@ -77,7 +77,7 @@ CREATE POLICY "Creators and admins can delete conduct templates"
   FOR DELETE
   USING (
     auth.uid() = created_by
-    OR auth.uid() IN (SELECT id FROM users WHERE role = 'Admin')
+    OR auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
 
 -- Function para incrementar times_used
