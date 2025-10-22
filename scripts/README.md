@@ -1,166 +1,157 @@
-# 🛠️ Scripts de Utilidade - DuduFisio-AI
+# Scripts de Deploy
 
-Scripts úteis para configuração, teste e monitoramento do sistema.
+Este diretório contém scripts para automatizar o processo de deploy do projeto DuduFisio-AI.
 
 ## 📋 Scripts Disponíveis
 
-### 1. `setup-auth.js`
-**Descrição:** Assistente de configuração de autenticação
-
-**Uso:**
+### 🐧 Linux/macOS: `deploy.sh`
 ```bash
-node scripts/setup-auth.js
+./scripts/deploy.sh "sua mensagem de commit"
 ```
 
-**Funcionalidades:**
-- ✅ Verifica variáveis de ambiente
-- ✅ Exibe checklist de configuração
-- ✅ Lista URLs de configuração
-- ✅ Gera CRON_SECRET
-- ✅ Exibe próximos passos
-
----
-
-### 2. `test-calendar.js`
-**Descrição:** Testa a geração de calendários e Edge Functions
-
-**Uso:**
-```bash
-node scripts/test-calendar.js
+### 🪟 Windows: `deploy.ps1`
+```powershell
+.\scripts\deploy.ps1 "sua mensagem de commit"
 ```
 
-**Funcionalidades:**
-- ✅ Testa endpoint de geração de .ics
-- ✅ Testa Cron Jobs (lembretes, limpeza, sync)
-- ✅ Testa página de login
-- ✅ Exibe resumo dos testes
+## 🚀 O que os Scripts Fazem
 
----
+### 1. **Git Operations**
+- ✅ Verifica status do repositório
+- ✅ Adiciona arquivos modificados ao staging
+- ✅ Cria commit com a mensagem fornecida
+- ✅ Faz push para o branch `main` no GitHub
 
-### 3. `generate-cron-secret.js`
-**Descrição:** Gera uma chave aleatória segura para CRON_SECRET
+### 2. **Supabase Operations**
+- ✅ Verifica se o Supabase está rodando
+- ✅ Inicia o Supabase se necessário
+- ✅ Verifica migrations pendentes
+- ✅ Oferece opção de criar novas migrations
+- ✅ Oferece opção de aplicar migrations
 
-**Uso:**
+### 3. **Verificações Adicionais**
+- ✅ Verifica se há dados mock para sincronizar
+- ✅ Fornece resumo completo do deploy
+- ✅ Sugere próximos passos
+
+## 📖 Como Usar
+
+### Exemplo Básico
 ```bash
-node scripts/generate-cron-secret.js
+# Linux/macOS
+./scripts/deploy.sh "fix: Corrigir bug no modal de agendamento"
+
+# Windows
+.\scripts\deploy.ps1 "fix: Corrigir bug no modal de agendamento"
 ```
 
-**Funcionalidades:**
-- ✅ Gera chave aleatória de 32 bytes
-- ✅ Exibe instruções de configuração
-- ✅ Salva chave em arquivo temporário
-- ✅ Exibe avisos de segurança
-
----
-
-### 4. `check-deployment.js`
-**Descrição:** Verifica o status do deployment no Vercel
-
-**Uso:**
+### Exemplo com Mensagem Detalhada
 ```bash
-node scripts/check-deployment.js
+# Linux/macOS
+./scripts/deploy.sh "feat: Adicionar nova funcionalidade de relatórios
+
+- Implementar geração de relatórios PDF
+- Adicionar filtros por data e paciente
+- Melhorar interface de visualização"
+
+# Windows
+.\scripts\deploy.ps1 "feat: Adicionar nova funcionalidade de relatórios
+
+- Implementar geração de relatórios PDF
+- Adicionar filtros por data e paciente
+- Melhorar interface de visualização"
 ```
 
-**Funcionalidades:**
-- ✅ Verifica se o site está online
-- ✅ Testa todas as URLs principais
-- ✅ Mede tempo de resposta
-- ✅ Exibe resumo do deployment
+## 🔧 Pré-requisitos
 
----
+### Para Linux/macOS:
+- Bash
+- Git configurado
+- Node.js e npm
+- Supabase CLI instalado
 
-## 🚀 Execução Rápida
+### Para Windows:
+- PowerShell 5.1 ou superior
+- Git configurado
+- Node.js e npm
+- Supabase CLI instalado
 
-### Setup Completo
+## 📝 Convenções de Commit
+
+Use as seguintes convenções para mensagens de commit:
+
+- `feat:` - Nova funcionalidade
+- `fix:` - Correção de bug
+- `docs:` - Documentação
+- `style:` - Formatação, ponto e vírgula, etc.
+- `refactor:` - Refatoração de código
+- `test:` - Adição de testes
+- `chore:` - Tarefas de manutenção
+
+### Exemplos:
 ```bash
-# 1. Verificar variáveis de ambiente e gerar CRON_SECRET
-node scripts/setup-auth.js
-
-# 2. Verificar deployment
-node scripts/check-deployment.js
-
-# 3. Testar funcionalidades
-node scripts/test-calendar.js
+feat: Adicionar sistema de notificações
+fix: Corrigir redirecionamento de pacientes
+docs: Atualizar README com novas instruções
+refactor: Melhorar performance do carregamento de dados
 ```
 
-### Setup Individual
+## 🚨 Troubleshooting
 
-#### Gerar CRON_SECRET
+### Erro: "Supabase não está rodando"
 ```bash
-node scripts/generate-cron-secret.js
+# Inicie o Supabase manualmente
+npx supabase start
 ```
 
-#### Verificar Deployment
+### Erro: "Git não configurado"
 ```bash
-node scripts/check-deployment.js
+# Configure o Git
+git config --global user.name "Seu Nome"
+git config --global user.email "seu.email@exemplo.com"
 ```
 
-#### Testar Calendários
+### Erro: "Supabase CLI não encontrado"
 ```bash
-node scripts/test-calendar.js
+# Instale o Supabase CLI
+npm install -g supabase
 ```
 
----
+## 🔄 Workflow Recomendado
 
-## 📊 Fluxo de Trabalho Recomendado
+1. **Desenvolvimento Local**
+   ```bash
+   npm run dev
+   ```
 
-### 1. Pós-Deploy
-```bash
-# Verificar se o deployment está online
-node scripts/check-deployment.js
-```
+2. **Teste das Alterações**
+   - Teste todas as funcionalidades
+   - Verifique se não há erros no console
+   - Teste em diferentes navegadores
 
-### 2. Configuração
-```bash
-# Executar setup completo
-node scripts/setup-auth.js
-```
+3. **Deploy**
+   ```bash
+   ./scripts/deploy.sh "sua mensagem de commit"
+   ```
 
-### 3. Testes
-```bash
-# Testar funcionalidades
-node scripts/test-calendar.js
-```
+4. **Verificação Pós-Deploy**
+   - Acesse http://localhost:5173
+   - Acesse http://127.0.0.1:54323 (Supabase Studio)
+   - Verifique se tudo está funcionando
 
----
+## 📞 Suporte
 
-## 🔧 Requisitos
+Se encontrar problemas com os scripts:
 
-- Node.js 16+ instalado
-- Acesso à internet
-- Variáveis de ambiente configuradas
+1. Verifique se todos os pré-requisitos estão instalados
+2. Verifique se o Git está configurado corretamente
+3. Verifique se o Supabase CLI está funcionando
+4. Consulte os logs de erro para mais detalhes
 
----
+## 🎯 Próximas Melhorias
 
-## 📝 Notas
-
-- Todos os scripts são executados localmente
-- Nenhum script modifica arquivos do projeto
-- Scripts são independentes e podem ser executados em qualquer ordem
-- Logs coloridos para melhor visualização
-
----
-
-## 🆘 Troubleshooting
-
-### Erro: "Cannot find module"
-**Solução:** Execute `npm install` na raiz do projeto
-
-### Erro: "ENOTFOUND"
-**Solução:** Verifique sua conexão com a internet
-
-### Erro: "ECONNREFUSED"
-**Solução:** O site pode estar offline ou em manutenção
-
----
-
-## 📚 Documentação Relacionada
-
-- `PROXIMOS_PASSOS.md` - Guia de configuração
-- `RESUMO_IMPLEMENTACAO_FINAL.md` - Resumo da implementação
-- `RESUMO_EXECUTIVO.md` - Resumo executivo
-
----
-
-**Desenvolvido com ❤️ para DuduFisio-AI**
-
+- [ ] Adicionar verificação de testes antes do deploy
+- [ ] Integração com CI/CD
+- [ ] Deploy automático para produção
+- [ ] Backup automático do banco de dados
+- [ ] Notificações de deploy via Slack/Email
