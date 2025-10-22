@@ -1,13 +1,9 @@
 import { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, CheckCircle2, XCircle, CreditCard } from 'lucide-react';
-
-// Inicializar Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
+import { getStripe, isStripeConfigured } from '@/lib/stripe';
 
 interface StripeCheckoutProps {
   amount: number;
@@ -20,11 +16,46 @@ interface StripeCheckoutProps {
 
 // Componente de formulário de pagamento
 function CheckoutForm({ amount, paymentId, patientEmail, description, onSuccess, onError }: StripeCheckoutProps) {
-  const stripe = useStripe();
-  const elements = useElements();
+  const [stripeHooks, setStripeHooks] = useState<any>(null);
+  const [stripe, setStripe] = useState<any>(null);
+  const [elements, setElements] = useState<any>(null);
+
+  useEffect(() => {
+    const loadStripeHooks = async () => {
+      try {
+        const { useStripe, useElements } = await import('@stripe/react-stripe-js');
+        setStripeHooks({ useStripe, useElements });
+      } catch (error) {
+        console.warn('Falha ao carregar hooks do Stripe:', error);
+      }
+    };
+
+    loadStripeHooks();
+  }, []);
+
+  // Usar hooks do Stripe se disponíveis
+  const stripeFromHook = stripeHooks?.useStripe?.();
+  const elementsFromHook = stripeHooks?.useElements?.();
+
+  if (stripeFromHook) setStripe(stripeFromHook);
+  if (elementsFromHook) setElements(elementsFromHook);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [CardElement, setCardElement] = useState<any>(null);
+
+  useEffect(() => {
+    const loadCardElement = async () => {
+      try {
+        const { CardElement: StripeCardElement } = await import('@stripe/react-stripe-js');
+        setCardElement(() => StripeCardElement);
+      } catch (error) {
+        console.warn('Falha ao carregar CardElement do Stripe:', error);
+      }
+    };
+
+    loadCardElement();
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -143,7 +174,13 @@ function CheckoutForm({ amount, paymentId, patientEmail, description, onSuccess,
         <CardContent className="space-y-4">
           {/* Elemento do cartão Stripe */}
           <div className="border border-gray-300 rounded-lg p-4 bg-white">
-            <CardElement options={cardElementOptions} />
+            {CardElement ? (
+              <CardElement options={cardElementOptions} />
+            ) : (
+              <div className="text-center text-gray-500 py-4">
+                Carregando formulário de pagamento...
+              </div>
+            )}
           </div>
 
           {/* Valor Total */}
@@ -195,28 +232,50 @@ function CheckoutForm({ amount, paymentId, patientEmail, description, onSuccess,
 // Componente principal
 export function StripeCheckout(props: StripeCheckoutProps) {
   const [stripeLoaded, setStripeLoaded] = useState(false);
+  const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
 
   useEffect(() => {
-    // Verificar se a chave pública do Stripe está configurada
-    const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-    
-    if (!stripeKey) {
-      console.warn('⚠️ VITE_STRIPE_PUBLISHABLE_KEY não está configurada');
-    } else {
-      setStripeLoaded(true);
-    }
+    const initializeStripe = async () => {
+      if (!isStripeConfigured()) {
+        console.debug('Stripe não configurado - pulando carregamento');
+        return;
+      }
+
+      try {
+        const stripe = await getStripe();
+        if (stripe) {
+          setStripePromise(stripe);
+          setStripeLoaded(true);
+        }
+      } catch (error) {
+        console.warn('Falha ao carregar Stripe:', error);
+      }
+    };
+
+    initializeStripe();
   }, []);
 
-  if (!stripeLoaded) {
+  if (!isStripeConfigured()) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Alert>
             <AlertDescription>
               ⚠️ Configuração do Stripe não encontrada. 
-              Configure a variável VITE_STRIPE_PUBLISHABLE_KEY no arquivo .env.local
+              Configure a variável VITE_STRIPE_PUBLIC_KEY no arquivo .env.local
             </AlertDescription>
           </Alert>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!stripeLoaded || !stripePromise) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-sky-500 mb-4" />
+          <p className="text-gray-600">Carregando sistema de pagamento...</p>
         </CardContent>
       </Card>
     );

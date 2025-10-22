@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import {
   BarChart3,
@@ -26,6 +26,7 @@ import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import { useToast } from '../contexts/ToastContext';
 import userService, { UserProfile } from '../services/userService';
 import DemoDataManager from '../components/settings/DemoDataManager';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 type SectionId = 'profile' | 'security' | 'notifications' | 'agenda' | 'crm' | 'advanced' | 'demo-data';
 type AgendaView = 'week' | 'day' | 'month' | 'list';
@@ -174,7 +175,7 @@ interface SectionCardProps {
   children: React.ReactNode;
 }
 
-const SectionCard: React.FC<SectionCardProps> = ({ id, icon, title, description, children }) => (
+const SectionCard: React.FC<SectionCardProps> = React.memo(({ id, icon, title, description, children }) => (
   <section
     id={id}
     className="rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
@@ -190,7 +191,7 @@ const SectionCard: React.FC<SectionCardProps> = ({ id, icon, title, description,
     </div>
     <div className="space-y-6 px-6 py-6">{children}</div>
   </section>
-);
+));
 
 interface WorkingDayToggleProps {
   label: string;
@@ -198,7 +199,7 @@ interface WorkingDayToggleProps {
   onToggle: () => void;
 }
 
-const WorkingDayToggle: React.FC<WorkingDayToggleProps> = ({ label, active, onToggle }) => (
+const WorkingDayToggle: React.FC<WorkingDayToggleProps> = React.memo(({ label, active, onToggle }) => (
   <button
     type="button"
     onClick={onToggle}
@@ -210,7 +211,7 @@ const WorkingDayToggle: React.FC<WorkingDayToggleProps> = ({ label, active, onTo
   >
     {label}
   </button>
-);
+));
 
 interface BooleanFieldProps {
   id: string;
@@ -220,7 +221,7 @@ interface BooleanFieldProps {
   onChange: (checked: boolean) => void;
 }
 
-const BooleanField: React.FC<BooleanFieldProps> = ({ id, label, description, value, onChange }) => (
+const BooleanField: React.FC<BooleanFieldProps> = React.memo(({ id, label, description, value, onChange }) => (
   <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3">
     <div className="max-w-[75%]">
       <Label htmlFor={id} className="text-sm font-medium text-slate-700">
@@ -230,7 +231,7 @@ const BooleanField: React.FC<BooleanFieldProps> = ({ id, label, description, val
     </div>
     <Switch id={id} checked={value} onCheckedChange={onChange} />
   </div>
-);
+));
 
 const SettingsPage: React.FC = () => {
   const { user, updateProfile, updatePassword } = useSupabaseAuth();
@@ -385,6 +386,10 @@ const SettingsPage: React.FC = () => {
     });
   }, []);
 
+  // Usar ref para evitar dependência circular
+  const hydrateFormsRef = useRef(hydrateForms);
+  hydrateFormsRef.current = hydrateForms;
+
   const mergeSettings = useCallback(
     (partial: Partial<ProfileSettings>): ProfileSettings => {
       const current = profileData ? parseProfileSettings(profileData.profile_settings) : {};
@@ -521,7 +526,7 @@ const SettingsPage: React.FC = () => {
         throw new Error('Nao foi possivel carregar o perfil.');
       }
       setProfileData(profile);
-      hydrateForms(profile);
+      hydrateFormsRef.current(profile);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Erro inesperado ao carregar configuracoes.';
@@ -530,7 +535,7 @@ const SettingsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [hydrateForms, showToast, userId]);
+  }, [showToast, userId]);
 
   useEffect(() => {
     if (!userId) {
@@ -539,7 +544,7 @@ const SettingsPage: React.FC = () => {
       return;
     }
     loadProfile();
-  }, [loadProfile, userId]);
+  }, [userId]); // Removido loadProfile das dependências para evitar loop infinito
 
   useEffect(() => {
     if (loading) {
@@ -585,7 +590,7 @@ const SettingsPage: React.FC = () => {
     }
   }, []);
 
-  const handleToggleWorkingDay = (dayValue: number) => {
+  const handleToggleWorkingDay = useCallback((dayValue: number) => {
     setProfileForm(prev => {
       const exists = prev.workingDays.includes(dayValue);
       const days = exists
@@ -596,7 +601,32 @@ const SettingsPage: React.FC = () => {
         workingDays: days.sort((a, b) => a - b),
       };
     });
-  };
+  }, []);
+
+  // Handlers memoizados para evitar re-renders desnecessários
+  const handleProfileChange = useCallback((field: string, value: string) => {
+    setProfileForm(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleAgendaChange = useCallback((field: string, value: any) => {
+    setAgendaForm(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleCrmChange = useCallback((field: string, value: any) => {
+    setCrmForm(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handlePatientChange = useCallback((field: string, value: any) => {
+    setPatientForm(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleEducatorChange = useCallback((field: string, value: any) => {
+    setEducatorForm(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleAdminChange = useCallback((field: string, value: any) => {
+    setAdminForm(prev => ({ ...prev, [field]: value }));
+  }, []);
 
   const handleSaveProfile = async () => {
     if (!profileData) {
@@ -883,24 +913,25 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
-              <SettingsIcon className="h-6 w-6" />
-            </div>
-            <div className="flex-1">
-              <PageHeader
-                title="Configuracoes"
-                subtitle="Personalize sua experiencia, agenda e comunicacoes."
-              />
+    <ErrorBoundary fallback={<div className="flex h-64 items-center justify-center text-red-500">Erro ao carregar configurações. Tente recarregar a página.</div>}>
+      <div className="min-h-screen bg-slate-50">
+        <div className="border-b border-slate-200 bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="flex items-start gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
+                <SettingsIcon className="h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <PageHeader
+                  title="Configuracoes"
+                  subtitle="Personalize sua experiencia, agenda e comunicacoes."
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
         {loading ? (
           <div className="flex h-64 items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
@@ -1625,7 +1656,8 @@ const SettingsPage: React.FC = () => {
           </div>
         )}
       </main>
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 };
 

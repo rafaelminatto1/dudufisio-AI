@@ -16,6 +16,29 @@ import { Role } from '../types';
 const preloadedComponents = new Set<string>();
 
 /**
+ * Mapa estático de componentes preloadáveis
+ * Substitui template strings por imports mapeados
+ */
+const PRELOADABLE_COMPONENTS = {
+  'pages/DashboardPage': () => import('../pages/DashboardPage'),
+  'pages/AdminDashboardPage': () => import('../pages/AdminDashboardPage'),
+  'pages/UserManagementPage': () => import('../pages/UserManagementPage'),
+  'pages/ReportsPage': () => import('../pages/ReportsPage'),
+  'pages/AgendaPage': () => import('../pages/AgendaPage'),
+  'pages/PatientListPage': () => import('../pages/PatientListPage'),
+  'pages/PatientDetailPage': () => import('../pages/PatientDetailPage'),
+  'pages/PatientPortalDashboard': () => import('../pages/PatientPortalDashboard'),
+  'pages/PartnerPortalDashboard': () => import('../pages/PartnerPortalDashboard'),
+  'pages/ExercisesPage': () => import('../pages/ExercisesPage'),
+  'pages/FinancialPage': () => import('../pages/FinancialPage'),
+  'pages/SettingsPage': () => import('../pages/SettingsPage'),
+  'components/ui/OptimizedLoader': () => import('../components/ui/OptimizedLoader'),
+  'components/ErrorBoundary': () => import('../components/ErrorBoundary'),
+  'components/reports/ReportsDashboard': () => import('../components/reports/ReportsDashboard'),
+  'components/financial/FinancialDashboard': () => import('../components/financial/FinancialDashboard'),
+};
+
+/**
  * Configuração de preloading por role
  */
 const ROLE_PRELOAD_CONFIG: Record<Role, string[]> = {
@@ -31,19 +54,12 @@ const ROLE_PRELOAD_CONFIG: Record<Role, string[]> = {
     'pages/AgendaPage',
     'pages/PatientListPage',
     'pages/PatientDetailPage',
-    'components/agenda/EnhancedAgendaPage',
-    'components/medical/body-map/BodyMapContainer',
   ],
   [Role.Patient]: [
     'pages/PatientPortalDashboard',
-    'pages/MyAppointmentsPage',
-    'pages/MyExercisesPage',
-    'components/patient-portal/PatientDashboard',
   ],
   [Role.EducadorFisico]: [
     'pages/PartnerPortalDashboard',
-    'pages/PartnerExerciseLibraryPage',
-    'components/partner/PartnerDashboard',
   ],
 };
 
@@ -66,11 +82,17 @@ export async function preloadComponent(componentPath: string): Promise<void> {
   }
 
   try {
-    await import(`../${componentPath}.tsx`);
+    const loader = PRELOADABLE_COMPONENTS[componentPath as keyof typeof PRELOADABLE_COMPONENTS];
+    if (!loader) {
+      console.warn(`Componente ${componentPath} não encontrado no mapa de preload`);
+      return;
+    }
+    await loader();
     preloadedComponents.add(componentPath);
     console.log(`✅ Preloaded: ${componentPath}`);
   } catch (error) {
-    console.warn(`⚠️ Failed to preload: ${componentPath}`, error);
+    // Falha silenciosa - não bloquear a aplicação
+    console.debug(`⚠️ Failed to preload: ${componentPath}`, error);
   }
 }
 

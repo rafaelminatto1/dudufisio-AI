@@ -94,6 +94,7 @@ const WhatsAppPage = createLazyComponent(() => import('./WhatsAppPage'));
 const InactivePatientEmailPage = createLazyComponent(() => import('./InactivePatientEmailPage'));
 const HepGeneratorPage = createLazyComponent(() => import('./HepGeneratorPage'));
 const AgendaSettingsPage = createLazyComponent(() => import('./AgendaSettingsPage'));
+const SessionEvolutionSettingsPage = createLazyComponent(() => import('./SessionEvolutionSettingsPage'));
 const CheckoutPage = createLazyComponent(() => import('../src/pages/CheckoutPage'));
 const TeleconsultaRoomPage = createLazyComponent(() => import('../src/pages/TeleconsultaRoomPage'));
 const TeleconsultasListPage = createLazyComponent(() => import('../src/pages/TeleconsultasListPage'));
