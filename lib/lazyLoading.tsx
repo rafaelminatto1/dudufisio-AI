@@ -85,6 +85,8 @@ export const LazyPages = {
   AdminDashboardPage: createLazyComponent(() => import('../pages/AdminDashboardPage')),
   CompleteDashboard: CompleteDashboard,
   SessionFormPage: createLazyComponent(() => import('../pages/SessionFormPage')),
+  SessionEvolutionPage: createLazyComponent(() => import('../pages/SessionEvolutionPage')),
+  SessionEvolutionSettingsPage: createLazyComponent(() => import('../pages/SessionEvolutionSettingsPage')),
   SessionViewPage: createLazyComponent(() => import('../pages/SessionViewPage')),
   SuppliesPage: createLazyComponent(() => import('../pages/SuppliesPage')),
 };

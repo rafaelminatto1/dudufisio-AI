@@ -67,19 +67,17 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   });
   
   const slotDate = useMemo(() => appointmentToEdit?.startTime || initialData?.date || new Date(), [appointmentToEdit, initialData]);
-  const [slotTime, setSlotTime] = useState(useMemo(() => {
-    if (appointmentToEdit) {
-      return format(appointmentToEdit.startTime, 'HH:mm');
-    }
-    if (initialData?.date) {
-      return format(initialData.date, 'HH:mm');
-    }
-    return format(new Date(), 'HH:mm');
-  }, [appointmentToEdit, initialData]));
+  const [slotTime, setSlotTime] = useState('09:00');
   const [therapistId, setTherapistId] = useState(appointmentToEdit?.therapistId || initialData?.therapistId || therapists[0]?.id || '');
   
   useEffect(() => {
     if (isOpen) {
+        console.log('🔍 AppointmentFormModal - useEffect executado');
+        console.log('   isOpen:', isOpen);
+        console.log('   appointmentToEdit:', appointmentToEdit);
+        console.log('   initialData:', initialData);
+        console.log('   initialData?.date:', initialData?.date);
+        
         setIsTeleconsultaEnabled(schedulingSettingsService.getSettings().teleconsultaEnabled);
         if (appointmentToEdit) {
             const patient = patients.find(p => p.id === appointmentToEdit.patientId);
@@ -89,7 +87,9 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             setDuration(dur);
             setNotes(appointmentToEdit.observations || '');
             setTherapistId(appointmentToEdit.therapistId);
-            setSlotTime(format(appointmentToEdit.startTime, 'HH:mm'));
+            const slotTimeValue = format(appointmentToEdit.startTime, 'HH:mm');
+            console.log('   setSlotTime (edit):', slotTimeValue);
+            setSlotTime(slotTimeValue);
             setRecurrenceRule(appointmentToEdit.recurrenceRule);
         } else {
             // Se temos initialData com patientId (vindo da lista de espera), pré-selecionar o paciente
@@ -103,11 +103,22 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             setDuration(60);
             setNotes('');
             setTherapistId(initialData?.therapistId || therapists[0]?.id || '');
-            setSlotTime(format(initialData?.date || new Date(), 'HH:mm'));
+            const slotTimeValue = format(initialData?.date || new Date(), 'HH:mm');
+            console.log('   setSlotTime (new):', slotTimeValue);
+            console.log('   initialData?.date:', initialData?.date);
+            console.log('   format(initialData?.date, "HH:mm"):', format(initialData?.date, 'HH:mm'));
+            setSlotTime(slotTimeValue);
             setRecurrenceRule(undefined);
         }
     }
-  }, [appointmentToEdit, initialData, isOpen, patients, therapists]);
+  }, [appointmentToEdit, initialData, isOpen, patients]);
+
+  // useEffect separado para atualizar therapistId quando therapists são carregados
+  useEffect(() => {
+    if (isOpen && therapists.length > 0 && !therapistId) {
+      setTherapistId(therapists[0]?.id || '');
+    }
+  }, [isOpen, therapists, therapistId]);
 
   useEffect(() => {
     recurrenceTemplateService.listTemplates()?.then(setTemplates).catch(() => showToast('Falha ao carregar templates.', 'error'));

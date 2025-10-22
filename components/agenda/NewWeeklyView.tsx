@@ -364,7 +364,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                               const clickY = e.clientY - rect.top;
                               const minutesFromTop = clickY / PIXELS_PER_MINUTE;
                               const snappedMinutes = Math.floor(minutesFromTop / SLOT_DURATION) * SLOT_DURATION;
-                              const hour = START_HOUR + Math.floor(snappedMinutes / 60);
+                              const hour = Math.floor(snappedMinutes / 60);
                               const minute = snappedMinutes % 60;
                               onSlotClick(day, `${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`, therapist.id);
                             }}

@@ -49,6 +49,8 @@ import { useAgendaHotkeys } from '../hooks/useAgendaHotkeys';
 import { useDebounce } from '../hooks/useDebounce';
 import { useIsMobile } from '../hooks/useMediaQuery';
 import MobileAgendaView from '../components/agenda/MobileAgendaView';
+import useSessionEvolutionMode from '../hooks/useSessionEvolutionMode';
+import SessionEvolutionModal from '../components/session/SessionEvolutionModal';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
@@ -61,6 +63,11 @@ export default function AgendaPage() {
     const [currentView, setCurrentView] = useState<AgendaViewType>('weekly');
     const [showSessionForm, setShowSessionForm] = useState(false);
     const [selectedAppointmentForSession, setSelectedAppointmentForSession] = useState<EnrichedAppointment | null>(null);
+    
+    // Session Evolution Mode
+    const { mode: sessionEvolutionMode } = useSessionEvolutionMode();
+    const [showEvolutionModal, setShowEvolutionModal] = useState(false);
+    const [modalAppointmentId, setModalAppointmentId] = useState<string>('');
 
     // Calculate date ranges based on current view
     const { startDate, endDate } = useMemo(() => {
@@ -228,10 +235,24 @@ export default function AgendaPage() {
     }, [showToast]);
 
     const handleSlotClick = (day: Date, time: string, therapistId: string) => {
+        console.log('🔍 handleSlotClick chamado');
+        console.log('   day:', day);
+        console.log('   time:', time);
+        console.log('   therapistId:', therapistId);
+        
         const [hour = '0', minute = '0'] = time.split(':');
         const clickedDate = setMinutes(setHours(day, parseInt(hour, 10)), parseInt(minute, 10));
         
-        setInitialFormData({ date: clickedDate, therapistId });
+        console.log('   hour:', hour);
+        console.log('   minute:', minute);
+        console.log('   clickedDate:', clickedDate);
+        console.log('   clickedDate.getHours():', clickedDate.getHours());
+        console.log('   clickedDate.getMinutes():', clickedDate.getMinutes());
+        
+        const initialFormData = { date: clickedDate, therapistId };
+        console.log('   initialFormData:', initialFormData);
+        
+        setInitialFormData(initialFormData);
         setAppointmentToEdit(null);
         setIsFormOpen(true);
     };
@@ -321,10 +342,27 @@ export default function AgendaPage() {
     };
 
     const handleStartSession = useCallback((appointment: EnrichedAppointment) => {
+        setSelectedAppointment(null); // Fecha o modal de detalhes
         
-        setSelectedAppointment(null); // Fecha o modal
-        navigate(`/atendimento/${appointment.id}`);
-    }, [navigate]);
+        // Navegar baseado no modo configurado pelo usuário
+        switch (sessionEvolutionMode) {
+            case 'page':
+                navigate(`/session-evolution/${appointment.id}`);
+                break;
+            case 'modal':
+                setModalAppointmentId(appointment.id);
+                setShowEvolutionModal(true);
+                break;
+            case 'expanded':
+                setSelectedAppointmentForSession(appointment);
+                setShowSessionForm(true);
+                break;
+            case 'existing':
+            default:
+                navigate(`/atendimento/${appointment.id}`);
+                break;
+        }
+    }, [navigate, sessionEvolutionMode]);
 
     const handleBackToAgenda = useCallback(() => {
         setShowSessionForm(false);
@@ -918,6 +956,23 @@ export default function AgendaPage() {
                 isOpen={isKeyboardHelpOpen}
                 onClose={() => setIsKeyboardHelpOpen(false)}
             />
+
+            {/* Session Evolution Modal (Opção 2) */}
+            {showEvolutionModal && modalAppointmentId && (
+                <SessionEvolutionModal
+                    isOpen={showEvolutionModal}
+                    appointmentId={modalAppointmentId}
+                    onClose={() => {
+                        setShowEvolutionModal(false);
+                        setModalAppointmentId('');
+                        refetch(); // Atualizar agenda após fechar
+                    }}
+                    onSave={() => {
+                        showToast('Sessão salva com sucesso!', 'success');
+                        refetch();
+                    }}
+                />
+            )}
         </main>
     );
 }

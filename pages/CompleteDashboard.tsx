@@ -507,6 +507,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/backup" element={LazyElement(BackupManagementPage)} />
                 <Route path="/backup-management" element={LazyElement(BackupManagementPage)} />
                 <Route path="/agenda-settings" element={LazyElement(AgendaSettingsPage)} />
+                <Route path="/session-evolution-settings" element={LazyElement(SessionEvolutionSettingsPage)} />
                 <Route path="/integrations" element={LazyElement(IntegrationsTestPage)} />
                 <Route path="/integrations-test" element={LazyElement(IntegrationsTestPage)} />
                 <Route path="/bi-integration-test" element={LazyElement(BIIntegrationTestPage)} />

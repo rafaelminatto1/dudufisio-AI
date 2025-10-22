@@ -1388,6 +1388,55 @@ export interface MaterialLink {
   createdAt: string;
 }
 
+// ============================================================================
+// SISTEMA DE TEMPLATES - TIPOS
+// ============================================================================
+
+export interface MaterialTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  category: MaterialCategory | string;
+  content: string; // HTML do Tiptap
+  thumbnail?: string;
+  tags?: string[];
+  isPublic: boolean;
+  isSystemTemplate: boolean;
+  usageCount: number;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MaterialComment {
+  id: string;
+  materialId: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  content: string;
+  parentCommentId?: string; // Para replies
+  mentions?: string[]; // User IDs mencionados
+  isResolved: boolean;
+  resolvedBy?: string;
+  resolvedAt?: string;
+  createdAt: string;
+  updatedAt?: string;
+  replies?: MaterialComment[];
+}
+
+export interface MaterialCollaborator {
+  id: string;
+  materialId: string;
+  userId: string;
+  userName: string;
+  userAvatar?: string;
+  role: 'owner' | 'editor' | 'viewer';
+  invitedBy: string;
+  invitedAt: string;
+  lastAccessAt?: string;
+}
+
 // --- Specialty Assessment Types ---
 
 export interface Specialty {
@@ -3744,4 +3793,160 @@ export interface CreateLeadInput {
   message?: string;
   source?: string;
   // Removido 'status' que não existe no tipo original
+}
+
+// ============================================================================
+// SISTEMA DE EVOLUÇÃO DE SESSÃO - TIPOS
+// ============================================================================
+
+// Dados completos da evolução de uma sessão
+export interface SessionEvolution {
+  id: string;
+  sessionId: string; // ID do appointment ou SOAP note
+  patientId: string;
+  sessionNumber: number;
+  sessionDate: string; // ISO date
+  therapistId: string;
+  therapistName: string;
+  
+  // Dados SOAP
+  subjective?: string;
+  objective?: string;
+  assessment?: string;
+  plan?: string;
+  
+  // Testes realizados na sessão
+  testsPerformed: TestResult[];
+  
+  // Métricas rápidas
+  painLevel?: number; // 0-10
+  satisfactionLevel?: number; // 0-10
+  
+  // Metadata
+  duration?: number; // minutos
+  tags?: string[];
+  notes?: string;
+  
+  createdAt: string;
+  updatedAt: string;
+  createdBy?: string;
+}
+
+// Resultado de um teste/avaliação específico
+export interface TestResult {
+  id: string;
+  testName: string;
+  testType: 'amplitude' | 'strength' | 'balance' | 'functional' | 'pain' | 'other';
+  value: number;
+  unit: string;
+  side?: 'left' | 'right' | 'bilateral';
+  notes?: string;
+  assessedAt: string;
+  assessedBy?: string;
+}
+
+// Dados para evolução de testes ao longo do tempo (para gráficos)
+export interface TestEvolutionData {
+  sessionNumber: number;
+  sessionDate: string;
+  testName: string;
+  value: number;
+  unit: string;
+  side?: 'left' | 'right' | 'bilateral';
+  variation?: number; // variação em relação à sessão anterior
+  percentChange?: number; // variação percentual
+  notes?: string;
+}
+
+// Estatísticas de um teste específico
+export interface TestStatistics {
+  testName: string;
+  unit: string;
+  totalMeasurements: number;
+  firstValue: number;
+  lastValue: number;
+  minValue: number;
+  maxValue: number;
+  averageValue: number;
+  totalImprovement: number;
+  percentImprovement: number;
+  trend: 'improving' | 'stable' | 'declining';
+  lastMeasuredAt: string;
+}
+
+// Template de conduta para replicação
+export interface ConductTemplate {
+  id: string;
+  patientId: string;
+  name: string;
+  description?: string;
+  
+  // Dados da conduta
+  subjective?: string;
+  objective?: string;
+  assessment?: string;
+  plan?: string;
+  
+  // Testes incluídos
+  tests?: Array<{
+    testName: string;
+    testType: string;
+    unit: string;
+  }>;
+  
+  // Metadata
+  sourceSessionId?: string;
+  sourceSessionDate?: string;
+  timesUsed: number;
+  
+  createdAt: string;
+  createdBy?: string;
+  isTemplate: boolean; // true se é template salvo, false se é de sessão anterior
+}
+
+// Alerta de teste obrigatório
+export interface MandatoryTestAlert {
+  id: string;
+  testConfigId: string;
+  testName: string;
+  testType: 'amplitude' | 'strength' | 'balance' | 'functional' | 'pain';
+  severity: 'critical' | 'important' | 'low';
+  reason: string;
+  message: string;
+  dueAt: string; // quando deve ser realizado
+  isCompleted: boolean;
+  completedAt?: string;
+  canSkip: boolean; // se pode pular (não crítico)
+}
+
+// Configuração de qual tipo de gráfico usar para cada métrica
+export type ChartType = 'bar' | 'line' | 'area' | 'radar';
+
+export interface ChartConfig {
+  metricName: string;
+  chartType: ChartType;
+  color: string;
+  showGoalLine?: boolean;
+  goalValue?: number;
+}
+
+// Insight gerado automaticamente para relatório médico
+export interface MedicalInsight {
+  id: string;
+  patientId: string;
+  type: 'pain_reduction' | 'range_improvement' | 'strength_gain' | 'functional_progress' | 'milestone' | 'alert';
+  title: string;
+  description: string;
+  data: {
+    metric?: string;
+    initialValue?: number;
+    currentValue?: number;
+    improvement?: number;
+    percentImprovement?: number;
+    sessions?: number;
+    timeframe?: string;
+  };
+  severity?: 'info' | 'success' | 'warning' | 'error';
+  suggestedText?: string; // texto sugerido para laudo
+  generatedAt: string;
 }
