@@ -13,10 +13,11 @@ import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, ArrowLeft } 
 import { AnimatePresence } from 'framer-motion';
 import { Button } from '../components/ui/button';
 import { useAppointments } from '../hooks/useAppointments';
-import { EnrichedAppointment, Appointment, AppointmentStatus, Patient, SchedulingAlert, WaitlistEntry } from '../types';
+import { EnrichedAppointment, Appointment, AppointmentStatus, Patient, SchedulingAlert, WaitlistEntry, ScheduleBlock } from '../types';
 import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
+import { blockService } from '../services/scheduling/blockService';
 import { useData } from '../contexts/AppContext';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import { Role } from '../types';
@@ -98,6 +99,7 @@ export default function AgendaPage() {
     const [patients, setPatients] = useState<Patient[]>([]);
     const [, setIsLoadingData] = useState(true);
     const [waitlistEntries, setWaitlistEntries] = useState<WaitlistEntry[]>([]);
+    const [scheduleBlocks, setScheduleBlocks] = useState<ScheduleBlock[]>([]);
     const [isWaitlistModalOpen, setIsWaitlistModalOpen] = useState(false);
     const [isWaitlistManagerOpen, setIsWaitlistManagerOpen] = useState(false);
     const [isWaitlistEditOpen, setIsWaitlistEditOpen] = useState(false);
@@ -214,16 +216,27 @@ export default function AgendaPage() {
         }
     }, []);
 
+    const refreshScheduleBlocks = useCallback(async () => {
+        try {
+            const blocksData = await blockService.listBlocks();
+            setScheduleBlocks(blocksData);
+        } catch (error) {
+            console.error('Erro ao atualizar bloqueios de agenda:', error);
+        }
+    }, []);
+
     useEffect(() => {
         const fetchInitialData = async () => {
             setIsLoadingData(true);
             try {
-                const [patientData, waitlistData] = await Promise.all([
+                const [patientData, waitlistData, blocksData] = await Promise.all([
                     patientService.getAllPatients(),
                     waitlistService.listEntries('waiting'),
+                    blockService.listBlocks(),
                 ]);
                 setPatients(patientData);
                 setWaitlistEntries(waitlistData);
+                setScheduleBlocks(blocksData);
             } catch (error) {
                 console.error('Erro ao carregar dados iniciais:', error);
                 showToast('Falha ao carregar dados de suporte da agenda.', 'error');
@@ -277,6 +290,7 @@ export default function AgendaPage() {
             console.log('🔄 Refazendo fetch dos agendamentos');
             refetch();
             refreshWaitlist();
+            refreshScheduleBlocks();
             setIsFormOpen(false);
             setAppointmentToEdit(null);
             return true;
@@ -304,6 +318,7 @@ export default function AgendaPage() {
             showToast('Agendamento(s) removido(s) com sucesso!', 'success');
             refetch();
             refreshWaitlist();
+            refreshScheduleBlocks();
             setIsFormOpen(false);
             setAppointmentToEdit(null);
             setSelectedAppointment(null);
@@ -606,8 +621,10 @@ export default function AgendaPage() {
                     <DailyView
                         {...commonProps}
                         selectedDate={currentDate}
+                        scheduleBlocks={scheduleBlocks}
                         onSlotClick={handleSlotClick}
                         onDrop={handleDrop}
+                        onRightClick={handleRightClick}
                     />
                 );
             case 'weekly':
@@ -615,6 +632,7 @@ export default function AgendaPage() {
                     <NewWeeklyView
                         {...commonProps}
                         currentDate={currentDate}
+                        scheduleBlocks={scheduleBlocks}
                         onSlotClick={handleSlotClick}
                         onDrop={handleDrop}
                         onEdit={handleEditClick}
@@ -948,7 +966,10 @@ export default function AgendaPage() {
                 isOpen={isScheduleBlocksOpen}
                 onClose={() => setIsScheduleBlocksOpen(false)}
                 therapists={therapists}
-                onUpdate={refetch}
+                onUpdate={() => {
+                    refetch();
+                    refreshScheduleBlocks();
+                }}
             />
 
             {/* Keyboard Shortcuts Help */}

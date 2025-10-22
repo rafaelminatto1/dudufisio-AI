@@ -10,7 +10,7 @@ import endOfWeek from 'date-fns/endOfWeek';
 import { ptBR } from 'date-fns/locale';
 import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { EnrichedAppointment, Therapist } from '../../types';
+import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
 import { ChevronLeft, ChevronRight, AlertCircle, CheckCircle } from 'lucide-react';
 import Tooltip from '../ui/tooltip';
@@ -49,7 +49,7 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
   const getDayStats = (date: Date) => {
     const dayApps = getAppointmentsForDay(date);
     const hasConflicts = dayApps.some(app => app.hasConflict);
-    const completed = dayApps.filter(app => app.status === 'completed').length;
+    const completed = dayApps.filter(app => app.status === AppointmentStatus.Completed).length;
     const total = dayApps.length;
     const paid = dayApps.filter(app => app.paymentStatus === 'paid').length;
 
@@ -165,22 +165,27 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
                       >
                         <div
                           className={cn(
-                            "text-xs p-1 rounded text-white cursor-pointer hover:opacity-80 transition-opacity min-w-0",
-                            `bg-${appointment.therapistColor}-500`
+                            "text-xs p-1.5 rounded-md text-white cursor-pointer hover:opacity-80 transition-all duration-200 min-w-0 border border-white/20 shadow-sm",
+                            `bg-${appointment.therapistColor}-500 hover:bg-${appointment.therapistColor}-600`
                           )}
                           onClick={(e) => {
                             e.stopPropagation();
                             onAppointmentClick?.(appointment);
                           }}
                         >
-                          <div className="truncate">
-                            {format(appointment.startTime, 'HH:mm')} {appointment.patientName.split(' ').slice(0, 2).join(' ')}
+                          <div className="flex items-center justify-between gap-1">
+                            <div className="truncate font-medium">
+                              {format(appointment.startTime, 'HH:mm')} {appointment.patientName.split(' ').slice(0, 2).join(' ')}
+                            </div>
+                            {appointment.paymentStatus === 'paid' && (
+                              <CheckCircle className="w-3 h-3 text-green-200 flex-shrink-0" />
+                            )}
                           </div>
                         </div>
                       </Tooltip>
                     ))}
                     {dayAppointments.length > 3 && (
-                      <div className="text-xs text-slate-500 font-medium">
+                      <div className="text-xs text-slate-500 font-medium bg-slate-100 rounded-md px-2 py-1 text-center">
                         +{dayAppointments.length - 3} mais
                       </div>
                     )}

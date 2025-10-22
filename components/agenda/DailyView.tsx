@@ -4,15 +4,17 @@ import isSameDay from 'date-fns/isSameDay';
 import isToday from 'date-fns/isToday';
 import { ptBR } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { EnrichedAppointment, Therapist } from '../../types';
-import AppointmentCard from '../AppointmentCard';
+import { EnrichedAppointment, Therapist, ScheduleBlock } from '../../types';
+import OptimizedAppointmentCard from './OptimizedAppointmentCard';
 import { cn } from '../../lib/utils';
 import Tooltip from '../ui/tooltip';
+import ScheduleBlockBar from './ScheduleBlockBar';
 
 interface DailyViewProps {
   selectedDate: Date;
   appointments: EnrichedAppointment[];
   therapists: Therapist[];
+  scheduleBlocks?: ScheduleBlock[];
   onSlotClick: (date: Date, time: string, therapistId: string) => void;
   onAppointmentClick: (appointment: EnrichedAppointment) => void;
   onDragStart: (e: React.DragEvent<HTMLDivElement>, appointment: EnrichedAppointment) => void;
@@ -20,6 +22,7 @@ interface DailyViewProps {
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>, date: Date, therapistId: string) => void;
   draggedAppointmentId: string | null;
+  onRightClick?: (appointment: EnrichedAppointment, e: React.MouseEvent) => void;
 }
 
 const START_HOUR = 7;
@@ -66,13 +69,15 @@ const DailyView: React.FC<DailyViewProps> = ({
   selectedDate,
   appointments,
   therapists,
+  scheduleBlocks = [],
   onSlotClick,
   onAppointmentClick,
   onDragStart,
   onDragEnd,
   onDragOver,
   onDrop,
-  draggedAppointmentId
+  draggedAppointmentId,
+  onRightClick
 }) => {
   const dayAppointments = appointments.filter(app => isSameDay(app.startTime, selectedDate));
 
@@ -143,16 +148,36 @@ const DailyView: React.FC<DailyViewProps> = ({
                       </div>
                     ))}
 
+                    {/* Schedule Blocks */}
+                    {scheduleBlocks
+                      .filter(block => 
+                        isSameDay(block.startTime, selectedDate) && 
+                        block.therapistId === therapist.id
+                      )
+                      .map((block) => (
+                        <ScheduleBlockBar
+                          key={block.id}
+                          block={block}
+                          startHour={START_HOUR}
+                          pixelsPerMinute={PIXELS_PER_MINUTE}
+                          therapistIndex={0}
+                          totalTherapists={1}
+                        />
+                      ))}
+
                     {therapistAppointments.map(app => (
-                      <AppointmentCard
+                      <OptimizedAppointmentCard
                         key={app.id}
                         appointment={app}
                         startHour={START_HOUR}
                         pixelsPerMinute={PIXELS_PER_MINUTE}
                         isBeingDragged={draggedAppointmentId === app.id}
-                        onClick={() => onAppointmentClick(app)}
-                        onDragStart={(e) => onDragStart(e, app)}
+                        onClick={onAppointmentClick}
+                        onRightClick={onRightClick || (() => {})}
+                        onDragStart={onDragStart}
                         onDragEnd={onDragEnd}
+                        therapistIndex={0}
+                        totalTherapists={1}
                       />
                     ))}
 

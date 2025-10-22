@@ -7,16 +7,19 @@ import isToday from 'date-fns/isToday';
 import { ptBR } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
+import { EnrichedAppointment, Therapist, AppointmentStatus, ScheduleBlock } from '../../types';
 import { cn } from '../../lib/utils';
 import AppointmentContextMenu from './AppointmentContextMenu';
 import HolidayIndicator from './HolidayIndicator';
 import Tooltip from '../ui/tooltip';
+import ScheduleBlockBar from './ScheduleBlockBar';
+import OptimizedAppointmentCard from './OptimizedAppointmentCard';
 
 interface NewWeeklyViewProps {
   currentDate: Date;
   appointments: EnrichedAppointment[];
   therapists: Therapist[];
+  scheduleBlocks?: ScheduleBlock[];
   onSlotClick: (day: Date, time: string, therapistId: string) => void;
   onAppointmentClick: (appointment: EnrichedAppointment) => void;
   onDragStart: (e: React.DragEvent<HTMLDivElement>, appointment: EnrichedAppointment) => void;
@@ -35,24 +38,6 @@ const END_HOUR = 21; // Horário estendido até 21h
 const SLOT_DURATION = 30;
 const PIXELS_PER_MINUTE = 2.5; // Aumentado para melhor visualização
 
-// Cores sólidas e opacas para os terapeutas
-const THERAPIST_COLORS = {
-  'therapist-1': {
-    primary: '#8B5CF6', // Purple
-    light: '#F3F4F6',
-    border: '#8B5CF6'
-  },
-  'therapist-2': {
-    primary: '#10B981', // Emerald
-    light: '#F0FDF4',
-    border: '#10B981'
-  },
-  'therapist-3': {
-    primary: '#3B82F6', // Blue
-    light: '#EFF6FF',
-    border: '#3B82F6'
-  }
-};
 
 const timeSlots = Array.from({ length: (END_HOUR - START_HOUR) * (60 / SLOT_DURATION) }, (_, i) => {
   const totalMinutes = START_HOUR * 60 + i * SLOT_DURATION;
@@ -90,122 +75,26 @@ const CurrentTimeIndicator: React.FC = () => {
   );
 };
 
-// Card de agendamento com design sólido e sem transparência
-const AppointmentCard: React.FC<{
-  appointment: EnrichedAppointment;
-  startHour: number;
-  pixelsPerMinute: number;
-  isBeingDragged: boolean;
-  onClick: (appointment: EnrichedAppointment) => void;
-  onRightClick: (appointment: EnrichedAppointment, e: React.MouseEvent) => void;
-  onDragStart: (e: React.DragEvent<HTMLDivElement>, appointment: EnrichedAppointment) => void;
-  onDragEnd: () => void;
-  therapistIndex: number;
-}> = ({
-  appointment,
-  startHour,
-  pixelsPerMinute,
-  isBeingDragged,
-  onClick,
-  onRightClick,
-  onDragStart,
-  onDragEnd,
-  therapistIndex
-}) => {
-  const top = ((appointment.startTime.getHours() - startHour) * 60 + appointment.startTime.getMinutes()) * pixelsPerMinute;
-  const durationInMinutes = (appointment.endTime.getTime() - appointment.startTime.getTime()) / (60 * 1000);
-  const height = Math.max(durationInMinutes * pixelsPerMinute, 40);
-
-  // Cores sólidas baseadas no terapeuta
-  const therapistColor = THERAPIST_COLORS[`therapist-${(therapistIndex % 3) + 1}` as keyof typeof THERAPIST_COLORS];
+// Indicador de drop para drag-and-drop
+const DropIndicator: React.FC<{ top: number; show: boolean }> = ({ top, show }) => {
+  if (!show) return null;
   
-  // Estilos sólidos para status
-  const getStatusStyle = (status: AppointmentStatus) => {
-    switch (status) {
-      case AppointmentStatus.Scheduled:
-        return 'bg-white border-slate-200';
-      case AppointmentStatus.Completed:
-        return 'bg-green-50 border-green-200';
-      case AppointmentStatus.Canceled:
-        return 'bg-gray-100 border-gray-300';
-      case AppointmentStatus.NoShow:
-        return 'bg-orange-50 border-orange-200';
-      default:
-        return 'bg-white border-slate-200';
-    }
-  };
-
   return (
-    <div
-      onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
-      onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); onRightClick(appointment, e); }}
-      draggable="true"
-      onDragStart={(e) => onDragStart(e, appointment)}
-      onDragEnd={onDragEnd}
-      className={cn(
-        "absolute rounded-lg cursor-pointer transition-all duration-200 overflow-hidden flex flex-col border-2 shadow-md hover:shadow-lg hover:scale-[1.01] font-semibold",
-        getStatusStyle(appointment.status),
-        isBeingDragged && 'opacity-50 ring-4 ring-blue-400 scale-105',
-        appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse',
-        "hover:border-opacity-60"
-      )}
-      data-testid="appointment-block"
-      style={{
-        top: `${top}px`,
-        height: `${height}px`,
-        left: `calc(${therapistIndex * 33.33}% + ${therapistIndex * 0.125}rem)`,
-        width: `calc(33.33% - 0.25rem)`,
-        zIndex: 10,
-        minWidth: '140px',
-        borderLeftColor: therapistColor.border,
-        borderLeftWidth: '4px',
-        backgroundColor: appointment.status === AppointmentStatus.Completed ? '#F0FDF4' : 
-                        appointment.status === AppointmentStatus.Canceled ? '#F9FAFB' :
-                        appointment.status === AppointmentStatus.NoShow ? '#FFF7ED' : '#FFFFFF',
-        opacity: isBeingDragged ? 0.5 : 1
-      }}
+    <div 
+      className="absolute left-0 right-0 z-30 pointer-events-none transition-all duration-150"
+      style={{ top: `${top}px` }}
     >
-      <div className="flex-grow min-h-0 flex flex-col justify-between p-2">
-        <div className="flex items-center justify-between gap-1 mb-1">
-          <Tooltip 
-            content={`${appointment.patientName}${appointment.therapistName ? ` - ${appointment.therapistName}` : ''}`}
-            side="top"
-            delayDuration={200}
-          >
-            <div className="font-bold text-sm leading-tight flex-1 text-slate-900 min-w-0">
-              <div className="truncate font-semibold">
-                {appointment.patientName.split(' ').slice(0, 2).join(' ')}
-              </div>
-            </div>
-          </Tooltip>
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            {appointment.hasConflict && (
-              <span className="text-orange-600 text-base" title={appointment.conflictReason}>
-                ⚠️
-              </span>
-            )}
-            {appointment.paymentStatus === 'paid' && (
-              <div className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0 shadow-sm"></div>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="text-xs leading-tight font-mono text-slate-700 font-bold">
-            {format(appointment.startTime, 'HH:mm')}
-          </div>
-          <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
-            {appointment.type.substring(0, 3)}
-          </div>
-        </div>
-      </div>
+      <div className="h-1 bg-blue-500 shadow-lg opacity-80 rounded-full" />
     </div>
   );
 };
+
 
 const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
   currentDate,
   appointments,
   therapists,
+  scheduleBlocks = [],
   onSlotClick,
   onAppointmentClick,
   onDragStart,
@@ -226,6 +115,10 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
     position: { x: number; y: number };
   } | null>(null);
 
+  // Estados para feedback visual do drag-and-drop
+  const [dropIndicatorPosition, setDropIndicatorPosition] = useState<number | null>(null);
+  const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
+
   const handleRightClick = (appointment: EnrichedAppointment, e: React.MouseEvent) => {
     setContextMenu({
       appointment,
@@ -238,6 +131,26 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
     newStartTime.setDate(newStartTime.getDate() + 7);
 
     onSlotClick(newStartTime, format(newStartTime, 'HH:mm'), appointment.therapistId);
+  };
+
+  // Handler melhorado para drag over com feedback visual
+  const handleDragOverEnhanced = (e: React.DragEvent, day: Date) => {
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const dropY = e.clientY - rect.top;
+    
+    // Calcular posição com snap
+    const minutesFromTop = dropY / PIXELS_PER_MINUTE;
+    const snappedMinutes = Math.round(minutesFromTop / 30) * 30;
+    const snappedY = snappedMinutes * PIXELS_PER_MINUTE;
+    
+    setDropIndicatorPosition(snappedY);
+    setHoveredColumn(day.toISOString());
+  };
+
+  const handleDragLeave = () => {
+    setDropIndicatorPosition(null);
+    setHoveredColumn(null);
   };
 
   return (
@@ -287,12 +200,9 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
       </div>
 
       {/* Grid principal do calendário */}
-      <div className="flex-1 flex overflow-hidden rounded-lg shadow-lg border border-slate-200">
+      <div className="flex-1 flex overflow-hidden rounded-lg shadow-lg border border-slate-200 relative">
         {/* Coluna de horários */}
         <div className="w-16 sm:w-20 flex-shrink-0 border-r-2 border-slate-300 bg-gradient-to-b from-slate-50 to-slate-100">
-          <div className="h-12 text-center text-sm font-bold text-slate-700 py-3 bg-gradient-to-r from-slate-200 to-slate-300 shadow-sm border-b border-slate-300">
-            Hora
-          </div>
           {timeSlots.map(time => (
             <div 
               key={time} 
@@ -307,8 +217,36 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
           ))}
         </div>
 
+        {/* Linhas horizontais - horas cheias E meias horas */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          {timeSlots.map(time => {
+            const isFullHour = time.endsWith('00');
+            const [hour, minute] = time.split(':').map(Number);
+            const totalMinutes = (hour - START_HOUR) * 60 + minute;
+            const topPosition = totalMinutes * PIXELS_PER_MINUTE;
+            
+            return (
+              <div
+                key={time}
+                className={cn(
+                  "absolute border-b",
+                  isFullHour 
+                    ? "border-slate-400" // Hora cheia: linha mais grossa
+                    : "border-slate-200" // Meia hora: linha mais sutil
+                )}
+                style={{ 
+                  top: `${topPosition}px`,
+                  height: '1px',
+                  left: 0,
+                  right: 0
+                }}
+              />
+            );
+          })}
+        </div>
+
         {/* Grid dos dias - Design sólido sem transparência */}
-        <div className="flex-1 grid grid-cols-6 bg-slate-100 overflow-auto lg:gap-1 xl:gap-2">
+        <div className="flex-1 grid grid-cols-6 bg-slate-100 overflow-auto lg:gap-1 xl:gap-2 relative z-10">
           {weekDays.map((day) => {
             const dayAppointments = appointments.filter(app => isSameDay(app.startTime, day));
 
@@ -317,20 +255,6 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                 "relative border-r border-slate-200 last:border-r-0",
                 isToday(day) ? "bg-blue-50/30" : "bg-white"
               )}>
-                {/* Linhas de horário - mais visíveis mas não sobrepostas */}
-                {timeSlots.map(time => (
-                  <div
-                    key={time}
-                    className={cn(
-                      "absolute w-full border-b",
-                      time.endsWith('00') ? "border-slate-400" : "border-slate-200"
-                    )}
-                    style={{ 
-                      top: `${(parseInt(time.split(':')[0]) - START_HOUR) * 60 * PIXELS_PER_MINUTE}px`, 
-                      height: '1px' 
-                    }}
-                  />
-                ))}
 
                 {/* Área de slots para cada terapeuta */}
                 <div className="relative" style={{ height: `${(END_HOUR - START_HOUR) * 60 * PIXELS_PER_MINUTE}px` }}>
@@ -345,7 +269,8 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                           therapistIndex === 1 && "hover:bg-emerald-50/20",
                           therapistIndex === 2 && "hover:bg-blue-50/20"
                         )}
-                        onDragOver={onDragOver}
+                        onDragOver={(e) => handleDragOverEnhanced(e, day)}
+                        onDragLeave={handleDragLeave}
                         onDrop={(e) => onDrop(e, day, therapist.id)}
                       >
                         {timeSlots.map((time) => (
@@ -379,11 +304,28 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                     ))}
                   </div>
 
+                  {/* Schedule Blocks */}
+                  {scheduleBlocks
+                    .filter(block => isSameDay(block.startTime, day))
+                    .map((block) => {
+                      const therapistIndex = therapists.findIndex(t => t.id === block.therapistId);
+                      return (
+                        <ScheduleBlockBar
+                          key={block.id}
+                          block={block}
+                          startHour={START_HOUR}
+                          pixelsPerMinute={PIXELS_PER_MINUTE}
+                          therapistIndex={therapistIndex >= 0 ? therapistIndex : 0}
+                          totalTherapists={therapists.length}
+                        />
+                      );
+                    })}
+
                   {/* Agendamentos */}
                   {dayAppointments.map((appointment) => {
                     const therapistIndex = therapists.findIndex(t => t.id === appointment.therapistId);
                     return (
-                      <AppointmentCard
+                      <OptimizedAppointmentCard
                         key={appointment.id}
                         appointment={appointment}
                         startHour={START_HOUR}
@@ -394,12 +336,18 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                         onDragStart={onDragStart}
                         onDragEnd={onDragEnd}
                         therapistIndex={therapistIndex >= 0 ? therapistIndex : 0}
+                        totalTherapists={therapists.length}
                       />
                     );
                   })}
 
                   {/* Indicador de tempo atual */}
                   {isToday(day) && <CurrentTimeIndicator />}
+                  
+                  {/* Indicador de drop para drag-and-drop */}
+                  {hoveredColumn === day.toISOString() && dropIndicatorPosition !== null && (
+                    <DropIndicator top={dropIndicatorPosition} show={true} />
+                  )}
                 </div>
               </div>
             );

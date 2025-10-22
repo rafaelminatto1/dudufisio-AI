@@ -79,15 +79,15 @@ const ListView: React.FC<ListViewProps> = ({
   const getStatusColor = (status: AppointmentStatus) => {
     switch (status) {
       case AppointmentStatus.Scheduled:
-        return 'bg-fisio-primary-100 text-fisio-primary-800 border-fisio-primary-200';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       case AppointmentStatus.Completed:
-        return 'bg-fisio-secondary-100 text-fisio-secondary-800 border-fisio-secondary-200';
+        return 'bg-green-100 text-green-800 border-green-200';
       case AppointmentStatus.Canceled:
-        return 'bg-fisio-error-100 text-fisio-error-800 border-fisio-error-200';
+        return 'bg-red-100 text-red-800 border-red-200';
       case AppointmentStatus.NoShow:
-        return 'bg-fisio-warning-100 text-fisio-warning-800 border-fisio-warning-200';
+        return 'bg-orange-100 text-orange-800 border-orange-200';
       default:
-        return 'bg-fisio-neutral-100 text-fisio-neutral-800 border-fisio-neutral-200';
+        return 'bg-slate-100 text-slate-800 border-slate-200';
     }
   };
 
@@ -218,28 +218,28 @@ const ListView: React.FC<ListViewProps> = ({
                       </Badge>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 text-sm text-slate-600">
-                      <div className="flex items-center gap-2">
-                        <Calendar size={16} />
-                        <span>{format(appointment.startTime, "d 'de' MMM, yyyy", { locale: ptBR })}</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm text-slate-600">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Calendar size={16} className="flex-shrink-0" />
+                        <span className="truncate">{format(appointment.startTime, "d 'de' MMM, yyyy", { locale: ptBR })}</span>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <Clock size={16} />
-                        <span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Clock size={16} className="flex-shrink-0" />
+                        <span className="truncate">
                           {format(appointment.startTime, 'HH:mm')} - {format(appointment.endTime, 'HH:mm')}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <User size={16} />
-                        <span>{appointment.therapistName}</span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <User size={16} className="flex-shrink-0" />
+                        <span className="truncate">{appointment.therapistName}</span>
                       </div>
 
                       {appointment.value && (
-                        <div className="flex items-center gap-2">
-                          <DollarSign size={16} />
-                          <span>R$ {appointment.value.toFixed(2)}</span>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <DollarSign size={16} className="flex-shrink-0" />
+                          <span className="truncate font-semibold text-green-600">R$ {appointment.value.toFixed(2)}</span>
                         </div>
                       )}
                     </div>
