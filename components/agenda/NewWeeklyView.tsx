@@ -31,7 +31,7 @@ interface NewWeeklyViewProps {
 }
 
 const START_HOUR = 7;
-const END_HOUR = 19;
+const END_HOUR = 21; // Horário estendido até 21h
 const SLOT_DURATION = 30;
 const PIXELS_PER_MINUTE = 2.5; // Aumentado para melhor visualização
 

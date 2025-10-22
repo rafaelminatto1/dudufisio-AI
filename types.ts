@@ -36,6 +36,7 @@ export interface Therapist {
   name: string;
   color: string; // e.g., 'teal', 'sky', 'indigo'
   avatarUrl: string;
+  crefito?: string; // Número de registro profissional CREFITO
 }
 
 // --- Patient Related Types ---
@@ -390,7 +391,7 @@ export interface Appointment {
   appointment_id?: string; // Alias ou FK para outras tabelas
   patientId: string;
   patient_id?: string; // Alias Supabase
-  therapistId: string;
+  therapistId?: string; // Opcional - pode ser definido após o atendimento
   therapist_id?: string; // Alias Supabase
   professional_id?: string; // Alias alternativo
   user_id?: string; // ID do usuário que criou

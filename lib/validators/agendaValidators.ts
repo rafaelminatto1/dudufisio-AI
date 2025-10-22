@@ -24,10 +24,8 @@ export const validateAppointment = (appointment: Partial<Appointment>): Validati
     errors.patient = 'Selecione um paciente';
   }
 
-  // Validar terapeuta
-  if (!appointment.therapistId) {
-    errors.therapist = 'Selecione um terapeuta';
-  }
+  // Terapeuta é opcional - pode ser definido após o atendimento
+  // Não validar como obrigatório
 
   // Validar tipo
   if (!appointment.type || !Object.values(AppointmentType).includes(appointment.type as AppointmentType)) {

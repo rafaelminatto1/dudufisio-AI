@@ -44,14 +44,22 @@ export const db = {
   },
 
   // Appointments
-  getAppointments: (): Appointment[] => [...appointments],
+  getAppointments: (): Appointment[] => {
+    console.log('📚 mockDb.getAppointments - Total de agendamentos:', appointments.length);
+    return [...appointments];
+  },
   saveAppointment: (appointmentData: Appointment): void => {
+    console.log('💾 mockDb.saveAppointment - Recebendo:', appointmentData);
     const index = appointments.findIndex(a => a.id === appointmentData.id);
     if (index > -1) {
+      console.log(`   ✏️ Atualizando agendamento existente no índice ${index}`);
       appointments[index] = appointmentData;
     } else {
+      console.log('   ➕ Adicionando novo agendamento');
       appointments.push(appointmentData);
     }
+    console.log('   📊 Total de agendamentos após salvar:', appointments.length);
+    console.log('   📋 IDs dos agendamentos:', appointments.map(a => a.id));
   },
   deleteAppointment: (id: string): void => {
     appointments = appointments.filter(a => a.id !== id);

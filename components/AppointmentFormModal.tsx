@@ -16,6 +16,7 @@ import RecurrenceSelector from './RecurrenceSelector';
 import { findConflict } from '../services/scheduling/conflictDetection';
 import { conflictDetectionService, Conflict } from '../services/scheduling/conflictDetectionService';
 import ConflictWarningDialog from './agenda/ConflictWarningDialog';
+import CapacityWarningDialog from './agenda/CapacityWarningDialog';
 import { generateRecurrences } from '../services/scheduling/recurrenceService';
 import { schedulingSettingsService } from '../services/schedulingSettingsService';
 import { validateAppointment, formatValidationErrors } from '../lib/validators/agendaValidators';
@@ -55,6 +56,14 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   const [showConflictDialog, setShowConflictDialog] = useState(false);
   const [pendingAppointment, setPendingAppointment] = useState<Appointment | null>(null);
   const [alternativeTimes, setAlternativeTimes] = useState<Date[]>([]);
+  const [showCapacityWarning, setShowCapacityWarning] = useState(false);
+  const [capacityInfo, setCapacityInfo] = useState<{
+    currentCount: number;
+    maxCapacity: number;
+    evaluationCount: number;
+    maxEvaluations: number;
+    isEvaluationLimit: boolean;
+  } | null>(null);
   
   const { showToast } = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -68,7 +77,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   
   const slotDate = useMemo(() => appointmentToEdit?.startTime || initialData?.date || new Date(), [appointmentToEdit, initialData]);
   const [slotTime, setSlotTime] = useState('09:00');
-  const [therapistId, setTherapistId] = useState(appointmentToEdit?.therapistId || initialData?.therapistId || therapists[0]?.id || '');
+  const [therapistId, setTherapistId] = useState<string>(appointmentToEdit?.therapistId || initialData?.therapistId || '');
   
   useEffect(() => {
     if (isOpen) {
@@ -102,11 +111,21 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             setAppointmentType(AppointmentType.Session);
             setDuration(60);
             setNotes('');
-            setTherapistId(initialData?.therapistId || therapists[0]?.id || '');
-            const slotTimeValue = format(initialData?.date || new Date(), 'HH:mm');
+            setTherapistId(initialData?.therapistId || '');
+            
+            // Corrigir hora: garantir que a data tenha hora definida
+            const dateToUse = initialData?.date || new Date();
+            const hours = dateToUse.getHours();
+            const minutes = dateToUse.getMinutes();
+            
+            // Se a hora for 00:00 (meia-noite), usar 09:00 como padrão
+            const slotTimeValue = (hours === 0 && minutes === 0) 
+                ? '09:00' 
+                : format(dateToUse, 'HH:mm');
+            
             console.log('   setSlotTime (new):', slotTimeValue);
             console.log('   initialData?.date:', initialData?.date);
-            console.log('   format(initialData?.date, "HH:mm"):', format(initialData?.date, 'HH:mm'));
+            console.log('   dateToUse hours:', hours, 'minutes:', minutes);
             setSlotTime(slotTimeValue);
             setRecurrenceRule(undefined);
         }
@@ -161,7 +180,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       patientId: selectedPatient.id,
       patientName: selectedPatient.name,
       patientAvatarUrl: (selectedPatient as any).avatarUrl || `https://i.pravatar.cc/150?u=${selectedPatient.id}`,
-      therapistId: therapistId,
+      therapistId: therapistId || undefined, // Permitir vazio
       title: appointmentToEdit?.title || `${appointmentType}`,
       startTime: startTime,
       endTime: endTime,
@@ -186,12 +205,41 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     const appointmentsToSave = generateRecurrences(baseAppointment);
     console.log('🔄 Agendamentos gerados para salvar:', appointmentsToSave);
     
-    // Verificar conflitos usando o novo serviço (incluindo bloqueios)
-    const conflictCheck = await conflictDetectionService.checkConflicts(
-      baseAppointment,
+    // Verificar capacidade do horário (limites de profissionais)
+    const occupancy = schedulingSettingsService.getSlotOccupancy(
+      startTime, 
       allAppointments,
-      availableBlocks
+      appointmentToEdit?.id // Ignorar o próprio agendamento se estiver editando
     );
+    
+    console.log('📊 Verificação de capacidade:', occupancy);
+    
+    // Se o horário está no limite ou excede, mostrar aviso
+    if (occupancy.isPatientLimitFull || occupancy.isEvalLimitFull) {
+      const isEvalLimit = appointmentType === AppointmentType.Evaluation && occupancy.isEvalLimitFull;
+      
+      setCapacityInfo({
+        currentCount: occupancy.patientCount,
+        maxCapacity: occupancy.patientLimit,
+        evaluationCount: occupancy.evalCount,
+        maxEvaluations: occupancy.evalLimit,
+        isEvaluationLimit: isEvalLimit
+      });
+      setPendingAppointment(baseAppointment);
+      setShowCapacityWarning(true);
+      setIsSaving(false);
+      return;
+    }
+    
+    // Verificar conflitos usando o novo serviço (incluindo bloqueios)
+    // Nota: se therapistId estiver vazio, não verificar conflitos de terapeuta
+    const conflictCheck = baseAppointment.therapistId 
+      ? await conflictDetectionService.checkConflicts(
+          baseAppointment,
+          allAppointments,
+          availableBlocks
+        )
+      : { hasConflicts: false, conflicts: [] };
 
     if (conflictCheck.hasConflicts) {
       // Sugerir horários alternativos
@@ -229,6 +277,39 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       onClose();
     } else {
       console.error('❌ Falha ao salvar alguns agendamentos');
+    }
+    setIsSaving(false);
+  };
+
+  const handleConfirmCapacity = async () => {
+    if (!pendingAppointment) return;
+
+    setIsSaving(true);
+    setShowCapacityWarning(false);
+
+    // Marcar o agendamento como tendo sobrecarga
+    const appointmentWithOverload = {
+      ...pendingAppointment,
+      hasConflict: true,
+      conflictReason: capacityInfo?.isEvaluationLimit 
+        ? `Limite de avaliações excedido (${capacityInfo.evaluationCount}/${capacityInfo.maxEvaluations})`
+        : `Capacidade excedida (${capacityInfo?.currentCount}/${capacityInfo?.maxCapacity} profissionais)`
+    };
+
+    const appointmentsToSave = generateRecurrences(appointmentWithOverload);
+
+    let success = true;
+    for (const app of appointmentsToSave) {
+      const result = await onSave(app);
+      if (!result) {
+        success = false;
+        break;
+      }
+    }
+
+    if (success) {
+      showToast('Agendamento criado com aviso de sobrecarga.', 'warning');
+      onClose();
     }
     setIsSaving(false);
   };
@@ -348,14 +429,18 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Fisioterapeuta</label>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Fisioterapeuta <span className="text-slate-400 font-normal">(opcional)</span>
+            </label>
             <select
               value={therapistId}
               onChange={(e) => setTherapistId(e.target.value)}
               className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-sky-500 focus:border-sky-500 text-sm"
             >
-              {therapists.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+              <option value="">Selecionar depois (na evolução)</option>
+              {therapists.map(t => <option key={t.id} value={t.id}>{t.name}{t.crefito ? ` - ${t.crefito}` : ''}</option>)}
             </select>
+            <p className="mt-1 text-xs text-slate-500">Deixe vazio para definir o profissional após o atendimento</p>
           </div>
 
           <div>
@@ -467,6 +552,27 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           </button>
         </div>
       </div>
+
+      {/* Capacity Warning Dialog */}
+      {showCapacityWarning && capacityInfo && (
+        <CapacityWarningDialog
+          isOpen={showCapacityWarning}
+          onClose={() => {
+            setShowCapacityWarning(false);
+            setCapacityInfo(null);
+            setPendingAppointment(null);
+            setIsSaving(false);
+          }}
+          onConfirm={handleConfirmCapacity}
+          patientName={pendingAppointment?.patientName}
+          timeSlot={slotTime}
+          currentCount={capacityInfo.currentCount}
+          maxCapacity={capacityInfo.maxCapacity}
+          evaluationCount={capacityInfo.evaluationCount}
+          maxEvaluations={capacityInfo.maxEvaluations}
+          isEvaluationLimit={capacityInfo.isEvaluationLimit}
+        />
+      )}
 
       {/* Conflict Warning Dialog */}
       <ConflictWarningDialog

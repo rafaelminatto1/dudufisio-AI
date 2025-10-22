@@ -14,9 +14,9 @@ export const mockUsers: User[] = [
 ];
 
 export const mockTherapists: Therapist[] = [
-    { id: 'therapist_1', name: 'Dr. Roberto', color: 'teal', avatarUrl: 'https://i.pravatar.cc/150?u=user_1' },
-    { id: 'therapist_2', name: 'Dra. Camila', color: 'sky', avatarUrl: 'https://i.pravatar.cc/150?u=user_2' },
-    { id: 'therapist_3', name: 'Dr. Fernando', color: 'indigo', avatarUrl: 'https://i.pravatar.cc/150?u=user_3' },
+    { id: 'therapist_1', name: 'Dr. Roberto', color: 'teal', avatarUrl: 'https://i.pravatar.cc/150?u=user_1', crefito: 'CREFITO-3/123456-F' },
+    { id: 'therapist_2', name: 'Dra. Camila', color: 'sky', avatarUrl: 'https://i.pravatar.cc/150?u=user_2', crefito: 'CREFITO-3/234567-F' },
+    { id: 'therapist_3', name: 'Dr. Fernando', color: 'indigo', avatarUrl: 'https://i.pravatar.cc/150?u=user_3', crefito: 'CREFITO-3/345678-F' },
 ];
 
 export const mockPartners: Partner[] = [
