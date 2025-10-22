@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Calendar, Phone, Mail, User, FileText, Clock, Target, MessageCircle, Activity, BarChart, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -6,6 +7,10 @@ import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { clinicalContentService } from '../services/clinicalContentService';
 import type { ClinicalProtocol } from '../types/clinicalContent';
+import { supabasePatientService } from '../services/supabase/patientServiceSupabase';
+import { Patient } from '../types';
+import PatientFormDialog from '../components/patients/PatientFormDialog';
+import PatientDeleteDialog from '../components/patients/PatientDeleteDialog';
 import { ExerciseAssignmentSection } from '../components/patient/ExerciseAssignmentSection';
 import { ObservationFeed } from '../components/patient/ObservationFeed';
 import { NewObservationModal } from '../components/patient/NewObservationModal';
@@ -38,6 +43,11 @@ import { FunctionalityChart } from '../components/charts/FunctionalityChart';
 import { ReportGeneratorDialog } from '../components/reports/ReportGeneratorDialog';
 
 const PatientDetailPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [patient, setPatient] = useState<Patient | null>(null);
+  const [patientLoading, setPatientLoading] = useState(true);
+  const [patientError, setPatientError] = useState<string | null>(null);
   const [assignedProtocols, setAssignedProtocols] = useState<ClinicalProtocol[]>([]);
   const [loading, setLoading] = useState(true);
   const [showObservationModal, setShowObservationModal] = useState(false);
@@ -45,19 +55,38 @@ const PatientDetailPage: React.FC = () => {
   const [bodyMapSessions, setBodyMapSessions] = useState<any[]>([]);
   const [bodyMapLoading, setBodyMapLoading] = useState(false);
   const [bodyMapError, setBodyMapError] = useState<string | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const patient = {
-    id: '22e518b6-814f-4ea3-ad18-ce0c130f3005', // ✅ ID real do banco de dados
-    name: 'Maria Silva Santos',
-    email: 'maria.silva@email.com',
-    phone: '+5511987654321',
-    birthDate: '1985-03-15',
-    status: 'active',
-    totalSessions: 3
-  };
+  // Carregar dados do paciente do Supabase
+  useEffect(() => {
+    if (!id) return;
+    
+    const loadPatient = async () => {
+      try {
+        setPatientLoading(true);
+        setPatientError(null);
+        const data = await supabasePatientService.getPatientById(id);
+        if (!data) {
+          setPatientError('Paciente não encontrado');
+          return;
+        }
+        setPatient(data);
+      } catch (err) {
+        console.error('Erro ao carregar paciente:', err);
+        setPatientError('Erro ao carregar dados do paciente');
+      } finally {
+        setPatientLoading(false);
+      }
+    };
+    
+    loadPatient();
+  }, [id]);
 
   // Carregar protocolos atribuídos ao paciente
   useEffect(() => {
+    if (!patient?.id) return;
+    
     const loadAssignedProtocols = () => {
       try {
         const protocols = clinicalContentService.protocols.getProtocolsForPatient(patient.id);
@@ -70,20 +99,18 @@ const PatientDetailPage: React.FC = () => {
     };
 
     loadAssignedProtocols();
-  }, [patient.id]);
+  }, [patient?.id]);
 
   // Carregar sessões de mapa corporal
   useEffect(() => {
     const loadBodyMapSessions = async () => {
-      if (activeTab !== 'body-map') return;
+      if (activeTab !== 'body-map' || !patient?.id) return;
       
       setBodyMapLoading(true);
       setBodyMapError(null);
       
       try {
-        
         const sessions = await bodyMapService.getPatientBodyMapHistory(patient.id);
-        
         setBodyMapSessions(sessions);
       } catch (error: any) {
         console.error('❌ Erro ao carregar sessões de mapa corporal:', error);
@@ -94,9 +121,10 @@ const PatientDetailPage: React.FC = () => {
     };
 
     loadBodyMapSessions();
-  }, [patient.id, activeTab]);
+  }, [patient?.id, activeTab]);
 
   const calculateAge = (birthDate: string) => {
+    if (!birthDate) return 0;
     const today = new Date();
     const birth = new Date(birthDate);
     let age = today.getFullYear() - birth.getFullYear();
@@ -109,12 +137,85 @@ const PatientDetailPage: React.FC = () => {
     return age;
   };
 
-        return (
+  // Função para recarregar dados do paciente
+  const reloadPatient = async () => {
+    if (!id) return;
+    try {
+      const data = await supabasePatientService.getPatientById(id);
+      if (data) {
+        setPatient(data);
+      }
+    } catch (err) {
+      console.error('Erro ao recarregar paciente:', err);
+    }
+  };
+
+  // Loading state
+  if (patientLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <p className="text-slate-600">Carregando dados do paciente...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (patientError) {
+    return (
+      <div className="min-h-screen bg-slate-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center space-y-4">
+              <div className="text-red-600 font-semibold mb-2">
+                ⚠️ {patientError}
+              </div>
+              <Button 
+                onClick={() => navigate('/patients')}
+                variant="outline"
+              >
+                Voltar para Lista de Pacientes
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No patient data
+  if (!patient) {
+    return (
+      <div className="min-h-screen bg-slate-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center space-y-4">
+              <p className="text-slate-600">Paciente não encontrado</p>
+              <Button 
+                onClick={() => navigate('/patients')}
+                variant="outline"
+              >
+                Voltar para Lista de Pacientes
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className="min-h-screen bg-slate-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => navigate('/patients')}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
@@ -123,9 +224,9 @@ const PatientDetailPage: React.FC = () => {
               {patient.name}
             </h1>
             <div className="flex items-center gap-4">
-              <Badge variant="default">Ativo</Badge>
+              <Badge variant="default">{patient.status}</Badge>
               <span className="text-slate-600">{calculateAge(patient.birthDate)} anos</span>
-              <span className="text-slate-600">{patient.totalSessions} sessões</span>
+              <span className="text-slate-600">ID: {patient.id.slice(0, 8)}...</span>
             </div>
           </div>
           <div className="flex gap-2">
@@ -133,12 +234,15 @@ const PatientDetailPage: React.FC = () => {
               <Calendar className="w-4 h-4 mr-2" />
               Nova Consulta
             </Button>
-            <Button>
+            <Button onClick={() => setShowEditModal(true)}>
               <Edit className="w-4 h-4 mr-2" />
               Editar
             </Button>
+            <Button variant="destructive" onClick={() => setShowDeleteModal(true)}>
+              Excluir
+            </Button>
           </div>
-                        </div>
+        </div>
 
         {/* Alertas do Paciente */}
         <div className="mb-6">
@@ -163,16 +267,16 @@ const PatientDetailPage: React.FC = () => {
                   <Mail className="w-4 h-4 text-slate-400" />
                   <span className="font-medium">Email:</span>
                 </div>
-                <p className="text-slate-600">{patient.email}</p>
-                    </div>
+                <p className="text-slate-600">{patient.email || 'Não informado'}</p>
+              </div>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
                   <Phone className="w-4 h-4 text-slate-400" />
                   <span className="font-medium">Telefone:</span>
-                        </div>
-                <p className="text-slate-600">{patient.phone}</p>
-                        </div>
+                </div>
+                <p className="text-slate-600">{patient.phone || 'Não informado'}</p>
+              </div>
               
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
@@ -180,9 +284,9 @@ const PatientDetailPage: React.FC = () => {
                   <span className="font-medium">Data de Nascimento:</span>
                 </div>
                 <p className="text-slate-600">
-                  {new Date(patient.birthDate).toLocaleDateString('pt-BR')}
+                  {patient.birthDate ? new Date(patient.birthDate).toLocaleDateString('pt-BR') : 'Não informado'}
                 </p>
-                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -573,6 +677,28 @@ const PatientDetailPage: React.FC = () => {
           onSuccess={() => {
             setShowObservationModal(false);
             // Recarregar o feed se necessário
+          }}
+        />
+
+        {/* Modal de Edição */}
+        <PatientFormDialog
+          open={showEditModal}
+          onOpenChange={setShowEditModal}
+          patient={patient}
+          onSuccess={() => {
+            setShowEditModal(false);
+            reloadPatient();
+          }}
+        />
+
+        {/* Modal de Exclusão */}
+        <PatientDeleteDialog
+          open={showDeleteModal}
+          onOpenChange={setShowDeleteModal}
+          patient={patient}
+          onSuccess={() => {
+            setShowDeleteModal(false);
+            navigate('/patients');
           }}
         />
       </div>

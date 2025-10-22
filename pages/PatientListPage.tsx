@@ -1,12 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import ResponsiveContainer from '@/components/ui/ResponsiveContainer';
 import PatientTable from '@/components/patients/PatientTable';
+import { usePatient } from '@/contexts/PatientContext';
 
 const PatientListPage: React.FC = () => {
   const navigate = useNavigate();
+  const { patients, isLoading } = usePatient();
+  const [stats, setStats] = useState({
+    total: 0,
+    active: 0,
+    inactive: 0,
+    discharged: 0,
+    loading: true
+  });
+
   const handleViewPatient = (patient: { id: string }) => navigate(`/patients/${patient.id}`);
+
+  // Calcular estatísticas baseado nos pacientes do contexto
+  useEffect(() => {
+    const calculateStats = () => {
+      const total = patients.length;
+      const active = patients.filter(p => p.status === 'Active').length;
+      const inactive = patients.filter(p => p.status === 'Inactive').length;
+      const discharged = patients.filter(p => p.status === 'Discharged').length;
+      
+      setStats({
+        total,
+        active,
+        inactive,
+        discharged,
+        loading: isLoading
+      });
+    };
+
+    calculateStats();
+  }, [patients, isLoading]);
 
   return (
     <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
@@ -31,7 +61,7 @@ const PatientListPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Total de Pacientes</p>
-                  <p className="text-3xl font-bold">—</p>
+                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.total}</p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +77,7 @@ const PatientListPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Pacientes Ativos</p>
-                  <p className="text-3xl font-bold">—</p>
+                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.active}</p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,7 +93,7 @@ const PatientListPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Pacientes Inativos</p>
-                  <p className="text-3xl font-bold">—</p>
+                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.inactive}</p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,7 +109,7 @@ const PatientListPage: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Pacientes com Alta</p>
-                  <p className="text-3xl font-bold">—</p>
+                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.discharged}</p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
