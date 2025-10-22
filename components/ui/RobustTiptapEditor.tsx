@@ -136,8 +136,31 @@ const RobustTiptapEditor: React.FC<RobustTiptapEditorProps> = ({
 }) => {
   const [useFallback, setUseFallback] = React.useState(false);
   const [editorError, setEditorError] = React.useState<Error | null>(null);
+  const [isInitializing, setIsInitializing] = React.useState(true);
 
-  // Configuração do editor com tratamento de erro
+  // Timeout para detectar falha de inicialização
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (isInitializing) {
+        console.warn('TiptapEditor: Timeout na inicialização, ativando fallback');
+        setUseFallback(true);
+        setIsInitializing(false);
+      }
+    }, 3000); // 3 segundos timeout
+
+    return () => clearTimeout(timeout);
+  }, [isInitializing]);
+
+  // Detectar falha do editor e ativar fallback
+  React.useEffect(() => {
+    if (editorError) {
+      console.error('TiptapEditor: Erro detectado, ativando fallback:', editorError);
+      setUseFallback(true);
+      setIsInitializing(false);
+    }
+  }, [editorError]);
+
+  // Configuração do editor com tratamento de erro robusto
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -194,10 +217,13 @@ const RobustTiptapEditor: React.FC<RobustTiptapEditorProps> = ({
     onCreate: ({ editor }) => {
       // Editor criado com sucesso
       setEditorError(null);
+      setIsInitializing(false);
+      console.log('TiptapEditor: Inicializado com sucesso');
     },
     onDestroy: () => {
       // Cleanup
       setEditorError(null);
+      setIsInitializing(false);
     },
     editorProps: {
       attributes: {
@@ -218,8 +244,8 @@ const RobustTiptapEditor: React.FC<RobustTiptapEditorProps> = ({
     }
   }, [value, editor]);
 
-  // Fallback para textarea se o editor falhar
-  if (useFallback || editorError) {
+  // Fallback para textarea se o editor falhar ou não inicializar
+  if (useFallback || editorError || (!editor && !isInitializing)) {
     return (
       <div className="border border-slate-300 rounded-lg overflow-hidden">
         {showToolbar && (
@@ -239,7 +265,8 @@ const RobustTiptapEditor: React.FC<RobustTiptapEditorProps> = ({
     );
   }
 
-  if (!editor) {
+  // Loading state enquanto inicializa
+  if (!editor && isInitializing) {
     return (
       <div className="border border-slate-300 rounded-lg overflow-hidden">
         <div className="p-4" style={{ minHeight }}>

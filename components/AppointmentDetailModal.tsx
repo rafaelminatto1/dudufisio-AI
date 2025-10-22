@@ -104,7 +104,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
       if (appointment.type === AppointmentType.Teleconsulta) {
         navigate(`/teleconsulta/${appointment.id}`);
       } else {
-        navigate(`/sessions/${appointment.id}/form`);
+        navigate(`/atendimento/${appointment.id}`);
       }
     }
   };
