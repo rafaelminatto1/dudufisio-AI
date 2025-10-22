@@ -135,7 +135,8 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   // useEffect separado para atualizar therapistId quando therapists são carregados
   useEffect(() => {
     if (isOpen && therapists.length > 0 && !therapistId) {
-      setTherapistId(therapists[0]?.id || '');
+      // Sempre manter vazio para mostrar o placeholder "Selecionar depois (na evolução)"
+      setTherapistId('');
     }
   }, [isOpen, therapists, therapistId]);
 
@@ -175,8 +176,12 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     
     const endTime = new Date(startTime.getTime() + duration * 60000);
 
+    const appointmentId = appointmentToEdit?.id || `app_${Date.now()}`;
+    console.log('🔍 AppointmentFormModal - Gerando agendamento com ID:', appointmentId);
+    console.log('🔍 AppointmentFormModal - Paciente selecionado:', selectedPatient);
+    
     const baseAppointment: Appointment = {
-      id: appointmentToEdit?.id || `app_${Date.now()}`,
+      id: appointmentId,
       patientId: selectedPatient.id,
       patientName: selectedPatient.name,
       patientAvatarUrl: (selectedPatient as any).avatarUrl || `https://i.pravatar.cc/150?u=${selectedPatient.id}`,
@@ -214,8 +219,8 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     
     console.log('📊 Verificação de capacidade:', occupancy);
     
-    // Se o horário está no limite ou excede, mostrar aviso
-    if (occupancy.isPatientLimitFull || occupancy.isEvalLimitFull) {
+    // Se o horário excede o limite (não apenas no limite exato), mostrar aviso
+    if (occupancy.patientCount >= occupancy.patientLimit || occupancy.isEvalLimitFull) {
       const isEvalLimit = appointmentType === AppointmentType.Evaluation && occupancy.isEvalLimitFull;
       
       setCapacityInfo({
@@ -513,16 +518,6 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             </div>
           )}
 
-          {waitlistEntries.length > 0 && (
-            <div className="bg-slate-100 border border-slate-200 text-slate-700 rounded-md p-3 text-xs">
-              <strong>Fila de espera prioritária:</strong>
-              <ul className="list-disc list-inside mt-1 space-y-1">
-                {waitlistEntries.slice(0, 3).map(entry => (
-                  <li key={entry.id}>Paciente {entry.patientId} — urgência {entry.urgency}</li>
-                ))}
-              </ul>
-            </div>
-          )}
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">Observações</label>

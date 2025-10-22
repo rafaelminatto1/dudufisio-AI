@@ -77,9 +77,18 @@ const AtendimentoPage: React.FC = () => {
     const fetchAllData = useCallback(async () => {
         if (!appointmentId) return;
 
+        console.log('🔍 AtendimentoPage - Buscando agendamento com ID:', appointmentId);
         const allAppointments = await appointmentService.getAppointments();
+        console.log('📋 AtendimentoPage - Total de agendamentos disponíveis:', allAppointments.length);
+        console.log('📋 AtendimentoPage - IDs dos agendamentos:', allAppointments.map(a => a.id));
+        
         const appData = allAppointments.find(a => a.id === appointmentId);
-        if (!appData) throw new Error("Consulta não encontrada.");
+        if (!appData) {
+            console.error('❌ AtendimentoPage - Agendamento não encontrado:', appointmentId);
+            throw new Error("Consulta não encontrada.");
+        }
+        
+        console.log('✅ AtendimentoPage - Agendamento encontrado:', appData);
         setAppointment(appData);
 
         const patientData = await patientService.getPatientById(appData.patientId);

@@ -30,7 +30,19 @@ export const getAppointments = async (startDate?: Date, endDate?: Date): Promise
 
 export const getAppointmentById = async (id: string): Promise<Appointment | undefined> => {
     await delay(300);
-    return db.getAppointments().find(appointment => appointment.id === id);
+    console.log('🔍 getAppointmentById - Buscando agendamento com ID:', id);
+    const appointments = db.getAppointments();
+    console.log('📋 getAppointmentById - Total de agendamentos:', appointments.length);
+    console.log('📋 getAppointmentById - IDs disponíveis:', appointments.map(a => a.id));
+    
+    const appointment = appointments.find(appointment => appointment.id === id);
+    if (appointment) {
+        console.log('✅ getAppointmentById - Agendamento encontrado:', appointment);
+    } else {
+        console.log('❌ getAppointmentById - Agendamento não encontrado para ID:', id);
+    }
+    
+    return appointment;
 };
 
 export const getAppointmentsByPatientId = async (patientId: string): Promise<Appointment[]> => {

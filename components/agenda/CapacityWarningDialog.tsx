@@ -70,7 +70,10 @@ const CapacityWarningDialog: React.FC<CapacityWarningDialogProps> = ({
                     A capacidade máxima para este horário é de <strong>{maxCapacity}</strong> profissional(is).
                   </p>
                   <p className="text-amber-700 font-medium">
-                    Agendar {patientName ? `${patientName}` : 'este paciente'} causará sobrecarga.
+                    {currentCount >= maxCapacity 
+                      ? `Agendar ${patientName ? `${patientName}` : 'este paciente'} causará sobrecarga.`
+                      : `Agendar ${patientName ? `${patientName}` : 'este paciente'} atingirá o limite máximo.`
+                    }
                   </p>
                 </div>
               )}

@@ -60,6 +60,7 @@ class SchedulingSettingsService {
         
         const evaluationsInSlot = appointmentsInSlot.filter(app => app.type === AppointmentType.Evaluation);
     
+        // Verificar se está no limite exato (não excede)
         const isPatientLimitFull = appointmentsInSlot.length >= rule.limit;
         const isEvalLimitFull = evaluationsInSlot.length >= settings.maxEvaluationsPerSlot;
 

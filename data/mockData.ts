@@ -190,6 +190,23 @@ export const mockPatients: Patient[] = [
     conditions: [{ name: 'Fascite Plantar Crônica', date: '2024-06-20' }],
   },
   {
+    id: 'rafael_minatto',
+    name: 'Rafael Minatto de Martino',
+    cpf: '123.456.789-99',
+    birthDate: '1988-08-15',
+    phone: '(11) 99999-8888',
+    email: 'rafael.minatto@example.com',
+    emergencyContact: { name: 'Maria Minatto', phone: '(11) 99999-7777' },
+    address: { street: 'Rua das Palmeiras, 123', city: 'São Paulo', state: 'SP', zip: '01234-567' },
+    status: PatientStatus.Active,
+    lastVisit: '22/10/2025',
+    registrationDate: '2024-10-01',
+    avatarUrl: 'https://picsum.photos/id/1020/200/200',
+    consentGiven: true,
+    whatsappConsent: 'opt-in',
+    conditions: [{ name: 'Lombalgia Crônica', date: '2024-10-01' }],
+  },
+  {
     id: '6',
     name: 'Lúcia Martins',
     cpf: '678.901.234-56',
@@ -285,6 +302,9 @@ export const mockAppointments: Appointment[] = [
     { id: 'app_new_9', patientId: '5', patientName: 'Fernando Oliveira', patientAvatarUrl: mockPatients[4]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(-14, 16), endTime: getFutureDate(-14, 17), title: 'Fortalecimento', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 120, paymentStatus: 'paid' },
     { id: 'app_new_10', patientId: '6', patientName: 'Lúcia Martins', patientAvatarUrl: mockPatients[5]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(-21, 9), endTime: getFutureDate(-21, 10), title: 'Pilates Clínico', type: AppointmentType.Session, status: AppointmentStatus.Completed, value: 130, paymentStatus: 'paid' },
     { id: 'app_new_11', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(0, 15), endTime: getFutureDate(0, 16), title: 'Terapia Manual Ombro', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
+    
+    // Agendamento específico para Rafael Minatto com o ID da URL
+    { id: 'app_1761159064656', patientId: 'rafael_minatto', patientName: 'Rafael Minatto de Martino', patientAvatarUrl: mockPatients.find(p => p.id === 'rafael_minatto')?.avatarUrl || '', therapistId: 'therapist_1', startTime: new Date('2025-10-22T15:52:00'), endTime: new Date('2025-10-22T16:52:00'), title: 'Sessão de Lombalgia', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending' },
 
 ];
 
