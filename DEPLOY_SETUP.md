@@ -74,3 +74,5 @@ Push no GitHub → Workflow executa → Conecta Supabase → Aplica migrations �
 
 **Sem necessidade de scripts manuais!** 🎉
 
+
+

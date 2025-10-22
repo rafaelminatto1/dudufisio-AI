@@ -294,10 +294,14 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
             Hora
           </div>
           {timeSlots.map(time => (
-            <div key={time} className={cn(
-              "h-12 text-right pr-3 text-xs font-semibold flex items-center justify-end border-b transition-colors",
-              time.endsWith('00') ? "border-slate-300 text-slate-700 bg-slate-100/50" : "border-slate-200 text-slate-500"
-            )}>
+            <div 
+              key={time} 
+              className={cn(
+                "text-right pr-3 text-xs font-semibold flex items-center justify-end border-b transition-colors",
+                time.endsWith('00') ? "border-slate-300 text-slate-700 bg-slate-100/50" : "border-slate-200 text-slate-500"
+              )}
+              style={{ height: `${SLOT_DURATION * PIXELS_PER_MINUTE}px` }}
+            >
               {time.endsWith('00') ? time : ''}
             </div>
           ))}
@@ -359,14 +363,8 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                               height: `${SLOT_DURATION * PIXELS_PER_MINUTE}px`,
                               minHeight: '48px'
                             }}
-                            onClick={(e) => {
-                              const rect = e.currentTarget.getBoundingClientRect();
-                              const clickY = e.clientY - rect.top;
-                              const minutesFromTop = clickY / PIXELS_PER_MINUTE;
-                              const snappedMinutes = Math.floor(minutesFromTop / SLOT_DURATION) * SLOT_DURATION;
-                              const hour = Math.floor(snappedMinutes / 60);
-                              const minute = snappedMinutes % 60;
-                              onSlotClick(day, `${String(hour).padStart(2,'0')}:${String(minute).padStart(2,'0')}`, therapist.id);
+                            onClick={() => {
+                              onSlotClick(day, time, therapist.id);
                             }}
                           >
                             {/* Indicador de hover */}

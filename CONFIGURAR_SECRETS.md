@@ -117,3 +117,5 @@ start https://github.com/rafaelminatto1/dudufisio-AI/actions
 
 **✨ Depois de configurar, seu deploy será automático a cada push!**
 
+
+
