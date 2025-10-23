@@ -1,1 +1,0 @@
-{"result":0,"method":"wsm.onHashChange","parameters":"{\"newLocationUrl\":\"aHR0cDovL2xvY2FsaG9zdDo1MTc2L2Rhc2hib2FyZA==\",\"urlEncrypted\":true}"}

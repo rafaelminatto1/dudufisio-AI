@@ -1,8 +1,16 @@
 import React from 'react';
-import { Plus, Filter, Calendar, AlertTriangle, Search, Users, Lock } from 'lucide-react';
+import { Plus, Filter, Calendar, AlertTriangle, Search, Users, Lock, MoreVertical, Download, Settings } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
+import { Separator } from '../ui/separator';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import { cn } from '../../lib/utils';
 
 interface AgendaToolbarProps {
@@ -52,66 +60,99 @@ const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
 
         {/* Right - Actions */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Indicators */}
-          {waitlistCount > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onViewWaitlist}
-              className="relative border-fisio-primary-200 text-fisio-primary-700 hover:bg-fisio-primary-50"
-            >
-              <Users className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Lista de Espera</span>
-              <Badge className="ml-2 h-5 px-1.5 text-xs bg-fisio-error-100 text-fisio-error-700 border-fisio-error-200">
-                {waitlistCount}
-              </Badge>
-            </Button>
-          )}
-
-          {conflictsCount > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-fisio-warning-600 border-fisio-warning-200 hover:bg-fisio-warning-50"
-            >
-              <AlertTriangle className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Conflitos</span>
-              <Badge className="ml-2 h-5 px-1.5 text-xs bg-fisio-warning-100 text-fisio-warning-700 border-fisio-warning-200">
-                {conflictsCount}
-              </Badge>
-            </Button>
-          )}
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onToggleFilters}
-            className={cn(
-              "relative border-fisio-neutral-200",
-              showFilters && "bg-fisio-neutral-100"
+          {/* Grupo 1: Indicadores */}
+          <div className="flex items-center gap-2">
+            {waitlistCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onViewWaitlist}
+                className="relative border-blue-200 text-blue-700 hover:bg-blue-50"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Lista de Espera</span>
+                <Badge className="ml-2 h-5 px-1.5 text-xs bg-red-100 text-red-700 border-red-200">
+                  {waitlistCount}
+                </Badge>
+              </Button>
             )}
-          >
-            <Filter className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">Filtros</span>
-          </Button>
 
-          {onManageBlocks && (
+            {conflictsCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-orange-600 border-orange-200 hover:bg-orange-50"
+              >
+                <AlertTriangle className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Conflitos</span>
+                <Badge className="ml-2 h-5 px-1.5 text-xs bg-orange-100 text-orange-700 border-orange-200">
+                  {conflictsCount}
+                </Badge>
+              </Button>
+            )}
+          </div>
+
+          <Separator orientation="vertical" className="h-6" />
+
+          {/* Grupo 2: Ações Secundárias */}
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={onManageBlocks}
-              className="border-fisio-neutral-200"
+              onClick={onToggleFilters}
+              className={cn(
+                "relative",
+                showFilters && "bg-slate-100"
+              )}
             >
-              <Lock className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Bloqueios</span>
+              <Filter className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Filtros</span>
             </Button>
-          )}
 
+            {onManageBlocks && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onManageBlocks}
+              >
+                <Lock className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Bloqueios</span>
+              </Button>
+            )}
+
+            {/* Dropdown de Ações Extras */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Download className="w-4 h-4 mr-2" />
+                  Exportar Agenda
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Imprimir Agenda
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Settings className="w-4 h-4 mr-2" />
+                  Configurações
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <Separator orientation="vertical" className="h-6" />
+
+          {/* Grupo 3: Ação Primária */}
           {onNewAppointment && (
             <Button
               size="sm"
               onClick={onNewAppointment}
-              className="bg-fisio-primary-DEFAULT hover:bg-fisio-primary-600 shadow-sm"
+              className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
             >
               <Plus className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Novo Agendamento</span>

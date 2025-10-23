@@ -2,8 +2,9 @@ import React from 'react';
 import { Calendar, Clock, DollarSign, Users, TrendingUp, AlertCircle } from 'lucide-react';
 import { Card } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { Appointment, Therapist } from '../../types';
+import { Appointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
+import { motion } from 'framer-motion';
 
 interface AgendaStatsProps {
   appointments: Appointment[];
@@ -25,10 +26,10 @@ interface StatCard {
 const AgendaStats: React.FC<AgendaStatsProps> = ({ appointments, therapists, className }) => {
   // Calcular métricas
   const totalAppointments = appointments.length;
-  const completedAppointments = appointments.filter(a => a.status === 'completed').length;
-  const pendingAppointments = appointments.filter(a => a.status === 'scheduled').length;
-  const cancelledAppointments = appointments.filter(a => a.status === 'cancelled').length;
-  const noShowAppointments = appointments.filter(a => a.status === 'no-show').length;
+  const completedAppointments = appointments.filter(a => a.status === AppointmentStatus.Completed).length;
+  const pendingAppointments = appointments.filter(a => a.status === AppointmentStatus.Scheduled).length;
+  const cancelledAppointments = appointments.filter(a => a.status === AppointmentStatus.Canceled).length;
+  const noShowAppointments = appointments.filter(a => a.status === AppointmentStatus.NoShow).length;
 
   // Calcular valor total
   const totalValue = appointments.reduce((sum, app) => sum + (app.value || 0), 0);
@@ -89,33 +90,40 @@ const AgendaStats: React.FC<AgendaStatsProps> = ({ appointments, therapists, cla
       {/* Main Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
-          <Card key={index} className="p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <p className="text-sm text-slate-600 mb-1">{stat.label}</p>
-                <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-                {stat.trend && (
-                  <div className="flex items-center gap-1 mt-2">
-                    <TrendingUp 
-                      className={cn(
-                        "w-3 h-3",
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-sm text-slate-600 mb-1">{stat.label}</p>
+                  <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+                  {stat.trend && (
+                    <div className="flex items-center gap-1 mt-2">
+                      <TrendingUp 
+                        className={cn(
+                          "w-3 h-3",
+                          stat.trend.isPositive ? "text-green-600" : "text-red-600"
+                        )}
+                      />
+                      <span className={cn(
+                        "text-xs font-medium",
                         stat.trend.isPositive ? "text-green-600" : "text-red-600"
-                      )}
-                    />
-                    <span className={cn(
-                      "text-xs font-medium",
-                      stat.trend.isPositive ? "text-green-600" : "text-red-600"
-                    )}>
-                      {stat.trend.isPositive ? 'Bom' : 'Atenção'}
-                    </span>
-                  </div>
-                )}
+                      )}>
+                        {stat.trend.isPositive ? 'Bom' : 'Atenção'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className={cn("p-2 rounded-lg", stat.color)}>
+                  {stat.icon}
+                </div>
               </div>
-              <div className={cn("p-2 rounded-lg", stat.color)}>
-                {stat.icon}
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </motion.div>
         ))}
       </div>
 

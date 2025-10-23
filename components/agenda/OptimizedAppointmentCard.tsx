@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 import { Card } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Button } from '../ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import Tooltip from '../ui/tooltip';
 import { cn } from '../../lib/utils';
 import { EnrichedAppointment, AppointmentStatus } from '../../types';
-import { Clock, AlertCircle, CheckCircle2, Circle, User } from 'lucide-react';
+import { Clock, AlertCircle, CheckCircle2, Circle, User, Edit, Check, MoreVertical, Trash, Copy } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import EditingIndicator from './EditingIndicator';
 
 interface OptimizedAppointmentCardProps {
   appointment: EnrichedAppointment;
@@ -20,6 +30,11 @@ interface OptimizedAppointmentCardProps {
   onDragEnd: () => void;
   therapistIndex: number;
   totalTherapists: number;
+  onEdit?: (appointment: EnrichedAppointment) => void;
+  onDelete?: (appointmentId: string) => void;
+  onComplete?: (appointment: EnrichedAppointment) => void;
+  onDuplicate?: (appointment: EnrichedAppointment) => void;
+  editingUser?: { id: string; name: string; avatar?: string };
 }
 
 // Cores sólidas e opacas para os terapeutas
@@ -51,15 +66,21 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
   onDragStart,
   onDragEnd,
   therapistIndex,
-  totalTherapists
+  totalTherapists,
+  onEdit,
+  onDelete,
+  onComplete,
+  onDuplicate,
+  editingUser,
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
   const top = ((appointment.startTime.getHours() - startHour) * 60 + appointment.startTime.getMinutes()) * pixelsPerMinute;
   const durationInMinutes = (appointment.endTime.getTime() - appointment.startTime.getTime()) / (60 * 1000);
   
   // Otimização: reduzir espaço em branco mas manter respiração visual
-  const heightReductionFactor = 0.65; // Aumentado de 0.3 para 0.65
+  const heightReductionFactor = 0.90; // Ajustado para 90% para evitar sobreposição
   const calculatedHeight = durationInMinutes * pixelsPerMinute * heightReductionFactor;
-  const height = Math.max(calculatedHeight, 20); // Reduzido de 25px para 20px
+  const height = Math.max(calculatedHeight, 20); // Altura mínima de 20px
 
   // Cores sólidas baseadas no terapeuta
   const therapistColor = THERAPIST_COLORS[`therapist-${(therapistIndex % 3) + 1}` as keyof typeof THERAPIST_COLORS];
@@ -113,6 +134,8 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
     <div
         onClick={(e) => { e.stopPropagation(); onClick(appointment); }}
         onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); onRightClick(appointment, e); }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         draggable="true"
         onDragStart={(e) => onDragStart(e, appointment)}
         onDragEnd={onDragEnd}
@@ -129,7 +152,7 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
           height: `${height}px`,
           left: `${leftPosition}%`,
           width: `${cardWidth}%`,
-          zIndex: 10,
+          zIndex: isHovered ? 20 : 10,
           minWidth: '140px',
           borderLeftColor: therapistColor.border,
           borderLeftWidth: '4px',
@@ -140,6 +163,88 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
           padding: '0 2px' // Padding interno para respiração visual
         }}
       >
+        {/* Indicador de Edição */}
+        {editingUser && <EditingIndicator userName={editingUser.name} userAvatar={editingUser.avatar} />}
+
+        {/* Quick Actions ao Hover */}
+        <AnimatePresence>
+          {isHovered && height > 40 && (
+            <motion.div
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.15 }}
+              className="absolute top-1 right-1 flex gap-1 z-30"
+            >
+              {onEdit && (
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  className="h-5 w-5 shadow-md hover:shadow-lg"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(appointment);
+                  }}
+                >
+                  <Edit className="h-3 w-3" />
+                </Button>
+              )}
+              {onComplete && appointment.status === AppointmentStatus.Scheduled && (
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  className="h-5 w-5 shadow-md hover:shadow-lg bg-green-50 hover:bg-green-100"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onComplete(appointment);
+                  }}
+                >
+                  <Check className="h-3 w-3 text-green-600" />
+                </Button>
+              )}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="h-5 w-5 shadow-md hover:shadow-lg"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreVertical className="h-3 w-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {onDuplicate && (
+                    <>
+                      <DropdownMenuItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDuplicate(appointment);
+                        }}
+                      >
+                        <Copy className="h-4 w-4 mr-2" />
+                        Duplicar
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  {onDelete && (
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(appointment.id);
+                      }}
+                      className="text-red-600 focus:text-red-600"
+                    >
+                      <Trash className="h-4 w-4 mr-2" />
+                      Excluir
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div className="flex-grow min-h-0 flex flex-col justify-between p-1.5">
           <div className="flex items-start justify-between gap-1 mb-0.5">
             <Tooltip 

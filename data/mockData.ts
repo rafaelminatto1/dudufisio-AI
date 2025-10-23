@@ -386,6 +386,43 @@ export const mockScheduleBlocks: ScheduleBlock[] = [
         },
         metadata: { isFullDay: true },
     },
+    // Bloqueios de teste para reproduzir o problema das linhas verde e amarela
+    {
+        id: `block_treinamento_${Date.now()}`,
+        therapistId: 'therapist_1',
+        startTime: getFutureDate(0, 11, 0),
+        endTime: getFutureDate(0, 11, 30),
+        blockType: 'treinamento',
+        reason: 'Treinamento de equipe - Primeira linha verde',
+        metadata: { createdBy: 'user_1' },
+    },
+    {
+        id: `block_almoco_${Date.now()}`,
+        therapistId: 'therapist_2',
+        startTime: getFutureDate(0, 11, 0),
+        endTime: getFutureDate(0, 11, 30),
+        blockType: 'almoco',
+        reason: 'Horário de almoço - Primeira linha amarela',
+        metadata: { createdBy: 'user_1' },
+    },
+    {
+        id: `block_treinamento_2_${Date.now()}`,
+        therapistId: 'therapist_1',
+        startTime: getFutureDate(0, 12, 0),
+        endTime: getFutureDate(0, 12, 30),
+        blockType: 'treinamento',
+        reason: 'Treinamento de equipe - Segunda linha verde',
+        metadata: { createdBy: 'user_1' },
+    },
+    {
+        id: `block_almoco_2_${Date.now()}`,
+        therapistId: 'therapist_2',
+        startTime: getFutureDate(0, 12, 0),
+        endTime: getFutureDate(0, 12, 30),
+        blockType: 'almoco',
+        reason: 'Horário de almoço - Segunda linha amarela',
+        metadata: { createdBy: 'user_1' },
+    },
 ];
 
 export const mockWaitlistEntries: WaitlistEntry[] = [

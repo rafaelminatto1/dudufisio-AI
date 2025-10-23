@@ -19,6 +19,7 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
   const [showDropdown, setShowDropdown] = useState(false);
   const [showQuickRegister, setShowQuickRegister] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -29,6 +30,7 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
     if (selectedPatient) {
         setSearchTerm(selectedPatient.name);
         setShowDropdown(false);
+        setSelectedIndex(-1);
     }
   }, [selectedPatient]);
 
@@ -62,7 +64,7 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
           // Mostrar erro mas permitir cadastro rápido
           setSearchResults([]);
           setShowQuickRegister(debouncedSearchTerm.length >= 3);
-          showToast('Erro ao buscar pacientes. Você pode cadastrar um novo.', 'warning');
+          showToast('Erro ao buscar pacientes. Você pode cadastrar um novo.', 'error');
         } finally {
           // Garantir que loading sempre para
           setIsSearching(false);
@@ -116,7 +118,39 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
+    setSelectedIndex(-1);
     if (value !== selectedPatient?.name) onSelectPatient(null);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showDropdown) return;
+
+    const totalItems = searchResults.length + (showQuickRegister ? 1 : 0);
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev + 1) % totalItems);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => prev <= 0 ? totalItems - 1 : prev - 1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedIndex >= 0) {
+          if (selectedIndex < searchResults.length) {
+            handleSelectPatient(searchResults[selectedIndex]);
+          } else if (showQuickRegister) {
+            handleQuickRegister();
+          }
+        }
+        break;
+      case 'Escape':
+        setShowDropdown(false);
+        setSelectedIndex(-1);
+        break;
+    }
   };
 
   return (
@@ -127,6 +161,7 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
           type="text"
           value={searchTerm}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           onFocus={() => setShowDropdown(true)}
           placeholder="Digite o nome ou CPF do paciente..."
           className={cn("w-full px-10 py-2 border rounded-md", "focus:ring-2 focus:ring-sky-500 focus:border-transparent", selectedPatient && "border-green-500 bg-green-50")}
@@ -149,16 +184,39 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
       <AnimatePresence>
         {showDropdown && !selectedPatient && (
           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute z-20 w-full mt-1 bg-white rounded-md shadow-lg border overflow-hidden max-h-60 overflow-y-auto">
-            {searchResults.length > 0 && searchResults.map(patient => (
-              <button key={patient.id} onClick={() => handleSelectPatient(patient)} className="w-full px-4 py-2 hover:bg-sky-50 text-left">
+            {searchResults.length > 0 && searchResults.map((patient, index) => (
+              <button 
+                key={patient.id} 
+                onClick={() => handleSelectPatient(patient)} 
+                className={cn(
+                  "w-full px-4 py-2 text-left transition-colors",
+                  selectedIndex === index ? "bg-sky-100 text-sky-900" : "hover:bg-sky-50"
+                )}
+              >
                 <p className="font-medium text-gray-900">{patient.name}</p>
                 <p className="text-sm text-gray-500">{patient.cpf}</p>
               </button>
             ))}
             
             {showQuickRegister && (
-              <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={handleQuickRegister} disabled={isRegistering} className="w-full p-3 bg-green-50 hover:bg-green-100 border-t">
-                <div className="flex items-center gap-2">{isRegistering ? <Loader2 className="w-4 h-4 text-green-600 animate-spin" /> : <UserPlus className="w-4 h-4 text-green-600" />}<p className="font-semibold text-sm text-gray-900">{isRegistering ? 'Cadastrando...' : `Cadastrar "${searchTerm}"`}</p></div>
+              <motion.button 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                onClick={handleQuickRegister} 
+                disabled={isRegistering} 
+                className={cn(
+                  "w-full p-3 border-t transition-colors",
+                  selectedIndex === searchResults.length 
+                    ? "bg-green-100 text-green-900" 
+                    : "bg-green-50 hover:bg-green-100"
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  {isRegistering ? <Loader2 className="w-4 h-4 text-green-600 animate-spin" /> : <UserPlus className="w-4 h-4 text-green-600" />}
+                  <p className="font-semibold text-sm text-gray-900">
+                    {isRegistering ? 'Cadastrando...' : `Cadastrar "${searchTerm}"`}
+                  </p>
+                </div>
               </motion.button>
             )}
             

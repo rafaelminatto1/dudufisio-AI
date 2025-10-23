@@ -1,7 +1,19 @@
 
+/**
+ * Modal de Agendamento - AppointmentFormModal
+ * 
+ * TODO: Futuras melhorias
+ * - Migrar para React Hook Form para melhor gerenciamento de estado
+ * - Adicionar validação com Zod schema
+ * - Implementar validação em tempo real
+ * - Adicionar debounce em campos de busca
+ * - Melhorar performance com useMemo/useCallback
+ * - Adicionar testes unitários
+ * - Implementar acessibilidade completa (ARIA)
+ */
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { X, Save, Calendar, Clock } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { X, Save, Calendar, Clock, AlertCircle } from 'lucide-react';
 import type { Appointment, Patient, Therapist, PatientSummary, RecurrenceRule } from '../types';
 import { AppointmentStatus, AppointmentType } from '../types';
 import { recurrenceTemplateService } from '../services/scheduling/recurrenceTemplateService';
@@ -21,6 +33,27 @@ import { generateRecurrences } from '../services/scheduling/recurrenceService';
 import { schedulingSettingsService } from '../services/schedulingSettingsService';
 import { validateAppointment, formatValidationErrors } from '../lib/validators/agendaValidators';
 import { useFocusTrap } from '../hooks/useFocusTrap';
+import { cn } from '../lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Label } from './ui/label';
+import { Textarea } from './ui/textarea';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { Button } from './ui/button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';
+import { Separator } from './ui/separator';
+import { Badge } from './ui/badge';
+
+// Interface para futura migração para React Hook Form
+interface AppointmentFormData {
+  patient: Patient | PatientSummary | null;
+  therapistId: string;
+  appointmentType: AppointmentType;
+  duration: number;
+  slotTime: string;
+  notes: string;
+  recurrenceRule?: RecurrenceRule;
+  templateId?: string;
+}
 
 interface AppointmentFormModalProps {
   isOpen: boolean;
@@ -37,6 +70,7 @@ interface AppointmentFormModalProps {
 
 const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onClose, onSave, onDelete: _onDelete, appointment: _appointment, appointmentToEdit, initialData, patients = [], therapists = [], allAppointments = [] }) => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | PatientSummary | null>(null);
+  const [showValidation, setShowValidation] = useState(false);
   
   // Log para debug
   useEffect(() => {
@@ -78,6 +112,25 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   const slotDate = useMemo(() => appointmentToEdit?.startTime || initialData?.date || new Date(), [appointmentToEdit, initialData]);
   const [slotTime, setSlotTime] = useState('09:00');
   const [therapistId, setTherapistId] = useState<string>(appointmentToEdit?.therapistId || initialData?.therapistId || '');
+  
+  // Memoizar terapeutas filtrados para melhor performance
+  const filteredTherapists = useMemo(() => 
+    therapists.filter(t => t.id !== ''), 
+    [therapists]
+  );
+  
+  // Callbacks memoizados para melhor performance
+  const handleTherapistChange = useCallback((value: string) => {
+    setTherapistId(value);
+  }, []);
+  
+  const handleAppointmentTypeChange = useCallback((value: string) => {
+    setAppointmentType(value as AppointmentType);
+  }, []);
+  
+  const handleDurationChange = useCallback((value: string) => {
+    setDuration(Number(value));
+  }, []);
   
   useEffect(() => {
     if (isOpen) {
@@ -163,7 +216,8 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     
     if (!selectedPatient) {
       console.warn('⚠️ Nenhum paciente selecionado');
-      showToast('Selecione um paciente para agendar.', 'error');
+      setShowValidation(true);
+      showToast('Por favor, selecione um paciente', 'error');
       return;
     }
     
@@ -241,7 +295,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     const conflictCheck = baseAppointment.therapistId 
       ? await conflictDetectionService.checkConflicts(
           baseAppointment,
-          allAppointments,
+          allAppointments as any,
           availableBlocks
         )
       : { hasConflicts: false, conflicts: [] };
@@ -251,7 +305,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       const suggestions = conflictDetectionService.suggestAlternativeTimes(
         baseAppointment.startTime,
         duration,
-        allAppointments,
+        allAppointments as any,
         availableBlocks,
         baseAppointment.therapistId,
         5
@@ -313,7 +367,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     }
 
     if (success) {
-      showToast('Agendamento criado com aviso de sobrecarga.', 'warning');
+      showToast('Agendamento criado com aviso de sobrecarga.', 'info');
       onClose();
     }
     setIsSaving(false);
@@ -343,7 +397,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     }
 
     if (success) {
-      showToast('Agendamento criado com aviso de conflito.', 'warning');
+      showToast('Agendamento criado com aviso de conflito.', 'info');
       onClose();
     }
     setIsSaving(false);
@@ -403,149 +457,185 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     >
       <div 
         ref={containerRef}
-        className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col"
+        className="bg-transparent rounded-lg shadow-xl w-full max-w-[95vw] sm:max-w-3xl md:max-w-4xl mx-2 sm:mx-4 max-h-[90vh] flex flex-col"
       >
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 id="modal-title" className="text-xl font-semibold">{title}</h2>
-          <button 
-            ref={closeButtonRef}
-            onClick={onClose} 
-            className="p-1 hover:bg-slate-100 rounded-full transition"
-            aria-label="Fechar modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        
-        <div className="bg-sky-50 px-4 py-3 flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-sky-600" /><span className="font-medium">{format(slotDate, "EEEE, d 'de' MMMM", { locale: ptBR })}</span></div>
-          <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-sky-600" />
-            <input type="time" value={slotTime} onChange={e => setSlotTime(e.target.value)} className="font-medium bg-transparent border-none p-0 focus:ring-0" />
-          </div>
-        </div>
-        
-        <div id="modal-description" className="p-4 space-y-4 overflow-y-auto">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Paciente *</label>
-            <PatientSearchInput
-              onSelectPatient={setSelectedPatient}
-              selectedPatient={selectedPatient}
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Fisioterapeuta <span className="text-slate-400 font-normal">(opcional)</span>
-            </label>
-            <select
-              value={therapistId}
-              onChange={(e) => setTherapistId(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-sky-500 focus:border-sky-500 text-sm"
+        <Card className="border-0 shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
+            <div>
+              <div className="flex items-center gap-2">
+                <CardTitle>{title}</CardTitle>
+                {appointmentToEdit && (
+                  <Badge variant="info">Editando</Badge>
+                )}
+              </div>
+              <CardDescription className="mt-1">Preencha os dados do agendamento</CardDescription>
+            </div>
+            <button 
+              ref={closeButtonRef}
+              onClick={onClose} 
+              className="p-1 hover:bg-slate-100 rounded-full transition"
+              aria-label="Fechar modal"
             >
-              <option value="">Selecionar depois (na evolução)</option>
-              {therapists.map(t => <option key={t.id} value={t.id}>{t.name}{t.crefito ? ` - ${t.crefito}` : ''}</option>)}
-            </select>
-            <p className="mt-1 text-xs text-slate-500">Deixe vazio para definir o profissional após o atendimento</p>
+              <X className="w-5 h-5" />
+            </button>
+          </CardHeader>
+        
+        <div className="bg-muted/50 px-4 md:px-6 py-3 md:py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 text-sm border-b">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-primary" />
+            <span className="font-medium">{format(slotDate, "EEEE, d 'de' MMMM", { locale: ptBR })}</span>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Tipo de Atendimento</label>
-            <select
-              value={appointmentType}
-              onChange={(e) => setAppointmentType(e.target.value as AppointmentType)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-sky-500 focus:border-sky-500 text-sm"
-            >
-              {Object.values(AppointmentType)
-                  .filter(type => isTeleconsultaEnabled || type !== AppointmentType.Teleconsulta)
-                  .map(type => <option key={type} value={type}>{type}</option>)}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Duração</label>
-            <div className="flex gap-2">
-              {[30, 45, 60].map(min => (
-                <button
-                  key={min}
-                  onClick={() => setDuration(min)}
-                  className={`px-4 py-2 rounded-md border transition text-sm ${
-                    duration === min
-                      ? 'bg-sky-500 text-white border-sky-500'
-                      : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
-                  }`}
-                >
-                  {min} min
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          {!appointmentToEdit?.seriesId && <RecurrenceSelector recurrenceRule={recurrenceRule} onChange={setRecurrenceRule} />}
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Templates de horários</label>
-            <div className="flex gap-2">
-              <select
-                value={selectedTemplateId}
-                onChange={(e) => setSelectedTemplateId(e.target.value || undefined)}
-                className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:ring-sky-500 focus:border-sky-500 text-sm"
-              >
-                <option value="">Selecione um template</option>
-                {templates.map(template => (
-                  <option key={template.id} value={template.id}>{template.title}</option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={applyTemplate}
-                className="px-3 py-2 bg-emerald-500 text-white rounded-md text-sm hover:bg-emerald-600"
-              >
-                Aplicar
-              </button>
-            </div>
-            <p className="mt-2 text-xs text-slate-500">Use templates para criar séries de horários recorrentes e otimizar encaixes.</p>
-          </div>
-
-          {availableBlocks.length > 0 && (
-            <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-md p-3 text-xs">
-              <strong>Bloqueios próximos:</strong>
-              <ul className="list-disc list-inside mt-1 space-y-1">
-                {availableBlocks.slice(0, 2).map(block => (
-                  <li key={block.id}>{block.reason || 'Bloqueio'} em {format(block.startTime, "dd/MM HH:mm")}</li>
-                ))}
-                {availableBlocks.length > 2 && <li>+ {availableBlocks.length - 2} bloqueio(s)</li>}
-              </ul>
-            </div>
-          )}
-
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">Observações</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-sky-500 focus:border-sky-500 text-sm"
-              placeholder="Observações sobre o atendimento..."
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-primary" />
+            <input 
+              type="time" 
+              value={slotTime} 
+              onChange={e => setSlotTime(e.target.value)} 
+              className="font-medium bg-background border border-input rounded px-2 py-1 focus:ring-2 focus:ring-ring focus:border-ring hover:border-ring/50 transition-colors cursor-pointer" 
+              title="Clique para alterar o horário"
             />
           </div>
         </div>
         
-        <div className="flex items-center justify-end gap-3 px-4 py-3 bg-slate-50 rounded-b-lg border-t">
-          <button onClick={onClose} className="px-4 py-2 text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition text-sm">Cancelar</button>
-          <button
+        <Separator className="my-0" />
+        
+        <div id="modal-description" className="p-6 overflow-y-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            {/* Coluna 1 */}
+            <div className="space-y-4">
+              <div 
+                className={cn(
+                  "space-y-2",
+                  !selectedPatient && showValidation && "animate-shake"
+                )}
+                aria-invalid={!selectedPatient && showValidation}
+                aria-describedby={!selectedPatient && showValidation ? "patient-error" : undefined}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <Label className="text-sm font-medium">Paciente</Label>
+                  <Badge variant="destructive" className="text-xs">Obrigatório</Badge>
+                </div>
+                <PatientSearchInput
+                  onSelectPatient={setSelectedPatient}
+                  selectedPatient={selectedPatient}
+                />
+                {!selectedPatient && showValidation && (
+                  <p id="patient-error" className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    Selecione um paciente para continuar
+                  </p>
+                )}
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="therapist">
+                  Fisioterapeuta <span className="text-muted-foreground">(opcional)</span>
+                </Label>
+                <Select value={therapistId} onValueChange={handleTherapistChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecionar depois (na evolução)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredTherapists.map(t => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.name}{t.crefito ? ` - ${t.crefito}` : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">Deixe vazio para definir o profissional após o atendimento</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="appointment-type">Tipo de Atendimento</Label>
+                <Select value={appointmentType} onValueChange={handleAppointmentTypeChange}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(AppointmentType)
+                        .filter(type => isTeleconsultaEnabled || type !== AppointmentType.Teleconsulta)
+                        .map(type => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            {/* Coluna 2 */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Duração</Label>
+                <RadioGroup value={duration.toString()} onValueChange={handleDurationChange}>
+                  <div className="flex gap-4">
+                    {[30, 45, 60].map(min => (
+                      <div key={min} className="flex items-center space-x-2">
+                        <RadioGroupItem value={min.toString()} id={`duration-${min}`} />
+                        <Label htmlFor={`duration-${min}`} className="cursor-pointer">{min} min</Label>
+                      </div>
+                    ))}
+                  </div>
+                </RadioGroup>
+              </div>
+              
+              {!appointmentToEdit?.seriesId && <RecurrenceSelector recurrenceRule={recurrenceRule} onChange={setRecurrenceRule} />}
+
+              <div className="space-y-2">
+                <Label htmlFor="template">Templates de horários</Label>
+                <div className="flex gap-2">
+                  <Select value={selectedTemplateId || ""} onValueChange={(value) => setSelectedTemplateId(value || undefined)}>
+                    <SelectTrigger className="flex-1">
+                      <SelectValue placeholder="Selecione um template" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {templates.map(template => (
+                        <SelectItem key={template.id} value={template.id}>{template.title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    onClick={applyTemplate}
+                    variant="default"
+                    size="sm"
+                  >
+                    Aplicar
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">Use templates para criar séries de horários recorrentes e otimizar encaixes.</p>
+              </div>
+            </div>
+          </div>
+          
+          <Separator className="my-6" />
+          
+          {/* Observações - largura completa */}
+          <div className="mt-6">
+            <div className="space-y-2">
+              <Label htmlFor="notes">Observações</Label>
+              <Textarea
+                id="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={3}
+                placeholder="Observações sobre o atendimento..."
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex items-center justify-end gap-3 px-6 py-4 bg-muted/50 rounded-b-lg border-t">
+          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button
             onClick={handleSaveClick}
             disabled={!selectedPatient || isSaving}
-            className={`px-4 py-2 rounded-md transition flex items-center text-sm ${
-              !selectedPatient || isSaving
-                ? 'opacity-50 cursor-not-allowed bg-gray-400 text-gray-200'
-                : 'bg-sky-500 text-white hover:bg-sky-600'
-            }`}
           >
             <Save className="w-4 h-4 mr-2"/>
             {isSaving ? 'Salvando...' : 'Confirmar Agendamento'}
-          </button>
+          </Button>
         </div>
+        </Card>
       </div>
 
       {/* Capacity Warning Dialog */}
