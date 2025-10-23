@@ -1,9 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-
-export const config = {
-  runtime: 'edge',
-};
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 /**
  * Vercel Cron Job: Atualiza Edge Config com dados da agenda
@@ -16,26 +12,24 @@ export const config = {
  * 
  * Benefício: Reduz latência de 200ms para ~10ms
  */
-export default async function handler(req: NextRequest) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // 1. Verificar autenticação do Cron
-    const authHeader = req.headers.get('authorization');
+    const authHeader = req.headers['authorization'];
     const cronSecret = process.env.CRON_SECRET;
 
     if (!cronSecret) {
       console.error('[CronCache] CRON_SECRET não configurado');
-      return NextResponse.json(
-        { error: 'Cron secret not configured' },
-        { status: 500 }
-      );
+      return res.status(500).json({
+        error: 'Cron secret not configured'
+      });
     }
 
     if (authHeader !== `Bearer ${cronSecret}`) {
       console.error('[CronCache] Autenticação falhou');
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return res.status(401).json({
+        error: 'Unauthorized'
+      });
     }
 
     console.log('[CronCache] Iniciando atualização do cache...');
@@ -110,7 +104,7 @@ export default async function handler(req: NextRequest) {
 
     if (!edgeConfigId || !vercelToken) {
       console.warn('[CronCache] Edge Config não configurado, retornando dados sem atualizar cache');
-      return NextResponse.json({
+      return res.status(200).json({
         success: true,
         cached: false,
         data: cacheData,
@@ -147,7 +141,7 @@ export default async function handler(req: NextRequest) {
     const edgeConfigResult = await edgeConfigResponse.json();
     console.log('[CronCache] Cache atualizado com sucesso!', edgeConfigResult);
 
-    return NextResponse.json({
+    return res.status(200).json({
       success: true,
       cached: true,
       data: cacheData,
@@ -156,13 +150,10 @@ export default async function handler(req: NextRequest) {
     });
   } catch (error) {
     console.error('[CronCache] Erro fatal:', error);
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+    return res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
   }
 }
 
