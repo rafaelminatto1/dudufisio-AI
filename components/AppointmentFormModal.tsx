@@ -13,7 +13,10 @@
  */
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { X, Save, Calendar, Clock, AlertCircle } from 'lucide-react';
+import { X, Save, Calendar, Clock, AlertCircle, Loader2 } from 'lucide-react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { appointmentFormSchema, type AppointmentFormValues } from '../lib/validators/appointmentFormSchema';
 import type { Appointment, Patient, Therapist, PatientSummary, RecurrenceRule } from '../types';
 import { AppointmentStatus, AppointmentType } from '../types';
 import { recurrenceTemplateService } from '../services/scheduling/recurrenceTemplateService';
@@ -71,6 +74,21 @@ interface AppointmentFormModalProps {
 const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onClose, onSave, onDelete: _onDelete, appointment: _appointment, appointmentToEdit, initialData, patients = [], therapists = [], allAppointments = [] }) => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | PatientSummary | null>(null);
   const [showValidation, setShowValidation] = useState(false);
+  const [loadingState, setLoadingState] = useState<'idle' | 'validating' | 'saving'>('idle');
+  
+  // React Hook Form - inicialização gradual
+  const form = useForm<AppointmentFormValues>({
+    resolver: zodResolver(appointmentFormSchema),
+    mode: 'onBlur', // Validar ao sair do campo (migrar para onChange depois)
+    defaultValues: {
+      patient: null,
+      therapistId: '',
+      appointmentType: AppointmentType.Session,
+      duration: 60,
+      slotTime: '09:00',
+      notes: '',
+    },
+  });
   
   // Log para debug
   useEffect(() => {
@@ -292,6 +310,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     
     // Verificar conflitos usando o novo serviço (incluindo bloqueios)
     // Nota: se therapistId estiver vazio, não verificar conflitos de terapeuta
+    setLoadingState('validating');
     const conflictCheck = baseAppointment.therapistId 
       ? await conflictDetectionService.checkConflicts(
           baseAppointment,
@@ -299,6 +318,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           availableBlocks
         )
       : { hasConflicts: false, conflicts: [] };
+    setLoadingState('idle');
 
     if (conflictCheck.hasConflicts) {
       // Sugerir horários alternativos
@@ -320,6 +340,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     }
 
     // In a real scenario, this might be a single batch API call
+    setLoadingState('saving');
     let success = true;
     for (const app of appointmentsToSave) {
         console.log('💾 Salvando agendamento via onSave:', app);
@@ -337,6 +358,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     } else {
       console.error('❌ Falha ao salvar alguns agendamentos');
     }
+    setLoadingState('idle');
     setIsSaving(false);
   };
 
@@ -454,13 +476,14 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       aria-modal="true"
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
+      data-testid="appointment-form-modal"
     >
       <div 
         ref={containerRef}
         className="bg-transparent rounded-lg shadow-xl w-full max-w-[95vw] sm:max-w-3xl md:max-w-4xl mx-2 sm:mx-4 max-h-[90vh] flex flex-col"
       >
         <Card className="border-0 shadow-none">
-          <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
+          <CardHeader className="flex flex-row items-center justify-between p-4 border-b" data-testid="modal-header">
             <div>
               <div className="flex items-center gap-2">
                 <CardTitle>{title}</CardTitle>
@@ -565,19 +588,37 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             
             {/* Coluna 2 */}
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Duração</Label>
-                <RadioGroup value={duration.toString()} onValueChange={handleDurationChange}>
-                  <div className="flex gap-4">
-                    {[30, 45, 60].map(min => (
-                      <div key={min} className="flex items-center space-x-2">
-                        <RadioGroupItem value={min.toString()} id={`duration-${min}`} />
-                        <Label htmlFor={`duration-${min}`} className="cursor-pointer">{min} min</Label>
+              <Controller
+                name="duration"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <div className="space-y-2">
+                    <Label>Duração</Label>
+                    <RadioGroup 
+                      value={field.value.toString()} 
+                      onValueChange={(v) => {
+                        field.onChange(Number(v));
+                        setDuration(Number(v)); // Manter sincronizado com estado local
+                      }}
+                    >
+                      <div className="flex gap-4">
+                        {[30, 45, 60].map(min => (
+                          <div key={min} className="flex items-center space-x-2">
+                            <RadioGroupItem value={min.toString()} id={`duration-${min}`} />
+                            <Label htmlFor={`duration-${min}`} className="cursor-pointer">{min} min</Label>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </RadioGroup>
+                    {fieldState.error && (
+                      <p className="text-xs text-destructive flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {fieldState.error.message}
+                      </p>
+                    )}
                   </div>
-                </RadioGroup>
-              </div>
+                )}
+              />
               
               {!appointmentToEdit?.seriesId && <RecurrenceSelector recurrenceRule={recurrenceRule} onChange={setRecurrenceRule} />}
 
@@ -626,13 +667,32 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
         </div>
         
         <div className="flex items-center justify-end gap-3 px-6 py-4 bg-muted/50 rounded-b-lg border-t">
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button variant="outline" onClick={onClose} disabled={loadingState !== 'idle'}>
+            Cancelar
+          </Button>
           <Button
             onClick={handleSaveClick}
-            disabled={!selectedPatient || isSaving}
+            disabled={!selectedPatient || loadingState !== 'idle'}
+            data-testid="submit-button"
           >
-            <Save className="w-4 h-4 mr-2"/>
-            {isSaving ? 'Salvando...' : 'Confirmar Agendamento'}
+            {loadingState === 'validating' && (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin"/>
+                Verificando conflitos...
+              </>
+            )}
+            {loadingState === 'saving' && (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin"/>
+                Salvando...
+              </>
+            )}
+            {loadingState === 'idle' && (
+              <>
+                <Save className="w-4 h-4 mr-2"/>
+                Confirmar Agendamento
+              </>
+            )}
           </Button>
         </div>
         </Card>

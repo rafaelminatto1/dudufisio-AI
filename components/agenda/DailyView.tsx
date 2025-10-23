@@ -178,6 +178,7 @@ const DailyView: React.FC<DailyViewProps> = ({
                         onDragEnd={onDragEnd}
                         therapistIndex={0}
                         totalTherapists={1}
+                        allAppointments={therapistAppointments}
                       />
                     ))}
 

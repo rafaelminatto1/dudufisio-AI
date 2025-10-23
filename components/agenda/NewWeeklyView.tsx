@@ -337,6 +337,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                         onDragEnd={onDragEnd}
                         therapistIndex={therapistIndex >= 0 ? therapistIndex : 0}
                         totalTherapists={therapists.length}
+                        allAppointments={dayAppointments}
                       />
                     );
                   })}

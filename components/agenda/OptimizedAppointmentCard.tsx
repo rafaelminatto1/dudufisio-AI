@@ -35,6 +35,7 @@ interface OptimizedAppointmentCardProps {
   onComplete?: (appointment: EnrichedAppointment) => void;
   onDuplicate?: (appointment: EnrichedAppointment) => void;
   editingUser?: { id: string; name: string; avatar?: string };
+  allAppointments?: EnrichedAppointment[]; // Para calcular espaço disponível
 }
 
 // Cores sólidas e opacas para os terapeutas
@@ -72,15 +73,37 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
   onComplete,
   onDuplicate,
   editingUser,
+  allAppointments = [],
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const top = ((appointment.startTime.getHours() - startHour) * 60 + appointment.startTime.getMinutes()) * pixelsPerMinute;
   const durationInMinutes = (appointment.endTime.getTime() - appointment.startTime.getTime()) / (60 * 1000);
   
-  // Otimização: reduzir espaço em branco mas manter respiração visual
-  const heightReductionFactor = 0.90; // Ajustado para 90% para evitar sobreposição
-  const calculatedHeight = durationInMinutes * pixelsPerMinute * heightReductionFactor;
-  const height = Math.max(calculatedHeight, 20); // Altura mínima de 20px
+  // Encontrar o próximo agendamento do mesmo terapeuta para limitar altura
+  const nextAppointment = allAppointments
+    .filter(app => 
+      app.id !== appointment.id && 
+      app.therapistId === appointment.therapistId &&
+      app.startTime > appointment.startTime
+    )
+    .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())[0];
+  
+  // Calcular altura disponível até o próximo agendamento
+  const nextAppointmentTop = nextAppointment 
+    ? ((nextAppointment.startTime.getHours() - startHour) * 60 + nextAppointment.startTime.getMinutes()) * pixelsPerMinute
+    : null;
+  
+  // Altura ideal do card (65% para manter visual compacto)
+  const heightReductionFactor = 0.65;
+  const idealHeight = durationInMinutes * pixelsPerMinute * heightReductionFactor;
+  
+  // Altura máxima: espaço até o próximo agendamento (com margem de 4px)
+  const maxHeight = nextAppointmentTop !== null 
+    ? Math.max(nextAppointmentTop - top - 4, 20) 
+    : idealHeight;
+  
+  // Usar o menor valor entre altura ideal e altura máxima
+  const height = Math.max(Math.min(idealHeight, maxHeight), 20);
 
   // Cores sólidas baseadas no terapeuta
   const therapistColor = THERAPIST_COLORS[`therapist-${(therapistIndex % 3) + 1}` as keyof typeof THERAPIST_COLORS];
@@ -140,9 +163,9 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
         onDragStart={(e) => onDragStart(e, appointment)}
         onDragEnd={onDragEnd}
         className={cn(
-          "absolute rounded-lg cursor-pointer transition-all duration-200 overflow-hidden flex flex-col border-2 shadow-md hover:shadow-lg hover:scale-[1.01] font-semibold",
+          "absolute rounded-lg cursor-pointer transition-all duration-200 overflow-hidden flex flex-col border-2 shadow-md hover:shadow-lg font-semibold",
           getStatusStyle(appointment.status),
-          isBeingDragged && 'opacity-50 ring-4 ring-blue-400 scale-105',
+          isBeingDragged && 'opacity-50 ring-4 ring-blue-400',
           appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse',
           "hover:border-opacity-60"
         )}
