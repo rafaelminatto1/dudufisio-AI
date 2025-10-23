@@ -70,10 +70,9 @@ class SupabaseAuthService {
           const user = await this.mapSupabaseUserToUser(session.user);
           this.updateState({ user, session, loading: false });
         } else {
-          console.log('🔄 Nenhuma sessão ativa, usando mock auth');
-          // Use mock authentication for development
-          const mockUser = this.getMockUser();
-          this.updateState({ user: mockUser, session: null, loading: false });
+          console.log('🔄 Nenhuma sessão ativa, redirecionando para login');
+          // Não criar usuário mock automaticamente - deixar null para mostrar tela de login
+          this.updateState({ user: null, session: null, loading: false });
         }
 
         // Clear the timeout since we completed successfully
@@ -112,15 +111,10 @@ class SupabaseAuthService {
   }
 
   private switchToFallbackAuth() {
-    console.log('🔄 Switching to fallback authentication...');
+    console.log('🔄 Supabase indisponível, aguardando login manual');
     
-    // Subscribe to fallback auth state changes
-    const unsubscribe = fallbackAuthService.subscribe((fallbackState) => {
-      this.updateState(fallbackState);
-    });
-
-    // Store unsubscribe function for cleanup
-    (this as any).fallbackUnsubscribe = unsubscribe;
+    // Não criar usuário automático - apenas marcar que está pronto para login
+    this.updateState({ user: null, session: null, loading: false });
   }
 
   private updateState(newState: Partial<AuthState>) {
