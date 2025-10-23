@@ -151,6 +151,23 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     setDuration(Number(value));
   }, []);
   
+  // Reset do formulário ao fechar modal
+  useEffect(() => {
+    if (!isOpen) {
+      form.reset({
+        patient: null,
+        therapistId: '',
+        appointmentType: AppointmentType.Session,
+        duration: 60,
+        slotTime: '09:00',
+        notes: '',
+        recurrenceRule: undefined,
+        templateId: undefined,
+      });
+      setShowValidation(false);
+    }
+  }, [isOpen, form]);
+  
   useEffect(() => {
     if (isOpen) {
         console.log('🔍 AppointmentFormModal - useEffect executado');
@@ -172,6 +189,17 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             console.log('   setSlotTime (edit):', slotTimeValue);
             setSlotTime(slotTimeValue);
             setRecurrenceRule(appointmentToEdit.recurrenceRule);
+            
+            // Inicializar React Hook Form com dados de edição
+            form.reset({
+              patient: patient || null,
+              therapistId: appointmentToEdit.therapistId || '',
+              appointmentType: appointmentToEdit.type,
+              duration: dur,
+              slotTime: slotTimeValue,
+              notes: appointmentToEdit.observations || '',
+              recurrenceRule: appointmentToEdit.recurrenceRule as any,
+            });
         } else {
             // Se temos initialData com patientId (vindo da lista de espera), pré-selecionar o paciente
             if (initialData && 'patientId' in initialData && initialData.patientId) {
@@ -426,8 +454,9 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     setIsSaving(false);
   };
 
-  const applyTemplate = async () => {
-    if (!selectedTemplateId) {
+  const applyTemplate = async (templateId?: string) => {
+    const idToUse = templateId || selectedTemplateId;
+    if (!idToUse) {
       showToast('Selecione um template para aplicar.', 'error');
       return;
     }
@@ -450,7 +479,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       } as Partial<Appointment>;
 
       const result = await recurrenceTemplateService.applyTemplate(
-        selectedTemplateId,
+        idToUse,
         slotDate,
         baseAppointment,
         allAppointments
@@ -494,14 +523,14 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
               </div>
               <CardDescription className="mt-1">Preencha os dados do agendamento</CardDescription>
             </div>
-            <button 
-              ref={closeButtonRef}
-              onClick={onClose} 
-              className="p-1 hover:bg-slate-100 rounded-full transition"
-              aria-label="Fechar modal"
-            >
-              <X className="w-5 h-5" />
-            </button>
+          <button 
+            ref={closeButtonRef}
+            onClick={onClose} 
+            className="p-1 hover:bg-slate-100 rounded-full transition"
+            aria-label="Fechar modal"
+          >
+            <X className="w-5 h-5" />
+          </button>
           </CardHeader>
         
         <div className="bg-muted/50 px-4 md:px-6 py-3 md:py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 text-sm border-b">
@@ -511,12 +540,32 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           </div>
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-primary" />
-            <input 
-              type="time" 
-              value={slotTime} 
-              onChange={e => setSlotTime(e.target.value)} 
-              className="font-medium bg-background border border-input rounded px-2 py-1 focus:ring-2 focus:ring-ring focus:border-ring hover:border-ring/50 transition-colors cursor-pointer" 
-              title="Clique para alterar o horário"
+            <Controller
+              name="slotTime"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <>
+                  <input 
+                    type="time" 
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setSlotTime(e.target.value);
+                    }}
+                    className={cn(
+                      "font-medium bg-background border border-input rounded px-2 py-1 focus:ring-2 focus:ring-ring focus:border-ring hover:border-ring/50 transition-colors cursor-pointer",
+                      fieldState.error && "border-destructive"
+                    )}
+                    title="Clique para alterar o horário"
+                    data-testid="time-input"
+                  />
+                  {fieldState.error && (
+                    <p className="text-xs text-destructive ml-2">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </>
+              )}
             />
           </div>
         </div>
@@ -543,12 +592,12 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                       <Label className="text-sm font-medium">Paciente</Label>
                       <Badge variant="destructive" className="text-xs">Obrigatório</Badge>
                     </div>
-                    <PatientSearchInput
+            <PatientSearchInput
                       onSelectPatient={(patient) => {
-                        field.onChange(patient);
+                        field.onChange(patient as any);
                         setSelectedPatient(patient);
                       }}
-                      selectedPatient={field.value}
+                      selectedPatient={field.value as any}
                     />
                     {fieldState.error && (
                       <p id="patient-error" className="text-xs text-destructive flex items-center gap-1">
@@ -556,7 +605,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                         {fieldState.error.message}
                       </p>
                     )}
-                  </div>
+          </div>
                 )}
               />
               
@@ -586,7 +635,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                     <p className="text-xs text-muted-foreground">
                       Deixe vazio para definir o profissional após o atendimento
                     </p>
-                  </div>
+          </div>
                 )}
               />
 
@@ -604,8 +653,8 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.values(AppointmentType)
-                          .filter(type => isTeleconsultaEnabled || type !== AppointmentType.Teleconsulta)
+              {Object.values(AppointmentType)
+                  .filter(type => isTeleconsultaEnabled || type !== AppointmentType.Teleconsulta)
                           .map(type => (
                             <SelectItem key={type} value={type}>{type}</SelectItem>
                           ))}
@@ -614,8 +663,8 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                   </div>
                 )}
               />
-            </div>
-            
+          </div>
+          
             {/* Coluna 2 */}
             <div className="space-y-4">
               <Controller
@@ -632,14 +681,38 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                       }}
                     >
                       <div className="flex gap-4">
-                        {[30, 45, 60].map(min => (
+              {[30, 45, 60].map(min => (
                           <div key={min} className="flex items-center space-x-2">
                             <RadioGroupItem value={min.toString()} id={`duration-${min}`} />
                             <Label htmlFor={`duration-${min}`} className="cursor-pointer">{min} min</Label>
                           </div>
-                        ))}
-                      </div>
+              ))}
+            </div>
                     </RadioGroup>
+                    {fieldState.error && (
+                      <p className="text-xs text-destructive flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {fieldState.error.message}
+                      </p>
+                    )}
+          </div>
+                )}
+              />
+              
+              <Controller
+                name="recurrenceRule"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <div className="space-y-2">
+                    {!appointmentToEdit?.seriesId && (
+                      <RecurrenceSelector 
+                        recurrenceRule={field.value as any} 
+                        onChange={(value) => {
+                          field.onChange(value as any);
+                          setRecurrenceRule(value);
+                        }}
+                      />
+                    )}
                     {fieldState.error && (
                       <p className="text-xs text-destructive flex items-center gap-1">
                         <AlertCircle className="w-3 h-3" />
@@ -649,50 +722,81 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                   </div>
                 )}
               />
-              
-              {!appointmentToEdit?.seriesId && <RecurrenceSelector recurrenceRule={recurrenceRule} onChange={setRecurrenceRule} />}
 
-              <div className="space-y-2">
-                <Label htmlFor="template">Templates de horários</Label>
-                <div className="flex gap-2">
-                  <Select value={selectedTemplateId || ""} onValueChange={(value) => setSelectedTemplateId(value || undefined)}>
-                    <SelectTrigger className="flex-1">
-                      <SelectValue placeholder="Selecione um template" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {templates.map(template => (
-                        <SelectItem key={template.id} value={template.id}>{template.title}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    type="button"
-                    onClick={applyTemplate}
-                    variant="default"
-                    size="sm"
-                  >
-                    Aplicar
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">Use templates para criar séries de horários recorrentes e otimizar encaixes.</p>
-              </div>
+              <Controller
+                name="templateId"
+                control={form.control}
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label htmlFor="template">Templates de horários</Label>
+            <div className="flex gap-2">
+                      <Select value={field.value || ""} onValueChange={(value) => {
+                        field.onChange(value || undefined);
+                        setSelectedTemplateId(value || undefined);
+                      }}>
+                        <SelectTrigger className="flex-1" data-testid="template-select">
+                          <SelectValue placeholder="Selecione um template" />
+                        </SelectTrigger>
+                        <SelectContent>
+                {templates.map(template => (
+                            <SelectItem key={template.id} value={template.id}>{template.title}</SelectItem>
+                ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                type="button"
+                        onClick={() => applyTemplate(field.value)}
+                        variant="default"
+                        size="sm"
+                        disabled={!field.value}
+              >
+                Aplicar
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Use templates para criar séries de horários recorrentes e otimizar encaixes.
+                    </p>
+                  </div>
+                )}
+              />
             </div>
           </div>
-          
+
           <Separator className="my-6" />
           
           {/* Observações - largura completa */}
           <div className="mt-6">
-            <div className="space-y-2">
-              <Label htmlFor="notes">Observações</Label>
-              <Textarea
-                id="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
-                placeholder="Observações sobre o atendimento..."
-              />
+            <Controller
+              name="notes"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <div className="space-y-2">
+                  <Label htmlFor="notes">Observações</Label>
+                  <Textarea
+                    {...field}
+                    id="notes"
+                    rows={3}
+                    placeholder="Observações sobre o atendimento..."
+                    data-testid="notes-textarea"
+                    maxLength={500}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setNotes(e.target.value);
+                    }}
+                  />
+                  <div className="flex justify-between items-center">
+                    <p className="text-xs text-muted-foreground">
+                      {field.value?.length || 0}/500 caracteres
+                    </p>
+                    {fieldState.error && (
+                      <p className="text-xs text-destructive">
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
             </div>
+          )}
+            />
           </div>
         </div>
         
@@ -701,8 +805,9 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             Cancelar
           </Button>
           <Button
-            onClick={handleSaveClick}
-            disabled={!selectedPatient || loadingState !== 'idle'}
+            type="button"
+            onClick={form.handleSubmit(handleSaveClick)}
+            disabled={loadingState !== 'idle'}
             data-testid="submit-button"
           >
             {loadingState === 'validating' && (
@@ -719,7 +824,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             )}
             {loadingState === 'idle' && (
               <>
-                <Save className="w-4 h-4 mr-2"/>
+            <Save className="w-4 h-4 mr-2"/>
                 Confirmar Agendamento
               </>
             )}
