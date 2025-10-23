@@ -527,64 +527,93 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Coluna 1 */}
             <div className="space-y-4">
-              <div 
-                className={cn(
-                  "space-y-2",
-                  !selectedPatient && showValidation && "animate-shake"
+              <Controller
+                name="patient"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <div 
+                    className={cn(
+                      "space-y-2",
+                      fieldState.error && "animate-shake"
+                    )}
+                    aria-invalid={!!fieldState.error}
+                    aria-describedby={fieldState.error ? "patient-error" : undefined}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Label className="text-sm font-medium">Paciente</Label>
+                      <Badge variant="destructive" className="text-xs">Obrigatório</Badge>
+                    </div>
+                    <PatientSearchInput
+                      onSelectPatient={(patient) => {
+                        field.onChange(patient);
+                        setSelectedPatient(patient);
+                      }}
+                      selectedPatient={field.value}
+                    />
+                    {fieldState.error && (
+                      <p id="patient-error" className="text-xs text-destructive flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" />
+                        {fieldState.error.message}
+                      </p>
+                    )}
+                  </div>
                 )}
-                aria-invalid={!selectedPatient && showValidation}
-                aria-describedby={!selectedPatient && showValidation ? "patient-error" : undefined}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <Label className="text-sm font-medium">Paciente</Label>
-                  <Badge variant="destructive" className="text-xs">Obrigatório</Badge>
-                </div>
-                <PatientSearchInput
-                  onSelectPatient={setSelectedPatient}
-                  selectedPatient={selectedPatient}
-                />
-                {!selectedPatient && showValidation && (
-                  <p id="patient-error" className="text-xs text-destructive flex items-center gap-1">
-                    <AlertCircle className="w-3 h-3" />
-                    Selecione um paciente para continuar
-                  </p>
-                )}
-              </div>
+              />
               
-              <div className="space-y-2">
-                <Label htmlFor="therapist">
-                  Fisioterapeuta <span className="text-muted-foreground">(opcional)</span>
-                </Label>
-                <Select value={therapistId} onValueChange={handleTherapistChange}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecionar depois (na evolução)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filteredTherapists.map(t => (
-                      <SelectItem key={t.id} value={t.id}>
-                        {t.name}{t.crefito ? ` - ${t.crefito}` : ''}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">Deixe vazio para definir o profissional após o atendimento</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="appointment-type">Tipo de Atendimento</Label>
-                <Select value={appointmentType} onValueChange={handleAppointmentTypeChange}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(AppointmentType)
-                        .filter(type => isTeleconsultaEnabled || type !== AppointmentType.Teleconsulta)
-                        .map(type => (
-                          <SelectItem key={type} value={type}>{type}</SelectItem>
+              <Controller
+                name="therapistId"
+                control={form.control}
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label htmlFor="therapist">
+                      Fisioterapeuta <span className="text-muted-foreground">(opcional)</span>
+                    </Label>
+                    <Select value={field.value} onValueChange={(value) => {
+                      field.onChange(value);
+                      setTherapistId(value);
+                    }}>
+                      <SelectTrigger data-testid="therapist-select">
+                        <SelectValue placeholder="Selecionar depois (na evolução)" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filteredTherapists.map(t => (
+                          <SelectItem key={t.id} value={t.id}>
+                            {t.name}{t.crefito ? ` - ${t.crefito}` : ''}
+                          </SelectItem>
                         ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Deixe vazio para definir o profissional após o atendimento
+                    </p>
+                  </div>
+                )}
+              />
+
+              <Controller
+                name="appointmentType"
+                control={form.control}
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <Label htmlFor="appointment-type">Tipo de Atendimento</Label>
+                    <Select value={field.value} onValueChange={(value) => {
+                      field.onChange(value);
+                      setAppointmentType(value as AppointmentType);
+                    }}>
+                      <SelectTrigger data-testid="appointment-type-select">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(AppointmentType)
+                          .filter(type => isTeleconsultaEnabled || type !== AppointmentType.Teleconsulta)
+                          .map(type => (
+                            <SelectItem key={type} value={type}>{type}</SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+              />
             </div>
             
             {/* Coluna 2 */}
