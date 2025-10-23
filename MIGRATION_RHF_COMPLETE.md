@@ -390,3 +390,4 @@ interface OptimizedAppointmentCardProps {
 
 **Pronto para produção! 🚀**
 
+
