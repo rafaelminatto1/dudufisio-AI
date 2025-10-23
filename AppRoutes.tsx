@@ -19,6 +19,7 @@ import {
 import { initializeLazyLoading } from './lib/advancedLazyLoading';
 import { PerformanceProfiler } from './lib/performanceOptimizations';
 import { initializeIntelligentPreloading } from './lib/intelligentPreloading';
+import { initializeMobileOptimizations, getAdaptiveConfig } from './lib/mobileOptimizations';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
@@ -30,11 +31,13 @@ import AuthRoutes from './pages/auth/AuthRoutes';
 import { Role } from './types';
 import { initializeServiceWorker } from './lib/serviceWorkerManager';
 import OfflineIndicator from './components/OfflineIndicator';
+import OfflineNotification from './components/OfflineNotification';
+import MobileLoadingScreen from './components/ui/MobileLoadingScreen';
 import { logger } from './lib/logger';
 import './lib/debugHelpers';
 
 const LOG_CONTEXT = 'AppRoutes';
-const LOADING_TIMEOUT_MS = 10_000;
+const LOADING_TIMEOUT_MS = getAdaptiveConfig().loadingTimeout;
 
 type ErrorBoundaryState = {
   hasError: boolean;
@@ -132,12 +135,7 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryS
 }
 
 const buildLoadingScreen = (message: string) => (
-  <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-    <div className="text-center">
-      <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-indigo-600" />
-      <p className="text-gray-600">{message}</p>
-    </div>
-  </div>
+  <MobileLoadingScreen message={message} />
 );
 
 const TIMEOUT_SCREEN = (
@@ -229,6 +227,10 @@ const AppContent: React.FC = memo(() => {
 
   useEffect(() => {
     logger.info('Inicializando aplicação.', { context: LOG_CONTEXT });
+    
+    // Inicializar otimizações mobile primeiro
+    initializeMobileOptimizations();
+    
     initializeServiceWorkerCallback();
   }, [initializeServiceWorkerCallback]);
 
@@ -354,6 +356,7 @@ const AppRoutes: React.FC = () => (
                   <ToastProvider>
                     <AppContent />
                     <OfflineIndicator />
+                    <OfflineNotification />
                   </ToastProvider>
                 </PerformanceProfiler>
               </ExerciseProvider>
