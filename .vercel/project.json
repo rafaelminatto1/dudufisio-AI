@@ -1,16 +1,1 @@
-{
-  "projectId": "prj_lJT0yis7pFVJASeoHaykO6A1U7kz",
-  "orgId": "team_RWPxV6A0gp02a6FO7Ghf2YSV",
-  "projectName": "dudufisio-ai",
-  "settings": {
-    "createdAt": 1758576602830,
-    "framework": "vite",
-    "devCommand": null,
-    "installCommand": "npm install",
-    "buildCommand": "npm run build",
-    "outputDirectory": "dist",
-    "rootDirectory": null,
-    "directoryListing": false,
-    "nodeVersion": "22.x"
-  }
-}
+{"projectId":"prj_lJT0yis7pFVJASeoHaykO6A1U7kz","orgId":"team_RWPxV6A0gp02a6FO7Ghf2YSV","projectName":"dudufisio-ai"}

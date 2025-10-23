@@ -76,10 +76,11 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   const [showValidation, setShowValidation] = useState(false);
   const [loadingState, setLoadingState] = useState<'idle' | 'validating' | 'saving'>('idle');
   
-  // React Hook Form - inicialização gradual
+  // React Hook Form - inicialização gradual com validação em tempo real
   const form = useForm<AppointmentFormValues>({
     resolver: zodResolver(appointmentFormSchema),
-    mode: 'onBlur', // Validar ao sair do campo (migrar para onChange depois)
+    mode: 'onChange', // Validação em tempo real
+    reValidateMode: 'onChange', // Re-validar em cada mudança
     defaultValues: {
       patient: null,
       therapistId: '',
