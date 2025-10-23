@@ -1,5 +1,7 @@
 import { supabase } from '../../lib/supabaseClient';
 import { handleSupabaseError } from '../../lib/middleware/errorHandler';
+import { retryApiCall } from '../../lib/retryManager';
+import { fallbackAuthService } from '../../lib/fallbackAuth';
 import { User, Role } from '../../types';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
@@ -40,31 +42,35 @@ class SupabaseAuthService {
 
   private async initializeAuth() {
     try {
-      
+      console.log('🔄 Inicializando autenticação...');
 
       // Set a timeout for initialization to prevent infinite loading
       const initTimeout = setTimeout(() => {
-        console.warn('⚠️ Auth initialization timeout, falling back to unauthenticated state');
-        this.updateState({ user: null, session: null, loading: false });
-      }, 5000);
+        console.warn('⚠️ Auth initialization timeout, falling back to fallback auth');
+        this.switchToFallbackAuth();
+      }, 8000); // Aumentado para 8 segundos
 
       try {
-        // Get initial session
-        
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        // Get initial session with retry
+        const { data: { session }, error: sessionError } = await retryApiCall(
+          () => supabase.auth.getSession(),
+          'getSession',
+          2 // Apenas 2 tentativas para inicialização
+        );
 
         if (sessionError) {
-          console.warn('⚠️ Session error:', sessionError.message);
-          throw sessionError;
+          console.warn('⚠️ Session error, switching to fallback auth:', sessionError.message);
+          clearTimeout(initTimeout);
+          this.switchToFallbackAuth();
+          return;
         }
 
         if (session?.user) {
-          
+          console.log('✅ Usuário autenticado via Supabase');
           const user = await this.mapSupabaseUserToUser(session.user);
           this.updateState({ user, session, loading: false });
-          
         } else {
-          
+          console.log('🔄 Nenhuma sessão ativa, usando mock auth');
           // Use mock authentication for development
           const mockUser = this.getMockUser();
           this.updateState({ user: mockUser, session: null, loading: false });
@@ -74,9 +80,8 @@ class SupabaseAuthService {
         clearTimeout(initTimeout);
 
         // Listen for auth changes
-        
         supabase.auth.onAuthStateChange(async (event, session) => {
-          
+          console.log('🔄 Auth state change:', event);
           try {
             if (event === 'SIGNED_IN' && session?.user) {
               // Check if this is a new OAuth user and create profile if needed
@@ -95,20 +100,27 @@ class SupabaseAuthService {
           }
         });
 
-        
       } catch (error) {
         clearTimeout(initTimeout);
-        throw error;
+        console.error('❌ Supabase auth failed, switching to fallback:', error);
+        this.switchToFallbackAuth();
       }
     } catch (error) {
       console.error('❌ Auth initialization error:', error);
-      
-
-      // Always complete initialization, even on error
-      this.updateState({ user: null, session: null, loading: false });
-
-      // Don't throw the error - let the app continue in unauthenticated mode
+      this.switchToFallbackAuth();
     }
+  }
+
+  private switchToFallbackAuth() {
+    console.log('🔄 Switching to fallback authentication...');
+    
+    // Subscribe to fallback auth state changes
+    const unsubscribe = fallbackAuthService.subscribe((fallbackState) => {
+      this.updateState(fallbackState);
+    });
+
+    // Store unsubscribe function for cleanup
+    (this as any).fallbackUnsubscribe = unsubscribe;
   }
 
   private updateState(newState: Partial<AuthState>) {
@@ -257,10 +269,15 @@ class SupabaseAuthService {
         return this.mockLogin(credentials);
       }
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password,
-      });
+      // Try Supabase first with retry
+      const { data, error } = await retryApiCall(
+        () => supabase.auth.signInWithPassword({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+        'signInWithPassword',
+        2
+      );
 
       if (error) throw error;
       if (!data.user) throw new Error('Login falhou');
@@ -268,11 +285,18 @@ class SupabaseAuthService {
       const user = await this.mapSupabaseUserToUser(data.user);
       return user;
     } catch (error: any) {
-      // If Supabase fails and we have demo credentials, try mock auth
-      if (this.shouldUseMockAuth(credentials)) {
-        return this.mockLogin(credentials);
+      console.warn('⚠️ Supabase login failed, trying fallback auth:', error);
+      
+      // If Supabase fails, try fallback auth
+      try {
+        return await fallbackAuthService.login(credentials.email, credentials.password);
+      } catch (fallbackError) {
+        // If fallback also fails and we have demo credentials, try mock auth
+        if (this.shouldUseMockAuth(credentials)) {
+          return this.mockLogin(credentials);
+        }
+        throw new Error(handleSupabaseError(error));
       }
-      throw new Error(handleSupabaseError(error));
     }
   }
 

@@ -82,6 +82,7 @@
     "perf:local": "node scripts/lighthouse-performance.js http://localhost:4173",
     "perf:prod": "node scripts/lighthouse-performance.js https://moocafisio.com.br",
     "perf:staging": "node scripts/lighthouse-performance.js https://dudufisio-git-main-rafael-minattos-projects.vercel.app",
+    "test:mobile": "node scripts/test-mobile-loading.js",
     "fix:radix": "bash scripts/fix-radix-ui-build.sh",
     "fix:radix:win": "powershell -ExecutionPolicy Bypass -File scripts/fix-radix-ui-build.ps1",
     "fix:build": "powershell -ExecutionPolicy Bypass -File scripts/fix-build-simple.ps1"
