@@ -36,7 +36,7 @@ const ExerciseLibraryPage = createLazyComponent(() => import('./ExerciseLibraryP
 const EnhancedExerciseLibraryPage = createLazyComponent(() => import('./EnhancedExerciseLibraryPage'));
 const ExerciseLibraryTestPage = createLazyComponent(() => import('./ExerciseLibraryTestPage'));
 const SessionPage = createLazyComponent(() => import('./SessionPage'));
-const AtendimentoPage = createLazyComponent(() => import('./AtendimentoPageNew'));
+const AtendimentoPage = createLazyComponent(() => import('./AtendimentoPage'));
 const AtendimentoPageDemo = createLazyComponent(() => import('./AtendimentoPageDemo'));
 const SpecialtyAssessmentsPage = createLazyComponent(() => import('./SpecialtyAssessmentsPage'));
 const AcompanhamentoPage = createLazyComponent(() => import('./AcompanhamentoPage'));

@@ -71,7 +71,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
                 Pular para conteúdo principal
             </a>
             <a 
-                href="#navigation" 
+                href="#sidebar-navigation" 
                 className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-48 focus:z-[100] focus:px-4 focus:py-2 focus:bg-fisio-secondary-DEFAULT focus:text-white focus:rounded-lg focus:shadow-lg focus:font-semibold transition-all"
             >
                 Pular para navegação
@@ -87,7 +87,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
             )}
 
             {/* Sidebar - Responsiva */}
-            <aside
+            <div
                 id="navigation"
                 className={`
                     ${isMobile
@@ -99,7 +99,7 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
                 `}
             >
                 <Sidebar />
-            </aside>
+            </div>
 
             {/* Conteúdo Principal */}
             <div className="flex-1 flex flex-col min-w-0 relative">

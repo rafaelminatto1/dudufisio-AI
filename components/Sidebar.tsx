@@ -365,6 +365,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <aside 
+      id="sidebar-navigation"
       className={`h-screen transition-all duration-300 ease-in-out bg-white border-r border-slate-200 flex flex-col ${isCollapsed ? 'w-14' : 'w-56'}`}
       data-testid="sidebar"
       role="navigation"
@@ -479,7 +480,7 @@ const Sidebar: React.FC = () => {
                 {/* Action Buttons Section */}
                 {!isCollapsed && (
                     <div className="flex items-center justify-between space-x-1">
-                        <NotificationBell unreadCount={unreadCount} isCollapsed={isCollapsed} />
+                        <NotificationBell isCollapsed={isCollapsed} />
                         <button onClick={handleLogout} title="Sair do sistema" className="p-2 rounded-full text-slate-500 hover:bg-red-100 hover:text-red-600 transition-colors">
                             <LogOut className="w-4 h-4" />
                         </button>
@@ -487,7 +488,7 @@ const Sidebar: React.FC = () => {
                 )}
                 {isCollapsed && (
                     <div className="flex items-center justify-center space-x-1">
-                        <NotificationBell unreadCount={unreadCount} isCollapsed={isCollapsed} />
+                        <NotificationBell isCollapsed={isCollapsed} />
                         <button onClick={handleLogout} title="Sair do sistema" className="p-1.5 rounded-full text-slate-500 hover:bg-red-100 hover:text-red-600 transition-colors">
                             <LogOut className="w-4 h-4" />
                         </button>
@@ -500,10 +501,5 @@ const Sidebar: React.FC = () => {
   );
 };
 
-// Memoização otimizada com comparação customizada
-export default memo(Sidebar, (prevProps, nextProps) => {
-    // Só re-renderizar se user.id ou user.role mudarem
-    return prevProps.user?.id === nextProps.user?.id && 
-           prevProps.user?.role === nextProps.user?.role &&
-           prevProps.isCollapsed === nextProps.isCollapsed;
-});
+// Exportar com memoização simples (Sidebar não recebe props externas)
+export default memo(Sidebar);

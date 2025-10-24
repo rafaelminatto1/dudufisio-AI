@@ -257,13 +257,19 @@ class SupabaseAuthService {
   }
 
   async login(credentials: LoginCredentials): Promise<User> {
+    console.log(`🔐 [AUTH] Tentando login para: ${credentials.email}`);
+    
     try {
       // Check if we should use mock authentication for development
       if (this.shouldUseMockAuth(credentials)) {
-        return this.mockLogin(credentials);
+        console.log('🎭 [AUTH] Usando mock authentication para credenciais demo');
+        const user = this.mockLogin(credentials);
+        console.log('✅ [AUTH] Login mock bem-sucedido');
+        return user;
       }
 
       // Try Supabase first with retry
+      console.log('🔄 [AUTH] Tentando login via Supabase...');
       const { data, error } = await retryApiCall(
         () => supabase.auth.signInWithPassword({
           email: credentials.email,
@@ -277,9 +283,10 @@ class SupabaseAuthService {
       if (!data.user) throw new Error('Login falhou');
 
       const user = await this.mapSupabaseUserToUser(data.user);
+      console.log('✅ [AUTH] Login via Supabase bem-sucedido');
       return user;
     } catch (error: any) {
-      console.warn('⚠️ Supabase login failed, trying fallback auth:', error);
+      console.warn('⚠️ [AUTH] Supabase login failed, trying fallback auth:', error);
       
       // If Supabase fails, try fallback auth
       try {
@@ -287,8 +294,12 @@ class SupabaseAuthService {
       } catch (fallbackError) {
         // If fallback also fails and we have demo credentials, try mock auth
         if (this.shouldUseMockAuth(credentials)) {
-          return this.mockLogin(credentials);
+          console.log('🎭 [AUTH] Usando mock authentication como último recurso');
+          const user = this.mockLogin(credentials);
+          console.log('✅ [AUTH] Login mock bem-sucedido (fallback)');
+          return user;
         }
+        console.error('❌ [AUTH] Todos os métodos de login falharam');
         throw new Error(handleSupabaseError(error));
       }
     }

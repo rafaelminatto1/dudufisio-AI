@@ -71,11 +71,33 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
     }
   };
 
-  const handleDemoLogin = (email: string) => {
+  const handleDemoLogin = async (email: string) => {
+    // Preencher campos para feedback visual
     setFormData({
       email,
       password: 'demo123456'
     });
+
+    // Fazer login automaticamente
+    setIsLoading(true);
+    try {
+      console.log(`🎯 [DEMO LOGIN] Iniciando login automático para: ${email}`);
+      
+      await login({
+        email,
+        password: 'demo123456'
+      });
+      
+      console.log('✅ [DEMO LOGIN] Login bem-sucedido, redirecionando...');
+      
+      // Redirect to dashboard after successful login
+      navigate('/dashboard');
+      onSuccess?.();
+    } catch (err) {
+      console.error('❌ [DEMO LOGIN] Erro ao fazer login:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSocialLogin = async (provider: 'google' | 'github' | 'apple') => {

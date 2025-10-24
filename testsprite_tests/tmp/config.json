@@ -2,17 +2,7 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:4173",
+  "localEndpoint": "http://localhost:5176",
   "loginUser": "admin@dudufisio.com",
-  "loginPassword": "demo123456",
-  "executionArgs": {
-    "projectName": "dudufisio-ai",
-    "projectPath": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI",
-    "testIds": [],
-    "additionalInstruction": "",
-    "envs": {
-      "API_KEY": "sk-user-8bMuKGfFoUIqX4t6ssw0xomOk6IV_HwEsApfdFk6dKdt9VPWsfekx6ge2QgANJyDuJqx8YqFAdjprxq5X_3Q2zFH6fc-rKwMqPACaMgJCt_jXILdR2OZYzCuap6y0uLjI58"
-    }
-  },
-  "proxy": "http://cb7c9b6b-673b-4a62-8301-859d60fdedad:DuDUw4Tkcw8W6552ElyucGOAZeewoWHv@tun.testsprite.com:8080"
+  "loginPassword": "demo123456"
 }

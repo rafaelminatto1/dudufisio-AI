@@ -110,6 +110,8 @@ class FallbackAuthService {
   }
 
   async login(email: string, password: string): Promise<User> {
+    console.log(`🔄 [FALLBACK] Tentando login para: ${email}`);
+    
     // Simular delay de rede
     await new Promise(resolve => setTimeout(resolve, 1000));
 
@@ -152,8 +154,11 @@ class FallbackAuthService {
 
     const user = mockUsers[email];
     if (!user || password !== 'demo123456') {
+      console.error('❌ [FALLBACK] Credenciais inválidas');
       throw new Error('Credenciais inválidas');
     }
+
+    console.log('✅ [FALLBACK] Credenciais válidas, criando sessão...');
 
     // Criar sessão mock
     const mockSession = {
@@ -173,6 +178,7 @@ class FallbackAuthService {
 
     this.updateState({ user, session: mockSession, loading: false });
     
+    console.log('✅ [FALLBACK] Login realizado com sucesso');
     logger.info('[FALLBACK] Login realizado com sucesso');
     return user;
   }

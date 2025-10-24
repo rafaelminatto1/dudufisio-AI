@@ -99,8 +99,8 @@ test.describe('Tela de Login', () => {
       
       console.log('✅ Redirecionado para o dashboard após login');
       
-      // Verificar se está no dashboard
-      await expect(page.locator('text=Dashboard')).toBeVisible();
+      // Verificar se está no dashboard usando um seletor mais específico
+      await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
       
       // Tirar screenshot
       await page.screenshot({ path: 'tests/screenshots/after-login.png', fullPage: true });

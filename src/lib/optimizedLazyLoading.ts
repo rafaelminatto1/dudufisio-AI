@@ -77,7 +77,7 @@ export function preloadRoute(routePath: string) {
     '/patient-pain-diary': () => import('../pages/PatientPainDiaryPage').then(() => {}),
     '/session-view': () => import('../pages/SessionViewPage').then(() => {}),
     '/session-form': () => import('../pages/SessionFormPage').then(() => {}),
-    '/atendimento': () => import('../pages/AtendimentoPageNew').then(() => {}),
+    '/atendimento': () => import('../pages/AtendimentoPage').then(() => {}),
     '/atendimento-demo': () => import('../pages/AtendimentoPageDemo').then(() => {}),
     '/specialty-assessments': () => import('../pages/SpecialtyAssessmentsPage').then(() => {}),
     '/sports-rehabilitation': () => import('../pages/SportsRehabilitationPage').then(() => {}),
