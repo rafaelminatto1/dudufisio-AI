@@ -93,7 +93,7 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
       const pendingTests = await getMandatoryAssessmentsForSession(
         patient.id,
         patientNotes.length + 1,
-        'during'
+        'mid_session'
       );
 
       if (pendingTests.length > 0) {
@@ -149,7 +149,7 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
         'Profissional optou por salvar sem realizar medições obrigatórias'
       );
 
-      showToast('Sessão salva sem medições obrigatórias. Não conformidade registrada.', 'warning');
+      showToast('Sessão salva sem medições obrigatórias. Não conformidade registrada.', 'info');
       setIsSaveBlockingDialogOpen(false);
     } catch (error) {
       console.error('Erro ao registrar não conformidade:', error);
@@ -234,10 +234,10 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
             </button>
           </header>
 
-          {/* Content - Layout 3 Colunas */}
+          {/* Content - Layout 4 Colunas (EXPANDIDO) */}
           <div className="flex-1 overflow-hidden flex flex-row">
-            {/* Coluna 1 (40%): Formulário SOAP */}
-            <div className="w-[40%] p-6 overflow-y-auto border-r border-slate-200">
+            {/* Coluna 1 (30%): Formulário SOAP */}
+            <div className="w-[30%] p-6 overflow-y-auto border-r border-slate-200">
               <SessionForm
                 patient={patient}
                 onSave={handleSaveNote}
@@ -249,17 +249,41 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
               />
             </div>
 
-            {/* Coluna 2 (35%): Dados Históricos do Paciente */}
-            <div className="w-[35%] p-6 overflow-y-auto border-r border-slate-200 bg-slate-50">
+            {/* Coluna 2 (25%): Histórico & Condutas */}
+            <div className="w-[25%] p-6 overflow-y-auto border-r border-slate-200 bg-slate-50">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-700 mb-3">Histórico de Sessões</h3>
               <PatientContextPanel 
                 patient={patient}
                 sessionNumber={patientNotes.length + 1}
                 timing="during"
               />
+                </div>
+              </div>
             </div>
 
-            {/* Coluna 3 (25%): Visão Geral e Métricas */}
-            <div className="w-[25%] p-6 overflow-y-auto bg-white">
+            {/* Coluna 3 (25%): Testes & Evolução */}
+            <div className="w-[25%] p-6 overflow-y-auto border-r border-slate-200 bg-white">
+              <div className="space-y-6">
+                {/* Alertas e Testes */}
+                {pendingMandatoryTests.length > 0 && (
+                  <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
+                    <p className="text-sm font-semibold text-red-800 mb-2">
+                      ⚠️ {pendingMandatoryTests.length} teste(s) obrigatório(s)
+                    </p>
+                    <ul className="text-xs text-red-700 space-y-1">
+                      {pendingMandatoryTests.map((test, idx) => (
+                        <li key={idx}>• {test.testName}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Coluna 4 (20%): Resumo Paciente */}
+            <div className="w-[20%] p-6 overflow-y-auto bg-slate-50">
               <div className="space-y-6">
                 {/* Visão Geral do Paciente */}
                 <PatientOverview patient={patient} />

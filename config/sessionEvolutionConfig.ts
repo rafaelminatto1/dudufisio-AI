@@ -1,106 +1,185 @@
 /**
- * Configuração para Sistema de Evolução de Sessão
- * Permite alternar entre as 3 opções de implementação
+ * Configuração do Sistema de Evolução de Sessão
+ * Define qual modo de interface usar
  */
 
-export type SessionEvolutionMode = 'page' | 'modal' | 'expanded' | 'existing';
-
-interface SessionEvolutionConfig {
-  // Modo de implementação ativo
-  mode: SessionEvolutionMode;
-  
-  // Rota para navegação
-  route: string;
-  
-  // Configurações de UI
-  showMandatoryAlerts: boolean;
-  showGoalsPanel: boolean;
-  showSurgeryTimeline: boolean;
-  showEvolutionCharts: boolean;
-  showMedicalInsights: boolean;
-  
-  // Configurações de comportamento
-  autoSaveEnabled: boolean;
-  autoSaveInterval: number; // segundos
-  blockSaveOnCriticalAlerts: boolean;
-}
+export type SessionEvolutionMode = 'page' | 'modal' | 'expansion';
 
 /**
- * Configuração padrão
- * Para alternar entre as opções, basta mudar o 'mode'
- * 
- * Opções disponíveis:
- * - 'page': Nova página fullscreen (SessionEvolutionPage.tsx)
- * - 'modal': Modal fullscreen (SessionEvolutionModal.tsx)
- * - 'expanded': Expansão da SessionFormPage (SessionFormPageExpanded.tsx)
- * - 'existing': Usa a AtendimentoPage.tsx existente (padrão atual)
+ * Modo de interface de evolução de sessão
+ * - 'page': Página nova com rota /atendimento/:appointmentId/evolucao
+ * - 'modal': Modal fullscreen que abre sobre a agenda
+ * - 'expansion': Expande a SessionFormPage existente
  */
-export const sessionEvolutionConfig: SessionEvolutionConfig = {
-  // ⚙️ ESCOLHA A OPÇÃO AQUI:
-  // 'page' | 'modal' | 'expanded' | 'existing'
-  mode: 'existing', // Padrão: usa a página existente
+export const SESSION_EVOLUTION_MODE: SessionEvolutionMode =
+  (import.meta.env.VITE_SESSION_MODE as SessionEvolutionMode) || 'modal';
+
+/**
+ * Configurações de layout
+ */
+export const LAYOUT_CONFIG = {
+  // Desktop: 4 colunas
+  fourColumns: {
+    col1Width: '30%', // SOAP Form
+    col2Width: '25%', // Histórico
+    col3Width: '25%', // Evolução/Testes
+    col4Width: '20%', // Resumo
+  },
   
-  // Rota baseada no modo
-  route: '/atendimento', // Será concatenado com /:appointmentId
+  // Tablet: 2 colunas
+  twoColumns: {
+    col1Width: '50%',
+    col2Width: '50%',
+  },
   
-  // Features ativadas
-  showMandatoryAlerts: true,
-  showGoalsPanel: true,
-  showSurgeryTimeline: true,
-  showEvolutionCharts: true,
-  showMedicalInsights: true,
-  
-  // Comportamento
-  autoSaveEnabled: true,
-  autoSaveInterval: 30, // 30 segundos
-  blockSaveOnCriticalAlerts: true,
+  // Mobile: 1 coluna
+  mobileColumns: {
+    width: '100%',
+  },
 };
 
 /**
- * Helper para alternar entre modos
+ * Configurações de features
  */
-export function setSessionEvolutionMode(mode: SessionEvolutionMode): void {
-  sessionEvolutionConfig.mode = mode;
-  console.log(`✅ Modo de evolução alterado para: ${mode}`);
-}
+export const FEATURES_CONFIG = {
+  // Alertas de testes obrigatórios
+  mandatoryTestAlerts: {
+    enabled: true,
+    blockSaveOnCritical: true,
+    showWarningOnImportant: true,
+    showInfoOnLow: true,
+  },
+  
+  // Replicação de condutas
+  conductReplication: {
+    enabled: true,
+    showRecentSessions: 10,
+    enableTemplates: true,
+  },
+  
+  // Insights médicos automáticos
+  medicalInsights: {
+    enabled: true,
+    autoGenerate: true,
+    showSuggestedText: true,
+  },
+  
+  // Gráficos de evolução
+  evolutionCharts: {
+    enabled: true,
+    defaultChartType: 'line' as 'bar' | 'line' | 'area' | 'radar',
+    enableExport: true,
+    exportFormats: ['png', 'svg', 'csv'] as const,
+  },
+  
+  // Sistema de autosave
+  autosave: {
+    enabled: true,
+    debounceMs: 2500,
+  },
+};
 
 /**
- * Helper para obter rota completa
+ * Configurações de validação
  */
-export function getSessionRoute(appointmentId: string): string {
-  return `${sessionEvolutionConfig.route}/${appointmentId}`;
-}
+export const VALIDATION_CONFIG = {
+  soap: {
+    subjectiveMinLength: 10,
+    objectiveMinLength: 10,
+    assessmentMinLength: 10,
+    planMinLength: 10,
+  },
+  
+  painScale: {
+    min: 0,
+    max: 10,
+  },
+  
+  tests: {
+    requireUnitOfMeasure: true,
+    allowNegativeValues: false,
+  },
+};
 
 /**
- * Instruções de uso:
- * 
- * Para testar cada opção de implementação:
- * 
- * 1. OPÇÃO 1 - Página Nova:
- *    setSessionEvolutionMode('page');
- *    - Usa: SessionEvolutionPage.tsx
- *    - Rota: /atendimento/:appointmentId
- *    - Layout: 4 colunas fullscreen
- *    - Navegação: botão voltar
- * 
- * 2. OPÇÃO 2 - Modal Fullscreen:
- *    setSessionEvolutionMode('modal');
- *    - Usa: SessionEvolutionModal.tsx
- *    - Abre: modal sobre a agenda
- *    - Layout: 4 colunas em modal
- *    - Fechamento: X ou ESC
- * 
- * 3. OPÇÃO 3 - Expansão:
- *    setSessionEvolutionMode('expanded');
- *    - Usa: SessionFormPageExpanded.tsx
- *    - Integração: com SessionFormPage existente
- *    - Layout: 4 colunas adaptado
- * 
- * 4. EXISTING - Página Atual (padrão):
- *    setSessionEvolutionMode('existing');
- *    - Usa: AtendimentoPage.tsx (página atual robusta)
- *    - Mantém: funcionalidade atual
+ * Configurações de UI/UX
  */
+export const UI_CONFIG = {
+  animations: {
+    enabled: true,
+    duration: 300, // ms
+  },
+  
+  toast: {
+    duration: 3000, // ms
+    position: 'top-right' as const,
+  },
+  
+  modal: {
+    closeOnEsc: true,
+    closeOnOverlayClick: false,
+  },
+  
+  colors: {
+    critical: {
+      bg: 'bg-red-50',
+      text: 'text-red-800',
+      border: 'border-red-300',
+    },
+    important: {
+      bg: 'bg-orange-50',
+      text: 'text-orange-800',
+      border: 'border-orange-300',
+    },
+    low: {
+      bg: 'bg-blue-50',
+      text: 'text-blue-800',
+      border: 'border-blue-300',
+    },
+    success: {
+      bg: 'bg-green-50',
+      text: 'text-green-800',
+      border: 'border-green-300',
+    },
+  },
+};
 
-export default sessionEvolutionConfig;
+/**
+ * Helper functions
+ */
+export const isPageMode = () => SESSION_EVOLUTION_MODE === 'page';
+export const isModalMode = () => SESSION_EVOLUTION_MODE === 'modal';
+export const isExpansionMode = () => SESSION_EVOLUTION_MODE === 'expansion';
 
+/**
+ * Retorna URL para evolução de sessão
+ */
+export const getSessionEvolutionUrl = (appointmentId: string): string => {
+  switch (SESSION_EVOLUTION_MODE) {
+    case 'page':
+      return `/atendimento/${appointmentId}/evolucao`;
+    case 'modal':
+      // Modal não usa navegação de URL
+      return '#';
+    case 'expansion':
+      return `/session/${appointmentId}`;
+    default:
+      return `/atendimento/${appointmentId}/evolucao`;
+  }
+};
+
+/**
+ * Debug mode
+ */
+export const DEBUG_MODE = import.meta.env.DEV;
+
+/**
+ * Log configurações no console (apenas em desenvolvimento)
+ */
+if (DEBUG_MODE) {
+  console.log('🔧 Session Evolution Config:', {
+    mode: SESSION_EVOLUTION_MODE,
+    features: FEATURES_CONFIG,
+    validation: VALIDATION_CONFIG,
+  });
+}

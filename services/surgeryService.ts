@@ -99,7 +99,8 @@ export async function addSurgery(
 
     const updatedSurgeries = [...(patient.surgeries || []), newSurgery];
     
-    await patientService.updatePatient(patientId, {
+    await patientService.updatePatient({
+      ...patient,
       surgeries: updatedSurgeries,
     });
 
@@ -151,7 +152,8 @@ export async function updateSurgery(
       s.id === surgeryId ? updatedSurgery : s
     ) || [];
 
-    await patientService.updatePatient(patient.id, {
+    await patientService.updatePatient({
+      ...patient,
       surgeries: updatedSurgeries,
     });
 
@@ -179,7 +181,8 @@ export async function deleteSurgery(surgeryId: string): Promise<void> {
 
     const updatedSurgeries = patient.surgeries?.filter(s => s.id !== surgeryId) || [];
 
-    await patientService.updatePatient(patient.id, {
+    await patientService.updatePatient({
+      ...patient,
       surgeries: updatedSurgeries,
     });
   } catch (error) {
@@ -262,7 +265,7 @@ export async function getRecentSurgeries(patientId: string): Promise<Surgery[]> 
 /**
  * Verifica se paciente tem cirurgia em período de recuperação crítico
  */
-export async function hasC riticalRecoverySurgery(patientId: string): Promise<boolean> {
+export async function hasCriticalRecoverySurgery(patientId: string): Promise<boolean> {
   try {
     const surgeries = await getSurgeriesByPatientId(patientId);
     return surgeries.some(s => {

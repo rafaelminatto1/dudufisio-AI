@@ -232,6 +232,29 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     }
   }, [appointmentToEdit, initialData, isOpen, patients]);
 
+  // useEffect separado para atualizar slotTime quando initialData.date mudar
+  // Este useEffect resolve o bug de sempre mostrar 09:00 quando clicar em diferentes slots
+  useEffect(() => {
+    if (isOpen && initialData?.date && !appointmentToEdit) {
+      const dateToUse = initialData.date;
+      const hours = dateToUse.getHours();
+      const minutes = dateToUse.getMinutes();
+      
+      // Se a hora for 00:00 (meia-noite), usar 09:00 como padrão
+      const slotTimeValue = (hours === 0 && minutes === 0) 
+        ? '09:00' 
+        : format(dateToUse, 'HH:mm');
+      
+      console.log('⏰ Atualizando slotTime dinamicamente:', slotTimeValue);
+      console.log('   Data recebida:', dateToUse);
+      console.log('   Horário calculado:', hours, ':', minutes);
+      
+      // Atualizar estado local E formulário React Hook Form
+      setSlotTime(slotTimeValue);
+      form.setValue('slotTime', slotTimeValue, { shouldValidate: true });
+    }
+  }, [initialData?.date, isOpen, appointmentToEdit, form]);
+
   // useEffect separado para atualizar therapistId quando therapists são carregados
   useEffect(() => {
     if (isOpen && therapists.length > 0 && !therapistId) {
@@ -258,8 +281,14 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [onClose, isOpen]);
 
-  const handleSaveClick = async () => {
-    console.log('🔍 Validando agendamento - Paciente selecionado:', selectedPatient);
+  const handleSaveClick = async (formData?: AppointmentFormValues) => {
+    console.log('🚀 handleSaveClick CHAMADO!');
+    console.log('   FormData recebido:', formData);
+    console.log('   selectedPatient:', selectedPatient);
+    console.log('   slotTime:', slotTime);
+    console.log('   therapistId:', therapistId);
+    console.log('   appointmentType:', appointmentType);
+    console.log('   duration:', duration);
     
     if (!selectedPatient) {
       console.warn('⚠️ Nenhum paciente selecionado');
@@ -806,9 +835,16 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           </Button>
           <Button
             type="button"
-            onClick={form.handleSubmit(handleSaveClick)}
+            onClick={form.handleSubmit(
+              handleSaveClick,
+              (errors) => {
+                console.error('❌ Erros de validação do formulário:', errors);
+                showToast('Por favor, corrija os erros no formulário', 'error');
+              }
+            )}
             disabled={loadingState !== 'idle'}
             data-testid="submit-button"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium disabled:bg-blue-400 disabled:text-white"
           >
             {loadingState === 'validating' && (
               <>

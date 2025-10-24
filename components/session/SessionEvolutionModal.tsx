@@ -3,10 +3,30 @@ import { X, Save, Maximize2, Minimize2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useToast } from '../../contexts/ToastContext';
 import SessionEvolutionContainer from './SessionEvolutionContainer';
-import { Patient, EnrichedAppointment } from '../../types';
+import { Patient, EnrichedAppointment, SoapNote, Surgery, PatientGoal, Pathology, MandatoryTestAlert, MedicalInsight } from '../../types';
 import * as appointmentService from '../../services/appointmentService';
 import * as patientService from '../../services/patientService';
+import * as soapNoteService from '../../services/soapNoteService';
+import * as surgeryService from '../../services/surgeryService';
+import * as patientGoalsService from '../../services/patientGoalsService';
+import * as pathologyService from '../../services/pathologyService';
+import * as mandatoryTestAlertService from '../../services/mandatoryTestAlertService';
+import * as medicalReportSuggestionsService from '../../services/medicalReportSuggestionsService';
 import { AnimatePresence, motion } from 'framer-motion';
+
+// Import all column components
+import { SOAPFormPanel } from './SOAPFormPanel';
+import { SessionHistoryPanel } from './SessionHistoryPanel';
+import { SurgeryTimeline } from './SurgeryTimeline';
+import { TreatmentDurationCard } from './TreatmentDurationCard';
+import { TestEvolutionPanel } from './TestEvolutionPanel';
+import { MandatoryTestAlert as MandatoryTestAlertComponent } from './MandatoryTestAlert';
+import { PathologyManager } from './PathologyManager';
+import { PatientGoalsPanel } from './PatientGoalsPanel';
+import PatientOverview from './PatientOverview';
+import PatientMetrics from './PatientMetrics';
+import { MedicalReportSuggestions } from './MedicalReportSuggestions';
+import { SaveBlockingDialog } from './SaveBlockingDialog';
 
 /**
  * OPÇÃO 2: Modal Fullscreen para Evolução de Sessão
@@ -31,8 +51,17 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
   
   const [appointment, setAppointment] = useState<EnrichedAppointment | null>(null);
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [patientNotes, setPatientNotes] = useState<SoapNote[]>([]);
+  const [surgeries, setSurgeries] = useState<Surgery[]>([]);
+  const [goals, setGoals] = useState<PatientGoal[]>([]);
+  const [pathologies, setPathologies] = useState<Pathology[]>([]);
+  const [mandatoryAlerts, setMandatoryAlerts] = useState<MandatoryTestAlert[]>([]);
+  const [medicalInsights, setMedicalInsights] = useState<MedicalInsight[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isMaximized, setIsMaximized] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showBlockingDialog, setShowBlockingDialog] = useState(false);
+  const [pendingCriticalTests, setPendingCriticalTests] = useState<MandatoryTestAlert[]>([]);
 
   useEffect(() => {
     if (isOpen) {
@@ -72,6 +101,35 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
       }
 
       setPatient(patientData);
+
+      // Carregar todos os dados em paralelo
+      const [
+        notesData,
+        surgeriesData,
+        goalsData,
+        pathologiesData,
+      ] = await Promise.all([
+        soapNoteService.getNotesByPatientId(patientData.id),
+        surgeryService.getSurgeriesByPatientId(patientData.id),
+        patientGoalsService.getGoalsByPatientId(patientData.id),
+        pathologyService.getPathologiesByPatientId(patientData.id),
+      ]);
+
+      setPatientNotes(notesData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+      setSurgeries(surgeriesData);
+      setGoals(goalsData);
+      setPathologies(pathologiesData);
+
+      // Gerar alertas e insights
+      const sessionNumber = notesData.length + 1;
+      const [alerts, insights] = await Promise.all([
+        mandatoryTestAlertService.generateMandatoryTestAlerts(patientData.id, sessionNumber),
+        medicalReportSuggestionsService.generateMedicalInsights(patientData.id),
+      ]);
+
+      setMandatoryAlerts(alerts);
+      setMedicalInsights(insights);
+
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
       showToast('Erro ao carregar dados da sessão', 'error');
@@ -81,12 +139,60 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
     }
   };
 
+  const handleSaveNote = async (noteData: Omit<SoapNote, 'id' | 'patientId' | 'therapist'>) => {
+    if (!patient) return;
+
+    // Verificar testes obrigatórios críticos
+    const criticalAlerts = mandatoryAlerts.filter(
+      a => a.severity === 'critical' && !a.isCompleted
+    );
+
+    if (criticalAlerts.length > 0) {
+      setPendingCriticalTests(criticalAlerts);
+      setShowBlockingDialog(true);
+      return;
+    }
+
+    await performSave(noteData);
+  };
+
+  const performSave = async (noteData: Omit<SoapNote, 'id' | 'patientId' | 'therapist'>) => {
+    if (!patient || !appointment) return;
+
+    setIsSaving(true);
+    try {
+      // Salvar nota SOAP
+      await soapNoteService.addNote(patient.id, noteData);
+
+      // Recarregar dados
+      await loadData();
+
+      showToast('Sessão registrada com sucesso!', 'success');
+      
+      if (onSave) {
+        onSave();
+      }
+      onClose();
+    } catch (error) {
+      console.error('Erro ao salvar sessão:', error);
+      showToast('Erro ao salvar sessão', 'error');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSave = async () => {
     showToast('Sessão salva com sucesso!', 'success');
     if (onSave) {
       onSave();
     }
     onClose();
+  };
+
+  const handleSaveAnyway = async () => {
+    // Permite salvar mesmo com testes pendentes
+    // Log de não conformidade já é feito pelo SaveBlockingDialog
+    setShowBlockingDialog(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -236,26 +342,90 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
                   layout="4-columns"
                   soapFormSlot={
                     <div className="space-y-4">
-                      <h3 className="text-lg font-semibold text-slate-900">Formulário SOAP</h3>
-                      <p className="text-slate-600">Componente SOAPFormPanel será inserido aqui</p>
+                      <SOAPFormPanel
+                        patientId={patient.id}
+                        sessionNumber={patientNotes.length + 1}
+                        previousNote={patientNotes[0] || null}
+                        onSave={handleSaveNote}
+                        onCancel={onClose}
+                        isLoading={isSaving}
+                      />
                     </div>
                   }
                   historySlot={
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold text-slate-900">Histórico & Condutas</h3>
-                      <p className="text-slate-600">Componente SessionHistoryPanel será inserido aqui</p>
+                    <div className="space-y-6">
+                      <SessionHistoryPanel
+                        patientId={patient.id}
+                        limit={10}
+                        onReplicateConduct={(note) => {/* Implementar replicação */}}
+                      />
+                      
+                      <div className="mt-6">
+                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Cirurgias</h3>
+                        <SurgeryTimeline
+                          patientId={patient.id}
+                        />
+                      </div>
+
+                      <TreatmentDurationCard
+                        patient={patient}
+                      />
                     </div>
                   }
                   evolutionSlot={
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold text-slate-900">Testes & Evolução</h3>
-                      <p className="text-slate-600">Componente TestEvolutionPanel será inserido aqui</p>
+                    <div className="space-y-6">
+                      {/* Alertas de Testes Obrigatórios */}
+                      {mandatoryAlerts.length > 0 && (
+                        <div>
+                          <h3 className="text-lg font-semibold text-slate-900 mb-4">Alertas</h3>
+                          <MandatoryTestAlertComponent
+                            alerts={mandatoryAlerts}
+                          />
+                        </div>
+                      )}
+
+                      {/* Patologias */}
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Patologias</h3>
+                        <PathologyManager
+                          patientId={patient.id}
+                        />
+                      </div>
+
+                      {/* Evolução de Testes */}
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Evolução</h3>
+                        <TestEvolutionPanel
+                          patientId={patient.id}
+                          sessionNumber={patientNotes.length + 1}
+                        />
+                      </div>
                     </div>
                   }
                   summarySlot={
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-semibold text-slate-900">Resumo Paciente</h3>
-                      <p className="text-slate-600">Componente PatientGoalsPanel será inserido aqui</p>
+                    <div className="space-y-6">
+                      <PatientOverview patient={patient} />
+
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Objetivos</h3>
+                        <PatientGoalsPanel
+                          patient={patient}
+                        />
+                      </div>
+
+                      <PatientMetrics
+                        patient={patient}
+                        appointments={[appointment]}
+                      />
+
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Insights</h3>
+                        <MedicalReportSuggestions
+                          patientId={patient.id}
+                          isCollapsible={true}
+                          defaultExpanded={true}
+                        />
+                      </div>
                     </div>
                   }
                 />
@@ -266,6 +436,22 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
               )}
             </div>
           </motion.div>
+
+          {/* Save Blocking Dialog */}
+          {showBlockingDialog && (
+            <SaveBlockingDialog
+              isOpen={showBlockingDialog}
+              onClose={() => setShowBlockingDialog(false)}
+              onSaveAnyway={handleSaveAnyway}
+              onCancel={() => setShowBlockingDialog(false)}
+              pendingTests={pendingCriticalTests.map(alert => ({
+                id: alert.id,
+                testName: alert.testName,
+                testType: alert.testType,
+                frequencyType: 'every_session',
+              }))}
+            />
+          )}
         </>
       )}
     </AnimatePresence>

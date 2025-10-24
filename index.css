@@ -22,6 +22,28 @@
     --fisio-warning: 255 193 7; /* #FFC107 */
     --fisio-success: 40 167 69; /* #28A745 */
     
+    /* Variáveis CSS necessárias para shadcn/ui */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 20%;
+    --primary: 211 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 142 76% 36%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 0 0% 20%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 211 100% 50%;
+    --radius: 0.5rem;
+    
     /* Variáveis de espaçamento */
     --spacing-xs: 0.25rem;
     --spacing-sm: 0.5rem;

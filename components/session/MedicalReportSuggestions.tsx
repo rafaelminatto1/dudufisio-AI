@@ -94,7 +94,7 @@ export const MedicalReportSuggestions: React.FC<MedicalReportSuggestionsProps> =
       const url = URL.createObjectURL(blob);
       
       link.setAttribute('href', url);
-      link.setAttribute('download', `relatorio_medico_${patient Id}_${new Date().toISOString().split('T')[0]}.txt`);
+      link.setAttribute('download', `relatorio_medico_${patientId}_${new Date().toISOString().split('T')[0]}.txt`);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();

@@ -4,14 +4,11 @@ import StarterKit from '@tiptap/starter-kit';
 import { TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { TextAlign } from '@tiptap/extension-text-align';
-import { Underline } from '@tiptap/extension-underline';
-import { Link } from '@tiptap/extension-link';
 import { Image } from '@tiptap/extension-image';
 import { Table } from '@tiptap/extension-table';
 import { TableRow } from '@tiptap/extension-table-row';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { TableHeader } from '@tiptap/extension-table-header';
-import { History } from '@tiptap/extension-history';
 import { AlertCircle } from 'lucide-react';
 import { Skeleton } from './skeleton';
 
@@ -161,9 +158,13 @@ const RobustTiptapEditor: React.FC<RobustTiptapEditorProps> = ({
   }, [editorError]);
 
   // Configuração do editor com tratamento de erro robusto
+  // IMPORTANTE: Cada instância do editor precisa de suas próprias instâncias de extensões
+  // Por isso as extensões são criadas DENTRO do useEditor, não fora
   const editor = useEditor({
     extensions: [
+      // StarterKit com configuração minimalista para evitar conflitos
       StarterKit.configure({
+        // Manter configurações básicas
         bulletList: {
           keepMarks: true,
           keepAttributes: false,
@@ -172,25 +173,11 @@ const RobustTiptapEditor: React.FC<RobustTiptapEditorProps> = ({
           keepMarks: true,
           keepAttributes: false,
         },
-        link: false,
-        strike: false,
-        history: false,
       }),
       TextStyle,
       Color,
-      History.configure({
-        depth: 50, // Reduzido para melhor performance
-        newGroupDelay: 1000,
-      }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
-      }),
-      Underline,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: {
-          class: 'text-blue-600 underline cursor-pointer',
-        },
       }),
       Image.configure({
         HTMLAttributes: {
@@ -206,6 +193,7 @@ const RobustTiptapEditor: React.FC<RobustTiptapEditorProps> = ({
     ],
     content: value,
     editable: !disabled,
+    immediatelyRender: false, // Previne problemas de hidratação e renders múltiplos
     onUpdate: ({ editor }) => {
       try {
         onChange(editor.getHTML());
@@ -231,7 +219,7 @@ const RobustTiptapEditor: React.FC<RobustTiptapEditorProps> = ({
         style: `min-height: ${minHeight};`,
       },
     },
-  }, [disabled, minHeight]);
+  });
 
   React.useEffect(() => {
     if (editor && value !== editor.getHTML()) {
@@ -325,14 +313,6 @@ const RobustTiptapEditor: React.FC<RobustTiptapEditorProps> = ({
             title="Itálico (Ctrl+I)"
           >
             <em>I</em>
-          </ToolbarButton>
-          
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleUnderline().run()}
-            isActive={editor.isActive('underline')}
-            title="Sublinhado"
-          >
-            <u>U</u>
           </ToolbarButton>
 
           <Separator />

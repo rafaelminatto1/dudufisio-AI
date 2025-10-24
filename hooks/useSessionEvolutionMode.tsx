@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { SessionEvolutionMode } from '../config/sessionEvolutionConfig';
+import { SessionEvolutionMode, SESSION_EVOLUTION_MODE } from '../config/sessionEvolutionConfig';
 
 /**
  * Hook para gerenciar preferência de modo de evolução de sessão
@@ -9,7 +9,7 @@ import { SessionEvolutionMode } from '../config/sessionEvolutionConfig';
 const STORAGE_KEY = 'session_evolution_mode_preference';
 
 export function useSessionEvolutionMode() {
-  const [mode, setModeState] = useState<SessionEvolutionMode>('existing');
+  const [mode, setModeState] = useState<SessionEvolutionMode>(SESSION_EVOLUTION_MODE);
   const [isLoading, setIsLoading] = useState(true);
 
   // Carregar preferência ao montar

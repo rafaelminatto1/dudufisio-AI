@@ -60,9 +60,11 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
 
       // Revalidate: Always fetch fresh data from the network.
       try {
-          console.log('🔄 Buscando agendamentos do serviço...');
+          console.log('🔄 useAppointments - Buscando agendamentos do serviço...');
+          console.log('   Período:', startDate, 'até', endDate);
           const fetchedAppointments = await appointmentService.getAppointments(startDate, endDate);
-          console.log('📋 Agendamentos recebidos:', fetchedAppointments);
+          console.log('📋 useAppointments - Agendamentos recebidos:', fetchedAppointments.length, 'agendamentos');
+          console.log('📋 useAppointments - Detalhes dos agendamentos:', fetchedAppointments);
           setAppointments(fetchedAppointments); // Update state with the fresh data.
           setError(null);
           
@@ -87,7 +89,8 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
       fetchAppointments();
       
       const handleAppointmentsChanged = () => {
-          console.log('📢 Evento appointments:changed recebido, limpando cache e refazendo fetch');
+          console.log('📢 useAppointments - Evento appointments:changed recebido!');
+          console.log('   Limpando cache e refazendo fetch...');
           clearCache();
           fetchAppointments();
       };

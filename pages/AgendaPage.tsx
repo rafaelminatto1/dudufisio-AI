@@ -362,18 +362,18 @@ export default function AgendaPage() {
         // Navegar baseado no modo configurado pelo usuário
         switch (sessionEvolutionMode) {
             case 'page':
-                navigate(`/session-evolution/${appointment.id}`);
+                navigate(`/atendimento/${appointment.id}/evolucao`);
                 break;
             case 'modal':
                 setModalAppointmentId(appointment.id);
                 setShowEvolutionModal(true);
                 break;
-            case 'expanded':
-                setSelectedAppointmentForSession(appointment);
-                setShowSessionForm(true);
+            case 'expansion':
+                // Expande SessionFormPage existente
+                navigate(`/session/${appointment.id}`);
                 break;
-            case 'existing':
             default:
+                // Fallback para AtendimentoPage existente
                 navigate(`/atendimento/${appointment.id}`);
                 break;
         }

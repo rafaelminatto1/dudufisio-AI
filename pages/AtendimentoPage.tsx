@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebounce } from 'use-debounce';
 import * as ReactRouterDOM from 'react-router-dom';
-import { Save, BrainCircuit, Loader, Target, ListChecks, FileText, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react';
+import { Save, BrainCircuit, Loader, Target, ListChecks, FileText, CheckCircle, AlertCircle, TrendingUp, Play, Pause, Square, Clock, Calendar, Users, History, Eye, Repeat, Camera, Paperclip, BarChart3, BookOpen, MessageSquare, Stethoscope, ClipboardCheck, ClipboardList, Phone } from 'lucide-react';
 import { usePageData } from '../hooks/usePageData';
 import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
@@ -20,7 +20,7 @@ import PageLoader from '../components/ui/PageLoader';
 import InfoCard from '../components/ui/InfoCard';
 import PainScale from '../components/PainScale';
 import { aiOrchestratorService } from '../services/ai/aiOrchestratorService';
-import RobustTiptapEditorLazy from '../components/ui/RobustTiptapEditor';
+import SimpleSoapEditor from '../components/ui/SimpleSoapEditor';
 import { Progress } from '../components/ui/progress';
 import {
   attendanceFormSchema,
@@ -30,6 +30,9 @@ import {
   calculateFormCompletion,
   isFormReadyToFinish
 } from '../schemas/attendanceFormValidation';
+import PatientInfoCards from '../components/evolution/PatientInfoCards';
+import { usePatientEvolutionData } from '../hooks/usePatientEvolutionData';
+import { useEvolutionKeyboardShortcuts } from '../hooks/useEvolutionKeyboardShortcuts';
 
 const AtendimentoPage: React.FC = () => {
     const { appointmentId } = ReactRouterDOM.useParams<{ appointmentId: string }>();
@@ -51,6 +54,12 @@ const AtendimentoPage: React.FC = () => {
     const [currentNote, setCurrentNote] = useState<SoapNote | null>(null);
     const [, setIsPainModalOpen] = useState(false);
     const [currentPainPoint, setCurrentPainPoint] = useState<PainPoint | null>(null);
+    
+    // Session control states
+    const [isSessionActive, setIsSessionActive] = useState(false);
+    const [sessionStartTime, setSessionStartTime] = useState<Date | null>(null);
+    const [sessionDuration, setSessionDuration] = useState(0);
+    const [allPatientNotes, setAllPatientNotes] = useState<SoapNote[]>([]);
 
     // ✅ REACT HOOK FORM - Gerencia todo o estado do formulário
     const form = useForm<AttendanceFormData>({
@@ -101,6 +110,7 @@ const AtendimentoPage: React.FC = () => {
             treatmentService.getPlanByPatientId(patientData.id),
         ]);
         setPreviousNote(notesData[0] || null);
+        setAllPatientNotes(notesData);
 
         if (planData) {
             setTreatmentPlan(planData);
@@ -110,6 +120,75 @@ const AtendimentoPage: React.FC = () => {
     }, [appointmentId]);
 
     const { isLoading, error } = usePageData([fetchAllData], [appointmentId]);
+    
+    // Hook para consolidar dados dos cards
+    const evolutionData = usePatientEvolutionData(
+        patient,
+        allPatientNotes,
+        treatmentPlan,
+        planExercises
+    );
+    
+    // Hook para atalhos de teclado dos cards
+    useEvolutionKeyboardShortcuts();
+    
+    // Session timer effect
+    useEffect(() => {
+        if (!isSessionActive || !sessionStartTime) return;
+        
+        const interval = setInterval(() => {
+            const now = Date.now();
+            const start = sessionStartTime.getTime();
+            setSessionDuration(Math.floor((now - start) / 1000));
+        }, 1000);
+        
+        return () => clearInterval(interval);
+    }, [isSessionActive, sessionStartTime]);
+    
+    // Session control functions
+    const handleStartSession = useCallback(() => {
+        setIsSessionActive(true);
+        setSessionStartTime(new Date());
+    }, []);
+    
+    const handlePauseSession = useCallback(() => {
+        setIsSessionActive(false);
+    }, []);
+    
+    const handleResumeSession = useCallback(() => {
+        setIsSessionActive(true);
+        if (sessionStartTime) {
+            setSessionStartTime(new Date(Date.now() - sessionDuration * 1000));
+        }
+    }, [sessionDuration, sessionStartTime]);
+    
+    const formatDuration = useCallback((seconds: number) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }, []);
+    
+    // Calcular métricas de sessões
+    const sessionMetrics = useMemo(() => {
+        const totalSessions = allPatientNotes.length;
+        const firstSession = allPatientNotes[allPatientNotes.length - 1];
+        const lastSession = allPatientNotes[0];
+        
+        let treatmentDays = 0;
+        if (firstSession && lastSession) {
+            const first = new Date(firstSession.date);
+            const last = new Date(lastSession.date);
+            treatmentDays = Math.floor((last.getTime() - first.getTime()) / (1000 * 60 * 60 * 24));
+        }
+        
+        return {
+            totalSessions,
+            treatmentDays,
+            firstSessionDate: firstSession?.date || 'N/A',
+            lastSessionDate: lastSession?.date || 'N/A',
+        };
+    }, [allPatientNotes]);
 
     // ✅ AUTO-SAVE OTIMIZADO COM REACT HOOK FORM + DEBOUNCE
     useEffect(() => {
@@ -145,7 +224,7 @@ const AtendimentoPage: React.FC = () => {
                     plan: debouncedFormData.plan,
                     ...(debouncedFormData.painScale !== undefined && { painScale: debouncedFormData.painScale }),
                     bodyParts: debouncedFormData.painPoints.map(p => p.part),
-                    metricResults: debouncedFormData.metricResults,
+                    metricResults: debouncedFormData.metricResults.filter((m): m is { metricId: string; value: number } => !!m.metricId),
                 };
 
                 try {
@@ -206,7 +285,7 @@ const AtendimentoPage: React.FC = () => {
             ? currentMetrics.filter(m => m.metricId !== metricId)
             : [
                 ...currentMetrics.filter(m => m.metricId !== metricId),
-                { metricId, value: metricValue }
+                { metricId: metricId, value: metricValue }
             ];
 
         setValue('metricResults', updatedMetrics, { shouldDirty: true });
@@ -278,6 +357,26 @@ const AtendimentoPage: React.FC = () => {
         }
     }, [getValues, setValue]);
     
+    // Handler para repetir conduta de sessão anterior
+    const handleRepeatSession = useCallback((note: SoapNote) => {
+        setValue('subjective', note.subjective || '', { shouldDirty: true });
+        setValue('objective', note.objective || '', { shouldDirty: true });
+        setValue('assessment', note.assessment || '', { shouldDirty: true });
+        setValue('plan', note.plan || '', { shouldDirty: true });
+        
+        // Se houver score de dor, também carrega
+        if (note.painScale !== undefined) {
+            setValue('painScale', note.painScale, { shouldDirty: true });
+        }
+        
+        // Carrega métricas se houver
+        if (note.metricResults && note.metricResults.length > 0) {
+            setValue('metricResults', note.metricResults, { shouldDirty: true });
+        }
+        
+        showToast('Conduta da sessão anterior carregada com sucesso!', 'success');
+    }, [setValue, showToast]);
+    
     // Handle loading state
     if (isLoading) {
         return <PageLoader />;
@@ -290,76 +389,131 @@ const AtendimentoPage: React.FC = () => {
 
     return (
         <>
-            <div className="space-y-6">
-                 <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold leading-tight text-slate-900">{patient.name}</h1>
-                        <p className="mt-1 text-sm text-slate-500">Sessão em andamento - {appointment.type}</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        {getSaveStatusIndicator()}
-                        <button
-                            onClick={handleFinishSession}
-                            disabled={isFinishing || saveStatus !== 'saved' || !canFinish}
-                            className="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-colors disabled:bg-green-300 disabled:cursor-not-allowed"
-                            title={!canFinish ? 'Preencha todos os campos obrigatórios' : ''}
-                        >
-                            {isFinishing ? <Loader className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
-                            {isFinishing ? 'Salvando...' : 'Finalizar e Salvar'}
-                        </button>
-                    </div>
-                </header>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                    <div className="lg:col-span-1 space-y-6">
-                        {treatmentPlan && (
-                            <InfoCard title="Plano de Tratamento" icon={<Target />}>
-                                <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
-                                    <p className="text-sm text-slate-600">{treatmentPlan.treatmentGoals}</p>
-                                    <div>
-                                        <h4 className="font-semibold text-sm flex items-center mb-1"><ListChecks className="w-4 h-4 mr-2" /> Exercícios</h4>
-                                        <ul className="space-y-1 text-xs list-disc pl-5">
-                                            {planExercises.map(ex => <li key={ex.id}>{ex.exerciseName} ({ex.sets}x{ex.repetitions})</li>)}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </InfoCard>
-                        )}
-                        {previousNote && (
-                             <InfoCard title={`Última Evolução (${previousNote.date})`} icon={<FileText />}>
-                                 <div className="space-y-2 text-sm text-slate-600 max-h-60 overflow-y-auto pr-2">
-                                    <p><strong className="font-semibold text-sky-600">S:</strong> {previousNote.subjective}</p>
-                                    <p><strong className="font-semibold text-sky-600">A:</strong> {previousNote.assessment}</p>
-                                 </div>
-                            </InfoCard>
-                        )}
-                    </div>
-                    
-                    <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm space-y-4">
-                        <h2 className="text-xl font-bold text-slate-800">Evolução da Sessão Atual</h2>
-                        
-                        {/* ✅ PROGRESSO DO FORMULÁRIO */}
-                        <div className="p-4 bg-gradient-to-r from-sky-50 to-teal-50 rounded-lg border border-sky-200">
-                            <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                    <TrendingUp className="w-4 h-4 text-sky-600" />
-                                    <span className="text-sm font-semibold text-sky-700">Progresso do Prontuário</span>
-                                </div>
-                                <span className="text-xs font-bold text-sky-600">{formCompletion}%</span>
+            <div className="space-y-6 max-w-7xl mx-auto">
+                 {/* Header Simplificado */}
+                 <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                        {/* Info do Paciente */}
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span className="text-xl font-bold text-white">{patient.name.charAt(0)}</span>
                             </div>
-                            <Progress value={formCompletion} className="h-2 bg-sky-100" />
-                            {!canFinish && (
-                                <p className="mt-2 text-xs text-slate-600 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" />
-                                    Preencha todos os campos obrigatórios para finalizar
-                                </p>
-                            )}
+                            <div>
+                                <h1 className="text-2xl font-bold text-slate-900">{patient.name}</h1>
+                                <div className="flex items-center gap-3 mt-1 text-sm text-slate-600">
+                                    <span className="flex items-center gap-1">
+                                        <Phone className="w-3.5 h-3.5" />
+                                        {patient.phone}
+                                    </span>
+                                    {patient.age && (
+                                        <span className="flex items-center gap-1">
+                                            <Calendar className="w-3.5 h-3.5" />
+                                            {patient.age} anos
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
                         </div>
 
+                        {/* Controles da Sessão */}
+                        <div className="flex flex-wrap items-center gap-3">
+                            {/* Timer */}
+                            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200">
+                                <Clock className="w-4 h-4 text-slate-500" />
+                                <span className="font-mono text-sm font-medium text-slate-700">{formatDuration(sessionDuration)}</span>
+                                {isSessionActive && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse ml-1"></div>}
+                            </div>
+
+                            {/* Botões de Controle */}
+                            {!isSessionActive && !sessionStartTime ? (
+                                <button onClick={handleStartSession} className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                    <Play className="w-4 h-4" />
+                                    Iniciar
+                                </button>
+                            ) : isSessionActive ? (
+                                <button onClick={handlePauseSession} className="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                    <Pause className="w-4 h-4" />
+                                    Pausar
+                                </button>
+                            ) : (
+                                <button onClick={handleResumeSession} className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                    <Play className="w-4 h-4" />
+                                    Retomar
+                                </button>
+                            )}
+                            
+                            {/* Status de Salvamento */}
+                            {getSaveStatusIndicator()}
+                            
+                            {/* Botão Finalizar */}
+                            <button
+                                onClick={handleFinishSession}
+                                disabled={isFinishing || saveStatus !== 'saved' || !canFinish}
+                                className="px-5 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-sm transition-colors disabled:bg-green-300 disabled:cursor-not-allowed flex items-center gap-2"
+                                title={!canFinish ? 'Preencha todos os campos obrigatórios' : ''}
+                            >
+                                {isFinishing ? <Loader className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                                {isFinishing ? 'Salvando...' : 'Finalizar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {/* NOVO: Cards Colapsáveis de Informações */}
+                <div className="relative">
+                    <PatientInfoCards
+                        patient={patient}
+                        treatmentPlan={treatmentPlan}
+                        exercises={planExercises}
+                        sessionHistory={allPatientNotes}
+                        metrics={sessionMetrics}
+                        onRepeatSession={handleRepeatSession}
+                    />
+                    
+                    {/* Dica de Atalhos - Compacta */}
+                    <details className="mt-2">
+                        <summary className="text-xs text-slate-400 hover:text-slate-600 cursor-pointer text-center">
+                            💡 Atalhos de teclado disponíveis
+                        </summary>
+                        <div className="mt-2 text-xs text-slate-500 text-center space-x-2">
+                            <kbd className="px-1.5 py-0.5 bg-slate-100 rounded border border-slate-300">Ctrl+1-6</kbd> cards • 
+                            <kbd className="px-1.5 py-0.5 bg-slate-100 rounded border border-slate-300">Ctrl+Shift+E</kbd> expandir • 
+                            <kbd className="px-1.5 py-0.5 bg-slate-100 rounded border border-slate-300">Ctrl+Shift+C</kbd> colapsar
+                        </div>
+                    </details>
+                </div>
+
+                {/* Formulário SOAP - Limpo e Focado */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm space-y-6">
+                        <div className="flex items-center justify-between">
+                            <h2 className="text-xl font-bold text-slate-800">Registro SOAP da Sessão</h2>
+                            
+                            {/* Progresso Compacto */}
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
+                                    <Progress value={formCompletion} className="h-2 w-24 bg-sky-100" />
+                                    <span className="text-xs font-bold text-sky-600">{formCompletion}%</span>
+                                </div>
+                                {!canFinish && (
+                                    <span className="text-xs text-amber-600 flex items-center gap-1">
+                                        <AlertCircle className="w-3 h-3" />
+                                        Campos obrigatórios pendentes
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Escala de Dor - Topo para fácil acesso */}
+                        <PainScale
+                            selectedScore={formData.painScale}
+                            onSelectScore={(score) => setValue('painScale', score, { shouldDirty: true })}
+                        />
+
+                        {/* Métricas de Acompanhamento - Se houver */}
                         {activeMetrics.length > 0 && (
-                            <div className="p-4 bg-slate-50 rounded-lg">
-                                <h3 className="text-sm font-semibold text-teal-700 mb-2">Métricas de Acompanhamento</h3>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                <h3 className="text-sm font-semibold text-slate-700 mb-3">Métricas da Sessão</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                                     {activeMetrics.map(metric => {
                                         const currentMetricResults = formData.metricResults;
                                         const metricValue = currentMetricResults.find(m => m.metricId === metric.id)?.value ?? '';
@@ -372,7 +526,7 @@ const AtendimentoPage: React.FC = () => {
                                                         type="number"
                                                         value={metricValue}
                                                         onChange={e => handleMetricChange(metric.id, e.target.value)}
-                                                        className="mt-1 w-full p-2 pr-10 border border-slate-300 rounded-lg"
+                                                        className="mt-1 w-full p-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                                         aria-label={`Valor para ${metric.name}`}
                                                         placeholder="0"
                                                     />
@@ -385,119 +539,134 @@ const AtendimentoPage: React.FC = () => {
                             </div>
                         )}
 
-                        <PainScale
-                            selectedScore={formData.painScale}
-                            onSelectScore={(score) => setValue('painScale', score, { shouldDirty: true })}
-                        />
+                        {/* Campos SOAP em Grid 2 Colunas */}
+                        <div className="space-y-6">
+                            {/* S e O - Primeira linha */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                {/* SUBJETIVO */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <MessageSquare className="w-5 h-5 text-blue-600" />
+                                            <label className="text-base font-bold text-slate-900">
+                                                Subjetivo <span className="text-red-500">*</span>
+                                            </label>
+                                        </div>
+                                        <span className={`text-xs ${formData.subjective.length < 10 ? 'text-red-500' : formData.subjective.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                            {formData.subjective.length}/5000
+                                        </span>
+                                    </div>
+                                    <SimpleSoapEditor
+                                        value={formData.subjective}
+                                        onChange={(value) => setValue('subjective', value, { shouldDirty: true })}
+                                        minHeight="160px"
+                                        placeholder="Queixas e sintomas relatados pelo paciente..."
+                                    />
+                                    {errors.subjective && (
+                                        <p className="text-xs text-red-500 flex items-center gap-1">
+                                            <AlertCircle className="w-3 h-3" />
+                                            {errors.subjective.message}
+                                        </p>
+                                    )}
+                                </div>
 
-                        {/* ✅ CAMPO SUBJETIVO COM VALIDAÇÃO */}
-                        <div>
-                            <div className="flex items-center justify-between mb-1">
-                                <label className="text-sm font-semibold text-sky-700">
-                                    S (Subjetivo) <span className="text-red-500">*</span>
-                                </label>
-                                <span className={`text-xs ${formData.subjective.length < 10 ? 'text-red-500' : formData.subjective.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
-                                    {formData.subjective.length} / 5000
-                                </span>
+                                {/* OBJETIVO */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <Stethoscope className="w-5 h-5 text-green-600" />
+                                            <label className="text-base font-bold text-slate-900">
+                                                Objetivo <span className="text-red-500">*</span>
+                                            </label>
+                                        </div>
+                                        <span className={`text-xs ${formData.objective.length < 10 ? 'text-red-500' : formData.objective.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                            {formData.objective.length}/5000
+                                        </span>
+                                    </div>
+                                    <SimpleSoapEditor
+                                        value={formData.objective}
+                                        onChange={(value) => setValue('objective', value, { shouldDirty: true })}
+                                        minHeight="160px"
+                                        placeholder="Observações clínicas, testes realizados, medições..."
+                                    />
+                                    {errors.objective && (
+                                        <p className="text-xs text-red-500 flex items-center gap-1">
+                                            <AlertCircle className="w-3 h-3" />
+                                            {errors.objective.message}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                            <RobustTiptapEditorLazy
-                                value={formData.subjective}
-                                onChange={(value) => setValue('subjective', value, { shouldDirty: true })}
-                                minHeight="80px"
-                                placeholder="Relato do paciente..."
-                            />
-                            {errors.subjective && (
-                                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" />
-                                    {errors.subjective.message}
-                                </p>
-                            )}
-                        </div>
 
-                        {/* ✅ CAMPO OBJETIVO COM VALIDAÇÃO */}
-                        <div>
-                            <div className="flex items-center justify-between mb-1">
-                                <label className="text-sm font-semibold text-sky-700">
-                                    O (Objetivo) <span className="text-red-500">*</span>
-                                </label>
-                                <span className={`text-xs ${formData.objective.length < 10 ? 'text-red-500' : formData.objective.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
-                                    {formData.objective.length} / 5000
-                                </span>
+                            {/* Botão IA - Entre S/O e A/P */}
+                            <div className="flex justify-center">
+                                <button
+                                    onClick={handleGenerateSuggestion}
+                                    disabled={isAiLoading || (!formData.subjective?.trim() && !formData.objective?.trim())}
+                                    className="px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 rounded-lg shadow-md hover:shadow-lg flex items-center gap-2 disabled:from-slate-300 disabled:to-slate-400 disabled:cursor-not-allowed transition-all"
+                                >
+                                    {isAiLoading ? <Loader className="w-5 h-5 animate-spin" /> : <BrainCircuit className="w-5 h-5" />}
+                                    {isAiLoading ? 'IA gerando sugestões...' : '✨ Gerar Avaliação e Plano com IA'}
+                                </button>
                             </div>
-                            <RobustTiptapEditorLazy
-                                value={formData.objective}
-                                onChange={(value) => setValue('objective', value, { shouldDirty: true })}
-                                minHeight="80px"
-                                placeholder="Achados, testes, medidas..."
-                            />
-                            {errors.objective && (
-                                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" />
-                                    {errors.objective.message}
-                                </p>
-                            )}
-                        </div>
 
-                        {/* ✅ BOTÃO IA */}
-                        <div className="flex justify-end">
-                             <button
-                                onClick={handleGenerateSuggestion}
-                                disabled={isAiLoading || (!formData.subjective?.trim() && !formData.objective?.trim())}
-                                className="px-4 py-2 text-sm font-medium text-sky-600 bg-sky-50 border border-sky-200 rounded-lg hover:bg-sky-100 flex items-center disabled:bg-slate-100 disabled:text-slate-400"
-                            >
-                                 {isAiLoading ? <Loader className="w-4 h-4 mr-2 animate-spin" /> : <BrainCircuit className="w-4 h-4 mr-2" />}
-                                 Sugerir A/P com IA
-                             </button>
-                        </div>
+                            {/* A e P - Segunda linha */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                {/* AVALIAÇÃO */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <ClipboardCheck className="w-5 h-5 text-purple-600" />
+                                            <label className="text-base font-bold text-slate-900">
+                                                Avaliação <span className="text-red-500">*</span>
+                                            </label>
+                                        </div>
+                                        <span className={`text-xs ${formData.assessment.length < 10 ? 'text-red-500' : formData.assessment.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                            {formData.assessment.length}/5000
+                                        </span>
+                                    </div>
+                                    <SimpleSoapEditor
+                                        value={formData.assessment}
+                                        onChange={(value) => setValue('assessment', value, { shouldDirty: true })}
+                                        minHeight="160px"
+                                        placeholder="Análise e interpretação clínica dos achados..."
+                                    />
+                                    {errors.assessment && (
+                                        <p className="text-xs text-red-500 flex items-center gap-1">
+                                            <AlertCircle className="w-3 h-3" />
+                                            {errors.assessment.message}
+                                        </p>
+                                    )}
+                                </div>
 
-                        {/* ✅ CAMPO AVALIAÇÃO COM VALIDAÇÃO */}
-                        <div>
-                            <div className="flex items-center justify-between mb-1">
-                                <label className="text-sm font-semibold text-sky-700">
-                                    A (Avaliação) <span className="text-red-500">*</span>
-                                </label>
-                                <span className={`text-xs ${formData.assessment.length < 10 ? 'text-red-500' : formData.assessment.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
-                                    {formData.assessment.length} / 5000
-                                </span>
+                                {/* PLANO */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <ClipboardList className="w-5 h-5 text-orange-600" />
+                                            <label className="text-base font-bold text-slate-900">
+                                                Plano <span className="text-red-500">*</span>
+                                            </label>
+                                        </div>
+                                        <span className={`text-xs ${formData.plan.length < 10 ? 'text-red-500' : formData.plan.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                            {formData.plan.length}/5000
+                                        </span>
+                                    </div>
+                                    <SimpleSoapEditor
+                                        value={formData.plan}
+                                        onChange={(value) => setValue('plan', value, { shouldDirty: true })}
+                                        minHeight="160px"
+                                        placeholder="Conduta e intervenções realizadas, próximos passos..."
+                                    />
+                                    {errors.plan && (
+                                        <p className="text-xs text-red-500 flex items-center gap-1">
+                                            <AlertCircle className="w-3 h-3" />
+                                            {errors.plan.message}
+                                        </p>
+                                    )}
+                                </div>
                             </div>
-                            <RobustTiptapEditorLazy
-                                value={formData.assessment}
-                                onChange={(value) => setValue('assessment', value, { shouldDirty: true })}
-                                minHeight="80px"
-                                placeholder="Diagnóstico cinesiofuncional da sessão..."
-                            />
-                            {errors.assessment && (
-                                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" />
-                                    {errors.assessment.message}
-                                </p>
-                            )}
                         </div>
-
-                        {/* ✅ CAMPO PLANO COM VALIDAÇÃO */}
-                        <div>
-                            <div className="flex items-center justify-between mb-1">
-                                <label className="text-sm font-semibold text-sky-700">
-                                    P (Plano) <span className="text-red-500">*</span>
-                                </label>
-                                <span className={`text-xs ${formData.plan.length < 10 ? 'text-red-500' : formData.plan.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
-                                    {formData.plan.length} / 5000
-                                </span>
-                            </div>
-                            <RobustTiptapEditorLazy
-                                value={formData.plan}
-                                onChange={(value) => setValue('plan', value, { shouldDirty: true })}
-                                minHeight="80px"
-                                placeholder="Condutas para a próxima sessão, orientações..."
-                            />
-                            {errors.plan && (
-                                <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                                    <AlertCircle className="w-3 h-3" />
-                                    {errors.plan.message}
-                                </p>
-                            )}
-                        </div>
-                    </div>
                 </div>
             </div>
         </>
