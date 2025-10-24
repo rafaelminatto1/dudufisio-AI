@@ -278,7 +278,54 @@ npm run test:performance
 
 # Rodar todos os testes
 npm run test:all
+
+# Testes críticos do sistema de evolução
+npm run test:critical
+npm run test:evolution
+npm run test:templates
+npm run test:keyboard
 ```
+
+---
+
+## 🔍 Monitoramento e Segurança
+
+### Auditoria de Segurança
+
+```bash
+# Auditoria completa com análise de risco
+npm run security:audit
+
+# Verificação rápida
+npm run security:check
+
+# Verificar dependências críticas
+npm run check:dependencies
+
+# Alertas de vulnerabilidades
+npm run alert:vulnerabilities
+```
+
+### Monitoramento de Saúde
+
+```bash
+# Verificar saúde geral do sistema
+npm run monitor:health
+
+# Relatório diário
+npm run report:daily
+```
+
+### Workflows Automáticos
+
+O projeto inclui workflows GitHub Actions para:
+
+- ✅ **Auditoria Semanal**: Toda segunda às 9h
+- ✅ **Testes E2E após Deploy**: Automático
+- ✅ **Bundle Size Check**: Em PRs
+- ✅ **CI/CD Completo**: Push e PRs
+
+**Ver mais**: [MONITORING_GUIDE.md](./MONITORING_GUIDE.md) | [E2E_TESTING_GUIDE.md](./E2E_TESTING_GUIDE.md)
 
 ---
 

@@ -85,7 +85,18 @@
     "test:mobile": "node scripts/test-mobile-loading.js",
     "fix:radix": "bash scripts/fix-radix-ui-build.sh",
     "fix:radix:win": "powershell -ExecutionPolicy Bypass -File scripts/fix-radix-ui-build.ps1",
-    "fix:build": "powershell -ExecutionPolicy Bypass -File scripts/fix-build-simple.ps1"
+    "fix:build": "powershell -ExecutionPolicy Bypass -File scripts/fix-build-simple.ps1",
+    "security:audit": "node scripts/security-audit.cjs",
+    "security:check": "npm audit && npm outdated @vercel/node",
+    "monitor:health": "node scripts/monitor-health.cjs",
+    "test:evolution": "playwright test tests/e2e/session-evolution-complete.spec.ts",
+    "test:templates": "playwright test tests/e2e/conduct-templates.spec.ts",
+    "test:keyboard": "playwright test tests/e2e/keyboard-shortcuts.spec.ts",
+    "test:patient-data": "playwright test tests/e2e/patient-data-integration.spec.ts",
+    "test:critical": "playwright test tests/e2e/session-evolution-complete.spec.ts tests/e2e/conduct-templates.spec.ts tests/e2e/keyboard-shortcuts.spec.ts",
+    "report:daily": "node scripts/daily-summary.cjs",
+    "check:dependencies": "node scripts/check-dependencies.cjs",
+    "alert:vulnerabilities": "node scripts/alert-vulnerabilities.cjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.67.0",
