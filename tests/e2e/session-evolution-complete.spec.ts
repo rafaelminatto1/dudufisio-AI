@@ -44,8 +44,8 @@ test.describe('Sistema de Evolução de Sessão - Fluxo Completo', () => {
   });
 
   test('1. Abrir modal de evolução via agenda e preencher SOAP', async ({ page }) => {
-    // Navegar para agenda
-    await page.click('a:has-text("Agenda"), [href*="agenda"]');
+    // Navegar para agenda usando goto (mais confiável)
+    await page.goto('/agenda');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(2000);
 
