@@ -122,12 +122,30 @@ export const saveAppointment = async (appointmentData: Appointment): Promise<App
             console.log('   ID do agendamento:', fullAppointmentData.id);
             console.log('   Paciente:', fullAppointmentData.patientName);
             console.log('   Horário:', fullAppointmentData.startTime);
+            console.log('   TherapistId:', fullAppointmentData.therapistId);
+            
+            // Validar se therapistId é um UUID válido ou está vazio
+            // IDs de mock começam com "therapist_" - não são UUIDs válidos
+            const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            
+            if (fullAppointmentData.therapistId && !isValidUUID.test(fullAppointmentData.therapistId)) {
+                console.warn('⚠️ therapistId não é um UUID válido:', fullAppointmentData.therapistId);
+                console.warn('   Isso é um ID de mock. Não vou salvar no Supabase.');
+                console.warn('   Use dados reais do Supabase ou deixe o therapistId vazio.');
+                throw new Error(`TherapistId "${fullAppointmentData.therapistId}" não é um UUID válido. Use IDs do Supabase ou deixe vazio.`);
+            }
+            
+            // Se therapistId é inválido mas está vazio/null, converter para undefined
+            const dataParaSupabase = {
+                ...fullAppointmentData,
+                therapistId: fullAppointmentData.therapistId || undefined
+            };
             
             // Se o agendamento tem ID que começa com "app_", é um novo agendamento (ID gerado localmente)
             // O Supabase vai gerar um ID próprio (UUID)
             if (fullAppointmentData.id && fullAppointmentData.id.startsWith('app_')) {
                 console.log('   → Criando NOVO agendamento no Supabase');
-                const created = await supabaseAppointmentService.createAppointment(fullAppointmentData);
+                const created = await supabaseAppointmentService.createAppointment(dataParaSupabase);
                 console.log('✅ appointmentService - Agendamento CRIADO no Supabase com ID:', created.id);
                 console.log('   Dados salvos:', created);
                 eventService.emit('appointments:changed');
@@ -136,14 +154,14 @@ export const saveAppointment = async (appointmentData: Appointment): Promise<App
                 console.log('   → Atualizando agendamento existente no Supabase');
                 const updated = await supabaseAppointmentService.updateAppointment(
                     fullAppointmentData.id,
-                    fullAppointmentData
+                    dataParaSupabase
                 );
                 console.log('✅ appointmentService - Agendamento ATUALIZADO no Supabase');
                 eventService.emit('appointments:changed');
                 return updated;
             } else {
                 console.log('   → Criando NOVO agendamento (sem ID local)');
-                const created = await supabaseAppointmentService.createAppointment(fullAppointmentData);
+                const created = await supabaseAppointmentService.createAppointment(dataParaSupabase);
                 console.log('✅ appointmentService - Agendamento CRIADO no Supabase com ID:', created.id);
                 eventService.emit('appointments:changed');
                 return created;
@@ -151,6 +169,7 @@ export const saveAppointment = async (appointmentData: Appointment): Promise<App
         } catch (error) {
             console.error('❌ appointmentService - Erro ao salvar no Supabase:', error);
             console.error('   Detalhes do erro:', JSON.stringify(error, null, 2));
+            console.warn('⚠️ FALLBACK: Salvando apenas no mock (dados não persistirão após reload)');
             // Fallback para mock se houver erro
         }
     }

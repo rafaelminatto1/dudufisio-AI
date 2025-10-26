@@ -130,7 +130,10 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   
   const slotDate = useMemo(() => appointmentToEdit?.startTime || initialData?.date || new Date(), [appointmentToEdit, initialData]);
   const [slotTime, setSlotTime] = useState('09:00');
-  const [therapistId, setTherapistId] = useState<string>(appointmentToEdit?.therapistId || initialData?.therapistId || '');
+  // Se therapistId começar com "therapist_", é um ID de mock - converter para vazio
+  const isValidUUID = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  const getValidTherapistId = (id?: string) => (id && isValidUUID(id)) ? id : '';
+  const [therapistId, setTherapistId] = useState<string>(getValidTherapistId(appointmentToEdit?.therapistId || initialData?.therapistId));
   
   // Memoizar terapeutas filtrados para melhor performance
   const filteredTherapists = useMemo(() => 
@@ -315,7 +318,8 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       patientId: selectedPatient.id,
       patientName: selectedPatient.name,
       patientAvatarUrl: (selectedPatient as any).avatarUrl || `https://i.pravatar.cc/150?u=${selectedPatient.id}`,
-      therapistId: therapistId || undefined, // Permitir vazio
+      // Apenas usar therapistId se for um UUID válido (dados do Supabase)
+      therapistId: (therapistId && isValidUUID(therapistId)) ? therapistId : undefined,
       title: appointmentToEdit?.title || `${appointmentType}`,
       startTime: startTime,
       endTime: endTime,

@@ -12,11 +12,13 @@ class SupabaseAppointmentService {
     // Map appointment type from database to TypeScript enum
     const mapType = (dbType: string | null): AppointmentType => {
       switch (dbType) {
+        case 'regular': return AppointmentType.Session; // ✅ Adicionado mapeamento explícito
         case 'first_consultation': return AppointmentType.Evaluation;
         case 'followup': return AppointmentType.Return;
         case 'evaluation': return AppointmentType.Evaluation;
         case 'teleconsultation': return AppointmentType.Teleconsulta;
         case 'emergency': return AppointmentType.Urgent;
+        case 'group': return AppointmentType.Session; // ✅ Grupo também vira Sessão
         default: return AppointmentType.Session;
       }
     };
@@ -66,15 +68,21 @@ class SupabaseAppointmentService {
   }
 
   private mapAppointmentToInsert(appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>): AppointmentInsert {
+    console.log('🔄 mapAppointmentToInsert - Dados recebidos:', appointment);
+    
     // Map TypeScript enum to database values
     const mapTypeToDb = (type: AppointmentType): string => {
+      console.log('🔄 mapTypeToDb - Tipo recebido:', type);
       switch (type) {
         case AppointmentType.Evaluation: return 'evaluation';
+        case AppointmentType.Session: return 'regular'; // ✅ Adicionado!
         case AppointmentType.Return: return 'followup';
         case AppointmentType.Teleconsulta: return 'teleconsultation';
         case AppointmentType.Urgent: return 'emergency';
         case AppointmentType.Pilates: return 'regular';
-        default: return 'regular';
+        default: 
+          console.warn('⚠️ Tipo de agendamento não mapeado:', type, '- Usando regular');
+          return 'regular';
       }
     };
 
@@ -93,26 +101,37 @@ class SupabaseAppointmentService {
     const duration = appointment.duration ||
                      Math.round((appointment.endTime.getTime() - appointment.startTime.getTime()) / 60000);
 
-    return {
+    const mappedType = mapTypeToDb(appointment.type);
+    const mappedStatus = mapStatusToDb(appointment.status || AppointmentStatus.Scheduled);
+    
+    const insertData = {
       patient_id: appointment.patientId,
-      therapist_id: appointment.therapistId,
+      therapist_id: appointment.therapistId || null, // Explicitamente null se undefined
       start_time: appointment.startTime.toISOString(),
       end_time: appointment.endTime.toISOString(),
       duration: duration,
-      title: appointment.title || undefined,
-      description: appointment.description || undefined,
-      type: mapTypeToDb(appointment.type) as any,
-      status: mapStatusToDb(appointment.status || AppointmentStatus.Scheduled) as any,
-      notes: appointment.observations || undefined,
-      patient_notes: appointment.notes || undefined,
+      title: appointment.title || `Consulta de ${appointment.type}`,
+      description: appointment.description || null,
+      type: mappedType as any,
+      status: mappedStatus as any,
+      notes: appointment.observations || null,
+      patient_notes: appointment.notes || null,
       is_virtual: appointment.is_virtual || false,
-      meeting_url: appointment.meeting_url || undefined,
+      meeting_url: appointment.meeting_url || null,
       is_recurring: appointment.is_recurring || false,
-      recurrence_rule: appointment.recurrence_rule as any,
-      parent_appointment_id: appointment.parent_appointment_id || undefined,
+      recurrence_rule: appointment.recurrence_rule as any || null,
+      parent_appointment_id: appointment.parent_appointment_id || null,
       price: appointment.value || null,
       paid: appointment.paymentStatus === 'paid',
     };
+    
+    console.log('📤 mapAppointmentToInsert - Dados para Supabase:', insertData);
+    console.log('   patient_id:', insertData.patient_id);
+    console.log('   therapist_id:', insertData.therapist_id);
+    console.log('   type:', insertData.type);
+    console.log('   status:', insertData.status);
+    
+    return insertData;
   }
 
   private mapAppointmentToUpdate(appointment: Partial<Appointment>): AppointmentUpdate {
@@ -175,12 +194,27 @@ class SupabaseAppointmentService {
     try {
       const { data, error } = await supabase
         .from('appointments')
-        .select('*')
+        .select(`
+          *,
+          patient:users!appointments_patient_id_fkey(id, full_name, email),
+          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
+        `)
         .order('start_time', { ascending: true });
 
       if (error) throw error;
 
-      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+      console.log('📊 getAllAppointments - Dados do Supabase:', data);
+
+      // Mapear com nomes de paciente e terapeuta
+      return (data ?? []).map((row: any) => {
+        const mapped = this.mapRowToAppointment(row);
+        return {
+          ...mapped,
+          patientName: row.patient?.full_name || 'Paciente Sem Nome',
+          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
+          therapistName: row.therapist?.full_name || undefined,
+        };
+      });
     } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
@@ -190,7 +224,11 @@ class SupabaseAppointmentService {
     try {
       const { data, error } = await supabase
         .from('appointments')
-        .select('*')
+        .select(`
+          *,
+          patient:users!appointments_patient_id_fkey(id, full_name, email),
+          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
+        `)
         .eq('id', id)
         .single();
 
@@ -199,7 +237,15 @@ class SupabaseAppointmentService {
         throw error;
       }
 
-      return data ? this.mapRowToAppointment(data) : null;
+      if (!data) return null;
+
+      const mapped = this.mapRowToAppointment(data);
+      return {
+        ...mapped,
+        patientName: (data as any).patient?.full_name || 'Paciente Sem Nome',
+        patientAvatarUrl: `https://i.pravatar.cc/150?u=${data.patient_id}`,
+        therapistName: (data as any).therapist?.full_name || undefined,
+      };
     } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
@@ -209,14 +255,41 @@ class SupabaseAppointmentService {
     try {
       const { data, error } = await supabase
         .from('appointments')
-        .select('*')
+        .select(`
+          *,
+          patient:users!appointments_patient_id_fkey(id, full_name, email),
+          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
+        `)
         .gte('start_time', startDate)
         .lte('start_time', endDate)
         .order('start_time', { ascending: true });
 
       if (error) throw error;
 
-      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+      console.log('📊 getAppointmentsByDateRange - Dados do Supabase:', data);
+      console.log('📊 Primeiro agendamento completo:', data?.[0]);
+      console.log('📊 Patient do primeiro:', data?.[0]?.patient);
+      console.log('📊 Patient full_name:', data?.[0]?.patient?.full_name);
+
+      // Mapear com nomes de paciente e terapeuta
+      return (data ?? []).map((row: any) => {
+        console.log('🔄 Mapeando row:', row);
+        console.log('   row.patient:', row.patient);
+        console.log('   row.patient?.full_name:', row.patient?.full_name);
+        
+        const mapped = this.mapRowToAppointment(row);
+        const result = {
+          ...mapped,
+          patientName: row.patient?.full_name || 'Paciente Sem Nome',
+          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
+          therapistName: row.therapist?.full_name || undefined,
+        };
+        
+        console.log('✅ Resultado mapeado:', result);
+        console.log('   patientName:', result.patientName);
+        
+        return result;
+      });
     } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
@@ -226,7 +299,11 @@ class SupabaseAppointmentService {
     try {
       let query = supabase
         .from('appointments')
-        .select('*')
+        .select(`
+          *,
+          patient:users!appointments_patient_id_fkey(id, full_name, email),
+          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
+        `)
         .eq('therapist_id', therapistId);
 
       if (startDate) {
@@ -241,7 +318,15 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+      return (data ?? []).map((row: any) => {
+        const mapped = this.mapRowToAppointment(row);
+        return {
+          ...mapped,
+          patientName: row.patient?.full_name || 'Paciente Sem Nome',
+          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
+          therapistName: row.therapist?.full_name || undefined,
+        };
+      });
     } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
@@ -251,7 +336,11 @@ class SupabaseAppointmentService {
     try {
       let query = supabase
         .from('appointments')
-        .select('*')
+        .select(`
+          *,
+          patient:users!appointments_patient_id_fkey(id, full_name, email),
+          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
+        `)
         .eq('patient_id', patientId);
 
       if (startDate) {
@@ -266,7 +355,15 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+      return (data ?? []).map((row: any) => {
+        const mapped = this.mapRowToAppointment(row);
+        return {
+          ...mapped,
+          patientName: row.patient?.full_name || 'Paciente Sem Nome',
+          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
+          therapistName: row.therapist?.full_name || undefined,
+        };
+      });
     } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
@@ -276,13 +373,25 @@ class SupabaseAppointmentService {
     try {
       const { data, error } = await supabase
         .from('appointments')
-        .select('*')
+        .select(`
+          *,
+          patient:users!appointments_patient_id_fkey(id, full_name, email),
+          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
+        `)
         .eq('status', status)
         .order('start_time', { ascending: true });
 
       if (error) throw error;
 
-      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+      return (data ?? []).map((row: any) => {
+        const mapped = this.mapRowToAppointment(row);
+        return {
+          ...mapped,
+          patientName: row.patient?.full_name || 'Paciente Sem Nome',
+          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
+          therapistName: row.therapist?.full_name || undefined,
+        };
+      });
     } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
@@ -303,16 +412,37 @@ class SupabaseAppointmentService {
 
       const insertData = this.mapAppointmentToInsert(appointmentData);
 
+      console.log('📡 Enviando INSERT para Supabase...');
       const { data, error } = await supabase
         .from('appointments')
         .insert(insertData)
-        .select()
+        .select(`
+          *,
+          patient:users!appointments_patient_id_fkey(id, full_name, email),
+          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
+        `)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ ERRO DO SUPABASE:', error);
+        console.error('   Código:', error.code);
+        console.error('   Mensagem:', error.message);
+        console.error('   Detalhes:', error.details);
+        console.error('   Hint:', error.hint);
+        throw error;
+      }
 
-      return this.mapRowToAppointment(data);
+      console.log('✅ INSERT bem-sucedido! Dados retornados:', data);
+      
+      const mapped = this.mapRowToAppointment(data);
+      return {
+        ...mapped,
+        patientName: (data as any).patient?.full_name || 'Paciente Sem Nome',
+        patientAvatarUrl: `https://i.pravatar.cc/150?u=${data.patient_id}`,
+        therapistName: (data as any).therapist?.full_name || undefined,
+      };
     } catch (error: unknown) {
+      console.error('❌ Erro capturado no createAppointment:', error);
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -340,12 +470,22 @@ class SupabaseAppointmentService {
         .from('appointments')
         .update(updateData)
         .eq('id', id)
-        .select()
+        .select(`
+          *,
+          patient:users!appointments_patient_id_fkey(id, full_name, email),
+          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
+        `)
         .single();
 
       if (error) throw error;
 
-      return this.mapRowToAppointment(data);
+      const mapped = this.mapRowToAppointment(data);
+      return {
+        ...mapped,
+        patientName: (data as any).patient?.full_name || 'Paciente Sem Nome',
+        patientAvatarUrl: `https://i.pravatar.cc/150?u=${data.patient_id}`,
+        therapistName: (data as any).therapist?.full_name || undefined,
+      };
     } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
@@ -364,8 +504,16 @@ class SupabaseAppointmentService {
     }
   }
 
-  async checkConflicts(therapistId: string, startTime: string, endTime: string, excludeId?: string): Promise<Appointment[]> {
+  async checkConflicts(therapistId: string | undefined, startTime: string, endTime: string, excludeId?: string): Promise<Appointment[]> {
     try {
+      // Se não há therapistId, não verificar conflitos
+      // Isso permite múltiplos agendamentos sem terapeuta no mesmo horário
+      // (para casos onde admin/estagiário agenda e define terapeuta depois)
+      if (!therapistId) {
+        console.log('⏭️ checkConflicts: Sem therapistId, pulando verificação de conflitos');
+        return [];
+      }
+
       let query = supabase
         .from('appointments')
         .select('*')
@@ -393,7 +541,11 @@ class SupabaseAppointmentService {
 
       const { data, error } = await supabase
         .from('appointments')
-        .select('*')
+        .select(`
+          *,
+          patient:users!appointments_patient_id_fkey(id, full_name, email),
+          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
+        `)
         .gte('start_time', now)
         .in('status', [AppointmentStatus.Scheduled])
         .order('start_time', { ascending: true })
@@ -401,7 +553,15 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+      return (data ?? []).map((row: any) => {
+        const mapped = this.mapRowToAppointment(row);
+        return {
+          ...mapped,
+          patientName: row.patient?.full_name || 'Paciente Sem Nome',
+          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
+          therapistName: row.therapist?.full_name || undefined,
+        };
+      });
     } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
