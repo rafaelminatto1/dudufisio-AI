@@ -24,13 +24,21 @@
     <meta name="application-name" content="Activity Fisio" />
 
     <!-- Fase 1: Otimizações de Performance -->
+    <!-- DNS Prefetch para domínios externos -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://urfxniitfbbvsaskicfo.supabase.co">
+    <link rel="dns-prefetch" href="https://generativelanguage.googleapis.com">
+
+    <!-- Preconnect para recursos críticos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+    <link rel="preconnect" href="https://urfxniitfbbvsaskicfo.supabase.co">
+
     <!-- Carrega a fonte principal de forma assíncrona para não bloquear a renderização -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
-    
+
     <!-- Import map removido - Vite gerencia as dependências -->
 </head>
   <body class="bg-slate-50 antialiased">
