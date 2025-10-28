@@ -1,4 +1,4 @@
-import { Patient, Appointment, SoapNote, AppointmentStatus, TreatmentPlan, ExercisePrescription, AuditLogEntry, Therapist, AppointmentType, RecurrenceRule, KnowledgeBaseEntry, User, Role, Exercise, Group, VoucherPlan, Voucher, Document, Task, TaskStatus, TaskPriority, Notification, Achievement, MedicalReport, FinancialTransaction, TransactionType, ExpenseCategory, Intern, InternStatus, EducationalCase, Project, ProjectStatus, Partner, InventoryCategory, Supplier, InventoryItem, ItemStatus, StockMovement, MovementType, Event, EventType, EventStatus, EventRegistration, RegistrationStatus, EventProvider, ProviderStatus, PatientStatus, RecurrenceTemplate, WaitlistEntry, WaitlistStatus, ScheduleBlock, SchedulingAlert } from '../types';
+import { Patient, Appointment, SoapNote, AppointmentStatus, TreatmentPlan, ExercisePrescription, AuditLogEntry, Therapist, AppointmentType, RecurrenceRule, KnowledgeBaseEntry, User, Role, Exercise, Group, VoucherPlan, Voucher, Document, Task, TaskStatus, TaskPriority, Notification, Achievement, MedicalReport, FinancialTransaction, TransactionType, ExpenseCategory, Intern, InternStatus, EducationalCase, Project, ProjectStatus, Partner, InventoryCategory, Supplier, InventoryItem, ItemStatus, StockMovement, InventoryMovementType, Event, EventType, EventStatus, EventRegistration, RegistrationStatus, EventProvider, ProviderStatus, PatientStatus, RecurrenceTemplate, WaitlistEntry, WaitlistStatus, ScheduleBlock, SchedulingAlert } from '../types';
 import { CalendarCheck, Flame, Medal, Shield, Star, Trophy } from 'lucide-react';
 import { generateRecurrences } from '../services/scheduling/recurrenceService';
 
@@ -1265,9 +1265,9 @@ export const mockInventoryItems: InventoryItem[] = [
 ];
 
 export const mockStockMovements: StockMovement[] = [
-    { id: 'mov-1', supplyId: 'item-1', itemId: 'item-1', movementType: MovementType.Out, quantity: 1, userId: 'user_1', createdAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), reason: 'Uso com paciente', patientId: '1' },
-    { id: 'mov-2', supplyId: 'item-2', itemId: 'item-2', movementType: MovementType.Out, quantity: 1, userId: 'user_1', createdAt: new Date(Date.now() - 3 * 3600 * 1000).toISOString(), reason: 'Uso com paciente', patientId: '2' },
-    { id: 'mov-3', supplyId: 'item-4', itemId: 'item-4', movementType: MovementType.In, quantity: 10, userId: 'user_admin', createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(), reason: 'Recebimento de pedido' },
+    { id: 'mov-1', supplyId: 'item-1', itemId: 'item-1', movementType: 'saida', quantity: 1, userId: 'user_1', createdAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(), reason: 'Uso com paciente', patientId: '1' },
+    { id: 'mov-2', supplyId: 'item-2', itemId: 'item-2', movementType: 'saida', quantity: 1, userId: 'user_1', createdAt: new Date(Date.now() - 3 * 3600 * 1000).toISOString(), reason: 'Uso com paciente', patientId: '2' },
+    { id: 'mov-3', supplyId: 'item-4', itemId: 'item-4', movementType: 'entrada', quantity: 10, userId: 'user_admin', createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(), reason: 'Recebimento de pedido' },
 ];
 
 

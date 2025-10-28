@@ -2928,6 +2928,46 @@ export type InventoryMovementType =
   | 'vencimento'
   | 'perda';
 
+// Compatibility enum for legacy code using MovementType.In / MovementType.Out
+export enum MovementType {
+  In = 'entrada',
+  Out = 'saida',
+  Adjustment = 'ajuste',
+  Expiration = 'vencimento',
+  Loss = 'perda'
+}
+
+// Helper utilities for MovementType
+export const MovementTypeUtils = {
+  isEntrada: (type: InventoryMovementType | MovementType): boolean => {
+    return type === 'entrada' || type === MovementType.In;
+  },
+  isSaida: (type: InventoryMovementType | MovementType): boolean => {
+    return type === 'saida' || type === MovementType.Out;
+  },
+  toPortuguese: (type: InventoryMovementType | MovementType): string => {
+    switch (type) {
+      case 'entrada':
+      case MovementType.In:
+        return 'Entrada';
+      case 'saida':
+      case MovementType.Out:
+        return 'Saída';
+      case 'ajuste':
+      case MovementType.Adjustment:
+        return 'Ajuste';
+      case 'vencimento':
+      case MovementType.Expiration:
+        return 'Vencimento';
+      case 'perda':
+      case MovementType.Loss:
+        return 'Perda';
+      default:
+        return type;
+    }
+  }
+};
+
 export type OrderStatus = 
   | 'pending'
   | 'approved'
