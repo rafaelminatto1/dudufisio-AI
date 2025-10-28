@@ -211,7 +211,7 @@ export interface ParsedTreatmentPlan {
 // GEMINI VEO 2.0 - VIDEO GENERATION
 // =============================================
 
-const GEMINI_API_KEY = 'AIzaSyDc5vZXFRAlU18dl1Bk9K2NT-BS8GmuLtM';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 // NOTA: A API Gemini Veo 2.0 ainda não está publicamente disponível no SDK JavaScript

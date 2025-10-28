@@ -2928,27 +2928,16 @@ export type InventoryMovementType =
   | 'vencimento'
   | 'perda';
 
-// Compatibility enum for legacy code using MovementType.In / MovementType.Out
-export enum MovementType {
-  In = 'entrada',
-  Out = 'saida',
-  Adjustment = 'ajuste',
-  Expiration = 'vencimento',
-  Loss = 'perda'
-}
-
-// Helper utilities for MovementType
+// Helper utilities for InventoryMovementType
 export const MovementTypeUtils = {
-  isEntrada: (type: InventoryMovementType | MovementType): boolean => {
-    return type === 'entrada' || type === MovementType.In;
+  isEntrada: (type: InventoryMovementType): boolean => {
+    return type === 'entrada';
   },
-  isSaida: (type: InventoryMovementType | MovementType): boolean => {
-    return type === 'saida' || type === MovementType.Out;
+  isSaida: (type: InventoryMovementType): boolean => {
+    return type === 'saida';
   },
-  toPortuguese: (type: InventoryMovementType | MovementType): string => {
-    // Since enum values map to strings, we only need string cases to avoid duplicates
-    const typeStr = String(type);
-    switch (typeStr) {
+  toPortuguese: (type: InventoryMovementType): string => {
+    switch (type) {
       case 'entrada':
         return 'Entrada';
       case 'saida':
@@ -2960,7 +2949,7 @@ export const MovementTypeUtils = {
       case 'perda':
         return 'Perda';
       default:
-        return typeStr;
+        return type;
     }
   }
 };

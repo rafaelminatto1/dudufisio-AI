@@ -1,7 +1,7 @@
 // pages/InventoryDashboardPage.tsx
 import React, { useState, useEffect, useCallback, memo, useMemo } from 'react';
 import PageHeader from '../components/PageHeader';
-import { InventoryItem, InventoryMetrics, Supplier, InventoryCategory, MovementType } from '../types';
+import { InventoryItem, InventoryMetrics, Supplier, InventoryCategory, InventoryMovementType } from '../types';
 import * as inventoryService from '../services/inventoryService';
 import { useToast } from '../contexts/ToastContext';
 import { Skeleton } from '../components/ui/skeleton';
@@ -35,7 +35,7 @@ const InventoryDashboardPage: React.FC = () => {
     const { showToast } = useToast();
 
     // Modal States
-    const [movementModal, setMovementModal] = useState<{ isOpen: boolean, item: InventoryItem | null, type: MovementType }>({ isOpen: false, item: null, type: MovementType.Out });
+    const [movementModal, setMovementModal] = useState<{ isOpen: boolean, item: InventoryItem | null, type: InventoryMovementType }>({ isOpen: false, item: null, type: 'saida' });
     const [itemFormModal, setItemFormModal] = useState<{ isOpen: boolean, item?: InventoryItem }>({ isOpen: false });
 
     const fetchData = useCallback(async () => {
@@ -70,7 +70,7 @@ const InventoryDashboardPage: React.FC = () => {
         try {
             await inventoryService.addStockMovement(itemId, type, quantity, reason);
             showToast('Movimentação de estoque registrada!', 'success');
-            setMovementModal({ isOpen: false, item: null, type: MovementType.Out });
+            setMovementModal({ isOpen: false, item: null, type: 'saida' });
             fetchData(); // Refresh all data
         } catch (error: any) {
             showToast(error.message || 'Falha ao registrar movimentação.', 'error');
@@ -114,7 +114,7 @@ const InventoryDashboardPage: React.FC = () => {
             
             <StockMovementModal
                 isOpen={movementModal.isOpen}
-                onClose={() => setMovementModal({ isOpen: false, item: null, type: MovementType.Out })}
+                onClose={() => setMovementModal({ isOpen: false, item: null, type: 'saida' })}
                 onSave={handleSaveMovement}
                 item={movementModal.item}
                 movementType={movementModal.type}
@@ -149,8 +149,8 @@ const InventoryDashboardPage: React.FC = () => {
                                     item={item}
                                     suppliers={suppliers}
                                     categories={categories}
-                                    onAddStock={() => handleOpenMovementModal(item, MovementType.In)}
-                                    onRemoveStock={() => handleOpenMovementModal(item, MovementType.Out)}
+                                    onAddStock={() => handleOpenMovementModal(item, 'entrada')}
+                                    onRemoveStock={() => handleOpenMovementModal(item, 'saida')}
                                     onEdit={() => setItemFormModal({ isOpen: true, item })}
                                 />
                             ))}
@@ -168,8 +168,8 @@ const InventoryDashboardPage: React.FC = () => {
                                 item={item}
                                 suppliers={suppliers}
                                 categories={categories}
-                                onAddStock={() => handleOpenMovementModal(item, MovementType.In)}
-                                onRemoveStock={() => handleOpenMovementModal(item, MovementType.Out)}
+                                onAddStock={() => handleOpenMovementModal(item, 'entrada')}
+                                onRemoveStock={() => handleOpenMovementModal(item, 'saida')}
                                 onEdit={() => setItemFormModal({ isOpen: true, item })}
                             />
                         ))}

@@ -35,7 +35,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
 );
 
@@ -47,7 +47,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
+    AND users.role = 'admin'
   )
 );
 
@@ -63,7 +63,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
 );
 
@@ -75,19 +75,31 @@ WITH CHECK (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
 );
 
--- Apenas Admins podem atualizar ou deletar insumos
-CREATE POLICY "Only admins can update or delete supplies"
-ON supplies FOR UPDATE, DELETE
+-- Apenas Admins podem atualizar insumos
+CREATE POLICY "Only admins can update supplies"
+ON supplies FOR UPDATE
 TO authenticated
 USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
+    AND users.role = 'admin'
+  )
+);
+
+-- Apenas Admins podem deletar insumos
+CREATE POLICY "Only admins can delete supplies"
+ON supplies FOR DELETE
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE users.id = auth.uid()
+    AND users.role = 'admin'
   )
 );
 
@@ -103,7 +115,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
 );
 
@@ -115,7 +127,7 @@ WITH CHECK (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
   AND moved_by = auth.uid()
 );
@@ -128,7 +140,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
+    AND users.role = 'admin'
   )
 );
 
@@ -144,7 +156,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
 );
 
@@ -156,7 +168,7 @@ WITH CHECK (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
   AND requested_by = auth.uid()
 );
@@ -169,7 +181,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
+    AND users.role = 'admin'
   )
 );
 
@@ -214,7 +226,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
 );
 
@@ -227,7 +239,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
+    AND users.role = 'admin'
   )
 );
 
@@ -243,7 +255,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
 );
 
@@ -255,7 +267,7 @@ WITH CHECK (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
   AND used_by = auth.uid()
 );
@@ -278,7 +290,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
+    AND users.role = 'admin'
   )
 );
 
@@ -294,7 +306,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
+    AND users.role IN ('admin', 'therapist')
   )
 );
 
@@ -306,7 +318,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
+    AND users.role = 'admin'
   )
 );
 
@@ -322,7 +334,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
+    AND users.role = 'admin'
   )
 );
 
@@ -338,7 +350,7 @@ USING (
   EXISTS (
     SELECT 1 FROM users
     WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
+    AND users.role = 'admin'
   )
 );
 

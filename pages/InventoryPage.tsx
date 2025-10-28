@@ -16,7 +16,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { useInventory, useInventoryMetrics, useInventoryAlerts, useLowStockItems, useExpiringItems } from '../hooks/useInventory';
-import { InventoryItem, MovementType } from '../types';
+import { InventoryItem, InventoryMovementType } from '../types';
 import ItemFormModal from '../components/inventory/ItemFormModal';
 import StockMovementModal from '../components/inventory/StockMovementModal';
 import AlertsTab from '../components/inventory/AlertsTab';
@@ -57,7 +57,7 @@ const InventoryPage: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | undefined>(undefined);
   const [showMovementModal, setShowMovementModal] = useState(false);
-  const [movementType, setMovementType] = useState<MovementType>(MovementType.In);
+  const [movementType, setMovementType] = useState<InventoryMovementType>('entrada');
 
   const filteredItems = React.useMemo(() => {
     let result = searchQuery ? searchItems(searchQuery) : items;
@@ -69,7 +69,7 @@ const InventoryPage: React.FC = () => {
 
   const handleAddMovement = useCallback(async (
     itemId: string,
-    type: MovementType,
+    type: InventoryMovementType,
     quantity: number,
     reason: string
   ) => {
@@ -96,7 +96,7 @@ const InventoryPage: React.FC = () => {
     }
   }, [createItem, updateItem]);
 
-  const openMovementModal = useCallback((item: InventoryItem, type: MovementType) => {
+  const openMovementModal = useCallback((item: InventoryItem, type: InventoryMovementType) => {
     setSelectedItem(item);
     setMovementType(type);
     setShowMovementModal(true);
@@ -201,7 +201,7 @@ const InventoryPage: React.FC = () => {
                       </p>
                     </div>
                     <button
-                      onClick={() => openMovementModal(item, MovementType.In as any)}
+                      onClick={() => openMovementModal(item, 'entrada')}
                       className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
                     >
                       Repor
@@ -345,14 +345,14 @@ const InventoryPage: React.FC = () => {
                     <td className="p-4">
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => openMovementModal(item, MovementType.In as any)}
+                          onClick={() => openMovementModal(item, 'entrada')}
                           className="p-1 text-green-600 hover:bg-green-100 rounded"
                           title="Entrada de estoque"
                         >
                           <Upload className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => openMovementModal(item, MovementType.Out as any)}
+                          onClick={() => openMovementModal(item, 'saida')}
                           className="p-1 text-red-600 hover:bg-red-100 rounded"
                           title="Saída de estoque"
                         >

@@ -71,9 +71,9 @@ export const addStockMovement = async (
     const previousStock = item.currentStock;
     let newStock = previousStock;
 
-    if (movementType === MovementType.In) {
+    if (movementType === 'entrada') {
         newStock += quantity;
-    } else if (movementType === MovementType.Out) {
+    } else if (movementType === 'saida') {
         newStock -= quantity;
         if (newStock < 0) throw new Error("Stock cannot be negative.");
     }

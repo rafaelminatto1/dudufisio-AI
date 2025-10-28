@@ -1,515 +1,127 @@
-# 🔒 APLICAR RLS MANUALMENTE NO SUPABASE
+# 🚀 Guia de Aplicação Manual - Migration RLS
 
+**Status:** Correções aplicadas, pronto para aplicar em produção  
 **Data:** 28 de Outubro de 2025
 
----
+## ✅ Correções Já Aplicadas
 
-## ⚠️ PROBLEMA IDENTIFICADO
+1. ✅ Removida API key hardcoded do Gemini  
+2. ✅ Removido enum `MovementType` duplicado
+3. ✅ Build local bem-sucedido
+4. ✅ Migration RLS corrigida (roles em minúsculo)
 
-O CLI do Supabase está com problemas de conectividade:
-- ❌ `npx supabase db push` falhou (DNS resolution error)
-- ❌ `npx supabase link` falhou (timeout na API)
+## 📝 Como Aplicar a Migration RLS Manualmente
 
----
+### Método 1: Via Supabase Dashboard SQL Editor (RECOMENDADO)
 
-## ✅ SOLUÇÃO: APLICAR VIA DASHBOARD
+1. **Acessar SQL Editor:**
+   ```
+   https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo/sql/new
+   ```
 
-### Passo 1: Acessar o Dashboard do Supabase
+2. **Copiar o conteúdo da migration:**
+   - Arquivo: `supabase/migrations/20251027000010_reenable_rls_production.sql`
+   - Copiar TODO o conteúdo do arquivo
 
-1. Acesse: https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo
-2. Faça login com suas credenciais
-3. Vá para **SQL Editor** no menu lateral
+3. **Colar no SQL Editor e Executar:**
+   - Click em "Run" ou pressione `Ctrl+Enter`
+   - Aguardar confirmação de sucesso
 
-### Passo 2: Aplicar a Migration RLS
+4. **Verificar aplicação:**
+   ```sql
+   SELECT COUNT(*) as total_policies 
+   FROM pg_policies 
+   WHERE schemaname = 'public';
+   ```
+   **Resultado esperado:** 20+ políticas
 
-Copie e cole o seguinte SQL no SQL Editor:
+### Método 2: Via CLI (se conseguir conectar)
 
-```sql
--- ============================================================================
--- REABILITAR ROW LEVEL SECURITY PARA PRODUÇÃO
--- ============================================================================
--- Migração: 20251027000010_reenable_rls_production.sql
--- Data: 2025-10-27
--- Descrição: Reabilita RLS e cria políticas de segurança adequadas
--- Prioridade: CRÍTICA - SEGURANÇA
--- ============================================================================
-
--- ============================================================================
--- REABILITAR ROW LEVEL SECURITY
--- ============================================================================
-
-ALTER TABLE suppliers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE supplies ENABLE ROW LEVEL SECURITY;
-ALTER TABLE stock_movements ENABLE ROW LEVEL SECURITY;
-ALTER TABLE purchase_orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE purchase_order_items ENABLE ROW LEVEL SECURITY;
-ALTER TABLE supply_alerts ENABLE ROW LEVEL SECURITY;
-ALTER TABLE task_supplies_used ENABLE ROW LEVEL SECURITY;
-ALTER TABLE task_type_supply_templates ENABLE ROW LEVEL SECURITY;
-ALTER TABLE supply_batches ENABLE ROW LEVEL SECURITY;
-ALTER TABLE purchase_approvals ENABLE ROW LEVEL SECURITY;
-ALTER TABLE auto_replenishment_rules ENABLE ROW LEVEL SECURITY;
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - SUPPLIERS
--- ============================================================================
-
--- Admins e Therapists podem ver todos os fornecedores
-CREATE POLICY "Admins and therapists can view all suppliers"
-ON suppliers FOR SELECT
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
--- Apenas Admins podem inserir/atualizar/deletar fornecedores
-CREATE POLICY "Only admins can manage suppliers"
-ON suppliers FOR ALL
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
-  )
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - SUPPLIES
--- ============================================================================
-
--- Admins e Therapists podem ver todos os insumos
-CREATE POLICY "Admins and therapists can view all supplies"
-ON supplies FOR SELECT
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
--- Admins e Therapists podem inserir novos insumos
-CREATE POLICY "Admins and therapists can create supplies"
-ON supplies FOR INSERT
-TO authenticated
-WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
--- Apenas Admins podem atualizar ou deletar insumos
-CREATE POLICY "Only admins can update or delete supplies"
-ON supplies FOR UPDATE, DELETE
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
-  )
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - STOCK_MOVEMENTS
--- ============================================================================
-
--- Admins e Therapists podem ver todas as movimentações
-CREATE POLICY "Admins and therapists can view stock movements"
-ON stock_movements FOR SELECT
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
--- Admins e Therapists podem registrar movimentações
-CREATE POLICY "Admins and therapists can create stock movements"
-ON stock_movements FOR INSERT
-TO authenticated
-WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-  AND moved_by = auth.uid()
-);
-
--- Apenas Admins podem deletar movimentações
-CREATE POLICY "Only admins can delete stock movements"
-ON stock_movements FOR DELETE
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
-  )
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - PURCHASE_ORDERS
--- ============================================================================
-
--- Admins e Therapists podem ver pedidos de compra
-CREATE POLICY "Admins and therapists can view purchase orders"
-ON purchase_orders FOR SELECT
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
--- Admins e Therapists podem criar pedidos
-CREATE POLICY "Admins and therapists can create purchase orders"
-ON purchase_orders FOR INSERT
-TO authenticated
-WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-  AND requested_by = auth.uid()
-);
-
--- Apenas Admins podem aprovar/atualizar pedidos
-CREATE POLICY "Only admins can update purchase orders"
-ON purchase_orders FOR UPDATE
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
-  )
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - PURCHASE_ORDER_ITEMS
--- ============================================================================
-
--- Seguem as mesmas regras dos purchase_orders
-CREATE POLICY "View purchase order items with parent permission"
-ON purchase_order_items FOR SELECT
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM purchase_orders po
-    INNER JOIN users u ON u.id = auth.uid()
-    WHERE po.id = purchase_order_items.purchase_order_id
-    AND u.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
-CREATE POLICY "Create purchase order items with parent permission"
-ON purchase_order_items FOR INSERT
-TO authenticated
-WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM purchase_orders po
-    INNER JOIN users u ON u.id = auth.uid()
-    WHERE po.id = purchase_order_items.purchase_order_id
-    AND u.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - SUPPLY_ALERTS
--- ============================================================================
-
--- Admins e Therapists podem ver alertas
-CREATE POLICY "Admins and therapists can view supply alerts"
-ON supply_alerts FOR SELECT
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
--- Admins podem resolver alertas
-CREATE POLICY "Admins can resolve supply alerts"
-ON supply_alerts FOR UPDATE
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
-  )
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - TASK_SUPPLIES_USED
--- ============================================================================
-
--- Therapists podem ver uso de insumos
-CREATE POLICY "Therapists can view their task supplies usage"
-ON task_supplies_used FOR SELECT
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
--- Therapists podem registrar uso de insumos
-CREATE POLICY "Therapists can record supply usage"
-ON task_supplies_used FOR INSERT
-TO authenticated
-WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-  AND used_by = auth.uid()
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - TASK_TYPE_SUPPLY_TEMPLATES
--- ============================================================================
-
--- Todos authenticated podem ver templates
-CREATE POLICY "Authenticated users can view supply templates"
-ON task_type_supply_templates FOR SELECT
-TO authenticated
-USING (true);
-
--- Apenas Admins podem gerenciar templates
-CREATE POLICY "Only admins can manage supply templates"
-ON task_type_supply_templates FOR INSERT, UPDATE, DELETE
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
-  )
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - SUPPLY_BATCHES
--- ============================================================================
-
--- Admins e Therapists podem ver lotes
-CREATE POLICY "Admins and therapists can view supply batches"
-ON supply_batches FOR SELECT
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role IN ('Admin', 'Fisioterapeuta')
-  )
-);
-
--- Apenas Admins podem gerenciar lotes
-CREATE POLICY "Only admins can manage supply batches"
-ON supply_batches FOR INSERT, UPDATE, DELETE
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
-  )
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - PURCHASE_APPROVALS
--- ============================================================================
-
--- Admins podem ver e gerenciar aprovações
-CREATE POLICY "Admins can manage purchase approvals"
-ON purchase_approvals FOR ALL
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
-  )
-);
-
--- ============================================================================
--- POLÍTICAS DE SEGURANÇA - AUTO_REPLENISHMENT_RULES
--- ============================================================================
-
--- Admins podem ver e gerenciar regras de reposição automática
-CREATE POLICY "Admins can manage auto replenishment rules"
-ON auto_replenishment_rules FOR ALL
-TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM users
-    WHERE users.id = auth.uid()
-    AND users.role = 'Admin'
-  )
-);
-
--- ============================================================================
--- ATUALIZAR COMENTÁRIOS
--- ============================================================================
-
-COMMENT ON TABLE suppliers IS 'Fornecedores - RLS HABILITADO com políticas por role';
-COMMENT ON TABLE supplies IS 'Insumos - RLS HABILITADO com políticas por role';
-COMMENT ON TABLE stock_movements IS 'Movimentações de estoque - RLS HABILITADO';
-COMMENT ON TABLE purchase_orders IS 'Pedidos de compra - RLS HABILITADO';
-
--- ============================================================================
--- FIM DA MIGRAÇÃO
--- ============================================================================
+```bash
+npx supabase link --project-ref urfxniitfbbvsaskicfo
+npx supabase db push --linked
 ```
 
-### Passo 3: Executar o SQL
+## 🔍 Políticas RLS que Serão Criadas
 
-1. Cole o SQL completo acima no SQL Editor
-2. Clique em **Run** (ou pressione Ctrl+Enter)
-3. Aguarde a execução completar
-4. Verifique se não há erros
+A migration habilita RLS e cria políticas para 11 tabelas:
 
-### Passo 4: Verificar RLS Habilitado
+### Tabelas Afetadas:
+1. ✅ `suppliers` - 2 políticas (view, manage)
+2. ✅ `supplies` - 4 políticas (view, create, update, delete)
+3. ✅ `stock_movements` - 3 políticas (view, create, delete)
+4. ✅ `purchase_orders` - 3 políticas (view, create, update)
+5. ✅ `purchase_order_items` - 2 políticas (view, create)
+6. ✅ `supply_alerts` - 2 políticas (view, update)
+7. ✅ `task_supplies_used` - 2 políticas (view, create)
+8. ✅ `task_type_supply_templates` - 2 políticas (view, manage)
+9. ✅ `supply_batches` - 2 políticas (view, manage)
+10. ✅ `purchase_approvals` - 1 política (manage)
+11. ✅ `auto_replenishment_rules` - 1 política (manage)
 
-Execute este SQL para verificar:
+**Total:** ~24 políticas RLS
+
+### Permissões por Role:
+
+**Admin (`admin`):**
+- ✅ Acesso completo a todas as tabelas
+- ✅ Pode criar, ler, atualizar e deletar
+- ✅ Pode aprovar pedidos de compra
+
+**Therapist (`therapist`):**
+- ✅ Pode ver insumos e fornecedores
+- ✅ Pode registrar uso de insumos
+- ✅ Pode criar pedidos de compra
+- ❌ NÃO pode deletar fornecedores
+- ❌ NÃO pode aprovar pedidos
+
+**Patient (`patient`):**
+- ❌ NÃO tem acesso ao módulo de insumos
+
+## ⚠️ Validação Pós-Aplicação
+
+Após aplicar a migration, executar:
 
 ```sql
-SELECT 
-  schemaname,
-  tablename,
-  rowsecurity
-FROM pg_tables
+-- 1. Contar políticas criadas
+SELECT tablename, COUNT(*) as policies_count
+FROM pg_policies 
 WHERE schemaname = 'public'
   AND tablename IN (
     'suppliers', 'supplies', 'stock_movements', 
-    'purchase_orders', 'purchase_order_items', 
-    'supply_alerts', 'task_supplies_used',
-    'task_type_supply_templates', 'supply_batches',
-    'purchase_approvals', 'auto_replenishment_rules'
+    'purchase_orders', 'purchase_order_items', 'supply_alerts',
+    'task_supplies_used', 'task_type_supply_templates', 
+    'supply_batches', 'purchase_approvals', 'auto_replenishment_rules'
+  )
+GROUP BY tablename
+ORDER BY tablename;
+
+-- 2. Verificar RLS habilitado
+SELECT schemaname, tablename, rowsecurity
+FROM pg_tables 
+WHERE schemaname = 'public'
+  AND tablename IN (
+    'suppliers', 'supplies', 'stock_movements', 
+    'purchase_orders', 'purchase_order_items', 'supply_alerts',
+    'task_supplies_used', 'task_type_supply_templates', 
+    'supply_batches', 'purchase_approvals', 'auto_replenishment_rules'
   )
 ORDER BY tablename;
 ```
 
-**Resultado Esperado:** Todas as tabelas devem ter `rowsecurity = true`
+**Resultado esperado:**
+- Todas as tabelas devem ter `rowsecurity = true`
+- Total de ~24 políticas distribuídas entre as 11 tabelas
 
-### Passo 5: Verificar Políticas Criadas
+## 🎯 Próximos Passos Após Aplicação
 
-```sql
-SELECT 
-  schemaname,
-  tablename,
-  policyname,
-  permissive,
-  roles,
-  cmd,
-  qual,
-  with_check
-FROM pg_policies
-WHERE schemaname = 'public'
-ORDER BY tablename, policyname;
-```
-
-**Resultado Esperado:** Várias políticas (policies) criadas para cada tabela
+1. ✅ Marcar migration como aplicada
+2. ✅ Fazer commit das correções de código
+3. ✅ Fazer deploy no Vercel
+4. ✅ Testar em produção com diferentes roles
 
 ---
 
-## 🧪 TESTES COM RLS HABILITADO
+**📌 IMPORTANTE:** Não esqueça de fazer backup do banco antes de aplicar!
 
-Após aplicar o RLS, teste os seguintes fluxos:
-
-### ✅ Teste 1: Login como Admin
-```
-1. Fazer login como Admin
-2. Acessar módulo de Insumos
-3. Verificar se consegue:
-   ✓ Ver todos os insumos
-   ✓ Criar novo insumo
-   ✓ Editar insumo existente
-   ✓ Deletar insumo
-```
-
-### ✅ Teste 2: Login como Fisioterapeuta
-```
-1. Fazer login como Fisioterapeuta
-2. Acessar módulo de Insumos
-3. Verificar se consegue:
-   ✓ Ver todos os insumos
-   ✓ Registrar uso de insumos
-   ✓ Criar pedidos de compra
-   ✗ NÃO deletar pedidos de compra
-   ✗ NÃO deletar insumos
-```
-
-### ✅ Teste 3: Login como Paciente
-```
-1. Fazer login como Paciente
-2. Tentar acessar módulo de Insumos
-3. Verificar se:
-   ✗ NÃO vê dados de insumos
-   ✗ NÃO acessa módulo de gestão
-   ✓ Vê apenas seus próprios dados
-```
-
----
-
-## 📋 CHECKLIST DE VALIDAÇÃO
-
-- [ ] RLS habilitado em todas as 11 tabelas
-- [ ] Políticas criadas sem erros
-- [ ] Admin consegue acessar tudo
-- [ ] Fisioterapeuta tem acesso limitado
-- [ ] Paciente não acessa dados de outros
-- [ ] Aplicação funciona normalmente
-- [ ] Não há erros de permissão no console
-
----
-
-## 🔄 ROLLBACK (Se Necessário)
-
-Se algo der errado, desabilite o RLS temporariamente:
-
-```sql
--- APENAS PARA DESENVOLVIMENTO/EMERGÊNCIA
-ALTER TABLE suppliers DISABLE ROW LEVEL SECURITY;
-ALTER TABLE supplies DISABLE ROW LEVEL SECURITY;
-ALTER TABLE stock_movements DISABLE ROW LEVEL SECURITY;
--- ... repetir para todas as tabelas
-```
-
-⚠️ **NÃO USE ISSO EM PRODUÇÃO!**
-
----
-
-## 📞 SUPORTE
-
-**Em caso de problemas:**
-- Verifique os logs no Supabase Dashboard > Logs
-- Consulte: https://supabase.com/docs/guides/auth/row-level-security
-- Revisar políticas: https://www.postgresql.org/docs/current/sql-createpolicy.html
-
----
-
-**✅ SIGA ESTE GUIA PARA APLICAR RLS COM SEGURANÇA**
-
-*Última atualização: 28/10/2025*
-
+**URL do backup:** https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo/database/backups/scheduled

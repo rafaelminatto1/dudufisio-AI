@@ -1,16 +1,15 @@
 // components/inventory/StockMovementModal.tsx
 import React, { useState } from 'react';
 import { X, Plus, Minus, Loader } from 'lucide-react';
-import type { InventoryItem } from '../../types';
-import { MovementType } from '../../types';
+import type { InventoryItem, InventoryMovementType } from '../../types';
 import { useToast } from '../../contexts/ToastContext';
 
 interface StockMovementModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (itemId: string, type: MovementType, quantity: number, reason: string) => Promise<void>;
+  onSave: (itemId: string, type: InventoryMovementType, quantity: number, reason: string) => Promise<void>;
   item: InventoryItem | null;
-  movementType: MovementType;
+  movementType: InventoryMovementType;
 }
 
 const StockMovementModal: React.FC<StockMovementModalProps> = ({ isOpen, onClose, onSave, item, movementType }) => {
@@ -31,7 +30,7 @@ const StockMovementModal: React.FC<StockMovementModalProps> = ({ isOpen, onClose
         setIsSaving(false);
     };
 
-    const isOut = movementType === MovementType.Out;
+    const isOut = movementType === 'saida';
     const title = isOut ? 'Registrar Saída de Estoque' : 'Registrar Entrada de Estoque';
     const Icon = isOut ? Minus : Plus;
     const buttonClass = isOut ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600';

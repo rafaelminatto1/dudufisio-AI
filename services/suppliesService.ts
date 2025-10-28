@@ -626,7 +626,7 @@ export const getSuppliesDashboardData = async (): Promise<SuppliesDashboardData>
     // Top insumos mais consumidos
     const consumptionMap = new Map<string, number>();
     movements
-      .filter(m => m.movementType === MovementType.Out)
+      .filter(m => m.movementType === 'saida')
       .forEach(movement => {
         const current = consumptionMap.get(movement.supplyId) || 0;
         consumptionMap.set(movement.supplyId, current + movement.quantity);
@@ -679,11 +679,11 @@ export const getConsumptionReport = async (
       const supplyMovements = movements.filter(m => m.supplyId === supply.id);
       
       const totalConsumed = supplyMovements
-        .filter(m => m.movementType === MovementType.Out)
+        .filter(m => m.movementType === 'saida')
         .reduce((sum, m) => sum + m.quantity, 0);
 
       const totalReceived = supplyMovements
-        .filter(m => m.movementType === MovementType.In)
+        .filter(m => m.movementType === 'entrada')
         .reduce((sum, m) => sum + m.quantity, 0);
 
       const daysDiff = dateFrom && dateTo ? 
