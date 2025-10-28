@@ -2,30 +2,7 @@
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { AIProvider, AIResponse, AIQueryLog } from '../../types';
 import { secureLogger } from '../../lib/secureLogger';
-
-// Rate limiting configuration
-const RATE_LIMIT = {
-  maxRequestsPerMinute: 10,
-  requests: [] as number[],
-};
-
-// Check rate limit
-function checkRateLimit(): boolean {
-  const now = Date.now();
-  const oneMinuteAgo = now - 60000;
-
-  // Remove old requests
-  RATE_LIMIT.requests = RATE_LIMIT.requests.filter(time => time > oneMinuteAgo);
-
-  // Check if within limit
-  if (RATE_LIMIT.requests.length >= RATE_LIMIT.maxRequestsPerMinute) {
-    return false;
-  }
-
-  // Add current request
-  RATE_LIMIT.requests.push(now);
-  return true;
-}
+import { checkRateLimit as rateLimitCheck } from './rateLimiter';
 
 export class AiOrchestratorService {
   private genAI: GoogleGenerativeAI | null = null;
@@ -93,11 +70,28 @@ export class AiOrchestratorService {
     }
   }
 
-  async query(prompt: string, provider?: string): Promise<AIResponse> {
-    // Check rate limit
-    if (!checkRateLimit()) {
-      throw new Error('Rate limit exceeded. Please wait a moment before trying again.');
+  async query(prompt: string, provider?: string, userId: string = 'anonymous'): Promise<AIResponse> {
+    // Check rate limit with new rate limiter
+    const rateLimit = await rateLimitCheck(userId, 'ai:query');
+
+    if (!rateLimit.allowed) {
+      const error = `Rate limit exceeded. Try again in ${rateLimit.retryAfter} seconds.`;
+      secureLogger.warn('AI query rate limited', {
+        component: 'AiOrchestratorService',
+        action: 'query',
+        userId,
+        remaining: rateLimit.remaining,
+        retryAfter: rateLimit.retryAfter
+      });
+      throw new Error(error);
     }
+
+    secureLogger.debug('AI query rate limit check passed', {
+      component: 'AiOrchestratorService',
+      action: 'query',
+      userId,
+      remaining: rateLimit.remaining
+    });
 
     // Fallback to mock if Gemini not configured
     if (!this.model) {

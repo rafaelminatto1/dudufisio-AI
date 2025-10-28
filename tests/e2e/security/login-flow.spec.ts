@@ -106,50 +106,19 @@ test.describe('Login Flow Security', () => {
 
   test('should logout successfully and clear session', async ({ page }) => {
     // Login first
-    await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 10000 });
-    await page.fill('input[type="email"], input[name="email"]', 'admin@dudufisio.com');
-    await page.fill('input[type="password"], input[name="password"]', 'Admin@123');
-    await page.click('button[type="submit"]');
+    await loginAsAdmin(page);
 
-    // Wait for successful login
-    await page.waitForTimeout(3000);
+    // Logout using helper
+    await logout(page);
+    
+    const currentUrl = page.url();
 
-    // Look for logout button (might be in menu, sidebar, or profile dropdown)
-    const logoutSelectors = [
-      'button:has-text("Sair")',
-      'button:has-text("Logout")',
-      'a:has-text("Sair")',
-      'a:has-text("Logout")',
-      '[data-testid="logout"]',
-      '[aria-label="Logout"]'
-    ];
-
-    let logoutButtonFound = false;
-    for (const selector of logoutSelectors) {
-      const count = await page.locator(selector).count();
-      if (count > 0) {
-        await page.click(selector);
-        logoutButtonFound = true;
-        break;
-      }
-    }
-
-    if (logoutButtonFound) {
-      // Wait for redirect to login
-      await page.waitForTimeout(2000);
-      const currentUrl = page.url();
-
-      // Should be back on login page
-      const isOnLogin = currentUrl.includes('/login') || currentUrl === '/';
-      expect(isOnLogin).toBeTruthy();
-    } else {
-      console.warn('Logout button not found - manual logout test needed');
-    }
+    // Should be back on login page
+    const isOnLogin = currentUrl.includes('/login') || currentUrl === '/'  || currentUrl.includes('/auth');
+    expect(isOnLogin).toBeTruthy();
   });
 
   test('should prevent SQL injection in login form', async ({ page }) => {
-    await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 10000 });
-
     // Try SQL injection payloads
     const sqlPayloads = [
       "' OR '1'='1",
@@ -158,11 +127,10 @@ test.describe('Login Flow Security', () => {
     ];
 
     for (const payload of sqlPayloads) {
-      await page.fill('input[type="email"], input[name="email"]', payload);
-      await page.fill('input[type="password"], input[name="password"]', payload);
-      await page.click('button[type="submit"]');
-
-      await page.waitForTimeout(2000);
+      await loginWithInvalidCredentials(page, {
+        email: payload,
+        password: payload
+      });
 
       // Should not successfully log in
       const currentUrl = page.url();

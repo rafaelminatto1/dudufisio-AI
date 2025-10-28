@@ -12,7 +12,8 @@
       "Bash(curl:*)",
       "Bash(npm run type-check:*)",
       "Bash(npx tsc:*)",
-      "Bash(Select-String -Pattern \"admin-dashboard\" -Context 0,2)"
+      "Bash(Select-String -Pattern \"admin-dashboard\" -Context 0,2)",
+      "Bash(npx playwright test:*)"
     ],
     "deny": [],
     "ask": []
