@@ -62,7 +62,10 @@ const KeyboardShortcutsHelp: React.FC<KeyboardShortcutsHelpProps> = ({ isOpen, o
     if (!acc[shortcut.category]) {
       acc[shortcut.category] = [];
     }
-    acc[shortcut.category].push(shortcut);
+    const categoryArray = acc[shortcut.category];
+    if (categoryArray) {
+      categoryArray.push(shortcut);
+    }
     return acc;
   }, {} as Record<string, Shortcut[]>);
 

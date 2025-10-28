@@ -222,7 +222,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
           {timeSlots.map(time => {
             const isFullHour = time.endsWith('00');
             const [hour, minute] = time.split(':').map(Number);
-            const totalMinutes = (hour - START_HOUR) * 60 + minute;
+            const totalMinutes = ((hour ?? 0) - START_HOUR) * 60 + (minute ?? 0);
             const topPosition = totalMinutes * PIXELS_PER_MINUTE;
             
             return (

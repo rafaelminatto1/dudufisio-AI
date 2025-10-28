@@ -8,7 +8,11 @@
       "Bash(git push)",
       "Bash(vercel:*)",
       "Bash(npm run build:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npx tsc:*)",
+      "Bash(Select-String -Pattern \"admin-dashboard\" -Context 0,2)"
     ],
     "deny": [],
     "ask": []

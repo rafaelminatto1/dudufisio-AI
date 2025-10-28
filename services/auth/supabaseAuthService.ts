@@ -4,6 +4,7 @@ import { retryApiCall } from '../../lib/retryManager';
 import { fallbackAuthService } from '../../lib/fallbackAuth';
 import { User, Role } from '../../types';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { secureLogger } from '../../lib/secureLogger';
 
 export interface AuthState {
   user: User | null;
@@ -42,11 +43,16 @@ class SupabaseAuthService {
 
   private async initializeAuth() {
     try {
-      console.log('🔄 Inicializando autenticação...');
+      secureLogger.info('Inicializando autenticação', {
+        component: 'supabaseAuthService',
+        action: 'initializeAuth'
+      });
 
       // Set a timeout for initialization to prevent infinite loading
       const initTimeout = setTimeout(() => {
-        console.warn('⚠️ Auth initialization timeout, falling back to fallback auth');
+        secureLogger.warn('Auth initialization timeout, fallback ativado', {
+          component: 'supabaseAuthService'
+        });
         this.switchToFallbackAuth();
       }, 8000); // Aumentado para 8 segundos
 
@@ -59,18 +65,26 @@ class SupabaseAuthService {
         );
 
         if (sessionError) {
-          console.warn('⚠️ Session error, switching to fallback auth:', sessionError.message);
+          secureLogger.warn('Session error, switching to fallback auth', {
+            component: 'supabaseAuthService',
+            error: sessionError.message
+          });
           clearTimeout(initTimeout);
           this.switchToFallbackAuth();
           return;
         }
 
         if (session?.user) {
-          console.log('✅ Usuário autenticado via Supabase');
+          secureLogger.info('Usuário autenticado via Supabase', {
+            component: 'supabaseAuthService',
+            userId: session.user.id
+          });
           const user = await this.mapSupabaseUserToUser(session.user);
           this.updateState({ user, session, loading: false });
         } else {
-          console.log('🔄 Nenhuma sessão ativa, redirecionando para login');
+          secureLogger.info('Nenhuma sessão ativa, exibindo login', {
+            component: 'supabaseAuthService'
+          });
           // Não criar usuário mock automaticamente - deixar null para mostrar tela de login
           this.updateState({ user: null, session: null, loading: false });
         }
@@ -80,7 +94,10 @@ class SupabaseAuthService {
 
         // Listen for auth changes
         supabase.auth.onAuthStateChange(async (event, session) => {
-          console.log('🔄 Auth state change:', event);
+          secureLogger.info('Auth state change', {
+            component: 'supabaseAuthService',
+            event
+          });
           try {
             if (event === 'SIGNED_IN' && session?.user) {
               // Check if this is a new OAuth user and create profile if needed
@@ -94,24 +111,33 @@ class SupabaseAuthService {
               this.updateState({ user, session, loading: false });
             }
           } catch (error) {
-            console.error('Error handling auth state change:', error);
+            secureLogger.error('Erro ao processar mudança de estado auth', error, {
+              component: 'supabaseAuthService',
+              action: 'onAuthStateChange'
+            });
             // Don't break the app, just log the error
           }
         });
 
       } catch (error) {
         clearTimeout(initTimeout);
-        console.error('❌ Supabase auth failed, switching to fallback:', error);
+        secureLogger.error('Supabase auth failed, switching to fallback', error, {
+          component: 'supabaseAuthService'
+        });
         this.switchToFallbackAuth();
       }
     } catch (error) {
-      console.error('❌ Auth initialization error:', error);
+      secureLogger.error('Auth initialization error', error, {
+        component: 'supabaseAuthService'
+      });
       this.switchToFallbackAuth();
     }
   }
 
   private switchToFallbackAuth() {
-    console.log('🔄 Supabase indisponível, aguardando login manual');
+    secureLogger.info('Supabase indisponível, aguardando login manual', {
+      component: 'supabaseAuthService'
+    });
     
     // Não criar usuário automático - apenas marcar que está pronto para login
     this.updateState({ user: null, session: null, loading: false });
@@ -129,14 +155,23 @@ class SupabaseAuthService {
       try {
         const parsed = JSON.parse(storedMockSession);
         if (parsed.expiresAt > Date.now()) {
-          
+          secureLogger.info('Sessão mock recuperada do localStorage', {
+            component: 'supabaseAuthService',
+            action: 'getMockUser',
+            userId: parsed.user?.id
+          });
           return parsed.user;
         } else {
-          
+          secureLogger.info('Sessão mock expirada, removendo', {
+            component: 'supabaseAuthService'
+          });
           localStorage.removeItem('mock_session');
         }
       } catch (e) {
-        console.warn('⚠️ Erro ao recuperar sessão mock, removendo:', e);
+        secureLogger.warn('Erro ao recuperar sessão mock, removendo', {
+          component: 'supabaseAuthService',
+          error: String(e)
+        });
         localStorage.removeItem('mock_session');
       }
     }
@@ -158,7 +193,12 @@ class SupabaseAuthService {
       expiresAt: Date.now() + (8 * 60 * 60 * 1000)
     };
     localStorage.setItem('mock_session', JSON.stringify(sessionData));
-    console.log('💾 Sessão mock persistida no localStorage (válida por 8h)');
+    secureLogger.info('Sessão mock criada e persistida', {
+      component: 'supabaseAuthService',
+      action: 'getMockUser',
+      userId: mockUser.id,
+      validFor: '8 hours'
+    });
 
     return mockUser;
   }
@@ -175,8 +215,11 @@ class SupabaseAuthService {
   }
 
   private mockLogin(credentials: LoginCredentials): User {
-    
-    
+    secureLogger.info('Login mock iniciado', {
+      component: 'supabaseAuthService',
+      action: 'mockLogin'
+    });
+
     const mockUsers: Record<string, User> = {
       'admin@dudufisio.com': {
         id: 'mock-admin-1',
@@ -236,7 +279,12 @@ class SupabaseAuthService {
       expiresAt: Date.now() + (8 * 60 * 60 * 1000)
     };
     localStorage.setItem('mock_session', JSON.stringify(sessionData));
-    
+    secureLogger.info('Login mock bem-sucedido', {
+      component: 'supabaseAuthService',
+      action: 'mockLogin',
+      userId: user.id,
+      role: user.role
+    });
 
     // Update state with mock user and session
     this.updateState({ user, session: mockSession, loading: false });
@@ -257,19 +305,27 @@ class SupabaseAuthService {
   }
 
   async login(credentials: LoginCredentials): Promise<User> {
-    console.log(`🔐 [AUTH] Tentando login para: ${credentials.email}`);
-    
+    secureLogger.info('Tentativa de login', {
+      component: 'supabaseAuthService',
+      action: 'login'
+    });
+
     try {
       // Check if we should use mock authentication for development
       if (this.shouldUseMockAuth(credentials)) {
-        console.log('🎭 [AUTH] Usando mock authentication para credenciais demo');
+        secureLogger.info('Usando autenticação mock para credenciais demo', {
+          component: 'supabaseAuthService',
+          action: 'login'
+        });
         const user = this.mockLogin(credentials);
-        console.log('✅ [AUTH] Login mock bem-sucedido');
         return user;
       }
 
       // Try Supabase first with retry
-      console.log('🔄 [AUTH] Tentando login via Supabase...');
+      secureLogger.info('Tentando login via Supabase', {
+        component: 'supabaseAuthService',
+        action: 'login'
+      });
       const { data, error } = await retryApiCall(
         () => supabase.auth.signInWithPassword({
           email: credentials.email,
@@ -283,23 +339,36 @@ class SupabaseAuthService {
       if (!data.user) throw new Error('Login falhou');
 
       const user = await this.mapSupabaseUserToUser(data.user);
-      console.log('✅ [AUTH] Login via Supabase bem-sucedido');
+      secureLogger.info('Login via Supabase bem-sucedido', {
+        component: 'supabaseAuthService',
+        action: 'login',
+        userId: user.id
+      });
       return user;
     } catch (error: any) {
-      console.warn('⚠️ [AUTH] Supabase login failed, trying fallback auth:', error);
-      
+      secureLogger.warn('Login Supabase falhou, tentando fallback', {
+        component: 'supabaseAuthService',
+        action: 'login',
+        error: error.message
+      });
+
       // If Supabase fails, try fallback auth
       try {
         return await fallbackAuthService.login(credentials.email, credentials.password);
       } catch (fallbackError) {
         // If fallback also fails and we have demo credentials, try mock auth
         if (this.shouldUseMockAuth(credentials)) {
-          console.log('🎭 [AUTH] Usando mock authentication como último recurso');
+          secureLogger.info('Usando mock auth como último recurso', {
+            component: 'supabaseAuthService',
+            action: 'login'
+          });
           const user = this.mockLogin(credentials);
-          console.log('✅ [AUTH] Login mock bem-sucedido (fallback)');
           return user;
         }
-        console.error('❌ [AUTH] Todos os métodos de login falharam');
+        secureLogger.error('Todos os métodos de login falharam', error, {
+          component: 'supabaseAuthService',
+          action: 'login'
+        });
         throw new Error(handleSupabaseError(error));
       }
     }
@@ -336,7 +405,10 @@ class SupabaseAuthService {
         } as any);
 
       if (profileError) {
-        console.error('Profile creation error:', profileError);
+        secureLogger.error('Erro ao criar perfil do usuário', profileError, {
+          component: 'supabaseAuthService',
+          action: 'register'
+        });
         // Don't throw here as the user was created successfully
       }
 
@@ -351,8 +423,11 @@ class SupabaseAuthService {
     try {
       // Limpar sessão mock do localStorage
       localStorage.removeItem('mock_session');
-      
-      
+      secureLogger.info('Logout executado', {
+        component: 'supabaseAuthService',
+        action: 'logout'
+      });
+
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
     } catch (error: any) {
@@ -528,8 +603,12 @@ class SupabaseAuthService {
         .single();
 
       if (!existingProfile) {
-        
-        
+        secureLogger.info('Criando perfil para usuário OAuth', {
+          component: 'supabaseAuthService',
+          action: 'ensureUserProfile',
+          userId: supabaseUser.id
+        });
+
         // Create profile for OAuth user
         const { error: profileError } = await supabase
           .from('user_profiles')
@@ -551,14 +630,25 @@ class SupabaseAuthService {
           } as any);
 
         if (profileError) {
-          console.error('Error creating OAuth user profile:', profileError);
+          secureLogger.error('Erro ao criar perfil OAuth', profileError, {
+            component: 'supabaseAuthService',
+            action: 'ensureUserProfile',
+            userId: supabaseUser.id
+          });
           // Don't throw here as the user was authenticated successfully
         } else {
-          
+          secureLogger.info('Perfil OAuth criado com sucesso', {
+            component: 'supabaseAuthService',
+            action: 'ensureUserProfile',
+            userId: supabaseUser.id
+          });
         }
       }
     } catch (error) {
-      console.error('Error ensuring user profile:', error);
+      secureLogger.error('Erro ao garantir perfil do usuário', error, {
+        component: 'supabaseAuthService',
+        action: 'ensureUserProfile'
+      });
       // Don't throw here as the user was authenticated successfully
     }
   }
@@ -585,7 +675,11 @@ class SupabaseAuthService {
         mfaEnabled: supabaseUser.factors && supabaseUser.factors.length > 0,
       };
     } catch (error) {
-      console.error('Error mapping user:', error);
+      secureLogger.error('Erro ao mapear usuário', error, {
+        component: 'supabaseAuthService',
+        action: 'mapSupabaseUserToUser',
+        userId: supabaseUser.id
+      });
       // Fallback to basic user data
       return {
         id: supabaseUser.id,

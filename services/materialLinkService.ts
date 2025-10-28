@@ -1,6 +1,7 @@
 // services/materialLinkService.ts
 import { MaterialLink, Material } from '../types';
 import { supabase } from '../lib/supabaseClient';
+import { secureLogger } from '../lib/secureLogger';
 
 export interface LinkCreateData {
   fromMaterialId: string;
@@ -27,10 +28,18 @@ class MaterialLinkService {
       const { data, error } = await supabase.from('clinical_material_links').select('count').limit(1);
       if (!error) {
         this.useSupabase = true;
-        console.log('Material Link Service: Using Supabase');
+        secureLogger.info('Material Link Service initialized', {
+          component: 'materialLinkService',
+          action: 'initialize',
+          dataSource: 'supabase'
+        });
       }
     } catch (error) {
-      console.log('Material Link Service: Using Mock data');
+      secureLogger.info('Material Link Service fallback to mock', {
+        component: 'materialLinkService',
+        action: 'initialize',
+        dataSource: 'mock'
+      });
     }
   }
 
@@ -56,7 +65,10 @@ class MaterialLinkService {
 
         return link;
       } catch (error) {
-        console.error('Error creating link in Supabase:', error);
+        secureLogger.error('Failed to create material link', error, {
+          component: 'materialLinkService',
+          action: 'createLink'
+        });
         throw error;
       }
     }
@@ -95,7 +107,10 @@ class MaterialLinkService {
             }]);
         }
       } catch (error) {
-        console.error('Error creating bidirectional link:', error);
+        secureLogger.error('Failed to create bidirectional link', error, {
+          component: 'materialLinkService',
+          action: 'createBidirectionalLink'
+        });
       }
     }
   }
@@ -113,7 +128,10 @@ class MaterialLinkService {
         if (error) throw error;
         return data;
       } catch (error) {
-        console.error('Error fetching material links from Supabase:', error);
+        secureLogger.error('Failed to fetch material links', error, {
+          component: 'materialLinkService',
+          action: 'getMaterialLinks'
+        });
         return this.getMockMaterialLinks(materialId);
       }
     }
@@ -151,7 +169,10 @@ class MaterialLinkService {
 
         return [];
       } catch (error) {
-        console.error('Error fetching related materials from Supabase:', error);
+        secureLogger.error('Failed to fetch related materials', error, {
+          component: 'materialLinkService',
+          action: 'getRelatedMaterials'
+        });
         return this.getMockRelatedMaterials(materialId);
       }
     }
@@ -202,7 +223,10 @@ class MaterialLinkService {
 
         return materialsWithLinks.sort((a, b) => b.linkCount - a.linkCount);
       } catch (error) {
-        console.error('Error searching materials for link from Supabase:', error);
+        secureLogger.error('Failed to search materials for link', error, {
+          component: 'materialLinkService',
+          action: 'searchMaterialsForLink'
+        });
         return this.getMockSearchResults(query);
       }
     }
@@ -220,7 +244,10 @@ class MaterialLinkService {
 
         if (error) throw error;
       } catch (error) {
-        console.error('Error deleting link from Supabase:', error);
+        secureLogger.error('Failed to delete link', error, {
+          component: 'materialLinkService',
+          action: 'deleteLink'
+        });
         throw error;
       }
     }
@@ -259,7 +286,10 @@ class MaterialLinkService {
           createdLinks.push(link);
         }
       } catch (error) {
-        console.error(`Error creating link for "${linkText}":`, error);
+        secureLogger.error('Failed to create link from wiki text', error, {
+          component: 'materialLinkService',
+          action: 'extractLinksFromContent'
+        });
       }
     }
 

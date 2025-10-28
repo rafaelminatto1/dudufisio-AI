@@ -5,6 +5,8 @@
  * @see https://developers.facebook.com/docs/whatsapp/cloud-api
  */
 
+import { secureLogger } from '../../lib/secureLogger';
+
 interface WhatsAppConfig {
   apiUrl: string;
   phoneNumberId: string;
@@ -55,7 +57,10 @@ class WhatsAppBusinessService {
    */
   async sendTextMessage(to: string, text: string): Promise<any> {
     if (!this.isConfigured()) {
-      console.warn('⚠️ WhatsApp not configured. Skipping message send.');
+      secureLogger.warn('WhatsApp not configured. Skipping message send.', {
+        component: 'WhatsAppBusinessService',
+        action: 'sendTextMessage'
+      });
       return null;
     }
 
@@ -83,7 +88,10 @@ class WhatsAppBusinessService {
     components?: any[]
   ): Promise<any> {
     if (!this.isConfigured()) {
-      console.warn('⚠️ WhatsApp not configured. Skipping template send.');
+      secureLogger.warn('WhatsApp not configured. Skipping template send.', {
+        component: 'WhatsAppBusinessService',
+        action: 'sendTemplate'
+      });
       return null;
     }
 
@@ -194,7 +202,7 @@ Como podemos ajudá-lo(a) hoje? 😊
     const text = `
 ❌ *Consulta Cancelada*
 
-Olá ${data.patientName},
+Olá ${patientName},
 
 Informamos que sua consulta foi cancelada:
 
@@ -250,7 +258,12 @@ Desculpe o transtorno.
    */
   private async makeRequest(url: string, payload: any): Promise<any> {
     try {
-      console.log('📤 Sending WhatsApp request:', { url, payload: { ...payload, to: '***' } });
+      secureLogger.info('Sending WhatsApp request', {
+        component: 'WhatsAppBusinessService',
+        action: 'makeRequest',
+        url,
+        type: payload.type
+      });
 
       const response = await fetch(url, {
         method: 'POST',
@@ -264,15 +277,26 @@ Desculpe o transtorno.
       const data = await response.json();
 
       if (!response.ok) {
-        console.error('❌ WhatsApp API error:', data);
+        secureLogger.error('WhatsApp API error', data, {
+          component: 'WhatsAppBusinessService',
+          action: 'makeRequest',
+          statusCode: response.status
+        });
         throw new Error(data.error?.message || 'WhatsApp API request failed');
       }
 
-      console.log('✅ WhatsApp message sent:', data);
+      secureLogger.info('WhatsApp message sent successfully', {
+        component: 'WhatsAppBusinessService',
+        action: 'makeRequest',
+        messageId: data.messages?.[0]?.id
+      });
       return data;
 
     } catch (error) {
-      console.error('❌ WhatsApp service error:', error);
+      secureLogger.error('WhatsApp service error', error, {
+        component: 'WhatsAppBusinessService',
+        action: 'makeRequest'
+      });
       throw error;
     }
   }

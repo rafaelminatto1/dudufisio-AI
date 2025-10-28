@@ -4,6 +4,7 @@
  */
 
 import { Patient, SoapNote } from '../../types';
+import { secureLogger } from '../../lib/secureLogger';
 
 export interface PatientEvolutionReport {
   patientId: string;
@@ -224,7 +225,10 @@ class ClinicalReportService {
 
       return report;
     } catch (error) {
-      console.error('Erro ao gerar relatório de evolução:', error);
+      secureLogger.error('Failed to generate patient evolution report', error, {
+        component: 'clinicalReportService',
+        action: 'generatePatientEvolutionReport'
+      });
       throw new Error('Falha ao gerar relatório de evolução');
     }
   }
@@ -290,7 +294,10 @@ class ClinicalReportService {
 
       return report;
     } catch (error) {
-      console.error('Erro ao gerar relatório de efetividade:', error);
+      secureLogger.error('Failed to generate effectiveness report', error, {
+        component: 'clinicalReportService',
+        action: 'generateEffectivenessReport'
+      });
       throw new Error('Falha ao gerar relatório de efetividade');
     }
   }
@@ -411,7 +418,10 @@ class ClinicalReportService {
 
       return report;
     } catch (error) {
-      console.error('Erro ao gerar relatório de adesão:', error);
+      secureLogger.error('Failed to generate adherence report', error, {
+        component: 'clinicalReportService',
+        action: 'generateAdherenceReport'
+      });
       throw new Error('Falha ao gerar relatório de adesão');
     }
   }
@@ -422,13 +432,21 @@ class ClinicalReportService {
   async exportToPDF(report: any, reportType: string): Promise<Blob> {
     try {
       // Em produção, usar biblioteca como jsPDF ou pdfmake
-      console.log(`Exportando relatório ${reportType} para PDF`);
-      
+      secureLogger.info('Exporting report to PDF', {
+        component: 'clinicalReportService',
+        action: 'exportToPDF',
+        reportType
+      });
+
       // Simulação
       const blob = new Blob(['PDF content'], { type: 'application/pdf' });
       return blob;
     } catch (error) {
-      console.error('Erro ao exportar PDF:', error);
+      secureLogger.error('Failed to export report to PDF', error, {
+        component: 'clinicalReportService',
+        action: 'exportToPDF',
+        reportType
+      });
       throw new Error('Falha ao exportar relatório');
     }
   }
@@ -439,14 +457,22 @@ class ClinicalReportService {
   async exportToExcel(report: any, reportType: string): Promise<Blob> {
     try {
       // Em produção, usar biblioteca como xlsx
-      console.log(`Exportando relatório ${reportType} para Excel`);
-      
-      const blob = new Blob(['Excel content'], { 
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      secureLogger.info('Exporting report to Excel', {
+        component: 'clinicalReportService',
+        action: 'exportToExcel',
+        reportType
+      });
+
+      const blob = new Blob(['Excel content'], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
       return blob;
     } catch (error) {
-      console.error('Erro ao exportar Excel:', error);
+      secureLogger.error('Failed to export report to Excel', error, {
+        component: 'clinicalReportService',
+        action: 'exportToExcel',
+        reportType
+      });
       throw new Error('Falha ao exportar relatório');
     }
   }
@@ -485,7 +511,10 @@ class ClinicalReportService {
       
       return insights;
     } catch (error) {
-      console.error('Erro ao gerar insights:', error);
+      secureLogger.error('Failed to generate AI insights', error, {
+        component: 'clinicalReportService',
+        action: 'generateAIInsights'
+      });
       return [];
     }
   }
@@ -527,7 +556,10 @@ class ClinicalReportService {
         difference
       };
     } catch (error) {
-      console.error('Erro ao comparar com benchmarks:', error);
+      secureLogger.error('Failed to compare with benchmarks', error, {
+        component: 'clinicalReportService',
+        action: 'compareWithBenchmarks'
+      });
       throw new Error('Falha ao comparar com benchmarks');
     }
   }

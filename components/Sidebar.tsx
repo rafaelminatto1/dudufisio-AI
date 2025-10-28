@@ -17,6 +17,7 @@ import { useNotifications } from '../hooks/useNotifications';
 import { Role } from '../types';
 import SidebarSearch from './SidebarSearch';
 import NotificationBell from './NotificationBell';
+import { secureLogger } from '../lib/secureLogger';
 
 const NavLinkComponent = withMemoization(({ to, icon: Icon, label, isCollapsed, badgeCount }: { to: string, icon: React.ElementType, label: string, isCollapsed: boolean, badgeCount?: number }) => (
     <NavLink
@@ -274,13 +275,13 @@ const Sidebar: React.FC = () => {
     const appContext = useApp();
     user = appContext.user;
     logout = appContext.logout;
-    console.log('🔍 [SIDEBAR] useApp() executado com sucesso:', { 
+    secureLogger.debug('useApp executado com sucesso', { 
+      component: 'Sidebar',
       hasUser: !!user, 
-      userId: user?.id, 
-      userRole: user?.role 
+      userId: user?.id
     });
   } catch (error) {
-    console.error('❌ [SIDEBAR] Erro ao usar useApp():', error);
+    secureLogger.error('Erro ao usar useApp', error, { component: 'Sidebar' });
     // Fallback para evitar crash
     user = null;
     logout = () => Promise.resolve();
@@ -291,9 +292,12 @@ const Sidebar: React.FC = () => {
   try {
     const notifications = useNotifications(user?.id || '');
     unreadCount = notifications.unreadCount || 0;
-    console.log('🔍 [SIDEBAR] useNotifications() executado:', { unreadCount });
+    secureLogger.debug('useNotifications executado', { 
+      component: 'Sidebar',
+      unreadCount 
+    });
   } catch (error) {
-    console.error('❌ [SIDEBAR] Erro ao usar useNotifications():', error);
+    secureLogger.error('Erro ao usar useNotifications', error, { component: 'Sidebar' });
     unreadCount = 0;
   }
 

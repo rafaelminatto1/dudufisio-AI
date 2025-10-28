@@ -1,6 +1,7 @@
 // services/mediaUploadService.ts
 import { supabase } from '../lib/supabaseClient';
 import { MediaAttachment } from '../types';
+import { secureLogger } from '../lib/secureLogger';
 
 export interface UploadOptions {
   materialId: string;
@@ -40,10 +41,16 @@ class MediaUploadService {
       const { data, error } = await supabase.from('clinical_material_media').select('count').limit(1);
       if (!error) {
         this.useSupabase = true;
-        console.log('Media Upload Service: Using Supabase');
+        secureLogger.info('Media Upload Service usando Supabase', {
+          component: 'mediaUploadService',
+          action: 'initializeSupabase'
+        });
       }
     } catch (error) {
-      console.log('Media Upload Service: Using Mock data');
+      secureLogger.info('Media Upload Service usando dados Mock', {
+        component: 'mediaUploadService',
+        action: 'initializeSupabase'
+      });
     }
   }
 
@@ -112,7 +119,13 @@ class MediaUploadService {
           position: 0,
         };
       } catch (error) {
-        console.error('Error uploading file to Supabase:', error);
+        secureLogger.error('Erro ao fazer upload de arquivo para Supabase', error, {
+          component: 'mediaUploadService',
+          action: 'uploadFile',
+          materialId,
+          fileType: type,
+          fileSize: file.size
+        });
         throw error;
       }
     }
@@ -154,7 +167,12 @@ class MediaUploadService {
           position: 0,
         };
       } catch (error) {
-        console.error('Error saving URL to Supabase:', error);
+        secureLogger.error('Erro ao salvar URL no Supabase', error, {
+          component: 'mediaUploadService',
+          action: 'uploadFromUrl',
+          materialId: options.materialId,
+          type: options.type
+        });
         throw error;
       }
     }
@@ -197,7 +215,11 @@ class MediaUploadService {
           materialId: item.material_id,
         }));
       } catch (error) {
-        console.error('Error fetching media gallery from Supabase:', error);
+        secureLogger.error('Erro ao buscar galeria de mídia do Supabase', error, {
+          component: 'mediaUploadService',
+          action: 'getMediaGallery',
+          materialId
+        });
         return this.getMockGallery(materialId);
       }
     }
@@ -225,7 +247,11 @@ class MediaUploadService {
             .remove([filePath]);
 
           if (storageError) {
-            console.error('Error deleting from storage:', storageError);
+            secureLogger.error('Erro ao deletar arquivo do storage', storageError, {
+              component: 'mediaUploadService',
+              action: 'deleteMedia',
+              mediaId
+            });
           }
         }
 
@@ -237,7 +263,11 @@ class MediaUploadService {
 
         if (dbError) throw dbError;
       } catch (error) {
-        console.error('Error deleting media from Supabase:', error);
+        secureLogger.error('Erro ao deletar mídia do Supabase', error, {
+          component: 'mediaUploadService',
+          action: 'deleteMedia',
+          mediaId
+        });
         throw error;
       }
     }
@@ -254,7 +284,11 @@ class MediaUploadService {
 
         if (error) throw error;
       } catch (error) {
-        console.error('Error updating media in Supabase:', error);
+        secureLogger.error('Erro ao atualizar mídia no Supabase', error, {
+          component: 'mediaUploadService',
+          action: 'updateMedia',
+          mediaId
+        });
         throw error;
       }
     }

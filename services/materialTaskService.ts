@@ -1,6 +1,7 @@
 // services/materialTaskService.ts
 import { MaterialTask, MaterialMention } from '../types';
 import { supabase } from '../lib/supabaseClient';
+import { secureLogger } from '../lib/secureLogger';
 
 export interface TaskCreateData {
   materialId: string;
@@ -40,10 +41,18 @@ class MaterialTaskService {
       const { data, error } = await supabase.from('clinical_material_tasks').select('count').limit(1);
       if (!error) {
         this.useSupabase = true;
-        console.log('Material Task Service: Using Supabase');
+        secureLogger.info('Material Task Service initialized', {
+          component: 'materialTaskService',
+          action: 'initialize',
+          dataSource: 'supabase'
+        });
       }
     } catch (error) {
-      console.log('Material Task Service: Using Mock data');
+      secureLogger.info('Material Task Service fallback to mock', {
+        component: 'materialTaskService',
+        action: 'initialize',
+        dataSource: 'mock'
+      });
     }
   }
 
@@ -73,7 +82,10 @@ class MaterialTaskService {
 
         return task;
       } catch (error) {
-        console.error('Error creating task from mention in Supabase:', error);
+        secureLogger.error('Failed to create task from mention', error, {
+          component: 'materialTaskService',
+          action: 'createTaskFromMention'
+        });
         throw error;
       }
     }
@@ -117,7 +129,10 @@ class MaterialTaskService {
 
         return task;
       } catch (error) {
-        console.error('Error creating task in Supabase:', error);
+        secureLogger.error('Failed to create task', error, {
+          component: 'materialTaskService',
+          action: 'createTask'
+        });
         throw error;
       }
     }
@@ -168,7 +183,10 @@ class MaterialTaskService {
 
         return data;
       } catch (error) {
-        console.error('Error fetching tasks from Supabase:', error);
+        secureLogger.error('Failed to fetch tasks', error, {
+          component: 'materialTaskService',
+          action: 'getTasksByUser'
+        });
         return this.getMockTasks(userId);
       }
     }
@@ -200,7 +218,10 @@ class MaterialTaskService {
         if (error) throw error;
         return task;
       } catch (error) {
-        console.error('Error updating task in Supabase:', error);
+        secureLogger.error('Failed to update task', error, {
+          component: 'materialTaskService',
+          action: 'updateTask'
+        });
         throw error;
       }
     }
@@ -233,7 +254,10 @@ class MaterialTaskService {
 
         if (error) throw error;
       } catch (error) {
-        console.error('Error deleting task from Supabase:', error);
+        secureLogger.error('Failed to delete task', error, {
+          component: 'materialTaskService',
+          action: 'deleteTask'
+        });
         throw error;
       }
     }
@@ -270,7 +294,10 @@ class MaterialTaskService {
 
         return stats;
       } catch (error) {
-        console.error('Error fetching task stats from Supabase:', error);
+        secureLogger.error('Failed to fetch task statistics', error, {
+          component: 'materialTaskService',
+          action: 'getTaskStats'
+        });
         return { total: 0, pending: 0, inProgress: 0, completed: 0, overdue: 0 };
       }
     }
@@ -305,7 +332,10 @@ class MaterialTaskService {
 
         if (error) throw error;
       } catch (error) {
-        console.error('Error creating notification:', error);
+        secureLogger.error('Failed to create notification', error, {
+          component: 'materialTaskService',
+          action: 'createNotification'
+        });
       }
     }
   }

@@ -1,6 +1,7 @@
 // AI Orchestrator Service - Gemini API Integration
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { AIProvider, AIResponse, AIQueryLog } from '../../types';
+import { secureLogger } from '../../lib/secureLogger';
 
 // Rate limiting configuration
 const RATE_LIMIT = {
@@ -39,7 +40,10 @@ export class AiOrchestratorService {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
     if (!apiKey || apiKey === 'your_gemini_api_key') {
-      console.warn('⚠️ Gemini API key not configured. Using fallback mock responses.');
+      secureLogger.warn('Gemini API key not configured. Using fallback mock responses.', {
+        component: 'AiOrchestratorService',
+        action: 'initializeGemini'
+      });
       return;
     }
 
@@ -75,9 +79,15 @@ export class AiOrchestratorService {
         },
       });
 
-      console.log('✅ Gemini API initialized successfully');
+      secureLogger.info('Gemini API initialized successfully', {
+        component: 'AiOrchestratorService',
+        action: 'initializeGemini'
+      });
     } catch (error) {
-      console.error('❌ Error initializing Gemini API:', error);
+      secureLogger.error('Error initializing Gemini API', error, {
+        component: 'AiOrchestratorService',
+        action: 'initializeGemini'
+      });
       this.genAI = null;
       this.model = null;
     }
@@ -107,7 +117,10 @@ export class AiOrchestratorService {
         source: 'gemini',
       };
     } catch (error) {
-      console.error('Error calling Gemini API:', error);
+      secureLogger.error('Error calling Gemini API', error, {
+        component: 'AiOrchestratorService',
+        action: 'query'
+      });
 
       // Fallback to mock on error
       return this.getMockResponse(prompt, provider);
@@ -156,7 +169,10 @@ Retorne APENAS um objeto JSON válido no seguinte formato (sem markdown, sem tex
         return parsed;
       } catch (parseError) {
         // If JSON parsing fails, try to extract content manually
-        console.warn('Failed to parse JSON, using fallback extraction');
+        secureLogger.warn('Failed to parse JSON, using fallback extraction', {
+          component: 'AiOrchestratorService',
+          action: 'generateSoapNote'
+        });
 
         return {
           assessment: this.extractSection(text, 'assessment') || 'Análise clínica pendente.',
@@ -164,7 +180,10 @@ Retorne APENAS um objeto JSON válido no seguinte formato (sem markdown, sem tex
         };
       }
     } catch (error) {
-      console.error('Error generating SOAP note:', error);
+      secureLogger.error('Error generating SOAP note', error, {
+        component: 'AiOrchestratorService',
+        action: 'generateSoapNote'
+      });
       throw error;
     }
   }
@@ -211,7 +230,10 @@ Certifique-se de que:
       try {
         return JSON.parse(cleanedText);
       } catch (parseError) {
-        console.warn('Failed to parse structured response, using fallback');
+        secureLogger.warn('Failed to parse structured response, using fallback', {
+          component: 'AiOrchestratorService',
+          action: 'getResponse'
+        });
 
         // Return fallback structure
         return {
@@ -224,7 +246,10 @@ Certifique-se de que:
         };
       }
     } catch (error) {
-      console.error('Error getting AI response:', error);
+      secureLogger.error('Error getting AI response', error, {
+        component: 'AiOrchestratorService',
+        action: 'getResponse'
+      });
       throw error;
     }
   }

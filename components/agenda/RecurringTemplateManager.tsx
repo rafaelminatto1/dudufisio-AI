@@ -323,7 +323,7 @@ const RecurringTemplateManager: React.FC<RecurringTemplateManagerProps> = ({
                               <div className="flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />
                                 <span>
-                                  {template.recurrenceRule.days.map(d => DAYS[d]?.label).join(', ')}
+                                  {(template.recurrenceRule.days || []).map(d => DAYS[d]?.label).join(', ')}
                                 </span>
                               </div>
                             </div>
@@ -395,7 +395,7 @@ const RecurringTemplateManager: React.FC<RecurringTemplateManagerProps> = ({
                     <span className="font-medium">Frequência:</span> {selectedTemplate.recurrenceRule.frequency}
                   </div>
                   <div>
-                    <span className="font-medium">Dias:</span> {selectedTemplate.recurrenceRule.days.map(d => DAYS[d]?.label).join(', ')}
+                    <span className="font-medium">Dias:</span> {(selectedTemplate.recurrenceRule.days || []).map(d => DAYS[d]?.label).join(', ')}
                   </div>
                   <div>
                     <span className="font-medium">Terapeuta:</span> {therapists.find(t => t.id === selectedTemplate.therapistId)?.name}

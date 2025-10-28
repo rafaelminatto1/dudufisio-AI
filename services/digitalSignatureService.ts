@@ -3,6 +3,8 @@
  * Integração com ICP-Brasil, BirdID e DocuSign
  */
 
+import { secureLogger } from '../lib/secureLogger';
+
 export interface DigitalCertificate {
   id: string;
   type: 'A1' | 'A3';
@@ -81,7 +83,11 @@ class DigitalSignatureService {
    */
   configureBirdID(config: BirdIDConfig) {
     this.birdIdConfig = config;
-    console.log('[Signature] BirdID configurado:', config.environment);
+    secureLogger.info('BirdID configurado', {
+      component: 'DigitalSignatureService',
+      action: 'configureBirdID',
+      environment: config.environment
+    });
   }
 
   /**
@@ -89,7 +95,10 @@ class DigitalSignatureService {
    */
   configureDocuSign(config: DocuSignConfig) {
     this.docuSignConfig = config;
-    console.log('[Signature] DocuSign configurado');
+    secureLogger.info('DocuSign configurado', {
+      component: 'DigitalSignatureService',
+      action: 'configureDocuSign'
+    });
   }
 
   /**
@@ -104,7 +113,11 @@ class DigitalSignatureService {
         throw new Error('BirdID não configurado');
       }
 
-      console.log('[Signature] Criando solicitação BirdID:', request.documentId);
+      secureLogger.info('Criando solicitação BirdID', {
+        component: 'DigitalSignatureService',
+        action: 'createSignatureRequestBirdID',
+        documentId: request.documentId
+      });
 
       // Em produção, fazer requisição à API do BirdID
       const response = {
@@ -114,7 +127,10 @@ class DigitalSignatureService {
 
       return response;
     } catch (error) {
-      console.error('[Signature] Erro ao criar solicitação BirdID:', error);
+      secureLogger.error('Erro ao criar solicitação BirdID', error, {
+        component: 'DigitalSignatureService',
+        action: 'createSignatureRequestBirdID'
+      });
       throw new Error('Falha ao criar solicitação de assinatura');
     }
   }
@@ -131,7 +147,11 @@ class DigitalSignatureService {
         throw new Error('DocuSign não configurado');
       }
 
-      console.log('[Signature] Criando envelope DocuSign:', request.documentId);
+      secureLogger.info('Criando envelope DocuSign', {
+        component: 'DigitalSignatureService',
+        action: 'createEnvelopeDocuSign',
+        documentId: request.documentId
+      });
 
       // Em produção, usar DocuSign SDK
       const response = {
@@ -141,7 +161,10 @@ class DigitalSignatureService {
 
       return response;
     } catch (error) {
-      console.error('[Signature] Erro ao criar envelope DocuSign:', error);
+      secureLogger.error('Erro ao criar envelope DocuSign', error, {
+        component: 'DigitalSignatureService',
+        action: 'createEnvelopeDocuSign'
+      });
       throw new Error('Falha ao criar envelope de assinatura');
     }
   }
@@ -155,7 +178,12 @@ class DigitalSignatureService {
     privateKey: string
   ): Promise<SignedDocument> {
     try {
-      console.log('[Signature] Assinando com ICP-Brasil:', certificate.type);
+      secureLogger.info('Assinando com ICP-Brasil', {
+        component: 'DigitalSignatureService',
+        action: 'signWithICPBrasil',
+        certificateType: certificate.type,
+        certificateId: certificate.id
+      });
 
       // Validar certificado
       if (!this.validateCertificate(certificate)) {
@@ -192,7 +220,10 @@ class DigitalSignatureService {
 
       return signedDoc;
     } catch (error) {
-      console.error('[Signature] Erro ao assinar documento:', error);
+      secureLogger.error('Erro ao assinar documento', error, {
+        component: 'DigitalSignatureService',
+        action: 'signWithICPBrasil'
+      });
       throw new Error('Falha ao assinar documento');
     }
   }
@@ -209,7 +240,11 @@ class DigitalSignatureService {
     }>;
   }> {
     try {
-      console.log('[Signature] Verificando assinatura:', signedDocument.id);
+      secureLogger.info('Verificando assinatura', {
+        component: 'DigitalSignatureService',
+        action: 'verifySignature',
+        documentId: signedDocument.id
+      });
 
       const details = await Promise.all(
         signedDocument.signatures.map(async (signature) => {
@@ -235,7 +270,10 @@ class DigitalSignatureService {
         details
       };
     } catch (error) {
-      console.error('[Signature] Erro ao verificar assinatura:', error);
+      secureLogger.error('Erro ao verificar assinatura', error, {
+        component: 'DigitalSignatureService',
+        action: 'verifySignature'
+      });
       throw new Error('Falha ao verificar assinatura');
     }
   }
@@ -245,7 +283,10 @@ class DigitalSignatureService {
    */
   async listInstalledCertificates(): Promise<DigitalCertificate[]> {
     try {
-      console.log('[Signature] Listando certificados instalados');
+      secureLogger.info('Listando certificados instalados', {
+        component: 'DigitalSignatureService',
+        action: 'listInstalledCertificates'
+      });
 
       // Em produção, acessar certificados via Web Crypto API ou extensão
       const mockCertificates: DigitalCertificate[] = [
@@ -268,7 +309,10 @@ class DigitalSignatureService {
 
       return mockCertificates.filter(cert => cert.isValid);
     } catch (error) {
-      console.error('[Signature] Erro ao listar certificados:', error);
+      secureLogger.error('Erro ao listar certificados', error, {
+        component: 'DigitalSignatureService',
+        action: 'listInstalledCertificates'
+      });
       return [];
     }
   }
@@ -296,7 +340,10 @@ class DigitalSignatureService {
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     } catch (error) {
-      console.error('[Signature] Erro ao gerar hash:', error);
+      secureLogger.error('Erro ao gerar hash', error, {
+        component: 'DigitalSignatureService',
+        action: 'generateSignatureHash'
+      });
       return 'mock_hash_' + Date.now();
     }
   }
@@ -309,7 +356,10 @@ class DigitalSignatureService {
       // Em produção, recalcular hash e comparar
       return true; // Mock
     } catch (error) {
-      console.error('[Signature] Erro ao verificar hash:', error);
+      secureLogger.error('Erro ao verificar hash', error, {
+        component: 'DigitalSignatureService',
+        action: 'verifySignatureHash'
+      });
       return false;
     }
   }
@@ -322,14 +372,27 @@ class DigitalSignatureService {
     recipients: Array<{ email: string; role: string }>
   ): Promise<void> {
     try {
-      console.log('[Signature] Enviando documento para assinatura');
+      secureLogger.info('Enviando documento para assinatura', {
+        component: 'DigitalSignatureService',
+        action: 'sendForSignature',
+        documentId: signedDocument.id,
+        recipientCount: recipients.length
+      });
 
       // Em produção, integrar com serviço de email
-      recipients.forEach(recipient => {
-        console.log(`[Signature] Email enviado para: ${recipient.email}`);
+      recipients.forEach((recipient, index) => {
+        secureLogger.info('Email enviado para destinatário', {
+          component: 'DigitalSignatureService',
+          action: 'sendForSignature',
+          recipientIndex: index,
+          role: recipient.role
+        });
       });
     } catch (error) {
-      console.error('[Signature] Erro ao enviar documento:', error);
+      secureLogger.error('Erro ao enviar documento', error, {
+        component: 'DigitalSignatureService',
+        action: 'sendForSignature'
+      });
       throw new Error('Falha ao enviar documento');
     }
   }
@@ -342,7 +405,11 @@ class DigitalSignatureService {
       // Em produção, consultar API do provedor
       return 'fully_signed';
     } catch (error) {
-      console.error('[Signature] Erro ao buscar status:', error);
+      secureLogger.error('Erro ao buscar status', error, {
+        component: 'DigitalSignatureService',
+        action: 'getSignatureStatus',
+        requestId
+      });
       return 'pending';
     }
   }
@@ -352,11 +419,19 @@ class DigitalSignatureService {
    */
   async cancelSignatureRequest(requestId: string): Promise<void> {
     try {
-      console.log('[Signature] Cancelando solicitação:', requestId);
-      
+      secureLogger.info('Cancelando solicitação', {
+        component: 'DigitalSignatureService',
+        action: 'cancelSignatureRequest',
+        requestId
+      });
+
       // Em produção, chamar API do provedor
     } catch (error) {
-      console.error('[Signature] Erro ao cancelar:', error);
+      secureLogger.error('Erro ao cancelar', error, {
+        component: 'DigitalSignatureService',
+        action: 'cancelSignatureRequest',
+        requestId
+      });
       throw new Error('Falha ao cancelar solicitação');
     }
   }
@@ -366,7 +441,11 @@ class DigitalSignatureService {
    */
   async downloadSignedDocument(documentId: string): Promise<Blob> {
     try {
-      console.log('[Signature] Baixando documento:', documentId);
+      secureLogger.info('Baixando documento', {
+        component: 'DigitalSignatureService',
+        action: 'downloadSignedDocument',
+        documentId
+      });
 
       // Em produção, buscar do servidor
       const blob = new Blob(['Documento assinado digitalmente'], {
@@ -375,7 +454,11 @@ class DigitalSignatureService {
 
       return blob;
     } catch (error) {
-      console.error('[Signature] Erro ao baixar documento:', error);
+      secureLogger.error('Erro ao baixar documento', error, {
+        component: 'DigitalSignatureService',
+        action: 'downloadSignedDocument',
+        documentId
+      });
       throw new Error('Falha ao baixar documento');
     }
   }

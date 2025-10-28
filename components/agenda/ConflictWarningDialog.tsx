@@ -96,7 +96,7 @@ const ConflictWarningDialog: React.FC<ConflictWarningDialogProps> = ({
                       </Badge>
                     </div>
                     
-                    {conflict.conflictingAppointments.length > 0 && (
+                    {conflict.conflictingAppointments && conflict.conflictingAppointments.length > 0 && (
                       <div className="mt-2 space-y-1">
                         {conflict.conflictingAppointments.slice(0, 2).map((appointment, idx) => (
                           <div
@@ -117,7 +117,7 @@ const ConflictWarningDialog: React.FC<ConflictWarningDialogProps> = ({
                             </div>
                           </div>
                         ))}
-                        {conflict.conflictingAppointments.length > 2 && (
+                        {conflict.conflictingAppointments && conflict.conflictingAppointments.length > 2 && (
                           <div className="text-xs text-slate-500 text-center py-1">
                             +{conflict.conflictingAppointments.length - 2} mais
                           </div>

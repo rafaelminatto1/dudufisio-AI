@@ -2,6 +2,7 @@ import { supabase } from '../../lib/supabaseClient';
 import { handleSupabaseError } from '../../lib/middleware/errorHandler';
 import { Appointment, AppointmentStatus, AppointmentType } from '../../types';
 import type { Database } from '../../types/database';
+import { secureLogger } from '../../lib/secureLogger';
 
 type AppointmentRow = Database['public']['Tables']['appointments']['Row'];
 type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
@@ -68,11 +69,18 @@ class SupabaseAppointmentService {
   }
 
   private mapAppointmentToInsert(appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>): AppointmentInsert {
-    console.log('🔄 mapAppointmentToInsert - Dados recebidos:', appointment);
+    secureLogger.debug('Mapeando agendamento para insert', {
+      component: 'appointmentServiceSupabase',
+      action: 'mapAppointmentToInsert',
+      appointmentType: appointment.type
+    });
     
     // Map TypeScript enum to database values
     const mapTypeToDb = (type: AppointmentType): string => {
-      console.log('🔄 mapTypeToDb - Tipo recebido:', type);
+      secureLogger.debug('Mapeando tipo de agendamento', {
+        component: 'appointmentServiceSupabase',
+        type
+      });
       switch (type) {
         case AppointmentType.Evaluation: return 'evaluation';
         case AppointmentType.Session: return 'regular'; // ✅ Adicionado!
@@ -81,7 +89,10 @@ class SupabaseAppointmentService {
         case AppointmentType.Urgent: return 'emergency';
         case AppointmentType.Pilates: return 'regular';
         default: 
-          console.warn('⚠️ Tipo de agendamento não mapeado:', type, '- Usando regular');
+          secureLogger.warn('Tipo de agendamento não mapeado, usando regular', {
+            component: 'appointmentServiceSupabase',
+            type
+          });
           return 'regular';
       }
     };
@@ -125,11 +136,14 @@ class SupabaseAppointmentService {
       paid: appointment.paymentStatus === 'paid',
     };
     
-    console.log('📤 mapAppointmentToInsert - Dados para Supabase:', insertData);
-    console.log('   patient_id:', insertData.patient_id);
-    console.log('   therapist_id:', insertData.therapist_id);
-    console.log('   type:', insertData.type);
-    console.log('   status:', insertData.status);
+    secureLogger.debug('Dados mapeados para Supabase', {
+      component: 'appointmentServiceSupabase',
+      action: 'mapAppointmentToInsert',
+      patientId: insertData.patient_id,
+      therapistId: insertData.therapist_id,
+      type: insertData.type,
+      status: insertData.status
+    });
     
     return insertData;
   }
@@ -203,7 +217,11 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      console.log('📊 getAllAppointments - Dados do Supabase:', data);
+      secureLogger.info('Agendamentos recuperados do Supabase', {
+        component: 'appointmentServiceSupabase',
+        action: 'getAllAppointments',
+        count: data?.length || 0
+      });
 
       // Mapear com nomes de paciente e terapeuta
       return (data ?? []).map((row: any) => {
@@ -266,17 +284,16 @@ class SupabaseAppointmentService {
 
       if (error) throw error;
 
-      console.log('📊 getAppointmentsByDateRange - Dados do Supabase:', data);
-      console.log('📊 Primeiro agendamento completo:', data?.[0]);
-      console.log('📊 Patient do primeiro:', data?.[0]?.patient);
-      console.log('📊 Patient full_name:', data?.[0]?.patient?.full_name);
+      secureLogger.info('Agendamentos por período recuperados', {
+        component: 'appointmentServiceSupabase',
+        action: 'getAppointmentsByDateRange',
+        count: data?.length || 0,
+        startDate,
+        endDate
+      });
 
       // Mapear com nomes de paciente e terapeuta
       return (data ?? []).map((row: any) => {
-        console.log('🔄 Mapeando row:', row);
-        console.log('   row.patient:', row.patient);
-        console.log('   row.patient?.full_name:', row.patient?.full_name);
-        
         const mapped = this.mapRowToAppointment(row);
         const result = {
           ...mapped,
@@ -284,10 +301,7 @@ class SupabaseAppointmentService {
           patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
           therapistName: row.therapist?.full_name || undefined,
         };
-        
-        console.log('✅ Resultado mapeado:', result);
-        console.log('   patientName:', result.patientName);
-        
+
         return result;
       });
     } catch (error: unknown) {
@@ -412,7 +426,12 @@ class SupabaseAppointmentService {
 
       const insertData = this.mapAppointmentToInsert(appointmentData);
 
-      console.log('📡 Enviando INSERT para Supabase...');
+      secureLogger.info('Criando novo agendamento', {
+        component: 'appointmentServiceSupabase',
+        action: 'createAppointment',
+        patientId: insertData.patient_id,
+        type: insertData.type
+      });
       const { data, error } = await supabase
         .from('appointments')
         .insert(insertData)
@@ -424,15 +443,19 @@ class SupabaseAppointmentService {
         .single();
 
       if (error) {
-        console.error('❌ ERRO DO SUPABASE:', error);
-        console.error('   Código:', error.code);
-        console.error('   Mensagem:', error.message);
-        console.error('   Detalhes:', error.details);
-        console.error('   Hint:', error.hint);
+        secureLogger.error('Erro ao criar agendamento no Supabase', error, {
+          component: 'appointmentServiceSupabase',
+          action: 'createAppointment',
+          errorCode: error.code
+        });
         throw error;
       }
 
-      console.log('✅ INSERT bem-sucedido! Dados retornados:', data);
+      secureLogger.info('Agendamento criado com sucesso', {
+        component: 'appointmentServiceSupabase',
+        action: 'createAppointment',
+        appointmentId: data.id
+      });
       
       const mapped = this.mapRowToAppointment(data);
       return {
@@ -442,7 +465,10 @@ class SupabaseAppointmentService {
         therapistName: (data as any).therapist?.full_name || undefined,
       };
     } catch (error: unknown) {
-      console.error('❌ Erro capturado no createAppointment:', error);
+      secureLogger.error('Erro ao criar agendamento', error, {
+        component: 'appointmentServiceSupabase',
+        action: 'createAppointment'
+      });
       throw new Error(handleSupabaseError(error));
     }
   }
@@ -510,7 +536,11 @@ class SupabaseAppointmentService {
       // Isso permite múltiplos agendamentos sem terapeuta no mesmo horário
       // (para casos onde admin/estagiário agenda e define terapeuta depois)
       if (!therapistId) {
-        console.log('⏭️ checkConflicts: Sem therapistId, pulando verificação de conflitos');
+        secureLogger.debug('Verificação de conflitos pulada', {
+          component: 'appointmentServiceSupabase',
+          action: 'checkConflicts',
+          reason: 'No therapist ID provided'
+        });
         return [];
       }
 

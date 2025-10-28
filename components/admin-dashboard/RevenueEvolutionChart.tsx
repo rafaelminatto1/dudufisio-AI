@@ -141,10 +141,10 @@ const RevenueEvolutionChart: React.FC<RevenueEvolutionChartProps> = ({ data, isL
             {data.length > 0 ? (
               <>
                 <div className="text-lg font-bold text-green-600">
-                  {data.reduce((max, curr) => curr.revenue > max.revenue ? curr : max, data[0])?.month}
+                  {data.reduce((max, curr) => curr.revenue > max.revenue ? curr : max, data[0]!).month}
                 </div>
                 <div className="text-xs text-green-600">
-                  {formatCurrency(Math.max(...data.map(d => d.revenue)))}
+                  {formatCurrency(Math.max(...data.map(d => d.revenue), 0))}
                 </div>
               </>
             ) : (
@@ -163,8 +163,8 @@ const RevenueEvolutionChart: React.FC<RevenueEvolutionChartProps> = ({ data, isL
           <div className="bg-purple-50 p-3 rounded-lg">
             <div className="text-sm font-medium text-purple-800">Crescimento</div>
             <div className="text-lg font-bold text-purple-600">
-              {data.length >= 2 ? (
-                ((data[data.length - 1].revenue - data[0].revenue) / data[0].revenue * 100).toFixed(1)
+              {data.length >= 2 && data[0]!.revenue > 0 ? (
+                ((data[data.length - 1]!.revenue - data[0]!.revenue) / data[0]!.revenue * 100).toFixed(1)
               ) : '0'}%
             </div>
             <div className="text-xs text-purple-600">Período total</div>

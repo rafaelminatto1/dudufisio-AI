@@ -55,7 +55,7 @@ const SchedulingInsightsBanner: React.FC<SchedulingInsightsBannerProps> = ({
           )}
         </div>
 
-        {hasAlerts && alerts.length > 0 && (
+        {hasAlerts && alerts.length > 0 && alerts[0] && (
           <div className="mt-2 text-xs text-gray-600">
             Último alerta: {alerts[0].message}
           </div>

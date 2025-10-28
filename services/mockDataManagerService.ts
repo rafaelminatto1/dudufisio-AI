@@ -5,6 +5,7 @@
 
 import * as sessionEvolutionService from './sessionEvolutionService';
 import * as conductReplicationService from './conductReplicationService';
+import { secureLogger } from '../lib/secureLogger';
 
 export interface MockDataStatus {
   sessionEvolutions: {
@@ -28,11 +29,15 @@ const MOCK_META_KEY = 'mock_data_metadata';
  */
 export async function populateAllMockData(patientId: string): Promise<void> {
   try {
-    console.log(`📝 Populando dados mock para paciente ${patientId}...`);
+    secureLogger.info('Populando dados mock', {
+      component: 'mockDataManagerService',
+      action: 'populateAllMockData',
+      patientId
+    });
 
     // Popular evoluções de sessão
     sessionEvolutionService.populateMockData(patientId, 10);
-    
+
     // Popular templates de conduta
     conductReplicationService.populateMockData(patientId);
 
@@ -45,9 +50,19 @@ export async function populateAllMockData(patientId: string): Promise<void> {
     };
     localStorage.setItem(MOCK_META_KEY, JSON.stringify(metadata));
 
-    console.log('✅ Dados mock populados com sucesso');
+    secureLogger.info('Dados mock populados com sucesso', {
+      component: 'mockDataManagerService',
+      action: 'populateAllMockData',
+      patientId,
+      sessionCount: 10,
+      templateCount: 2
+    });
   } catch (error) {
-    console.error('Erro ao popular dados mock:', error);
+    secureLogger.error('Erro ao popular dados mock', error, {
+      component: 'mockDataManagerService',
+      action: 'populateAllMockData',
+      patientId
+    });
     throw error;
   }
 }
@@ -57,11 +72,14 @@ export async function populateAllMockData(patientId: string): Promise<void> {
  */
 export async function clearAllMockData(): Promise<void> {
   try {
-    console.log('🗑️ Limpando todos os dados mock...');
+    secureLogger.info('Limpando todos os dados mock', {
+      component: 'mockDataManagerService',
+      action: 'clearAllMockData'
+    });
 
     // Limpar evoluções de sessão
     sessionEvolutionService.clearMockData();
-    
+
     // Limpar templates de conduta
     conductReplicationService.clearMockData();
 
@@ -71,9 +89,15 @@ export async function clearAllMockData(): Promise<void> {
     };
     localStorage.setItem(MOCK_META_KEY, JSON.stringify(metadata));
 
-    console.log('✅ Dados mock limpos com sucesso');
+    secureLogger.info('Dados mock limpos com sucesso', {
+      component: 'mockDataManagerService',
+      action: 'clearAllMockData'
+    });
   } catch (error) {
-    console.error('Erro ao limpar dados mock:', error);
+    secureLogger.error('Erro ao limpar dados mock', error, {
+      component: 'mockDataManagerService',
+      action: 'clearAllMockData'
+    });
     throw error;
   }
 }
@@ -103,7 +127,10 @@ export async function getMockStatus(): Promise<MockDataStatus> {
       lastCleared: meta?.lastCleared,
     };
   } catch (error) {
-    console.error('Erro ao obter status mock:', error);
+    secureLogger.error('Erro ao obter status mock', error, {
+      component: 'mockDataManagerService',
+      action: 'getMockStatus'
+    });
     return {
       sessionEvolutions: { count: 0, patients: [] },
       conductTemplates: { count: 0, patients: [] },
@@ -131,7 +158,10 @@ export async function exportMockData(): Promise<string> {
 
     return JSON.stringify(exportData, null, 2);
   } catch (error) {
-    console.error('Erro ao exportar dados mock:', error);
+    secureLogger.error('Erro ao exportar dados mock', error, {
+      component: 'mockDataManagerService',
+      action: 'exportMockData'
+    });
     throw error;
   }
 }
@@ -148,11 +178,17 @@ export async function importMockData(jsonData: string): Promise<void> {
     }
 
     // TODO: Importar dados reais
-    console.log('Dados importados:', data);
-    
+    secureLogger.info('Dados mock importados', {
+      component: 'mockDataManagerService',
+      action: 'importMockData'
+    });
+
     showToast('Dados mock importados com sucesso', 'success');
   } catch (error) {
-    console.error('Erro ao importar dados mock:', error);
+    secureLogger.error('Erro ao importar dados mock', error, {
+      component: 'mockDataManagerService',
+      action: 'importMockData'
+    });
     throw error;
   }
 }
@@ -182,13 +218,21 @@ export async function downloadMockDataAsFile(): Promise<void> {
     link.click();
     document.body.removeChild(link);
   } catch (error) {
-    console.error('Erro ao fazer download:', error);
+    secureLogger.error('Erro ao fazer download de dados mock', error, {
+      component: 'mockDataManagerService',
+      action: 'downloadMockDataAsFile'
+    });
     throw error;
   }
 }
 
 // Helper para toast (importar quando necessário)
 function showToast(message: string, type: 'success' | 'error' | 'info') {
-  console.log(`[${type.toUpperCase()}] ${message}`);
+  secureLogger.info('Toast exibido', {
+    component: 'mockDataManagerService',
+    action: 'showToast',
+    message,
+    type
+  });
 }
 

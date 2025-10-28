@@ -1,5 +1,6 @@
 import { Appointment, RecurrenceRule } from '../../types';
 import { startOfWeek, addDays } from './schedulingUtils';
+import { secureLogger } from '../../lib/secureLogger';
 
 const DEFAULT_MAX_OCCURRENCES = 200;
 
@@ -12,7 +13,11 @@ const cloneWithDate = (appointment: Appointment, startTime: Date, duration: numb
         endTime,
         seriesId,
     };
-    console.log('🔄 cloneWithDate - Clonando agendamento:', result);
+    secureLogger.debug('Clonando agendamento recorrente', {
+        component: 'recurrenceService',
+        seriesId,
+        appointmentId: result.id
+    });
     return result;
 };
 
@@ -176,13 +181,19 @@ const createMonthly = (
  */
 export const generateRecurrences = (initialAppointment: Appointment): Appointment[] => {
     const { recurrenceRule } = initialAppointment;
-    console.log('🔄 generateRecurrences - Agendamento inicial:', initialAppointment);
-    console.log('🔄 generateRecurrences - Regra de recorrência:', recurrenceRule);
+    secureLogger.debug('Gerando recorrências de agendamento', {
+        component: 'recurrenceService',
+        appointmentId: initialAppointment.id,
+        hasRecurrenceRule: !!recurrenceRule
+    });
 
     if (!recurrenceRule) {
         const singleAppointment = { ...initialAppointment };
         delete singleAppointment.recurrenceRule;
-        console.log('🔄 generateRecurrences - Sem recorrência, retornando agendamento único:', singleAppointment);
+        secureLogger.debug('Sem recorrência, retornando agendamento único', {
+            component: 'recurrenceService',
+            appointmentId: singleAppointment.id
+        });
         return [singleAppointment];
     }
 
@@ -210,6 +221,10 @@ export const generateRecurrences = (initialAppointment: Appointment): Appointmen
     })();
 
     const result = occurrences.length > 0 ? occurrences : [baseAppointment];
-    console.log('🔄 generateRecurrences - Resultado final:', result);
+    secureLogger.debug('Recorrências geradas', {
+        component: 'recurrenceService',
+        count: result.length,
+        seriesId
+    });
     return result;
 };

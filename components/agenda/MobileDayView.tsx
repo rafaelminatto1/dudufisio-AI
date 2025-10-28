@@ -55,7 +55,7 @@ const MobileDayView: React.FC<MobileDayViewProps> = ({
 
           {/* Appointments */}
           <div className="space-y-2">
-            {groupedByHour[hour].map((appointment) => (
+            {(groupedByHour[hour] || []).map((appointment) => (
               <div
                 key={appointment.id}
                 onClick={() => onAppointmentClick(appointment)}

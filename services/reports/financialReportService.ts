@@ -3,6 +3,8 @@
  * Gera DRE, Fluxo de Caixa, Análise de Inadimplência
  */
 
+import { secureLogger } from '../../lib/secureLogger';
+
 export interface DREReport {
   period: {
     start: Date;
@@ -264,7 +266,10 @@ class FinancialReportService {
 
       return report;
     } catch (error) {
-      console.error('Erro ao gerar DRE:', error);
+      secureLogger.error('Erro ao gerar DRE', error, {
+        component: 'FinancialReportService',
+        action: 'generateDRE'
+      });
       throw new Error('Falha ao gerar DRE');
     }
   }
@@ -355,7 +360,10 @@ class FinancialReportService {
 
       return report;
     } catch (error) {
-      console.error('Erro ao gerar fluxo de caixa:', error);
+      secureLogger.error('Erro ao gerar fluxo de caixa', error, {
+        component: 'FinancialReportService',
+        action: 'generateCashFlow'
+      });
       throw new Error('Falha ao gerar fluxo de caixa');
     }
   }
@@ -462,7 +470,10 @@ class FinancialReportService {
 
       return report;
     } catch (error) {
-      console.error('Erro ao gerar relatório de inadimplência:', error);
+      secureLogger.error('Erro ao gerar relatório de inadimplência', error, {
+        component: 'FinancialReportService',
+        action: 'generateDefaultReport'
+      });
       throw new Error('Falha ao gerar relatório de inadimplência');
     }
   }
@@ -531,7 +542,10 @@ class FinancialReportService {
 
       return kpis;
     } catch (error) {
-      console.error('Erro ao calcular KPIs:', error);
+      secureLogger.error('Erro ao calcular KPIs', error, {
+        component: 'FinancialReportService',
+        action: 'calculateFinancialKPIs'
+      });
       throw new Error('Falha ao calcular KPIs financeiros');
     }
   }
@@ -562,15 +576,23 @@ class FinancialReportService {
   ): Promise<Blob> {
     try {
       // Em produção, usar biblioteca como xlsx
-      console.log(`Exportando relatório financeiro: ${filename}`);
-      
+      secureLogger.info('Exportando relatório financeiro', {
+        component: 'FinancialReportService',
+        action: 'exportFinancialReport',
+        filename
+      });
+
       const blob = new Blob(['Excel content'], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
-      
+
       return blob;
     } catch (error) {
-      console.error('Erro ao exportar relatório:', error);
+      secureLogger.error('Erro ao exportar relatório', error, {
+        component: 'FinancialReportService',
+        action: 'exportFinancialReport',
+        filename
+      });
       throw new Error('Falha ao exportar relatório financeiro');
     }
   }

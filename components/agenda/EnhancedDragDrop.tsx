@@ -127,6 +127,8 @@ export const EnhancedDragDrop: React.FC<EnhancedDragDropProps> = ({
     if (historyIndex < 0) return;
 
     const historyEntry = history[historyIndex];
+    if (!historyEntry) return;
+
     try {
       await onMove(
         historyEntry.appointment.id,
@@ -143,6 +145,8 @@ export const EnhancedDragDrop: React.FC<EnhancedDragDropProps> = ({
     if (historyIndex >= history.length - 1) return;
 
     const historyEntry = history[historyIndex + 1];
+    if (!historyEntry) return;
+
     try {
       await onMove(
         historyEntry.appointment.id,

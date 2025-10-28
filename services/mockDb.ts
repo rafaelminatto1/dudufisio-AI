@@ -21,6 +21,7 @@ import {
   mockScheduleBlocks,
   mockSchedulingAlerts,
 } from '../data/mockData';
+import { secureLogger } from '../lib/secureLogger';
 
 // Create mutable copies of the mock data to act as our "database"
 let patients = [...mockPatients];
@@ -45,21 +46,36 @@ export const db = {
 
   // Appointments
   getAppointments: (): Appointment[] => {
-    console.log('📚 mockDb.getAppointments - Total de agendamentos:', appointments.length);
+    secureLogger.debug('Obtendo agendamentos do mock DB', {
+      component: 'mockDb',
+      action: 'getAppointments',
+      count: appointments.length
+    });
     return [...appointments];
   },
   saveAppointment: (appointmentData: Appointment): void => {
-    console.log('💾 mockDb.saveAppointment - Recebendo:', appointmentData);
     const index = appointments.findIndex(a => a.id === appointmentData.id);
     if (index > -1) {
-      console.log(`   ✏️ Atualizando agendamento existente no índice ${index}`);
+      secureLogger.debug('Atualizando agendamento existente', {
+        component: 'mockDb',
+        action: 'saveAppointment',
+        appointmentId: appointmentData.id,
+        index
+      });
       appointments[index] = appointmentData;
     } else {
-      console.log('   ➕ Adicionando novo agendamento');
+      secureLogger.debug('Adicionando novo agendamento', {
+        component: 'mockDb',
+        action: 'saveAppointment',
+        appointmentId: appointmentData.id
+      });
       appointments.push(appointmentData);
     }
-    console.log('   📊 Total de agendamentos após salvar:', appointments.length);
-    console.log('   📋 IDs dos agendamentos:', appointments.map(a => a.id));
+    secureLogger.debug('Agendamento salvo', {
+      component: 'mockDb',
+      action: 'saveAppointment',
+      totalCount: appointments.length
+    });
   },
   deleteAppointment: (id: string): void => {
     appointments = appointments.filter(a => a.id !== id);

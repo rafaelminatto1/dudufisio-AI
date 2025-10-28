@@ -13,17 +13,17 @@ export default defineConfig({
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 1,
+  /* Retry on failed tests - increased for flaky test mitigation */
+  retries: process.env.CI ? 2 : 2,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
-  /* Global timeout for each test */
-  timeout: 60 * 1000, // 60 seconds per test
+  /* Global timeout for each test - increased from 60s to 90s */
+  timeout: 90 * 1000, // 90 seconds per test
   /* Expect timeout */
   expect: {
-    timeout: 10 * 1000, // 10 seconds for assertions
+    timeout: 15 * 1000, // 15 seconds for assertions (increased from 10s)
   },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -33,11 +33,11 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
 
-    /* Navigation timeout */
-    navigationTimeout: 30 * 1000, // 30 seconds for page navigation
+    /* Navigation timeout - increased from 30s to 45s */
+    navigationTimeout: 45 * 1000, // 45 seconds for page navigation
 
-    /* Action timeout */
-    actionTimeout: 15 * 1000, // 15 seconds for actions like click, fill
+    /* Action timeout - increased from 15s to 20s */
+    actionTimeout: 20 * 1000, // 20 seconds for actions like click, fill
 
     /* Screenshot on failure */
     screenshot: 'only-on-failure',

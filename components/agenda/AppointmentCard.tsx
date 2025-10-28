@@ -158,7 +158,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
               </div>
 
               {/* Price (if not compact) */}
-              {!compact && appointment.price > 0 && (
+              {!compact && appointment.price !== undefined && appointment.price > 0 && (
                 <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
                   <p className="text-xs font-semibold text-slate-900 dark:text-slate-100">
                     R$ {appointment.price.toFixed(2)}

@@ -1,7 +1,9 @@
 {
   "root": true,
   "ignorePatterns": ["dist", "build", "node_modules"],
-  "rules": {},
+  "rules": {
+    "no-console": ["error", { "allow": ["warn", "error"] }]
+  },
   "overrides": [
     {
       "files": [
@@ -15,13 +17,13 @@
       }
     },
     {
-      "files": ["lib/logger.ts"],
+      "files": ["lib/logger.ts", "lib/secureLogger.ts", "lib/middleware/logger.ts"],
       "rules": {
         "no-console": "off"
       }
     },
     {
-      "files": ["**/*.spec.ts", "**/*.test.ts", "tests/**/*"],
+      "files": ["**/*.spec.ts", "**/*.test.ts", "tests/**/*", "scripts/**/*"],
       "rules": {
         "no-console": "off"
       }

@@ -1,5 +1,6 @@
 // services/materialTagService.ts
 import { supabase } from '../lib/supabaseClient';
+import { secureLogger } from '../lib/secureLogger';
 
 export interface TagStats {
   name: string;
@@ -26,10 +27,18 @@ class MaterialTagService {
       const { data, error } = await supabase.from('clinical_materials').select('count').limit(1);
       if (!error) {
         this.useSupabase = true;
-        console.log('Material Tag Service: Using Supabase');
+        secureLogger.info('Material Tag Service initialized', {
+          component: 'materialTagService',
+          action: 'initialize',
+          dataSource: 'supabase'
+        });
       }
     } catch (error) {
-      console.log('Material Tag Service: Using Mock data');
+      secureLogger.info('Material Tag Service fallback to mock', {
+        component: 'materialTagService',
+        action: 'initialize',
+        dataSource: 'mock'
+      });
     }
   }
 
@@ -66,7 +75,10 @@ class MaterialTagService {
           .map(([name, data]) => ({ name, ...data }))
           .sort((a, b) => b.count - a.count);
       } catch (error) {
-        console.error('Error fetching tags from Supabase:', error);
+        secureLogger.error('Failed to fetch tags', error, {
+          component: 'materialTagService',
+          action: 'getAllTags'
+        });
         return this.getMockTags();
       }
     }
@@ -144,7 +156,10 @@ class MaterialTagService {
           .slice(0, 5)
           .map(([tag]) => tag);
       } catch (error) {
-        console.error('Error getting suggested tags from Supabase:', error);
+        secureLogger.error('Failed to get suggested tags', error, {
+          component: 'materialTagService',
+          action: 'getSuggestedTags'
+        });
         return this.getMockSuggestedTags();
       }
     }
@@ -155,7 +170,10 @@ class MaterialTagService {
   async createTag(tagName: string): Promise<void> {
     // Tags are automatically created when added to materials
     // This method is for future use if we want to pre-define tags
-    console.log(`Tag "${tagName}" will be created when first used in a material`);
+    secureLogger.debug('Tag creation deferred to material usage', {
+      component: 'materialTagService',
+      action: 'createTag'
+    });
   }
 
   // Get tag statistics

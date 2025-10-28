@@ -73,9 +73,9 @@ const ProfessionalProductivityChart: React.FC<ProfessionalProductivityChartProps
   };
 
   // Calcular cores baseadas na performance
-  const maxRevenue = Math.max(...data.map(d => d.revenue));
+  const maxRevenue = Math.max(...data.map(d => d.revenue), 0);
   const getBarColor = (revenue: number) => {
-    const percentage = (revenue / maxRevenue) * 100;
+    const percentage = maxRevenue > 0 ? (revenue / maxRevenue) * 100 : 0;
     if (percentage >= 90) return '#10b981'; // Verde
     if (percentage >= 70) return '#3b82f6'; // Azul
     if (percentage >= 50) return '#f59e0b'; // Amarelo
@@ -89,9 +89,9 @@ const ProfessionalProductivityChart: React.FC<ProfessionalProductivityChartProps
   const avgRevenuePerProfessional = data.length > 0 ? totalRevenue / data.length : 0;
 
   // Top performer
-  const topPerformer = data.length > 0 ? data.reduce((max, curr) => 
-    curr.revenue > max.revenue ? curr : max, data[0]
-  ) : undefined;
+  const topPerformer = data.length > 0
+    ? data.reduce((max, curr) => curr.revenue > max.revenue ? curr : max, data[0]!)
+    : undefined;
 
   return (
     <Card className="hover:shadow-md transition-shadow">

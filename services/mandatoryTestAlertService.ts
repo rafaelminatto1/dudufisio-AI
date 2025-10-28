@@ -3,6 +3,7 @@ import * as patientService from './patientService';
 import * as pathologyService from './pathologyService';
 import * as sessionEvolutionService from './sessionEvolutionService';
 import { logDataSource } from '../config/supabaseTablesConfig';
+import { secureLogger } from '../lib/secureLogger';
 
 /**
  * Service para gerenciamento de alertas de testes obrigatórios
@@ -46,7 +47,11 @@ export async function generateMandatoryTestAlerts(
       return severityOrder[b.severity] - severityOrder[a.severity];
     });
   } catch (error) {
-    console.error('Erro ao gerar alertas de testes obrigatórios:', error);
+    secureLogger.error('Erro ao gerar alertas de testes obrigatórios', error, {
+      component: 'mandatoryTestAlertService',
+      action: 'generateMandatoryTestAlerts',
+      patientId
+    });
     return [];
   }
 }
@@ -89,7 +94,11 @@ async function generateAlertsFromTestConfigs(
 
     return alerts;
   } catch (error) {
-    console.error('Erro ao gerar alertas de config:', error);
+    secureLogger.error('Erro ao gerar alertas de configuração', error, {
+      component: 'mandatoryTestAlertService',
+      action: 'generateAlertsFromTestConfigs',
+      patientId
+    });
     return [];
   }
 }
@@ -109,7 +118,11 @@ async function generateAlertsFromPathologies(patientId: string): Promise<Mandato
 
     return alerts;
   } catch (error) {
-    console.error('Erro ao gerar alertas de patologias:', error);
+    secureLogger.error('Erro ao gerar alertas de patologias', error, {
+      component: 'mandatoryTestAlertService',
+      action: 'generateAlertsFromPathologies',
+      patientId
+    });
     return [];
   }
 }
@@ -279,7 +292,12 @@ export async function checkCriticalAlertsCompleted(
       pendingImportant,
     };
   } catch (error) {
-    console.error('Erro ao verificar alertas:', error);
+    secureLogger.error('Erro ao verificar alertas críticos', error, {
+      component: 'mandatoryTestAlertService',
+      action: 'checkCriticalAlertsCompleted',
+      patientId,
+      sessionId
+    });
     return {
       allCompleted: false,
       pendingCritical: [],
@@ -341,20 +359,26 @@ export async function logTestException(
 ): Promise<void> {
   try {
     // Em produção, salvar no banco de dados/auditoria
-    console.log('Exceção de teste registrada:', {
+    secureLogger.warn('Exceção de teste obrigatório registrada', {
+      component: 'mandatoryTestAlertService',
+      action: 'logTestException',
       patientId,
       sessionId,
       testName: alert.testName,
       severity: alert.severity,
-      reason,
       userId,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     });
 
     // Aqui você poderia adicionar ao sistema de auditoria
     // await auditService.logException(...)
   } catch (error) {
-    console.error('Erro ao registrar exceção:', error);
+    secureLogger.error('Erro ao registrar exceção de teste', error, {
+      component: 'mandatoryTestAlertService',
+      action: 'logTestException',
+      patientId,
+      sessionId
+    });
     throw error;
   }
 }
@@ -396,7 +420,11 @@ export async function getAlertHistory(
 
     return history;
   } catch (error) {
-    console.error('Erro ao buscar histórico de alertas:', error);
+    secureLogger.error('Erro ao buscar histórico de alertas', error, {
+      component: 'mandatoryTestAlertService',
+      action: 'getAlertHistory',
+      patientId
+    });
     return [];
   }
 }
@@ -444,7 +472,11 @@ export async function calculateComplianceRate(patientId: string): Promise<{
       importantCompliance: totalImportant > 0 ? (completedImportant / totalImportant) * 100 : 100,
     };
   } catch (error) {
-    console.error('Erro ao calcular taxa de compliance:', error);
+    secureLogger.error('Erro ao calcular taxa de compliance', error, {
+      component: 'mandatoryTestAlertService',
+      action: 'calculateComplianceRate',
+      patientId
+    });
     return {
       totalAlerts: 0,
       completedAlerts: 0,

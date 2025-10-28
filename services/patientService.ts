@@ -3,6 +3,7 @@ import { db } from './mockDb';
 import { eventService } from './eventService';
 import { supabasePatientService } from './supabase/patientServiceSupabase';
 import { SupabaseConfigManager } from '../lib/supabaseConfig';
+import { secureLogger } from '../lib/secureLogger';
 
 // Mock data para desenvolvimento
 const MOCK_PATIENT_TRACKING_DATA = {
@@ -92,7 +93,10 @@ export const searchPatients = async (term: string, retryCount = 0): Promise<Pati
             
             return results.map(mapPatientToSummary).slice(0, 10);
         } catch (error) {
-            console.error('Erro ao buscar pacientes no Supabase:', error);
+            secureLogger.error('Erro ao buscar pacientes no Supabase', error, { 
+                component: 'patientService',
+                action: 'searchPatients'
+            });
             
             // Retry automático
             if (retryCount < MAX_RETRIES) {
@@ -101,7 +105,10 @@ export const searchPatients = async (term: string, retryCount = 0): Promise<Pati
             }
             
             // Fallback para busca local nos dados mock
-            console.warn('Fallback para busca local após falhas no Supabase');
+            secureLogger.warn('Fallback para busca local após falhas no Supabase', { 
+                component: 'patientService',
+                action: 'searchPatients'
+            });
             const lowerTerm = term.toLowerCase();
             const allPatients = db.getPatients();
             
@@ -149,12 +156,23 @@ export const quickAddPatient = async (name: string): Promise<Patient> => {
                 whatsappConsent: 'opt-out',
             };
 
-            console.log('📝 Cadastrando paciente rápido:', quickPatient);
+            secureLogger.info('Cadastrando paciente rápido', { 
+                component: 'patientService',
+                action: 'createQuickPatient',
+                patientId: quickPatient.id
+            });
             const createdPatient = await supabasePatientService.createPatient(quickPatient);
-            console.log('✅ Paciente cadastrado com sucesso:', createdPatient);
+            secureLogger.info('Paciente cadastrado com sucesso', { 
+                component: 'patientService',
+                action: 'createQuickPatient',
+                patientId: createdPatient.id
+            });
             return createdPatient;
         } catch (error: any) {
-            console.error('❌ Erro ao criar paciente no Supabase:', error);
+            secureLogger.error('Erro ao criar paciente no Supabase', error, { 
+                component: 'patientService',
+                action: 'createQuickPatient'
+            });
             // FIX: Garantir que a mensagem de erro seja extraída corretamente
             const errorMessage = error?.message || error?.toString() || 'Erro desconhecido ao cadastrar paciente';
             throw new Error(`Falha ao cadastrar paciente: ${errorMessage}`);
@@ -290,7 +308,11 @@ export const getPatientById = async (id: string): Promise<Patient | undefined> =
             }
             return patient ?? undefined;
         } catch (error) {
-            console.warn('[patientService] Falha ao buscar paciente no Supabase, tentando dados mock.', error);
+            secureLogger.warn('Falha ao buscar paciente no Supabase, tentando dados mock', {
+                component: 'patientService',
+                action: 'getPatientById',
+                error: error instanceof Error ? error.message : String(error)
+            });
             // Fallback to mock data if Supabase fails (e.g., invalid UUID format)
         }
     }
@@ -496,11 +518,17 @@ export async function addCommunicationLog(
       .eq('id', patientId);
 
     if (error) {
-      console.error('Error adding communication log:', error);
+      secureLogger.error('Failed to add communication log', error, {
+        component: 'patientService',
+        action: 'addCommunicationLog'
+      });
       throw new Error('Falha ao adicionar log de comunicação');
     }
   } catch (error) {
-    console.error('Error in addCommunicationLog:', error);
+    secureLogger.error('Error in addCommunicationLog', error, {
+      component: 'patientService',
+      action: 'addCommunicationLog'
+    });
     throw error;
   }
 }
@@ -520,11 +548,17 @@ export async function savePainPoints(
       .eq('id', patientId);
 
     if (error) {
-      console.error('Error saving pain points:', error);
+      secureLogger.error('Failed to save pain points', error, {
+        component: 'patientService',
+        action: 'savePainPoints'
+      });
       throw new Error('Falha ao salvar pontos de dor');
     }
   } catch (error) {
-    console.error('Error in savePainPoints:', error);
+    secureLogger.error('Error in savePainPoints', error, {
+      component: 'patientService',
+      action: 'savePainPoints'
+    });
     throw error;
   }
 }

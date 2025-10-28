@@ -3,6 +3,8 @@
  * Suporta: Google Calendar, Outlook Calendar, iCal
  */
 
+import { secureLogger } from '../lib/secureLogger';
+
 export interface CalendarProvider {
   id: string;
   name: string;
@@ -47,8 +49,10 @@ class CalendarSyncService {
       //   process.env.GOOGLE_REDIRECT_URI
       // );
       
-      // SEGURO: Log sem expor authCode
-    console.log('Conectando ao Google Calendar...');
+      secureLogger.info('Connecting to Google Calendar', {
+        component: 'CalendarSyncService',
+        action: 'connectGoogleCalendar'
+      });
 
       // Simulação de conexão
       const provider: CalendarProvider = {
@@ -63,7 +67,10 @@ class CalendarSyncService {
 
       return provider;
     } catch (error) {
-      console.error('Erro ao conectar Google Calendar:', error);
+      secureLogger.error('Failed to connect to Google Calendar', error, {
+        component: 'CalendarSyncService',
+        action: 'connectGoogleCalendar'
+      });
       throw new Error('Falha na conexão com Google Calendar');
     }
   }
@@ -80,7 +87,10 @@ class CalendarSyncService {
       //   }
       // });
 
-      console.log('Conectando ao Outlook Calendar...');
+      secureLogger.info('Connecting to Outlook Calendar', {
+        component: 'CalendarSyncService',
+        action: 'connectOutlookCalendar'
+      });
 
       const provider: CalendarProvider = {
         id: 'outlook_' + Date.now(),
@@ -94,7 +104,10 @@ class CalendarSyncService {
 
       return provider;
     } catch (error) {
-      console.error('Erro ao conectar Outlook Calendar:', error);
+      secureLogger.error('Failed to connect to Outlook Calendar', error, {
+        component: 'CalendarSyncService',
+        action: 'connectOutlookCalendar'
+      });
       throw new Error('Falha na conexão com Outlook Calendar');
     }
   }
@@ -179,7 +192,10 @@ class CalendarSyncService {
       ical += 'END:VCALENDAR';
       return ical;
     } catch (error) {
-      console.error('Erro ao exportar para iCal:', error);
+      secureLogger.error('Failed to export to iCal', error, {
+        component: 'CalendarSyncService',
+        action: 'exportToICal'
+      });
       throw new Error('Falha ao exportar calendário');
     }
   }
@@ -206,7 +222,11 @@ class CalendarSyncService {
   async syncGoogleCalendar(provider: CalendarProvider, config: SyncConfig): Promise<ExternalEvent[]> {
     try {
       // Em produção, usar API do Google Calendar
-      console.log('Sincronizando Google Calendar:', provider.calendarId);
+      secureLogger.info('Syncing Google Calendar', {
+        component: 'CalendarSyncService',
+        action: 'syncGoogleCalendar',
+        providerId: provider.id
+      });
 
       // Simulação de eventos
       const mockEvents: ExternalEvent[] = [
@@ -232,7 +252,11 @@ class CalendarSyncService {
 
       return mockEvents;
     } catch (error) {
-      console.error('Erro ao sincronizar Google Calendar:', error);
+      secureLogger.error('Failed to sync Google Calendar', error, {
+        component: 'CalendarSyncService',
+        action: 'syncGoogleCalendar',
+        providerId: provider.id
+      });
       throw new Error('Falha na sincronização com Google Calendar');
     }
   }
@@ -243,7 +267,11 @@ class CalendarSyncService {
   async syncOutlookCalendar(provider: CalendarProvider, config: SyncConfig): Promise<ExternalEvent[]> {
     try {
       // Em produção, usar Microsoft Graph API
-      console.log('Sincronizando Outlook Calendar:', provider.email);
+      secureLogger.info('Syncing Outlook Calendar', {
+        component: 'CalendarSyncService',
+        action: 'syncOutlookCalendar',
+        providerId: provider.id
+      });
 
       const mockEvents: ExternalEvent[] = [
         {
@@ -258,7 +286,11 @@ class CalendarSyncService {
 
       return mockEvents;
     } catch (error) {
-      console.error('Erro ao sincronizar Outlook Calendar:', error);
+      secureLogger.error('Failed to sync Outlook Calendar', error, {
+        component: 'CalendarSyncService',
+        action: 'syncOutlookCalendar',
+        providerId: provider.id
+      });
       throw new Error('Falha na sincronização com Outlook Calendar');
     }
   }
@@ -268,14 +300,23 @@ class CalendarSyncService {
    */
   async createExternalEvent(provider: CalendarProvider, event: ExternalEvent): Promise<string> {
     try {
-      console.log(`Criando evento em ${provider.type}:`, event.title);
+      secureLogger.info('Creating external event', {
+        component: 'CalendarSyncService',
+        action: 'createExternalEvent',
+        providerId: provider.id,
+        eventId: event.id
+      });
 
       // Em produção, fazer requisição à API apropriada
       const eventId = `${provider.type}_${Date.now()}`;
-      
+
       return eventId;
     } catch (error) {
-      console.error('Erro ao criar evento externo:', error);
+      secureLogger.error('Failed to create external event', error, {
+        component: 'CalendarSyncService',
+        action: 'createExternalEvent',
+        providerId: provider.id
+      });
       throw new Error('Falha ao criar evento no calendário externo');
     }
   }
@@ -285,11 +326,21 @@ class CalendarSyncService {
    */
   async updateExternalEvent(provider: CalendarProvider, eventId: string, event: Partial<ExternalEvent>): Promise<void> {
     try {
-      console.log(`Atualizando evento ${eventId} em ${provider.type}`);
+      secureLogger.info('Updating external event', {
+        component: 'CalendarSyncService',
+        action: 'updateExternalEvent',
+        providerId: provider.id,
+        eventId
+      });
 
       // Em produção, fazer requisição à API apropriada
     } catch (error) {
-      console.error('Erro ao atualizar evento externo:', error);
+      secureLogger.error('Failed to update external event', error, {
+        component: 'CalendarSyncService',
+        action: 'updateExternalEvent',
+        providerId: provider.id,
+        eventId
+      });
       throw new Error('Falha ao atualizar evento no calendário externo');
     }
   }
@@ -299,11 +350,21 @@ class CalendarSyncService {
    */
   async deleteExternalEvent(provider: CalendarProvider, eventId: string): Promise<void> {
     try {
-      console.log(`Deletando evento ${eventId} de ${provider.type}`);
+      secureLogger.info('Deleting external event', {
+        component: 'CalendarSyncService',
+        action: 'deleteExternalEvent',
+        providerId: provider.id,
+        eventId
+      });
 
       // Em produção, fazer requisição à API apropriada
     } catch (error) {
-      console.error('Erro ao deletar evento externo:', error);
+      secureLogger.error('Failed to delete external event', error, {
+        component: 'CalendarSyncService',
+        action: 'deleteExternalEvent',
+        providerId: provider.id,
+        eventId
+      });
       throw new Error('Falha ao deletar evento do calendário externo');
     }
   }
@@ -328,7 +389,10 @@ class CalendarSyncService {
 
       return providers;
     } catch (error) {
-      console.error('Erro ao buscar provedores:', error);
+      secureLogger.error('Failed to fetch providers', error, {
+        component: 'CalendarSyncService',
+        action: 'getConnectedProviders'
+      });
       throw new Error('Falha ao carregar provedores de calendário');
     }
   }
@@ -338,11 +402,19 @@ class CalendarSyncService {
    */
   async disconnectProvider(providerId: string): Promise<void> {
     try {
-      console.log('Desconectando provedor:', providerId);
+      secureLogger.info('Disconnecting provider', {
+        component: 'CalendarSyncService',
+        action: 'disconnectProvider',
+        providerId
+      });
 
       // Em produção, revogar tokens e limpar dados
     } catch (error) {
-      console.error('Erro ao desconectar provedor:', error);
+      secureLogger.error('Failed to disconnect provider', error, {
+        component: 'CalendarSyncService',
+        action: 'disconnectProvider',
+        providerId
+      });
       throw new Error('Falha ao desconectar calendário');
     }
   }
@@ -352,14 +424,23 @@ class CalendarSyncService {
    */
   async setupWebhook(provider: CalendarProvider, webhookUrl: string): Promise<string> {
     try {
-      console.log(`Configurando webhook para ${provider.type}:`, webhookUrl);
+      secureLogger.info('Setting up webhook', {
+        component: 'CalendarSyncService',
+        action: 'setupWebhook',
+        providerId: provider.id,
+        providerType: provider.type
+      });
 
       // Em produção, configurar webhook na API apropriada
       const webhookId = `webhook_${Date.now()}`;
-      
+
       return webhookId;
     } catch (error) {
-      console.error('Erro ao configurar webhook:', error);
+      secureLogger.error('Failed to setup webhook', error, {
+        component: 'CalendarSyncService',
+        action: 'setupWebhook',
+        providerId: provider.id
+      });
       throw new Error('Falha ao configurar sincronização automática');
     }
   }
@@ -396,7 +477,11 @@ class CalendarSyncService {
         errorCount: 0
       };
     } catch (error) {
-      console.error('Erro ao verificar status:', error);
+      secureLogger.error('Failed to check sync status', error, {
+        component: 'CalendarSyncService',
+        action: 'checkSyncStatus',
+        providerId
+      });
       throw new Error('Falha ao verificar status de sincronização');
     }
   }

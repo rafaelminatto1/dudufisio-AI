@@ -3,6 +3,8 @@
  * Integração com Sefaz e armazenamento de XMLs
  */
 
+import { secureLogger } from '../lib/secureLogger';
+
 export interface NFe {
   id: string;
   numero: number;
@@ -113,7 +115,12 @@ class NFeService {
    */
   configure(config: SefazConfig) {
     this.config = config;
-    console.log('[NFe] Sefaz configurado:', config.ambiente, config.uf);
+    secureLogger.info('Sefaz configurado', {
+      component: 'NFeService',
+      action: 'configure',
+      ambiente: config.ambiente,
+      uf: config.uf
+    });
   }
 
   /**
@@ -125,7 +132,10 @@ class NFeService {
         throw new Error('Sefaz não configurado');
       }
 
-      console.log('[NFe] Gerando NF-e...');
+      secureLogger.info('Gerando NF-e', {
+        component: 'NFeService',
+        action: 'gerarNFe'
+      });
 
       // Gerar número sequencial
       this.ultimoNumero++;
@@ -148,7 +158,10 @@ class NFeService {
 
       return nfe;
     } catch (error) {
-      console.error('[NFe] Erro ao gerar NF-e:', error);
+      secureLogger.error('Erro ao gerar NF-e', error, {
+        component: 'NFeService',
+        action: 'gerarNFe'
+      });
       throw new Error('Falha ao gerar NF-e');
     }
   }
@@ -166,7 +179,11 @@ class NFeService {
         throw new Error('Sefaz não configurado');
       }
 
-      console.log('[NFe] Transmitindo NF-e:', nfe.numero);
+      secureLogger.info('Transmitindo NF-e', {
+        component: 'NFeService',
+        action: 'transmitirNFe',
+        nfeNumero: nfe.numero
+      });
 
       // Em produção, fazer requisição SOAP para Sefaz
       // Exemplo: NFeAutorizacao4
@@ -189,7 +206,10 @@ class NFeService {
         };
       }
     } catch (error) {
-      console.error('[NFe] Erro ao transmitir NF-e:', error);
+      secureLogger.error('Erro ao transmitir NF-e', error, {
+        component: 'NFeService',
+        action: 'transmitirNFe'
+      });
       throw new Error('Falha ao transmitir NF-e');
     }
   }
@@ -203,7 +223,11 @@ class NFeService {
     dataAutorizacao?: Date;
   }> {
     try {
-      console.log('[NFe] Consultando NF-e:', chave);
+      secureLogger.info('Consultando NF-e', {
+        component: 'NFeService',
+        action: 'consultarNFe',
+        chave
+      });
 
       // Em produção, fazer requisição para Sefaz
       // Exemplo: NFeConsultaProtocolo4
@@ -214,7 +238,10 @@ class NFeService {
         dataAutorizacao: new Date()
       };
     } catch (error) {
-      console.error('[NFe] Erro ao consultar NF-e:', error);
+      secureLogger.error('Erro ao consultar NF-e', error, {
+        component: 'NFeService',
+        action: 'consultarNFe'
+      });
       throw new Error('Falha ao consultar NF-e');
     }
   }
@@ -236,7 +263,11 @@ class NFeService {
         throw new Error('Justificativa deve ter no mínimo 15 caracteres');
       }
 
-      console.log('[NFe] Cancelando NF-e:', chave);
+      secureLogger.info('Cancelando NF-e', {
+        component: 'NFeService',
+        action: 'cancelarNFe',
+        chave
+      });
 
       // Em produção, fazer requisição para Sefaz
       // Exemplo: NFeEventoCancelamento
@@ -247,7 +278,10 @@ class NFeService {
         motivo: 'Cancelamento homologado'
       };
     } catch (error) {
-      console.error('[NFe] Erro ao cancelar NF-e:', error);
+      secureLogger.error('Erro ao cancelar NF-e', error, {
+        component: 'NFeService',
+        action: 'cancelarNFe'
+      });
       throw new Error('Falha ao cancelar NF-e');
     }
   }
@@ -266,14 +300,23 @@ class NFeService {
         throw new Error('Justificativa deve ter no mínimo 15 caracteres');
       }
 
-      console.log('[NFe] Inutilizando numeração:', numeroInicial, '-', numeroFinal);
+      secureLogger.info('Inutilizando numeração', {
+        component: 'NFeService',
+        action: 'inutilizarNumeracao',
+        numeroInicial,
+        numeroFinal,
+        serie
+      });
 
       // Em produção, fazer requisição para Sefaz
       // Exemplo: NFeInutilizacao4
 
       return true;
     } catch (error) {
-      console.error('[NFe] Erro ao inutilizar numeração:', error);
+      secureLogger.error('Erro ao inutilizar numeração', error, {
+        component: 'NFeService',
+        action: 'inutilizarNumeracao'
+      });
       return false;
     }
   }
@@ -283,7 +326,11 @@ class NFeService {
    */
   async gerarDANFE(nfe: NFe): Promise<Blob> {
     try {
-      console.log('[NFe] Gerando DANFE:', nfe.numero);
+      secureLogger.info('Gerando DANFE', {
+        component: 'NFeService',
+        action: 'gerarDANFE',
+        nfeNumero: nfe.numero
+      });
 
       // Em produção, usar biblioteca de geração de PDF
       // Exemplo: pdfmake, jspdf
@@ -312,7 +359,10 @@ ${nfe.protocoloAutorizacao ? `Protocolo: ${nfe.protocoloAutorizacao}` : ''}
       const blob = new Blob([pdfContent], { type: 'application/pdf' });
       return blob;
     } catch (error) {
-      console.error('[NFe] Erro ao gerar DANFE:', error);
+      secureLogger.error('Erro ao gerar DANFE', error, {
+        component: 'NFeService',
+        action: 'gerarDANFE'
+      });
       throw new Error('Falha ao gerar DANFE');
     }
   }
@@ -322,15 +372,25 @@ ${nfe.protocoloAutorizacao ? `Protocolo: ${nfe.protocoloAutorizacao}` : ''}
    */
   async enviarPorEmail(nfe: NFe, destinatario: string): Promise<void> {
     try {
-      console.log('[NFe] Enviando NF-e por email:', destinatario);
+      secureLogger.info('Enviando NF-e por email', {
+        component: 'NFeService',
+        action: 'enviarPorEmail',
+        nfeNumero: nfe.numero
+      });
 
       // Gerar DANFE
       const danfe = await this.gerarDANFE(nfe);
 
       // Em produção, integrar com serviço de email
-      console.log('[NFe] Email enviado com sucesso');
+      secureLogger.info('Email enviado com sucesso', {
+        component: 'NFeService',
+        action: 'enviarPorEmail'
+      });
     } catch (error) {
-      console.error('[NFe] Erro ao enviar email:', error);
+      secureLogger.error('Erro ao enviar email', error, {
+        component: 'NFeService',
+        action: 'enviarPorEmail'
+      });
       throw new Error('Falha ao enviar NF-e por email');
     }
   }
@@ -340,7 +400,11 @@ ${nfe.protocoloAutorizacao ? `Protocolo: ${nfe.protocoloAutorizacao}` : ''}
    */
   async armazenarXML(nfe: NFe): Promise<string> {
     try {
-      console.log('[NFe] Armazenando XML:', nfe.chave);
+      secureLogger.info('Armazenando XML', {
+        component: 'NFeService',
+        action: 'armazenarXML',
+        chave: nfe.chave
+      });
 
       // Em produção, salvar em storage (S3, Supabase Storage, etc)
       const filename = `${nfe.chave}.xml`;
@@ -349,7 +413,10 @@ ${nfe.protocoloAutorizacao ? `Protocolo: ${nfe.protocoloAutorizacao}` : ''}
       // Simulação
       return path;
     } catch (error) {
-      console.error('[NFe] Erro ao armazenar XML:', error);
+      secureLogger.error('Erro ao armazenar XML', error, {
+        component: 'NFeService',
+        action: 'armazenarXML'
+      });
       throw new Error('Falha ao armazenar XML');
     }
   }
