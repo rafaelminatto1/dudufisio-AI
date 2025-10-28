@@ -13,19 +13,20 @@ export interface LoginCredentials {
 
 /**
  * Default test credentials
+ * These credentials match the mock auth in supabaseAuthService.ts
  */
 export const TEST_CREDENTIALS = {
   admin: {
     email: 'admin@dudufisio.com',
-    password: 'Admin@123'
+    password: 'demo123456'
   },
   therapist: {
     email: 'therapist@dudufisio.com',
-    password: 'Therapist@123'
+    password: 'demo123456'
   },
   patient: {
     email: 'patient@dudufisio.com',
-    password: 'Patient@123'
+    password: 'demo123456'
   }
 };
 

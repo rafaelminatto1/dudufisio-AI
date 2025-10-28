@@ -13,7 +13,11 @@
       "Bash(npm run type-check:*)",
       "Bash(npx tsc:*)",
       "Bash(Select-String -Pattern \"admin-dashboard\" -Context 0,2)",
-      "Bash(npx playwright test:*)"
+      "Bash(npx playwright test:*)",
+      "Bash(timeout 60 npx playwright test:*)",
+      "Bash(Remove-Item -Path \"test-results\" -Recurse -Force -ErrorAction SilentlyContinue)",
+      "Bash(npx playwright show-report)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
