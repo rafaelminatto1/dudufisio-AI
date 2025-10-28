@@ -20,24 +20,24 @@
     "types": [
       "vite/client"
     ],
-    /* Build configuration for Vercel deployment */
-    "strict": false,
+    /* Build configuration - Habilitando type safety gradualmente */
+    "strict": false, // TODO: Habilitar após refatoração
     "noEmitOnError": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": false,
-    "noUncheckedIndexedAccess": false,
+    "noFallthroughCasesInSwitch": true, // HABILITADO ✅
+    "noUncheckedIndexedAccess": true, // HABILITADO ✅
     "exactOptionalPropertyTypes": false,
-    "noImplicitReturns": false,
+    "noImplicitReturns": true, // HABILITADO ✅
     "noPropertyAccessFromIndexSignature": false,
-    /* Healthcare data privacy */
-    "strictNullChecks": false,
-    "strictFunctionTypes": false,
-    "strictBindCallApply": false,
-    "strictPropertyInitialization": false,
-    "noImplicitAny": false,
+    /* Healthcare data privacy - Type safety habilitada */
+    "strictNullChecks": true, // HABILITADO ✅
+    "strictFunctionTypes": true, // HABILITADO ✅
+    "strictBindCallApply": true, // HABILITADO ✅
+    "strictPropertyInitialization": false, // TODO: Habilitar após refatoração
+    "noImplicitAny": false, // TODO: Habilitar após remover 343+ usos de 'any'
     "noImplicitThis": false,
-    "alwaysStrict": false,
+    "alwaysStrict": true, // HABILITADO ✅
     /* Path mapping - Fixed according to Context7 documentation */
     "baseUrl": ".",
     "paths": {

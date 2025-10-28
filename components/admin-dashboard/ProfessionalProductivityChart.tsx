@@ -85,13 +85,13 @@ const ProfessionalProductivityChart: React.FC<ProfessionalProductivityChartProps
   // Estatísticas
   const totalSessions = data.reduce((sum, d) => sum + d.sessions, 0);
   const totalRevenue = data.reduce((sum, d) => sum + d.revenue, 0);
-  const avgSessionsPerProfessional = totalSessions / data.length;
-  const avgRevenuePerProfessional = totalRevenue / data.length;
+  const avgSessionsPerProfessional = data.length > 0 ? totalSessions / data.length : 0;
+  const avgRevenuePerProfessional = data.length > 0 ? totalRevenue / data.length : 0;
 
   // Top performer
-  const topPerformer = data.reduce((max, curr) => 
+  const topPerformer = data.length > 0 ? data.reduce((max, curr) => 
     curr.revenue > max.revenue ? curr : max, data[0]
-  );
+  ) : undefined;
 
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -155,12 +155,18 @@ const ProfessionalProductivityChart: React.FC<ProfessionalProductivityChartProps
 
           <div className="bg-orange-50 p-3 rounded-lg">
             <div className="text-sm font-medium text-orange-800">Top Performer</div>
-            <div className="text-sm font-bold text-orange-600">
-              {topPerformer.name.split(' ')[0]}
-            </div>
-            <div className="text-xs text-orange-600">
-              {topPerformer.sessions} sessões
-            </div>
+            {topPerformer ? (
+              <>
+                <div className="text-sm font-bold text-orange-600">
+                  {topPerformer.name.split(' ')[0]}
+                </div>
+                <div className="text-xs text-orange-600">
+                  {topPerformer.sessions} sessões
+                </div>
+              </>
+            ) : (
+              <div className="text-sm text-orange-600">Sem dados</div>
+            )}
           </div>
         </div>
 

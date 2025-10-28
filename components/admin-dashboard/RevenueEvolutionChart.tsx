@@ -138,18 +138,24 @@ const RevenueEvolutionChart: React.FC<RevenueEvolutionChartProps> = ({ data, isL
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-green-50 p-3 rounded-lg">
             <div className="text-sm font-medium text-green-800">Melhor Mês</div>
-            <div className="text-lg font-bold text-green-600">
-              {data.reduce((max, curr) => curr.revenue > max.revenue ? curr : max, data[0])?.month}
-            </div>
-            <div className="text-xs text-green-600">
-              {formatCurrency(Math.max(...data.map(d => d.revenue)))}
-            </div>
+            {data.length > 0 ? (
+              <>
+                <div className="text-lg font-bold text-green-600">
+                  {data.reduce((max, curr) => curr.revenue > max.revenue ? curr : max, data[0])?.month}
+                </div>
+                <div className="text-xs text-green-600">
+                  {formatCurrency(Math.max(...data.map(d => d.revenue)))}
+                </div>
+              </>
+            ) : (
+              <div className="text-sm text-green-600">Sem dados</div>
+            )}
           </div>
 
           <div className="bg-blue-50 p-3 rounded-lg">
             <div className="text-sm font-medium text-blue-800">Média Mensal</div>
             <div className="text-lg font-bold text-blue-600">
-              {formatCurrency(data.reduce((sum, curr) => sum + curr.revenue, 0) / data.length)}
+              {formatCurrency(data.length > 0 ? data.reduce((sum, curr) => sum + curr.revenue, 0) / data.length : 0)}
             </div>
             <div className="text-xs text-blue-600">Últimos {data.length} meses</div>
           </div>

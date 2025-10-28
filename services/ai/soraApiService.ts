@@ -6,8 +6,13 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // API Keys
-const OPENAI_API_KEY = process.env.VITE_OPENAI_API_KEY || '';
-const GEMINI_API_KEY = process.env.VITE_GEMINI_API_KEY || 'AIzaSyDc5vZXFRAlU18dl1Bk9K2NT-BS8GmuLtM';
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+
+// Validar se a API key está configurada
+if (!GEMINI_API_KEY) {
+  console.warn('⚠️ VITE_GEMINI_API_KEY não configurada. Serviço Sora funcionará em modo simulado.');
+}
 
 // Inicializar Gemini para otimização de prompts
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);

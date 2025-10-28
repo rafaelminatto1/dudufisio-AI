@@ -47,7 +47,8 @@ class CalendarSyncService {
       //   process.env.GOOGLE_REDIRECT_URI
       // );
       
-      console.log('Conectando ao Google Calendar com código:', authCode);
+      // SEGURO: Log sem expor authCode
+    console.log('Conectando ao Google Calendar...');
 
       // Simulação de conexão
       const provider: CalendarProvider = {
@@ -79,7 +80,7 @@ class CalendarSyncService {
       //   }
       // });
 
-      console.log('Conectando ao Outlook Calendar com token');
+      console.log('Conectando ao Outlook Calendar...');
 
       const provider: CalendarProvider = {
         id: 'outlook_' + Date.now(),

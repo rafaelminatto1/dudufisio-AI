@@ -23,7 +23,7 @@ const App: React.FC = () => {
         <AppRoutes />
         {/* DevTools apenas em desenvolvimento */}
         {import.meta.env.DEV && (
-          <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+          <ReactQueryDevtools initialIsOpen={false} position="bottom" />
         )}
         
         {/* Vercel Analytics e Speed Insights */}

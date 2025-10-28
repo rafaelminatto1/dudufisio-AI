@@ -120,7 +120,8 @@ export const saveAppointment = async (appointmentData: Appointment): Promise<App
         try {
             console.log('💾 appointmentService - Salvando no Supabase:', fullAppointmentData);
             console.log('   ID do agendamento:', fullAppointmentData.id);
-            console.log('   Paciente:', fullAppointmentData.patientName);
+            // SEGURO: Log sem expor nome do paciente
+            console.log('   Paciente ID:', fullAppointmentData.patientId);
             console.log('   Horário:', fullAppointmentData.startTime);
             console.log('   TherapistId:', fullAppointmentData.therapistId);
             

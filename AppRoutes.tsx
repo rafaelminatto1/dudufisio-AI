@@ -62,7 +62,7 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryS
     });
 
     if (typeof window !== 'undefined') {
-      (window as Record<string, unknown>).__APP_ERROR__ = {
+      (window as unknown as Record<string, unknown>).__APP_ERROR__ = {
         error: error.message,
         stack: error.stack,
         componentStack: errorInfo.componentStack,

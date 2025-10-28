@@ -31,7 +31,7 @@ function createMockBodyMapSession(
 }
 
 function getMockBodyMapHistory(patientId: string): BodyMapSession[] {
-  console.warn('⚠️ Retornando histórico mock vazio para paciente:', patientId);
+    console.warn('⚠️ Retornando histórico mock vazio. Patient ID:', patientId.substring(0, 8) + '...');
   // Retornar array vazio - o usuário pode criar novas sessões
   return [];
 }

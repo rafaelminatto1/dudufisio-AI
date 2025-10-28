@@ -5,10 +5,14 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// API Key - usar a key fornecida ou variável de ambiente
-const API_KEY = process.env.VITE_IMAGEN_API_KEY || 
-                process.env.VITE_GEMINI_API_KEY || 
-                'AIzaSyDc5vZXFRAlU18dl1Bk9K2NT-BS8GmuLtM';
+// API Key - usar variável de ambiente
+const API_KEY = import.meta.env.VITE_IMAGEN_API_KEY || 
+                import.meta.env.VITE_GEMINI_API_KEY || 
+                '';
+
+if (!API_KEY) {
+  console.warn('⚠️ VITE_IMAGEN_API_KEY ou VITE_GEMINI_API_KEY não configurada. Serviço funcionará em modo simulado.');
+}
 
 // Inicializar o cliente Gemini
 const genAI = new GoogleGenerativeAI(API_KEY);

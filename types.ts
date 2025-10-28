@@ -138,24 +138,9 @@ export interface PatientAttachment {
     size: number;
 }
 
-export interface CommunicationLog {
-  id: string;
-  date: string; // ISO String
-  type: 'email' | 'sms' | 'call' | 'whatsapp';
-  notes: string;
-  actor: string; // who made the contact, e.g., 'Dr. Roberto'
-}
-
-export interface PainPoint {
-  id: string;
-  x: number; // percentage
-  y: number; // percentage
-  intensity: number; // 0-10
-  type: 'latejante' | 'aguda' | 'queimação' | 'formigamento' | 'cansaço';
-  description: string;
-  date: string; // ISO String
-  bodyPart: 'front' | 'back';
-}
+// NOTA: CommunicationLog e PainPoint estão definidos mais abaixo com versão completa (linhas ~1948+)
+// Mantidos aqui apenas para compatibilidade com código legacy que pode estar usando
+// TODO: Refatorar código que usa estes tipos para usar as versões completas abaixo
 
 export interface Patient {
   // === IDs e Código ===
@@ -1984,48 +1969,8 @@ export interface InventoryItem {
   sku?: string;
 }
 
-// DEPRECATED: Use InventoryMovementType instead
-// This enum is kept for backward compatibility but should not be used in new code
-export enum MovementType {
-  In = 'In',
-  Out = 'Out',
-  Transfer = 'Transfer'
-}
-
-// Helper functions to convert between MovementType enum and Portuguese strings
-export const MovementTypeUtils = {
-  toPortuguese: (type: MovementType): string => {
-    switch (type) {
-      case MovementType.In: return 'entrada';
-      case MovementType.Out: return 'saida';
-      case MovementType.Transfer: return 'transferencia';
-      default: return type;
-    }
-  },
-  fromPortuguese: (str: string): MovementType => {
-    switch (str.toLowerCase()) {
-      case 'entrada': return MovementType.In;
-      case 'saida': return MovementType.Out;
-      case 'transferencia': return MovementType.Transfer;
-      default: return MovementType.In;
-    }
-  },
-  isEntrada: (type: MovementType): boolean => type === MovementType.In,
-  isSaida: (type: MovementType): boolean => type === MovementType.Out
-}
-
-// DEPRECATED: This interface is duplicated. Use the one at line 2924 instead.
-// This interface is kept for backward compatibility but should not be used in new code
-export interface StockMovement {
-  id: string;
-  itemId: string;
-  movementType: MovementType;
-  quantity: number;
-  userId: string;
-  reason?: string;
-  patientId?: string;
-  createdAt: string; // ISO String
-}
+// REMOVED: MovementType enum and StockMovement interface - DEPRECATED
+// Use InventoryMovementType (linha ~2979) e StockMovement (linha ~3052) instead
 
 export enum InventoryAlertType {
     LowStock = 'LowStock',

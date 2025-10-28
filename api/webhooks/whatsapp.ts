@@ -18,14 +18,15 @@ function handleVerification(req: VercelRequest, res: VercelResponse) {
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
-  console.log('🔍 Webhook verification request:', { mode, token, challenge });
+  // SEGURO: Log de verificação sem expor token completo
+  console.warn('Webhook verification request received');
 
   if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-    console.log('✅ Webhook verified successfully');
+    console.warn('Webhook verified successfully');
     return res.status(200).send(challenge);
   }
 
-  console.error('❌ Webhook verification failed');
+  console.error('Webhook verification failed');
   return res.status(403).json({ error: 'Verification failed' });
 }
 
@@ -35,7 +36,8 @@ function handleVerification(req: VercelRequest, res: VercelResponse) {
  */
 async function handleWebhookEvent(req: VercelRequest, res: VercelResponse) {
   try {
-    console.log('📨 Received webhook event:', JSON.stringify(req.body, null, 2));
+    // SEGURO: Log estruturado sem expor dados sensíveis do body
+    console.warn('Webhook event received', { object: req.body?.object, entryCount: req.body?.entry?.length || 0 });
 
     const { object, entry } = req.body;
 
@@ -79,12 +81,12 @@ async function processMessage(value: any) {
     const { from, id, type, timestamp } = message;
     const contact = contacts.find((c: any) => c.wa_id === from);
 
-    console.log('📩 Processing message:', {
-      from,
-      id,
+    // SEGURO: Log de processamento sem expor dados do contato
+    console.warn('Processing WhatsApp message', {
+      messageId: id,
       type,
       timestamp,
-      contact: contact?.profile?.name
+      hasContact: !!contact
     });
 
     // Aqui você pode implementar a lógica de resposta automática
@@ -92,7 +94,8 @@ async function processMessage(value: any) {
 
     if (type === 'text') {
       const textContent = message.text?.body;
-      console.log('💬 Text message received:', textContent);
+      // SEGURO: Log sem expor conteúdo da mensagem
+      console.warn('Text message received', { hasContent: !!textContent, length: textContent?.length || 0 });
 
       // TODO: Implementar lógica de resposta automática
       // - Verificar palavras-chave
@@ -110,14 +113,18 @@ async function processMessage(value: any) {
  * Processa atualizações de status de template
  */
 async function processTemplateStatusUpdate(value: any) {
-  console.log('📝 Template status update:', value);
+  // SEGURO: Log estruturado de status de template
+  console.warn('Template status update received');
 
   const { event, message_template_id, message_template_name, reason } = value;
 
-  console.log(`Template ${message_template_name} (${message_template_id}): ${event}`);
+  console.warn(`Template status: ${event}`, { 
+    templateId: message_template_id,
+    event 
+  });
 
   if (reason) {
-    console.log('Reason:', reason);
+    console.warn('Template event reason:', { reason });
   }
 
   // TODO: Atualizar status do template no banco de dados
@@ -128,13 +135,10 @@ async function processTemplateStatusUpdate(value: any) {
  * Main handler
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Log da requisição (sanitizado)
-  console.log(`${req.method} /api/webhooks/whatsapp`, {
-    query: req.query,
-    headers: {
-      'content-type': req.headers['content-type'],
-      'user-agent': req.headers['user-agent']
-    }
+  // Log da requisição (sanitizado - não expõe query params que podem conter tokens)
+  console.warn(`${req.method} /api/webhooks/whatsapp`, {
+    hasQuery: !!req.query,
+    contentType: req.headers['content-type']
   });
 
   if (req.method === 'GET') {

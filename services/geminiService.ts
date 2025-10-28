@@ -449,7 +449,7 @@ export async function generateExerciseVideo(prompt: string): Promise<VideoOperat
 
     
     
-    console.log('🔑 [GEMINI VEO] API Key:', `${GEMINI_API_KEY.substring(0, 10)}...`);
+    // REMOVIDO: Log de API key (SEGURANÇA - não expor credenciais)
 
     // Tentar API real primeiro
     const realAPIResult = await tryGoogleAIVideoAPI(prompt);

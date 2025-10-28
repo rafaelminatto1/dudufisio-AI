@@ -49,8 +49,8 @@ export interface DREReport {
     custoTotal: number;
   };
   resultado: {
-    lucro Bruto: number;
-    despesas OperacionaisTotal: number;
+    lucroBruto: number;
+    despesasOperacionaisTotal: number;
     lucroOperacional: number;
     lucroLiquido: number;
     margemBruta: number; // %

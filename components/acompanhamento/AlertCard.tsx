@@ -36,9 +36,11 @@ const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, 
     const handleLogContact = async (contactType: 'WhatsApp' | 'Ligação') => {
         if (!user) return;
         try {
+            // Converter tipo para o formato esperado pelo CommunicationLog
+            const logType = contactType === 'WhatsApp' ? 'whatsapp' : 'call';
             await patientService.addCommunicationLog(patient.id, {
                 date: new Date().toISOString(),
-                type: contactType,
+                type: logType,
                 notes: `Tentativa de contato para acompanhamento via ${contactType}.`,
                 actor: user.name,
             });
