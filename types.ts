@@ -2946,24 +2946,21 @@ export const MovementTypeUtils = {
     return type === 'saida' || type === MovementType.Out;
   },
   toPortuguese: (type: InventoryMovementType | MovementType): string => {
-    switch (type) {
+    // Since enum values map to strings, we only need string cases to avoid duplicates
+    const typeStr = String(type);
+    switch (typeStr) {
       case 'entrada':
-      case MovementType.In:
         return 'Entrada';
       case 'saida':
-      case MovementType.Out:
         return 'Saída';
       case 'ajuste':
-      case MovementType.Adjustment:
         return 'Ajuste';
       case 'vencimento':
-      case MovementType.Expiration:
         return 'Vencimento';
       case 'perda':
-      case MovementType.Loss:
         return 'Perda';
       default:
-        return type;
+        return typeStr;
     }
   }
 };
