@@ -198,7 +198,7 @@ USING (
     SELECT 1 FROM purchase_orders po
     INNER JOIN users u ON u.id = auth.uid()
     WHERE po.id = purchase_order_items.purchase_order_id
-    AND u.role IN ('Admin', 'Fisioterapeuta')
+    AND u.role IN ('admin', 'therapist')
   )
 );
 
@@ -210,7 +210,7 @@ WITH CHECK (
     SELECT 1 FROM purchase_orders po
     INNER JOIN users u ON u.id = auth.uid()
     WHERE po.id = purchase_order_items.purchase_order_id
-    AND u.role IN ('Admin', 'Fisioterapeuta')
+    AND u.role IN ('admin', 'therapist')
   )
 );
 
@@ -282,9 +282,33 @@ ON task_type_supply_templates FOR SELECT
 TO authenticated
 USING (true);
 
--- Apenas Admins podem gerenciar templates
-CREATE POLICY "Only admins can manage supply templates"
-ON task_type_supply_templates FOR INSERT, UPDATE, DELETE
+-- Apenas Admins podem criar templates
+CREATE POLICY "Only admins can insert supply templates"
+ON task_type_supply_templates FOR INSERT
+TO authenticated
+WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE users.id = auth.uid()
+    AND users.role = 'admin'
+  )
+);
+
+-- Apenas Admins podem atualizar templates
+CREATE POLICY "Only admins can update supply templates"
+ON task_type_supply_templates FOR UPDATE
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE users.id = auth.uid()
+    AND users.role = 'admin'
+  )
+);
+
+-- Apenas Admins podem deletar templates
+CREATE POLICY "Only admins can delete supply templates"
+ON task_type_supply_templates FOR DELETE
 TO authenticated
 USING (
   EXISTS (
@@ -310,9 +334,33 @@ USING (
   )
 );
 
--- Apenas Admins podem gerenciar lotes
-CREATE POLICY "Only admins can manage supply batches"
-ON supply_batches FOR INSERT, UPDATE, DELETE
+-- Apenas Admins podem criar lotes
+CREATE POLICY "Only admins can insert supply batches"
+ON supply_batches FOR INSERT
+TO authenticated
+WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE users.id = auth.uid()
+    AND users.role = 'admin'
+  )
+);
+
+-- Apenas Admins podem atualizar lotes
+CREATE POLICY "Only admins can update supply batches"
+ON supply_batches FOR UPDATE
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1 FROM users
+    WHERE users.id = auth.uid()
+    AND users.role = 'admin'
+  )
+);
+
+-- Apenas Admins podem deletar lotes
+CREATE POLICY "Only admins can delete supply batches"
+ON supply_batches FOR DELETE
 TO authenticated
 USING (
   EXISTS (
