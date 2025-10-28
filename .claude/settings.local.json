@@ -4,7 +4,11 @@
       "Bash(rm:*)",
       "Bash(vercel logs:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git push)",
+      "Bash(vercel:*)",
+      "Bash(npm run build:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
