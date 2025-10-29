@@ -244,7 +244,7 @@ const MultiTherapistAppointmentCard: React.FC<{
             {format(appointment.startTime, 'HH:mm')}
           </div>
           <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
-            {appointment.type.substring(0, 3)}
+            {appointment.type?.substring(0, 3) || ''}
           </div>
         </div>
       </div>

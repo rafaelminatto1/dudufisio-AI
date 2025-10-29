@@ -80,7 +80,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
       if (appointment.therapistName?.toLowerCase().includes(query)) {
         score += 8;
       }
-      if (appointment.type.toLowerCase().includes(query)) {
+      if (appointment.type?.toLowerCase().includes(query)) {
         score += 5;
       }
       if (appointment.observations?.toLowerCase().includes(query)) {

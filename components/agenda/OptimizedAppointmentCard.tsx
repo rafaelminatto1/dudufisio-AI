@@ -367,7 +367,9 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
               {format(appointment.startTime, 'HH:mm')}
             </div>
             <div className="text-[9px] font-semibold text-slate-600 uppercase tracking-wide truncate">
-              {appointment.type.substring(0, 3)}
+              {typeof appointment.type === 'string' && appointment.type
+                ? appointment.type.substring(0, 3)
+                : ''}
             </div>
           </div>
         </div>

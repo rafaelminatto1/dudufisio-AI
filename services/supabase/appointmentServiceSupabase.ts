@@ -120,9 +120,10 @@ class SupabaseAppointmentService {
       checkedOutAt: row.checked_out_at || undefined,
 
       // Payment
-      paymentStatus: row.payment_status || undefined,
+      paymentStatus: (row.payment_status as 'paid' | 'pending' | undefined) || 'pending',
       paymentAmount: row.payment_amount || undefined,
       paymentMethod: row.payment_method || undefined,
+      value: row.payment_amount ?? 0, // Mapear payment_amount para value
 
       // Metadata
       tags: row.tags || undefined,
@@ -186,7 +187,7 @@ class SupabaseAppointmentService {
 
     if (appointment.title) insert.title = appointment.title;
     if (appointment.description) insert.description = appointment.description;
-    if (appointment.type) insert.appointment_type = appointment.type;
+    if (appointment.type) insert.appointment_type = String(appointment.type); // Converter enum para string
 
     if (appointment.startTime) insert.start_time = appointment.startTime.toISOString();
     if (appointment.endTime) insert.end_time = appointment.endTime.toISOString();
@@ -216,8 +217,11 @@ class SupabaseAppointmentService {
     if (appointment.checkedInAt) insert.checked_in_at = appointment.checkedInAt;
     if (appointment.checkedOutAt) insert.checked_out_at = appointment.checkedOutAt;
 
-    if (appointment.paymentStatus) insert.payment_status = appointment.paymentStatus;
-    if (appointment.paymentAmount) insert.payment_amount = appointment.paymentAmount;
+    // Sempre definir payment_status (não pode ser null)
+    insert.payment_status = appointment.paymentStatus || 'pending';
+    // Mapear tanto value quanto paymentAmount para payment_amount
+    if (appointment.value !== undefined) insert.payment_amount = appointment.value;
+    else if (appointment.paymentAmount !== undefined) insert.payment_amount = appointment.paymentAmount;
     if (appointment.paymentMethod) insert.payment_method = appointment.paymentMethod;
 
     if (appointment.tags) insert.tags = appointment.tags;

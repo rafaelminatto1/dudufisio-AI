@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import * as ReactWindow from 'react-window';
+import { List } from 'react-window';
 import { ArrowUpDown, MoreHorizontal, MessageCircle, Calendar, FileText, Eye } from 'lucide-react';
 import {
   Table,
@@ -241,7 +241,7 @@ export const VirtualizedPatientTable: React.FC<VirtualizedPatientTableProps> = (
 
       {/* Lista virtualizada */}
       <div className="border border-slate-200 rounded-b-lg overflow-hidden">
-        <ReactWindow.FixedSizeList
+        <List
           height={height}
           itemCount={patients.length}
           itemSize={ROW_HEIGHT}
@@ -249,7 +249,7 @@ export const VirtualizedPatientTable: React.FC<VirtualizedPatientTableProps> = (
           className="scrollbar-thin"
         >
           {Row}
-        </ReactWindow.FixedSizeList>
+        </List>
       </div>
 
       {/* Footer com info */}

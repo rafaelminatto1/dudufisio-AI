@@ -145,7 +145,7 @@ export function MobileAppointmentSheet({
                 <div>
                   <p className="text-xs text-slate-600 mb-0.5">Tipo de Atendimento</p>
                   <p className="font-semibold text-slate-900">
-                    {appointment.type}
+                    {appointment.type || 'Não definido'}
                   </p>
                 </div>
               </div>
@@ -162,7 +162,7 @@ export function MobileAppointmentSheet({
                     <div>
                       <p className="text-xs text-slate-600 mb-0.5">Valor</p>
                       <p className="font-bold text-lg text-emerald-700">
-                        R$ {appointment.value.toFixed(2)}
+                        R$ {(appointment.value ?? 0).toFixed(2)}
                       </p>
                     </div>
                   </div>

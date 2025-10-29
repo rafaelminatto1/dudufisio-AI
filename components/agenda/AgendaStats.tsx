@@ -50,7 +50,8 @@ const AgendaStats: React.FC<AgendaStatsProps> = ({ appointments, therapists, cla
 
   // Agendamentos por tipo
   const appointmentsByType = appointments.reduce((acc, app) => {
-    acc[app.type] = (acc[app.type] || 0) + 1;
+    const type = app.type || 'Não definido';
+    acc[type] = (acc[type] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 

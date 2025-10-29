@@ -351,7 +351,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
                   </div>
                 ) : (
                   <div className="text-2xl font-bold text-slate-900">
-                    R$ {appointment.value.toFixed(2)}
+                    R$ {(appointment.value ?? 0).toFixed(2)}
                   </div>
                 )}
               </div>
