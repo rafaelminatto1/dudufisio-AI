@@ -8,9 +8,9 @@ import {
     ShieldCheck, Cog, Library, AreaChart, LogOut, FilePlus, FileClock, Dumbbell,
     AlertTriangle, Mail, BrainCircuit, ClipboardList, PieChart, DollarSign,
     SlidersHorizontal, Bell, MessageSquare, Handshake, Package, Ticket, Activity,
-    Users2, BookMarked, FileText, TrendingUp, Database, Settings, Monitor, 
-    HardDrive, Wrench, CreditCard, Eye, FileCheck, Search, Target, 
-    FileSpreadsheet, Zap, Globe, UserCheck, Archive, FileSearch, Film
+    Users2, BookMarked, FileText, TrendingUp, Database, Settings, Monitor,
+    HardDrive, Wrench, CreditCard, Eye, FileCheck, Search, Target,
+    FileSpreadsheet, Zap, Globe, UserCheck, Archive, FileSearch, Film, Sparkles
 } from 'lucide-react';
 import { useApp } from "../contexts/AppContext";
 import { useNotifications } from '../hooks/useNotifications';
@@ -103,7 +103,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
           clinicalNav: [
             { to: '/patients', icon: Users, label: 'Pacientes' },
             { to: '/agenda', icon: Calendar, label: 'Agenda' },
-            { to: '/acompanhamento', icon: Activity, label: 'Acompanhamento' },
+            { to: '/acompanhamento/monitoramento', icon: Activity, label: 'Acompanhamento' },
             { to: '/session-evolution', icon: TrendingUp, label: 'Evolução de Sessões' },
             { to: '/teleconsulta', icon: Activity, label: 'Teleconsulta' },
             { to: '/exercises', icon: Dumbbell, label: 'Exercícios' },
@@ -124,6 +124,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
           ],
           aiToolsNav: [
             { to: '/ai-tools/consolidated', icon: BrainCircuit, label: 'Ferramentas IA', roles: [Role.Admin, Role.Therapist] },
+            { to: '/body-map-demo', icon: Sparkles, label: '🎨 Body Map NOVO', roles: [Role.Admin, Role.Therapist] },
             { to: '/gerar-laudo', icon: FilePlus, label: 'Gerar Laudo' },
             { to: '/gerar-evolucao', icon: FileClock, label: 'Gerar Evolução' },
             { to: '/hep-generator', icon: Dumbbell, label: 'Gerar Plano (HEP)' },
@@ -170,7 +171,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
           clinicalNav: [
             { to: '/patients', icon: Users, label: 'Pacientes' },
             { to: '/agenda', icon: Calendar, label: 'Agenda' },
-            { to: '/acompanhamento', icon: Activity, label: 'Acompanhamento' },
+            { to: '/acompanhamento/monitoramento', icon: Activity, label: 'Acompanhamento' },
             { to: '/session-evolution', icon: TrendingUp, label: 'Evolução de Sessões' },
             { to: '/teleconsulta', icon: Activity, label: 'Teleconsulta' },
             { to: '/exercises', icon: Dumbbell, label: 'Exercícios' },

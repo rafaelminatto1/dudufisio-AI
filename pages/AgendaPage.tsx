@@ -18,6 +18,10 @@ import { useToast } from '../contexts/ToastContext';
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
 import { blockService } from '../services/scheduling/blockService';
+import LoadingState from '../components/ui/LoadingState';
+import ErrorState from '../components/ui/ErrorState';
+import EmptyState from '../components/ui/EmptyState';
+import { handleError } from '../lib/middleware/errorHandler';
 import { useData } from '../contexts/AppContext';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import { Role } from '../types';
@@ -52,6 +56,7 @@ import { useIsMobile } from '../hooks/useMediaQuery';
 import MobileAgendaView from '../components/agenda/MobileAgendaView';
 import useSessionEvolutionMode from '../hooks/useSessionEvolutionMode';
 import SessionEvolutionModal from '../components/session/SessionEvolutionModal';
+import RescheduleConfirmModal from '../components/agenda/RescheduleConfirmModal';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
@@ -69,6 +74,15 @@ export default function AgendaPage() {
     const { mode: sessionEvolutionMode } = useSessionEvolutionMode();
     const [showEvolutionModal, setShowEvolutionModal] = useState(false);
     const [modalAppointmentId, setModalAppointmentId] = useState<string>('');
+
+    // Reschedule Confirmation Modal States
+    const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+    const [pendingReschedule, setPendingReschedule] = useState<{
+        appointment: EnrichedAppointment;
+        newStartTime: Date;
+        newEndTime: Date;
+        therapistId: string;
+    } | null>(null);
 
     // Calculate date ranges based on current view
     const { startDate, endDate } = useMemo(() => {
@@ -119,6 +133,15 @@ export default function AgendaPage() {
         paymentStatus: [],
         showConflicts: false
     });
+    
+    // Estados de loading/erro para operações específicas
+    const [isLoadingAppointments, setIsLoadingAppointments] = useState(false);
+    const [appointmentsError, setAppointmentsError] = useState<string | null>(null);
+    const [isLoadingPatients, setIsLoadingPatients] = useState(false);
+    const [patientsError, setPatientsError] = useState<string | null>(null);
+    const [isSavingAppointment, setIsSavingAppointment] = useState(false);
+    const [isDeletingAppointment, setIsDeletingAppointment] = useState(false);
+    
     const { showToast } = useToast();
 
     // Modal states
@@ -228,6 +251,9 @@ export default function AgendaPage() {
     useEffect(() => {
         const fetchInitialData = async () => {
             setIsLoadingData(true);
+            setIsLoadingPatients(true);
+            setPatientsError(null);
+            
             try {
                 const [patientData, waitlistData, blocksData] = await Promise.all([
                     patientService.getAllPatients(),
@@ -238,10 +264,21 @@ export default function AgendaPage() {
                 setWaitlistEntries(waitlistData);
                 setScheduleBlocks(blocksData);
             } catch (error) {
-                console.error('Erro ao carregar dados iniciais:', error);
-                showToast('Falha ao carregar dados de suporte da agenda.', 'error');
+                const errorMessage = 'Falha ao carregar dados de suporte da agenda';
+                setPatientsError(errorMessage);
+                
+                handleError(error, {
+                    operation: 'fetchInitialData',
+                    severity: 'medium',
+                    fallbackMessage: errorMessage,
+                    context: { 
+                        component: 'AgendaPage',
+                        dataTypes: ['patients', 'waitlist', 'blocks']
+                    }
+                });
             } finally {
                 setIsLoadingData(false);
+                setIsLoadingPatients(false);
             }
         };
         fetchInitialData();
@@ -282,6 +319,7 @@ export default function AgendaPage() {
     };
     
     const handleSaveAppointment = async (appointmentData: Appointment): Promise<boolean> => {
+        setIsSavingAppointment(true);
         try {
             console.log('🔍 Salvando agendamento:', appointmentData);
             await appointmentService.saveAppointment(appointmentData);
@@ -296,8 +334,21 @@ export default function AgendaPage() {
             return true;
         } catch (error) {
             console.error('Erro ao salvar consulta:', error);
-            showToast('Falha ao salvar a consulta.', 'error');
+            
+            handleError(error, {
+                operation: 'handleSaveAppointment',
+                severity: 'high',
+                fallbackMessage: 'Erro ao salvar agendamento',
+                context: { 
+                    appointmentId: appointmentData.id,
+                    patientId: appointmentData.patientId,
+                    startTime: appointmentData.startTime.toISOString()
+                }
+            });
+            
             return false;
+        } finally {
+            setIsSavingAppointment(false);
         }
     };
     
@@ -309,6 +360,7 @@ export default function AgendaPage() {
         const confirmed = window.confirm(seriesId ? 'Excluir esta e todas as futuras ocorrências?' : 'Tem certeza que deseja excluir este agendamento?');
         if (!confirmed) return false;
   
+        setIsDeletingAppointment(true);
         try {
             if (seriesId) {
                 await appointmentService.deleteAppointmentSeries(seriesId, appointmentToDelete.startTime);
@@ -323,9 +375,23 @@ export default function AgendaPage() {
             setAppointmentToEdit(null);
             setSelectedAppointment(null);
             return true;
-        } catch {
-            showToast('Falha ao remover agendamento(s).', 'error');
+        } catch (error) {
+            console.error('Erro ao excluir agendamento:', error);
+            
+            handleError(error, {
+                operation: 'handleDeleteAppointment',
+                severity: 'high',
+                fallbackMessage: 'Erro ao excluir agendamento',
+                context: { 
+                    appointmentId,
+                    seriesId,
+                    patientId: appointmentToDelete.patientId
+                }
+            });
+            
             return false;
+        } finally {
+            setIsDeletingAppointment(false);
         }
     };
 
@@ -369,11 +435,9 @@ export default function AgendaPage() {
                 setShowEvolutionModal(true);
                 break;
             case 'expansion':
-                // Expande SessionFormPage existente
                 navigate(`/session/${appointment.id}`);
                 break;
             default:
-                // Fallback para AtendimentoPage existente
                 navigate(`/atendimento/${appointment.id}`);
                 break;
         }
@@ -393,7 +457,7 @@ export default function AgendaPage() {
     const handleDragEnd = () => setDraggedAppointmentId(null);
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
     
-    const handleDrop = async (e: React.DragEvent<HTMLDivElement>, day: Date, therapistId: string) => {
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>, day: Date, therapistId: string) => {
         e.preventDefault();
         const appointmentData = JSON.parse(e.dataTransfer.getData("application/json")) as EnrichedAppointment;
         const columnEl = e.currentTarget;
@@ -411,18 +475,52 @@ export default function AgendaPage() {
         const duration = new Date(appointmentData.endTime).getTime() - new Date(appointmentData.startTime).getTime();
         const newEndTime = new Date(newStartTime.getTime() + duration);
         
-        const updatedAppointment: Appointment = { ...appointmentData, startTime: newStartTime, endTime: newEndTime, therapistId };
-        
+        // MANTER o fisioterapeuta original do agendamento
+        // Armazenar dados temporariamente e abrir modal de confirmação
+        setPendingReschedule({
+            appointment: appointmentData,
+            newStartTime,
+            newEndTime,
+            therapistId: appointmentData.therapistId  // Mantém o fisioterapeuta original
+        });
+        setShowRescheduleModal(true);
+        setDraggedAppointmentId(null);
+    };
+
+    const handleConfirmReschedule = async () => {
+        if (!pendingReschedule) return;
+
+        const { appointment, newStartTime, newEndTime, therapistId } = pendingReschedule;
+        const updatedAppointment: Appointment = {
+            ...appointment,
+            startTime: newStartTime,
+            endTime: newEndTime,
+            therapistId
+        };
+
         try {
+            // Fecha o modal primeiro
+            setShowRescheduleModal(false);
+            setPendingReschedule(null);
+            
+            // Salva o agendamento
             await appointmentService.saveAppointment(updatedAppointment);
-            showToast('Agendamento movido!', 'success');
-            refetch();
+            showToast('Agendamento movido com sucesso!', 'success');
+            
+            // Força atualização da agenda
+            await refetch();
+            refreshWaitlist();
+            refreshScheduleBlocks();
         } catch (error) {
             console.error('Erro ao mover agendamento:', error);
             showToast('Falha ao mover agendamento.', 'error');
-        } finally {
-            setDraggedAppointmentId(null);
         }
+    };
+
+    const handleCancelReschedule = () => {
+        setShowRescheduleModal(false);
+        setPendingReschedule(null);
+        setDraggedAppointmentId(null);
     };
 
     // Funções para lista de espera
@@ -992,6 +1090,20 @@ export default function AgendaPage() {
                         showToast('Sessão salva com sucesso!', 'success');
                         refetch();
                     }}
+                />
+            )}
+
+            {/* Reschedule Confirmation Modal */}
+            {pendingReschedule && (
+                <RescheduleConfirmModal
+                    isOpen={showRescheduleModal}
+                    appointment={pendingReschedule.appointment}
+                    newStartTime={pendingReschedule.newStartTime}
+                    newEndTime={pendingReschedule.newEndTime}
+                    newTherapistId={pendingReschedule.therapistId}
+                    newTherapistName={therapists.find(t => t.id === pendingReschedule.therapistId)?.name}
+                    onConfirm={handleConfirmReschedule}
+                    onCancel={handleCancelReschedule}
                 />
             )}
         </main>

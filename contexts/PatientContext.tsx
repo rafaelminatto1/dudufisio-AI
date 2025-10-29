@@ -7,6 +7,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react';
 import { Patient, PatientFormData } from '../types/patient';
 import { patientToasts } from '../utils/toast';
+import { handleError } from '../lib/middleware/errorHandler';
 
 // ============================================================================
 // TYPES
@@ -711,8 +712,18 @@ export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children })
       const errorMessage = err instanceof Error ? err.message : 'Erro ao criar paciente';
       setError(errorMessage);
       
+      // Usar handleError para erros não relacionados a validação
       if (!errorMessage.includes('já cadastrado')) {
-        patientToasts.createError(errorMessage);
+        handleError(err, {
+          operation: 'createPatient',
+          severity: 'medium',
+          fallbackMessage: 'Erro ao criar paciente',
+          context: { 
+            patientName: formData.name,
+            hasCPF: !!formData.cpf,
+            hasEmail: !!formData.email
+          }
+        });
       }
       
       throw err;
@@ -767,8 +778,18 @@ export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children })
       const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar paciente';
       setError(errorMessage);
       
-      if (!errorMessage.includes('já cadastrado')) {
-        patientToasts.updateError(errorMessage);
+      // Usar handleError para erros não relacionados a validação
+      if (!errorMessage.includes('já cadastrado') && !errorMessage.includes('não encontrado')) {
+        handleError(err, {
+          operation: 'updatePatient',
+          severity: 'medium',
+          fallbackMessage: 'Erro ao atualizar paciente',
+          context: { 
+            patientId: id,
+            hasCPF: !!formData.cpf,
+            hasEmail: !!formData.email
+          }
+        });
       }
       
       throw err;
@@ -803,7 +824,18 @@ export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro ao excluir paciente';
       setError(errorMessage);
-      patientToasts.deleteError(errorMessage);
+      // Usar handleError para erros não relacionados a validação
+      if (!errorMessage.includes('não encontrado')) {
+        handleError(err, {
+          operation: 'deletePatient',
+          severity: 'medium',
+          fallbackMessage: 'Erro ao excluir paciente',
+          context: { 
+            patientId: id,
+            patientName: patient?.name
+          }
+        });
+      }
       throw err;
     } finally {
       setIsLoading(false);
@@ -832,7 +864,15 @@ export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar paciente';
       setError(errorMessage);
-      patientToasts.loadError();
+      // Usar handleError para erros não relacionados a validação
+      handleError(err, {
+        operation: 'getPatient',
+        severity: 'low',
+        fallbackMessage: 'Erro ao buscar paciente',
+        context: { 
+          patientId: id
+        }
+      });
       return null;
     } finally {
       setIsLoading(false);
@@ -854,6 +894,15 @@ export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children })
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar pacientes';
       setError(errorMessage);
+      // Usar handleError para erros não relacionados a validação
+      handleError(err, {
+        operation: 'getAllPatients',
+        severity: 'medium',
+        fallbackMessage: 'Erro ao buscar todos os pacientes',
+        context: { 
+          patientsCount: patients.length
+        }
+      });
       return [];
     } finally {
       setIsLoading(false);

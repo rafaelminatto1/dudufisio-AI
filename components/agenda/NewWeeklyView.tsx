@@ -118,6 +118,8 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
   // Estados para feedback visual do drag-and-drop
   const [dropIndicatorPosition, setDropIndicatorPosition] = useState<number | null>(null);
   const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
+  const [previewTime, setPreviewTime] = useState<string | null>(null);
+  const [previewPosition, setPreviewPosition] = useState<{ x: number; y: number } | null>(null);
 
   const handleRightClick = (appointment: EnrichedAppointment, e: React.MouseEvent) => {
     setContextMenu({
@@ -144,13 +146,22 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
     const snappedMinutes = Math.round(minutesFromTop / 30) * 30;
     const snappedY = snappedMinutes * PIXELS_PER_MINUTE;
     
+    // Calcular horário de destino
+    const newHour = START_HOUR + Math.floor(snappedMinutes / 60);
+    const newMinute = snappedMinutes % 60;
+    const timeString = `${String(newHour).padStart(2, '0')}:${String(newMinute).padStart(2, '0')}`;
+    
     setDropIndicatorPosition(snappedY);
     setHoveredColumn(day.toISOString());
+    setPreviewTime(timeString);
+    setPreviewPosition({ x: e.clientX, y: e.clientY });
   };
 
   const handleDragLeave = () => {
     setDropIndicatorPosition(null);
     setHoveredColumn(null);
+    setPreviewTime(null);
+    setPreviewPosition(null);
   };
 
   return (
@@ -384,6 +395,24 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
             }
           }}
         />
+      )}
+
+      {/* Preview do horário durante drag */}
+      {previewTime && previewPosition && (
+        <div
+          className="fixed z-50 pointer-events-none transition-all duration-150"
+          style={{
+            left: `${previewPosition.x + 15}px`,
+            top: `${previewPosition.y - 10}px`,
+          }}
+        >
+          <div className="bg-blue-600 text-white px-3 py-2 rounded-lg shadow-2xl font-bold text-sm border-2 border-blue-400">
+            <div className="flex items-center gap-2">
+              <span className="text-xs opacity-90">📍 Novo horário:</span>
+              <span className="text-base tabular-nums">{previewTime}</span>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

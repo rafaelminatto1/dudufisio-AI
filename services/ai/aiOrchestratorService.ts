@@ -3,6 +3,7 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/ge
 import { AIProvider, AIResponse, AIQueryLog } from '../../types';
 import { secureLogger } from '../../lib/secureLogger';
 import { checkRateLimit as rateLimitCheck } from './rateLimiter';
+import { handleError } from '../../lib/middleware/errorHandler';
 
 export class AiOrchestratorService {
   private genAI: GoogleGenerativeAI | null = null;
@@ -114,6 +115,17 @@ export class AiOrchestratorService {
       secureLogger.error('Error calling Gemini API', error, {
         component: 'AiOrchestratorService',
         action: 'query'
+      });
+
+      handleError(error, {
+        operation: 'aiQuery',
+        severity: 'medium',
+        fallbackMessage: 'Erro ao processar consulta com IA',
+        context: { 
+          userId,
+          provider: 'gemini',
+          promptLength: prompt.length
+        }
       });
 
       // Fallback to mock on error

@@ -17,6 +17,7 @@ import AgendaPage from './AgendaPage';
 const PatientListPage = LazyPages.PatientListPage; // ✅ FIX: Usar LazyPages centralizado
 const PatientDetailPage = LazyPages.PatientDetailPage; // ✅ FIX: Usar LazyPages centralizado
 const BodyMapDashboardPage = LazyPages.BodyMapDashboardPage; // ✅ Mapa Corporal
+const BodyMapDemoPage = createLazyComponent(() => import('./BodyMapDemoPage')); // 🎨 NOVO: Demo Body Map Profissional
 const PatientEditPage = createLazyComponent(() => import('./PatientEditPage'));
 const SessionFormPage = LazyPages.SessionFormPage;
 const SessionViewPage = LazyPages.SessionViewPage;
@@ -40,6 +41,7 @@ const AtendimentoPage = createLazyComponent(() => import('./AtendimentoPage'));
 const AtendimentoPageDemo = createLazyComponent(() => import('./AtendimentoPageDemo'));
 const SpecialtyAssessmentsPage = createLazyComponent(() => import('./SpecialtyAssessmentsPage'));
 const AcompanhamentoPage = createLazyComponent(() => import('./AcompanhamentoPage'));
+const PatientMonitoringPage = createLazyComponent(() => import('./PatientMonitoringPage'));
 const TreatmentPage = createLazyComponent(() => import('./TreatmentPage'));
 const IntegrationsTestPage = createLazyComponent(() => import('./IntegrationsTestPage'));
 const BIIntegrationTestPage = createLazyComponent(() => import('./BIIntegrationTestPage'));
@@ -419,7 +421,9 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/patients/:id/view" element={LazyElement(PatientDetailPage, 'Detalhes do Paciente')} />
                 <Route path="/patients/:id" element={LazyElement(PatientDetailPage, 'Detalhes do Paciente')} />
                 <Route path="/body-map-dashboard/:patientId" element={LazyElement(BodyMapDashboardPage, 'Dashboard Mapa Corporal')} />
+                <Route path="/body-map-demo" element={LazyElement(BodyMapDemoPage, '🎨 Demo Body Map Profissional')} />
                 <Route path="/acompanhamento" element={LazyElement(AcompanhamentoPage, 'Acompanhamento')} />
+                <Route path="/acompanhamento/monitoramento" element={LazyElement(PatientMonitoringPage, 'Monitoramento de Pacientes')} />
                 <Route path="/notifications" element={LazyElement(NotificationCenterPage, 'Notificações')} />
                 <Route path="/tasks" element={<PageErrorBoundary pageName="Tarefas"><KanbanPage /></PageErrorBoundary>} />
                 <Route path="/session-evolution" element={LazyElement(SessionEvolutionPage, 'Evolução de Sessão')} />

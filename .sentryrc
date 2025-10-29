@@ -1,0 +1,8 @@
+[auth]
+token=3118f328183090028742689eef152b594362965a3c27a2f52f80c01cc171fded
+
+[defaults]
+url=https://sentry.io/
+org=activity-fisioterapia-rg
+project=sentry-dudufisio-ai
+

@@ -4,6 +4,8 @@ import { eventService } from './eventService';
 import { supabasePatientService } from './supabase/patientServiceSupabase';
 import { SupabaseConfigManager } from '../lib/supabaseConfig';
 import { secureLogger } from '../lib/secureLogger';
+import { withSupabaseQuery, withSupabaseMutation, withSupabaseCritical } from '../lib/supabase/errorHandler';
+import { handleError } from '../lib/middleware/errorHandler';
 
 // Mock data para desenvolvimento
 const MOCK_PATIENT_TRACKING_DATA = {
@@ -48,42 +50,52 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 // Usar exclusivamente Supabase - sem fallback para mock
 const isSupabaseEnabled = true;
 
-export const getRecentPatients = async (): Promise<Patient[]> => {
-    if (isSupabaseEnabled) {
-        const patients = await supabasePatientService.getAllPatients();
+export const getRecentPatients = withSupabaseQuery(
+    async (): Promise<Patient[]> => {
+        if (isSupabaseEnabled) {
+            const patients = await supabasePatientService.getAllPatients();
+            return [...patients]
+                .sort((a,b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime())
+                .slice(0, 5);
+        }
+
+        await delay(200);
+        const patients = db.getPatients();
         return [...patients]
             .sort((a,b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime())
             .slice(0, 5);
+    },
+    {
+        operation: 'getRecentPatients',
+        fallbackMessage: 'Erro ao buscar pacientes recentes'
     }
+);
 
-    await delay(200);
-    const patients = db.getPatients();
-    return [...patients]
-        .sort((a,b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime())
-        .slice(0, 5);
-}
+export const getAllPatients = withSupabaseQuery(
+    async (): Promise<Patient[]> => {
+        if (isSupabaseEnabled) {
+            const patients = await supabasePatientService.getAllPatients();
+            return [...patients].sort((a,b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime());
+        }
 
-export const getAllPatients = async (): Promise<Patient[]> => {
-    if (isSupabaseEnabled) {
-        const patients = await supabasePatientService.getAllPatients();
-        return [...patients].sort((a,b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime());
+        await delay(500);
+        const patients = db.getPatients();
+        const sortedPatients = [...patients].sort((a,b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime());
+        return sortedPatients;
+    },
+    {
+        operation: 'getAllPatients',
+        fallbackMessage: 'Erro ao buscar todos os pacientes'
     }
+);
 
-    await delay(500);
-    const patients = db.getPatients();
-    const sortedPatients = [...patients].sort((a,b) => new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime());
-    return sortedPatients;
-};
-
-export const searchPatients = async (term: string, retryCount = 0): Promise<PatientSummary[]> => {
-    if (term.length < 2) return [];
-    
-    const MAX_RETRIES = 2;
-    const TIMEOUT_MS = 10000;
-    
-    if (isSupabaseEnabled) {
-        try {
+export const searchPatients = withSupabaseCritical(
+    async (term: string): Promise<PatientSummary[]> => {
+        if (term.length < 2) return [];
+        
+        if (isSupabaseEnabled) {
             // Implementar timeout
+            const TIMEOUT_MS = 10000;
             const timeoutPromise = new Promise<never>((_, reject) => 
                 setTimeout(() => reject(new Error('Timeout na busca')), TIMEOUT_MS)
             );
@@ -92,51 +104,32 @@ export const searchPatients = async (term: string, retryCount = 0): Promise<Pati
             const results = await Promise.race([searchPromise, timeoutPromise]);
             
             return results.map(mapPatientToSummary).slice(0, 10);
-        } catch (error) {
-            secureLogger.error('Erro ao buscar pacientes no Supabase', error, { 
-                component: 'patientService',
-                action: 'searchPatients'
-            });
-            
-            // Retry automático
-            if (retryCount < MAX_RETRIES) {
-                await delay(500 * (retryCount + 1)); // Backoff exponencial
-                return searchPatients(term, retryCount + 1);
-            }
-            
-            // Fallback para busca local nos dados mock
-            secureLogger.warn('Fallback para busca local após falhas no Supabase', { 
-                component: 'patientService',
-                action: 'searchPatients'
-            });
-            const lowerTerm = term.toLowerCase();
-            const allPatients = db.getPatients();
-            
-            return allPatients
-                .filter(p => p.name.toLowerCase().includes(lowerTerm) || p.cpf.includes(lowerTerm))
-                .map(mapPatientToSummary)
-                .slice(0, 10);
         }
+        
+        // Busca mock (código existente mantido)
+        await delay(300);
+        const lowerTerm = term.toLowerCase();
+        const allPatients = db.getPatients();
+        
+        return allPatients
+            .filter(p => p.name.toLowerCase().includes(lowerTerm) || p.cpf.includes(lowerTerm))
+            .map(mapPatientToSummary)
+            .slice(0, 10); // Return top 10 matches
+    },
+    {
+        operation: 'searchPatients',
+        fallbackMessage: 'Erro ao buscar pacientes',
+        context: { searchTerm: 'dynamic' } // Será substituído dinamicamente
     }
-    
-    // Busca mock (código existente mantido)
-    await delay(300);
-    const lowerTerm = term.toLowerCase();
-    const allPatients = db.getPatients();
-    
-    return allPatients
-        .filter(p => p.name.toLowerCase().includes(lowerTerm) || p.cpf.includes(lowerTerm))
-        .map(mapPatientToSummary)
-        .slice(0, 10); // Return top 10 matches
-};
+);
 
-export const quickAddPatient = async (name: string): Promise<Patient> => {
-    if (!name || name.trim().length < 3) {
-        throw new Error('Nome deve ter pelo menos 3 caracteres');
-    }
-    
-    if (isSupabaseEnabled) {
-        try {
+export const quickAddPatient = withSupabaseMutation(
+    async (name: string): Promise<Patient> => {
+        if (!name || name.trim().length < 3) {
+            throw new Error('Nome deve ter pelo menos 3 caracteres');
+        }
+        
+        if (isSupabaseEnabled) {
             // Gerar telefone temporário para satisfazer constraint NOT NULL
             const tempPhone = `temp_${Date.now()}`;
             
@@ -168,39 +161,35 @@ export const quickAddPatient = async (name: string): Promise<Patient> => {
                 patientId: createdPatient.id
             });
             return createdPatient;
-        } catch (error: any) {
-            secureLogger.error('Erro ao criar paciente no Supabase', error, { 
-                component: 'patientService',
-                action: 'createQuickPatient'
-            });
-            // FIX: Garantir que a mensagem de erro seja extraída corretamente
-            const errorMessage = error?.message || error?.toString() || 'Erro desconhecido ao cadastrar paciente';
-            throw new Error(`Falha ao cadastrar paciente: ${errorMessage}`);
         }
-    }
 
-    await delay(500);
-    const newPatient: Patient = {
-        id: `patient_${Date.now()}`,
-        name: name.trim(),
-        cpf: `TEMP-${Date.now()}`, // Temporary CPF
-        birthDate: '',
-        phone: '',
-        email: '',
-        emergencyContact: { name: '', phone: '' },
-        address: { street: '', city: '', state: '', zip: '' },
-        // FIX: Use PatientStatus enum instead of string literal.
-        status: PatientStatus.Active,
-        lastVisit: new Date().toISOString(),
-        registrationDate: new Date().toISOString(),
-        avatarUrl: `https://picsum.photos/seed/${Date.now()}/200/200`,
-        consentGiven: true, // Assume consent for quick add, to be confirmed later
-        whatsappConsent: 'opt-out',
-    };
-    db.addPatient(newPatient);
-    eventService.emit('patients:changed');
-    return newPatient;
-};
+        await delay(500);
+        const newPatient: Patient = {
+            id: `patient_${Date.now()}`,
+            name: name.trim(),
+            cpf: `TEMP-${Date.now()}`, // Temporary CPF
+            birthDate: '',
+            phone: '',
+            email: '',
+            emergencyContact: { name: '', phone: '' },
+            address: { street: '', city: '', state: '', zip: '' },
+            // FIX: Use PatientStatus enum instead of string literal.
+            status: PatientStatus.Active,
+            lastVisit: new Date().toISOString(),
+            registrationDate: new Date().toISOString(),
+            avatarUrl: `https://picsum.photos/seed/${Date.now()}/200/200`,
+            consentGiven: true, // Assume consent for quick add, to be confirmed later
+            whatsappConsent: 'opt-out',
+        };
+        db.addPatient(newPatient);
+        eventService.emit('patients:changed');
+        return newPatient;
+    },
+    {
+        operation: 'quickAddPatient',
+        fallbackMessage: 'Erro ao cadastrar paciente rapidamente'
+    }
+);
 
 
 export const getPatients = async ({ limit = 15, cursor, searchTerm, statusFilter, startDate, endDate, therapistId }: {
@@ -297,9 +286,9 @@ export const getPatients = async ({ limit = 15, cursor, searchTerm, statusFilter
     return { patients: patientSummaries, nextCursor };
 };
 
-export const getPatientById = async (id: string): Promise<Patient | undefined> => {
-    if (isSupabaseEnabled) {
-        try {
+export const getPatientById = withSupabaseQuery(
+    async (id: string): Promise<Patient | undefined> => {
+        if (isSupabaseEnabled) {
             const patient = await supabasePatientService.getPatientById(id);
             // Adicionar dados de tracking mock se disponível
             const mockData = MOCK_PATIENT_TRACKING_DATA[id as keyof typeof MOCK_PATIENT_TRACKING_DATA];
@@ -307,63 +296,72 @@ export const getPatientById = async (id: string): Promise<Patient | undefined> =
                 patient.trackedMetrics = mockData.trackedMetrics;
             }
             return patient ?? undefined;
-        } catch (error) {
-            secureLogger.warn('Falha ao buscar paciente no Supabase, tentando dados mock', {
-                component: 'patientService',
-                action: 'getPatientById',
-                error: error instanceof Error ? error.message : String(error)
-            });
-            // Fallback to mock data if Supabase fails (e.g., invalid UUID format)
         }
-    }
 
-    await delay(300);
-    const patient = db.getPatientById(id);
-    // Adicionar dados de tracking mock se disponível
-    const mockData = MOCK_PATIENT_TRACKING_DATA[id as keyof typeof MOCK_PATIENT_TRACKING_DATA];
-    if (mockData && patient) {
-        patient.trackedMetrics = mockData.trackedMetrics;
+        await delay(300);
+        const patient = db.getPatientById(id);
+        // Adicionar dados de tracking mock se disponível
+        const mockData = MOCK_PATIENT_TRACKING_DATA[id as keyof typeof MOCK_PATIENT_TRACKING_DATA];
+        if (mockData && patient) {
+            patient.trackedMetrics = mockData.trackedMetrics;
+        }
+        return patient;
+    },
+    {
+        operation: 'getPatientById',
+        fallbackMessage: 'Erro ao buscar paciente'
     }
-    return patient;
-};
+);
 
-export const addPatient = async (patientData: Omit<Patient, 'id' | 'lastVisit'>): Promise<Patient> => {
-    if (isSupabaseEnabled) {
-        const now = new Date().toISOString();
-        const payload: Omit<Patient, 'id'> = {
+export const addPatient = withSupabaseMutation(
+    async (patientData: Omit<Patient, 'id' | 'lastVisit'>): Promise<Patient> => {
+        if (isSupabaseEnabled) {
+            const now = new Date().toISOString();
+            const payload: Omit<Patient, 'id'> = {
+                ...patientData,
+                lastVisit: now,
+                registrationDate: patientData.registrationDate ?? now,
+            };
+
+            const created = await supabasePatientService.createPatient(payload);
+            eventService.emit('patients:changed');
+            return created;
+        }
+
+        await delay(400);
+        const newPatient: Patient = {
+            id: `patient_${Date.now()}`,
             ...patientData,
-            lastVisit: now,
-            registrationDate: patientData.registrationDate ?? now,
+            lastVisit: new Date().toISOString(),
         };
-
-        const created = await supabasePatientService.createPatient(payload);
+        db.addPatient(newPatient);
         eventService.emit('patients:changed');
-        return created;
+        return newPatient;
+    },
+    {
+        operation: 'addPatient',
+        fallbackMessage: 'Erro ao cadastrar paciente'
     }
+);
 
-    await delay(400);
-    const newPatient: Patient = {
-        id: `patient_${Date.now()}`,
-        ...patientData,
-        lastVisit: new Date().toISOString(),
-    };
-    db.addPatient(newPatient);
-    eventService.emit('patients:changed');
-    return newPatient;
-};
+export const updatePatient = withSupabaseMutation(
+    async (updatedPatient: Patient): Promise<Patient> => {
+        if (isSupabaseEnabled) {
+            const updated = await supabasePatientService.updatePatient(updatedPatient.id, updatedPatient);
+            eventService.emit('patients:changed');
+            return updated;
+        }
 
-export const updatePatient = async (updatedPatient: Patient): Promise<Patient> => {
-    if (isSupabaseEnabled) {
-        const updated = await supabasePatientService.updatePatient(updatedPatient.id, updatedPatient);
+        await delay(400);
+        db.updatePatient(updatedPatient);
         eventService.emit('patients:changed');
-        return updated;
+        return updatedPatient;
+    },
+    {
+        operation: 'updatePatient',
+        fallbackMessage: 'Erro ao atualizar paciente'
     }
-
-    await delay(400);
-    db.updatePatient(updatedPatient);
-    eventService.emit('patients:changed');
-    return updatedPatient;
-};
+);
 
 export const addAttachment = async (patientId: string, file: File): Promise<PatientAttachment> => {
     if (isSupabaseEnabled) {

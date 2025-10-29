@@ -3922,3 +3922,79 @@ export interface MedicalInsight {
   suggestedText?: string; // texto sugerido para laudo
   generatedAt: string;
 }
+
+// --- Patient Monitoring Types ---
+
+export type RiskLevel = 'low' | 'medium' | 'high';
+
+export interface PatientWithMonitoringMetrics extends Patient {
+  // Métricas calculadas
+  attendanceRate: number; // Taxa de presença (0-100)
+  consecutiveMisses: number; // Faltas consecutivas
+  daysSinceLastSession: number; // Dias desde última sessão
+  lastSessionDate: string | null; // Data da última sessão
+  totalSessions: number; // Total de sessões realizadas
+  totalMisses: number; // Total de faltas
+  averagePainLevel: number; // Nível médio de dor (0-10)
+  painTrend: 'improving' | 'stable' | 'worsening' | 'no_data'; // Tendência de dor
+  riskLevel: RiskLevel; // Nível de risco calculado
+  riskReasons: string[]; // Razões para o nível de risco
+  nextScheduledSession?: string; // Próxima sessão agendada
+}
+
+export interface MonitoringFilters {
+  searchTerm: string; // Busca por nome/CPF
+  status: PatientStatus | 'all'; // Status do paciente
+  riskLevel: RiskLevel | 'all'; // Nível de risco
+  attendanceRange: 'all' | 'low' | 'medium' | 'high' | 'excellent'; // <50% | 50-75% | 75-90% | >90%
+  painLevel: 'all' | 'none' | 'low' | 'moderate' | 'severe'; // Nível de dor
+  therapistId: string | 'all'; // Terapeuta responsável
+}
+
+export type MonitoringSortField = 
+  | 'name' 
+  | 'status' 
+  | 'lastSessionDate' 
+  | 'attendanceRate' 
+  | 'painLevel' 
+  | 'riskLevel';
+
+export interface MonitoringSortConfig {
+  field: MonitoringSortField;
+  direction: 'asc' | 'desc';
+}
+
+export interface KPIMetrics {
+  totalActivePatients: number;
+  averageAttendanceRate: number;
+  patientsAtRisk: number; // Pacientes em risco médio ou alto
+  totalMissesInPeriod: number;
+  trends: {
+    activePatients: number; // Variação percentual
+    attendanceRate: number;
+    patientsAtRisk: number;
+    misses: number;
+  };
+}
+
+export interface PresenceDataPoint {
+  date: string; // YYYY-MM-DD
+  attendanceRate: number; // 0-100
+  totalSessions: number;
+  completed: number;
+  missed: number;
+}
+
+export interface PainDistributionData {
+  category: 'none' | 'low' | 'moderate' | 'severe';
+  label: string; // "Sem dor (0)", "Leve (1-3)", etc.
+  count: number;
+  percentage: number;
+  color: string;
+}
+
+export interface QuickActionType {
+  type: 'whatsapp' | 'schedule' | 'note' | 'details';
+  label: string;
+  icon: string;
+}

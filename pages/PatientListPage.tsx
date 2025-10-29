@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import ResponsiveContainer from '@/components/ui/ResponsiveContainer';
 import PatientTable from '@/components/patients/PatientTable';
 import { usePatient } from '@/contexts/PatientContext';
+import LoadingState from '@/components/ui/LoadingState';
+import ErrorState from '@/components/ui/ErrorState';
+import EmptyState from '@/components/ui/EmptyState';
+import { handleError } from '@/lib/middleware/errorHandler';
 
 const PatientListPage: React.FC = () => {
   const navigate = useNavigate();
-  const { patients, isLoading } = usePatient();
+  const { patients, isLoading, error, getAllPatients } = usePatient();
   const [stats, setStats] = useState({
     total: 0,
     active: 0,
@@ -15,8 +19,26 @@ const PatientListPage: React.FC = () => {
     discharged: 0,
     loading: true
   });
+  const [retryCount, setRetryCount] = useState(0);
 
   const handleViewPatient = (patient: { id: string }) => navigate(`/patients/${patient.id}`);
+
+  const handleRetry = useCallback(async () => {
+    try {
+      setRetryCount(prev => prev + 1);
+      await getAllPatients();
+    } catch (err) {
+      handleError(err, {
+        operation: 'retryLoadPatients',
+        severity: 'medium',
+        fallbackMessage: 'Erro ao tentar carregar pacientes novamente',
+        context: { 
+          retryCount: retryCount + 1,
+          component: 'PatientListPage'
+        }
+      });
+    }
+  }, [getAllPatients, retryCount]);
 
   // Calcular estatísticas baseado nos pacientes do contexto
   useEffect(() => {
@@ -37,6 +59,51 @@ const PatientListPage: React.FC = () => {
 
     calculateStats();
   }, [patients, isLoading]);
+
+  // Mostrar estados de loading/erro
+  if (isLoading && patients.length === 0) {
+    return (
+      <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
+        <ResponsiveContainer>
+          <LoadingState 
+            message="Carregando lista de pacientes..." 
+            size="lg"
+          />
+        </ResponsiveContainer>
+      </main>
+    );
+  }
+
+  if (error && patients.length === 0) {
+    return (
+      <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
+        <ResponsiveContainer>
+          <ErrorState 
+            error={error}
+            onRetry={handleRetry}
+            title="Erro ao carregar pacientes"
+            message="Não foi possível carregar a lista de pacientes. Tente novamente."
+          />
+        </ResponsiveContainer>
+      </main>
+    );
+  }
+
+  if (!isLoading && patients.length === 0) {
+    return (
+      <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
+        <ResponsiveContainer>
+          <EmptyState 
+            type="users"
+            title="Nenhum paciente cadastrado"
+            description="Comece adicionando seu primeiro paciente para gerenciar consultas e tratamentos."
+            actionText="Cadastrar primeiro paciente"
+            onAction={() => navigate('/patients/new')}
+          />
+        </ResponsiveContainer>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">

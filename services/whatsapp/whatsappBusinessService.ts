@@ -6,6 +6,7 @@
  */
 
 import { secureLogger } from '../../lib/secureLogger';
+import { handleError } from '../../lib/middleware/errorHandler';
 
 interface WhatsAppConfig {
   apiUrl: string;
@@ -297,6 +298,18 @@ Desculpe o transtorno.
         component: 'WhatsAppBusinessService',
         action: 'makeRequest'
       });
+      
+      handleError(error, {
+        operation: 'whatsappMakeRequest',
+        severity: 'medium',
+        fallbackMessage: 'Erro ao enviar mensagem via WhatsApp',
+        context: { 
+          url,
+          payloadType: payload.type,
+          phoneNumberId: this.config.phoneNumberId
+        }
+      });
+      
       throw error;
     }
   }

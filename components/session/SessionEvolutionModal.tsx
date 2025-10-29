@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Maximize2, Minimize2 } from 'lucide-react';
+import { X, Save, Maximize2, Minimize2, LayoutGrid, Columns, List } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useToast } from '../../contexts/ToastContext';
-import SessionEvolutionContainer from './SessionEvolutionContainer';
-import { Patient, EnrichedAppointment, SoapNote, Surgery, PatientGoal, Pathology, MandatoryTestAlert, MedicalInsight } from '../../types';
+import { Patient, EnrichedAppointment, SoapNote, Surgery, PatientGoal, Pathology, MandatoryTestAlert, MedicalInsight, AppointmentStatus } from '../../types';
 import * as appointmentService from '../../services/appointmentService';
 import * as patientService from '../../services/patientService';
 import * as soapNoteService from '../../services/soapNoteService';
@@ -12,7 +11,11 @@ import * as patientGoalsService from '../../services/patientGoalsService';
 import * as pathologyService from '../../services/pathologyService';
 import * as mandatoryTestAlertService from '../../services/mandatoryTestAlertService';
 import * as medicalReportSuggestionsService from '../../services/medicalReportSuggestionsService';
+import * as bodyMapService from '../../services/bodyMapService';
 import { AnimatePresence, motion } from 'framer-motion';
+import { SessionLayoutA_Cards, SessionLayoutB_Columns, SessionLayoutC_Accordion, type SessionLayoutType } from './layouts';
+import type { PainData, PainModalData } from '../body-map-pro';
+import { handleError } from '../../lib/middleware/errorHandler';
 
 // Import all column components
 import { SOAPFormPanel } from './SOAPFormPanel';
@@ -62,6 +65,9 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [showBlockingDialog, setShowBlockingDialog] = useState(false);
   const [pendingCriticalTests, setPendingCriticalTests] = useState<MandatoryTestAlert[]>([]);
+  const [selectedLayout, setSelectedLayout] = useState<SessionLayoutType>('cards');
+  const [painData, setPainData] = useState<PainData[]>([]);
+  const [previousPainData, setPreviousPainData] = useState<PainData[]>([]);
 
   useEffect(() => {
     if (isOpen) {
@@ -108,17 +114,33 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
         surgeriesData,
         goalsData,
         pathologiesData,
+        bodyMapSessions,
       ] = await Promise.all([
         soapNoteService.getNotesByPatientId(patientData.id),
         surgeryService.getSurgeriesByPatientId(patientData.id),
         patientGoalsService.getGoalsByPatientId(patientData.id),
         pathologyService.getPathologiesByPatientId(patientData.id),
+        bodyMapService.getPatientBodyMapHistory(patientData.id),
       ]);
 
       setPatientNotes(notesData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
       setSurgeries(surgeriesData);
       setGoals(goalsData);
       setPathologies(pathologiesData);
+
+      // Processar dados de dor
+      if (bodyMapSessions.length > 0) {
+        const latestSession = bodyMapSessions[0];
+        if (latestSession && latestSession.painRegions) {
+          const previousPain: PainData[] = latestSession.painRegions.map(region => ({
+            regionId: region.regionId,
+            intensity: region.intensity,
+            type: region.type as any,
+            notes: region.notes || ''
+          }));
+          setPreviousPainData(previousPain);
+        }
+      }
 
       // Gerar alertas e insights
       const sessionNumber = notesData.length + 1;
@@ -136,6 +158,48 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
       onClose();
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Handlers para Body Map
+  const handleSavePainData = async (data: PainModalData) => {
+    if (!patient) return;
+
+    try {
+      setPainData(prev => {
+        const existingIndex = prev.findIndex(p => p.regionId === data.regionId);
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = {
+            regionId: data.regionId,
+            intensity: data.intensity,
+            type: data.type,
+            notes: data.notes
+          };
+          return updated;
+        } else {
+          return [...prev, {
+            regionId: data.regionId,
+            intensity: data.intensity,
+            type: data.type,
+            notes: data.notes
+          }];
+        }
+      });
+      showToast('Registro de dor atualizado', 'success');
+    } catch (error) {
+      console.error('Erro ao salvar dados de dor:', error);
+      showToast('Erro ao salvar dados de dor', 'error');
+    }
+  };
+
+  const handleDeletePainData = async (regionId: string) => {
+    try {
+      setPainData(prev => prev.filter(p => p.regionId !== regionId));
+      showToast('Registro de dor removido', 'success');
+    } catch (error) {
+      console.error('Erro ao deletar dados de dor:', error);
+      showToast('Erro ao deletar dados de dor', 'error');
     }
   };
 
@@ -164,18 +228,51 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
       // Salvar nota SOAP
       await soapNoteService.addNote(patient.id, noteData);
 
+      // Salvar dados do Body Map se houver
+      if (painData.length > 0) {
+        const sessionNumber = patientNotes.length + 1;
+        await bodyMapService.saveBodyMapSession({
+          patientId: patient.id,
+          sessionNumber,
+          date: new Date().toISOString(),
+          painRegions: painData.map(p => ({
+            regionId: p.regionId,
+            intensity: p.intensity,
+            type: p.type,
+            notes: p.notes || undefined
+          }))
+        });
+      }
+
+      // Atualizar status do agendamento
+      await appointmentService.saveAppointment({
+        ...appointment,
+        status: AppointmentStatus.Completed,
+      });
+
       // Recarregar dados
       await loadData();
 
       showToast('Sessão registrada com sucesso!', 'success');
-      
+
       if (onSave) {
         onSave();
       }
       onClose();
     } catch (error) {
       console.error('Erro ao salvar sessão:', error);
-      showToast('Erro ao salvar sessão', 'error');
+      
+      handleError(error, {
+        operation: 'performSave',
+        severity: 'high',
+        fallbackMessage: 'Erro ao salvar sessão',
+        context: { 
+          patientId: patient.id,
+          appointmentId: appointment.id,
+          hasPainData: painData.length > 0,
+          sessionNumber: patientNotes.length + 1
+        }
+      });
     } finally {
       setIsSaving(false);
     }
@@ -251,6 +348,43 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
 
                 {/* Right: Actions */}
                 <div className="flex items-center space-x-2">
+                  {/* Layout Selector */}
+                  <div className="hidden lg:flex items-center space-x-1 mr-2 bg-white rounded-lg p-1 shadow-sm">
+                    <button
+                      onClick={() => setSelectedLayout('cards')}
+                      className={`p-2 rounded transition-colors ${
+                        selectedLayout === 'cards'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                      title="Layout Cards"
+                    >
+                      <LayoutGrid className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setSelectedLayout('columns')}
+                      className={`p-2 rounded transition-colors ${
+                        selectedLayout === 'columns'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                      title="Layout 2 Colunas"
+                    >
+                      <Columns className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setSelectedLayout('accordion')}
+                      className={`p-2 rounded transition-colors ${
+                        selectedLayout === 'accordion'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-slate-600 hover:bg-slate-100'
+                      }`}
+                      title="Layout Accordion"
+                    >
+                      <List className="w-4 h-4" />
+                    </button>
+                  </div>
+
                   {/* Maximize/Minimize */}
                   <Button
                     variant="ghost"
@@ -333,102 +467,61 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
                   </div>
                 </div>
               ) : patient && appointment ? (
-                <SessionEvolutionContainer
-                  appointmentId={appointmentId}
-                  patient={patient}
-                  appointment={appointment}
-                  onClose={onClose}
-                  onSave={handleSave}
-                  layout="4-columns"
-                  soapFormSlot={
-                    <div className="space-y-4">
-                      <SOAPFormPanel
-                        patientId={patient.id}
-                        sessionNumber={patientNotes.length + 1}
-                        previousNote={patientNotes[0] || null}
-                        onSave={handleSaveNote}
-                        onCancel={onClose}
-                        isLoading={isSaving}
-                      />
-                    </div>
-                  }
-                  historySlot={
-                    <div className="space-y-6">
-                      <SessionHistoryPanel
-                        patientId={patient.id}
-                        limit={10}
-                        onReplicateConduct={(note) => {/* Implementar replicação */}}
-                      />
-                      
-                      <div className="mt-6">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Cirurgias</h3>
-                        <SurgeryTimeline
-                          patientId={patient.id}
-                        />
-                      </div>
+                <>
+                  {selectedLayout === 'cards' && (
+                    <SessionLayoutA_Cards
+                      patient={patient}
+                      sessionNumber={patientNotes.length + 1}
+                      patientNotes={patientNotes}
+                      mandatoryAlerts={mandatoryAlerts}
+                      pathologies={pathologies}
+                      goals={goals}
+                      painData={painData}
+                      previousPainData={previousPainData}
+                      onSavePainData={handleSavePainData}
+                      onDeletePainData={handleDeletePainData}
+                      onSaveNote={handleSaveNote}
+                      onCancel={onClose}
+                      isSaving={isSaving}
+                    />
+                  )}
 
-                      <TreatmentDurationCard
-                        patient={patient}
-                      />
-                    </div>
-                  }
-                  evolutionSlot={
-                    <div className="space-y-6">
-                      {/* Alertas de Testes Obrigatórios */}
-                      {mandatoryAlerts.length > 0 && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-slate-900 mb-4">Alertas</h3>
-                          <MandatoryTestAlertComponent
-                            alerts={mandatoryAlerts}
-                          />
-                        </div>
-                      )}
+                  {selectedLayout === 'columns' && (
+                    <SessionLayoutB_Columns
+                      patient={patient}
+                      sessionNumber={patientNotes.length + 1}
+                      patientNotes={patientNotes}
+                      mandatoryAlerts={mandatoryAlerts}
+                      pathologies={pathologies}
+                      goals={goals}
+                      painData={painData}
+                      previousPainData={previousPainData}
+                      onSavePainData={handleSavePainData}
+                      onDeletePainData={handleDeletePainData}
+                      onSaveNote={handleSaveNote}
+                      onCancel={onClose}
+                      isSaving={isSaving}
+                    />
+                  )}
 
-                      {/* Patologias */}
-                      <div>
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Patologias</h3>
-                        <PathologyManager
-                          patientId={patient.id}
-                        />
-                      </div>
-
-                      {/* Evolução de Testes */}
-                      <div>
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Evolução</h3>
-                        <TestEvolutionPanel
-                          patientId={patient.id}
-                          sessionNumber={patientNotes.length + 1}
-                        />
-                      </div>
-                    </div>
-                  }
-                  summarySlot={
-                    <div className="space-y-6">
-                      <PatientOverview patient={patient} />
-
-                      <div>
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Objetivos</h3>
-                        <PatientGoalsPanel
-                          patient={patient}
-                        />
-                      </div>
-
-                      <PatientMetrics
-                        patient={patient}
-                        appointments={[appointment]}
-                      />
-
-                      <div>
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Insights</h3>
-                        <MedicalReportSuggestions
-                          patientId={patient.id}
-                          isCollapsible={true}
-                          defaultExpanded={true}
-                        />
-                      </div>
-                    </div>
-                  }
-                />
+                  {selectedLayout === 'accordion' && (
+                    <SessionLayoutC_Accordion
+                      patient={patient}
+                      sessionNumber={patientNotes.length + 1}
+                      patientNotes={patientNotes}
+                      mandatoryAlerts={mandatoryAlerts}
+                      pathologies={pathologies}
+                      goals={goals}
+                      painData={painData}
+                      previousPainData={previousPainData}
+                      onSavePainData={handleSavePainData}
+                      onDeletePainData={handleDeletePainData}
+                      onSaveNote={handleSaveNote}
+                      onCancel={onClose}
+                      isSaving={isSaving}
+                    />
+                  )}
+                </>
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-slate-600">Dados não encontrados</p>

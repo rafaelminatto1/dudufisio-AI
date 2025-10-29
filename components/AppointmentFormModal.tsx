@@ -40,6 +40,7 @@ import { cn } from '../lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
+import { handleError } from '../lib/middleware/errorHandler';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Button } from './ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './ui/card';

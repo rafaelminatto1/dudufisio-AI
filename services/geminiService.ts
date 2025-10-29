@@ -1,11 +1,23 @@
 // Mock service for build purposes - Complete function list
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { handleError } from '../lib/middleware/errorHandler';
+import { AppError } from '../lib/middleware/errorHandler';
 
 // Generic text generation function
 export const generateText = async (prompt: string): Promise<string> => {
-  // Mock implementation
-  await new Promise(resolve => setTimeout(resolve, 100));
-  return 'Mock response from generateText';
+  try {
+    // Mock implementation
+    await new Promise(resolve => setTimeout(resolve, 100));
+    return 'Mock response from generateText';
+  } catch (error) {
+    handleError(error, {
+      operation: 'generateText',
+      severity: 'medium',
+      fallbackMessage: 'Erro ao gerar texto com IA',
+      context: { prompt: prompt.substring(0, 100) } // Log apenas início do prompt
+    });
+    throw error;
+  }
 };
 
 export const generateTreatmentProtocol = () => Promise.resolve('');
@@ -28,15 +40,16 @@ export const generatePatientProgressSummary = () => Promise.resolve('');
 export const generateAppointmentReminder = () => Promise.resolve('');
 export const generateInactivePatientEmail = () => Promise.resolve('');
 export const generateClinicalMaterialContent = async (data: { nome_material: string; tipo_material: string }): Promise<string> => {
-  // Simular delay de API
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  const { nome_material, tipo_material } = data;
-  
-  // Conteúdo mock baseado no tipo de material
-  switch (tipo_material) {
-    case 'Escala de Avaliação':
-      return `# ${nome_material}
+  try {
+    // Simular delay de API
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const { nome_material, tipo_material } = data;
+    
+    // Conteúdo mock baseado no tipo de material
+    switch (tipo_material) {
+      case 'Escala de Avaliação':
+        return `# ${nome_material}
 
 ## Descrição
 Esta é uma escala de avaliação clínica utilizada para mensurar aspectos específicos da condição do paciente.
@@ -62,8 +75,8 @@ Esta é uma escala de avaliação clínica utilizada para mensurar aspectos espe
 - Validação clínica em população brasileira
 - Atualização: 2024`;
 
-    case 'Protocolo Clínico':
-      return `# ${nome_material}
+      case 'Protocolo Clínico':
+        return `# ${nome_material}
 
 ## Objetivo
 Protocolo clínico baseado em evidências científicas para o tratamento de condições específicas.
@@ -114,8 +127,8 @@ Protocolo clínico baseado em evidências científicas para o tratamento de cond
 ## Evidências Científicas
 Baseado em estudos de nível de evidência A e B, com resultados significativos em população similar.`;
 
-    default:
-      return `# ${nome_material}
+      default:
+        return `# ${nome_material}
 
 ## Introdução
 Material de orientação clínica para profissionais de fisioterapia.
@@ -145,6 +158,18 @@ Este material contém informações essenciais para a prática clínica baseada 
 
 ---
 *Material atualizado em 2024 - DuduFisio-AI*`;
+    }
+  } catch (error) {
+    handleError(error, {
+      operation: 'generateClinicalMaterialContent',
+      severity: 'medium',
+      fallbackMessage: 'Erro ao gerar conteúdo de material clínico',
+      context: { 
+        materialName: data.nome_material,
+        materialType: data.tipo_material
+      }
+    });
+    throw error;
   }
 };
 export const generatePatientClinicalSummary = (_patient: any, _notes: any) => Promise.resolve('');
@@ -447,19 +472,13 @@ export async function generateExerciseVideo(prompt: string): Promise<VideoOperat
       throw new Error('Prompt não pode estar vazio');
     }
 
-    
-    
-    // REMOVIDO: Log de API key (SEGURANÇA - não expor credenciais)
-
     // Tentar API real primeiro
     const realAPIResult = await tryGoogleAIVideoAPI(prompt);
     if (realAPIResult) {
-      
       return realAPIResult;
     }
 
     // FALLBACK: Simulação inteligente baseada no prompt
-    
     
     // Simular delay de processamento inicial
     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -467,7 +486,6 @@ export async function generateExerciseVideo(prompt: string): Promise<VideoOperat
     // Selecionar vídeo baseado no conteúdo do prompt
     const selectedVideo = selectVideoBasedOnPrompt(prompt);
     
-
     return {
       done: false,
       progress: 0,
@@ -480,8 +498,16 @@ export async function generateExerciseVideo(prompt: string): Promise<VideoOperat
       }
     };
   } catch (error) {
-    console.error('❌ [GEMINI VEO] Erro ao iniciar geração de vídeo:', error);
-    throw new Error(`Falha ao iniciar geração: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    handleError(error, {
+      operation: 'generateExerciseVideo',
+      severity: 'high',
+      fallbackMessage: 'Erro ao gerar vídeo de exercício',
+      context: { 
+        promptLength: prompt?.length || 0,
+        promptPreview: prompt?.substring(0, 50) || ''
+      }
+    });
+    throw error;
   }
 }
 
@@ -493,8 +519,6 @@ export async function generateExerciseVideo(prompt: string): Promise<VideoOperat
  */
 export async function getVideosOperation(operation: VideoOperation): Promise<VideoOperation> {
   try {
-    
-
     // IMPLEMENTAÇÃO TEMPORÁRIA: Simular progresso
     // Quando a API Gemini Veo 2.0 estiver disponível, substituir por:
     // return await ai.operations.getVideosOperation({ operation });
@@ -508,7 +532,6 @@ export async function getVideosOperation(operation: VideoOperation): Promise<Vid
 
     // Marcar como completo quando chegar a 100%
     if (newProgress >= 100) {
-      
       return {
         ...operation,
         done: true,
@@ -516,15 +539,22 @@ export async function getVideosOperation(operation: VideoOperation): Promise<Vid
       };
     }
 
-    
     return {
       ...operation,
       done: false,
       progress: newProgress
     };
   } catch (error) {
-    console.error('❌ [GEMINI VEO] Erro ao verificar status da operação:', error);
-    throw new Error(`Falha ao verificar status: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    handleError(error, {
+      operation: 'getVideosOperation',
+      severity: 'medium',
+      fallbackMessage: 'Erro ao verificar status da geração de vídeo',
+      context: { 
+        operationProgress: operation.progress,
+        operationDone: operation.done
+      }
+    });
+    throw error;
   }
 }
 
@@ -535,8 +565,6 @@ export async function getVideosOperation(operation: VideoOperation): Promise<Vid
  */
 export async function fetchVideoFromUri(uri: string): Promise<Blob> {
   try {
-    
-
     // Lista de vídeos de exemplo para simulação
     const videoUrls = [
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
@@ -566,12 +594,18 @@ export async function fetchVideoFromUri(uri: string): Promise<Blob> {
       throw new Error('Vídeo retornado está vazio');
     }
 
-    
-    
     return blob;
   } catch (error) {
-    console.error('❌ [GEMINI VEO] Erro ao baixar vídeo:', error);
-    throw new Error(`Falha ao baixar vídeo: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    handleError(error, {
+      operation: 'fetchVideoFromUri',
+      severity: 'high',
+      fallbackMessage: 'Erro ao baixar vídeo',
+      context: { 
+        uri: uri.substring(0, 100), // Log apenas início da URI
+        uriLength: uri.length
+      }
+    });
+    throw error;
   }
 }
 // ============================================================================

@@ -12,9 +12,10 @@ import * as pathologyService from '../services/pathologyService';
 import * as sessionEvolutionService from '../services/sessionEvolutionService';
 import * as mandatoryTestAlertService from '../services/mandatoryTestAlertService';
 import * as medicalReportSuggestionsService from '../services/medicalReportSuggestionsService';
-import { 
-  Patient, 
-  EnrichedAppointment, 
+import * as bodyMapService from '../services/bodyMapService';
+import {
+  Patient,
+  EnrichedAppointment,
   SoapNote,
   Surgery,
   PatientGoal,
@@ -39,6 +40,7 @@ import PatientMetrics from '../components/session/PatientMetrics';
 import { MedicalReportSuggestions } from '../components/session/MedicalReportSuggestions';
 import { SaveBlockingDialog } from '../components/session/SaveBlockingDialog';
 import { ConductReplicationDialog } from '../components/session/ConductReplicationDialog';
+import { BodyMapProfessional, BodyMapComparisonModal, type PainData, type PainModalData, BODY_REGIONS_FRONT, BODY_REGIONS_BACK } from '../components/body-map-pro';
 
 /**
  * OPÇÃO 1: Página Nova para Evolução de Sessão
@@ -62,6 +64,8 @@ const SessionEvolutionPage: React.FC = () => {
   const [pathologies, setPathologies] = useState<Pathology[]>([]);
   const [mandatoryAlerts, setMandatoryAlerts] = useState<MandatoryTestAlert[]>([]);
   const [medicalInsights, setMedicalInsights] = useState<MedicalInsight[]>([]);
+  const [painData, setPainData] = useState<PainData[]>([]);
+  const [previousSessionPainData, setPreviousSessionPainData] = useState<PainData[]>([]);
 
   // UI states
   const [isLoading, setIsLoading] = useState(true);
@@ -70,6 +74,7 @@ const SessionEvolutionPage: React.FC = () => {
   const [showBlockingDialog, setShowBlockingDialog] = useState(false);
   const [showReplicationDialog, setShowReplicationDialog] = useState(false);
   const [pendingCriticalTests, setPendingCriticalTests] = useState<MandatoryTestAlert[]>([]);
+  const [showComparisonModal, setShowComparisonModal] = useState(false);
 
   // Load all data
   useEffect(() => {
@@ -110,11 +115,13 @@ const SessionEvolutionPage: React.FC = () => {
         surgeriesData,
         goalsData,
         pathologiesData,
+        bodyMapSessions,
       ] = await Promise.all([
         soapNoteService.getNotesByPatientId(foundAppointment.patientId),
         surgeryService.getSurgeriesByPatientId(foundAppointment.patientId),
         patientGoalsService.getGoalsByPatientId(foundAppointment.patientId),
         pathologyService.getPathologiesByPatientId(foundAppointment.patientId),
+        bodyMapService.getSessionsByPatient(foundAppointment.patientId),
       ]);
 
       setPatientNotes(notesData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
@@ -122,6 +129,21 @@ const SessionEvolutionPage: React.FC = () => {
       setSurgeries(surgeriesData);
       setGoals(goalsData);
       setPathologies(pathologiesData);
+
+      // Processar dados de dor
+      if (bodyMapSessions.length > 0) {
+        // Sessão mais recente (para comparação)
+        const latestSession = bodyMapSessions[0];
+        if (latestSession && latestSession.painRegions) {
+          const previousPainData: PainData[] = latestSession.painRegions.map(region => ({
+            regionId: region.regionId,
+            intensity: region.intensity,
+            type: region.type as any,
+            notes: region.notes || ''
+          }));
+          setPreviousSessionPainData(previousPainData);
+        }
+      }
 
       // Gerar alertas e insights
       const sessionNumber = notesData.length + 1;
@@ -142,6 +164,94 @@ const SessionEvolutionPage: React.FC = () => {
       navigate('/agenda');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Função para detectar pioras na dor
+  const detectPainWorsening = () => {
+    if (previousSessionPainData.length === 0 || painData.length === 0) {
+      return { hasWorsening: false, alerts: [] };
+    }
+
+    const alerts: { region: string; previous: number; current: number; change: number }[] = [];
+    const previousMap = new Map(previousSessionPainData.map(p => [p.regionId, p.intensity]));
+
+    painData.forEach(current => {
+      const previous = previousMap.get(current.regionId);
+      if (previous !== undefined) {
+        const change = current.intensity - previous;
+        if (change >= 2) {
+          // Buscar nome da região
+          const region = [...BODY_REGIONS_FRONT, ...BODY_REGIONS_BACK].find(r => r.id === current.regionId);
+          alerts.push({
+            region: region?.name || current.regionId,
+            previous,
+            current: current.intensity,
+            change
+          });
+        }
+      } else if (current.intensity >= 5) {
+        // Nova região com dor moderada/severa
+        const region = [...BODY_REGIONS_FRONT, ...BODY_REGIONS_BACK].find(r => r.id === current.regionId);
+        alerts.push({
+          region: region?.name || current.regionId,
+          previous: 0,
+          current: current.intensity,
+          change: current.intensity
+        });
+      }
+    });
+
+    return { hasWorsening: alerts.length > 0, alerts };
+  };
+
+  // Handlers para Body Map
+  const handleSavePainData = async (data: PainModalData) => {
+    if (!patient) return;
+
+    try {
+      // Atualizar state local
+      setPainData(prev => {
+        const existingIndex = prev.findIndex(p => p.regionId === data.regionId);
+
+        if (existingIndex >= 0) {
+          // Atualizar existente
+          const updated = [...prev];
+          updated[existingIndex] = {
+            regionId: data.regionId,
+            intensity: data.intensity,
+            type: data.type,
+            notes: data.notes
+          };
+          return updated;
+        } else {
+          // Adicionar novo
+          return [
+            ...prev,
+            {
+              regionId: data.regionId,
+              intensity: data.intensity,
+              type: data.type,
+              notes: data.notes
+            }
+          ];
+        }
+      });
+
+      showToast('Registro de dor atualizado', 'success');
+    } catch (error) {
+      console.error('Erro ao salvar dados de dor:', error);
+      showToast('Erro ao salvar dados de dor', 'error');
+    }
+  };
+
+  const handleDeletePainData = async (regionId: string) => {
+    try {
+      setPainData(prev => prev.filter(p => p.regionId !== regionId));
+      showToast('Registro de dor removido', 'success');
+    } catch (error) {
+      console.error('Erro ao deletar dados de dor:', error);
+      showToast('Erro ao deletar dados de dor', 'error');
     }
   };
 
@@ -170,6 +280,22 @@ const SessionEvolutionPage: React.FC = () => {
       // Salvar nota SOAP
       await soapNoteService.addNote(patient.id, noteData);
 
+      // Salvar dados do Body Map se houver
+      if (painData.length > 0) {
+        const sessionNumber = patientNotes.length + 1;
+        await bodyMapService.saveBodyMapSession({
+          patientId: patient.id,
+          sessionNumber,
+          date: new Date().toISOString(),
+          painRegions: painData.map(p => ({
+            regionId: p.regionId,
+            intensity: p.intensity,
+            type: p.type,
+            notes: p.notes || undefined
+          }))
+        });
+      }
+
       // Atualizar status do agendamento
       await appointmentService.saveAppointment({
         ...appointment,
@@ -181,7 +307,7 @@ const SessionEvolutionPage: React.FC = () => {
       setPatientNotes(notes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
 
       showToast('Sessão registrada com sucesso!', 'success');
-      
+
       // Redirecionar para agenda
     navigate('/agenda');
     } catch (error) {
@@ -440,6 +566,71 @@ const SessionEvolutionPage: React.FC = () => {
                     sessionNumber={sessionNumber}
                   />
                 </div>
+
+                {/* Mapa de Dor */}
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-bold text-slate-900">Mapa de Dor</h2>
+                    {previousSessionPainData.length > 0 && (
+                      <button
+                        onClick={() => setShowComparisonModal(true)}
+                        className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center space-x-1"
+                      >
+                        <span>📊 Comparar</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Alerta de Piora */}
+                  {(() => {
+                    const { hasWorsening, alerts } = detectPainWorsening();
+                    if (hasWorsening) {
+                      return (
+                        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                          <div className="flex items-start space-x-3">
+                            <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                              <span className="text-red-600 font-bold text-sm">!</span>
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-sm font-semibold text-red-900 mb-2">
+                                ⚠️ Piora Detectada em {alerts.length} Região{alerts.length > 1 ? 'ões' : ''}
+                              </h3>
+                              <ul className="text-xs text-red-800 space-y-1">
+                                {alerts.slice(0, 3).map((alert, idx) => (
+                                  <li key={idx}>
+                                    • <strong>{alert.region}</strong>: {alert.previous === 0 ? 'Nova região' : `${alert.previous} → ${alert.current}`} (+{alert.change} pontos)
+                                  </li>
+                                ))}
+                                {alerts.length > 3 && (
+                                  <li className="text-red-700 font-medium">
+                                    ... e mais {alerts.length - 3} região{alerts.length - 3 > 1 ? 'ões' : ''}
+                                  </li>
+                                )}
+                              </ul>
+                              <button
+                                onClick={() => setShowComparisonModal(true)}
+                                className="mt-2 text-xs text-red-700 hover:text-red-900 font-medium underline"
+                              >
+                                Ver comparação detalhada →
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+
+                  <BodyMapProfessional
+                    patientId={patient.id}
+                    patientName={patient.name}
+                    painData={painData}
+                    onSavePainData={handleSavePainData}
+                    onDeletePainData={handleDeletePainData}
+                    onViewHistory={() => setShowComparisonModal(true)}
+                    readOnly={false}
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -501,6 +692,17 @@ const SessionEvolutionPage: React.FC = () => {
         onConfirm={() => {/* Implementar */}}
         previousSessions={patientNotes.slice(0, 10)}
         patientName={patient.name}
+      />
+
+      {/* Modal de Comparação do Body Map */}
+      <BodyMapComparisonModal
+        isOpen={showComparisonModal}
+        onClose={() => setShowComparisonModal(false)}
+        patientName={patient.name}
+        previousSessionNumber={sessionNumber - 1}
+        currentSessionNumber={sessionNumber}
+        previousPainData={previousSessionPainData}
+        currentPainData={painData}
       />
     </div>
   );

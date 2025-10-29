@@ -1,34 +1,66 @@
-import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+/**
+ * Setup para Testes Unitários
+ */
 
-// Mock global do Supabase
-vi.mock('../lib/supabase', () => ({
-  supabase: {
-    from: vi.fn(() => ({
-      select: vi.fn(() => Promise.resolve({ data: [], error: null })),
-      insert: vi.fn(() => Promise.resolve({ data: null, error: null })),
-      update: vi.fn(() => Promise.resolve({ data: null, error: null })),
-      delete: vi.fn(() => Promise.resolve({ data: null, error: null })),
-    })),
-    auth: {
-      getSession: vi.fn(() => Promise.resolve({ data: { session: null }, error: null })),
-    },
-  },
-}));
+import { expect, afterEach, vi } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 
-// Mock do ToastContext
-vi.mock('../contexts/ToastContext', () => ({
-  useToast: () => ({
-    showToast: vi.fn(),
-  }),
-}));
+// Cleanup após cada teste
+afterEach(() => {
+  cleanup();
+});
 
-// Mock do Router
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useNavigate: () => vi.fn(),
-    useLocation: () => ({ pathname: '/' }),
-  };
+// Mock do localStorage
+const localStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+};
+
+global.localStorage = localStorageMock as any;
+
+// Mock do sessionStorage
+const sessionStorageMock = {
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
+};
+
+global.sessionStorage = sessionStorageMock as any;
+
+// Mock do IntersectionObserver
+global.IntersectionObserver = class IntersectionObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  takeRecords() {
+    return [];
+  }
+  unobserve() {}
+} as any;
+
+// Mock do ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+} as any;
+
+// Mock do matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
 });

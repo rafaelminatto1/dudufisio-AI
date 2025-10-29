@@ -9,6 +9,8 @@
 
 // Importar toast do react-toastify ao invés de hooks
 import { toast } from 'react-toastify';
+import { reportErrorToSentry } from '../monitoring/sentryConfig';
+import { trackError } from '../monitoring/errorMetrics';
 
 // =============================================================================
 // TIPOS DE ERRO
@@ -162,6 +164,23 @@ interface ErrorHandlerOptions {
   logToConsole?: boolean;
   rethrow?: boolean;
   customMessage?: string;
+  /** Severidade do erro para categorização */
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  /** Ações customizadas no toast */
+  actions?: ErrorAction[];
+  /** Contexto adicional para logs */
+  context?: Record<string, any>;
+  /** Se deve incluir stack trace nos logs */
+  includeStack?: boolean;
+}
+
+/**
+ * Ação customizada para toast de erro
+ */
+interface ErrorAction {
+  label: string;
+  action: () => void;
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 }
 
 /**
@@ -176,6 +195,10 @@ export function handleError(
     logToConsole = true,
     rethrow = false,
     customMessage,
+    severity = 'medium',
+    actions = [],
+    context = {},
+    includeStack = false,
   } = options;
   
   let appError: AppError;
@@ -196,16 +219,42 @@ export function handleError(
     appError = new InternalServerError('Erro desconhecido', error);
   }
   
+  // Determina severidade baseada no status code se não especificada
+  const finalSeverity = severity === 'medium' ? getSeverityFromStatusCode(appError.statusCode) : severity;
+  
   // Log no console (apenas em desenvolvimento)
   if (logToConsole && import.meta.env.DEV) {
-    console.error('❌ Error:', {
+    const logData = {
       name: appError.name,
       message: appError.message,
       code: appError.code,
       statusCode: appError.statusCode,
+      severity: finalSeverity,
       details: appError.details,
-      stack: appError.stack,
-    });
+      context,
+      timestamp: new Date().toISOString(),
+    };
+    
+    if (includeStack) {
+      logData.stack = appError.stack;
+    }
+    
+    console.error('❌ Error:', logData);
+  }
+  
+  // Reportar ao Sentry em produção
+  if (import.meta.env.PROD) {
+    reportErrorToSentry(
+      appError,
+      options.context?.operation || 'unknown',
+      finalSeverity,
+      context
+    );
+  }
+  
+  // Registrar métrica de erro
+  if (options.context?.operation) {
+    trackError(options.context.operation, appError, finalSeverity);
   }
   
   // Exibe toast com feedback ao usuário
@@ -213,13 +262,21 @@ export function handleError(
     const message = customMessage || appError.message;
     const title = getErrorTitle(appError);
     
-    // Define tipo do toast baseado no statusCode
-    if (appError.statusCode >= 500) {
-      toast.error(`${title}: ${message}`);
-    } else if (appError.statusCode >= 400) {
-      toast.warning(`${title}: ${message}`);
+    // Define tipo do toast baseado na severidade
+    const toastType = getToastTypeFromSeverity(finalSeverity);
+    
+    // Se há ações customizadas, usa toast com ações
+    if (actions.length > 0) {
+      showToastWithActions(title, message, actions, toastType);
     } else {
-      toast.info(`${title}: ${message}`);
+      // Toast simples
+      if (appError.statusCode >= 500) {
+        toast.error(`${title}: ${message}`);
+      } else if (appError.statusCode >= 400) {
+        toast.warning(`${title}: ${message}`);
+      } else {
+        toast.info(`${title}: ${message}`);
+      }
     }
   }
   
@@ -229,6 +286,61 @@ export function handleError(
   }
   
   return appError;
+}
+
+/**
+ * Determina severidade baseada no status code
+ */
+function getSeverityFromStatusCode(statusCode: number): 'low' | 'medium' | 'high' | 'critical' {
+  if (statusCode >= 500) return 'critical';
+  if (statusCode >= 400) return 'high';
+  if (statusCode >= 300) return 'medium';
+  return 'low';
+}
+
+/**
+ * Determina tipo de toast baseado na severidade
+ */
+function getToastTypeFromSeverity(severity: 'low' | 'medium' | 'high' | 'critical'): 'info' | 'warning' | 'error' {
+  switch (severity) {
+    case 'critical':
+    case 'high':
+      return 'error';
+    case 'medium':
+      return 'warning';
+    case 'low':
+    default:
+      return 'info';
+  }
+}
+
+/**
+ * Exibe toast com ações customizadas
+ */
+function showToastWithActions(
+  title: string,
+  message: string,
+  actions: ErrorAction[],
+  type: 'info' | 'warning' | 'error'
+) {
+  // Por enquanto, usa toast simples com mensagem sobre ações
+  // TODO: Implementar toast com botões quando react-toastify suportar
+  const actionText = actions.length > 0 ? ` (${actions.length} ação${actions.length > 1 ? 'ões' : ''} disponível${actions.length > 1 ? 'is' : ''})` : '';
+  
+  const fullMessage = `${title}: ${message}${actionText}`;
+  
+  switch (type) {
+    case 'error':
+      toast.error(fullMessage);
+      break;
+    case 'warning':
+      toast.warning(fullMessage);
+      break;
+    case 'info':
+    default:
+      toast.info(fullMessage);
+      break;
+  }
 }
 
 /**

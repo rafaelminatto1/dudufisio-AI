@@ -17,7 +17,9 @@
       "Bash(timeout 60 npx playwright test:*)",
       "Bash(Remove-Item -Path \"test-results\" -Recurse -Force -ErrorAction SilentlyContinue)",
       "Bash(npx playwright show-report)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout /t 8 /nobreak)"
     ],
     "deny": [],
     "ask": []

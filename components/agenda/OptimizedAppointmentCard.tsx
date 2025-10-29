@@ -93,17 +93,17 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
     ? ((nextAppointment.startTime.getHours() - startHour) * 60 + nextAppointment.startTime.getMinutes()) * pixelsPerMinute
     : null;
   
-  // Altura ideal do card (65% para manter visual compacto)
-  const heightReductionFactor = 0.65;
+  // Altura ideal do card (75% para melhor visualização mantendo compacto)
+  const heightReductionFactor = 0.75;
   const idealHeight = durationInMinutes * pixelsPerMinute * heightReductionFactor;
   
-  // Altura máxima: espaço até o próximo agendamento (com margem de 4px)
+  // Altura máxima: espaço até o próximo agendamento (com margem de 6px para respiração)
   const maxHeight = nextAppointmentTop !== null 
-    ? Math.max(nextAppointmentTop - top - 4, 20) 
+    ? Math.max(nextAppointmentTop - top - 6, 24) 
     : idealHeight;
   
-  // Usar o menor valor entre altura ideal e altura máxima
-  const height = Math.max(Math.min(idealHeight, maxHeight), 20);
+  // Usar o menor valor entre altura ideal e altura máxima (mínimo 24px)
+  const height = Math.max(Math.min(idealHeight, maxHeight), 24);
 
   // Cores sólidas baseadas no terapeuta
   const therapistColor = THERAPIST_COLORS[`therapist-${(therapistIndex % 3) + 1}` as keyof typeof THERAPIST_COLORS];
@@ -174,16 +174,19 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
           top: `${top}px`,
           height: `${height}px`,
           left: `${leftPosition}%`,
-          width: `${cardWidth}%`,
+          width: `calc(${cardWidth}% - 2px)`, // Margem mínima entre cards
+          maxWidth: `calc(${cardWidth}% - 2px)`,
           zIndex: isHovered ? 20 : 10,
-          minWidth: '140px',
+          minWidth: '90px',
+          maxHeight: `${height}px`,
           borderLeftColor: therapistColor.border,
           borderLeftWidth: '4px',
           backgroundColor: appointment.status === AppointmentStatus.Completed ? '#F0FDF4' : 
                           appointment.status === AppointmentStatus.Canceled ? '#F9FAFB' :
                           appointment.status === AppointmentStatus.NoShow ? '#FFF7ED' : '#FFFFFF',
           opacity: isBeingDragged ? 0.5 : 1,
-          padding: '0 2px' // Padding interno para respiração visual
+          padding: '2px 4px', // Mais padding horizontal
+          boxSizing: 'border-box'
         }}
       >
         {/* Indicador de Edição */}
@@ -268,8 +271,8 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="flex-grow min-h-0 flex flex-col justify-between p-1.5">
-          <div className="flex items-start justify-between gap-1 mb-0.5">
+        <div className="flex-grow min-h-0 flex flex-col justify-between p-1.5 overflow-hidden">
+          <div className="flex items-start justify-between gap-1 mb-0.5 overflow-hidden">
             <Tooltip 
               content={
                 <div className="space-y-1">
@@ -300,14 +303,15 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
               side="top"
               delayDuration={200}
             >
-              <div className="font-bold text-xs leading-tight flex-1 text-slate-900 min-w-0">
+              <div className="font-bold text-xs leading-tight flex-1 text-slate-900 min-w-0 overflow-hidden">
                 <div className="font-semibold break-words" style={{ 
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
                   lineHeight: '1.2',
-                  maxHeight: '2.4em' // 2 linhas * 1.2 line-height
+                  maxHeight: '2.4em', // 2 linhas * 1.2 line-height
+                  wordBreak: 'break-word'
                 }}>
                   {appointment.patientName}
                 </div>
@@ -322,11 +326,11 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
               {getPaymentBadge()}
             </div>
           </div>
-          <div className="flex items-center justify-between">
-            <div className="text-[10px] leading-tight font-mono text-slate-700 font-bold">
+          <div className="flex items-center justify-between overflow-hidden">
+            <div className="text-[10px] leading-tight font-mono text-slate-700 font-bold truncate">
               {format(appointment.startTime, 'HH:mm')}
             </div>
-            <div className="text-[9px] font-semibold text-slate-600 uppercase tracking-wide">
+            <div className="text-[9px] font-semibold text-slate-600 uppercase tracking-wide truncate">
               {appointment.type.substring(0, 3)}
             </div>
           </div>

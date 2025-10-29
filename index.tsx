@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import './index.css';
 import AppRoutes from './AppRoutes';
 import { registerServiceWorker } from './lib/serviceWorkerRegistration';
+import { initMonitoring } from './lib/monitoring/initMonitoring';
 
 // Configure React Query
 const queryClient = new QueryClient({
@@ -22,6 +23,9 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Inicializar sistema de monitoramento de erros
+initMonitoring();
 
 // Web Vitals monitoring (apenas em produção)
 if (import.meta.env.PROD) {

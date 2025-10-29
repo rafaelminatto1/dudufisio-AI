@@ -96,7 +96,10 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
     setIsEditingValue(false);
   };
 
-  const handleStartSession = () => {
+  const handleStartSession = (e?: React.MouseEvent) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    
     if (onStartSession) {
       onStartSession(appointment);
     } else {
@@ -431,6 +434,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
               <option value={AppointmentStatus.NoShow}>Faltou</option>
             </select>
             <Button
+              type="button"
               size="sm"
               onClick={handleStartSession}
               className="bg-green-600 hover:bg-green-700"
