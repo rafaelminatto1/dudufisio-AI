@@ -1,6 +1,6 @@
 // services/aiPredictionService.ts
 import { PatientWithMonitoringMetrics } from '../types';
-import { getGeminiClient } from './geminiService';
+// import { getGeminiClient } from './geminiService';
 
 export interface AbandonmentPrediction {
   patientId: string;
@@ -29,8 +29,12 @@ export async function predictPatientAbandonment(
   historicalData?: any
 ): Promise<AbandonmentPrediction> {
   try {
-    const gemini = getGeminiClient();
-
+    // const gemini = getGeminiClient(); // TODO: Implementar quando geminiService estiver pronto
+    
+    // Por enquanto, usar previsão baseada em regras
+    return predictWithRules(patient);
+    
+    /* TODO: Implementar IA quando geminiService estiver completo
     const prompt = `
 Você é um especialista em análise preditiva de retenção de pacientes em clínicas de fisioterapia.
 
@@ -95,9 +99,10 @@ Analise o perfil do paciente abaixo e preveja a probabilidade de abandono do tra
       predictionDate: new Date().toISOString(),
       confidence: prediction.confidence || 'medium',
     };
+    */
 
   } catch (error) {
-    console.error('Erro ao prever abandono com IA:', error);
+    console.error('Erro ao prever abandono:', error);
     
     // Fallback: Previsão baseada em regras
     return predictWithRules(patient);
