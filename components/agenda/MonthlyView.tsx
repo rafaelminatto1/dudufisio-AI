@@ -52,8 +52,25 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
     const completed = dayApps.filter(app => app.status === AppointmentStatus.Completed).length;
     const total = dayApps.length;
     const paid = dayApps.filter(app => app.paymentStatus === 'paid').length;
+    
+    // Densidade baseada em quantidade de agendamentos
+    let density: 'low' | 'medium' | 'high' = 'low';
+    if (total >= 8) density = 'high';
+    else if (total >= 4) density = 'medium';
 
-    return { total, hasConflicts, completed, paid };
+    return { total, hasConflicts, completed, paid, density };
+  };
+
+  // Função para obter cor do heat map baseada na densidade
+  const getHeatMapColor = (density: 'low' | 'medium' | 'high', isCurrentMonth: boolean) => {
+    if (!isCurrentMonth) return 'bg-slate-50';
+    
+    switch (density) {
+      case 'high': return 'bg-red-50 border-red-200';
+      case 'medium': return 'bg-yellow-50 border-yellow-200';
+      case 'low': return 'bg-green-50 border-green-200';
+      default: return 'bg-white';
+    }
   };
 
   const weekdays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
@@ -112,12 +129,13 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
                 <div
                   key={date.toISOString()}
                   className={cn(
-                    "p-1 sm:p-2 border-r border-b cursor-pointer transition-colors min-h-[80px] sm:min-h-[100px]",
+                    "p-1 sm:p-2 border cursor-pointer transition-all duration-200 min-h-[80px] sm:min-h-[120px] hover:shadow-lg",
                     !isCurrentMonth && "text-slate-400 bg-slate-50/50",
-                    isCurrentDay && "bg-sky-50 border-sky-200",
-                    isHovered && "bg-blue-50 border-blue-200",
-                    stats.hasConflicts && "bg-red-50/50 border-red-200",
-                    "last:border-r-0"
+                    isCurrentDay && "ring-2 ring-blue-500 bg-blue-50 border-blue-300",
+                    isHovered && "scale-[1.02] z-10",
+                    stats.hasConflicts && "ring-2 ring-red-400",
+                    // Heat map baseado na densidade
+                    isCurrentMonth && !isCurrentDay && getHeatMapColor(stats.density, isCurrentMonth)
                   )}
                   onClick={() => onDateClick(date)}
                   onMouseEnter={() => setHoveredDate(date)}
@@ -201,6 +219,17 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
                         <div className="flex items-center justify-between">
                           <span>Total de agendamentos:</span>
                           <span className="font-semibold">{stats.total}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Densidade:</span>
+                          <Badge className={cn(
+                            "text-[10px] h-4 px-1",
+                            stats.density === 'high' && "bg-red-100 text-red-700",
+                            stats.density === 'medium' && "bg-yellow-100 text-yellow-700",
+                            stats.density === 'low' && "bg-green-100 text-green-700"
+                          )}>
+                            {stats.density === 'high' ? '🔴 Alta' : stats.density === 'medium' ? '🟡 Média' : '🟢 Baixa'}
+                          </Badge>
                         </div>
                         <div className="flex items-center justify-between">
                           <span>Concluídos:</span>

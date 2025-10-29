@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import format from 'date-fns/format';
 import isSameDay from 'date-fns/isSameDay';
 import isToday from 'date-fns/isToday';
@@ -9,6 +9,9 @@ import OptimizedAppointmentCard from './OptimizedAppointmentCard';
 import { cn } from '../../lib/utils';
 import Tooltip from '../ui/tooltip';
 import ScheduleBlockBar from './ScheduleBlockBar';
+import ZoomControls from './ZoomControls';
+import { useAgendaZoom } from '../../hooks/useAgendaZoom';
+import TimelineIndicators from './TimelineIndicators';
 
 interface DailyViewProps {
   selectedDate: Date;
@@ -28,7 +31,7 @@ interface DailyViewProps {
 const START_HOUR = 7;
 const END_HOUR = 21;
 const SLOT_DURATION = 30;
-const PIXELS_PER_MINUTE = 2;
+const BASE_PIXELS_PER_MINUTE = 2;
 
 const timeSlots = Array.from({ length: (END_HOUR - START_HOUR) * (60 / SLOT_DURATION) }, (_, i) => {
   const totalMinutes = START_HOUR * 60 + i * SLOT_DURATION;
@@ -37,22 +40,22 @@ const timeSlots = Array.from({ length: (END_HOUR - START_HOUR) * (60 / SLOT_DURA
   return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
 });
 
-const CurrentTimeIndicator: React.FC = () => {
+const CurrentTimeIndicator: React.FC<{ pixelsPerMinute: number }> = ({ pixelsPerMinute }) => {
   const [top, setTop] = React.useState(0);
 
   React.useEffect(() => {
     const updatePosition = () => {
       const now = new Date();
       const minutesFromStart = (now.getHours() - START_HOUR) * 60 + now.getMinutes();
-      setTop(minutesFromStart * PIXELS_PER_MINUTE);
+      setTop(minutesFromStart * pixelsPerMinute);
     };
 
     updatePosition();
     const interval = setInterval(updatePosition, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [pixelsPerMinute]);
 
-  if (top < 0 || top > (END_HOUR - START_HOUR) * 60 * PIXELS_PER_MINUTE) {
+  if (top < 0 || top > (END_HOUR - START_HOUR) * 60 * pixelsPerMinute) {
     return null;
   }
 
@@ -60,6 +63,9 @@ const CurrentTimeIndicator: React.FC = () => {
     <div className="absolute left-0 right-0 z-10 pointer-events-none" style={{ top: `${top}px` }}>
       <div className="relative h-px bg-red-500">
         <div className="absolute -left-1.5 -top-1.5 w-3 h-3 bg-red-500 rounded-full"></div>
+        <div className="absolute left-2 -top-2 text-xs font-bold text-red-600 bg-white px-1 rounded">
+          Agora
+        </div>
       </div>
     </div>
   );
@@ -80,22 +86,56 @@ const DailyView: React.FC<DailyViewProps> = ({
   onRightClick
 }) => {
   const dayAppointments = appointments.filter(app => isSameDay(app.startTime, selectedDate));
+  
+  // Hook de zoom
+  const { zoomLevel, zoomFactor, setZoom } = useAgendaZoom();
+  const PIXELS_PER_MINUTE = BASE_PIXELS_PER_MINUTE * zoomFactor;
+  
+  // Ref para scroll automático
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hasScrolledRef = useRef(false);
+
+  // Auto-scroll para horário atual ao montar
+  useEffect(() => {
+    if (!hasScrolledRef.current && containerRef.current && isToday(selectedDate)) {
+      const now = new Date();
+      const currentHour = now.getHours();
+      
+      if (currentHour >= START_HOUR && currentHour < END_HOUR) {
+        const minutesFromStart = (currentHour - START_HOUR) * 60 + now.getMinutes();
+        const scrollPosition = minutesFromStart * PIXELS_PER_MINUTE;
+        
+        setTimeout(() => {
+          if (containerRef.current) {
+            containerRef.current.scrollTo({
+              top: Math.max(0, scrollPosition - 200),
+              behavior: 'smooth'
+            });
+            hasScrolledRef.current = true;
+          }
+        }, 100);
+      }
+    }
+  }, [selectedDate, PIXELS_PER_MINUTE]);
 
   return (
     <div className="flex-1 overflow-hidden">
-      <div className="mb-4">
-        <h2 className={cn(
-          "text-lg font-semibold",
-          isToday(selectedDate) ? "text-sky-600" : "text-slate-900"
-        )}>
-          {format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR })}
-        </h2>
-        <p className="text-sm text-slate-500">
-          {dayAppointments.length} agendamento{dayAppointments.length !== 1 ? 's' : ''}
-        </p>
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h2 className={cn(
+            "text-lg font-semibold",
+            isToday(selectedDate) ? "text-sky-600" : "text-slate-900"
+          )}>
+            {format(selectedDate, "EEEE, d 'de' MMMM", { locale: ptBR })}
+          </h2>
+          <p className="text-sm text-slate-500">
+            {dayAppointments.length} agendamento{dayAppointments.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+        <ZoomControls currentZoom={zoomLevel} onZoomChange={setZoom} />
       </div>
 
-      <div className="flex gap-2 sm:gap-4 h-full overflow-auto">
+      <div ref={containerRef} className="flex gap-2 sm:gap-4 h-full overflow-auto">
         {therapists.map((therapist) => {
           const therapistAppointments = dayAppointments.filter(app => app.therapistId === therapist.id);
 
@@ -149,6 +189,12 @@ const DailyView: React.FC<DailyViewProps> = ({
                     ))}
 
                     {/* Schedule Blocks */}
+                    {/* Timeline Indicators */}
+                    <TimelineIndicators 
+                      startHour={START_HOUR}
+                      pixelsPerMinute={PIXELS_PER_MINUTE}
+                    />
+
                     {scheduleBlocks
                       .filter(block => 
                         isSameDay(block.startTime, selectedDate) && 
@@ -182,7 +228,7 @@ const DailyView: React.FC<DailyViewProps> = ({
                       />
                     ))}
 
-                    {isToday(selectedDate) && <CurrentTimeIndicator />}
+                    {isToday(selectedDate) && <CurrentTimeIndicator pixelsPerMinute={PIXELS_PER_MINUTE} />}
                   </div>
                 </div>
               </CardContent>

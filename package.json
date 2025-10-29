@@ -99,6 +99,7 @@
     "alert:vulnerabilities": "node scripts/alert-vulnerabilities.cjs"
   },
   "dependencies": {
+    "@ai-sdk/groq": "^2.0.25",
     "@anthropic-ai/sdk": "^0.67.0",
     "@google/generative-ai": "^0.21.0",
     "@hookform/resolvers": "^3.10.0",
@@ -155,6 +156,7 @@
     "@vercel/analytics": "^1.5.0",
     "@vercel/edge-config": "^1.4.2",
     "@vercel/speed-insights": "^1.2.0",
+    "ai": "^5.0.81",
     "axios": "^1.12.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

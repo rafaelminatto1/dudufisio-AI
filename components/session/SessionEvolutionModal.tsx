@@ -153,9 +153,11 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
       setMedicalInsights(insights);
 
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      showToast('Erro ao carregar dados da sessão', 'error');
-      onClose();
+      console.error('❌ Erro detalhado ao carregar dados:', error);
+      console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack');
+      console.error('Error message:', error instanceof Error ? error.message : String(error));
+      showToast(`Erro ao carregar dados da sessão: ${error instanceof Error ? error.message : String(error)}`, 'error');
+      // NÃO fecha o modal imediatamente - deixa o usuário ver o erro
     } finally {
       setIsLoading(false);
     }

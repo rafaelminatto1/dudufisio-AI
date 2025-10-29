@@ -247,46 +247,52 @@ export function withSupabaseErrorHandling<T>(
 /**
  * Wrapper para operações de leitura (GET/SELECT)
  */
-export function withSupabaseQuery<T>(
-  operation: () => Promise<T>,
+export function withSupabaseQuery<T, TArgs extends any[] = []>(
+  operation: (...args: TArgs) => Promise<T>,
   options: Omit<SupabaseErrorHandlerOptions, 'retryable'> = {}
-): () => Promise<T> {
-  return withSupabaseErrorHandling(operation, {
-    ...options,
-    retryable: true,
-    maxRetries: 3,
-    fallbackMessage: options.fallbackMessage || 'Erro ao buscar dados'
-  });
+): (...args: TArgs) => Promise<T> {
+  return (...args: TArgs) => {
+    return withSupabaseErrorHandling(() => operation(...args), {
+      ...options,
+      retryable: true,
+      maxRetries: 3,
+      fallbackMessage: options.fallbackMessage || 'Erro ao buscar dados'
+    })();
+  };
 }
 
 /**
  * Wrapper para operações de escrita (INSERT/UPDATE/DELETE)
  */
-export function withSupabaseMutation<T>(
-  operation: () => Promise<T>,
+export function withSupabaseMutation<T, TArgs extends any[] = []>(
+  operation: (...args: TArgs) => Promise<T>,
   options: Omit<SupabaseErrorHandlerOptions, 'retryable'> = {}
-): () => Promise<T> {
-  return withSupabaseErrorHandling(operation, {
-    ...options,
-    retryable: false, // Mutations não são retryable por padrão
-    fallbackMessage: options.fallbackMessage || 'Erro ao salvar dados'
-  });
+): (...args: TArgs) => Promise<T> {
+  return (...args: TArgs) => {
+    return withSupabaseErrorHandling(() => operation(...args), {
+      ...options,
+      retryable: false, // Mutations não são retryable por padrão
+      fallbackMessage: options.fallbackMessage || 'Erro ao salvar dados'
+    })();
+  };
 }
 
 /**
  * Wrapper para operações críticas (com retry mais agressivo)
  */
-export function withSupabaseCritical<T>(
-  operation: () => Promise<T>,
+export function withSupabaseCritical<T, TArgs extends any[] = []>(
+  operation: (...args: TArgs) => Promise<T>,
   options: Omit<SupabaseErrorHandlerOptions, 'retryable' | 'maxRetries'> = {}
-): () => Promise<T> {
-  return withSupabaseErrorHandling(operation, {
-    ...options,
-    retryable: true,
-    maxRetries: 5,
-    retryDelay: 500, // Delay menor para operações críticas
-    fallbackMessage: options.fallbackMessage || 'Erro crítico na operação'
-  });
+): (...args: TArgs) => Promise<T> {
+  return (...args: TArgs) => {
+    return withSupabaseErrorHandling(() => operation(...args), {
+      ...options,
+      retryable: true,
+      maxRetries: 5,
+      retryDelay: 500, // Delay menor para operações críticas
+      fallbackMessage: options.fallbackMessage || 'Erro crítico na operação'
+    })();
+  };
 }
 
 // =============================================================================

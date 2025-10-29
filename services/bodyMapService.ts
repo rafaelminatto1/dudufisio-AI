@@ -1002,3 +1002,41 @@ export async function deleteBodyPoint(pointId: string): Promise<void> {
     throw new Error('Falha ao remover ponto de dor');
   }
 }
+
+// ============================================================================
+// COMPATIBILIDADE - FUNÇÕES LEGACY
+// ============================================================================
+
+/**
+ * Salva uma sessão de body map (wrapper para criar ou atualizar)
+ * @deprecated Use createBodyMapSession ou updateBodyMapSession diretamente
+ */
+export async function saveBodyMapSession(
+  data: Omit<BodyMapSession, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }
+): Promise<BodyMapSession> {
+  try {
+    // Se tem ID, atualizar sessão existente
+    if (data.id) {
+      const { id, ...updates } = data;
+      return await updateBodyMapSession(id, updates);
+    }
+    
+    // Caso contrário, criar nova sessão
+    const { id, ...createData } = data;
+    return await createBodyMapSession(createData);
+  } catch (error) {
+    console.error('Error saving body map session:', error);
+    throw new Error('Falha ao salvar sessão de mapa corporal');
+  }
+}
+
+/**
+ * Busca sessões de um paciente (alias para getPatientBodyMapHistory)
+ * @deprecated Use getPatientBodyMapHistory diretamente
+ */
+export async function getSessionsByPatient(
+  patientId: string,
+  filters?: BodyMapFilters
+): Promise<BodyMapSession[]> {
+  return getPatientBodyMapHistory(patientId, filters);
+}

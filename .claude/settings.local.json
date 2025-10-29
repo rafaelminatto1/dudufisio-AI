@@ -19,7 +19,11 @@
       "Bash(npx playwright show-report)",
       "Bash(cat:*)",
       "Bash(npm run dev:*)",
-      "Bash(timeout /t 8 /nobreak)"
+      "Bash(timeout /t 8 /nobreak)",
+      "Bash(Select-String -Pattern \"test\")",
+      "Bash(Select-Object -First 10)",
+      "Bash(/dev/null)",
+      "Bash(timeout /t 5 /nobreak)"
     ],
     "deny": [],
     "ask": []

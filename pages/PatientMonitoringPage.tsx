@@ -1,15 +1,25 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useDeferredValue } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../components/ui/card';
 import PageHeader from '../components/PageHeader';
-import { KPICards } from '../components/monitoring/KPICards';
-import { PresenceEvolutionChart } from '../components/monitoring/PresenceEvolutionChart';
-import { PainDistributionChart } from '../components/monitoring/PainDistributionChart';
-import { FilterToolbar } from '../components/monitoring/FilterToolbar';
-import { PatientMonitoringTable } from '../components/monitoring/PatientMonitoringTable';
-import { QuickActionDialog } from '../components/monitoring/QuickActionDialog';
+import {
+  KPICards,
+  PresenceEvolutionChart,
+  PainDistributionChart,
+  FilterToolbar,
+  PatientMonitoringTable,
+  QuickActionDialog,
+  ExportMenu,
+  MonitoringPageSkeleton,
+  KPICardsSkeleton,
+  ChartSkeleton,
+  TableEmptyState,
+  ErrorState,
+} from '../components/monitoring';
 import { useData } from '../contexts/AppContext';
 import { useToast } from '../contexts/ToastContext';
+import * as cacheManager from '../lib/cacheManager';
 import {
   PatientWithMonitoringMetrics,
   MonitoringFilters,
@@ -35,15 +45,23 @@ const PatientMonitoringPage: React.FC = () => {
   const [presenceData, setPresenceData] = useState<PresenceDataPoint[]>([]);
   const [painData, setPainData] = useState<PainDistributionData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingStage, setLoadingStage] = useState<'initial' | 'kpis' | 'charts' | 'complete'>('initial');
+  const [hasError, setHasError] = useState(false);
 
-  // Estados de UI
-  const [filters, setFilters] = useState<MonitoringFilters>({
-    searchTerm: '',
-    status: 'all',
-    riskLevel: 'all',
-    attendanceRange: 'all',
-    painLevel: 'all',
-    therapistId: 'all',
+  // Estados de UI com cache restaurado
+  const [filters, setFilters] = useState<MonitoringFilters>(() => {
+    const cached = cacheManager.getCache<MonitoringFilters>(
+      cacheManager.CacheKeys.FILTERS,
+      { storage: 'session' }
+    );
+    return cached || {
+      searchTerm: '',
+      status: 'all',
+      riskLevel: 'all',
+      attendanceRange: 'all',
+      painLevel: 'all',
+      therapistId: 'all',
+    };
   });
   const [sortConfig, setSortConfig] = useState<MonitoringSortConfig>({
     field: 'riskLevel',
@@ -53,39 +71,75 @@ const PatientMonitoringPage: React.FC = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Carregar dados
+  // Debounced filters para otimização de performance
+  const deferredFilters = useDeferredValue(filters);
+
+  // Salvar filtros no cache quando alterarem
+  useEffect(() => {
+    cacheManager.debouncedCacheSet(
+      cacheManager.CacheKeys.FILTERS,
+      filters,
+      { storage: 'session' }
+    );
+  }, [filters]);
+
+  // Carregar dados com cache e progressive loading
   useEffect(() => {
     loadData();
   }, [patients, appointments, period]);
 
   const loadData = async () => {
     setIsLoading(true);
+    setLoadingStage('initial');
+    setHasError(false);
+
     try {
-      // Calcular métricas de monitoramento
+      // Verificar cache primeiro
+      const cachedMetrics = cacheManager.getCache<PatientWithMonitoringMetrics[]>(
+        cacheManager.CacheKeys.PATIENTS_METRICS
+      );
+
+      if (cachedMetrics && cachedMetrics.length > 0) {
+        setPatientsWithMetrics(cachedMetrics);
+        setLoadingStage('complete');
+        setIsLoading(false);
+      }
+
+      // Progressive loading: KPIs primeiro
+      setLoadingStage('kpis');
       const metricsData = await patientMonitoringService.getPatientMonitoringMetrics(
         patients,
         appointments
       );
       setPatientsWithMetrics(metricsData);
+      cacheManager.setCache(cacheManager.CacheKeys.PATIENTS_METRICS, metricsData);
 
-      // Calcular KPIs
       const kpis = patientMonitoringService.getKPISummary(metricsData, period);
       setKpiMetrics(kpis);
 
-      // Dados de presença ao longo do tempo
+      // Depois gráficos
+      setLoadingStage('charts');
       const presence = patientMonitoringService.getPresenceEvolutionData(appointments, period);
       setPresenceData(presence);
 
-      // Distribuição de dor
       const pain = await patientMonitoringService.getPainDistributionData(patients);
       setPainData(pain);
+
+      // Completo
+      setLoadingStage('complete');
     } catch (error) {
       console.error('Erro ao carregar dados de monitoramento:', error);
       showToast('Erro ao carregar dados de monitoramento', 'error');
+      setHasError(true);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Função para retry em caso de erro
+  const handleRetry = useCallback(() => {
+    loadData();
+  }, [patients, appointments, period]);
 
   // Aplicar filtros
   const filteredPatients = useMemo(() => {
@@ -266,55 +320,151 @@ const PatientMonitoringPage: React.FC = () => {
     }
   };
 
+  // Estado de erro
+  if (hasError) {
+    return (
+      <div className="space-y-6 p-6">
+        <PageHeader
+          title="Acompanhamento de Pacientes"
+          subtitle="Monitore presença, evolução clínica e priorize ações para retenção"
+        />
+        <ErrorState
+          message="Não foi possível carregar os dados de monitoramento"
+          onRetry={handleRetry}
+        />
+      </div>
+    );
+  }
+
+  // Loading completo na primeira carga
+  if (isLoading && loadingStage === 'initial') {
+    return <MonitoringPageSkeleton />;
+  }
+
+  // Animações
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.4 }
+  };
+
+  const stagger = {
+    animate: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const hasFilters = Object.values(deferredFilters).some(
+    v => v !== 'all' && v !== ''
+  );
+
   return (
     <div className="space-y-6 p-6">
-      <PageHeader
-        title="Acompanhamento de Pacientes"
-        subtitle="Monitore presença, evolução clínica e priorize ações para retenção"
-      />
+      {/* Header com botão de exportação */}
+      <motion.div {...fadeInUp} className="flex items-center justify-between">
+        <PageHeader
+          title="Acompanhamento de Pacientes"
+          subtitle="Monitore presença, evolução clínica e priorize ações para retenção"
+        />
+        {!isLoading && sortedPatients.length > 0 && (
+          <ExportMenu 
+            patients={sortedPatients} 
+            kpiMetrics={kpiMetrics}
+          />
+        )}
+      </motion.div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full" />
-        </div>
-      ) : (
-        <>
-          {/* Seção 1: KPIs */}
-          {kpiMetrics && <KPICards metrics={kpiMetrics} />}
+      <AnimatePresence mode="wait">
+        {isLoading && loadingStage === 'kpis' ? (
+          <motion.div key="loading-kpis" {...fadeInUp}>
+            <KPICardsSkeleton />
+          </motion.div>
+        ) : (
+          kpiMetrics && (
+            <motion.div key="kpis" {...fadeInUp}>
+              <KPICards metrics={kpiMetrics} />
+            </motion.div>
+          )
+        )}
+      </AnimatePresence>
 
-          {/* Seção 2: Gráficos */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <PresenceEvolutionChart 
-                data={presenceData} 
-                onPeriodChange={handlePeriodChange}
-              />
-            </Card>
-            <Card>
-              <PainDistributionChart 
-                data={painData} 
-                onBarClick={handlePainBarClick}
-              />
-            </Card>
-          </div>
+      {/* Seção 2: Gráficos com animação */}
+      <motion.div 
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        variants={stagger}
+        initial="initial"
+        animate="animate"
+      >
+        {isLoading && loadingStage === 'charts' ? (
+          <>
+            <motion.div variants={fadeInUp}>
+              <ChartSkeleton />
+            </motion.div>
+            <motion.div variants={fadeInUp}>
+              <ChartSkeleton />
+            </motion.div>
+          </>
+        ) : (
+          <>
+            <motion.div variants={fadeInUp} id="charts-container">
+              <Card>
+                <PresenceEvolutionChart 
+                  data={presenceData} 
+                  onPeriodChange={handlePeriodChange}
+                />
+              </Card>
+            </motion.div>
+            <motion.div variants={fadeInUp}>
+              <Card>
+                <PainDistributionChart 
+                  data={painData} 
+                  onBarClick={handlePainBarClick}
+                />
+              </Card>
+            </motion.div>
+          </>
+        )}
+      </motion.div>
 
-          {/* Seção 3: Filtros + Tabela */}
-          <Card>
-            <FilterToolbar
-              filters={filters}
-              onFilterChange={setFilters}
-              therapists={therapists}
+      {/* Seção 3: Filtros + Tabela com animação */}
+      <motion.div {...fadeInUp}>
+        <Card>
+          <FilterToolbar
+            filters={filters}
+            onFilterChange={setFilters}
+            therapists={therapists}
+          />
+          
+          {sortedPatients.length === 0 ? (
+            <TableEmptyState
+              hasFilters={hasFilters}
+              onClearFilters={() => setFilters({
+                searchTerm: '',
+                status: 'all',
+                riskLevel: 'all',
+                attendanceRange: 'all',
+                painLevel: 'all',
+                therapistId: 'all',
+              })}
+              onAddPatient={() => navigate('/patients/new')}
             />
+          ) : (
             <PatientMonitoringTable
               patients={sortedPatients}
               sortConfig={sortConfig}
               onSort={handleSort}
               onAction={handleQuickAction}
-              isLoading={isLoading}
+              isLoading={false}
             />
-          </Card>
+          )}
+        </Card>
+      </motion.div>
 
-          {/* Dialog de Ações Rápidas */}
+      {/* Dialog de Ações Rápidas com animação */}
+      <AnimatePresence>
+        {dialogOpen && (
           <QuickActionDialog
             isOpen={dialogOpen}
             onClose={() => setDialogOpen(false)}
@@ -323,8 +473,8 @@ const PatientMonitoringPage: React.FC = () => {
             onSchedule={handleSchedule}
             onAddNote={handleAddNote}
           />
-        </>
-      )}
+        )}
+      </AnimatePresence>
     </div>
   );
 };

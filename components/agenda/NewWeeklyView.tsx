@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import format from 'date-fns/format';
 import addDays from 'date-fns/addDays';
 import startOfWeek from 'date-fns/startOfWeek';
@@ -14,6 +14,10 @@ import HolidayIndicator from './HolidayIndicator';
 import Tooltip from '../ui/tooltip';
 import ScheduleBlockBar from './ScheduleBlockBar';
 import OptimizedAppointmentCard from './OptimizedAppointmentCard';
+import ZoomControls, { ZoomLevel } from './ZoomControls';
+import { useAgendaZoom } from '../../hooks/useAgendaZoom';
+import TimelineIndicators from './TimelineIndicators';
+import { useThrottle } from '../../hooks/useThrottle';
 
 interface NewWeeklyViewProps {
   currentDate: Date;
@@ -36,7 +40,7 @@ interface NewWeeklyViewProps {
 const START_HOUR = 7;
 const END_HOUR = 21; // Horário estendido até 21h
 const SLOT_DURATION = 30;
-const PIXELS_PER_MINUTE = 2.5; // Aumentado para melhor visualização
+const BASE_PIXELS_PER_MINUTE = 2.5; // Base para melhor visualização
 
 
 const timeSlots = Array.from({ length: (END_HOUR - START_HOUR) * (60 / SLOT_DURATION) }, (_, i) => {
@@ -47,22 +51,22 @@ const timeSlots = Array.from({ length: (END_HOUR - START_HOUR) * (60 / SLOT_DURA
 });
 
 // Indicador de tempo atual
-const CurrentTimeIndicator: React.FC = () => {
+const CurrentTimeIndicator: React.FC<{ pixelsPerMinute: number }> = ({ pixelsPerMinute }) => {
   const [top, setTop] = React.useState(0);
 
   React.useEffect(() => {
     const updatePosition = () => {
       const now = new Date();
       const minutesFromStart = (now.getHours() - START_HOUR) * 60 + now.getMinutes();
-      setTop(minutesFromStart * PIXELS_PER_MINUTE);
+      setTop(minutesFromStart * pixelsPerMinute);
     };
 
     updatePosition();
     const interval = setInterval(updatePosition, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [pixelsPerMinute]);
 
-  if (top < 0 || top > (END_HOUR - START_HOUR) * 60 * PIXELS_PER_MINUTE) {
+  if (top < 0 || top > (END_HOUR - START_HOUR) * 60 * pixelsPerMinute) {
     return null;
   }
 
@@ -70,6 +74,9 @@ const CurrentTimeIndicator: React.FC = () => {
     <div className="absolute left-0 right-0 z-20 pointer-events-none" style={{ top: `${top}px` }}>
       <div className="relative h-0.5 bg-red-500 shadow-sm">
         <div className="absolute -left-1 -top-1 w-2 h-2 bg-red-500 rounded-full shadow-sm"></div>
+        <div className="absolute left-2 -top-2 text-xs font-bold text-red-600 bg-white px-1 rounded">
+          Agora
+        </div>
       </div>
     </div>
   );
@@ -110,6 +117,14 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
   const weekStart = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 1 }), [currentDate]);
   const weekDays = useMemo(() => Array.from({ length: 6 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
+  // Hook de zoom
+  const { zoomLevel, zoomFactor, setZoom } = useAgendaZoom();
+  const PIXELS_PER_MINUTE = BASE_PIXELS_PER_MINUTE * zoomFactor;
+
+  // Ref para scroll automático
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+  const hasScrolledRef = useRef(false);
+
   const [contextMenu, setContextMenu] = useState<{
     appointment: EnrichedAppointment;
     position: { x: number; y: number };
@@ -120,6 +135,8 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
   const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
   const [previewTime, setPreviewTime] = useState<string | null>(null);
   const [previewPosition, setPreviewPosition] = useState<{ x: number; y: number } | null>(null);
+  const [hasConflict, setHasConflict] = useState(false);
+  const [conflictReason, setConflictReason] = useState<string>('');
 
   const handleRightClick = (appointment: EnrichedAppointment, e: React.MouseEvent) => {
     setContextMenu({
@@ -136,7 +153,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
   };
 
   // Handler melhorado para drag over com feedback visual
-  const handleDragOverEnhanced = (e: React.DragEvent, day: Date) => {
+  const handleDragOverEnhancedInternal = (e: React.DragEvent, day: Date, therapistId: string) => {
     e.preventDefault();
     const rect = e.currentTarget.getBoundingClientRect();
     const dropY = e.clientY - rect.top;
@@ -151,21 +168,80 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
     const newMinute = snappedMinutes % 60;
     const timeString = `${String(newHour).padStart(2, '0')}:${String(newMinute).padStart(2, '0')}`;
     
+    // Verificar conflitos
+    if (draggedAppointmentId) {
+      const draggedAppt = appointments.find(a => a.id === draggedAppointmentId);
+      if (draggedAppt) {
+        const duration = new Date(draggedAppt.endTime).getTime() - new Date(draggedAppt.startTime).getTime();
+        const newStartTime = new Date(day);
+        newStartTime.setHours(newHour, newMinute, 0, 0);
+        const newEndTime = new Date(newStartTime.getTime() + duration);
+        
+        // Verificar se há conflito com outros agendamentos do mesmo fisioterapeuta
+        const conflict = appointments.some(app => 
+          app.id !== draggedAppointmentId &&
+          app.therapistId === draggedAppt.therapistId &&
+          isSameDay(app.startTime, day) &&
+          ((newStartTime >= app.startTime && newStartTime < app.endTime) ||
+           (newEndTime > app.startTime && newEndTime <= app.endTime) ||
+           (newStartTime <= app.startTime && newEndTime >= app.endTime))
+        );
+        
+        setHasConflict(conflict);
+        setConflictReason(conflict ? 'Conflito de horário com outro agendamento' : '');
+      }
+    }
+    
     setDropIndicatorPosition(snappedY);
     setHoveredColumn(day.toISOString());
     setPreviewTime(timeString);
     setPreviewPosition({ x: e.clientX, y: e.clientY });
   };
 
+  // Versão throttled para melhor performance (50ms)
+  const handleDragOverEnhanced = useThrottle(handleDragOverEnhancedInternal, 50);
+
   const handleDragLeave = () => {
     setDropIndicatorPosition(null);
     setHoveredColumn(null);
     setPreviewTime(null);
     setPreviewPosition(null);
+    setHasConflict(false);
+    setConflictReason('');
   };
+
+  // Auto-scroll para horário atual ao montar (apenas uma vez)
+  useEffect(() => {
+    if (!hasScrolledRef.current && gridContainerRef.current) {
+      const now = new Date();
+      const currentHour = now.getHours();
+      
+      // Apenas scroll se estiver dentro do horário de trabalho
+      if (currentHour >= START_HOUR && currentHour < END_HOUR) {
+        const minutesFromStart = (currentHour - START_HOUR) * 60 + now.getMinutes();
+        const scrollPosition = minutesFromStart * PIXELS_PER_MINUTE;
+        
+        // Scroll suave para posição atual com offset para centralizar
+        setTimeout(() => {
+          if (gridContainerRef.current) {
+            gridContainerRef.current.scrollTo({
+              top: Math.max(0, scrollPosition - 200), // Offset de 200px para centralizar
+              behavior: 'smooth'
+            });
+            hasScrolledRef.current = true;
+          }
+        }, 100); // Pequeno delay para garantir que o DOM está pronto
+      }
+    }
+  }, [PIXELS_PER_MINUTE]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Controles de Zoom */}
+      <div className="flex justify-end mb-3">
+        <ZoomControls currentZoom={zoomLevel} onZoomChange={setZoom} />
+      </div>
+
       {/* Header com informações dos dias */}
       <div className="mb-4">
         <div className="grid grid-cols-6 gap-0.5 sm:gap-1 md:gap-2 lg:gap-3">
@@ -211,7 +287,10 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
       </div>
 
       {/* Grid principal do calendário */}
-      <div className="flex-1 flex overflow-hidden rounded-lg shadow-lg border border-slate-200 relative">
+      <div 
+        ref={gridContainerRef}
+        className="flex-1 flex overflow-hidden rounded-lg shadow-lg border border-slate-200 relative"
+      >
         {/* Coluna de horários */}
         <div className="w-16 sm:w-20 flex-shrink-0 border-r-2 border-slate-300 bg-gradient-to-b from-slate-50 to-slate-100">
           {timeSlots.map(time => (
@@ -275,12 +354,18 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                       <div
                         key={therapist.id}
                         className={cn(
-                          "border-r border-slate-200 last:border-r-0 hover:bg-blue-50/20 transition-all duration-150",
+                          "border-r border-slate-200 last:border-r-0 transition-all duration-150",
                           therapistIndex === 0 && "hover:bg-purple-50/20",
                           therapistIndex === 1 && "hover:bg-emerald-50/20",
-                          therapistIndex === 2 && "hover:bg-blue-50/20"
+                          therapistIndex === 2 && "hover:bg-blue-50/20",
+                          // Feedback visual durante drag
+                          draggedAppointmentId && hoveredColumn === day.toISOString() && (
+                            hasConflict 
+                              ? "bg-red-50/40 ring-2 ring-red-300 ring-inset" 
+                              : "bg-green-50/40 ring-2 ring-green-300 ring-inset"
+                          )
                         )}
-                        onDragOver={(e) => handleDragOverEnhanced(e, day)}
+                        onDragOver={(e) => handleDragOverEnhanced(e, day, therapist.id)}
                         onDragLeave={handleDragLeave}
                         onDrop={(e) => onDrop(e, day, therapist.id)}
                       >
@@ -314,6 +399,12 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                       </div>
                     ))}
                   </div>
+
+                  {/* Timeline Indicators */}
+                  <TimelineIndicators 
+                    startHour={START_HOUR}
+                    pixelsPerMinute={PIXELS_PER_MINUTE}
+                  />
 
                   {/* Schedule Blocks */}
                   {scheduleBlocks
@@ -354,7 +445,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                   })}
 
                   {/* Indicador de tempo atual */}
-                  {isToday(day) && <CurrentTimeIndicator />}
+                  {isToday(day) && <CurrentTimeIndicator pixelsPerMinute={PIXELS_PER_MINUTE} />}
                   
                   {/* Indicador de drop para drag-and-drop */}
                   {hoveredColumn === day.toISOString() && dropIndicatorPosition !== null && (
@@ -406,11 +497,23 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
             top: `${previewPosition.y - 10}px`,
           }}
         >
-          <div className="bg-blue-600 text-white px-3 py-2 rounded-lg shadow-2xl font-bold text-sm border-2 border-blue-400">
+          <div className={cn(
+            "px-3 py-2 rounded-lg shadow-2xl font-bold text-sm border-2",
+            hasConflict 
+              ? "bg-red-600 border-red-400 text-white" 
+              : "bg-green-600 border-green-400 text-white"
+          )}>
             <div className="flex items-center gap-2">
-              <span className="text-xs opacity-90">📍 Novo horário:</span>
+              <span className="text-xs opacity-90">
+                {hasConflict ? '⛔ Conflito!' : '✅ Novo horário:'}
+              </span>
               <span className="text-base tabular-nums">{previewTime}</span>
             </div>
+            {hasConflict && conflictReason && (
+              <div className="text-[10px] mt-0.5 opacity-90">
+                {conflictReason}
+              </div>
+            )}
           </div>
         </div>
       )}

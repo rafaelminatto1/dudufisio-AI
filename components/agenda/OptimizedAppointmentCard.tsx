@@ -108,19 +108,36 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
   // Cores sólidas baseadas no terapeuta
   const therapistColor = THERAPIST_COLORS[`therapist-${(therapistIndex % 3) + 1}` as keyof typeof THERAPIST_COLORS];
   
-  // Estilos sólidos para status
+  // Verificar se é primeira consulta ou retorno
+  const isFirstAppointment = allAppointments.filter(app => 
+    app.patientId === appointment.patientId && 
+    app.startTime < appointment.startTime
+  ).length === 0;
+
+  const isReturn = !isFirstAppointment;
+
+  // Verificar se é urgente (nas próximas 2 horas)
+  const isUrgent = () => {
+    const now = new Date();
+    const diffInHours = (appointment.startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    return diffInHours > 0 && diffInHours <= 2 && appointment.status === AppointmentStatus.Scheduled;
+  };
+
+  // Estilos aprimorados para status
   const getStatusStyle = (status: AppointmentStatus) => {
+    const baseStyle = 'transition-all duration-200';
+    
     switch (status) {
       case AppointmentStatus.Scheduled:
-        return 'bg-white border-slate-200';
+        return `${baseStyle} bg-white border-slate-200 hover:border-blue-300`;
       case AppointmentStatus.Completed:
-        return 'bg-green-50 border-green-200';
+        return `${baseStyle} bg-green-50 border-green-300 hover:border-green-400`;
       case AppointmentStatus.Canceled:
-        return 'bg-gray-100 border-gray-300';
+        return `${baseStyle} bg-gray-100 border-gray-400`;
       case AppointmentStatus.NoShow:
-        return 'bg-orange-50 border-orange-200';
+        return `${baseStyle} bg-orange-50 border-orange-300 hover:border-orange-400`;
       default:
-        return 'bg-white border-slate-200';
+        return `${baseStyle} bg-white border-slate-200`;
     }
   };
 
@@ -163,11 +180,13 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
         onDragStart={(e) => onDragStart(e, appointment)}
         onDragEnd={onDragEnd}
         className={cn(
-          "absolute rounded-lg cursor-pointer transition-all duration-200 overflow-hidden flex flex-col border-2 shadow-md hover:shadow-lg font-semibold",
+          "absolute rounded-lg cursor-pointer transition-all duration-200 overflow-hidden flex flex-col border-2 shadow-md font-semibold",
           getStatusStyle(appointment.status),
           isBeingDragged && 'opacity-50 ring-4 ring-blue-400',
           appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse',
-          "hover:border-opacity-60"
+          isUrgent() && 'ring-2 ring-yellow-400 animate-pulse',
+          "hover:shadow-xl hover:scale-[1.02] hover:-translate-y-0.5",
+          "active:scale-[0.98]"
         )}
         data-testid="appointment-block"
         style={{
@@ -317,7 +336,24 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
                 </div>
               </div>
             </Tooltip>
-            <div className="flex items-center gap-1.5 flex-shrink-0">
+            <div className="flex items-center gap-1 flex-shrink-0 flex-wrap">
+              {/* Badge de Novo/Retorno */}
+              {isFirstAppointment && height > 35 && (
+                <Badge className="bg-blue-500 text-white text-[8px] px-1 py-0 h-4 leading-none">
+                  🆕 Novo
+                </Badge>
+              )}
+              {isReturn && height > 35 && (
+                <Badge className="bg-purple-500 text-white text-[8px] px-1 py-0 h-4 leading-none">
+                  🔄
+                </Badge>
+              )}
+              {/* Badge de Urgente */}
+              {isUrgent() && (
+                <span className="text-yellow-600 text-sm animate-bounce" title="Consulta em breve!">
+                  ⏰
+                </span>
+              )}
               {appointment.hasConflict && (
                 <span className="text-orange-600 text-base" title={appointment.conflictReason}>
                   ⚠️

@@ -6,7 +6,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
-import { Filter, Calendar, Clock, User, DollarSign } from 'lucide-react';
+import { Filter, Calendar, Clock, User, DollarSign, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import Tooltip from '../ui/tooltip';
 
 interface ListViewProps {
@@ -16,7 +16,8 @@ interface ListViewProps {
 }
 
 type FilterStatus = 'all' | AppointmentStatus;
-type SortBy = 'date' | 'patient' | 'therapist' | 'status';
+type SortBy = 'date' | 'patient' | 'therapist' | 'status' | 'value';
+type SortOrder = 'asc' | 'desc';
 
 const getTherapistColor = (color: string): string => {
   const colorMap: { [key: string]: string } = {
@@ -43,7 +44,18 @@ const ListView: React.FC<ListViewProps> = ({
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
   const [filterTherapist, setFilterTherapist] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortBy>('date');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [showFilters, setShowFilters] = useState(false);
+
+  // Toggle sort order or change sort column
+  const handleSort = (column: SortBy) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
 
   const filteredAndSortedAppointments = useMemo(() => {
     let filtered = [...appointments];
@@ -60,21 +72,32 @@ const ListView: React.FC<ListViewProps> = ({
 
     // Sort appointments
     filtered.sort((a, b) => {
+      let comparison = 0;
+      
       switch (sortBy) {
         case 'patient':
-          return a.patientName.localeCompare(b.patientName);
+          comparison = a.patientName.localeCompare(b.patientName);
+          break;
         case 'therapist':
-          return a.therapistName.localeCompare(b.therapistName);
+          comparison = a.therapistName.localeCompare(b.therapistName);
+          break;
         case 'status':
-          return a.status.localeCompare(b.status);
+          comparison = a.status.localeCompare(b.status);
+          break;
+        case 'value':
+          comparison = (a.value || 0) - (b.value || 0);
+          break;
         case 'date':
         default:
-          return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+          comparison = new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+          break;
       }
+      
+      return sortOrder === 'asc' ? comparison : -comparison;
     });
 
     return filtered;
-  }, [appointments, filterStatus, filterTherapist, sortBy]);
+  }, [appointments, filterStatus, filterTherapist, sortBy, sortOrder]);
 
   const getStatusColor = (status: AppointmentStatus) => {
     switch (status) {
@@ -177,9 +200,45 @@ const ListView: React.FC<ListViewProps> = ({
         )}
       </Card>
 
-      {/* Results count */}
-      <div className="text-sm text-slate-600">
-        {filteredAndSortedAppointments.length} agendamento{filteredAndSortedAppointments.length !== 1 ? 's' : ''} encontrado{filteredAndSortedAppointments.length !== 1 ? 's' : ''}
+      {/* Results count and sort indicators */}
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-slate-600">
+          {filteredAndSortedAppointments.length} agendamento{filteredAndSortedAppointments.length !== 1 ? 's' : ''} encontrado{filteredAndSortedAppointments.length !== 1 ? 's' : ''}
+        </div>
+        
+        {/* Quick sort buttons */}
+        <div className="flex items-center gap-1">
+          <Button
+            variant={sortBy === 'date' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => handleSort('date')}
+            className="text-xs h-7"
+          >
+            <Calendar className="w-3 h-3 mr-1" />
+            Data
+            {sortBy === 'date' && (sortOrder === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />)}
+          </Button>
+          <Button
+            variant={sortBy === 'patient' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => handleSort('patient')}
+            className="text-xs h-7"
+          >
+            <User className="w-3 h-3 mr-1" />
+            Paciente
+            {sortBy === 'patient' && (sortOrder === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />)}
+          </Button>
+          <Button
+            variant={sortBy === 'value' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => handleSort('value')}
+            className="text-xs h-7"
+          >
+            <DollarSign className="w-3 h-3 mr-1" />
+            Valor
+            {sortBy === 'value' && (sortOrder === 'asc' ? <ArrowUp className="w-3 h-3 ml-1" /> : <ArrowDown className="w-3 h-3 ml-1" />)}
+          </Button>
+        </div>
       </div>
 
       {/* Appointments list */}

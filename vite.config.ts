@@ -72,7 +72,11 @@ export default defineConfig({
   ].filter(Boolean), // Remove plugins undefined
   esbuild: {
     // Mantém console logs para debugging
-    logLevel: 'warning',
+    logLevel: 'silent', // Suprimir warnings do esbuild (duplicate-case do html2canvas)
+    logOverride: {
+      'duplicate-case': 'silent',
+      'this-is-undefined-in-esm': 'silent'
+    }
   },
   define: {
     'process.env': 'import.meta.env',
@@ -201,12 +205,36 @@ export default defineConfig({
     rollupOptions: {
       // Suprimir warnings de bibliotecas externas
       onwarn(warning, warn) {
-        // Suprimir warning de case duplicado em libs externas
-        if (warning.code === 'PLUGIN_WARNING' || warning.code === 'DUPLICATE_CASE') {
-          if (warning.message && warning.message.includes('case clause will never be evaluated')) {
-            return;
-          }
+        // Lista de códigos de warning para suprimir
+        const suppressedCodes = [
+          'DUPLICATE_CASE',
+          'PLUGIN_WARNING',
+          'CIRCULAR_DEPENDENCY',
+          'THIS_IS_UNDEFINED'
+        ];
+        
+        if (suppressedCodes.includes(warning.code)) {
+          return;
         }
+        
+        // Suprimir warnings específicos por mensagem
+        const suppressedMessages = [
+          'case clause will never be evaluated',
+          'duplicates an earlier case clause',
+          'Circular dependency',
+          'sourcemap'
+        ];
+        
+        if (suppressedMessages.some(msg => warning.message?.includes(msg))) {
+          return;
+        }
+        
+        // Suprimir warnings de node_modules (bibliotecas externas)
+        if (warning.id?.includes('node_modules') || 
+            warning.id?.includes('html2canvas')) {
+          return;
+        }
+        
         // Mostrar outros warnings
         warn(warning);
       },
