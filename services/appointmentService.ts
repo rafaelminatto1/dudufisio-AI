@@ -28,8 +28,8 @@ export const getAppointments = withSupabaseQuery(
         if (isSupabaseEnabled()) {
             if (startDate && endDate) {
                 const appointments = await supabaseAppointmentService.getAppointmentsByDateRange(
-                    startDate.toISOString(),
-                    endDate.toISOString()
+                    startDate,
+                    endDate
                 );
                 return appointments;
             } else {
@@ -81,11 +81,24 @@ export const getAppointmentById = withSupabaseQuery(
     }
 );
 
-export const getAppointmentsByPatientId = async (patientId: string): Promise<Appointment[]> => {
-    await delay(300);
-    return db.getAppointments().filter(a => a.patientId === patientId)
-      .sort((a, b) => b.startTime.getTime() - a.startTime.getTime());
-};
+export const getAppointmentsByPatientId = withSupabaseQuery(
+    async (patientId: string): Promise<Appointment[]> => {
+        // Usar Supabase se estiver disponível
+        if (isSupabaseEnabled()) {
+            const appointments = await supabaseAppointmentService.getAppointmentsByPatientId(patientId);
+            return appointments;
+        }
+
+        // Usar mock database (desenvolvimento local ou fallback)
+        await delay(300);
+        return db.getAppointments().filter(a => a.patientId === patientId)
+          .sort((a, b) => b.startTime.getTime() - a.startTime.getTime());
+    },
+    {
+        operation: 'getAppointmentsByPatientId',
+        fallbackMessage: 'Erro ao buscar agendamentos do paciente'
+    }
+);
 
 export const saveAppointment = withSupabaseMutation(
     async (appointmentData: Appointment): Promise<Appointment> => {

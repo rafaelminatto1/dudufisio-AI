@@ -88,7 +88,7 @@ const FreeVideoGeneratorReal = createLazyComponent(() => import('./FreeVideoGene
 const InventoryDashboardPage = createLazyComponent(() => import('./InventoryDashboardPage'));
 const NotificationCenterPage = createLazyComponent(() => import('./NotificationCenterPage'));
 const UnifiedCRMPage = createLazyComponent(() => import('./UnifiedCRMPage'));
-const NotFoundPage = LazyPages.NotFoundPage;
+const NotFoundInAppPage = LazyPages.NotFoundInAppPage;
 const SubscriptionPage = createLazyComponent(() => import('./SubscriptionPage'));
 const LegalPage = createLazyComponent(() => import('./LegalPage'));
 const KnowledgeBasePage = createLazyComponent(() => import('./KnowledgeBasePage'));
@@ -554,7 +554,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/financial" element={LazyElement(FinancialDashboardPage)} />
                 
                 {/* 404 - Catch all unknown routes */}
-                <Route path="*" element={LazyElement(NotFoundPage)} />
+                <Route path="*" element={LazyElement(NotFoundInAppPage)} />
             </Routes>
         </Layout>
         </ErrorBoundary>
