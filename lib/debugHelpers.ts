@@ -5,6 +5,24 @@
  */
 
 /**
+ * Controla o nível de logs do console
+ */
+export function setLogLevel(level: 'silent' | 'error' | 'warn' | 'info' | 'debug'): void {
+  localStorage.setItem('logLevel', level);
+  console.log(`📝 Log level definido para: ${level}`);
+  console.log('🔄 Recarregue a página para aplicar a mudança');
+}
+
+/**
+ * Obtém o log level atual
+ */
+export function getLogLevel(): string {
+  const localLevel = localStorage.getItem('logLevel');
+  const envLevel = import.meta.env.VITE_LOG_LEVEL;
+  return localLevel || envLevel || 'warn';
+}
+
+/**
  * Limpa completamente o cache e storage do navegador
  */
 export async function clearAllCache(): Promise<void> {
@@ -174,7 +192,9 @@ export function installDebugHelpers(): void {
       hardReload,
       checkContextHealth,
       startPerformanceMonitoring,
-      debugServiceWorker
+      debugServiceWorker,
+      setLogLevel,
+      getLogLevel
     };
     
     console.log(`
@@ -187,6 +207,8 @@ Use no console:
   debugHelpers.checkContextHealth()    - Verifica saúde
   debugHelpers.startPerformanceMonitoring() - Monitora performance
   debugHelpers.debugServiceWorker()    - Debug SW
+  debugHelpers.setLogLevel('debug')    - Define log level (silent|error|warn|info|debug)
+  debugHelpers.getLogLevel()           - Mostra log level atual
     `);
   }
 }
@@ -203,5 +225,7 @@ export default {
   checkContextHealth,
   startPerformanceMonitoring,
   debugServiceWorker,
+  setLogLevel,
+  getLogLevel,
   installDebugHelpers
 };

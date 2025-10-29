@@ -9,6 +9,7 @@
  */
 
 import { Role } from '../types';
+import { logger } from './logger';
 
 /**
  * Cache de componentes já preloaded
@@ -20,6 +21,7 @@ const preloadedComponents = new Set<string>();
  * Substitui template strings por imports mapeados
  */
 const PRELOADABLE_COMPONENTS = {
+  'pages/CompleteDashboard': () => import('../pages/CompleteDashboard'),
   'pages/DashboardPage': () => import('../pages/DashboardPage'),
   'pages/AdminDashboardPage': () => import('../pages/AdminDashboardPage'),
   'pages/UserManagementPage': () => import('../pages/UserManagementPage'),
@@ -84,15 +86,20 @@ export async function preloadComponent(componentPath: string): Promise<void> {
   try {
     const loader = PRELOADABLE_COMPONENTS[componentPath as keyof typeof PRELOADABLE_COMPONENTS];
     if (!loader) {
-      console.warn(`Componente ${componentPath} não encontrado no mapa de preload`);
+      logger.warn(`Componente ${componentPath} não encontrado no mapa de preload`, {
+        context: 'intelligentPreloading',
+      });
       return;
     }
     await loader();
     preloadedComponents.add(componentPath);
-    console.log(`✅ Preloaded: ${componentPath}`);
+    logger.debug(`Preloaded: ${componentPath}`, { context: 'intelligentPreloading' });
   } catch (error) {
     // Falha silenciosa - não bloquear a aplicação
-    console.debug(`⚠️ Failed to preload: ${componentPath}`, error);
+    logger.debug(`Failed to preload: ${componentPath}`, {
+      context: 'intelligentPreloading',
+      data: error as Error,
+    });
   }
 }
 
@@ -220,7 +227,10 @@ export async function preloadHeavyLibraries(libraries: string[]): Promise<void> 
       const importFn = libraryMap[lib];
       if (importFn) {
         return importFn().catch(err => {
-          console.warn(`Failed to preload library: ${lib}`, err);
+          logger.warn(`Failed to preload library: ${lib}`, {
+            context: 'intelligentPreloading',
+            data: err,
+          });
         });
       }
     })
@@ -231,7 +241,10 @@ export async function preloadHeavyLibraries(libraries: string[]): Promise<void> 
  * Sistema de preloading inteligente completo
  */
 export async function initializeIntelligentPreloading(userRole?: Role): Promise<void> {
-  console.log('🚀 Initializing intelligent preloading...');
+  logger.debug('Initializing intelligent preloading...', {
+    context: 'intelligentPreloading',
+    data: { userRole },
+  });
 
   // 1. Preload componentes críticos
   await preloadCriticalComponents();
@@ -247,7 +260,9 @@ export async function initializeIntelligentPreloading(userRole?: Role): Promise<
   // 4. Setup intersection preloading
   setupIntersectionPreloading();
 
-  console.log('✅ Intelligent preloading initialized');
+  logger.debug('Intelligent preloading initialized', {
+    context: 'intelligentPreloading',
+  });
 }
 
 /**
@@ -331,10 +346,14 @@ export async function preloadBasedOnLocation(): Promise<void> {
 
     // Preload de componentes baseado em localização
     // (exemplo: preload de componentes de clima, eventos locais, etc.)
-    console.log('Location-based preloading:', position.coords);
+    logger.debug('Location-based preloading enabled', {
+      context: 'intelligentPreloading',
+    });
   } catch (error) {
     // Silently fail
-    console.debug('Location-based preloading skipped');
+    logger.debug('Location-based preloading skipped', {
+      context: 'intelligentPreloading',
+    });
   }
 }
 
@@ -348,7 +367,10 @@ export async function preloadBasedOnPreferences(preferences: {
 }): Promise<void> {
   // Preload de componentes baseado em preferências
   // (exemplo: preload de componentes de tema, idioma, etc.)
-  console.log('Preferences-based preloading:', preferences);
+  logger.debug('Preferences-based preloading', {
+    context: 'intelligentPreloading',
+    data: preferences,
+  });
 }
 
 /**
@@ -365,7 +387,10 @@ export async function preloadBasedOnHistory(): Promise<void> {
 
     await preloadComponents(recentPages);
   } catch (error) {
-    console.warn('Failed to preload based on history:', error);
+    logger.warn('Failed to preload based on history', {
+      context: 'intelligentPreloading',
+      data: error as Error,
+    });
   }
 }
 
@@ -373,7 +398,10 @@ export async function preloadBasedOnHistory(): Promise<void> {
  * Sistema completo de preloading inteligente
  */
 export async function initializeCompletePreloading(userRole?: Role): Promise<void> {
-  console.log('🚀 Initializing complete intelligent preloading...');
+  logger.debug('Initializing complete intelligent preloading...', {
+    context: 'intelligentPreloading',
+    data: { userRole },
+  });
 
   // 1. Preload crítico
   await preloadCriticalComponents();
@@ -398,6 +426,8 @@ export async function initializeCompletePreloading(userRole?: Role): Promise<voi
   // 7. Preload baseado em histórico
   await preloadBasedOnHistory();
 
-  console.log('✅ Complete intelligent preloading initialized');
+  logger.debug('Complete intelligent preloading initialized', {
+    context: 'intelligentPreloading',
+  });
 }
 

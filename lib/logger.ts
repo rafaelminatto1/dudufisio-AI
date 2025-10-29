@@ -10,6 +10,47 @@ interface LogOptions {
 const isBrowser = typeof window !== 'undefined';
 const isProduction = process.env.NODE_ENV === 'production';
 
+/**
+ * Log levels em ordem de prioridade
+ */
+const LOG_LEVELS = {
+  silent: 0,
+  error: 1,
+  warn: 2,
+  info: 3,
+  debug: 4,
+} as const;
+
+type LogLevelName = keyof typeof LOG_LEVELS;
+
+/**
+ * Obtém o log level configurado
+ * Prioridade: localStorage > variável de ambiente > padrão
+ */
+const getConfiguredLogLevel = (): LogLevelName => {
+  // Em produção, sempre apenas errors
+  if (isProduction) {
+    return 'error';
+  }
+
+  // Verificar localStorage para override temporário
+  if (isBrowser) {
+    const localStorageLevel = localStorage.getItem('logLevel') as LogLevelName;
+    if (localStorageLevel && localStorageLevel in LOG_LEVELS) {
+      return localStorageLevel;
+    }
+  }
+
+  // Verificar variável de ambiente
+  const envLevel = import.meta.env.VITE_LOG_LEVEL as LogLevelName;
+  if (envLevel && envLevel in LOG_LEVELS) {
+    return envLevel;
+  }
+
+  // Padrão: warn em desenvolvimento
+  return 'warn';
+};
+
 const normalizeData = (data: LogOptions['data']): unknown => {
   if (!data) {
     return undefined;
@@ -31,11 +72,12 @@ const shouldLog = (level: LogLevel): boolean => {
     return true;
   }
 
-  if (!isProduction) {
-    return true;
-  }
+  const configuredLevel = getConfiguredLogLevel();
+  const configuredPriority = LOG_LEVELS[configuredLevel];
+  const messagePriority = LOG_LEVELS[level];
 
-  return level === 'error' || level === 'warn';
+  // Só loga se a prioridade da mensagem for <= a configurada
+  return messagePriority <= configuredPriority;
 };
 
 const formatPrefix = (level: LogLevel, context?: string): string => {

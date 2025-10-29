@@ -115,6 +115,61 @@ function formatLogMessage(
 }
 
 /**
+ * Log levels em ordem de prioridade
+ */
+const LOG_LEVELS = {
+  silent: 0,
+  error: 1,
+  warn: 2,
+  info: 3,
+  debug: 4,
+} as const;
+
+type LogLevelName = keyof typeof LOG_LEVELS;
+
+/**
+ * Obtém o log level configurado
+ * Prioridade: localStorage > variável de ambiente > padrão
+ */
+const getConfiguredLogLevel = (): LogLevelName => {
+  const isProduction = import.meta.env.PROD || false;
+
+  // Em produção, sempre apenas errors
+  if (isProduction) {
+    return 'error';
+  }
+
+  // Verificar localStorage para override temporário
+  if (typeof window !== 'undefined') {
+    const localStorageLevel = localStorage.getItem('logLevel') as LogLevelName;
+    if (localStorageLevel && localStorageLevel in LOG_LEVELS) {
+      return localStorageLevel;
+    }
+  }
+
+  // Verificar variável de ambiente
+  const envLevel = import.meta.env.VITE_LOG_LEVEL as LogLevelName;
+  if (envLevel && envLevel in LOG_LEVELS) {
+    return envLevel;
+  }
+
+  // Padrão: warn em desenvolvimento
+  return 'warn';
+};
+
+/**
+ * Verifica se deve logar baseado no nível
+ */
+const shouldLog = (level: LogLevel): boolean => {
+  const configuredLevel = getConfiguredLogLevel();
+  const configuredPriority = LOG_LEVELS[configuredLevel];
+  const messagePriority = LOG_LEVELS[level];
+
+  // Só loga se a prioridade da mensagem for <= a configurada
+  return messagePriority <= configuredPriority;
+};
+
+/**
  * Classe principal do Secure Logger
  */
 export class SecureLogger {
@@ -130,7 +185,7 @@ export class SecureLogger {
    * Log de debug (apenas em desenvolvimento)
    */
   debug(message: string, context?: LogContext): void {
-    if (!this.isDevelopment) return;
+    if (!shouldLog('debug')) return;
 
     const formattedMessage = formatLogMessage('debug', message, context);
     const sanitizedContext = context ? sanitizeData(context) : undefined;
@@ -142,6 +197,8 @@ export class SecureLogger {
    * Log informativo
    */
   info(message: string, context?: LogContext): void {
+    if (!shouldLog('info')) return;
+
     const formattedMessage = formatLogMessage('info', message, context);
     const sanitizedContext = context ? sanitizeData(context) : undefined;
 
