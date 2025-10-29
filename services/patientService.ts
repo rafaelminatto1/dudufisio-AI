@@ -5,6 +5,7 @@ import { supabasePatientService } from './supabase/patientServiceSupabase';
 import { SupabaseConfigManager } from '../lib/supabaseConfig';
 import { secureLogger } from '../lib/secureLogger';
 import { withSupabaseQuery, withSupabaseMutation, withSupabaseCritical } from '../lib/supabase/errorHandler';
+import { supabase } from '../lib/supabaseClient';
 import { handleError } from '../lib/middleware/errorHandler';
 
 // Mock data para desenvolvimento
@@ -130,37 +131,110 @@ export const quickAddPatient = withSupabaseMutation(
         }
         
         if (isSupabaseEnabled) {
-            // Gerar telefone temporário para satisfazer constraint NOT NULL
+            // Gerar dados temporários
             const tempPhone = `temp_${Date.now()}`;
-            
-            const quickPatient: Omit<Patient, 'id'> = {
-                name: name.trim(),
-                cpf: '',
-                birthDate: '',
-                phone: tempPhone, // Adicionar telefone temporário
-                email: '',
-                emergencyContact: { name: '', phone: '' },
-                address: { street: '', city: '', state: '', zip: '' },
-                status: PatientStatus.Active,
-                lastVisit: new Date().toISOString(),
-                registrationDate: new Date().toISOString(),
-                avatarUrl: '',
-                consentGiven: true,
-                whatsappConsent: 'opt-out',
-            };
+            const tempEmail = `temp_${Date.now()}@temp.local`;
 
-            secureLogger.info('Cadastrando paciente rápido', { 
+            secureLogger.info('Cadastrando paciente rápido', {
                 component: 'patientService',
                 action: 'createQuickPatient',
-                patientId: quickPatient.id
+                name: name.trim()
             });
-            const createdPatient = await supabasePatientService.createPatient(quickPatient);
-            secureLogger.info('Paciente cadastrado com sucesso', { 
-                component: 'patientService',
-                action: 'createQuickPatient',
-                patientId: createdPatient.id
-            });
-            return createdPatient;
+
+            try {
+                // 1. PRIMEIRO: Criar usuário na tabela users (obrigatório para foreign keys)
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .insert({
+                        full_name: name.trim(),
+                        email: tempEmail,
+                        phone: tempPhone,
+                        role: 'patient', // Importante: marcar como paciente
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    })
+                    .select()
+                    .single();
+
+                if (userError) {
+                    secureLogger.error('Erro ao criar usuário na tabela users', {
+                        component: 'patientService',
+                        error: userError
+                    });
+                    throw userError;
+                }
+
+                secureLogger.info('Usuário criado na tabela users', {
+                    component: 'patientService',
+                    userId: userData.id
+                });
+
+                // 2. DEPOIS: Criar dados clínicos na tabela patients usando o MESMO ID
+                const { error: patientError } = await supabase
+                    .from('patients')
+                    .insert({
+                        id: userData.id, // CRÍTICO: Usar o mesmo ID do users
+                        full_name: name.trim(),
+                        name: name.trim(),
+                        cpf: null,
+                        birth_date: null,
+                        phone: tempPhone,
+                        email: tempEmail,
+                        emergency_contact: { name: '', phone: '' },
+                        address: { street: '', city: '', state: '', zip: '' },
+                        status: 'active',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                        notes: null,
+                        allergies: null,
+                        chronic_conditions: null,
+                        blood_type: null,
+                        health_insurance: null,
+                        tags: null
+                    });
+
+                if (patientError) {
+                    secureLogger.error('Erro ao criar dados clínicos na tabela patients', {
+                        component: 'patientService',
+                        error: patientError
+                    });
+                    // Se falhar, deletar o usuário criado para evitar inconsistência
+                    await supabase.from('users').delete().eq('id', userData.id);
+                    throw patientError;
+                }
+
+                // 3. Retornar o paciente completo com o ID do users
+                const finalPatient: Patient = {
+                    id: userData.id,
+                    name: name.trim(),
+                    cpf: '',
+                    birthDate: '',
+                    phone: tempPhone,
+                    email: tempEmail,
+                    emergencyContact: { name: '', phone: '' },
+                    address: { street: '', city: '', state: '', zip: '' },
+                    status: PatientStatus.Active,
+                    lastVisit: new Date().toISOString(),
+                    registrationDate: new Date().toISOString(),
+                    avatarUrl: '',
+                    consentGiven: true,
+                    whatsappConsent: 'opt-out',
+                };
+
+                secureLogger.info('Paciente cadastrado com sucesso', {
+                    component: 'patientService',
+                    action: 'createQuickPatient',
+                    userId: userData.id
+                });
+
+                return finalPatient;
+            } catch (error) {
+                secureLogger.error('Erro ao cadastrar paciente rápido', {
+                    component: 'patientService',
+                    error
+                });
+                throw error;
+            }
         }
 
         await delay(500);
