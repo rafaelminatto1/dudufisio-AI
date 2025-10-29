@@ -112,7 +112,7 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
         therapistColor: therapistMap.get(app.therapistId)?.color || 'slate',
         typeColor: AppointmentTypeColors[app.type] || 'slate',
         patientMedicalAlerts: patientMap.get(app.patientId)?.medicalAlerts,
-        therapistName: therapistMap.get(app.therapistId)?.name || 'Unknown Therapist',
+        therapistName: therapistMap.get(app.therapistId)?.name || '(escolher depois na evolução)',
     }));
   }, [appointments, patients, therapists]);
 

@@ -19,7 +19,7 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
     const id = Date.now();
-    debug.logContextAccess('ToastContext', 'showToast');
+    // debug.logContextAccess('ToastContext', 'showToast'); // Desabilitado para reduzir logs
 
     setToasts(prevToasts => [...prevToasts, { id, message, type }]);
 
@@ -43,7 +43,7 @@ export const useToast = (): ToastContextType => {
   const debug = useDebug();
   const context = useContext(ToastContext);
 
-  debug.logContextAccess('ToastContext', 'useToast');
+  // debug.logContextAccess('ToastContext', 'useToast'); // Desabilitado para reduzir logs
 
   if (!context) {
     const error = new Error('useToast must be used within a ToastProvider');

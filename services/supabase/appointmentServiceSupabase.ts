@@ -1,752 +1,510 @@
 import { supabase } from '../../lib/supabaseClient';
 import { handleSupabaseError } from '../../lib/middleware/errorHandler';
 import { Appointment, AppointmentStatus, AppointmentType } from '../../types';
-import type { Database } from '../../types/database';
 import { secureLogger } from '../../lib/secureLogger';
 
-type AppointmentRow = Database['public']['Tables']['appointments']['Row'];
-type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
-type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
+type AppointmentRow = {
+  id: string;
+  patient_id: string;
+  therapist_id: string | null;
+  created_by: string | null;
+  patient_name: string;
+  patient_phone: string | null;
+  patient_email: string | null;
+  patient_avatar_url: string | null;
+  therapist_name: string | null;
+  title: string;
+  description: string | null;
+  appointment_type: string;
+  start_time: string;
+  end_time: string;
+  duration_minutes: number;
+  status: string;
+  location: string | null;
+  is_virtual: boolean | null;
+  meeting_url: string | null;
+  chief_complaint: string | null;
+  notes: string | null;
+  private_notes: string | null;
+  is_recurring: boolean | null;
+  recurrence_pattern: any | null;
+  parent_appointment_id: string | null;
+  cancelled_at: string | null;
+  cancellation_reason: string | null;
+  cancelled_by: string | null;
+  confirmed_at: string | null;
+  confirmation_method: string | null;
+  checked_in_at: string | null;
+  checked_out_at: string | null;
+  payment_status: string | null;
+  payment_amount: number | null;
+  payment_method: string | null;
+  tags: string[] | null;
+  color: string | null;
+  priority: number | null;
+  created_at: string;
+  updated_at: string;
+};
 
+type AppointmentInsert = Omit<AppointmentRow, 'id' | 'created_at' | 'updated_at'>;
+type AppointmentUpdate = Partial<AppointmentInsert>;
+
+/**
+ * Service para gerenciar appointments no Supabase
+ */
 class SupabaseAppointmentService {
+  /**
+   * Mapeia um registro do Supabase para o tipo Appointment
+   */
   private mapRowToAppointment(row: AppointmentRow): Appointment {
-    // Map appointment type from database to TypeScript enum
-    const mapType = (dbType: string | null): AppointmentType => {
-      switch (dbType) {
-        case 'regular': return AppointmentType.Session; // ✅ Adicionado mapeamento explícito
-        case 'first_consultation': return AppointmentType.Evaluation;
-        case 'followup': return AppointmentType.Return;
-        case 'evaluation': return AppointmentType.Evaluation;
-        case 'teleconsultation': return AppointmentType.Teleconsulta;
-        case 'emergency': return AppointmentType.Urgent;
-        case 'group': return AppointmentType.Session; // ✅ Grupo também vira Sessão
-        default: return AppointmentType.Session;
-      }
-    };
-
-    // Map status from database to TypeScript enum
-    const mapStatus = (dbStatus: string | null): AppointmentStatus => {
-      switch (dbStatus?.toLowerCase()) {
-        case 'confirmed': return AppointmentStatus.Confirmed;
-        case 'in_progress': return AppointmentStatus.InProgress;
-        case 'completed': return AppointmentStatus.Completed;
-        case 'cancelled': return AppointmentStatus.Canceled;
-        case 'no_show': return AppointmentStatus.NoShow;
-        case 'rescheduled': return AppointmentStatus.Scheduled;
-        default: return AppointmentStatus.Scheduled;
-      }
-    };
-
     return {
       id: row.id,
-      patientId: row.patient_id || '',
-      patientName: '', // Will be populated by join queries
-      patientAvatarUrl: '', // Will be populated by join queries
-      therapistId: row.therapist_id || '',
-      startTime: new Date(row.start_time || row.scheduled_at),
-      endTime: new Date(row.end_time || row.scheduled_at),
-      duration: row.duration || undefined,
-      title: row.title || `${mapType(row.appointment_type as any)} - Consulta`,
+      patientId: row.patient_id,
+      patient_id: row.patient_id,
+      therapistId: row.therapist_id || undefined,
+      therapist_id: row.therapist_id || undefined,
+      user_id: row.created_by || undefined,
+
+      // Patient info
+      patientName: row.patient_name,
+      full_name: row.patient_name,
+      patientPhone: row.patient_phone || undefined,
+      phone: row.patient_phone || undefined,
+      email: row.patient_email || undefined,
+      patientAvatarUrl: row.patient_avatar_url || '',
+
+      // Therapist info
+      therapistName: row.therapist_name || undefined,
+
+      // Appointment details
+      title: row.title,
       description: row.description || undefined,
-      type: mapType(row.appointment_type as any),
-      status: mapStatus(row.status),
-      value: row.price || 0,
-      paymentStatus: row.paid ? 'paid' : 'pending',
-      observations: row.notes || undefined,
-      notes: row.patient_notes || undefined,
-      sessionNumber: undefined,
-      totalSessions: undefined,
+      type: row.appointment_type as AppointmentType,
+      appointment_type: row.appointment_type,
+
+      // Date & Time
+      startTime: new Date(row.start_time),
+      endTime: new Date(row.end_time),
+      duration: row.duration_minutes,
+      duration_minutes: row.duration_minutes,
+
+      // Status
+      status: this.mapStatusFromDB(row.status),
+
+      // Location
+      location: row.location || undefined,
       is_virtual: row.is_virtual || undefined,
-      meeting_url: row.meeting_url || undefined,
-      is_recurring: row.is_recurring || undefined,
-      recurrence_rule: row.recurrence_rule as any,
-      parent_appointment_id: row.parent_appointment_id || undefined,
-      reminderSent: row.reminder_sent || undefined,
+      meetingUrl: row.meeting_url || undefined,
+
+      // Clinical
+      chiefComplaint: row.chief_complaint || undefined,
+      notes: row.notes || undefined,
+      privateNotes: row.private_notes || undefined,
+
+      // Recurrence
+      isRecurring: row.is_recurring || undefined,
+      recurrencePattern: row.recurrence_pattern || undefined,
+      parentAppointmentId: row.parent_appointment_id || undefined,
+
+      // Cancellation
+      cancelledAt: row.cancelled_at || undefined,
       cancellationReason: row.cancellation_reason || undefined,
-      created_at: row.created_at || undefined,
-      updated_at: row.updated_at || undefined,
+      cancelledBy: row.cancelled_by || undefined,
+
+      // Confirmation
+      confirmedAt: row.confirmed_at || undefined,
+      confirmationMethod: row.confirmation_method || undefined,
+
+      // Check-in/out
+      checkedInAt: row.checked_in_at || undefined,
+      checkedOutAt: row.checked_out_at || undefined,
+
+      // Payment
+      paymentStatus: row.payment_status || undefined,
+      paymentAmount: row.payment_amount || undefined,
+      paymentMethod: row.payment_method || undefined,
+
+      // Metadata
+      tags: row.tags || undefined,
+      color: row.color || undefined,
+      priority: row.priority || undefined,
+
+      // Timestamps
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
     };
   }
 
-  private mapAppointmentToInsert(appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>): AppointmentInsert {
-    secureLogger.debug('Mapeando agendamento para insert', {
-      component: 'appointmentServiceSupabase',
-      action: 'mapAppointmentToInsert',
-      appointmentType: appointment.type
-    });
-    
-    // Map TypeScript enum to database values
-    const mapTypeToDb = (type: AppointmentType): string => {
-      secureLogger.debug('Mapeando tipo de agendamento', {
-        component: 'appointmentServiceSupabase',
-        type
-      });
-      switch (type) {
-        case AppointmentType.Evaluation: return 'evaluation';
-        case AppointmentType.Session: return 'regular'; // ✅ Adicionado!
-        case AppointmentType.Return: return 'followup';
-        case AppointmentType.Teleconsulta: return 'teleconsultation';
-        case AppointmentType.Urgent: return 'emergency';
-        case AppointmentType.Pilates: return 'regular';
-        default: 
-          secureLogger.warn('Tipo de agendamento não mapeado, usando regular', {
-            component: 'appointmentServiceSupabase',
-            type
-          });
-          return 'regular';
-      }
+  /**
+   * Mapeia AppointmentStatus enum para string do banco
+   */
+  private mapStatusToDB(status: AppointmentStatus): string {
+    const statusMap: Record<AppointmentStatus, string> = {
+      [AppointmentStatus.Scheduled]: 'scheduled',
+      [AppointmentStatus.Confirmed]: 'confirmed',
+      [AppointmentStatus.InProgress]: 'in_progress',
+      [AppointmentStatus.Completed]: 'completed',
+      [AppointmentStatus.Canceled]: 'cancelled',
+      [AppointmentStatus.NoShow]: 'no_show',
+      [AppointmentStatus.Rescheduled]: 'rescheduled',
     };
-
-    const mapStatusToDb = (status: AppointmentStatus): string => {
-      switch (status) {
-        case AppointmentStatus.Scheduled: return 'scheduled';
-        case AppointmentStatus.Confirmed: return 'confirmed';
-        case AppointmentStatus.InProgress: return 'in_progress';
-        case AppointmentStatus.Completed: return 'completed';
-        case AppointmentStatus.Canceled: return 'cancelled';
-        case AppointmentStatus.NoShow: return 'no_show';
-        default: return 'scheduled';
-      }
-    };
-
-    const duration = appointment.duration ||
-                     Math.round((appointment.endTime.getTime() - appointment.startTime.getTime()) / 60000);
-
-    const mappedType = mapTypeToDb(appointment.type);
-    const mappedStatus = mapStatusToDb(appointment.status || AppointmentStatus.Scheduled);
-    
-    const insertData = {
-      patient_id: appointment.patientId,
-      therapist_id: appointment.therapistId || null, // Explicitamente null se undefined
-      start_time: appointment.startTime.toISOString(),
-      end_time: appointment.endTime.toISOString(),
-      duration: duration,
-      title: appointment.title || `Consulta de ${appointment.type}`,
-      description: appointment.description || null,
-      type: mappedType as any,
-      status: mappedStatus as any,
-      notes: appointment.observations || null,
-      patient_notes: appointment.notes || null,
-      is_virtual: appointment.is_virtual || false,
-      meeting_url: appointment.meeting_url || null,
-      is_recurring: appointment.is_recurring || false,
-      recurrence_rule: appointment.recurrence_rule as any || null,
-      parent_appointment_id: appointment.parent_appointment_id || null,
-      price: appointment.value || null,
-      paid: appointment.paymentStatus === 'paid',
-    };
-    
-    secureLogger.debug('Dados mapeados para Supabase', {
-      component: 'appointmentServiceSupabase',
-      action: 'mapAppointmentToInsert',
-      patientId: insertData.patient_id,
-      therapistId: insertData.therapist_id,
-      type: insertData.type,
-      status: insertData.status
-    });
-    
-    return insertData;
+    return statusMap[status] || 'scheduled';
   }
 
-  private mapAppointmentToUpdate(appointment: Partial<Appointment>): AppointmentUpdate {
-    const update: AppointmentUpdate = {};
-
-    // Map TypeScript enums to database values
-    const mapTypeToDb = (type: AppointmentType): string => {
-      switch (type) {
-        case AppointmentType.Evaluation: return 'evaluation';
-        case AppointmentType.Return: return 'followup';
-        case AppointmentType.Teleconsulta: return 'teleconsultation';
-        case AppointmentType.Urgent: return 'emergency';
-        default: return 'regular';
-      }
+  /**
+   * Mapeia string do banco para AppointmentStatus enum
+   */
+  private mapStatusFromDB(status: string): AppointmentStatus {
+    const statusMap: Record<string, AppointmentStatus> = {
+      'scheduled': AppointmentStatus.Scheduled,
+      'confirmed': AppointmentStatus.Confirmed,
+      'in_progress': AppointmentStatus.InProgress,
+      'completed': AppointmentStatus.Completed,
+      'cancelled': AppointmentStatus.Canceled,
+      'no_show': AppointmentStatus.NoShow,
+      'rescheduled': AppointmentStatus.Rescheduled,
     };
-
-    const mapStatusToDb = (status: AppointmentStatus): string => {
-      switch (status) {
-        case AppointmentStatus.Scheduled: return 'scheduled';
-        case AppointmentStatus.Confirmed: return 'confirmed';
-        case AppointmentStatus.InProgress: return 'in_progress';
-        case AppointmentStatus.Completed: return 'completed';
-        case AppointmentStatus.Canceled: return 'cancelled';
-        case AppointmentStatus.NoShow: return 'no_show';
-        default: return 'scheduled';
-      }
-    };
-
-    if (appointment.patientId) update.patient_id = appointment.patientId;
-    if (appointment.therapistId) update.therapist_id = appointment.therapistId;
-    if (appointment.startTime) {
-      update.start_time = appointment.startTime.toISOString();
-    }
-    if (appointment.endTime) {
-      update.end_time = appointment.endTime.toISOString();
-    }
-    if (appointment.duration !== undefined) {
-      update.duration = appointment.duration;
-    }
-    if (appointment.title) update.title = appointment.title;
-    if (appointment.description !== undefined) update.description = appointment.description;
-    if (appointment.status) update.status = mapStatusToDb(appointment.status) as any;
-    if (appointment.type) update.type = mapTypeToDb(appointment.type) as any;
-    if (appointment.observations !== undefined) update.notes = appointment.observations;
-    if (appointment.notes !== undefined) update.patient_notes = appointment.notes;
-    if (appointment.value !== undefined) update.price = appointment.value;
-    if (appointment.paymentStatus !== undefined) update.paid = appointment.paymentStatus === 'paid';
-    if (appointment.is_virtual !== undefined) update.is_virtual = appointment.is_virtual;
-    if (appointment.meeting_url !== undefined) update.meeting_url = appointment.meeting_url;
-    if (appointment.is_recurring !== undefined) update.is_recurring = appointment.is_recurring;
-    if (appointment.recurrence_rule !== undefined) update.recurrence_rule = appointment.recurrence_rule as any;
-    if (appointment.cancellationReason !== undefined) update.cancellation_reason = appointment.cancellationReason;
-
-    update.updated_at = new Date().toISOString();
-
-    return update;
+    return statusMap[status] || AppointmentStatus.Scheduled;
   }
 
+  /**
+   * Mapeia Appointment para insert no banco
+   */
+  private mapAppointmentToInsert(appointment: Partial<Appointment>): Partial<AppointmentInsert> {
+    const insert: Partial<AppointmentInsert> = {};
+
+    if (appointment.patientId) insert.patient_id = appointment.patientId;
+    if (appointment.therapistId) insert.therapist_id = appointment.therapistId;
+    if (appointment.user_id) insert.created_by = appointment.user_id;
+
+    if (appointment.patientName) insert.patient_name = appointment.patientName;
+    if (appointment.patientPhone) insert.patient_phone = appointment.patientPhone;
+    if (appointment.email) insert.patient_email = appointment.email;
+    if (appointment.patientAvatarUrl) insert.patient_avatar_url = appointment.patientAvatarUrl;
+
+    if (appointment.therapistName) insert.therapist_name = appointment.therapistName;
+
+    if (appointment.title) insert.title = appointment.title;
+    if (appointment.description) insert.description = appointment.description;
+    if (appointment.type) insert.appointment_type = appointment.type;
+
+    if (appointment.startTime) insert.start_time = appointment.startTime.toISOString();
+    if (appointment.endTime) insert.end_time = appointment.endTime.toISOString();
+    if (appointment.duration) insert.duration_minutes = appointment.duration;
+
+    if (appointment.status) insert.status = this.mapStatusToDB(appointment.status);
+
+    if (appointment.location) insert.location = appointment.location;
+    if (appointment.is_virtual !== undefined) insert.is_virtual = appointment.is_virtual;
+    if (appointment.meetingUrl) insert.meeting_url = appointment.meetingUrl;
+
+    if (appointment.chiefComplaint) insert.chief_complaint = appointment.chiefComplaint;
+    if (appointment.notes) insert.notes = appointment.notes;
+    if (appointment.privateNotes) insert.private_notes = appointment.privateNotes;
+
+    if (appointment.isRecurring !== undefined) insert.is_recurring = appointment.isRecurring;
+    if (appointment.recurrencePattern) insert.recurrence_pattern = appointment.recurrencePattern;
+    if (appointment.parentAppointmentId) insert.parent_appointment_id = appointment.parentAppointmentId;
+
+    if (appointment.cancelledAt) insert.cancelled_at = appointment.cancelledAt;
+    if (appointment.cancellation_reason) insert.cancellation_reason = appointment.cancellation_reason;
+    if (appointment.cancelledBy) insert.cancelled_by = appointment.cancelledBy;
+
+    if (appointment.confirmedAt) insert.confirmed_at = appointment.confirmedAt;
+    if (appointment.confirmationMethod) insert.confirmation_method = appointment.confirmationMethod;
+
+    if (appointment.checkedInAt) insert.checked_in_at = appointment.checkedInAt;
+    if (appointment.checkedOutAt) insert.checked_out_at = appointment.checkedOutAt;
+
+    if (appointment.paymentStatus) insert.payment_status = appointment.paymentStatus;
+    if (appointment.paymentAmount) insert.payment_amount = appointment.paymentAmount;
+    if (appointment.paymentMethod) insert.payment_method = appointment.paymentMethod;
+
+    if (appointment.tags) insert.tags = appointment.tags;
+    if (appointment.color) insert.color = appointment.color;
+    if (appointment.priority) insert.priority = appointment.priority;
+
+    return insert;
+  }
+
+  /**
+   * Busca todos os appointments
+   */
   async getAllAppointments(): Promise<Appointment[]> {
     try {
+      secureLogger.info('Buscando todos os appointments', {
+        component: 'appointmentServiceSupabase',
+        action: 'getAllAppointments'
+      });
+
       const { data, error } = await supabase
         .from('appointments')
-        .select(`
-          *,
-          patient:users!appointments_patient_id_fkey(id, full_name, email),
-          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
-        `)
+        .select('*')
         .order('start_time', { ascending: true });
 
       if (error) throw error;
 
-      secureLogger.info('Agendamentos recuperados do Supabase', {
-        component: 'appointmentServiceSupabase',
-        action: 'getAllAppointments',
-        count: data?.length || 0
-      });
-
-      // Mapear com nomes de paciente e terapeuta
-      return (data ?? []).map((row: any) => {
-        const mapped = this.mapRowToAppointment(row);
-        return {
-          ...mapped,
-          patientName: row.patient?.full_name || 'Paciente Sem Nome',
-          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
-          therapistName: row.therapist?.full_name || undefined,
-        };
-      });
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
     } catch (error: unknown) {
+      secureLogger.error('Erro ao buscar appointments', {
+        component: 'appointmentServiceSupabase',
+        error
+      });
       throw new Error(handleSupabaseError(error));
     }
   }
 
+  /**
+   * Busca appointments por range de datas
+   */
+  async getAppointmentsByDateRange(startDate: Date, endDate: Date): Promise<Appointment[]> {
+    try {
+      secureLogger.info('Buscando appointments por range de datas', {
+        component: 'appointmentServiceSupabase',
+        action: 'getAppointmentsByDateRange',
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
+      });
+
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('*')
+        .gte('start_time', startDate.toISOString())
+        .lte('start_time', endDate.toISOString())
+        .order('start_time', { ascending: true });
+
+      if (error) throw error;
+
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+    } catch (error: unknown) {
+      secureLogger.error('Erro ao buscar appointments por range', {
+        component: 'appointmentServiceSupabase',
+        error
+      });
+      throw new Error(handleSupabaseError(error));
+    }
+  }
+
+  /**
+   * Busca appointment por ID
+   */
   async getAppointmentById(id: string): Promise<Appointment | null> {
     try {
       const { data, error } = await supabase
         .from('appointments')
-        .select(`
-          *,
-          patient:users!appointments_patient_id_fkey(id, full_name, email),
-          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
-        `)
+        .select('*')
         .eq('id', id)
         .single();
 
-      if (error) {
-        if (error.code === 'PGRST116') return null;
-        throw error;
-      }
-
+      if (error) throw error;
       if (!data) return null;
 
-      const mapped = this.mapRowToAppointment(data);
-      return {
-        ...mapped,
-        patientName: (data as any).patient?.full_name || 'Paciente Sem Nome',
-        patientAvatarUrl: `https://i.pravatar.cc/150?u=${data.patient_id}`,
-        therapistName: (data as any).therapist?.full_name || undefined,
-      };
+      return this.mapRowToAppointment(data);
     } catch (error: unknown) {
-      throw new Error(handleSupabaseError(error));
-    }
-  }
-
-  async getAppointmentsByDateRange(startDate: string, endDate: string): Promise<Appointment[]> {
-    try {
-      const { data, error } = await supabase
-        .from('appointments')
-        .select(`
-          *,
-          patient:users!appointments_patient_id_fkey(id, full_name, email),
-          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
-        `)
-        .gte('start_time', startDate)
-        .lte('start_time', endDate)
-        .order('start_time', { ascending: true });
-
-      if (error) throw error;
-
-      secureLogger.info('Agendamentos por período recuperados', {
+      secureLogger.error('Erro ao buscar appointment por ID', {
         component: 'appointmentServiceSupabase',
-        action: 'getAppointmentsByDateRange',
-        count: data?.length || 0,
-        startDate,
-        endDate
+        appointmentId: id,
+        error
       });
-
-      // Mapear com nomes de paciente e terapeuta
-      return (data ?? []).map((row: any) => {
-        const mapped = this.mapRowToAppointment(row);
-        const result = {
-          ...mapped,
-          patientName: row.patient?.full_name || 'Paciente Sem Nome',
-          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
-          therapistName: row.therapist?.full_name || undefined,
-        };
-
-        return result;
-      });
-    } catch (error: unknown) {
       throw new Error(handleSupabaseError(error));
     }
   }
 
-  async getAppointmentsByTherapist(therapistId: string, startDate?: string, endDate?: string): Promise<Appointment[]> {
-    try {
-      let query = supabase
-        .from('appointments')
-        .select(`
-          *,
-          patient:users!appointments_patient_id_fkey(id, full_name, email),
-          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
-        `)
-        .eq('therapist_id', therapistId);
-
-      if (startDate) {
-        query = query.gte('start_time', startDate);
-      }
-
-      if (endDate) {
-        query = query.lte('start_time', endDate);
-      }
-
-      const { data, error } = await query.order('start_time', { ascending: true });
-
-      if (error) throw error;
-
-      return (data ?? []).map((row: any) => {
-        const mapped = this.mapRowToAppointment(row);
-        return {
-          ...mapped,
-          patientName: row.patient?.full_name || 'Paciente Sem Nome',
-          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
-          therapistName: row.therapist?.full_name || undefined,
-        };
-      });
-    } catch (error: unknown) {
-      throw new Error(handleSupabaseError(error));
-    }
-  }
-
-  async getAppointmentsByPatient(patientId: string, startDate?: string, endDate?: string): Promise<Appointment[]> {
-    try {
-      let query = supabase
-        .from('appointments')
-        .select(`
-          *,
-          patient:users!appointments_patient_id_fkey(id, full_name, email),
-          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
-        `)
-        .eq('patient_id', patientId);
-
-      if (startDate) {
-        query = query.gte('start_time', startDate);
-      }
-
-      if (endDate) {
-        query = query.lte('start_time', endDate);
-      }
-
-      const { data, error } = await query.order('start_time', { ascending: true });
-
-      if (error) throw error;
-
-      return (data ?? []).map((row: any) => {
-        const mapped = this.mapRowToAppointment(row);
-        return {
-          ...mapped,
-          patientName: row.patient?.full_name || 'Paciente Sem Nome',
-          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
-          therapistName: row.therapist?.full_name || undefined,
-        };
-      });
-    } catch (error: unknown) {
-      throw new Error(handleSupabaseError(error));
-    }
-  }
-
-  async getAppointmentsByStatus(status: AppointmentStatus): Promise<Appointment[]> {
+  /**
+   * Busca appointments por paciente
+   */
+  async getAppointmentsByPatientId(patientId: string): Promise<Appointment[]> {
     try {
       const { data, error } = await supabase
         .from('appointments')
-        .select(`
-          *,
-          patient:users!appointments_patient_id_fkey(id, full_name, email),
-          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
-        `)
-        .eq('status', status)
-        .order('start_time', { ascending: true });
+        .select('*')
+        .eq('patient_id', patientId)
+        .order('start_time', { ascending: false });
 
       if (error) throw error;
 
-      return (data ?? []).map((row: any) => {
-        const mapped = this.mapRowToAppointment(row);
-        return {
-          ...mapped,
-          patientName: row.patient?.full_name || 'Paciente Sem Nome',
-          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
-          therapistName: row.therapist?.full_name || undefined,
-        };
-      });
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
     } catch (error: unknown) {
+      secureLogger.error('Erro ao buscar appointments por paciente', {
+        component: 'appointmentServiceSupabase',
+        patientId,
+        error
+      });
       throw new Error(handleSupabaseError(error));
     }
   }
 
-  async createAppointment(appointmentData: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>): Promise<Appointment> {
+  /**
+   * Busca appointments por terapeuta
+   */
+  async getAppointmentsByTherapistId(therapistId: string): Promise<Appointment[]> {
     try {
-      // Check for conflicts before creating
-      const conflicts = await this.checkConflicts(
-        appointmentData.therapistId,
-        appointmentData.startTime.toISOString(),
-        appointmentData.endTime.toISOString()
-      );
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('*')
+        .eq('therapist_id', therapistId)
+        .order('start_time', { ascending: true});
 
-      if (conflicts.length > 0) {
-        throw new Error('Conflito de horário detectado. Já existe um agendamento neste horário.');
-      }
+      if (error) throw error;
 
-      const insertData = this.mapAppointmentToInsert(appointmentData);
+      return (data ?? []).map(this.mapRowToAppointment.bind(this));
+    } catch (error: unknown) {
+      secureLogger.error('Erro ao buscar appointments por terapeuta', {
+        component: 'appointmentServiceSupabase',
+        therapistId,
+        error
+      });
+      throw new Error(handleSupabaseError(error));
+    }
+  }
 
-      secureLogger.info('Criando novo agendamento', {
+  /**
+   * Cria um novo appointment
+   */
+  async createAppointment(appointment: Partial<Appointment>): Promise<Appointment> {
+    try {
+      secureLogger.info('Criando novo appointment', {
         component: 'appointmentServiceSupabase',
         action: 'createAppointment',
-        patientId: insertData.patient_id,
-        type: insertData.type
+        patientId: appointment.patientId,
+        startTime: appointment.startTime?.toISOString()
       });
+
+      const insertData = this.mapAppointmentToInsert(appointment);
+
       const { data, error } = await supabase
         .from('appointments')
         .insert(insertData)
-        .select(`
-          *,
-          patient:users!appointments_patient_id_fkey(id, full_name, email),
-          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
-        `)
+        .select()
         .single();
 
-      if (error) {
-        secureLogger.error('Erro ao criar agendamento no Supabase', error, {
-          component: 'appointmentServiceSupabase',
-          action: 'createAppointment',
-          errorCode: error.code
-        });
-        throw error;
-      }
+      if (error) throw error;
 
-      secureLogger.info('Agendamento criado com sucesso', {
+      secureLogger.info('Appointment criado com sucesso', {
         component: 'appointmentServiceSupabase',
-        action: 'createAppointment',
         appointmentId: data.id
       });
-      
-      const mapped = this.mapRowToAppointment(data);
-      return {
-        ...mapped,
-        patientName: (data as any).patient?.full_name || 'Paciente Sem Nome',
-        patientAvatarUrl: `https://i.pravatar.cc/150?u=${data.patient_id}`,
-        therapistName: (data as any).therapist?.full_name || undefined,
-      };
+
+      return this.mapRowToAppointment(data);
     } catch (error: unknown) {
-      secureLogger.error('Erro ao criar agendamento', error, {
+      secureLogger.error('Erro ao criar appointment', {
         component: 'appointmentServiceSupabase',
-        action: 'createAppointment'
+        error
       });
       throw new Error(handleSupabaseError(error));
     }
   }
 
+  /**
+   * Atualiza um appointment
+   */
   async updateAppointment(id: string, updates: Partial<Appointment>): Promise<Appointment> {
     try {
-      // Check for conflicts if time or therapist is being updated
-      if (updates.startTime || updates.endTime || updates.therapistId) {
-        const current = await this.getAppointmentById(id);
-        if (!current) throw new Error('Agendamento não encontrado');
+      secureLogger.info('Atualizando appointment', {
+        component: 'appointmentServiceSupabase',
+        action: 'updateAppointment',
+        appointmentId: id
+      });
 
-        const therapistId = updates.therapistId ?? current.therapistId;
-        const startTime = updates.startTime ?? current.startTime;
-        const endTime = updates.endTime ?? current.endTime;
-
-        const conflicts = await this.checkConflicts(therapistId, startTime.toISOString(), endTime.toISOString(), id);
-        if (conflicts.length > 0) {
-          throw new Error('Conflito de horário detectado. Já existe um agendamento neste horário.');
-        }
-      }
-
-      const updateData = this.mapAppointmentToUpdate(updates);
+      const updateData = this.mapAppointmentToInsert(updates);
 
       const { data, error } = await supabase
         .from('appointments')
         .update(updateData)
         .eq('id', id)
-        .select(`
-          *,
-          patient:users!appointments_patient_id_fkey(id, full_name, email),
-          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
-        `)
+        .select()
         .single();
 
       if (error) throw error;
 
-      const mapped = this.mapRowToAppointment(data);
-      return {
-        ...mapped,
-        patientName: (data as any).patient?.full_name || 'Paciente Sem Nome',
-        patientAvatarUrl: `https://i.pravatar.cc/150?u=${data.patient_id}`,
-        therapistName: (data as any).therapist?.full_name || undefined,
-      };
+      secureLogger.info('Appointment atualizado com sucesso', {
+        component: 'appointmentServiceSupabase',
+        appointmentId: id
+      });
+
+      return this.mapRowToAppointment(data);
     } catch (error: unknown) {
+      secureLogger.error('Erro ao atualizar appointment', {
+        component: 'appointmentServiceSupabase',
+        appointmentId: id,
+        error
+      });
       throw new Error(handleSupabaseError(error));
     }
   }
 
+  /**
+   * Cancela um appointment
+   */
+  async cancelAppointment(id: string, reason: string, cancelledBy?: string): Promise<Appointment> {
+    try {
+      secureLogger.info('Cancelando appointment', {
+        component: 'appointmentServiceSupabase',
+        action: 'cancelAppointment',
+        appointmentId: id
+      });
+
+      const { data, error } = await supabase
+        .from('appointments')
+        .update({
+          status: 'cancelled',
+          cancelled_at: new Date().toISOString(),
+          cancellation_reason: reason,
+          cancelled_by: cancelledBy || null
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      secureLogger.info('Appointment cancelado com sucesso', {
+        component: 'appointmentServiceSupabase',
+        appointmentId: id
+      });
+
+      return this.mapRowToAppointment(data);
+    } catch (error: unknown) {
+      secureLogger.error('Erro ao cancelar appointment', {
+        component: 'appointmentServiceSupabase',
+        appointmentId: id,
+        error
+      });
+      throw new Error(handleSupabaseError(error));
+    }
+  }
+
+  /**
+   * Deleta um appointment
+   */
   async deleteAppointment(id: string): Promise<void> {
     try {
+      secureLogger.info('Deletando appointment', {
+        component: 'appointmentServiceSupabase',
+        action: 'deleteAppointment',
+        appointmentId: id
+      });
+
       const { error } = await supabase
         .from('appointments')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
-    } catch (error: unknown) {
-      throw new Error(handleSupabaseError(error));
-    }
-  }
 
-  async checkConflicts(therapistId: string | undefined, startTime: string, endTime: string, excludeId?: string): Promise<Appointment[]> {
-    try {
-      // Se não há therapistId, não verificar conflitos
-      // Isso permite múltiplos agendamentos sem terapeuta no mesmo horário
-      // (para casos onde admin/estagiário agenda e define terapeuta depois)
-      if (!therapistId) {
-        secureLogger.debug('Verificação de conflitos pulada', {
-          component: 'appointmentServiceSupabase',
-          action: 'checkConflicts',
-          reason: 'No therapist ID provided'
-        });
-        return [];
-      }
-
-      let query = supabase
-        .from('appointments')
-        .select('*')
-        .eq('therapist_id', therapistId)
-        .neq('status', AppointmentStatus.Canceled)
-        .or(`and(start_time.lt.${endTime},end_time.gt.${startTime})`);
-
-      if (excludeId) {
-        query = query.neq('id', excludeId);
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-
-      return (data ?? []).map(this.mapRowToAppointment.bind(this));
-    } catch (error: unknown) {
-      throw new Error(handleSupabaseError(error));
-    }
-  }
-
-  async getUpcomingAppointments(limit: number = 10): Promise<Appointment[]> {
-    try {
-      const now = new Date().toISOString();
-
-      const { data, error } = await supabase
-        .from('appointments')
-        .select(`
-          *,
-          patient:users!appointments_patient_id_fkey(id, full_name, email),
-          therapist:users!appointments_therapist_id_fkey(id, full_name, email)
-        `)
-        .gte('start_time', now)
-        .in('status', [AppointmentStatus.Scheduled])
-        .order('start_time', { ascending: true })
-        .limit(limit);
-
-      if (error) throw error;
-
-      return (data ?? []).map((row: any) => {
-        const mapped = this.mapRowToAppointment(row);
-        return {
-          ...mapped,
-          patientName: row.patient?.full_name || 'Paciente Sem Nome',
-          patientAvatarUrl: `https://i.pravatar.cc/150?u=${row.patient_id}`,
-          therapistName: row.therapist?.full_name || undefined,
-        };
+      secureLogger.info('Appointment deletado com sucesso', {
+        component: 'appointmentServiceSupabase',
+        appointmentId: id
       });
     } catch (error: unknown) {
+      secureLogger.error('Erro ao deletar appointment', {
+        component: 'appointmentServiceSupabase',
+        appointmentId: id,
+        error
+      });
       throw new Error(handleSupabaseError(error));
     }
-  }
-
-  async getTodayAppointments(): Promise<Appointment[]> {
-    try {
-      const today = new Date();
-      const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
-      const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
-
-      return this.getAppointmentsByDateRange(startOfDay, endOfDay);
-    } catch (error: unknown) {
-      throw new Error(handleSupabaseError(error));
-    }
-  }
-
-  async getAppointmentStats(): Promise<{
-    total: number;
-    today: number;
-    thisWeek: number;
-    thisMonth: number;
-    byStatus: Record<AppointmentStatus, number>;
-  }> {
-    try {
-      const now = new Date();
-      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-      const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString();
-
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay());
-      startOfWeek.setHours(0, 0, 0, 0);
-
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-
-      const [
-        totalResult,
-        todayResult,
-        thisWeekResult,
-        thisMonthResult,
-        scheduledResult,
-        completedResult,
-        cancelledResult,
-        noShowResult
-      ] = await Promise.all([
-        supabase.from('appointments').select('id', { count: 'exact', head: true }),
-        supabase.from('appointments').select('id', { count: 'exact', head: true })
-          .gte('start_time', startOfDay).lt('start_time', endOfDay),
-        supabase.from('appointments').select('id', { count: 'exact', head: true })
-          .gte('start_time', startOfWeek.toISOString()),
-        supabase.from('appointments').select('id', { count: 'exact', head: true })
-          .gte('start_time', startOfMonth),
-        supabase.from('appointments').select('id', { count: 'exact', head: true })
-          .eq('status', AppointmentStatus.Scheduled),
-        supabase.from('appointments').select('id', { count: 'exact', head: true })
-          .eq('status', AppointmentStatus.Completed),
-        supabase.from('appointments').select('id', { count: 'exact', head: true })
-          .eq('status', AppointmentStatus.Canceled),
-        supabase.from('appointments').select('id', { count: 'exact', head: true })
-          .eq('status', AppointmentStatus.NoShow)
-      ]);
-
-      return {
-        total: totalResult.count || 0,
-        today: todayResult.count || 0,
-        thisWeek: thisWeekResult.count || 0,
-        thisMonth: thisMonthResult.count || 0,
-        byStatus: {
-          [AppointmentStatus.Scheduled]: scheduledResult.count || 0,
-          [AppointmentStatus.Completed]: completedResult.count || 0,
-          [AppointmentStatus.Canceled]: cancelledResult.count || 0,
-          [AppointmentStatus.NoShow]: noShowResult.count || 0,
-        }
-      };
-    } catch (error: unknown) {
-      throw new Error(handleSupabaseError(error));
-    }
-  }
-
-  // Real-time subscriptions
-  subscribeToAppointments(callback: (payload: any) => void) {
-    return supabase
-      .channel('appointments_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'appointments',
-        },
-        (payload) => {
-          let appointment = null;
-          if (payload.new) {
-            appointment = this.mapRowToAppointment(payload.new as AppointmentRow);
-          }
-          callback({
-            ...payload,
-            appointment,
-          });
-        }
-      )
-      .subscribe();
-  }
-
-  subscribeToTherapistAppointments(therapistId: string, callback: (payload: any) => void) {
-    return supabase
-      .channel(`therapist_${therapistId}_appointments`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'appointments',
-          filter: `therapist_id=eq.${therapistId}`,
-        },
-        (payload) => {
-          let appointment = null;
-          if (payload.new) {
-            appointment = this.mapRowToAppointment(payload.new as AppointmentRow);
-          }
-          callback({
-            ...payload,
-            appointment,
-          });
-        }
-      )
-      .subscribe();
-  }
-
-  subscribeToPatientAppointments(patientId: string, callback: (payload: any) => void) {
-    return supabase
-      .channel(`patient_${patientId}_appointments`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'appointments',
-          filter: `patient_id=eq.${patientId}`,
-        },
-        (payload) => {
-          let appointment = null;
-          if (payload.new) {
-            appointment = this.mapRowToAppointment(payload.new as AppointmentRow);
-          }
-          callback({
-            ...payload,
-            appointment,
-          });
-        }
-      )
-      .subscribe();
   }
 }
 
-// Export singleton instance
 export const supabaseAppointmentService = new SupabaseAppointmentService();
-export default supabaseAppointmentService;

@@ -288,37 +288,41 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   const handleSaveClick = async (formData?: AppointmentFormValues) => {
     console.log('🚀 handleSaveClick CHAMADO!');
     console.log('   FormData recebido:', formData);
-    console.log('   selectedPatient:', selectedPatient);
+
+    // Usar formData.patient em vez de selectedPatient (estado pode estar desatualizado)
+    const patient = formData?.patient || selectedPatient;
+
+    console.log('   patient (do formData ou estado):', patient);
     console.log('   slotTime:', slotTime);
     console.log('   therapistId:', therapistId);
     console.log('   appointmentType:', appointmentType);
     console.log('   duration:', duration);
-    
-    if (!selectedPatient) {
+
+    if (!patient) {
       console.warn('⚠️ Nenhum paciente selecionado');
       setShowValidation(true);
       showToast('Por favor, selecione um paciente', 'error');
       return;
     }
-    
+
     console.log('✅ Paciente válido, iniciando salvamento');
     setIsSaving(true);
-    
+
     const startTime = new Date(slotDate);
     const [hour, minute] = slotTime.split(':');
     startTime.setHours(parseInt(hour || '0'), parseInt(minute || '0'), 0, 0);
-    
+
     const endTime = new Date(startTime.getTime() + duration * 60000);
 
     const appointmentId = appointmentToEdit?.id || `app_${Date.now()}`;
     console.log('🔍 AppointmentFormModal - Gerando agendamento com ID:', appointmentId);
-    console.log('🔍 AppointmentFormModal - Paciente selecionado:', selectedPatient);
-    
+    console.log('🔍 AppointmentFormModal - Paciente selecionado:', patient);
+
     const baseAppointment: Appointment = {
       id: appointmentId,
-      patientId: selectedPatient.id,
-      patientName: selectedPatient.name,
-      patientAvatarUrl: (selectedPatient as any).avatarUrl || `https://i.pravatar.cc/150?u=${selectedPatient.id}`,
+      patientId: patient.id,
+      patientName: patient.name,
+      patientAvatarUrl: (patient as any).avatarUrl || `https://i.pravatar.cc/150?u=${patient.id}`,
       // Apenas usar therapistId se for um UUID válido (dados do Supabase)
       therapistId: (therapistId && isValidUUID(therapistId)) ? therapistId : undefined,
       title: appointmentToEdit?.title || `${appointmentType}`,

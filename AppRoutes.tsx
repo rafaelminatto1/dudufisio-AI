@@ -20,7 +20,7 @@ import { initializeLazyLoading } from './lib/advancedLazyLoading';
 import { PerformanceProfiler } from './lib/performanceOptimizations';
 import { initializeIntelligentPreloading } from './lib/intelligentPreloading';
 import { initializeMobileOptimizations, getAdaptiveConfig } from './lib/mobileOptimizations';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
 import { AppProvider } from './contexts/AppContext';
 import { ToastProvider } from './contexts/ToastContext';
@@ -189,6 +189,7 @@ const TIMEOUT_SCREEN = (
 
 const AppContent: React.FC = memo(() => {
   const { user, isAuthenticated, loading, logout } = useSupabaseAuth();
+  const location = useLocation();
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [loadingTimeout, setLoadingTimeout] = useState(false);
 
@@ -316,6 +317,12 @@ const AppContent: React.FC = memo(() => {
   }
 
   if (isAuthenticated && user) {
+    // Se está na raiz, redireciona para /dashboard
+    // Caso contrário, preserva a URL atual e deixa o dashboard gerenciar
+    if (location.pathname === '/') {
+      return <Navigate to="/dashboard" replace />;
+    }
+    
     return (
       <Suspense fallback={dashboardLoadingScreen}>
         <Routes>

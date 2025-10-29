@@ -42,6 +42,7 @@ import NotificationCenter from '../components/agenda/NotificationCenter';
 import QuickAddPatientDialog from '../components/agenda/QuickAddPatientDialog';
 import AgendaToolbar from '../components/agenda/AgendaToolbar';
 import { waitlistService } from '../services/waitlistService';
+import { notificationService } from '../services/notificationService';
 // Removido: listActiveAlerts - não usamos mais alertas
 import DailyView from '../components/agenda/DailyView';
 import NewWeeklyView from '../components/agenda/NewWeeklyView';

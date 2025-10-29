@@ -142,90 +142,51 @@ export const quickAddPatient = withSupabaseMutation(
             });
 
             try {
-                // 1. PRIMEIRO: Criar usuário na tabela users (obrigatório para foreign keys)
-                const { data: userData, error: userError } = await supabase
-                    .from('users')
+                // Criar paciente diretamente na tabela patients (schema atual do Supabase)
+                const { data: patientData, error: patientError } = await supabase
+                    .from('patients')
                     .insert({
                         full_name: name.trim(),
-                        email: tempEmail,
                         phone: tempPhone,
-                        role: 'patient', // Importante: marcar como paciente
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
+                        email: tempEmail,
+                        emergency_contact: { name: '', phone: '' },
+                        address: {},
+                        status: 'active'
                     })
                     .select()
                     .single();
 
-                if (userError) {
-                    secureLogger.error('Erro ao criar usuário na tabela users', {
-                        component: 'patientService',
-                        error: userError
-                    });
-                    throw userError;
-                }
-
-                secureLogger.info('Usuário criado na tabela users', {
-                    component: 'patientService',
-                    userId: userData.id
-                });
-
-                // 2. DEPOIS: Criar dados clínicos na tabela patients usando o MESMO ID
-                const { error: patientError } = await supabase
-                    .from('patients')
-                    .insert({
-                        id: userData.id, // CRÍTICO: Usar o mesmo ID do users
-                        full_name: name.trim(),
-                        name: name.trim(),
-                        cpf: null,
-                        birth_date: null,
-                        phone: tempPhone,
-                        email: tempEmail,
-                        emergency_contact: { name: '', phone: '' },
-                        address: { street: '', city: '', state: '', zip: '' },
-                        status: 'active',
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString(),
-                        notes: null,
-                        allergies: null,
-                        chronic_conditions: null,
-                        blood_type: null,
-                        health_insurance: null,
-                        tags: null
-                    });
-
                 if (patientError) {
-                    secureLogger.error('Erro ao criar dados clínicos na tabela patients', {
+                    secureLogger.error('Erro ao criar paciente na tabela patients', {
                         component: 'patientService',
                         error: patientError
                     });
-                    // Se falhar, deletar o usuário criado para evitar inconsistência
-                    await supabase.from('users').delete().eq('id', userData.id);
                     throw patientError;
                 }
 
-                // 3. Retornar o paciente completo com o ID do users
+                secureLogger.info('Paciente cadastrado com sucesso', {
+                    component: 'patientService',
+                    action: 'createQuickPatient',
+                    patientId: patientData.id
+                });
+
+                // Retornar o paciente no formato esperado pela aplicação
                 const finalPatient: Patient = {
-                    id: userData.id,
+                    id: patientData.id,
                     name: name.trim(),
-                    cpf: '',
-                    birthDate: '',
+                    cpf: patientData.cpf || '',
+                    birthDate: patientData.birth_date || '',
                     phone: tempPhone,
                     email: tempEmail,
                     emergencyContact: { name: '', phone: '' },
                     address: { street: '', city: '', state: '', zip: '' },
                     status: PatientStatus.Active,
                     lastVisit: new Date().toISOString(),
-                    registrationDate: new Date().toISOString(),
+                    registrationDate: patientData.created_at || new Date().toISOString(),
                     avatarUrl: '',
                     consentGiven: true,
                     whatsappConsent: 'opt-out',
                 };
-
-                secureLogger.info('Paciente cadastrado com sucesso', {
-                    component: 'patientService',
-                    action: 'createQuickPatient',
-                    userId: userData.id
-                });
 
                 return finalPatient;
             } catch (error) {

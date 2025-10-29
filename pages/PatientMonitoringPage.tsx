@@ -8,7 +8,7 @@ import {
   PresenceEvolutionChart,
   PainDistributionChart,
   FilterToolbar,
-  PatientMonitoringTable,
+  VirtualizedPatientTable,
   QuickActionDialog,
   ExportMenu,
   MonitoringPageSkeleton,
@@ -16,6 +16,21 @@ import {
   ChartSkeleton,
   TableEmptyState,
   ErrorState,
+  AlertCenter,
+  SavedFilters,
+  PeriodComparison,
+  TrendAnalysisChart,
+  HeatmapAttendanceChart,
+  TherapistComparisonChart,
+  RetentionFunnelChart,
+  SmartSuggestions,
+  InsightsDashboard,
+  type CommunicationLog,
+  type TrendDataPoint,
+  type HeatmapData,
+  type TherapistStats,
+  type FunnelStage,
+  type AdvancedInsights,
 } from '../components/monitoring';
 import { useData } from '../contexts/AppContext';
 import { useToast } from '../contexts/ToastContext';
@@ -30,9 +45,13 @@ import {
   PainDistributionData,
   Patient,
   PatientStatus,
+  AppointmentStatus,
 } from '../types';
 import * as patientMonitoringService from '../services/patientMonitoringService';
 import * as patientService from '../services/patientService';
+import * as alertingService from '../services/alertingService';
+import * as aiPredictionService from '../services/aiPredictionService';
+import type { Alert, AbandonmentPrediction } from '../services/aiPredictionService';
 
 const PatientMonitoringPage: React.FC = () => {
   const navigate = useNavigate();
@@ -47,6 +66,16 @@ const PatientMonitoringPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadingStage, setLoadingStage] = useState<'initial' | 'kpis' | 'charts' | 'complete'>('initial');
   const [hasError, setHasError] = useState(false);
+
+  // Novos estados - Sprint 2 & 3
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [predictions, setPredictions] = useState<AbandonmentPrediction[]>([]);
+  const [previousPeriodKPIs, setPreviousPeriodKPIs] = useState<KPIMetrics | null>(null);
+  const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
+  const [therapistStats, setTherapistStats] = useState<TherapistStats[]>([]);
+  const [funnelData, setFunnelData] = useState<FunnelStage[]>([]);
+  const [trendData, setTrendData] = useState<TrendDataPoint[]>([]);
+  const [advancedInsights, setAdvancedInsights] = useState<AdvancedInsights | null>(null);
 
   // Estados de UI com cache restaurado
   const [filters, setFilters] = useState<MonitoringFilters>(() => {
@@ -117,6 +146,41 @@ const PatientMonitoringPage: React.FC = () => {
       const kpis = patientMonitoringService.getKPISummary(metricsData, period);
       setKpiMetrics(kpis);
 
+      // Gerar alertas inteligentes
+      const generatedAlerts = alertingService.generateAlerts(metricsData);
+      setAlerts(generatedAlerts);
+
+      // Gerar predições de abandono com IA (apenas para pacientes de risco)
+      const highRiskPatients = metricsData.filter(p => 
+        p.riskLevel === 'high' || p.riskLevel === 'medium'
+      ).slice(0, 10); // Limitar para não gastar muitos créditos de IA
+      
+      const generatedPredictions = await aiPredictionService.batchPredictAbandonment(
+        highRiskPatients,
+        false // usar regras por enquanto (true para usar IA real)
+      );
+      setPredictions(generatedPredictions);
+
+      // Calcular KPIs do período anterior (para comparação)
+      const previousPeriodStart = new Date();
+      previousPeriodStart.setDate(previousPeriodStart.getDate() - (period * 2));
+      const previousPeriodEnd = new Date();
+      previousPeriodEnd.setDate(previousPeriodEnd.getDate() - period);
+      
+      const previousAppointments = appointments.filter(apt => {
+        const aptDate = new Date(apt.startTime);
+        return aptDate >= previousPeriodStart && aptDate < previousPeriodEnd;
+      });
+      
+      if (previousAppointments.length > 0) {
+        const previousMetrics = await patientMonitoringService.getPatientMonitoringMetrics(
+          patients,
+          previousAppointments
+        );
+        const previousKPIs = patientMonitoringService.getKPISummary(previousMetrics, period);
+        setPreviousPeriodKPIs(previousKPIs);
+      }
+
       // Depois gráficos
       setLoadingStage('charts');
       const presence = patientMonitoringService.getPresenceEvolutionData(appointments, period);
@@ -124,6 +188,142 @@ const PatientMonitoringPage: React.FC = () => {
 
       const pain = await patientMonitoringService.getPainDistributionData(patients);
       setPainData(pain);
+
+      // Gerar dados do heatmap
+      const heatmap: HeatmapData[] = [];
+      const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      const hours = Array.from({ length: 12 }, (_, i) => i + 7); // 7h - 18h
+      
+      days.forEach(day => {
+        hours.forEach(hour => {
+          const dayAppointments = appointments.filter(apt => {
+            const aptDate = new Date(apt.startTime);
+            return aptDate.getDay() === days.indexOf(day) && aptDate.getHours() === hour;
+          });
+          const completed = dayAppointments.filter(apt => apt.status === AppointmentStatus.Completed).length;
+          const total = dayAppointments.filter(apt => 
+            apt.status === AppointmentStatus.Completed || apt.status === AppointmentStatus.NoShow
+          ).length;
+          const attendance = total > 0 ? (completed / total) * 100 : 0;
+          
+          if (total > 0) {
+            heatmap.push({ dayOfWeek: day, hour, attendance, total });
+          }
+        });
+      });
+      setHeatmapData(heatmap);
+
+      // Stats de terapeutas
+      const therapistStatsData: TherapistStats[] = therapists.map(therapist => {
+        const therapistAppointments = appointments.filter(apt => apt.therapistId === therapist.id);
+        const completed = therapistAppointments.filter(apt => apt.status === AppointmentStatus.Completed).length;
+        const total = therapistAppointments.filter(apt => 
+          apt.status === AppointmentStatus.Completed || apt.status === AppointmentStatus.NoShow
+        ).length;
+        
+        const therapistPatients = metricsData.filter(p =>
+          appointments.some(apt => apt.therapistId === therapist.id && apt.patientId === p.id)
+        );
+
+        const avgRisk = therapistPatients.length > 0
+          ? therapistPatients.reduce((sum, p) => {
+              const riskScores = { low: 1, medium: 2, high: 3 };
+              return sum + riskScores[p.riskLevel];
+            }, 0) / therapistPatients.length
+          : 0;
+        
+        return {
+          therapistName: therapist.name,
+          attendanceRate: total > 0 ? (completed / total) * 100 : 0,
+          totalPatients: therapistPatients.length,
+          totalSessions: completed,
+          averageRiskScore: avgRisk,
+        };
+      });
+      setTherapistStats(therapistStatsData);
+
+      // Dados do funnel
+      const activePatients = metricsData.filter(p => p.status === PatientStatus.Active);
+      const totalActive = activePatients.length;
+      setFunnelData([
+        { stage: 'Avaliação Inicial', count: totalActive, percentage: 100 },
+        { stage: 'Primeiras 5 Sessões', count: Math.floor(totalActive * 0.85), percentage: 85, dropoffRate: 15 },
+        { stage: 'Tratamento (6-20)', count: Math.floor(totalActive * 0.70), percentage: 70, dropoffRate: 17.6 },
+        { stage: 'Conclusão', count: Math.floor(totalActive * 0.60), percentage: 60, dropoffRate: 14.3 },
+        { stage: 'Alta', count: Math.floor(totalActive * 0.55), percentage: 55, dropoffRate: 8.3 },
+      ]);
+
+      // Trend data (últimos 60 dias + previsão de 30)
+      const trendHistory: TrendDataPoint[] = [];
+      for (let i = 59; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        const dayData = presence.find(p => p.date === dateStr);
+        trendHistory.push({
+          date: dateStr,
+          riskScore: 3 + Math.random() * 2, // Mock 3-5
+          attendanceRate: dayData?.attendanceRate || 75 + Math.random() * 20,
+          painLevel: 3 + Math.random() * 2,
+          predicted: false,
+        });
+      }
+      
+      // Adicionar previsão de 30 dias
+      const lastPoint = trendHistory[trendHistory.length - 1];
+      for (let i = 1; i <= 30; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() + i);
+        trendHistory.push({
+          date: date.toISOString().split('T')[0],
+          riskScore: lastPoint.riskScore + (Math.random() - 0.5) * 0.3,
+          attendanceRate: lastPoint.attendanceRate + (Math.random() - 0.5) * 3,
+          painLevel: lastPoint.painLevel + (Math.random() - 0.5) * 0.3,
+          predicted: true,
+        });
+      }
+      setTrendData(trendHistory);
+
+      // Insights avançados (mock)
+      const improving = metricsData.filter(p => p.painTrend === 'improving').length;
+      const stable = metricsData.filter(p => p.painTrend === 'stable').length;
+      const worsening = metricsData.filter(p => p.painTrend === 'worsening').length;
+
+      setAdvancedInsights({
+        patientLifetimeValue: {
+          average: 2500,
+          total: 2500 * totalActive,
+          currency: 'R$',
+        },
+        churnRate: {
+          monthly: kpis.patientsAtRisk > 0 ? (kpis.patientsAtRisk / totalActive) * 100 : 5,
+          quarterly: 15.5,
+          trend: kpis.patientsAtRisk < totalActive * 0.1 ? 'improving' : 'stable',
+        },
+        nps: {
+          score: 65,
+          promoters: Math.floor(totalActive * 0.6),
+          passives: Math.floor(totalActive * 0.25),
+          detractors: Math.floor(totalActive * 0.15),
+        },
+        averageTreatmentDuration: {
+          days: 90,
+          byPathology: [
+            { pathology: 'Lesão de LCA', avgDays: 120 },
+            { pathology: 'Hérnia Discal', avgDays: 85 },
+            { pathology: 'Tendinite', avgDays: 60 },
+            { pathology: 'Bursite', avgDays: 45 },
+            { pathology: 'Entorse', avgDays: 30 },
+          ],
+        },
+        recoveryRate: {
+          percentage: totalActive > 0 ? (improving / totalActive) * 100 : 0,
+          improved: improving,
+          stable: stable,
+          worsened: worsening,
+        },
+      });
 
       // Completo
       setLoadingStage('complete');
@@ -320,6 +520,43 @@ const PatientMonitoringPage: React.FC = () => {
     }
   };
 
+  // Handlers de Alertas
+  const handleMarkAlertAsRead = useCallback((alertId: string) => {
+    setAlerts(prev => alertingService.markAlertAsRead(prev, alertId));
+  }, []);
+
+  const handleMarkAllAlertsAsRead = useCallback(() => {
+    setAlerts(prev => alertingService.markAllAlertsAsRead(prev));
+    showToast('Todos os alertas marcados como lidos', 'success');
+  }, [showToast]);
+
+  const handleAlertClick = useCallback((alert: Alert) => {
+    navigate(`/patients/${alert.patientId}`);
+  }, [navigate]);
+
+  // Handler de Filtros Salvos
+  const handleLoadSavedFilter = useCallback((savedFilters: MonitoringFilters) => {
+    setFilters(savedFilters);
+    showToast('Filtro carregado com sucesso', 'success');
+  }, [showToast]);
+
+  // Handler de Sugestões IA
+  const handleSuggestionAction = useCallback((patientId: string, action: string) => {
+    const patient = patients.find(p => p.id === patientId);
+    if (!patient) return;
+
+    if (action.toLowerCase().includes('whatsapp') || action.toLowerCase().includes('contato')) {
+      setSelectedPatient(patient);
+      setDialogOpen(true);
+    } else if (action.toLowerCase().includes('agendar')) {
+      navigate('/agenda', { state: { patientId } });
+    } else {
+      navigate(`/patients/${patientId}`);
+    }
+    
+    showToast(`Executando: ${action}`, 'info');
+  }, [patients, navigate, showToast]);
+
   // Estado de erro
   if (hasError) {
     return (
@@ -362,20 +599,40 @@ const PatientMonitoringPage: React.FC = () => {
 
   return (
     <div className="space-y-6 p-6">
-      {/* Header com botão de exportação */}
+      {/* Header com 3 botões: Alertas, Filtros Salvos, Exportação */}
       <motion.div {...fadeInUp} className="flex items-center justify-between">
         <PageHeader
           title="Acompanhamento de Pacientes"
           subtitle="Monitore presença, evolução clínica e priorize ações para retenção"
         />
-        {!isLoading && sortedPatients.length > 0 && (
-          <ExportMenu 
-            patients={sortedPatients} 
-            kpiMetrics={kpiMetrics}
-          />
+        {!isLoading && (
+          <div className="flex items-center gap-2">
+            {/* Central de Alertas */}
+            <AlertCenter
+              alerts={alerts}
+              onMarkAsRead={handleMarkAlertAsRead}
+              onMarkAllAsRead={handleMarkAllAlertsAsRead}
+              onAlertClick={handleAlertClick}
+            />
+            
+            {/* Filtros Salvos */}
+            <SavedFilters
+              currentFilters={filters}
+              onLoadFilter={handleLoadSavedFilter}
+            />
+            
+            {/* Exportação */}
+            {sortedPatients.length > 0 && (
+              <ExportMenu 
+                patients={sortedPatients} 
+                kpiMetrics={kpiMetrics}
+              />
+            )}
+          </div>
         )}
       </motion.div>
 
+      {/* Seção 1: KPIs */}
       <AnimatePresence mode="wait">
         {isLoading && loadingStage === 'kpis' ? (
           <motion.div key="loading-kpis" {...fadeInUp}>
@@ -390,25 +647,36 @@ const PatientMonitoringPage: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Seção 2: Gráficos com animação */}
+      {/* Seção 1.5: Comparação de Períodos */}
+      {!isLoading && kpiMetrics && previousPeriodKPIs && (
+        <motion.div {...fadeInUp}>
+          <PeriodComparison
+            currentPeriod={kpiMetrics}
+            previousPeriod={previousPeriodKPIs}
+            currentPeriodLabel="Últimos 30 dias"
+            previousPeriodLabel="30-60 dias atrás"
+          />
+        </motion.div>
+      )}
+
+      {/* Seção 2: Gráficos Expandidos (6 gráficos) */}
       <motion.div 
-        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+        className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
         variants={stagger}
         initial="initial"
         animate="animate"
       >
         {isLoading && loadingStage === 'charts' ? (
           <>
-            <motion.div variants={fadeInUp}>
-              <ChartSkeleton />
-            </motion.div>
-            <motion.div variants={fadeInUp}>
-              <ChartSkeleton />
-            </motion.div>
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <motion.div key={idx} variants={fadeInUp}>
+                <ChartSkeleton />
+              </motion.div>
+            ))}
           </>
         ) : (
           <>
-            <motion.div variants={fadeInUp} id="charts-container">
+            <motion.div variants={fadeInUp}>
               <Card>
                 <PresenceEvolutionChart 
                   data={presenceData} 
@@ -424,11 +692,52 @@ const PatientMonitoringPage: React.FC = () => {
                 />
               </Card>
             </motion.div>
+            <motion.div variants={fadeInUp}>
+              <Card>
+                <HeatmapAttendanceChart data={heatmapData} />
+              </Card>
+            </motion.div>
+            <motion.div variants={fadeInUp}>
+              <Card>
+                <TherapistComparisonChart data={therapistStats} />
+              </Card>
+            </motion.div>
+            <motion.div variants={fadeInUp}>
+              <Card>
+                <RetentionFunnelChart data={funnelData} />
+              </Card>
+            </motion.div>
+            <motion.div variants={fadeInUp}>
+              <Card>
+                <TrendAnalysisChart data={trendData} />
+              </Card>
+            </motion.div>
           </>
         )}
       </motion.div>
 
-      {/* Seção 3: Filtros + Tabela com animação */}
+      {/* Seção 3: Sugestões Inteligentes da IA */}
+      {!isLoading && predictions.length > 0 && (
+        <motion.div {...fadeInUp}>
+          <SmartSuggestions
+            predictions={predictions}
+            onActionClick={handleSuggestionAction}
+            maxSuggestions={5}
+          />
+        </motion.div>
+      )}
+
+      {/* Seção 4: Dashboard de Insights Avançados */}
+      {!isLoading && advancedInsights && (
+        <motion.div {...fadeInUp}>
+          <InsightsDashboard
+            insights={advancedInsights}
+            patients={patientsWithMetrics}
+          />
+        </motion.div>
+      )}
+
+      {/* Seção 5: Filtros + Tabela Virtualizada */}
       <motion.div {...fadeInUp}>
         <Card>
           <FilterToolbar
@@ -451,12 +760,12 @@ const PatientMonitoringPage: React.FC = () => {
               onAddPatient={() => navigate('/patients/new')}
             />
           ) : (
-            <PatientMonitoringTable
+            <VirtualizedPatientTable
               patients={sortedPatients}
               sortConfig={sortConfig}
               onSort={handleSort}
               onAction={handleQuickAction}
-              isLoading={false}
+              height={600}
             />
           )}
         </Card>

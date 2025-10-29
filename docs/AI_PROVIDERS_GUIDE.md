@@ -439,3 +439,4 @@ Problemas ou dúvidas sobre os AI providers? Verifique:
 
 **Última atualização**: ${new Date().toLocaleDateString('pt-BR')}
 
+

@@ -24,4 +24,14 @@ export {
   ErrorState 
 } from './EmptyStates';
 export { AlertCenter, AlertBadge } from './AlertCenter';
+export { CommunicationTimeline, type CommunicationLog } from './CommunicationTimeline';
+export { TrendAnalysisChart, type TrendDataPoint } from './TrendAnalysisChart';
+export { HeatmapAttendanceChart, type HeatmapData } from './HeatmapAttendanceChart';
+export { TherapistComparisonChart, type TherapistStats } from './TherapistComparisonChart';
+export { RetentionFunnelChart, type FunnelStage } from './RetentionFunnelChart';
+export { SmartSuggestions, type Suggestion } from './SmartSuggestions';
+export { InsightsDashboard, type AdvancedInsights } from './InsightsDashboard';
+export { SavedFilters } from './SavedFilters';
+export { PeriodComparison } from './PeriodComparison';
+export { VirtualizedPatientTable } from './VirtualizedPatientTable';
 
