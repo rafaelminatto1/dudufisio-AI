@@ -109,7 +109,7 @@ export default function AgendaPage() {
     }, [currentDate, currentView]);
 
     const { appointments, refetch } = useAppointments(startDate, endDate);
-    const { therapists } = useData();
+    const { therapists, refetch: refetchData } = useData();
     const { user } = useSupabaseAuth();
     const [patients, setPatients] = useState<Patient[]>([]);
     const [, setIsLoadingData] = useState(true);
@@ -552,17 +552,44 @@ export default function AgendaPage() {
     };
 
     const handleSavePatient = async (patientData: Omit<Patient, 'id' | 'code' | 'age' | 'bmi' | 'created_at' | 'updated_at'>): Promise<Patient> => {
-        // TODO: Implementar salvamento de paciente
-        const newPatient: Patient = {
-            ...patientData,
-            id: `patient_${Date.now()}`,
-            code: `PAC-${Date.now().toString().slice(-6)}`,
-            age: patientData.birthDate ? new Date().getFullYear() - new Date(patientData.birthDate).getFullYear() : undefined,
-            bmi: patientData.height && patientData.weight ? (patientData.weight / ((patientData.height / 100) ** 2)) : undefined,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-        };
-        return newPatient;
+        try {
+            // Usar o serviço para salvar o paciente
+            const newPatient = await patientService.addPatient(patientData);
+            
+            // Atualizar a lista local de pacientes
+            setPatients(prev => [...prev, newPatient]);
+            
+            // Atualizar dados do contexto
+            await refetchData();
+            
+            showToast('Paciente cadastrado com sucesso!', 'success');
+            return newPatient;
+        } catch (error) {
+            const errorMessage = 'Erro ao cadastrar paciente';
+            console.error(errorMessage, error);
+            showToast(errorMessage, 'error');
+            
+            // Em caso de erro, ainda criar um paciente local temporário para não quebrar o fluxo
+            // Mas isso é apenas um fallback - o ideal é o serviço funcionar
+            const fallbackPatient: Patient = {
+                ...patientData,
+                id: `patient_${Date.now()}`,
+                code: `PAC-${Date.now().toString().slice(-6)}`,
+                age: patientData.birthDate ? new Date().getFullYear() - new Date(patientData.birthDate).getFullYear() : undefined,
+                bmi: patientData.height && patientData.weight ? (patientData.weight / ((patientData.height / 100) ** 2)) : undefined,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+            };
+            
+            // Registrar erro para monitoramento
+            handleError(error as Error, {
+                operation: 'handleSavePatient',
+                severity: 'high',
+                fallbackMessage: errorMessage
+            });
+            
+            throw error; // Re-lançar o erro para que o componente possa lidar
+        }
     };
 
     const handleSelectPatient = (patient: Patient) => {

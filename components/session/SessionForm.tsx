@@ -13,6 +13,7 @@ interface SessionFormProps {
   previousNote?: SoapNote | null;
   onRepeatConduct?: () => void;
   onReplicateConduct?: () => void;
+  externalPlanUpdate?: string | null; // Campo para atualizar o plan externamente
 }
 
 interface SessionFormData {
@@ -31,7 +32,8 @@ const SessionForm: React.FC<SessionFormProps> = ({
   isLoading = false,
   previousNote,
   onRepeatConduct,
-  onReplicateConduct
+  onReplicateConduct,
+  externalPlanUpdate
 }) => {
   const { showToast } = useToast();
   const [formData, setFormData] = useState<SessionFormData>({
@@ -55,6 +57,16 @@ const SessionForm: React.FC<SessionFormProps> = ({
       }));
     }
   }, [previousNote]);
+
+  // Atualizar campo plan quando externalPlanUpdate mudar
+  useEffect(() => {
+    if (externalPlanUpdate !== null && externalPlanUpdate !== undefined) {
+      setFormData(prev => ({
+        ...prev,
+        plan: externalPlanUpdate
+      }));
+    }
+  }, [externalPlanUpdate]);
 
   const handleInputChange = (field: keyof SessionFormData, value: string | number) => {
     setFormData(prev => ({

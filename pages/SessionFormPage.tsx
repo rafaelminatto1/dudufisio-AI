@@ -38,6 +38,7 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
   const [isReplicateModalOpen, setIsReplicateModalOpen] = useState(false);
   const [isSaveBlockingDialogOpen, setIsSaveBlockingDialogOpen] = useState(false);
   const [pendingMandatoryTests, setPendingMandatoryTests] = useState<any[]>([]);
+  const [replicatedPlan, setReplicatedPlan] = useState<string | null>(null);
   
   const { therapists } = useData();
   const { showToast } = useToast();
@@ -169,9 +170,43 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
   };
 
   const handleReplicateConduct = async (fields: ConductFields) => {
-    // Aplicar campos replicados ao formulário
+    // Formatar os campos replicados em uma string estruturada para o campo Plan
+    const planParts: string[] = [];
+    
+    if (fields.techniques && fields.techniques.length > 0) {
+      planParts.push(`**Técnicas Aplicadas:**\n${fields.techniques.map(t => `- ${t}`).join('\n')}`);
+    }
+    
+    if (fields.exercises && fields.exercises.length > 0) {
+      planParts.push(`**Exercícios Prescritos:**\n${fields.exercises.map(e => `- ${e}`).join('\n')}`);
+    }
+    
+    if (fields.equipment && fields.equipment.length > 0) {
+      planParts.push(`**Equipamentos Utilizados:**\n${fields.equipment.map(eq => `- ${eq}`).join('\n')}`);
+    }
+    
+    if (fields.homeExercises && fields.homeExercises.length > 0) {
+      planParts.push(`**Exercícios Domiciliares:**\n${fields.homeExercises.map(he => `- ${he}`).join('\n')}`);
+    }
+    
+    if (fields.recommendations) {
+      planParts.push(`**Recomendações:**\n${fields.recommendations}`);
+    }
+    
+    if (fields.duration) {
+      planParts.push(`**Duração da Sessão:** ${fields.duration} minutos`);
+    }
+    
+    if (fields.frequency) {
+      planParts.push(`**Frequência de Retorno:** ${fields.frequency}`);
+    }
+    
+    const formattedPlan = planParts.join('\n\n');
+    
+    // Atualizar o campo plan do formulário
+    setReplicatedPlan(formattedPlan);
+    setIsReplicateModalOpen(false);
     showToast('Conduta replicada com sucesso!', 'success');
-    // TODO: Implementar aplicação dos campos ao formulário SOAP
   };
 
   const therapist = therapists.find(t => t.id === appointment?.therapistId);
@@ -246,6 +281,7 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
                 previousNote={patientNotes[0] || null}
                 onRepeatConduct={() => patientNotes[0] && handleRepeatConduct(patientNotes[0])}
                 onReplicateConduct={() => setIsReplicateModalOpen(true)}
+                externalPlanUpdate={replicatedPlan}
               />
             </div>
 
