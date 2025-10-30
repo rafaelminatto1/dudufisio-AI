@@ -4,8 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import './index.css';
 import AppRoutes from './AppRoutes';
-import { registerServiceWorker } from './lib/serviceWorkerRegistration';
-import { initMonitoring } from './lib/monitoring/initMonitoring';
+// Importações adiadas para pós-render
 
 // Performance mark - início do app
 try { performance.mark('app_start'); } catch {}
@@ -27,8 +26,8 @@ const queryClient = new QueryClient({
   },
 });
 
-// Inicializar sistema de monitoramento de erros
-initMonitoring();
+// Inicializar sistema de monitoramento de erros (adiado)
+import('./lib/monitoring/initMonitoring').then(m => m.initMonitoring()).catch(() => {});
 
 // Web Vitals monitoring (apenas em produção)
 if (import.meta.env.PROD) {
@@ -66,8 +65,8 @@ if (!rootElement) {
       performance.measure('time_to_first_render', 'app_start', 'app_rendered');
     } catch {}
 
-    // Registrar service worker para offline cache
-    registerServiceWorker({
+    // Registrar service worker para offline cache (adiado)
+    import('./lib/serviceWorkerRegistration').then(({ registerServiceWorker }) => registerServiceWorker({
       onSuccess: () => {
         console.log('✅ Service worker registered successfully - App ready for offline use');
       },
@@ -78,7 +77,7 @@ if (!rootElement) {
       onError: (error) => {
         console.error('❌ Service worker registration failed:', error);
       },
-    });
+    })).catch(() => {});
 
   } catch (error) {
     console.error('💥 Error rendering React app:', error);

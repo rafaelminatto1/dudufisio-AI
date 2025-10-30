@@ -9,16 +9,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {
-  CompleteDashboard,
-  PatientPortalDashboard,
-  PartnerPortalDashboard,
-  preloadCriticalComponents,
-  preloadUserRoleComponents,
-} from './lib/lazyLoading';
-import { initializeLazyLoading } from './lib/advancedLazyLoading';
 import { PerformanceProfiler } from './lib/performanceOptimizations';
-import { initializeIntelligentPreloading } from './lib/intelligentPreloading';
 import { initializeMobileOptimizations, getAdaptiveConfig } from './lib/mobileOptimizations';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
@@ -29,7 +20,7 @@ import { PatientProvider } from './contexts/PatientContext';
 import { ExerciseProvider } from './contexts/ExerciseContext';
 import AuthRoutes from './pages/auth/AuthRoutes';
 import { Role } from './types';
-import { initializeServiceWorker } from './lib/serviceWorkerManager';
+// SW e preloading serão importados sob demanda em idle
 import OfflineIndicator from './components/OfflineIndicator';
 import OfflineNotification from './components/OfflineNotification';
 import MobileLoadingScreen from './components/ui/MobileLoadingScreen';
@@ -204,6 +195,11 @@ const AppContent: React.FC = memo(() => {
   const [loadingTimeout, setLoadingTimeout] = useState(false);
 
   const initializeServiceWorkerCallback = useCallback(() => {
+    // Importar dinamicamente o registrador do SW
+    const loadAndInit = async () => {
+      const { initializeServiceWorker } = await import('./lib/serviceWorkerManager');
+      return initializeServiceWorker();
+    };
     const isHeadless = /HeadlessChrome|PhantomJS|Puppeteer/.test(navigator.userAgent);
 
     if (isHeadless) {
@@ -222,7 +218,7 @@ const AppContent: React.FC = memo(() => {
 
     logger.info('Inicializando Service Worker...', { context: LOG_CONTEXT });
 
-    initializeServiceWorker()
+    loadAndInit()
       .then(registered => {
         if (registered) {
           logger.info('Service Worker inicializado com sucesso.', { context: LOG_CONTEXT });
@@ -247,19 +243,24 @@ const AppContent: React.FC = memo(() => {
   }, [initializeServiceWorkerCallback]);
 
   const preloadComponentsCallback = useCallback(() => {
-    logger.debug('Preloading de componentes críticos.', { context: LOG_CONTEXT });
-    preloadCriticalComponents();
+    (async () => {
+      logger.debug('Preloading de componentes críticos.', { context: LOG_CONTEXT });
+      const lazy = await import('./lib/lazyLoading');
+      lazy.preloadCriticalComponents();
 
-    logger.debug('Inicializando sistema avançado de lazy loading.', { context: LOG_CONTEXT });
-    initializeLazyLoading();
+      logger.debug('Inicializando sistema avançado de lazy loading.', { context: LOG_CONTEXT });
+      const { initializeLazyLoading } = await import('./lib/advancedLazyLoading');
+      initializeLazyLoading();
 
-    logger.debug('Inicializando preloading inteligente.', { context: LOG_CONTEXT });
-    initializeIntelligentPreloading(user?.role);
+      logger.debug('Inicializando preloading inteligente.', { context: LOG_CONTEXT });
+      const { initializeIntelligentPreloading } = await import('./lib/intelligentPreloading');
+      initializeIntelligentPreloading(user?.role);
 
-    if (user?.role) {
-      logger.debug(`Preloading específico para o perfil ${user.role}.`, { context: LOG_CONTEXT });
-      preloadUserRoleComponents(user.role);
-    }
+      if (user?.role) {
+        logger.debug(`Preloading específico para o perfil ${user.role}.`, { context: LOG_CONTEXT });
+        lazy.preloadUserRoleComponents(user.role);
+      }
+    })();
   }, [user?.role]);
 
   useEffect(() => {
@@ -357,6 +358,14 @@ const AppContent: React.FC = memo(() => {
       return <Navigate to="/dashboard" replace />;
     }
     
+    // Prefetch em idle de alguns chunks de dashboard após autenticação
+    runWhenIdle(() => {
+      try {
+        import('./pages/DashboardPage');
+        import('./pages/AgendaPage');
+      } catch {}
+    });
+
     return (
       <Suspense fallback={dashboardLoadingScreen}>
         <Routes>
