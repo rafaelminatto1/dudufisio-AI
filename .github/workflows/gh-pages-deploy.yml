@@ -1,0 +1,100 @@
+name: Deploy Reports to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-reports:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build production
+        run: npm run build:fast
+        env:
+          NODE_ENV: production
+      
+      - name: Generate bundle report
+        run: node scripts/generate-bundle-report.cjs
+      
+      - name: Start preview server
+        run: npm run start &
+        env:
+          CI: true
+      
+      - name: Wait for server
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:4173; do sleep 2; done'
+      
+      - name: Run Lighthouse HTML
+        run: node scripts/lighthouse-performance.js http://localhost:4173 || true
+      
+      - name: Create reports directory
+        run: |
+          mkdir -p gh-pages
+          cp -r lighthouse-reports/* gh-pages/ || true
+          cp dist/stats.html gh-pages/bundle-stats.html || true
+          cp BUNDLE_SIZES.md gh-pages/ || true
+          cp LIGHTHOUSE_SUMMARY.md gh-pages/ || true
+      
+      - name: Create index page
+        run: |
+          cat > gh-pages/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="pt-BR">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>DuduFisio-AI - Performance Reports</title>
+            <style>
+              body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+              h1 { color: #0369a1; }
+              a { display: block; padding: 12px; margin: 8px 0; background: #f0f9ff; border-radius: 8px; text-decoration: none; color: #0c4a6e; }
+              a:hover { background: #e0f2fe; }
+              .date { color: #64748b; font-size: 0.9em; }
+            </style>
+          </head>
+          <body>
+            <h1>📊 DuduFisio-AI Performance Reports</h1>
+            <p class="date">Gerado automaticamente via GitHub Actions</p>
+            <h2>Relatórios Disponíveis:</h2>
+            <a href="bundle-stats.html">📦 Bundle Visualizer (Interactive)</a>
+            <a href="BUNDLE_SIZES.md">📊 Bundle Sizes (Markdown)</a>
+            <a href="LIGHTHOUSE_SUMMARY.md">⚡ Lighthouse Summary (Markdown)</a>
+          </body>
+          </html>
+          EOF
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './gh-pages'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
