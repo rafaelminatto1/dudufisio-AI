@@ -1,0 +1,54 @@
+# Vercel Ignore
+# Arquivos que não devem ser deployados
+
+# Node modules
+node_modules/
+
+# Ambiente de desenvolvimento
+.env.local
+.env.development
+.env.test
+
+# Testes
+tests/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+coverage/
+
+# Build artifacts
+.vite/
+dist/stats.html
+
+# IDE
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Documentação de desenvolvimento
+docs/
+*.md
+!README.md
+
+# Scripts de desenvolvimento
+scripts/
+playwright.config.ts
+vitest.config.ts
+
+# Source maps (já incluídos no build)
+**/*.map
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+.DS_Store
+Thumbs.db
+
