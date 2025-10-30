@@ -38,16 +38,24 @@
     <!-- Carrega a fonte principal de forma assíncrona para não bloquear a renderização -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    
+    <!-- Prefetch crítico dos chunks principais -->
+    <link rel="prefetch" as="script" href="/assets/react-vendor.js">
+    <link rel="prefetch" as="script" href="/assets/ui-radix.js">
 
     <!-- Import map removido - Vite gerencia as dependências -->
 </head>
   <body class="bg-slate-50 antialiased">
     <div id="root">
-      <div style="padding: 20px; text-align: center; font-family: Arial, sans-serif;">
-        <h2>Carregando DuduFisio-AI...</h2>
-        <p>Aguarde enquanto o sistema é inicializado.</p>
+      <div style="padding: 20px; text-align: center; font-family: system-ui, sans-serif;">
+        <div style="width: 48px; height: 48px; margin: 20px auto; border: 3px solid #e0f2fe; border-top-color: #0369a1; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <h2 style="font-size: 20px; margin: 12px 0; color: #0f172a;">DuduFisio-AI</h2>
+        <p style="font-size: 14px; color: #64748b;">Carregando...</p>
       </div>
     </div>
+    <style>
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

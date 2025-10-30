@@ -1,84 +1,32 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/send-reminders",
-      "schedule": "0 8,20 * * *"
-    },
-    {
-      "path": "/api/cron/cleanup-old-links",
-      "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/cron/sync-calendar-access",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/appointment-reminders",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/cron/daily-summary",
-      "schedule": "0 8 * * *"
-    },
-    {
-      "path": "/api/cron/update-agenda-cache",
-      "schedule": "0 */6 * * *"
-    }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
   "headers": [
     {
-      "source": "/api/calendar/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type"
-        }
-      ]
-    },
-    {
-      "source": "/manifest.json",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=3600"
+          "value": "public, max-age=31536000, immutable"
+        },
+        {
+          "key": "Content-Encoding",
+          "value": "br"
         }
       ]
     },
     {
-      "source": "/(.*)",
+      "source": "/(.*\\.(js|css|woff2?))",
       "headers": [
         {
-          "key": "X-DNS-Prefetch-Control",
-          "value": "on"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     },
     {
-      "source": "/assets/:path*",
+      "source": "/(.*\\.(png|jpg|jpeg|gif|webp|svg|ico))",
       "headers": [
         {
           "key": "Cache-Control",
@@ -92,6 +40,31 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
     }

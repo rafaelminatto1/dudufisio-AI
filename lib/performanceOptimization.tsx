@@ -207,7 +207,7 @@ export function useDebouncedValue<T>(value: T, delay: number = 300): T {
 
 // 🎯 Hook para monitoramento de performance
 export function usePerformanceMonitor(componentName: string) {
-  const [metrics, setMetrics] = useState({
+  const metricsRef = React.useRef({
     renderTime: 0,
     mountTime: 0,
     updateCount: 0,
@@ -220,23 +220,23 @@ export function usePerformanceMonitor(componentName: string) {
       const endTime = performance.now();
       const renderTime = endTime - startTime;
       
-      setMetrics(prev => ({
-        ...prev,
+      metricsRef.current = {
+        ...metricsRef.current,
         renderTime,
-        updateCount: prev.updateCount + 1,
-      }));
+        updateCount: metricsRef.current.updateCount + 1,
+      };
 
       // Log apenas em desenvolvimento
       if (process.env.NODE_ENV === 'development') {
         console.log(`[Performance] ${componentName}:`, {
           renderTime: `${renderTime.toFixed(2)}ms`,
-          updateCount: metrics.updateCount + 1,
+          updateCount: metricsRef.current.updateCount,
         });
       }
     };
-  });
+  }, []); // ✅ Array vazio - executa apenas no mount/unmount
 
-  return metrics;
+  return metricsRef.current;
 }
 
 // 🎯 Componente para lazy loading de imagens

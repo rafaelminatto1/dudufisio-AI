@@ -18,7 +18,7 @@ import { useOptimizedPatients, useOptimizedAppointments } from '../hooks/useOpti
 import { eventService } from '../services/eventService';
 import { useComponentPerformance } from '../hooks/usePerformanceMetrics';
 import OptimizedLoader from '../components/ui/OptimizedLoader';
-import { useMemoWithTTL, usePerformanceMonitor } from '../lib/performanceOptimization';
+import { useMemoWithTTL } from '../lib/performanceOptimization';
 import ResponsiveContainer from '../components/ui/ResponsiveContainer';
 import ResponsiveGrid from '../components/ui/ResponsiveGrid';
 import ResponsiveCard from '../components/ui/ResponsiveCard';
@@ -40,7 +40,6 @@ const isToday = (someDate: Date) => {
 const DashboardPage: React.FC = () => {
     // 🚀 Monitoramento de performance
     useComponentPerformance('DashboardPage');
-    usePerformanceMonitor('DashboardPage');
 
     // 📊 Hooks otimizados para dados
     const { therapists, isLoading: isTherapistsLoading } = useData();

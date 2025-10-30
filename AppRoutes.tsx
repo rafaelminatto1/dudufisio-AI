@@ -20,6 +20,12 @@ import { PatientProvider } from './contexts/PatientContext';
 import { ExerciseProvider } from './contexts/ExerciseContext';
 import AuthRoutes from './pages/auth/AuthRoutes';
 import { Role } from './types';
+
+// Lazy load dos dashboards específicos por role
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const PatientPortalDashboard = React.lazy(() => import('./pages/PatientPortalDashboard'));
+const PartnerPortalDashboard = React.lazy(() => import('./pages/PartnerPortalDashboard'));
+
 // SW e preloading serão importados sob demanda em idle
 import OfflineIndicator from './components/OfflineIndicator';
 import OfflineNotification from './components/OfflineNotification';
@@ -321,13 +327,25 @@ const AppContent: React.FC = memo(() => {
 
     switch (user.role) {
       case Role.Patient:
-        return <PatientPortalDashboard user={user} onLogout={logout} />;
+        return (
+          <Suspense fallback={<MobileLoadingScreen />}>
+            <PatientPortalDashboard user={user} onLogout={logout} />
+          </Suspense>
+        );
       case Role.Educator:
-        return <PartnerPortalDashboard user={user} onLogout={logout} />;
+        return (
+          <Suspense fallback={<MobileLoadingScreen />}>
+            <PartnerPortalDashboard user={user} onLogout={logout} />
+          </Suspense>
+        );
       case Role.Admin:
       case Role.Therapist:
       default:
-        return <CompleteDashboard user={user} onLogout={logout} />;
+        return (
+          <Suspense fallback={<MobileLoadingScreen />}>
+            <DashboardPage />
+          </Suspense>
+        );
     }
   }, [user, logout]);
 

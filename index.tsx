@@ -9,6 +9,22 @@ import AppRoutes from './AppRoutes';
 // Performance mark - início do app
 try { performance.mark('app_start'); } catch {}
 
+// Prefetch crítico do LoginPage e AuthRoutes logo após o boot
+if (typeof window !== 'undefined') {
+  const runWhenIdle = (cb: () => void) => {
+    if (typeof (window as any).requestIdleCallback === 'function') {
+      (window as any).requestIdleCallback(cb, { timeout: 1000 });
+    } else {
+      setTimeout(cb, 0);
+    }
+  };
+  
+  runWhenIdle(() => {
+    import('./pages/auth/LoginPage');
+    import('./pages/auth/AuthRoutes');
+  });
+}
+
 // Configure React Query
 const queryClient = new QueryClient({
   defaultOptions: {

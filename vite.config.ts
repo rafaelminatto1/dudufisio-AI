@@ -196,11 +196,17 @@ export default defineConfig({
     target: 'es2020',
     sourcemap: true,
     reportCompressedSize: true,
+    minify: 'esbuild',
+    cssMinify: true,
     // Garantir que os entry points sejam preservados para ordem de carregamento correta
     preserveEntrySignatures: 'strict',
     // Configurar ordem de carregamento dos chunks
     modulePreload: {
       polyfill: true,
+    },
+    // Configuração para melhor compressão
+    commonjsOptions: {
+      transformMixedEsModules: true,
     },
     rollupOptions: {
       // Suprimir warnings de bibliotecas externas
@@ -318,7 +324,6 @@ export default defineConfig({
         tryCatchDeoptimization: false,
       }
     },
-    minify: 'esbuild',
     chunkSizeWarningLimit: 500, // Mais restritivo
     cssCodeSplit: true, // Split CSS
     assetsInlineLimit: 4096, // Inline assets < 4kb
