@@ -1,4 +1,3 @@
-import { supabase } from '../../lib/supabaseClient';
 import { handleSupabaseError } from '../../lib/middleware/errorHandler';
 import { retryApiCall } from '../../lib/retryManager';
 import { fallbackAuthService } from '../../lib/fallbackAuth';
@@ -30,6 +29,10 @@ export interface TwoFactorSetup {
 }
 
 class SupabaseAuthService {
+  private async getSupabase() {
+    const { supabase } = await import('../../lib/supabaseClient');
+    return supabase;
+  }
   private listeners: Set<(state: AuthState) => void> = new Set();
   private currentState: AuthState = {
     user: null,
@@ -74,8 +77,9 @@ class SupabaseAuthService {
           action: 'initializeAuth'
         });
 
+        const supa = await this.getSupabase();
         const { data: { session }, error: sessionError } = await retryApiCall(
-          () => supabase.auth.getSession(),
+          () => supa.auth.getSession(),
           'getSession',
           2 // Apenas 2 tentativas para inicialização
         );
@@ -112,7 +116,7 @@ class SupabaseAuthService {
         clearTimeout(earlyFinishTimer);
 
         // Listen for auth changes
-        supabase.auth.onAuthStateChange(async (event, session) => {
+        supa.auth.onAuthStateChange(async (event, session) => {
           secureLogger.info('Auth state change', {
             component: 'supabaseAuthService',
             event
@@ -346,8 +350,9 @@ class SupabaseAuthService {
         component: 'supabaseAuthService',
         action: 'login'
       });
+      const supa = await this.getSupabase();
       const { data, error } = await retryApiCall(
-        () => supabase.auth.signInWithPassword({
+        () => supa.auth.signInWithPassword({
           email: credentials.email,
           password: credentials.password,
         }),
@@ -396,7 +401,8 @@ class SupabaseAuthService {
 
   async register(userData: RegisterData): Promise<User> {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const supa = await this.getSupabase();
+      const { data, error } = await supa.auth.signUp({
         email: userData.email,
         password: userData.password,
         options: {
@@ -448,7 +454,8 @@ class SupabaseAuthService {
         action: 'logout'
       });
 
-      const { error } = await supabase.auth.signOut();
+      const supa = await this.getSupabase();
+      const { error } = await supa.auth.signOut();
       if (error) throw error;
     } catch (error: any) {
       throw new Error(handleSupabaseError(error));
@@ -457,7 +464,8 @@ class SupabaseAuthService {
 
   async resetPassword(email: string): Promise<void> {
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const supa = await this.getSupabase();
+      const { error } = await supa.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
@@ -468,7 +476,8 @@ class SupabaseAuthService {
 
   async updatePassword(newPassword: string): Promise<void> {
     try {
-      const { error } = await supabase.auth.updateUser({
+      const supa = await this.getSupabase();
+      const { error } = await supa.auth.updateUser({
         password: newPassword
       });
       if (error) throw error;
@@ -479,7 +488,8 @@ class SupabaseAuthService {
 
   async updateProfile(updates: Partial<User>): Promise<User> {
     try {
-      const { data: { user: authUser }, error: authError } = await supabase.auth.updateUser({
+      const supa = await this.getSupabase();
+      const { data: { user: authUser }, error: authError } = await supa.auth.updateUser({
         data: {
           full_name: updates.fullName,
           phone: updates.phone,
@@ -490,7 +500,7 @@ class SupabaseAuthService {
       if (!authUser) throw new Error('Usuário não encontrado');
 
       // Update profile in our custom table
-      const { error: profileError } = await supabase
+      const { error: profileError } = await supa
         .from('users')
         .update({
           full_name: updates.fullName,
@@ -511,7 +521,8 @@ class SupabaseAuthService {
   // 2FA Methods
   async setup2FA(): Promise<TwoFactorSetup> {
     try {
-      const { data, error } = await supabase.auth.mfa.enroll({
+      const supa = await this.getSupabase();
+      const { data, error } = await supa.auth.mfa.enroll({
         factorType: 'totp'
       });
 
@@ -529,7 +540,8 @@ class SupabaseAuthService {
 
   async verify2FA(factorId: string, code: string): Promise<void> {
     try {
-      const { error } = await supabase.auth.mfa.challengeAndVerify({
+      const supa = await this.getSupabase();
+      const { error } = await supa.auth.mfa.challengeAndVerify({
         factorId,
         code
       });
@@ -541,7 +553,8 @@ class SupabaseAuthService {
 
   async get2FAFactors() {
     try {
-      const { data, error } = await supabase.auth.mfa.listFactors();
+      const supa = await this.getSupabase();
+      const { data, error } = await supa.auth.mfa.listFactors();
       if (error) throw error;
       return data;
     } catch (error: any) {
@@ -551,7 +564,8 @@ class SupabaseAuthService {
 
   async disable2FA(factorId: string): Promise<void> {
     try {
-      const { error } = await supabase.auth.mfa.unenroll({ factorId });
+      const supa = await this.getSupabase();
+      const { error } = await supa.auth.mfa.unenroll({ factorId });
       if (error) throw error;
     } catch (error: any) {
       throw new Error(handleSupabaseError(error));
@@ -561,7 +575,8 @@ class SupabaseAuthService {
   // Role and permission helpers
   async getUserRole(userId: string): Promise<Role> {
     try {
-      const { data, error } = await supabase
+      const supa = await this.getSupabase();
+      const { data, error } = await supa
         .from('user_profiles')
         .select('role')
         .eq('id', userId)
@@ -616,7 +631,8 @@ class SupabaseAuthService {
   private async ensureUserProfile(supabaseUser: SupabaseUser): Promise<void> {
     try {
       // Check if profile already exists
-      const { data: existingProfile } = await supabase
+      const supa = await this.getSupabase();
+      const { data: existingProfile } = await supa
         .from('user_profiles')
         .select('id')
         .eq('id', supabaseUser.id)
@@ -630,7 +646,7 @@ class SupabaseAuthService {
         });
 
         // Create profile for OAuth user
-        const { error: profileError } = await supabase
+        const { error: profileError } = await supa
           .from('user_profiles')
           .insert({
             id: supabaseUser.id,
@@ -676,7 +692,8 @@ class SupabaseAuthService {
   private async mapSupabaseUserToUser(supabaseUser: SupabaseUser): Promise<User> {
     try {
       // Try to get additional user data from our users table
-      const { data: profile } = await supabase
+      const supa = await this.getSupabase();
+      const { data: profile } = await supa
         .from('users')
         .select('*')
         .eq('auth_id', supabaseUser.id)
@@ -719,7 +736,8 @@ class SupabaseAuthService {
   // Social login methods
   async loginWithGoogle(): Promise<void> {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const supa = await this.getSupabase();
+      const { error } = await supa.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -737,7 +755,8 @@ class SupabaseAuthService {
 
   async loginWithGitHub(): Promise<void> {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const supa = await this.getSupabase();
+      const { error } = await supa.auth.signInWithOAuth({
         provider: 'github',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -752,7 +771,8 @@ class SupabaseAuthService {
 
   async loginWithApple(): Promise<void> {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const supa = await this.getSupabase();
+      const { error } = await supa.auth.signInWithOAuth({
         provider: 'apple',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
@@ -768,7 +788,8 @@ class SupabaseAuthService {
   // Session management
   async refreshSession(): Promise<void> {
     try {
-      const { error } = await supabase.auth.refreshSession();
+      const supa = await this.getSupabase();
+      const { error } = await supa.auth.refreshSession();
       if (error) throw error;
     } catch (error: any) {
       throw new Error(handleSupabaseError(error));
