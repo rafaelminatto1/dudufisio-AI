@@ -1,10 +1,12 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import LoginPage from './LoginPage';
-import RegisterPage from '../RegisterPage';
-import ForgotPasswordPage from '../ForgotPasswordPage';
-import ResetPasswordPage from '../ResetPasswordPage';
-import TwoFactorSetupPage from './TwoFactorSetupPage';
+
+// Lazy load para reduzir bundle inicial
+const LoginPage = lazy(() => import('./LoginPage'));
+const RegisterPage = lazy(() => import('../RegisterPage'));
+const ForgotPasswordPage = lazy(() => import('../ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('../ResetPasswordPage'));
+const TwoFactorSetupPage = lazy(() => import('./TwoFactorSetupPage'));
 
 interface AuthRoutesProps {
   onSuccess?: () => void;
