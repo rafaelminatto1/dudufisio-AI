@@ -1,5 +1,5 @@
 import { BusinessIntelligenceSystem } from '../BusinessIntelligenceSystem';
-import { BISystemTests } from '../tests/BISystemTests';
+// import { BISystemTests } from '../tests/BISystemTests'; // ❌ Comentado: testes não devem ser incluídos no build de produção
 import { DateRange } from '../types';
 
 /**
@@ -8,11 +8,11 @@ import { DateRange } from '../types';
  */
 export class BISystemDemo {
   private biSystem: BusinessIntelligenceSystem;
-  private testSystem: BISystemTests;
+  // private testSystem: BISystemTests; // ❌ Comentado: testes não devem ser incluídos no build de produção
 
   constructor(supabaseUrl: string, supabaseKey: string) {
     this.biSystem = new BusinessIntelligenceSystem(supabaseUrl, supabaseKey);
-    this.testSystem = new BISystemTests(supabaseUrl, supabaseKey);
+    // this.testSystem = new BISystemTests(supabaseUrl, supabaseKey); // ❌ Comentado: testes não devem ser incluídos no build de produção
   }
 
   /**
@@ -139,11 +139,13 @@ export class BISystemDemo {
 
   /**
    * Executa apenas os testes do sistema
+   * ❌ DESABILITADO: Testes não devem ser incluídos no build de produção
    */
   async runSystemTests(): Promise<void> {
+    console.warn('⚠️ Testes do sistema desabilitados no build de produção');
+    return;
     
-    
-
+    /* ❌ Comentado para evitar erro de build
     try {
       const testResults = await this.testSystem.runAllTests();
 
@@ -165,6 +167,7 @@ export class BISystemDemo {
       console.error('❌ ERRO NOS TESTES:', error);
       throw error;
     }
+    */
   }
 
   /**
@@ -364,9 +367,8 @@ export async function runBIDemo(supabaseUrl: string, supabaseKey: string): Promi
     // Executar demonstração completa
     await demo.runCompleteDemo();
 
-    // Executar testes
-    
-    await demo.runSystemTests();
+    // Executar testes - ❌ Desabilitado no build de produção
+    // await demo.runSystemTests();
 
     // Executar cenários práticos
     
