@@ -244,11 +244,12 @@ function isApiRequest(url) {
  * Gerenciamento de TTL de cache
  */
 async function setCacheTime(request, cacheName) {
-  const key = `${cacheName}-${request.url}-time`;
+  const key = `${cacheName}-${request.url}`;
   try {
     const cache = await caches.open('cache-metadata');
+    // ✅ FIX: Usar URL válida com scheme https para evitar erro "Request scheme unsupported"
     await cache.put(
-      new Request(key),
+      new Request(`https://cache-metadata/${encodeURIComponent(key)}`),
       new Response(Date.now().toString())
     );
   } catch (error) {
@@ -257,10 +258,11 @@ async function setCacheTime(request, cacheName) {
 }
 
 async function getCacheTime(request, cacheName) {
-  const key = `${cacheName}-${request.url}-time`;
+  const key = `${cacheName}-${request.url}`;
   try {
     const cache = await caches.open('cache-metadata');
-    const response = await cache.match(new Request(key));
+    // ✅ FIX: Usar URL válida com scheme https para evitar erro "Request scheme unsupported"
+    const response = await cache.match(new Request(`https://cache-metadata/${encodeURIComponent(key)}`));
     if (response) {
       const timeStr = await response.text();
       return parseInt(timeStr);

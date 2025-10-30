@@ -378,11 +378,22 @@ const AppContent: React.FC = memo(() => {
     
     // Prefetch em idle de alguns chunks de dashboard após autenticação
     runWhenIdle(() => {
-      try {
-        import('./pages/MainDashboard');
-        import('./pages/AgendaPage');
-        import('./pages/PatientListPage');
-      } catch {}
+      const preloadChunks = async () => {
+        try {
+          await Promise.all([
+            import('./pages/MainDashboard'),
+            import('./pages/AgendaPage'),
+            import('./pages/PatientListPage')
+          ]);
+          logger.debug('Dashboard chunks preloaded successfully', { context: LOG_CONTEXT });
+        } catch (error) {
+          logger.error('Error preloading dashboard chunks', {
+            context: LOG_CONTEXT,
+            data: error,
+          });
+        }
+      };
+      preloadChunks();
     });
 
     return (
