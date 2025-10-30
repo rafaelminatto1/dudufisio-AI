@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Lazy load para reduzir bundle inicial
@@ -7,6 +7,14 @@ const RegisterPage = lazy(() => import('../RegisterPage'));
 const ForgotPasswordPage = lazy(() => import('../ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('../ResetPasswordPage'));
 const TwoFactorSetupPage = lazy(() => import('./TwoFactorSetupPage'));
+
+const runWhenIdle = (cb: () => void) => {
+  if (typeof (window as any).requestIdleCallback === 'function') {
+    (window as any).requestIdleCallback(cb, { timeout: 1500 });
+  } else {
+    setTimeout(cb, 0);
+  }
+};
 
 interface AuthRoutesProps {
   onSuccess?: () => void;
@@ -30,6 +38,15 @@ const AuthRoutes: React.FC<AuthRoutesProps> = ({
   onBack2FA,
   onComplete2FA
 }) => {
+  // Prefetch em idle das rotas de auth comuns
+  useEffect(() => {
+    runWhenIdle(() => {
+      import('../RegisterPage');
+      import('../ForgotPasswordPage');
+      import('../ResetPasswordPage');
+      import('./TwoFactorSetupPage');
+    });
+  }, []);
   // Se está no setup de 2FA, mostrar só essa página
   if (show2FASetup) {
     return (
