@@ -174,26 +174,51 @@ class SupabaseAppointmentService {
   private mapAppointmentToInsert(appointment: Partial<Appointment>): Partial<AppointmentInsert> {
     const insert: Partial<AppointmentInsert> = {};
 
-    if (appointment.patientId) insert.patient_id = appointment.patientId;
+    // Required fields - must always be set
+    if (!appointment.patientId) {
+      throw new Error('patient_id é obrigatório');
+    }
+    if (!appointment.patientName) {
+      throw new Error('patient_name é obrigatório');
+    }
+    if (!appointment.title) {
+      throw new Error('title é obrigatório');
+    }
+    if (!appointment.type) {
+      throw new Error('appointment_type é obrigatório');
+    }
+    if (!appointment.startTime) {
+      throw new Error('start_time é obrigatório');
+    }
+    if (!appointment.endTime) {
+      throw new Error('end_time é obrigatório');
+    }
+    if (appointment.duration === undefined) {
+      throw new Error('duration_minutes é obrigatório');
+    }
+
+    insert.patient_id = appointment.patientId;
+    insert.patient_name = appointment.patientName;
+    insert.title = appointment.title;
+    insert.appointment_type = String(appointment.type);
+    insert.start_time = appointment.startTime.toISOString();
+    insert.end_time = appointment.endTime.toISOString();
+    insert.duration_minutes = appointment.duration;
+
+    // Status should always be set (default to 'scheduled')
+    insert.status = appointment.status ? this.mapStatusToDB(appointment.status) : 'scheduled';
+
+    // Optional fields
     if (appointment.therapistId) insert.therapist_id = appointment.therapistId;
     if (appointment.user_id) insert.created_by = appointment.user_id;
 
-    if (appointment.patientName) insert.patient_name = appointment.patientName;
     if (appointment.patientPhone) insert.patient_phone = appointment.patientPhone;
     if (appointment.email) insert.patient_email = appointment.email;
     if (appointment.patientAvatarUrl) insert.patient_avatar_url = appointment.patientAvatarUrl;
 
     if (appointment.therapistName) insert.therapist_name = appointment.therapistName;
 
-    if (appointment.title) insert.title = appointment.title;
     if (appointment.description) insert.description = appointment.description;
-    if (appointment.type) insert.appointment_type = String(appointment.type); // Converter enum para string
-
-    if (appointment.startTime) insert.start_time = appointment.startTime.toISOString();
-    if (appointment.endTime) insert.end_time = appointment.endTime.toISOString();
-    if (appointment.duration) insert.duration_minutes = appointment.duration;
-
-    if (appointment.status) insert.status = this.mapStatusToDB(appointment.status);
 
     if (appointment.location) insert.location = appointment.location;
     if (appointment.is_virtual !== undefined) insert.is_virtual = appointment.is_virtual;
@@ -376,13 +401,25 @@ class SupabaseAppointmentService {
 
       const insertData = this.mapAppointmentToInsert(appointment);
 
+      secureLogger.debug('Dados para inserção no Supabase', {
+        component: 'appointmentServiceSupabase',
+        insertData
+      });
+
       const { data, error } = await supabase
         .from('appointments')
         .insert(insertData)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        secureLogger.error('Erro detalhado do Supabase ao criar appointment', {
+          component: 'appointmentServiceSupabase',
+          error,
+          insertData
+        });
+        throw error;
+      }
 
       secureLogger.info('Appointment criado com sucesso', {
         component: 'appointmentServiceSupabase',

@@ -6,6 +6,7 @@ import { Patient, PatientSummary } from '../../types';
 import { useToast } from '../../contexts/ToastContext';
 import { useDebounce } from '../../hooks/useDebounce';
 import * as patientService from '../../services/patientService';
+import { QuickRegisterModal } from './QuickRegisterModal';
 
 interface PatientSearchInputProps {
   onSelectPatient: (patient: Patient | PatientSummary | null) => void;
@@ -18,9 +19,10 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showQuickRegister, setShowQuickRegister] = useState(false);
+  const [showQuickRegisterModal, setShowQuickRegisterModal] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const { showToast } = useToast();
@@ -73,28 +75,30 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
     search();
   }, [debouncedSearchTerm, showToast]);
   
-  const handleQuickRegister = async () => {
+  const handleQuickRegisterClick = () => {
     if (!searchTerm || searchTerm.length < 3) {
       showToast('Nome deve ter pelo menos 3 caracteres', 'error');
       return;
     }
-    
-    setIsRegistering(true);
-    console.log('🔄 Iniciando cadastro rápido:', searchTerm);
-    
+    setShowQuickRegisterModal(true);
+    setShowDropdown(false);
+  };
+
+  const handleQuickRegister = async (name: string, phone?: string) => {
+    console.log('🔄 Iniciando cadastro rápido:', name, phone);
+
     try {
-      const newPatient = await patientService.quickAddPatient(searchTerm.trim());
+      const newPatient = await patientService.quickAddPatient(name, phone);
       console.log('✅ Paciente criado:', newPatient);
-      
+
       // Garantir que o paciente é selecionado
       console.log('🔄 Chamando onSelectPatient com:', newPatient);
       onSelectPatient(newPatient);
       setSearchTerm(newPatient.name);
-      setShowDropdown(false);
       setShowQuickRegister(false);
-      
+
       showToast(`Paciente "${newPatient.name}" cadastrado com sucesso!`, 'success');
-      
+
       if (inputRef.current) {
         inputRef.current.classList.add('animate-pulse-green');
         setTimeout(() => inputRef.current?.classList.remove('animate-pulse-green'), 1000);
@@ -103,8 +107,7 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
       console.error('❌ Erro ao cadastrar paciente:', error);
       const errorMessage = error?.message || 'Erro ao cadastrar paciente. Tente novamente.';
       showToast(errorMessage, 'error');
-    } finally {
-      setIsRegistering(false);
+      throw error; // Re-throw para o modal tratar
     }
   };
   
@@ -199,22 +202,21 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
             ))}
             
             {showQuickRegister && (
-              <motion.button 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                onClick={handleQuickRegister} 
-                disabled={isRegistering} 
+              <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                onClick={handleQuickRegisterClick}
                 className={cn(
                   "w-full p-3 border-t transition-colors",
-                  selectedIndex === searchResults.length 
-                    ? "bg-green-100 text-green-900" 
+                  selectedIndex === searchResults.length
+                    ? "bg-green-100 text-green-900"
                     : "bg-green-50 hover:bg-green-100"
                 )}
               >
                 <div className="flex items-center gap-2">
-                  {isRegistering ? <Loader2 className="w-4 h-4 text-green-600 animate-spin" /> : <UserPlus className="w-4 h-4 text-green-600" />}
+                  <UserPlus className="w-4 h-4 text-green-600" />
                   <p className="font-semibold text-sm text-gray-900">
-                    {isRegistering ? 'Cadastrando...' : `Cadastrar "${searchTerm}"`}
+                    {`Cadastrar "${searchTerm}"`}
                   </p>
                 </div>
               </motion.button>
@@ -231,6 +233,14 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Quick Register Modal */}
+      <QuickRegisterModal
+        isOpen={showQuickRegisterModal}
+        onClose={() => setShowQuickRegisterModal(false)}
+        onConfirm={handleQuickRegister}
+        initialName={searchTerm}
+      />
     </div>
   );
 };

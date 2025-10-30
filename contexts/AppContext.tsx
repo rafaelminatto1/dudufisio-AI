@@ -9,6 +9,12 @@ import { safeAsync, safeLog } from '../lib/safety';
 import PageLoader from '../components/ui/PageLoader';
 import { logger } from '../lib/logger';
 
+interface PartialErrors {
+  therapists?: string;
+  patients?: string;
+  appointments?: string;
+}
+
 interface AppContextType {
   // Auth state (from SupabaseAuthContext) - properly typed with safety
   user: User | null;
@@ -23,6 +29,7 @@ interface AppContextType {
   appointments: Appointment[];
   dataLoading: boolean;
   error: string | null; // Simplified error handling
+  partialErrors: PartialErrors; // ✅ NEW: Errors parciais por serviço
   refetch: () => Promise<void>;
 
   // Additional safety methods
@@ -43,6 +50,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [partialErrors, setPartialErrors] = useState<PartialErrors>({}); // ✅ NEW: Estado de erros parciais
 
   // Auth wrapper function with proper error handling
   const login = useCallback(async (email: string, password: string): Promise<Result<User, Error>> => {
@@ -67,6 +75,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     
     setDataLoading(true);
     setError(null);
+    setPartialErrors({}); // ✅ Reset erros parciais
 
     try {
       // Safe parallel data fetching with individual error handling
@@ -77,35 +86,48 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       ]);
 
     const errors: string[] = [];
+    const newPartialErrors: PartialErrors = {}; // ✅ NEW: Track erros individuais
 
     // Handle therapists
     if (therapistsResult.success) {
       setTherapists(therapistsResult.data || []);
       safeLog('Therapists loaded successfully', { count: (therapistsResult.data || []).length });
+      // ✅ Se sucesso, não adiciona erro
     } else {
       setTherapists([]);
-      errors.push(`Terapeutas: ${therapistsResult.error?.message || 'Erro desconhecido'}`);
+      const errorMsg = therapistsResult.error?.message || 'Erro desconhecido';
+      errors.push(`Terapeutas: ${errorMsg}`);
+      newPartialErrors.therapists = errorMsg; // ✅ NEW: Armazena erro específico
     }
 
     // Handle patients
     if (patientsResult.success) {
       setPatients(patientsResult.data || []);
       safeLog('Patients loaded successfully', { count: (patientsResult.data || []).length });
+      // ✅ Se sucesso, não adiciona erro
     } else {
       setPatients([]);
-      errors.push(`Pacientes: ${patientsResult.error?.message || 'Erro desconhecido'}`);
+      const errorMsg = patientsResult.error?.message || 'Erro desconhecido';
+      errors.push(`Pacientes: ${errorMsg}`);
+      newPartialErrors.patients = errorMsg; // ✅ NEW: Armazena erro específico
     }
 
     // Handle appointments
     if (appointmentsResult.success) {
       setAppointments(appointmentsResult.data || []);
       safeLog('Appointments loaded successfully', { count: (appointmentsResult.data || []).length });
+      // ✅ Se sucesso, não adiciona erro
     } else {
       setAppointments([]);
-      errors.push(`Agendamentos: ${appointmentsResult.error?.message || 'Erro desconhecido'}`);
+      const errorMsg = appointmentsResult.error?.message || 'Erro desconhecido';
+      errors.push(`Agendamentos: ${errorMsg}`);
+      newPartialErrors.appointments = errorMsg; // ✅ NEW: Armazena erro específico
     }
 
-    // Set combined error if any failed
+    // ✅ Set partial errors (só os que falharam)
+    setPartialErrors(newPartialErrors);
+
+    // Set combined error if any failed (para compatibilidade)
     if (errors.length > 0) {
       setError(`Falha ao carregar alguns dados: ${errors.join(', ')}`);
     }
@@ -158,6 +180,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     appointments,
     dataLoading,
     error,
+    partialErrors, // ✅ NEW: Expõe erros parciais
     refetch: fetchData,
 
     // Safe access methods
@@ -170,7 +193,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     <AppContext.Provider value={value}>
       {authLoading ? (
         <PageLoader />
-      ) : error && user ? (
+      ) : error && user && Object.keys(partialErrors).length === 0 ? (
+        // ✅ NEW: Só mostra erro full-screen se TODOS os dados falharam
         <div className="flex items-center justify-center h-screen text-red-500">
           Falha ao carregar dados: {error}
           <button
@@ -181,7 +205,37 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           </button>
         </div>
       ) : (
-        children
+        // ✅ NEW: Mostra children mesmo com erros parciais, mas com banner de aviso
+        <>
+          {Object.keys(partialErrors).length > 0 && (
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4" role="alert" aria-live="polite">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3 flex-1">
+                  <p className="text-sm text-yellow-700 font-medium">
+                    Alguns dados não puderam ser carregados:
+                  </p>
+                  <ul className="mt-2 text-sm text-yellow-700 list-disc list-inside">
+                    {partialErrors.therapists && <li>Terapeutas: {partialErrors.therapists}</li>}
+                    {partialErrors.patients && <li>Pacientes: {partialErrors.patients}</li>}
+                    {partialErrors.appointments && <li>Agendamentos: {partialErrors.appointments}</li>}
+                  </ul>
+                  <button
+                    onClick={handleRetry}
+                    className="mt-3 text-sm font-medium text-yellow-800 hover:text-yellow-900 underline"
+                  >
+                    Tentar recarregar dados faltantes
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+          {children}
+        </>
       )}
     </AppContext.Provider>
   );

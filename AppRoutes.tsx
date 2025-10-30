@@ -39,6 +39,16 @@ import './lib/debugHelpers';
 const LOG_CONTEXT = 'AppRoutes';
 const LOADING_TIMEOUT_MS = getAdaptiveConfig().loadingTimeout;
 
+// Utilitário: agenda execução quando o thread estiver ocioso, com fallback seguro
+const runWhenIdle = (cb: () => void) => {
+  if (typeof (window as any).requestIdleCallback === 'function') {
+    (window as any).requestIdleCallback(cb, { timeout: 1500 });
+  } else {
+    // Próximo tick para não bloquear o first paint
+    setTimeout(cb, 0);
+  }
+};
+
 type ErrorBoundaryState = {
   hasError: boolean;
   error?: Error;
@@ -228,11 +238,12 @@ const AppContent: React.FC = memo(() => {
 
   useEffect(() => {
     logger.info('Inicializando aplicação.', { context: LOG_CONTEXT });
-    
-    // Inicializar otimizações mobile primeiro
+
+    // Inicializar otimizações mobile primeiro (rápido e leve)
     initializeMobileOptimizations();
-    
-    initializeServiceWorkerCallback();
+
+    // Adiar o Service Worker para ocioso/pós-first paint
+    runWhenIdle(initializeServiceWorkerCallback);
   }, [initializeServiceWorkerCallback]);
 
   const preloadComponentsCallback = useCallback(() => {
@@ -252,8 +263,19 @@ const AppContent: React.FC = memo(() => {
   }, [user?.role]);
 
   useEffect(() => {
-    preloadComponentsCallback();
+    // Preloads não-bloqueantes: executa quando ocioso
+    runWhenIdle(preloadComponentsCallback);
   }, [preloadComponentsCallback]);
+
+  // Marcar quando autenticação está pronta para exibir login
+  useEffect(() => {
+    if (!isAuthenticated && !user && !loading) {
+      try {
+        performance.mark('auth_ready');
+        performance.measure('time_to_auth_ready', 'app_start', 'auth_ready');
+      } catch {}
+    }
+  }, [isAuthenticated, user, loading]);
 
   useEffect(() => {
     if (!loading) {
@@ -299,7 +321,7 @@ const AppContent: React.FC = memo(() => {
     switch (user.role) {
       case Role.Patient:
         return <PatientPortalDashboard user={user} onLogout={logout} />;
-      case Role.EducadorFisico:
+      case Role.Educator:
         return <PartnerPortalDashboard user={user} onLogout={logout} />;
       case Role.Admin:
       case Role.Therapist:
@@ -307,6 +329,18 @@ const AppContent: React.FC = memo(() => {
         return <CompleteDashboard user={user} onLogout={logout} />;
     }
   }, [user, logout]);
+
+  // Fast-path: se não autenticado, mostre imediatamente as rotas de Auth
+  if (!isAuthenticated && !user) {
+    return (
+      <AuthRoutes
+        onSuccess={() => setShow2FASetup(false)}
+        show2FASetup={show2FASetup}
+        onBack2FA={() => setShow2FASetup(false)}
+        onComplete2FA={() => setShow2FASetup(false)}
+      />
+    );
+  }
 
   if (loading && !loadingTimeout) {
     return loadingScreen;

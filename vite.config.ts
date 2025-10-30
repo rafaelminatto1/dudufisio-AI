@@ -84,7 +84,7 @@ export default defineConfig({
     '__DEV__': process.env.NODE_ENV !== 'production'
   },
   server: {
-    port: 5176,
+    port: 5173,
     host: 'localhost',
     hmr: {
       overlay: true
@@ -94,7 +94,7 @@ export default defineConfig({
       interval: 100
     },
     cors: true,
-    strictPort: false, // Permite usar porta alternativa automaticamente se 5176 estiver ocupada
+    strictPort: false, // Permite usar porta alternativa automaticamente se 5173 estiver ocupada
     headers: {
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',

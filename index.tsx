@@ -7,6 +7,9 @@ import AppRoutes from './AppRoutes';
 import { registerServiceWorker } from './lib/serviceWorkerRegistration';
 import { initMonitoring } from './lib/monitoring/initMonitoring';
 
+// Performance mark - início do app
+try { performance.mark('app_start'); } catch {}
+
 // Configure React Query
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,6 +59,12 @@ if (!rootElement) {
       </React.StrictMode>
     );
     console.log('🎉 React application rendered successfully!');
+
+    // Performance mark - após render
+    try {
+      performance.mark('app_rendered');
+      performance.measure('time_to_first_render', 'app_start', 'app_rendered');
+    } catch {}
 
     // Registrar service worker para offline cache
     registerServiceWorker({

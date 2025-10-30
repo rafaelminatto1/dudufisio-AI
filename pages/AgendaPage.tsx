@@ -335,18 +335,23 @@ export default function AgendaPage() {
             return true;
         } catch (error) {
             console.error('Erro ao salvar consulta:', error);
-            
+
+            // Extract more specific error message if available
+            const errorMessage = error instanceof Error
+                ? error.message
+                : 'Erro desconhecido ao salvar agendamento';
+
             handleError(error, {
                 operation: 'handleSaveAppointment',
                 severity: 'high',
-                fallbackMessage: 'Erro ao salvar agendamento',
-                context: { 
+                fallbackMessage: `Erro ao salvar agendamento: ${errorMessage}`,
+                context: {
                     appointmentId: appointmentData.id,
                     patientId: appointmentData.patientId,
                     startTime: appointmentData.startTime.toISOString()
                 }
             });
-            
+
             return false;
         } finally {
             setIsSavingAppointment(false);

@@ -36,11 +36,11 @@ export default function UserMenu() {
       >
         <img
           src={session.user.avatarUrl || `https://i.pravatar.cc/150?u=${session.user.id}`}
-          alt={session.user.name || 'Avatar'}
+          alt={session.user.fullName || 'Avatar'}
           className="w-10 h-10 rounded-full"
         />
         <div className="text-left hidden md:block">
-          <p className="text-sm font-semibold text-slate-700 truncate max-w-[100px]">{session.user.name}</p>
+          <p className="text-sm font-semibold text-slate-700 truncate max-w-[100px]">{session.user.fullName}</p>
           <p className="text-xs text-slate-500 capitalize">{session.user.role?.toLowerCase()}</p>
         </div>
         <ChevronDown className="w-4 h-4 text-slate-500 hidden md:block" />
@@ -50,7 +50,7 @@ export default function UserMenu() {
         <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
           <div className="py-1">
             <div className="px-4 py-2 border-b">
-                <p className="text-sm font-medium text-gray-900 truncate">{session.user.name}</p>
+                <p className="text-sm font-medium text-gray-900 truncate">{session.user.fullName}</p>
                 <p className="text-sm text-gray-500 truncate">{session.user.email}</p>
             </div>
             <a

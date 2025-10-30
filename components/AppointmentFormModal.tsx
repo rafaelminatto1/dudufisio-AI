@@ -632,8 +632,12 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                     </div>
             <PatientSearchInput
                       onSelectPatient={(patient) => {
+                        console.log('👤 onSelectPatient callback - Paciente recebido:', patient);
+                        console.log('🔄 Atualizando field via field.onChange (React Hook Form)');
                         field.onChange(patient as any);
+                        console.log('🔄 Atualizando selectedPatient state');
                         setSelectedPatient(patient);
+                        console.log('✅ onSelectPatient callback - Sincronização completa');
                       }}
                       selectedPatient={field.value as any}
                     />

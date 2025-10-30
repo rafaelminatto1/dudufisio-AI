@@ -233,6 +233,40 @@ export interface ParsedTreatmentPlan {
 }
 
 // =============================================
+// GEMINI CLIENT HELPER
+// =============================================
+
+/**
+ * Obtém instância do cliente Gemini configurada
+ */
+export function getGeminiClient() {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    console.warn('⚠️ VITE_GEMINI_API_KEY não configurado - retornando cliente mock');
+    // Retornar cliente mock se não tiver chave
+    return {
+      generateText: async (prompt: string) => {
+        console.warn('Mock Gemini API call:', prompt.substring(0, 50) + '...');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return 'Mock response - Configure VITE_GEMINI_API_KEY to use real AI';
+      }
+    };
+  }
+  
+  const ai = new GoogleGenerativeAI(apiKey);
+  
+  return {
+    generateText: async (prompt: string) => {
+      const model = ai.getGenerativeModel({ model: 'gemini-pro' });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      return response.text();
+    }
+  };
+}
+
+// =============================================
 // GEMINI VEO 2.0 - VIDEO GENERATION
 // =============================================
 

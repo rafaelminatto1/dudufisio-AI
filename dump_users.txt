@@ -1,0 +1,328 @@
+SET session_replication_role = replica;
+
+--
+-- PostgreSQL database dump
+--
+
+-- \restrict FVwtk2cnycRcRuLiUanowGPFAgfdS4DGt6eCUx92mPe9WgOphMvhqvpOcHtO0uR
+
+-- Dumped from database version 17.6
+-- Dumped by pg_dump version 17.6
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."users" ("id", "auth_id", "email", "email_verified", "email_verified_at", "full_name", "phone", "avatar_url", "bio", "role", "status", "is_active", "permissions", "profile_settings", "notification_preferences", "two_factor_enabled", "two_factor_secret", "failed_login_attempts", "locked_until", "last_login_at", "last_activity_at", "last_ip_address", "created_at", "updated_at", "created_by", "updated_by", "deleted_at", "deleted_by") VALUES
+	('183bf3f6-1218-495b-bb0d-a58c2f75c8d2', NULL, 'teste-payment@dudufisio.com', false, NULL, 'Paciente Teste Pagamentos', NULL, NULL, NULL, 'patient', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-18 13:48:24.96595+00', '2025-10-18 13:48:24.96595+00', NULL, NULL, NULL, NULL),
+	('c0000000-0000-0000-0000-000000000001', NULL, 'terapeuta@dudufisio.com', false, NULL, 'Dr. João Silva', '(11) 98765-4321', NULL, NULL, 'therapist', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-18 13:50:13.438573+00', '2025-10-18 13:50:13.438573+00', NULL, NULL, NULL, NULL),
+	('c0000000-0000-0000-0000-000000000002', NULL, 'paciente@dudufisio.com', false, NULL, 'Maria Santos', '(11) 91234-5678', NULL, NULL, 'patient', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-18 13:50:13.438573+00', '2025-10-18 13:50:13.438573+00', NULL, NULL, NULL, NULL),
+	('c0000000-0000-0000-0000-000000000003', NULL, 'admin@dudufisio.com', false, NULL, 'Admin Sistema', '(11) 99999-9999', NULL, NULL, 'admin', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-18 13:50:13.438573+00', '2025-10-18 13:50:13.438573+00', NULL, NULL, NULL, NULL),
+	('db84713f-16ea-412a-8b3e-387d62ab4736', NULL, 'paciente1@teste.com', false, NULL, 'Paciente Teste 1', NULL, NULL, NULL, 'patient', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-26 14:14:04.877327+00', '2025-10-26 14:14:04.877327+00', NULL, NULL, NULL, NULL),
+	('a0c5f97f-1fd1-420a-b7a6-9f80a2e60ab5', NULL, 'paciente2@teste.com', false, NULL, 'Paciente Teste 2', NULL, NULL, NULL, 'patient', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-26 14:14:04.877327+00', '2025-10-26 14:14:04.877327+00', NULL, NULL, NULL, NULL),
+	('393c7bd7-da3f-4788-85e2-1e2ef59cc4dc', NULL, 'paciente3@teste.com', false, NULL, 'Paciente Teste 3', NULL, NULL, NULL, 'patient', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-26 14:14:04.877327+00', '2025-10-26 14:14:04.877327+00', NULL, NULL, NULL, NULL),
+	('8ac7c56b-dc05-4c26-872d-486de8f7995f', NULL, 'paciente4@teste.com', false, NULL, 'Paciente Teste 4', NULL, NULL, NULL, 'patient', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-26 14:14:04.877327+00', '2025-10-26 14:14:04.877327+00', NULL, NULL, NULL, NULL),
+	('4c0ef2f1-bbc1-4297-976e-374caf5a11bd', NULL, 'paciente5@teste.com', false, NULL, 'Paciente Teste 5', NULL, NULL, NULL, 'patient', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-26 14:14:04.877327+00', '2025-10-26 14:14:04.877327+00', NULL, NULL, NULL, NULL),
+	('1a6f8210-be2d-436b-b023-3a89dd21fa25', NULL, 'rafael@teste.com', false, NULL, 'RAFAEL MINATTO DE MARTINO', NULL, NULL, NULL, 'patient', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-26 14:14:04.877327+00', '2025-10-26 14:59:40.765632+00', NULL, NULL, NULL, NULL),
+	('8eb43124-5fbc-4e5d-b099-0f4cb0846414', NULL, 'temp_1761756082971@temp.local', false, NULL, 'DEMO jonas', 'temp_1761756082971', NULL, NULL, 'patient', 'pending_verification', true, '[]', '{}', '{"sms": false, "push": true, "email": true, "whatsapp": false}', false, NULL, 0, NULL, NULL, NULL, NULL, '2025-10-29 16:41:22.971+00', '2025-10-29 16:41:22.971+00', NULL, NULL, NULL, NULL);
+
+
+--
+-- Data for Name: appointments; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."appointments" ("id", "patient_id", "therapist_id", "start_time", "end_time", "duration", "type", "status", "title", "description", "notes", "patient_notes", "is_virtual", "meeting_url", "meeting_id", "is_recurring", "recurrence_rule", "parent_appointment_id", "reminder_sent", "reminder_sent_at", "price", "paid", "payment_id", "cancelled_at", "cancelled_by", "cancellation_reason", "checked_in_at", "checked_out_at", "created_at", "updated_at", "created_by", "updated_by", "deleted_at") VALUES
+	('41ebbc92-1a58-43c2-bd7d-1672a144355b', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', '2025-10-21 13:57:22.017+00', '2025-10-21 14:57:22.017+00', 60, 'consultation', 'scheduled', NULL, NULL, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:57:18.826281+00', '2025-10-18 13:57:18.826281+00', NULL, NULL, NULL),
+	('7b38db0f-2ab6-4e39-8302-d761012537bf', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', '2025-10-21 16:49:12.459+00', '2025-10-21 17:49:12.459+00', 60, 'consultation', 'scheduled', NULL, NULL, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-18 16:49:09.082+00', '2025-10-18 16:49:09.082+00', NULL, NULL, NULL),
+	('1a1b6eaa-7d75-4a60-b2d9-33e6bc00a83c', '1a6f8210-be2d-436b-b023-3a89dd21fa25', NULL, '2025-10-21 12:00:00+00', '2025-10-21 13:00:00+00', 60, 'regular', 'scheduled', 'Sessão', NULL, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, 120.00, false, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-26 14:15:58.202816+00', '2025-10-26 14:15:58.202816+00', NULL, NULL, NULL),
+	('341b1005-b3c0-4b70-8380-0faf227ec087', '1a6f8210-be2d-436b-b023-3a89dd21fa25', NULL, '2025-10-23 12:00:00+00', '2025-10-23 13:00:00+00', 60, 'regular', 'scheduled', 'Sessão', NULL, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, 120.00, false, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-26 14:16:12.70755+00', '2025-10-26 14:16:12.70755+00', NULL, NULL, NULL),
+	('36b33b32-d2d8-4fd4-8595-4f523ffd6445', '1a6f8210-be2d-436b-b023-3a89dd21fa25', NULL, '2025-10-21 13:00:00+00', '2025-10-21 14:00:00+00', 60, 'regular', 'scheduled', 'Sessão', NULL, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, 120.00, false, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-26 14:55:26.501403+00', '2025-10-26 14:55:26.501403+00', NULL, NULL, NULL),
+	('26c9aa18-bcec-4f81-b317-555d470a4ccf', '1a6f8210-be2d-436b-b023-3a89dd21fa25', NULL, '2025-10-30 10:30:00+00', '2025-10-30 11:30:00+00', 60, 'regular', 'scheduled', 'Sessão', NULL, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, 120.00, false, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-27 03:18:34.849986+00', '2025-10-29 01:58:26.525557+00', NULL, NULL, NULL),
+	('aad7d15f-052a-4c80-bc61-f053829c73b4', '1a6f8210-be2d-436b-b023-3a89dd21fa25', NULL, '2025-10-29 10:30:00+00', '2025-10-29 11:30:00+00', 60, 'regular', 'scheduled', 'Sessão', NULL, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, 120.00, false, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-27 03:24:16.16878+00', '2025-10-29 02:01:02.480723+00', NULL, NULL, NULL),
+	('5f036a39-0b7d-4b9a-b015-92aee98af473', '1a6f8210-be2d-436b-b023-3a89dd21fa25', NULL, '2025-10-29 12:00:00+00', '2025-10-29 13:00:00+00', 60, 'regular', 'scheduled', 'Sessão', NULL, NULL, NULL, false, NULL, NULL, false, NULL, NULL, false, NULL, 120.00, false, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-29 14:37:55.58581+00', '2025-10-29 14:37:55.58581+00', NULL, NULL, NULL);
+
+
+--
+-- Data for Name: appointment_requests; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."appointment_requests" ("id", "patient_id", "therapist_id", "preferred_date", "preferred_time_slot", "alternative_dates", "reason", "urgency", "status", "response_message", "approved_date", "appointment_id", "responded_by", "responded_at", "created_at", "updated_at") VALUES
+	('ba05ef9f-e722-432e-9736-9a5a17c8f23e', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', '2025-10-21 13:50:28.979+00', '14:00-15:00', '[]', 'Teste de solicitação de agendamento', 'normal', 'pending', NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:50:25.726067+00', '2025-10-18 13:50:25.726067+00'),
+	('0a18cc52-4bef-4446-a0b4-57dd805e7752', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', '2025-10-21 13:51:30.811+00', '14:00-15:00', '[]', 'Teste de solicitação de agendamento', 'normal', 'pending', NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:51:27.566604+00', '2025-10-18 13:51:27.566604+00'),
+	('a9917b3e-e247-43b9-968a-25ad938c49f9', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', '2025-10-21 13:52:16.875+00', '14:00-15:00', '[]', 'Teste de solicitação de agendamento', 'normal', 'pending', NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:52:13.627958+00', '2025-10-18 13:52:13.627958+00'),
+	('0da41d7a-2948-406d-8a2d-0b457bbe207a', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', '2025-10-21 13:53:09.126+00', '14:00-15:00', '[]', 'Teste de solicitação de agendamento', 'normal', 'pending', NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:53:05.876189+00', '2025-10-18 13:53:05.876189+00'),
+	('b1556ff8-f4b1-416f-879b-edd62f76c8ac', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', '2025-10-21 13:57:22.017+00', '14:00-15:00', '[]', 'Teste de solicitação de agendamento', 'normal', 'approved', NULL, NULL, '41ebbc92-1a58-43c2-bd7d-1672a144355b', 'c0000000-0000-0000-0000-000000000001', '2025-10-18 13:57:22.222+00', '2025-10-18 13:57:18.75646+00', '2025-10-18 13:57:18.75646+00'),
+	('f18bbbb2-22a6-49ac-8de3-bb0e9f536784', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', '2025-10-21 16:49:12.459+00', '14:00-15:00', '[]', 'Teste de solicitação de agendamento', 'normal', 'approved', NULL, NULL, '7b38db0f-2ab6-4e39-8302-d761012537bf', 'c0000000-0000-0000-0000-000000000001', '2025-10-18 16:49:12.673+00', '2025-10-18 16:49:08.975251+00', '2025-10-18 16:49:08.975251+00');
+
+
+--
+-- Data for Name: attachments; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: suppliers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."suppliers" ("id", "name", "contact_person", "email", "phone", "address", "cnpj", "payment_terms", "delivery_time_days", "is_active", "created_at", "updated_at") VALUES
+	('462dd993-8854-4b12-9e04-2aabd40660d8', 'MedSupplies Ltda', 'João Silva', 'contato@medsupplies.com.br', '(11) 3456-7890', NULL, '12.345.678/0001-90', '30 dias', 7, true, '2025-10-19 05:34:22.306778+00', '2025-10-19 05:34:22.306778+00'),
+	('7db88cdd-91a9-4a59-83d9-8a7d541909e1', 'FisioEquip Brasil', 'Maria Santos', 'vendas@fisioequip.com.br', '(21) 9876-5432', NULL, '98.765.432/0001-10', '15 dias', 5, true, '2025-10-19 05:34:22.306778+00', '2025-10-19 05:34:22.306778+00'),
+	('a9e8d21c-4e12-4e99-b8f2-54bad6a3a98b', 'Produtos Hospitalares SA', 'Carlos Oliveira', 'comercial@prodhospitalar.com.br', '(31) 2345-6789', NULL, '11.222.333/0001-44', '45 dias', 10, true, '2025-10-19 05:34:22.306778+00', '2025-10-19 05:34:22.306778+00');
+
+
+--
+-- Data for Name: supplies; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."supplies" ("id", "name", "description", "category", "subcategory", "brand", "model", "unit_of_measure", "current_stock", "minimum_stock", "maximum_stock", "unit_cost", "supplier_id", "barcode", "expiration_date", "storage_location", "is_active", "requires_prescription", "created_by", "created_at", "updated_at") VALUES
+	('473967d9-7666-4637-84f6-fadb7ab5391b', 'Theraband Verde', 'Faixa elástica de resistência média', 'equipamentos', NULL, NULL, NULL, 'unidade', 10, 5, NULL, NULL, '7db88cdd-91a9-4a59-83d9-8a7d541909e1', NULL, NULL, NULL, true, false, NULL, '2025-10-19 05:34:22.306778+00', '2025-10-19 05:34:22.306778+00'),
+	('aaec0824-524a-4dfa-903d-52742480bb4b', 'Eletrodos Autoadesivos', 'Eletrodos descartáveis para eletroterapia', 'materiais_descartaveis', NULL, NULL, NULL, 'pacote', 20, 10, NULL, NULL, '462dd993-8854-4b12-9e04-2aabd40660d8', NULL, NULL, NULL, true, false, NULL, '2025-10-19 05:34:22.306778+00', '2025-10-19 05:34:22.306778+00'),
+	('24f74a5a-ff18-4e95-94ee-bbbe5901cb1e', 'Gel Condutor', 'Gel para eletroterapia e ultrassom', 'materiais_descartaveis', NULL, NULL, NULL, 'litro', 5, 3, NULL, NULL, '462dd993-8854-4b12-9e04-2aabd40660d8', NULL, NULL, NULL, true, false, NULL, '2025-10-19 05:34:22.306778+00', '2025-10-19 05:34:22.306778+00'),
+	('e7ed41a2-4cdb-461d-a222-6630bd8205da', 'Eletrodo Adesivo 5cm', 'Eletrodos adesivos de 5cm para eletroterapia', 'materiais_descartaveis', 'Eletrodos', '', '', 'caixa', 0, 5, NULL, NULL, '462dd993-8854-4b12-9e04-2aabd40660d8', '', NULL, 'Gaveta A1', true, false, NULL, '2025-10-19 05:50:15.64191+00', '2025-10-19 05:50:15.64191+00'),
+	('6e3de83e-a59b-4a30-aa23-4956564550bb', 'Theraband Vermelho', 'Faixa elástica de resistência média para exercícios terapêuticos', 'equipamentos', 'Resistência Elástica', '', '', 'unidade', 0, 2, NULL, 25.00, '462dd993-8854-4b12-9e04-2aabd40660d8', '', NULL, '', true, false, NULL, '2025-10-19 05:52:08.035737+00', '2025-10-19 05:52:08.035737+00');
+
+
+--
+-- Data for Name: auto_replenishment_rules; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: therapists; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: patients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."patients" ("id", "user_id", "full_name", "email", "phone", "cpf", "birth_date", "gender", "address", "blood_type", "allergies", "chronic_conditions", "current_medications", "emergency_contact", "status", "assigned_therapist_id", "health_insurance", "insurance_number", "payment_method", "how_found_us", "referral_source", "notes", "tags", "created_at", "updated_at", "created_by", "updated_by", "deleted_at") VALUES
+	('f410e36f-0704-46e2-af34-5644e0aad57d', NULL, '[DEMO] Ana Silva Santos', 'ana.silva.demo@email.com', '(11) 98765-4321', '123.456.789-01', '1985-03-15', NULL, '{"city": "São Paulo", "state": "SP", "number": "", "street": "Rua das Flores, 123", "zipcode": "01234-567", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "João Silva", "phone": "(11) 98765-1234", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 17:05:02.588+00', '2025-10-22 17:05:02.588+00', NULL, NULL, NULL),
+	('29907b72-3aa2-429e-a5c9-e6556bee81da', NULL, '[DEMO] Carlos Oliveira', 'carlos.oliveira.demo@email.com', '(21) 99876-5432', '234.567.890-12', '1990-07-22', NULL, '{"city": "Rio de Janeiro", "state": "RJ", "number": "", "street": "Av. Principal, 456", "zipcode": "20000-000", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "Maria Oliveira", "phone": "(21) 99876-1111", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 17:05:02.894+00', '2025-10-22 17:05:02.894+00', NULL, NULL, NULL),
+	('346c6763-5b18-45c2-9098-275f5cd6acf7', NULL, '[DEMO] Maria Fernandes', 'maria.fernandes.demo@email.com', '(11) 97654-3210', '345.678.901-23', '1978-11-30', NULL, '{"city": "São Paulo", "state": "SP", "number": "", "street": "Rua Central, 789", "zipcode": "04567-890", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "Pedro Fernandes", "phone": "(11) 97654-9999", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 17:05:03.114+00', '2025-10-22 17:05:03.114+00', NULL, NULL, NULL),
+	('8e143fcc-bb3e-4760-925f-3440a57c5e36', NULL, '[DEMO] João Pedro Costa', 'joao.costa.demo@email.com', '(11) 96543-2109', '456.789.012-34', '1995-05-10', NULL, '{"city": "São Paulo", "state": "SP", "number": "", "street": "Alameda dos Anjos, 321", "zipcode": "01230-456", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "Ana Costa", "phone": "(11) 96543-8888", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 17:05:03.378+00', '2025-10-22 17:05:03.378+00', NULL, NULL, NULL),
+	('54e45d11-d632-4b8a-8643-a903cfa56808', NULL, '[DEMO] Patricia Souza', 'patricia.souza.demo@email.com', '(11) 95432-1098', '567.890.123-45', '1982-09-18', NULL, '{"city": "São Paulo", "state": "SP", "number": "", "street": "Rua do Comércio, 654", "zipcode": "03456-789", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "Roberto Souza", "phone": "(11) 95432-7777", "relationship": ""}', 'inactive', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 17:05:03.611+00', '2025-10-22 17:05:03.611+00', NULL, NULL, NULL),
+	('68018358-201c-49db-b1c7-ebdaf02cf2f0', NULL, '[DEMO] Fernanda Alves', 'fernanda.alves.demo@email.com', '(11) 93210-9876', '789.012.345-67', '1988-04-05', NULL, '{"city": "São Paulo", "state": "SP", "number": "", "street": "Rua da Paz, 147", "zipcode": "05678-901", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "Lucas Alves", "phone": "(11) 93210-5555", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 17:05:04.007+00', '2025-10-22 17:05:04.007+00', NULL, NULL, NULL),
+	('84e1497a-30f2-4cab-9518-1a2b2f96711e', NULL, '[DEMO] Lucas Martins', 'lucas.martins.demo@email.com', '(11) 92109-8765', '890.123.456-78', '1992-08-14', NULL, '{"city": "São Paulo", "state": "SP", "number": "", "street": "Av. da Liberdade, 258", "zipcode": "04321-234", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "Julia Martins", "phone": "(11) 92109-4444", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 17:05:04.204+00', '2025-10-22 17:05:04.204+00', NULL, NULL, NULL),
+	('b612f295-8a29-408b-886e-074cbb363a75', NULL, '[DEMO] Sandra Rodrigues', 'sandra.rodrigues.demo@email.com', '(11) 91098-7654', '901.234.567-89', '1987-02-20', NULL, '{"city": "São Paulo", "state": "SP", "number": "", "street": "Rua Augusta, 1500", "zipcode": "01310-100", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "Paulo Rodrigues", "phone": "(11) 91098-3333", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 17:05:04.421+00', '2025-10-22 17:05:04.421+00', NULL, NULL, NULL),
+	('8f5912f6-eb0d-48f3-92d3-ebb5cb45244d', NULL, '[DEMO] Ricardo Santos', 'ricardo.santos.demo@email.com', '(11) 90987-6543', '012.345.678-90', '1975-06-12', NULL, '{"city": "São Paulo", "state": "SP", "number": "", "street": "Av. Paulista, 1000", "zipcode": "01310-000", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "Carla Santos", "phone": "(11) 90987-2222", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-22 17:05:04.631+00', '2025-10-22 17:05:04.631+00', NULL, NULL, NULL),
+	('df24f9d7-4b85-4d6e-909e-184f0c19e6d3', '8eb43124-5fbc-4e5d-b099-0f4cb0846414', 'DEMO jonas', 'temp_1761756082971@temp.local', 'temp_1761756082971', NULL, NULL, NULL, '{"zip": "", "city": "", "state": "", "street": ""}', NULL, NULL, NULL, NULL, '{"name": "", "phone": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-29 16:41:28.159713+00', '2025-10-29 16:41:28.159713+00', NULL, NULL, NULL),
+	('77636679-7742-41f2-90eb-b65a4341efc2', NULL, 'DEMO JON JON', 'temp_1761764215820@temp.local', 'temp_1761764215820', NULL, NULL, NULL, '{}', NULL, NULL, NULL, NULL, '{"name": "", "phone": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-29 18:57:03.140126+00', '2025-10-29 18:57:03.140126+00', NULL, NULL, NULL),
+	('56b5d9ee-2d61-4731-bca4-ff5d64c7c4a2', NULL, 'Amanda Hitomi Notoya Minatto', NULL, 'temp_1761576012333', NULL, NULL, NULL, '{"city": "", "state": "", "number": "", "street": "", "zipcode": "", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "", "phone": "", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-27 14:40:12.343+00', '2025-10-27 14:40:12.343+00', NULL, NULL, NULL),
+	('1a6f8210-be2d-436b-b023-3a89dd21fa25', NULL, 'RAFAEL MINATTO DE MARTINO', NULL, 'temp_1761071694057', NULL, NULL, NULL, '{"city": "", "state": "", "number": "", "street": "", "zipcode": "", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "", "phone": "", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-21 18:34:54.057+00', '2025-10-29 14:37:55.58581+00', NULL, NULL, NULL),
+	('e41000e7-6d08-429d-9752-00178cef38e5', NULL, 'Gabriel Alves Lira', NULL, 'temp_1761749157576', NULL, NULL, NULL, '{"city": "", "state": "", "number": "", "street": "", "zipcode": "", "complement": "", "neighborhood": ""}', NULL, NULL, NULL, NULL, '{"name": "", "phone": "", "relationship": ""}', 'active', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-29 14:45:57.576+00', '2025-10-29 14:45:57.576+00', NULL, NULL, NULL);
+
+
+--
+-- Data for Name: session_evolutions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: conduct_templates; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: exercise_protocols; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: exercises; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: expense_categories; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."expense_categories" ("id", "name", "description", "icon", "color", "monthly_budget", "is_active", "created_at", "updated_at") VALUES
+	('b872acbe-4aa1-4fb0-a4f9-a4750b0ce5dc', 'Aluguel', 'Aluguel do espaço', 'home', '#ef4444', NULL, true, '2025-10-18 13:08:44.279946+00', '2025-10-18 13:08:44.279946+00'),
+	('d4db92fe-e624-4be7-b010-cb874af7ea24', 'Equipamentos', 'Equipamentos e materiais', 'package', '#f59e0b', NULL, true, '2025-10-18 13:08:44.279946+00', '2025-10-18 13:08:44.279946+00'),
+	('e5f9233b-e2fb-4c09-a13b-db274f042071', 'Salários', 'Salários e benefícios', 'users', '#10b981', NULL, true, '2025-10-18 13:08:44.279946+00', '2025-10-18 13:08:44.279946+00'),
+	('f84f4b66-1077-4ced-b33c-98a4cf4f723e', 'Marketing', 'Marketing e publicidade', 'megaphone', '#8b5cf6', NULL, true, '2025-10-18 13:08:44.279946+00', '2025-10-18 13:08:44.279946+00'),
+	('fe86a21c-e6ce-47d8-a415-098595cc8a14', 'Utilidades', 'Água, luz, internet', 'zap', '#06b6d4', NULL, true, '2025-10-18 13:08:44.279946+00', '2025-10-18 13:08:44.279946+00'),
+	('6f636d17-2c88-42bc-a104-5fe115ec6dcd', 'Manutenção', 'Manutenção e reparos', 'wrench', '#6366f1', NULL, true, '2025-10-18 13:08:44.279946+00', '2025-10-18 13:08:44.279946+00'),
+	('073bba39-cf71-4c89-9563-e0721cb8dac3', 'Software', 'Assinaturas e software', 'laptop', '#ec4899', NULL, true, '2025-10-18 13:08:44.279946+00', '2025-10-18 13:08:44.279946+00'),
+	('24f30d53-36d8-4e88-993f-8952a7987e93', 'Outros', 'Outras despesas', 'more-horizontal', '#64748b', NULL, true, '2025-10-18 13:08:44.279946+00', '2025-10-18 13:08:44.279946+00');
+
+
+--
+-- Data for Name: financial_transactions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: medical_insights; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: notifications; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: notification_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: notification_templates; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."notification_templates" ("id", "name", "description", "type", "subject_template", "email_template", "sms_template", "push_template", "variables", "is_active", "created_at", "updated_at", "created_by") VALUES
+	('c4469391-1738-413f-af2e-ad92b46a401c', 'appointment_reminder_24h', NULL, 'appointment_reminder_24h', 'Lembrete: Consulta amanhã às {{time}}', '<h1>Olá {{patientName}}!</h1><p>Lembramos que você tem uma consulta agendada:</p><p><strong>Data:</strong> {{date}}</p><p><strong>Hora:</strong> {{time}}</p><p><strong>Profissional:</strong> {{therapistName}}</p>', 'Lembrete: Consulta amanhã às {{time}} com {{therapistName}}. DuduFisio', 'Consulta amanhã às {{time}} com {{therapistName}}', '{patientName,date,time,therapistName,location}', true, '2025-10-18 13:13:11.870347+00', '2025-10-18 13:13:11.870347+00', NULL),
+	('0c8177ca-e6a7-4c11-9ced-092b7dec6461', 'appointment_confirmed', NULL, 'appointment_confirmed', 'Consulta confirmada para {{date}}', '<h1>Consulta Confirmada!</h1><p>Olá {{patientName}},</p><p>Sua consulta foi confirmada:</p><p><strong>Data:</strong> {{date}}</p><p><strong>Hora:</strong> {{time}}</p>', 'Consulta confirmada para {{date}} às {{time}}. DuduFisio', 'Consulta confirmada para {{date}} às {{time}}', '{patientName,date,time,therapistName}', true, '2025-10-18 13:13:11.870347+00', '2025-10-18 13:13:11.870347+00', NULL),
+	('b5458f65-d693-423d-bdfe-99c42bd402fe', 'appointment_cancelled', NULL, 'appointment_cancelled', 'Consulta cancelada', '<h1>Consulta Cancelada</h1><p>Olá {{patientName}},</p><p>Sua consulta de {{date}} às {{time}} foi cancelada.</p><p>Motivo: {{reason}}</p>', 'Sua consulta de {{date}} foi cancelada. Entre em contato para reagendar. DuduFisio', 'Consulta de {{date}} cancelada', '{patientName,date,time,reason}', true, '2025-10-18 13:13:11.870347+00', '2025-10-18 13:13:11.870347+00', NULL);
+
+
+--
+-- Data for Name: patient_exercise_prescriptions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: patient_messages; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."patient_messages" ("id", "sender_id", "recipient_id", "subject", "message", "message_type", "status", "thread_id", "is_reply", "attachments", "priority", "read_at", "archived_at", "created_at", "updated_at", "is_read", "is_archived", "parent_message_id") VALUES
+	('bc02cf47-f6d2-48bf-b968-08651f5783e0', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'Teste de Mensagem', 'Olá, esta é uma mensagem de teste!', 'general', 'unread', NULL, false, '[]', 'normal', '2025-10-18 13:51:30.423+00', NULL, '2025-10-18 13:51:27.10864+00', '2025-10-18 13:51:27.170927+00', true, false, NULL),
+	('b378f5e6-1f43-4dd4-97d9-9ce3131f4b21', 'c0000000-0000-0000-0000-000000000001', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'RE: Teste de Mensagem', 'Olá! Recebi sua mensagem!', 'general', 'unread', NULL, false, '[]', 'normal', NULL, NULL, '2025-10-18 13:51:27.236681+00', '2025-10-18 13:51:27.236681+00', false, false, 'bc02cf47-f6d2-48bf-b968-08651f5783e0'),
+	('4b1b33e0-6a1c-46d5-9461-a5014acb6ae7', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'Teste de Mensagem', 'Olá, esta é uma mensagem de teste!', 'general', 'unread', NULL, false, '[]', 'normal', '2025-10-18 13:52:16.588+00', NULL, '2025-10-18 13:52:13.279933+00', '2025-10-18 13:52:13.342253+00', true, false, NULL),
+	('eaf90c04-835b-4d3c-9170-dd9da67293ca', 'c0000000-0000-0000-0000-000000000001', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'RE: Teste de Mensagem', 'Olá! Recebi sua mensagem!', 'general', 'unread', NULL, false, '[]', 'normal', NULL, NULL, '2025-10-18 13:52:13.404427+00', '2025-10-18 13:52:13.404427+00', false, false, '4b1b33e0-6a1c-46d5-9461-a5014acb6ae7'),
+	('7cb37260-5355-4abb-98f4-9d01e98ab276', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'Teste de Mensagem', 'Olá, esta é uma mensagem de teste!', 'general', 'unread', NULL, false, '[]', 'normal', '2025-10-18 13:53:08.809+00', NULL, '2025-10-18 13:53:05.495755+00', '2025-10-18 13:53:05.561788+00', true, false, NULL),
+	('138af04e-07ff-40fe-b23a-95a95941ac15', 'c0000000-0000-0000-0000-000000000001', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'RE: Teste de Mensagem', 'Olá! Recebi sua mensagem!', 'general', 'unread', NULL, false, '[]', 'normal', NULL, NULL, '2025-10-18 13:53:05.622995+00', '2025-10-18 13:53:05.622995+00', false, false, '7cb37260-5355-4abb-98f4-9d01e98ab276'),
+	('45c6d66d-8d84-41d3-8e38-cc0c8c907eea', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'Teste de Mensagem', 'Olá, esta é uma mensagem de teste!', 'general', 'unread', NULL, false, '[]', 'normal', '2025-10-18 13:57:21.574+00', NULL, '2025-10-18 13:57:18.249759+00', '2025-10-18 13:57:18.311337+00', true, false, NULL),
+	('c7cad8af-a8a5-4e85-bfbb-23cf0547b459', 'c0000000-0000-0000-0000-000000000001', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'RE: Teste de Mensagem', 'Olá! Recebi sua mensagem!', 'general', 'unread', NULL, false, '[]', 'normal', NULL, NULL, '2025-10-18 13:57:18.451951+00', '2025-10-18 13:57:18.451951+00', false, false, '45c6d66d-8d84-41d3-8e38-cc0c8c907eea'),
+	('31474708-640a-4167-ba20-d1169f3579a7', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'Teste de Mensagem', 'Olá, esta é uma mensagem de teste!', 'general', 'unread', NULL, false, '[]', 'normal', '2025-10-18 16:49:12.101+00', NULL, '2025-10-18 16:49:08.512275+00', '2025-10-18 16:49:08.618731+00', true, false, NULL),
+	('bafd7a09-1b46-46c1-abb7-50d514dc8f92', 'c0000000-0000-0000-0000-000000000001', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'RE: Teste de Mensagem', 'Olá! Recebi sua mensagem!', 'general', 'unread', NULL, false, '[]', 'normal', NULL, NULL, '2025-10-18 16:49:08.72981+00', '2025-10-18 16:49:08.72981+00', false, false, '31474708-640a-4167-ba20-d1169f3579a7');
+
+
+--
+-- Data for Name: payment_settings; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."payment_settings" ("id", "accept_credit_card", "accept_debit_card", "accept_pix", "accept_boleto", "accept_cash", "stripe_enabled", "stripe_public_key", "stripe_secret_key", "mercadopago_enabled", "mercadopago_public_key", "mercadopago_access_token", "pix_key", "pix_key_type", "boleto_expires_days", "notify_on_payment", "notify_on_refund", "created_at", "updated_at") VALUES
+	('00000000-0000-0000-0000-000000000001', true, true, true, true, true, false, NULL, NULL, false, NULL, NULL, NULL, NULL, 3, true, true, '2025-10-18 13:14:41.917184+00', '2025-10-18 13:14:41.917184+00');
+
+
+--
+-- Data for Name: payments; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."payments" ("id", "patient_id", "appointment_id", "amount", "currency", "status", "payment_method", "provider", "provider_payment_id", "provider_customer_id", "description", "metadata", "pix_qr_code", "pix_qr_code_url", "pix_expires_at", "boleto_url", "boleto_barcode", "boleto_expires_at", "paid_at", "refunded_at", "refunded_amount", "created_at", "updated_at", "stripe_payment_intent_id", "stripe_customer_id") VALUES
+	('f982bbc3-86ce-48a6-ab89-151489ad8390', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', NULL, 150.00, 'BRL', 'pending', 'credit_card', NULL, NULL, NULL, 'Teste - Consulta de Fisioterapia', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:48:25.074529+00', '2025-10-18 13:48:25.074529+00', NULL, NULL),
+	('34d1982a-e810-4970-98d8-2c7c8b06a566', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', NULL, 150.00, 'BRL', 'pending', 'credit_card', NULL, NULL, NULL, 'Teste - Consulta de Fisioterapia', '{}', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:50:24.831217+00', '2025-10-18 13:50:24.831217+00', NULL, NULL),
+	('2fc49475-e7a7-4dc2-b358-fea5c1a002c0', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', NULL, 150.00, 'BRL', 'completed', 'credit_card', NULL, NULL, NULL, 'Teste - Consulta de Fisioterapia', '{}', NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:51:10.502+00', NULL, NULL, '2025-10-18 13:51:07.191146+00', '2025-10-18 13:51:07.24993+00', 'pi_test_1760795470502', NULL),
+	('e8cf3d48-25ce-4a5f-9c4a-b0404778482a', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', NULL, 150.00, 'BRL', 'completed', 'credit_card', NULL, NULL, NULL, 'Teste - Consulta de Fisioterapia', '{}', NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:52:15.908+00', NULL, NULL, '2025-10-18 13:52:12.598464+00', '2025-10-18 13:52:12.666675+00', 'pi_test_1760795535908', NULL),
+	('c5b19a2c-d7e1-46fb-ac2d-50ba0b14970b', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', NULL, 150.00, 'BRL', 'completed', 'credit_card', NULL, NULL, NULL, 'Teste - Consulta de Fisioterapia', '{}', NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:53:07.964+00', NULL, NULL, '2025-10-18 13:53:04.651583+00', '2025-10-18 13:53:04.716037+00', 'pi_test_1760795587964', NULL),
+	('d7ba820d-2060-426a-bf19-a3483e09c435', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', NULL, 150.00, 'BRL', 'completed', 'credit_card', NULL, NULL, NULL, 'Teste - Consulta de Fisioterapia', '{}', NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-18 13:57:20.65+00', NULL, NULL, '2025-10-18 13:57:17.330137+00', '2025-10-18 13:57:17.39108+00', 'pi_test_1760795840650', NULL),
+	('acc3a923-61f4-4252-b38b-ad50386194d3', '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', NULL, 150.00, 'BRL', 'completed', 'credit_card', NULL, NULL, NULL, 'Teste - Consulta de Fisioterapia', '{}', NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-18 16:49:11.199+00', NULL, NULL, '2025-10-18 16:49:07.59746+00', '2025-10-18 16:49:07.710108+00', 'pi_test_1760806151198', NULL);
+
+
+--
+-- Data for Name: payment_transactions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: purchase_orders; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: purchase_approvals; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: purchase_order_items; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: stock_movements; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: supply_alerts; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: supply_batches; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: task_supplies_used; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: task_type_supply_templates; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: teleconsultas; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO "public"."teleconsultas" ("id", "appointment_id", "patient_id", "therapist_id", "room_name", "scheduled_start", "scheduled_end", "status", "jwt_token", "moderator_password", "participant_password", "patient_joined_at", "therapist_joined_at", "started_at", "ended_at", "duration_minutes", "connection_quality", "therapist_notes", "patient_feedback", "patient_rating", "recording_url", "recording_duration", "metadata", "created_at", "updated_at") VALUES
+	('5f2db40c-6840-4ca9-87c0-c3977125de46', NULL, '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'test-1760795428382', '2025-10-18 14:50:28.382+00', '2025-10-18 15:40:28.382+00', 'completed', NULL, 'mod123', 'part456', '2025-10-18 13:50:28.452+00', '2025-10-18 13:50:28.452+00', '2025-10-18 13:50:28.452+00', '2025-10-18 13:50:28.505+00', 45, 'excellent', NULL, NULL, 5, NULL, NULL, '{}', '2025-10-18 13:50:25.131207+00', '2025-10-18 13:50:25.256875+00'),
+	('4cd7e7e0-3f7e-4240-a57d-9561034a42af', NULL, '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'test-1760795536177', '2025-10-18 14:52:16.177+00', '2025-10-18 15:42:16.177+00', 'completed', NULL, 'mod123', 'part456', '2025-10-18 13:52:16.231+00', '2025-10-18 13:52:16.231+00', '2025-10-18 13:52:16.231+00', '2025-10-18 13:52:16.288+00', 45, 'excellent', NULL, NULL, 5, NULL, NULL, '{}', '2025-10-18 13:52:12.9224+00', '2025-10-18 13:52:13.040994+00'),
+	('8723694e-bd45-4425-b99f-503e479b0959', NULL, '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'test-1760795588211', '2025-10-18 14:53:08.211+00', '2025-10-18 15:43:08.211+00', 'completed', NULL, 'mod123', 'part456', '2025-10-18 13:53:08.362+00', '2025-10-18 13:53:08.362+00', '2025-10-18 13:53:08.362+00', '2025-10-18 13:53:08.465+00', 45, 'excellent', NULL, NULL, 5, NULL, NULL, '{}', '2025-10-18 13:53:04.962044+00', '2025-10-18 13:53:05.208939+00'),
+	('635fed74-19da-4431-936e-da83ed94d54f', NULL, '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'test-1760795840993', '2025-10-18 14:57:20.993+00', '2025-10-18 15:47:20.993+00', 'completed', NULL, 'mod123', 'part456', '2025-10-18 13:57:21.081+00', '2025-10-18 13:57:21.081+00', '2025-10-18 13:57:21.081+00', '2025-10-18 13:57:21.196+00', 45, 'excellent', NULL, NULL, 5, NULL, NULL, '{}', '2025-10-18 13:57:17.730753+00', '2025-10-18 13:57:17.931528+00'),
+	('8dfe9c03-85d9-4caf-bf6d-0183578063fe', NULL, '183bf3f6-1218-495b-bb0d-a58c2f75c8d2', 'c0000000-0000-0000-0000-000000000001', 'test-1760806151546', '2025-10-18 17:49:11.546+00', '2025-10-18 18:39:11.546+00', 'completed', NULL, 'mod123', 'part456', '2025-10-18 16:49:11.651+00', '2025-10-18 16:49:11.651+00', '2025-10-18 16:49:11.651+00', '2025-10-18 16:49:11.751+00', 45, 'excellent', NULL, NULL, 5, NULL, NULL, '{}', '2025-10-18 16:49:08.059051+00', '2025-10-18 16:49:08.258919+00');
+
+
+--
+-- Name: order_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('"public"."order_sequence"', 1, false);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+-- \unrestrict FVwtk2cnycRcRuLiUanowGPFAgfdS4DGt6eCUx92mPe9WgOphMvhqvpOcHtO0uR
+
+RESET ALL;

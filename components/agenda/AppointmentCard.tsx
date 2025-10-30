@@ -36,7 +36,8 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   onClick,
   className,
 }) => {
-  const getInitials = (name: string) => {
+  const getInitials = (name: string | undefined) => {
+    if (!name) return '??';
     return name
       .split(' ')
       .map(word => word[0])
@@ -112,11 +113,11 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                   </Avatar>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-slate-900 dark:text-slate-100 truncate">
-                      {appointment.patientName.split(' ')[0] || appointment.patientName}
+                      {appointment.patientName ? (appointment.patientName.split(' ')[0] || appointment.patientName) : 'Sem nome'}
                     </p>
                     {!compact && (
                       <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
-                        {appointment.therapistName}
+                        {appointment.therapistName || 'Sem terapeuta'}
                       </p>
                     )}
                   </div>
@@ -170,9 +171,9 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           
           <TooltipContent side="top" className="max-w-xs">
             <div className="space-y-1">
-              <p className="font-semibold">{appointment.patientName}</p>
+              <p className="font-semibold">{appointment.patientName || 'Sem nome'}</p>
               <p className="text-xs text-slate-600 dark:text-slate-400">
-                {appointment.therapistName}
+                {appointment.therapistName || 'Sem terapeuta'}
               </p>
               <p className="text-xs text-slate-600 dark:text-slate-400">
                 {format(appointment.startTime, 'HH:mm', { locale: ptBR })} - {format(appointment.endTime, 'HH:mm', { locale: ptBR })}

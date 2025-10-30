@@ -27,15 +27,15 @@ export default defineConfig({
   
   // Configurações compartilhadas
   use: {
-    // Base URL
-    baseURL: 'http://localhost:5173',
-    
+    // Base URL - Será sobrescrita pelo webServer
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
+
     // Trace
     trace: 'on-first-retry',
-    
+
     // Screenshot
     screenshot: 'only-on-failure',
-    
+
     // Video
     video: 'retain-on-failure',
   },
@@ -65,10 +65,14 @@ export default defineConfig({
     },
   ],
 
-  // Web server
+  // Web server - Detecta automaticamente a porta ativa
+  // O Playwright tentará encontrar um servidor rodando em 5173, 5176 ou 5177
   webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
+    command: 'npm run dev:skip-check',
+    url: process.env.PLAYWRIGHT_SERVER_URL || 'http://localhost:5173',
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI, // Reutiliza servidor se já estiver rodando
+    stdout: 'ignore',
+    stderr: 'pipe',
   },
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, Home, RefreshCw, Mail, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import * as Sentry from '@sentry/react';
 
 interface ErrorPageProps {
   error?: Error;
@@ -15,6 +16,24 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error: propError, resetError }) =
   const error = propError;
   const errorMessage = error?.message || 'Ocorreu um erro inesperado';
   const errorStack = error?.stack;
+
+  // ✅ NEW: Capture error to Sentry if not already captured
+  React.useEffect(() => {
+    if (error && typeof window !== 'undefined') {
+      // Check if error was already reported (via ErrorBoundary)
+      const errorId = Sentry.captureException(error, {
+        tags: {
+          errorSource: 'error-page',
+        },
+        level: 'error',
+      });
+      
+      // Store error ID for reference
+      if (errorId) {
+        console.log('Error reported to Sentry:', errorId);
+      }
+    }
+  }, [error]);
 
   const handleReload = () => {
     if (resetError) {
@@ -132,6 +151,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error: propError, resetError }) =
         <div className="mt-8 text-center text-xs text-slate-400">
           <p>ID do Erro: {Date.now().toString(36)}</p>
           <p>Timestamp: {new Date().toLocaleString('pt-BR')}</p>
+          <p className="mt-2 text-slate-500">Este erro foi reportado automaticamente à nossa equipe de desenvolvimento.</p>
         </div>
       </div>
     </div>

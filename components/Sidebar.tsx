@@ -224,7 +224,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
           systemNav: []
         };
 
-      case Role.EducadorFisico:
+      case Role.Educator:
         // Physical Educator focused on exercises and educational content
         return {
           mainNav: [
@@ -448,33 +448,33 @@ const Sidebar: React.FC = () => {
                 {/* User Profile Section */}
                 <Link to="/settings" title="Ver perfil e configurações" className="flex items-center w-full mb-2">
                     <div className="relative">
-                        <img src={user.avatarUrl || `https://i.pravatar.cc/150?u=${user.id}`} alt={user.name} className="w-9 h-9 rounded-full shrink-0 border-2 border-white shadow-sm" />
+                        <img src={user.avatarUrl || `https://i.pravatar.cc/150?u=${user.id}`} alt={user.fullName} className="w-9 h-9 rounded-full shrink-0 border-2 border-white shadow-sm" />
                         <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${
                           user.role === Role.Admin ? 'bg-red-500' :
                           user.role === Role.Therapist ? 'bg-blue-500' :
-                          user.role === Role.EducadorFisico ? 'bg-orange-500' :
+                          user.role === Role.Educator ? 'bg-orange-500' :
                           user.role === Role.Patient ? 'bg-green-500' :
-                          user.role === Role.EducadorFisico ? 'bg-orange-500' :
+                          user.role === Role.Educator ? 'bg-orange-500' :
                           'bg-gray-500'
                         }`} title={`Perfil: ${user.role}`} />
                     </div>
                     {!isCollapsed && (
                         <div className="ml-3 text-left flex-1 overflow-hidden min-w-0">
-                            <p className="text-sm font-semibold text-slate-700 truncate">{user.name}</p>
+                            <p className="text-sm font-semibold text-slate-700 truncate">{user.fullName}</p>
                             <div className="flex items-center gap-1">
                                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                                   user.role === Role.Admin ? 'bg-red-100 text-red-700' :
                                   user.role === Role.Therapist ? 'bg-blue-100 text-blue-700' :
-                                  user.role === Role.EducadorFisico ? 'bg-orange-100 text-orange-700' :
+                                  user.role === Role.Educator ? 'bg-orange-100 text-orange-700' :
                                   user.role === Role.Patient ? 'bg-green-100 text-green-700' :
-                                  user.role === Role.EducadorFisico ? 'bg-orange-100 text-orange-700' :
+                                  user.role === Role.Educator ? 'bg-orange-100 text-orange-700' :
                                   'bg-gray-100 text-gray-700'
                                 }`}>
                                   {user.role === Role.Admin ? '👑 Admin' :
                                    user.role === Role.Therapist ? '🩺 Terapeuta' :
-                                   user.role === Role.EducadorFisico ? '🏃 Ed. Físico' :
+                                   user.role === Role.Educator ? '🏃 Ed. Físico' :
                                    user.role === Role.Patient ? '👤 Paciente' :
-                                   user.role === Role.EducadorFisico ? '🏃 Ed. Físico' :
+                                   user.role === Role.Educator ? '🏃 Ed. Físico' :
                                    user.role}
                                 </span>
                             </div>

@@ -3,15 +3,18 @@ import React from 'react';
 // --- User & Auth Types ---
 
 export enum Role {
-  Admin = 'Admin',
-  Therapist = 'Fisioterapeuta',
-  Patient = 'Paciente',
-  EducadorFisico = 'EducadorFisico',
+  Admin = 'admin',
+  Therapist = 'therapist',
+  Patient = 'patient',
+  Educator = 'educator',
+  Partner = 'partner',
+  Manager = 'manager',
+  Receptionist = 'receptionist',
 }
 
 export interface User {
   id: string;
-  name: string;
+  fullName: string; // Mudado de 'name' para 'fullName' para alinhar com o banco
   email: string;
   role: Role;
   avatarUrl: string;

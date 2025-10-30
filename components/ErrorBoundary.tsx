@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import ErrorPage from '../pages/ErrorPage';
+import * as Sentry from '@sentry/react';
 
 interface Props {
   children: ReactNode;
@@ -41,6 +42,25 @@ class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('💥 Error Boundary Caught:', error);
     console.error('📍 Component Stack:', errorInfo.componentStack);
+    
+    // ✅ NEW: Report to Sentry with full context
+    Sentry.captureException(error, {
+      contexts: {
+        react: {
+          componentStack: errorInfo.componentStack,
+        },
+      },
+      tags: {
+        errorBoundary: true,
+        errorType: 'render-error',
+      },
+      level: 'error',
+      extra: {
+        errorInfo: {
+          componentStack: errorInfo.componentStack,
+        },
+      },
+    });
     
     // Call optional error callback
     if (this.props.onError) {

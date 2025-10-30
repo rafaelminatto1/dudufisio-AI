@@ -125,20 +125,21 @@ export const searchPatients = withSupabaseCritical(
 );
 
 export const quickAddPatient = withSupabaseMutation(
-    async (name: string): Promise<Patient> => {
+    async (name: string, phone?: string): Promise<Patient> => {
         if (!name || name.trim().length < 3) {
             throw new Error('Nome deve ter pelo menos 3 caracteres');
         }
-        
+
         if (isSupabaseEnabled) {
-            // Gerar dados temporários
-            const tempPhone = `temp_${Date.now()}`;
+            // Usar telefone fornecido ou gerar temporário
+            const patientPhone = phone && phone.trim() ? phone.trim() : `temp_${Date.now()}`;
             const tempEmail = `temp_${Date.now()}@temp.local`;
 
             secureLogger.info('Cadastrando paciente rápido', {
                 component: 'patientService',
                 action: 'createQuickPatient',
-                name: name.trim()
+                name: name.trim(),
+                phone: patientPhone
             });
 
             try {
@@ -147,7 +148,7 @@ export const quickAddPatient = withSupabaseMutation(
                     .from('patients')
                     .insert({
                         full_name: name.trim(),
-                        phone: tempPhone,
+                        phone: patientPhone,
                         email: tempEmail,
                         emergency_contact: { name: '', phone: '' },
                         address: {},
@@ -176,7 +177,7 @@ export const quickAddPatient = withSupabaseMutation(
                     name: name.trim(),
                     cpf: patientData.cpf || '',
                     birthDate: patientData.birth_date || '',
-                    phone: tempPhone,
+                    phone: patientPhone,
                     email: tempEmail,
                     emergencyContact: { name: '', phone: '' },
                     address: { street: '', city: '', state: '', zip: '' },

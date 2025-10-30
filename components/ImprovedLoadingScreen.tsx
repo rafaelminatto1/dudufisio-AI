@@ -7,28 +7,18 @@ interface ImprovedLoadingScreenProps {
 
 export const ImprovedLoadingScreen: React.FC<ImprovedLoadingScreenProps> = ({
   onTimeout,
-  timeoutMs = 10000, // 10 segundos padrão
+  timeoutMs = 6000, // 6 segundos padrão
 }) => {
   const [progress, setProgress] = useState(0);
-  const [stage, setStage] = useState('Iniciando...');
+  const [stage, setStage] = useState('Carregando...');
   const [hasTimedOut, setHasTimedOut] = useState(false);
 
   useEffect(() => {
-    // Simular progresso de carregamento
-    const progressSteps = [
-      { time: 1000, progress: 20, stage: 'Carregando autenticação...' },
-      { time: 2000, progress: 40, stage: 'Inicializando contextos...' },
-      { time: 3000, progress: 60, stage: 'Carregando dados...' },
-      { time: 4000, progress: 80, stage: 'Preparando interface...' },
-      { time: 5000, progress: 95, stage: 'Finalizando...' },
-    ];
-
-    const timers = progressSteps.map(({ time, progress, stage }) =>
-      setTimeout(() => {
-        setProgress(progress);
-        setStage(stage);
-      }, time)
-    );
+    // Removida simulação artificial. Apenas progresso leve para feedback visual.
+    const timers: number[] = [];
+    const interval = setInterval(() => {
+      setProgress(prev => (prev < 90 ? prev + 5 : prev));
+    }, 200);
 
     // Timeout de segurança
     const timeoutTimer = setTimeout(() => {
@@ -40,6 +30,7 @@ export const ImprovedLoadingScreen: React.FC<ImprovedLoadingScreenProps> = ({
     }, timeoutMs);
 
     return () => {
+      clearInterval(interval);
       timers.forEach(clearTimeout);
       clearTimeout(timeoutTimer);
     };

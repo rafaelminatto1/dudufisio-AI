@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../components/ui/card';
 import PageHeader from '../components/PageHeader';
+import SkipToContent from '../components/ui/SkipToContent';
+import { LoadingAnnouncer } from '../components/ui/LoadingAnnouncer';
 import {
   KPICards,
   PresenceEvolutionChart,
@@ -575,7 +577,12 @@ const PatientMonitoringPage: React.FC = () => {
 
   // Loading completo na primeira carga
   if (isLoading && loadingStage === 'initial') {
-    return <MonitoringPageSkeleton />;
+    return (
+      <main role="main" aria-label="Carregando monitoramento de pacientes">
+        <LoadingAnnouncer isLoading={true} message="Carregando sistema de monitoramento de pacientes..." />
+        <MonitoringPageSkeleton />
+      </main>
+    );
   }
 
   // Animações
@@ -598,7 +605,9 @@ const PatientMonitoringPage: React.FC = () => {
   );
 
   return (
-    <div className="space-y-6 p-6">
+    <main role="main" aria-label="Acompanhamento de Pacientes" className="space-y-6 p-6">
+      <SkipToContent />
+      
       {/* Header com 3 botões: Alertas, Filtros Salvos, Exportação */}
       <motion.div {...fadeInUp} className="flex items-center justify-between">
         <PageHeader
@@ -633,19 +642,26 @@ const PatientMonitoringPage: React.FC = () => {
       </motion.div>
 
       {/* Seção 1: KPIs */}
-      <AnimatePresence mode="wait">
-        {isLoading && loadingStage === 'kpis' ? (
-          <motion.div key="loading-kpis" {...fadeInUp}>
-            <KPICardsSkeleton />
-          </motion.div>
-        ) : (
-          kpiMetrics && (
-            <motion.div key="kpis" {...fadeInUp}>
-              <KPICards metrics={kpiMetrics} />
+      <section role="region" aria-labelledby="kpi-section-title">
+        <h2 id="kpi-section-title" className="sr-only">Métricas Principais do Monitoramento</h2>
+        <LoadingAnnouncer 
+          isLoading={isLoading && loadingStage === 'kpis'} 
+          message="Carregando métricas principais..."
+        />
+        <AnimatePresence mode="wait">
+          {isLoading && loadingStage === 'kpis' ? (
+            <motion.div key="loading-kpis" {...fadeInUp}>
+              <KPICardsSkeleton />
             </motion.div>
-          )
-        )}
-      </AnimatePresence>
+          ) : (
+            kpiMetrics && (
+              <motion.div key="kpis" {...fadeInUp}>
+                <KPICards metrics={kpiMetrics} />
+              </motion.div>
+            )
+          )}
+        </AnimatePresence>
+      </section>
 
       {/* Seção 1.5: Comparação de Períodos */}
       {!isLoading && kpiMetrics && previousPeriodKPIs && (
@@ -784,7 +800,7 @@ const PatientMonitoringPage: React.FC = () => {
           />
         )}
       </AnimatePresence>
-    </div>
+    </main>
   );
 };
 

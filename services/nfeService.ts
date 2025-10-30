@@ -4,6 +4,7 @@
  */
 
 import { secureLogger } from '../lib/secureLogger';
+import { handleError } from '../lib/middleware/errorHandler';
 
 export interface NFe {
   id: string;
@@ -158,11 +159,14 @@ class NFeService {
 
       return nfe;
     } catch (error) {
-      secureLogger.error('Erro ao gerar NF-e', error, {
+      handleError(error, {
+        operation: 'gerarNFe',
         component: 'NFeService',
-        action: 'gerarNFe'
+        severity: 'high',
+        context: { dados: { modelo: dados.modelo, tipo: dados.tipo } },
+        customMessage: 'Não foi possível gerar a NF-e. Verifique os dados e tente novamente.'
       });
-      throw new Error('Falha ao gerar NF-e');
+      throw error; // Re-throw para manter compatibilidade
     }
   }
 
@@ -206,11 +210,14 @@ class NFeService {
         };
       }
     } catch (error) {
-      secureLogger.error('Erro ao transmitir NF-e', error, {
+      handleError(error, {
+        operation: 'transmitirNFe',
         component: 'NFeService',
-        action: 'transmitirNFe'
+        severity: 'high',
+        context: { nfeNumero: nfe.numero, chave: nfe.chave },
+        customMessage: 'Não foi possível transmitir a NF-e para a Sefaz. Verifique a conexão e tente novamente.'
       });
-      throw new Error('Falha ao transmitir NF-e');
+      throw error; // Re-throw para manter compatibilidade
     }
   }
 
@@ -238,11 +245,14 @@ class NFeService {
         dataAutorizacao: new Date()
       };
     } catch (error) {
-      secureLogger.error('Erro ao consultar NF-e', error, {
+      handleError(error, {
+        operation: 'consultarNFe',
         component: 'NFeService',
-        action: 'consultarNFe'
+        severity: 'medium',
+        context: { chave },
+        customMessage: 'Não foi possível consultar o status da NF-e. Tente novamente mais tarde.'
       });
-      throw new Error('Falha ao consultar NF-e');
+      throw error; // Re-throw para manter compatibilidade
     }
   }
 
@@ -278,11 +288,14 @@ class NFeService {
         motivo: 'Cancelamento homologado'
       };
     } catch (error) {
-      secureLogger.error('Erro ao cancelar NF-e', error, {
+      handleError(error, {
+        operation: 'cancelarNFe',
         component: 'NFeService',
-        action: 'cancelarNFe'
+        severity: 'high',
+        context: { chave, justificativa: justificativa.substring(0, 50) },
+        customMessage: 'Não foi possível cancelar a NF-e. Verifique a justificativa e tente novamente.'
       });
-      throw new Error('Falha ao cancelar NF-e');
+      throw error; // Re-throw para manter compatibilidade
     }
   }
 
@@ -313,9 +326,12 @@ class NFeService {
 
       return true;
     } catch (error) {
-      secureLogger.error('Erro ao inutilizar numeração', error, {
+      handleError(error, {
+        operation: 'inutilizarNumeracao',
         component: 'NFeService',
-        action: 'inutilizarNumeracao'
+        severity: 'medium',
+        context: { numeroInicial, numeroFinal, serie },
+        customMessage: 'Não foi possível inutilizar a numeração. Verifique os dados e tente novamente.'
       });
       return false;
     }
@@ -359,11 +375,14 @@ ${nfe.protocoloAutorizacao ? `Protocolo: ${nfe.protocoloAutorizacao}` : ''}
       const blob = new Blob([pdfContent], { type: 'application/pdf' });
       return blob;
     } catch (error) {
-      secureLogger.error('Erro ao gerar DANFE', error, {
+      handleError(error, {
+        operation: 'gerarDANFE',
         component: 'NFeService',
-        action: 'gerarDANFE'
+        severity: 'medium',
+        context: { nfeNumero: nfe.numero },
+        customMessage: 'Não foi possível gerar o DANFE. Tente novamente mais tarde.'
       });
-      throw new Error('Falha ao gerar DANFE');
+      throw error; // Re-throw para manter compatibilidade
     }
   }
 
@@ -387,11 +406,14 @@ ${nfe.protocoloAutorizacao ? `Protocolo: ${nfe.protocoloAutorizacao}` : ''}
         action: 'enviarPorEmail'
       });
     } catch (error) {
-      secureLogger.error('Erro ao enviar email', error, {
+      handleError(error, {
+        operation: 'enviarPorEmail',
         component: 'NFeService',
-        action: 'enviarPorEmail'
+        severity: 'medium',
+        context: { nfeNumero: nfe.numero, destinatario },
+        customMessage: 'Não foi possível enviar a NF-e por email. Verifique o endereço e tente novamente.'
       });
-      throw new Error('Falha ao enviar NF-e por email');
+      throw error; // Re-throw para manter compatibilidade
     }
   }
 
@@ -413,11 +435,14 @@ ${nfe.protocoloAutorizacao ? `Protocolo: ${nfe.protocoloAutorizacao}` : ''}
       // Simulação
       return path;
     } catch (error) {
-      secureLogger.error('Erro ao armazenar XML', error, {
+      handleError(error, {
+        operation: 'armazenarXML',
         component: 'NFeService',
-        action: 'armazenarXML'
+        severity: 'high',
+        context: { chave: nfe.chave },
+        customMessage: 'Não foi possível armazenar o XML da NF-e. Verifique o storage e tente novamente.'
       });
-      throw new Error('Falha ao armazenar XML');
+      throw error; // Re-throw para manter compatibilidade
     }
   }
 

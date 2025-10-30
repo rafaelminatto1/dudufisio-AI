@@ -1,12 +1,14 @@
 # 🐛 Bugs Pendentes - DuduFisio-AI
 
-**Última Atualização:** 29 de Janeiro de 2025
+**Última Atualização:** 29 de Janeiro de 2025 - 16:30 UTC
 
 ---
 
 ## 🔴 CRÍTICO - Alta Prioridade
 
 ### 1. Quick Patient Registration + Appointment não funciona corretamente
+
+**Status:** 🔍 EM INVESTIGAÇÃO - Testes E2E bloqueados por autenticação
 
 **Descrição:**
 O fluxo de criação expressa de paciente e agendamento em um único modal não está funcionando como esperado.
@@ -31,50 +33,62 @@ O fluxo de criação expressa de paciente e agendamento em um único modal não 
 - ❌ Validação pode estar bloqueando mesmo com paciente válido
 
 **Arquivos Envolvidos:**
-- [components/AppointmentFormModal.tsx](components/AppointmentFormModal.tsx) (linhas 288-325)
+- [components/AppointmentFormModal.tsx](components/AppointmentFormModal.tsx) (linhas 288-325, 633-643)
+- [components/agenda/PatientSearchInput.tsx](components/agenda/PatientSearchInput.tsx) (linhas 83-90)
+- [pages/AgendaPage.tsx](pages/AgendaPage.tsx) (linhas 322-354)
 - [services/patientService.ts](services/patientService.ts) (linhas 144-191)
 - [services/appointmentService.ts](services/appointmentService.ts)
 - [hooks/useAppointments.ts](hooks/useAppointments.ts)
 
-**Logs de Debug Necessários:**
-```typescript
-// Em AppointmentFormModal.tsx - handleSaveClick
-console.log('🚀 handleSaveClick CHAMADO!');
-console.log('   FormData recebido:', formData);
-console.log('   selectedPatient:', selectedPatient);
-console.log('   formData.patient:', formData?.patient);
-```
+**Debug Logs Adicionados:**
+✅ Debug logs extensivos adicionados em todos os pontos críticos do fluxo
 
 **Correções Já Tentadas:**
 - ✅ Corrigido schema do Supabase (patients table sem user_id)
 - ✅ Corrigido uso de `formData.patient` em vez de `selectedPatient`
 - ✅ Adicionado suporte Supabase em appointmentService
-- ❌ **AINDA NÃO FUNCIONA - PRECISA INVESTIGAÇÃO ADICIONAL**
+- ✅ Debug logs adicionados em PatientSearchInput.tsx
+- ✅ Debug logs adicionados em AppointmentFormModal.tsx
+- ✅ Debug logs adicionados em AgendaPage.tsx
+- ❌ **AINDA NÃO FUNCIONA - PRECISA TESTE MANUAL**
 
-**Próximos Passos para Debug:**
-1. Adicionar mais logs em `quickAddPatient()` para ver se paciente é criado
-2. Verificar se `onPatientCreated` callback está sendo chamado
-3. Verificar se `formData.patient` está sendo atualizado após criação
-4. Verificar validação em `handleSaveClick` - pode estar bloqueando indevidamente
-5. Verificar se `saveAppointment()` está sendo chamado corretamente
-6. Verificar se `eventService.emit('appointments:changed')` está funcionando
+**Bloqueio Atual:**
+- Testes E2E não conseguem autenticar (demo accounts podem não existir em Supabase)
+- Necessário teste manual para identificar problema específico
 
-**Teste Manual:**
-```
-1. Abrir http://localhost:5177/agenda
-2. Clicar em "Novo Agendamento"
-3. Digitar "DEMO Jonas"
-4. Clicar em "cadastrar DEMO Jonas"
-5. Aguardar 2 segundos
-6. Verificar console logs
-7. Preencher título: "Avaliação Inicial"
-8. Clicar "Confirmar Agendamento"
-9. Verificar se modal fecha
-10. Verificar se appointment aparece na agenda
-11. Abrir Supabase Studio → appointments table → Verificar registro
-```
+**Próximos Passos - TESTE MANUAL:**
 
-**Estimativa de Tempo:** 1-2 horas
+1. **Acesse a aplicação:**
+   ```
+   http://localhost:5177/agenda
+   ```
+
+2. **Faça login** (use uma das opções):
+   - Login sem senha (OTP)
+   - Conta demo (se disponível)
+   - Conta real do Supabase
+
+3. **Execute o fluxo completo:**
+   - Clicar em "Novo Agendamento"
+   - Digitar "DEMO TesteBug" no campo paciente
+   - Clicar em "cadastrar DEMO TesteBug"
+   - Aguardar 2 segundos
+   - Preencher título: "Avaliação Inicial"
+   - Selecionar data/hora
+   - Clicar "Confirmar Agendamento"
+
+4. **Observe os console logs:**
+   - Abra DevTools (F12)
+   - Monitore tab Console
+   - Procure por logs com emojis: 🔄, ✅, ❌, 🔍, 👤
+   - Identifique onde o fluxo quebra
+
+5. **Verifique resultados:**
+   - Modal fechou?
+   - Appointment aparece na agenda?
+   - Supabase Studio → appointments table → Registro existe?
+
+**Estimativa de Tempo:** 2-3 horas (incluindo debug manual)
 **Complexidade:** Média-Alta
 **Impacto:** Alto (funcionalidade principal do sistema)
 
@@ -82,30 +96,33 @@ console.log('   formData.patient:', formData?.patient);
 
 ## 🟡 MÉDIO - Média Prioridade
 
-### 2. Testes E2E Falhando (Connection Refused)
+### 2. Testes E2E Bloqueados por Autenticação
 
 **Descrição:**
-Todos os 4 testes E2E estão falhando com `ERR_CONNECTION_REFUSED` mesmo com dev server rodando.
+Testes E2E não conseguem completar login com contas demo.
 
 **Erro:**
-```
-Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/agenda
-```
+- Login aparenta sucesso no código
+- Mas screenshot mostra ainda na tela de login
+- `waitForURL` pode estar falhando silenciosamente
 
 **Causa Provável:**
-- Playwright config aponta para porta 5173
-- Dev server está rodando na porta 5177
-- Mismatch de portas
+- Contas demo não existem no Supabase
+- Redirect após login pode estar falhando
+- Playwright não detecta mudança de URL corretamente
 
 **Arquivos Envolvidos:**
-- [playwright.config.ts](playwright.config.ts) (linha 31, 71)
 - [tests/e2e/appointment-flow.spec.ts](tests/e2e/appointment-flow.spec.ts)
+- [tests/e2e/helpers/auth.ts](tests/e2e/helpers/auth.ts)
+- [pages/auth/LoginPage.tsx](pages/auth/LoginPage.tsx) (linhas 39-44, 74-100)
 
-**Solução:**
-Atualizar `playwright.config.ts` para porta dinâmica ou fixar porta do Vite.
+**Solução Temporária:**
+- Usar teste manual enquanto E2E não funciona
+- Considerar criar contas demo reais no Supabase
+- Ou usar mecanismo de auth bypass para testes
 
-**Estimativa:** 15 minutos
-**Impacto:** Médio (bloqueia automação de testes)
+**Estimativa:** 1 hora
+**Impacto:** Médio (bloqueia automação mas não funcionalidade)
 
 ---
 
@@ -129,7 +146,7 @@ Múltiplos erros TypeScript não relacionados ao fluxo principal:
 
 | Prioridade | Total | Status |
 |------------|-------|--------|
-| 🔴 Crítico | 1     | Pendente |
+| 🔴 Crítico | 1     | Em Investigação |
 | 🟡 Médio   | 1     | Pendente |
 | 🟢 Baixo   | 1     | Pode Esperar |
 
@@ -140,17 +157,29 @@ Múltiplos erros TypeScript não relacionados ao fluxo principal:
 
 ## 🎯 Próxima Ação Recomendada
 
-Resolver o bug **#1 (Quick Patient Registration)** antes de continuar com novos componentes, pois é funcionalidade crítica do sistema.
+**EXECUTAR TESTE MANUAL DO BUG #1**
 
-**Plan de Ação:**
-1. Adicionar debug logs extensivos em todo o fluxo
-2. Testar manualmente passo a passo
-3. Identificar onde o fluxo quebra
-4. Corrigir problema específico
-5. Re-testar até funcionar 100%
-6. Documentar solução
+Como os testes E2E estão bloqueados por problemas de autenticação, a próxima ação é:
+
+1. Abrir aplicação em http://localhost:5177
+2. Fazer login manualmente
+3. Testar fluxo de quick patient registration
+4. Monitorar console logs
+5. Identificar ponto exato de falha
+6. Aplicar correção específica
+
+**Preparação Completa:**
+- ✅ Dev server rodando (porta 5177)
+- ✅ Debug logs em todos os pontos críticos
+- ✅ Guia de teste manual criado
+- ✅ Documentação atualizada
+- ⏳ **AGUARDANDO EXECUÇÃO MANUAL**
 
 ---
 
 **Responsável:** Pendente
 **Data Limite:** Antes de deploy para produção
+**Documentos Relacionados:**
+- [DEBUG_PLAN_QUICK_REGISTRATION.md](DEBUG_PLAN_QUICK_REGISTRATION.md)
+- [TESTE_MANUAL_QUICK_REGISTRATION.md](TESTE_MANUAL_QUICK_REGISTRATION.md)
+- [STATUS_DESENVOLVIMENTO_ATUAL.md](STATUS_DESENVOLVIMENTO_ATUAL.md)

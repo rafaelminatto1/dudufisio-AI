@@ -49,15 +49,31 @@ class SupabaseAuthService {
       });
 
       // Set a timeout for initialization to prevent infinite loading
+      // Aumentado para 30 segundos para permitir que Supabase complete a verificação de sessão
       const initTimeout = setTimeout(() => {
-        secureLogger.warn('Auth initialization timeout, fallback ativado', {
+        secureLogger.warn('Auth initialization timeout após 30s, fallback ativado', {
           component: 'supabaseAuthService'
         });
         this.switchToFallbackAuth();
-      }, 8000); // Aumentado para 8 segundos
+      }, 30000); // 30 segundos - tempo suficiente para Supabase verificar sessão persistida
+
+      // Fast-path: se nada responder rapidamente, finalize loading para liberar a UI do login
+      const earlyFinishTimer = setTimeout(() => {
+        if (this.currentState.loading && !this.currentState.user) {
+          secureLogger.info('Finalizando loading cedo (200ms) para exibir login imediatamente', {
+            component: 'supabaseAuthService'
+          });
+          this.updateState({ loading: false });
+        }
+      }, 200);
 
       try {
         // Get initial session with retry
+        secureLogger.info('Verificando sessão existente...', {
+          component: 'supabaseAuthService',
+          action: 'initializeAuth'
+        });
+
         const { data: { session }, error: sessionError } = await retryApiCall(
           () => supabase.auth.getSession(),
           'getSession',
@@ -75,9 +91,11 @@ class SupabaseAuthService {
         }
 
         if (session?.user) {
-          secureLogger.info('Usuário autenticado via Supabase', {
+          secureLogger.info('✅ Sessão encontrada e restaurada do Supabase', {
             component: 'supabaseAuthService',
-            userId: session.user.id
+            userId: session.user.id,
+            email: session.user.email,
+            expiresAt: session.expires_at
           });
           const user = await this.mapSupabaseUserToUser(session.user);
           this.updateState({ user, session, loading: false });
@@ -89,8 +107,9 @@ class SupabaseAuthService {
           this.updateState({ user: null, session: null, loading: false });
         }
 
-        // Clear the timeout since we completed successfully
+        // Clear the timeouts since we completed successfully
         clearTimeout(initTimeout);
+        clearTimeout(earlyFinishTimer);
 
         // Listen for auth changes
         supabase.auth.onAuthStateChange(async (event, session) => {
@@ -121,6 +140,7 @@ class SupabaseAuthService {
 
       } catch (error) {
         clearTimeout(initTimeout);
+        clearTimeout(earlyFinishTimer);
         secureLogger.error('Supabase auth failed, switching to fallback', error, {
           component: 'supabaseAuthService'
         });
@@ -230,19 +250,19 @@ class SupabaseAuthService {
         phone: undefined,
         createdAt: new Date().toISOString()
       },
-      'therapist@dudufisio.com': {
+      'terapeuta@dudufisio.com': {
         id: 'mock-therapist-1',
-        email: 'therapist@dudufisio.com',
-        name: 'Fisioterapeuta',
+        email: 'terapeuta@dudufisio.com',
+        fullName: 'Dr. João Silva',
         role: Role.Therapist,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
       },
-      'patient@dudufisio.com': {
+      'paciente@dudufisio.com': {
         id: 'mock-patient-1',
-        email: 'patient@dudufisio.com',
-        name: 'Paciente',
+        email: 'paciente@dudufisio.com',
+        fullName: 'Maria Santos',
         role: Role.Patient,
         avatarUrl: '',
         phone: undefined,
@@ -251,8 +271,8 @@ class SupabaseAuthService {
       'educator@dudufisio.com': {
         id: 'mock-educator-1',
         email: 'educator@dudufisio.com',
-        name: 'Educador Físico',
-        role: Role.EducadorFisico,
+        fullName: 'Educador Físico',
+        role: Role.Educator,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString(),
@@ -381,7 +401,7 @@ class SupabaseAuthService {
         password: userData.password,
         options: {
           data: {
-            name: userData.name,
+            full_name: userData.name,
             role: userData.role,
             phone: userData.phone,
           }
@@ -397,7 +417,7 @@ class SupabaseAuthService {
         .insert({
           id: data.user.id,
           email: userData.email,
-          name: userData.name,
+          full_name: userData.name,
           role: userData.role,
           phone: userData.phone,
           created_at: new Date().toISOString(),
@@ -461,7 +481,7 @@ class SupabaseAuthService {
     try {
       const { data: { user: authUser }, error: authError } = await supabase.auth.updateUser({
         data: {
-          name: updates.name,
+          full_name: updates.fullName,
           phone: updates.phone,
         }
       });
@@ -471,13 +491,13 @@ class SupabaseAuthService {
 
       // Update profile in our custom table
       const { error: profileError } = await supabase
-        .from('user_profiles')
+        .from('users')
         .update({
-          name: updates.name,
+          full_name: updates.fullName,
           phone: updates.phone,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', authUser.id);
+        .eq('auth_id', authUser.id);
 
       if (profileError) throw profileError;
 
@@ -655,24 +675,24 @@ class SupabaseAuthService {
 
   private async mapSupabaseUserToUser(supabaseUser: SupabaseUser): Promise<User> {
     try {
-      // Try to get additional user data from our profiles table
+      // Try to get additional user data from our users table
       const { data: profile } = await supabase
-        .from('user_profiles')
+        .from('users')
         .select('*')
-        .eq('id', supabaseUser.id)
+        .eq('auth_id', supabaseUser.id)
         .single();
 
       return {
         id: supabaseUser.id,
+        fullName: profile?.full_name || supabaseUser.user_metadata?.['full_name'] || supabaseUser.email?.split('@')[0] || 'Usuário',
         email: supabaseUser.email || '',
-        name: profile?.name || supabaseUser.user_metadata?.['name'] || 'Usuário',
-        role: profile?.role || supabaseUser.user_metadata?.['role'] || Role.Patient,
+        role: (profile?.role as Role) || supabaseUser.user_metadata?.['role'] || Role.Patient,
         phone: profile?.phone || supabaseUser.user_metadata?.['phone'] || '',
-        avatarUrl: profile?.avatar_url || supabaseUser.user_metadata?.['avatar_url'] || '',
+        avatarUrl: profile?.avatar_url || supabaseUser.user_metadata?.['avatar_url'] || `https://api.dicebear.com/7.x/avataaars/svg?seed=${supabaseUser.email}`,
         emailVerified: !!supabaseUser.email_confirmed_at,
         createdAt: supabaseUser.created_at,
         lastSignIn: supabaseUser.last_sign_in_at,
-        mfaEnabled: supabaseUser.factors && supabaseUser.factors.length > 0,
+        mfaEnabled: profile?.two_factor_enabled || (supabaseUser.factors && supabaseUser.factors.length > 0),
       };
     } catch (error) {
       secureLogger.error('Erro ao mapear usuário', error, {
@@ -683,11 +703,11 @@ class SupabaseAuthService {
       // Fallback to basic user data
       return {
         id: supabaseUser.id,
+        fullName: supabaseUser.user_metadata?.['full_name'] || supabaseUser.email?.split('@')[0] || 'Usuário',
         email: supabaseUser.email || '',
-        name: supabaseUser.user_metadata?.['name'] || 'Usuário',
         role: supabaseUser.user_metadata?.['role'] || Role.Patient,
         phone: supabaseUser.user_metadata?.['phone'] || '',
-        avatarUrl: supabaseUser.user_metadata?.['avatar_url'] || '',
+        avatarUrl: supabaseUser.user_metadata?.['avatar_url'] || `https://api.dicebear.com/7.x/avataaars/svg?seed=${supabaseUser.email}`,
         emailVerified: !!supabaseUser.email_confirmed_at,
         createdAt: supabaseUser.created_at,
         lastSignIn: supabaseUser.last_sign_in_at,

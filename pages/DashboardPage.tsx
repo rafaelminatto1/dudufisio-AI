@@ -11,6 +11,7 @@ import { useData } from "../contexts/AppContext";
 import TodaysAppointments from '../components/dashboard/glance/TodaysAppointments';
 import PendingTasks from '../components/dashboard/glance/PendingTasks';
 import RecentActivity from '../components/dashboard/glance/RecentActivity';
+import { IncompleteRegistrationsCard } from '../components/dashboard/IncompleteRegistrationsCard';
 import useDashboardStats from '../hooks/useDashboardStats';
 import { AppointmentTypeColors, EnrichedAppointment } from '../types';
 import { useOptimizedPatients, useOptimizedAppointments } from '../hooks/useOptimizedData';
@@ -198,6 +199,11 @@ const DashboardPage: React.FC = () => {
                             subtitle="Maria Silva"
                         />
                     </ResponsiveGrid>
+                </AnimatedContainer>
+
+                {/* Incomplete Registrations Alert */}
+                <AnimatedContainer animation="fadeInUp" className="mb-8">
+                    <IncompleteRegistrationsCard patients={patients || []} />
                 </AnimatedContainer>
 
                 {/* Quick Actions */}

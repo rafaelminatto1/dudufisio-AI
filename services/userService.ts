@@ -48,7 +48,7 @@ class UserService {
     return mockUsers.map(user => ({
       id: user.id,
       email: user.email,
-      full_name: user.name,
+      full_name: user.fullName,
       role: user.role as any,
       is_active: true,
       created_at: new Date().toISOString(),
