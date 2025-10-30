@@ -74,7 +74,7 @@ const AppointmentTooltip: React.FC<AppointmentTooltipProps> = ({
 
         <div className="flex items-center gap-2 text-xs text-slate-600">
           <DollarSign className="w-3.5 h-3.5 text-slate-400" />
-          <span>R$ {appointment.value.toFixed(2)}</span>
+          <span>{formatCurrencyBR(appointment.value)}</span>
         </div>
       </div>
 

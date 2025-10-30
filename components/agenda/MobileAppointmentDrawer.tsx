@@ -91,7 +91,7 @@ const MobileAppointmentDrawer: React.FC<MobileAppointmentDrawerProps> = ({
                 <div>
                   <p className="text-sm text-slate-600">Valor</p>
                   <p className="font-semibold text-slate-900">
-                    R$ {appointment.value.toFixed(2)}
+                    {formatCurrencyBR(appointment.value)}
                   </p>
                 </div>
               </div>

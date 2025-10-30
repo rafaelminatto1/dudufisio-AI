@@ -4,6 +4,7 @@ import { Card } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Appointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
+import { formatCurrencyBR } from '../../lib/format';
 import { motion } from 'framer-motion';
 
 interface AgendaStatsProps {
@@ -74,7 +75,7 @@ const AgendaStats: React.FC<AgendaStatsProps> = ({ appointments, therapists, cla
     },
     {
       label: 'Valor Total',
-      value: `R$ ${totalValue.toFixed(2)}`,
+      value: formatCurrencyBR(totalValue),
       icon: <DollarSign className="w-5 h-5" />,
       color: 'text-emerald-600 bg-emerald-50'
     },
@@ -182,13 +183,13 @@ const AgendaStats: React.FC<AgendaStatsProps> = ({ appointments, therapists, cla
           <div className="p-3 bg-green-50 rounded-lg">
             <div className="text-xs text-green-600 mb-1">Pago</div>
             <div className="text-lg font-bold text-green-700">
-              R$ {paidValue.toFixed(2)}
+              {formatCurrencyBR(paidValue)}
             </div>
           </div>
           <div className="p-3 bg-orange-50 rounded-lg">
             <div className="text-xs text-orange-600 mb-1">Pendente</div>
             <div className="text-lg font-bold text-orange-700">
-              R$ {(totalValue - paidValue).toFixed(2)}
+              {formatCurrencyBR(totalValue - paidValue)}
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { Badge } from '../ui/badge';
 import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
-import { displayAppointmentType } from '../../lib/format';
+import { displayAppointmentType, formatCurrencyBR } from '../../lib/format';
 
 interface AgendaDashboardProps {
   appointments: EnrichedAppointment[];
@@ -77,7 +77,7 @@ const AgendaDashboard: React.FC<AgendaDashboardProps> = ({ appointments, therapi
             <div>
               <p className="text-sm text-slate-600">Receita Prevista</p>
               <p className="text-2xl font-bold text-slate-900">
-                R$ {totalRevenue.toFixed(2)}
+                {formatCurrencyBR(totalRevenue)}
               </p>
             </div>
             <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center border-2 border-green-200">

@@ -312,7 +312,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
                           </div>
                           <div className="text-right">
                             <div className="text-sm font-semibold text-slate-900">
-                              R$ {app.value.toFixed(2)}
+                              {formatCurrencyBR(app.value)}
                             </div>
                             <div className={`text-xs ${app.paymentStatus === 'paid' ? 'text-green-600' : 'text-slate-500'}`}>
                               {app.paymentStatus === 'paid' ? 'Pago' : 'Pendente'}

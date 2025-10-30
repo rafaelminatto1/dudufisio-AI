@@ -9,7 +9,7 @@ import {
 } from '../ui/popover';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { displayAppointmentType } from '../../lib/format';
+import { displayAppointmentType, formatCurrencyBR } from '../../lib/format';
 import { Separator } from '../ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { 
@@ -173,7 +173,7 @@ const AppointmentDetailPopover: React.FC<AppointmentDetailPopoverProps> = ({
                 <DollarSign className="w-4 h-4 text-green-600" />
                 <div>
                   <p className="text-sm font-medium text-green-600">
-                    R$ {appointment.value.toFixed(2)}
+                    {formatCurrencyBR(appointment.value)}
                   </p>
                 </div>
               </div>
