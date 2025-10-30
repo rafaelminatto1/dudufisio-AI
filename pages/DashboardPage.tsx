@@ -178,7 +178,7 @@ const DashboardPage: React.FC = () => {
                         />
                         <StatCard
                             title="Faturamento"
-                            value={`R$ ${stats.monthlyRevenue.toLocaleString()}`}
+                            value={stats.monthlyRevenue.value}
                             icon={DollarSign}
                             variant="success"
                             trend={{ value: 8, period: "este mês" }}

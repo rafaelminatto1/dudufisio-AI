@@ -22,7 +22,7 @@ import AuthRoutes from './pages/auth/AuthRoutes';
 import { Role } from './types';
 
 // Lazy load dos dashboards específicos por role
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const MainDashboard = React.lazy(() => import('./pages/MainDashboard'));
 const PatientPortalDashboard = React.lazy(() => import('./pages/PatientPortalDashboard'));
 const PartnerPortalDashboard = React.lazy(() => import('./pages/PartnerPortalDashboard'));
 
@@ -343,7 +343,7 @@ const AppContent: React.FC = memo(() => {
       default:
         return (
           <Suspense fallback={<MobileLoadingScreen />}>
-            <DashboardPage />
+            <MainDashboard user={user} onLogout={logout} />
           </Suspense>
         );
     }
@@ -379,8 +379,9 @@ const AppContent: React.FC = memo(() => {
     // Prefetch em idle de alguns chunks de dashboard após autenticação
     runWhenIdle(() => {
       try {
-        import('./pages/DashboardPage');
+        import('./pages/MainDashboard');
         import('./pages/AgendaPage');
+        import('./pages/PatientListPage');
       } catch {}
     });
 

@@ -1,10 +1,13 @@
 import React, { useMemo, memo } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
-  LayoutGrid, Users, Calendar, Activity, FileText, BarChart3,
+  LayoutGrid, Users, Users2, Calendar, Activity, FileText, BarChart3,
   DollarSign, BrainCircuit, Settings, X, ChevronLeft, ChevronRight,
   Stethoscope, ClipboardList, Package, MessageSquare, Target,
-  Library, Film, TrendingUp, Bell
+  Library, Film, TrendingUp, Bell, Monitor, Ticket, Handshake,
+  CreditCard, SlidersHorizontal, ShieldCheck, Zap, Globe, FileCheck,
+  FileSpreadsheet, FilePlus, FileClock, AlertTriangle, AreaChart,
+  Archive, BookMarked, Dumbbell
 } from 'lucide-react';
 import { Role } from '../../types';
 import { useNotifications } from '../../hooks/useNotifications';
@@ -68,7 +71,7 @@ const ResponsiveSidebar: React.FC<ResponsiveSidebarProps> = ({
           { id: 'patients', path: '/patients', icon: Users, label: 'Pacientes' },
           { id: 'agenda', path: '/agenda', icon: Calendar, label: 'Agenda' },
           { id: 'acompanhamento', path: '/acompanhamento', icon: Activity, label: 'Acompanhamento' },
-          { id: 'exercises', path: '/exercises', icon: Activity, label: 'Exercícios' },
+        { id: 'exercises', path: '/exercises', icon: Activity, label: 'Exercícios' },
           { id: 'protocols', path: '/protocols', icon: FileText, label: 'Protocolos' },
         ],
       });
@@ -79,9 +82,9 @@ const ResponsiveSidebar: React.FC<ResponsiveSidebarProps> = ({
       sections.push({
         title: 'Analytics',
         items: [
-          { id: 'reports', path: '/reports', icon: BarChart3, label: 'Relatórios' },
-          { id: 'financials', path: '/financials', icon: DollarSign, label: 'Financeiro' },
-          { id: 'analytics', path: '/clinical-analytics', icon: TrendingUp, label: 'Analytics' },
+        { id: 'reports', path: '/reports', icon: BarChart3, label: 'Relatórios' },
+        { id: 'financial', path: '/financial', icon: DollarSign, label: 'Financeiro' },
+        { id: 'analytics', path: '/analytics', icon: TrendingUp, label: 'Analytics' },
         ],
       });
     }
@@ -97,6 +100,46 @@ const ResponsiveSidebar: React.FC<ResponsiveSidebarProps> = ({
         ],
       });
     }
+
+  // Seção Gestão - Apenas Admin
+  if (user.role === Role.Admin) {
+    sections.push({
+      title: 'Gestão',
+      items: [
+        { id: 'user-management', path: '/user-management', icon: Users2, label: 'Gestão de Usuários' },
+        { id: 'groups', path: '/groups', icon: Users2, label: 'Grupos' },
+        { id: 'supplies', path: '/supplies', icon: Package, label: 'Insumos' },
+        { id: 'inventory', path: '/inventory', icon: Package, label: 'Estoque' },
+        { id: 'inventory-dashboard', path: '/inventory-dashboard', icon: Monitor, label: 'Dash de Estoque' },
+        { id: 'events', path: '/events', icon: Ticket, label: 'Eventos' },
+        { id: 'events-list', path: '/events-list', icon: Calendar, label: 'Lista de Eventos' },
+        { id: 'partnerships', path: '/partnerships', icon: Handshake, label: 'Parcerias' },
+        { id: 'subscriptions', path: '/subscription', icon: CreditCard, label: 'Assinaturas' },
+      ],
+    });
+  }
+
+  // Seção Sistema - Admin
+  if (user.role === Role.Admin) {
+    sections.push({
+      title: 'Sistema',
+      items: [
+        { id: 'crm', path: '/crm', icon: Target, label: 'CRM & Leads' },
+        { id: 'whatsapp', path: '/whatsapp', icon: MessageSquare, label: 'WhatsApp Business' },
+        { id: 'email-inativos', path: '/email-inativos', icon: FileText, label: 'Email Inativos' },
+        { id: 'backup-management', path: '/backup-management', icon: Package, label: 'Backup' },
+        { id: 'agenda-settings', path: '/agenda-settings', icon: SlidersHorizontal, label: 'Config. Agenda' },
+        { id: 'integrations', path: '/integrations', icon: ShieldCheck, label: 'Integrações' },
+        { id: 'integrations-test', path: '/integrations-test', icon: Zap, label: 'Teste Integrações' },
+        { id: 'bi-integration-test', path: '/bi-integration-test', icon: Globe, label: 'Teste BI' },
+        { id: 'ai-settings', path: '/ai-settings', icon: SlidersHorizontal, label: 'Config. IA' },
+        { id: 'audit-log', path: '/audit-log', icon: ShieldCheck, label: 'Auditoria & Compliance' },
+        { id: 'audit-log-page', path: '/audit-log-page', icon: FileCheck, label: 'Log de Auditoria' },
+        { id: 'legal', path: '/legal', icon: FileText, label: 'Legal' },
+        { id: 'settings', path: '/settings', icon: Settings, label: 'Configurações' },
+      ],
+    });
+  }
 
     // Seção Gestão - Apenas Admin
     if (user.role === Role.Admin) {

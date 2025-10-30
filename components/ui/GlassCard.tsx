@@ -27,8 +27,11 @@ const GlassCard: React.FC<GlassCardProps> = ({
   ...props
 }) => {
   const baseClasses = cn(
-    'relative overflow-hidden rounded-lg transition-all duration-200 bg-white shadow-md',
+    'relative overflow-hidden rounded-lg transition-all duration-200 shadow-md',
     {
+      'bg-white': variant === 'default',
+      'bg-slate-900': variant === 'dark',
+      'bg-gradient-to-br from-fisio-primary-500 via-fisio-primary-600 to-fisio-primary-700': variant === 'colored',
       'hover:shadow-lg': hover,
       'border border-slate-200': variant !== 'colored',
     },

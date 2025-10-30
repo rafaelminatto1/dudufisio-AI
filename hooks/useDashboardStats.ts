@@ -7,6 +7,7 @@ export interface DashboardStats {
     activePatients: { value: string; subtitle: string; };
     newPatientsThisMonth: { value: string; change?: string; changeType?: 'increase' | 'decrease' };
     avgSatisfaction: { value: string; subtitle: string; };
+    occupancyRate: number;
 }
 
 // Helper to calculate percentage change
@@ -58,6 +59,14 @@ export default function useDashboardStats({ patients, appointments }: UseDashboa
         const revenueChange = calculateChange(revenueThisMonth, revenueLastMonth);
         const newPatientsChange = calculateChange(newPatientsThisMonthCount, newPatientsLastMonthCount);
 
+        // Calculate occupancy rate (appointments this month / total possible slots)
+        // Assuming: 8 working hours/day, 20 working days/month, 1 hour per appointment
+        const workingHoursPerDay = 8;
+        const workingDaysPerMonth = 20;
+        const totalPossibleSlots = workingHoursPerDay * workingDaysPerMonth;
+        const appointmentsThisMonth = appointments.filter(app => new Date(app.startTime) >= startOfThisMonth).length;
+        const occupancyRate = totalPossibleSlots > 0 ? (appointmentsThisMonth / totalPossibleSlots) * 100 : 0;
+
         return {
             monthlyRevenue: {
                 value: `R$ ${revenueThisMonth.toLocaleString('pt-BR')}`,
@@ -74,7 +83,8 @@ export default function useDashboardStats({ patients, appointments }: UseDashboa
             avgSatisfaction: { // Still mocked
                 value: '9.2/10',
                 subtitle: 'Baseado em 48 avaliações'
-            }
+            },
+            occupancyRate
         };
     }, [patients, appointments]);
 
