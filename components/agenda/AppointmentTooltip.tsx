@@ -6,6 +6,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { EnrichedAppointment, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
+import { displayAppointmentType } from '../../lib/format';
 
 interface AppointmentTooltipProps {
   appointment: EnrichedAppointment;
@@ -47,7 +48,7 @@ const AppointmentTooltip: React.FC<AppointmentTooltipProps> = ({
             {appointment.patientName}
           </h4>
           <p className="text-xs text-slate-600 mt-0.5">
-            {appointment.type || 'Não definido'}
+            {displayAppointmentType(appointment.type)}
           </p>
         </div>
         <Badge variant="secondary" className={cn("text-xs", statusConfig.bg, statusConfig.color)}>

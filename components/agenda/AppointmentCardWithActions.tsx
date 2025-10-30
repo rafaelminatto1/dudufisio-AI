@@ -14,8 +14,10 @@ import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { cn } from '../../lib/utils';
+import { formatCurrencyBR, displayAppointmentType } from '../../lib/format';
 import { appointmentCardVariants } from '../../lib/animations';
-import type { EnrichedAppointment, AppointmentStatus } from '../../types';
+import type { EnrichedAppointment } from '../../types';
+import { AppointmentStatus } from '../../types';
 import { CalendarStatusBadge } from '../calendar/CalendarStatusBadge';
 
 interface AppointmentCardWithActionsProps {
@@ -193,7 +195,7 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
                       Pendente
                     </Badge>
                   )}
-                  {appointment.status === 'completed' && (
+                  {appointment.status === AppointmentStatus.Completed && (
                     <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300 text-xs">
                       <CheckCircle2 className="w-3 h-3 mr-1" />
                       Concluído
@@ -220,7 +222,7 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
                 
                 {!compact && (
                   <Badge variant="outline" className={cn('text-xs', getStatusColor(appointment.status))}>
-                    {appointment.type || 'Não definido'}
+                    {displayAppointmentType(appointment.type)}
                   </Badge>
                 )}
               </div>
@@ -229,7 +231,7 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
               {!compact && appointment.value > 0 && (
                 <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
                   <p className="text-xs font-semibold text-slate-900 dark:text-slate-100">
-                    R$ {appointment.value.toFixed(2)}
+                    {formatCurrencyBR(appointment.value)}
                   </p>
                 </div>
               )}

@@ -9,6 +9,7 @@ import {
 } from '../ui/popover';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
+import { displayAppointmentType } from '../../lib/format';
 import { Separator } from '../ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { 
@@ -115,7 +116,7 @@ const AppointmentDetailPopover: React.FC<AppointmentDetailPopoverProps> = ({
                 {appointment.patientName}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {appointment.type || 'Não definido'}
+                {displayAppointmentType(appointment.type)}
               </p>
               <div className="flex items-center space-x-2 mt-1">
                 {getStatusIcon(appointment.status)}

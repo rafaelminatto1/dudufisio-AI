@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar, Clock, User, DollarSign, Edit, Trash2, Phone, CheckCircle } from 'lucide-react';
+import { displayAppointmentType } from '../../lib/format';
 import {
   Drawer,
   DrawerClose,
@@ -80,7 +81,7 @@ const MobileAppointmentDrawer: React.FC<MobileAppointmentDrawerProps> = ({
               <Calendar className="w-5 h-5 text-slate-600" />
               <div>
                 <p className="text-sm text-slate-600">Tipo</p>
-                <p className="font-semibold text-slate-900">{appointment.type || 'Não definido'}</p>
+                <p className="font-semibold text-slate-900">{displayAppointmentType(appointment.type)}</p>
               </div>
             </div>
 

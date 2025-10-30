@@ -8,6 +8,7 @@ import { ptBR } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { EnrichedAppointment, Therapist } from '../../types';
 import { cn } from '../../lib/utils';
+import { displayAppointmentType } from '../../lib/format';
 
 interface WeeklyViewProps {
   currentDate: Date;
@@ -109,7 +110,7 @@ const ImprovedAppointmentCard: React.FC<{
         {height > 60 && (
           <>
             <div className="text-xs opacity-90 truncate">
-              {appointment.type || 'Não definido'}
+              {displayAppointmentType(appointment.type)}
             </div>
             <div className="text-xs opacity-80 mt-auto">
               {format(appointment.startTime, 'HH:mm')} - {format(appointment.endTime, 'HH:mm')}

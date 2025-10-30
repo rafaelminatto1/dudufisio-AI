@@ -2,9 +2,10 @@ import React from 'react';
 import { TrendingUp, Calendar, DollarSign, Users, AlertTriangle, Clock } from 'lucide-react';
 import { Card } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { EnrichedAppointment, Therapist } from '../../types';
+import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
+import { displayAppointmentType } from '../../lib/format';
 
 interface AgendaDashboardProps {
   appointments: EnrichedAppointment[];
@@ -15,15 +16,15 @@ interface AgendaDashboardProps {
 const AgendaDashboard: React.FC<AgendaDashboardProps> = ({ appointments, therapists, className }) => {
   // Calcular KPIs
   const totalAppointments = appointments.length;
-  const completedAppointments = appointments.filter(a => a.status === 'completed').length;
+  const completedAppointments = appointments.filter(a => a.status === AppointmentStatus.Completed).length;
   const totalRevenue = appointments.reduce((sum, a) => sum + (a.value || 0), 0);
   const uniquePatients = new Set(appointments.map(a => a.patientId)).size;
-  
+
   // Agendamentos nas próximas 2 horas
   const now = new Date();
   const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
   const upcomingAppointments = appointments
-    .filter(a => a.startTime >= now && a.startTime <= twoHoursLater && a.status === 'scheduled')
+    .filter(a => a.startTime >= now && a.startTime <= twoHoursLater && a.status === AppointmentStatus.Scheduled)
     .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 
   // Conflitos
@@ -34,7 +35,7 @@ const AgendaDashboard: React.FC<AgendaDashboardProps> = ({ appointments, therapi
     const hour = i + 6; // 6h às 19h
     const hourAppointments = appointments.filter(a => {
       const appHour = a.startTime.getHours();
-      return appHour === hour && a.status === 'scheduled';
+      return appHour === hour && a.status === AppointmentStatus.Scheduled;
     });
     return {
       hour,
@@ -139,7 +140,7 @@ const AgendaDashboard: React.FC<AgendaDashboardProps> = ({ appointments, therapi
                       {format(appointment.startTime, 'HH:mm', { locale: ptBR })}
                     </p>
                     <Badge variant="outline" className="text-xs">
-                      {appointment.type || 'Não definido'}
+                      {displayAppointmentType(appointment.type)}
                     </Badge>
                   </div>
                 </div>

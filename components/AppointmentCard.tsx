@@ -3,6 +3,7 @@ import { EnrichedAppointment, AppointmentStatus } from '../types';
 import { cn } from '../lib/utils';
 import { Repeat } from 'lucide-react';
 import Tooltip from './ui/tooltip';
+import { displayAppointmentType, formatCurrencyBR } from '../lib/format';
 
 interface AppointmentCardProps {
   appointment: EnrichedAppointment;
@@ -89,9 +90,16 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, startHou
             </span>
           </p>
         </Tooltip>
-        <p className="truncate text-xs opacity-90 font-medium">{appointment.type || 'Não definido'}</p>
+        <p className="truncate text-xs opacity-90 font-medium">{displayAppointmentType(appointment.type)}</p>
         {appointment.therapistName && (
           <p className="truncate text-xs opacity-75 mt-0.5">{appointment.therapistName}</p>
+        )}
+        {!compact && appointment.price !== undefined && appointment.price > 0 && (
+          <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+            <p className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+              {formatCurrencyBR(appointment.price)}
+            </p>
+          </div>
         )}
       </div>
       {appointment.seriesId && (
