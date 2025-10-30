@@ -89,7 +89,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, startHou
             </span>
           </p>
         </Tooltip>
-        <p className="truncate text-xs opacity-90 font-medium">{appointment.type}</p>
+        <p className="truncate text-xs opacity-90 font-medium">{appointment.type || 'Não definido'}</p>
         {appointment.therapistName && (
           <p className="truncate text-xs opacity-75 mt-0.5">{appointment.therapistName}</p>
         )}

@@ -26,7 +26,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, therapis
             <div className="flex justify-between items-start">
                 <div>
                     <p className={`font-bold text-slate-900 ${isPast ? 'text-slate-600' : ''}`}>
-                        {appointment.type}
+                        {appointment.type || 'Não definido'}
                     </p>
                     <p className="text-sm text-slate-600">{appointment.title}</p>
                 </div>

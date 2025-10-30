@@ -105,7 +105,7 @@ const NotificationSettings: React.FC<NotificationSettingsProps> = ({
     return message
       .replace(/\{\{patientName\}\}/g, appointment.patientName)
       .replace(/\{\{therapistName\}\}/g, appointment.therapistName)
-      .replace(/\{\{appointmentType\}\}/g, appointment.type)
+      .replace(/\{\{appointmentType\}\}/g, appointment.type || 'Não definido')
       .replace(/\{\{appointmentDate\}\}/g, format(appointment.startTime, 'dd/MM/yyyy', { locale: ptBR }))
       .replace(/\{\{appointmentTime\}\}/g, format(appointment.startTime, 'HH:mm', { locale: ptBR }))
       .replace(/\{\{appointmentEndTime\}\}/g, format(appointment.endTime, 'HH:mm', { locale: ptBR }))

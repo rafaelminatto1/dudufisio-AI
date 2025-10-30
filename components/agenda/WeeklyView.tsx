@@ -109,7 +109,7 @@ const ImprovedAppointmentCard: React.FC<{
         {height > 60 && (
           <>
             <div className="text-xs opacity-90 truncate">
-              {appointment.type}
+              {appointment.type || 'Não definido'}
             </div>
             <div className="text-xs opacity-80 mt-auto">
               {format(appointment.startTime, 'HH:mm')} - {format(appointment.endTime, 'HH:mm')}

@@ -304,7 +304,7 @@ const ListView: React.FC<ListViewProps> = ({
                     </div>
 
                     <div className="mt-2 text-sm text-slate-600">
-                      <strong>Tipo:</strong> {appointment.type}
+                      <strong>Tipo:</strong> {appointment.type || 'Não definido'}
                       {appointment.notes && (
                         <div className="mt-1">
                           <strong>Observações:</strong> {appointment.notes}

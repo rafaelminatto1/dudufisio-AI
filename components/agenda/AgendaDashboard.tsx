@@ -139,7 +139,7 @@ const AgendaDashboard: React.FC<AgendaDashboardProps> = ({ appointments, therapi
                       {format(appointment.startTime, 'HH:mm', { locale: ptBR })}
                     </p>
                     <Badge variant="outline" className="text-xs">
-                      {appointment.type}
+                      {appointment.type || 'Não definido'}
                     </Badge>
                   </div>
                 </div>

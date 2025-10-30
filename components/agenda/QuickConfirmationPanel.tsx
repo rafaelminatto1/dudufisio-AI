@@ -96,7 +96,7 @@ const QuickConfirmationPanel: React.FC<QuickConfirmationPanelProps> = ({
                     <Clock className="w-3 h-3" />
                     <span>{format(appointment.startTime, 'HH:mm', { locale: ptBR })}</span>
                     <span>•</span>
-                    <span>{appointment.type}</span>
+                    <span>{appointment.type || 'Não definido'}</span>
                   </div>
                   {appointment.patientPhone && (
                     <div className="flex items-center gap-1 mt-1 text-xs text-slate-500">

@@ -433,7 +433,7 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
                     <div>
                       <span className="text-slate-500">Tipo:</span>
                       <span className="ml-2 font-medium text-slate-900">
-                        {appointment.type}
+                        {appointment.type || 'Não definido'}
                       </span>
                     </div>
                     <div>

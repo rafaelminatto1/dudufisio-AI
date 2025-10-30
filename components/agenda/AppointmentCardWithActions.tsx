@@ -220,7 +220,7 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
                 
                 {!compact && (
                   <Badge variant="outline" className={cn('text-xs', getStatusColor(appointment.status))}>
-                    {appointment.type}
+                    {appointment.type || 'Não definido'}
                   </Badge>
                 )}
               </div>
