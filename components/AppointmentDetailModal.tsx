@@ -10,6 +10,7 @@ import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
 import PatientInfoCard from './agenda/PatientInfoCard';
 import * as appointmentService from '../services/appointmentService';
+import { formatCurrencyBR, displayAppointmentType } from '../lib/format';
 
 interface AppointmentDetailModalProps {
   appointment: EnrichedAppointment | null;
@@ -359,7 +360,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
                   </div>
                 ) : (
                   <div className="text-2xl font-bold text-slate-900">
-                    R$ {(appointment.value && appointment.value > 0 ? appointment.value : DEFAULT_SESSION_PRICE).toFixed(2)}
+                    {formatCurrencyBR(appointment.value)}
                   </div>
                 )}
               </div>

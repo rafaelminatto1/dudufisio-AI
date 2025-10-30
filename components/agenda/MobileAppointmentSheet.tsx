@@ -9,6 +9,7 @@ import {
 import { ScrollArea } from '../ui/scroll-area';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
+import { formatCurrencyBR, displayAppointmentType } from '../../lib/format';
 import { Card } from '../ui/card';
 import { Separator } from '../ui/separator';
 import {
@@ -145,7 +146,7 @@ export function MobileAppointmentSheet({
                 <div>
                   <p className="text-xs text-slate-600 mb-0.5">Tipo de Atendimento</p>
                   <p className="font-semibold text-slate-900">
-                    {appointment.type || 'Não definido'}
+                    {displayAppointmentType(appointment.type)}
                   </p>
                 </div>
               </div>
@@ -162,7 +163,7 @@ export function MobileAppointmentSheet({
                     <div>
                       <p className="text-xs text-slate-600 mb-0.5">Valor</p>
                       <p className="font-bold text-lg text-emerald-700">
-                        R$ {(appointment.value ?? 0).toFixed(2)}
+                        {formatCurrencyBR(appointment.value)}
                       </p>
                     </div>
                   </div>

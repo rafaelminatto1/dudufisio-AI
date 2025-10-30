@@ -5,6 +5,7 @@ import { AppointmentTypeColors } from '../types';
 import * as appointmentService from '../services/appointmentService';
 import { useData } from '../contexts/AppContext';
 import { eventService } from '../services/eventService';
+import { AppointmentType } from '../types';
 
 interface UseAppointmentsResult {
   appointments: EnrichedAppointment[];
@@ -108,9 +109,12 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
 
     return appointments.map(app => ({
         ...app,
+        // Defaults seguros
+        type: (app.type as any) || AppointmentType.Session,
+        value: typeof app.value === 'number' && Number.isFinite(app.value) ? app.value : 0,
         patientPhone: patientMap.get(app.patientId)?.phone || '',
         therapistColor: therapistMap.get(app.therapistId)?.color || 'slate',
-        typeColor: AppointmentTypeColors[app.type] || 'slate',
+        typeColor: AppointmentTypeColors[(app.type as any) || AppointmentType.Session] || 'slate',
         patientMedicalAlerts: patientMap.get(app.patientId)?.medicalAlerts,
         therapistName: therapistMap.get(app.therapistId)?.name || '(escolher depois na evolução)',
     }));

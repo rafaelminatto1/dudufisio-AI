@@ -8,6 +8,7 @@ import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
 import { Filter, Calendar, Clock, User, DollarSign, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import Tooltip from '../ui/tooltip';
+import { formatCurrencyBR, displayAppointmentType } from '../../lib/format';
 
 interface ListViewProps {
   appointments: EnrichedAppointment[];
@@ -298,13 +299,13 @@ const ListView: React.FC<ListViewProps> = ({
                       {appointment.value && (
                         <div className="flex items-center gap-2 min-w-0">
                           <DollarSign size={16} className="flex-shrink-0" />
-                          <span className="truncate font-semibold text-green-600">R$ {appointment.value.toFixed(2)}</span>
+                          <span className="truncate font-semibold text-green-600">{formatCurrencyBR(appointment.value)}</span>
                         </div>
                       )}
                     </div>
 
                     <div className="mt-2 text-sm text-slate-600">
-                      <strong>Tipo:</strong> {appointment.type || 'Não definido'}
+                      <strong>Tipo:</strong> {displayAppointmentType(appointment.type)}
                       {appointment.notes && (
                         <div className="mt-1">
                           <strong>Observações:</strong> {appointment.notes}
