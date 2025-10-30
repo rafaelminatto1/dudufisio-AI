@@ -62,10 +62,14 @@ export const PresenceEvolutionChart: React.FC<PresenceEvolutionChartProps> = ({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-lg">Evolução de Presença</CardTitle>
-            <CardDescription>Taxa de comparecimento ao longo do tempo</CardDescription>
+            <CardTitle className="text-lg" id="presence-chart-title">Evolução de Presença</CardTitle>
+            <CardDescription id="presence-chart-desc">Taxa de comparecimento ao longo do tempo</CardDescription>
           </div>
-          <Select value={period.toString()} onValueChange={handlePeriodChange}>
+          <Select 
+            value={period.toString()} 
+            onValueChange={handlePeriodChange}
+            aria-label="Selecionar período de análise"
+          >
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
@@ -80,8 +84,13 @@ export const PresenceEvolutionChart: React.FC<PresenceEvolutionChartProps> = ({
       </CardHeader>
       
       <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+        <div 
+          role="img" 
+          aria-labelledby="presence-chart-title"
+          aria-describedby="presence-chart-desc"
+        >
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200" />
             <XAxis 
               dataKey="date" 
@@ -111,6 +120,7 @@ export const PresenceEvolutionChart: React.FC<PresenceEvolutionChartProps> = ({
             />
           </LineChart>
         </ResponsiveContainer>
+        </div>
       </CardContent>
     </>
   );

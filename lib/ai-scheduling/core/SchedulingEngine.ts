@@ -354,7 +354,7 @@ export class SchedulingEngine {
       endTime,
       status: AppointmentStatus.Scheduled,
       type: request.appointmentType as any,
-      value: 120, // Será calculado
+      value: 180, // Padrão da sessão; pode ser ajustado posteriormente
       paymentStatus: 'pending',
       observations: '',
       recurrenceRule: { frequency: 'weekly', days: [], until: '' },

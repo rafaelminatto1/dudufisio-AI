@@ -8,7 +8,7 @@
 
 ### 1. Quick Patient Registration + Appointment não funciona corretamente
 
-**Status:** 🔍 EM INVESTIGAÇÃO - Testes E2E bloqueados por autenticação
+**Status:** 🔧 CORREÇÃO APLICADA - Aguardando Teste Manual (29/01/2025 16:50 UTC)
 
 **Descrição:**
 O fluxo de criação expressa de paciente e agendamento em um único modal não está funcionando como esperado.
@@ -43,14 +43,17 @@ O fluxo de criação expressa de paciente e agendamento em um único modal não 
 **Debug Logs Adicionados:**
 ✅ Debug logs extensivos adicionados em todos os pontos críticos do fluxo
 
-**Correções Já Tentadas:**
+**Correções Aplicadas (29/01 16:50 UTC):**
 - ✅ Corrigido schema do Supabase (patients table sem user_id)
 - ✅ Corrigido uso de `formData.patient` em vez de `selectedPatient`
 - ✅ Adicionado suporte Supabase em appointmentService
 - ✅ Debug logs adicionados em PatientSearchInput.tsx
 - ✅ Debug logs adicionados em AppointmentFormModal.tsx
 - ✅ Debug logs adicionados em AgendaPage.tsx
-- ❌ **AINDA NÃO FUNCIONA - PRECISA TESTE MANUAL**
+- ✅ **NOVO: Validação forçada após seleção de paciente com `form.trigger('patient')`**
+- ✅ **NOVO: Triplo fallback robusto para garantir paciente não-null**
+- ✅ **NOVO: Logs extensivos de erro de validação com detalhes específicos**
+- ⏳ **AGUARDANDO TESTE MANUAL PARA VALIDAR CORREÇÃO**
 
 **Bloqueio Atual:**
 - Testes E2E não conseguem autenticar (demo accounts podem não existir em Supabase)

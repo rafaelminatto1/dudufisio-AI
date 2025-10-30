@@ -288,18 +288,24 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
   const handleSaveClick = async (formData?: AppointmentFormValues) => {
     console.log('🚀 handleSaveClick CHAMADO!');
     console.log('   FormData recebido:', formData);
+    console.log('   FormData.patient:', formData?.patient);
+    console.log('   selectedPatient state:', selectedPatient);
+    console.log('   form.getValues("patient"):', form.getValues('patient'));
 
-    // Usar formData.patient em vez de selectedPatient (estado pode estar desatualizado)
-    const patient = formData?.patient || selectedPatient;
+    // Priorizar formData.patient, mas fazer fallback robusto
+    const patient = formData?.patient || form.getValues('patient') || selectedPatient;
 
-    console.log('   patient (do formData ou estado):', patient);
+    console.log('   ✅ Paciente final selecionado:', patient);
     console.log('   slotTime:', slotTime);
     console.log('   therapistId:', therapistId);
     console.log('   appointmentType:', appointmentType);
     console.log('   duration:', duration);
 
-    if (!patient) {
-      console.warn('⚠️ Nenhum paciente selecionado');
+    if (!patient || !patient.id) {
+      console.error('❌ Nenhum paciente selecionado - patient:', patient);
+      console.error('   formData.patient:', formData?.patient);
+      console.error('   form.getValues:', form.getValues('patient'));
+      console.error('   selectedPatient:', selectedPatient);
       setShowValidation(true);
       showToast('Por favor, selecione um paciente', 'error');
       return;
@@ -631,12 +637,26 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                       <Badge variant="destructive" className="text-xs">Obrigatório</Badge>
                     </div>
             <PatientSearchInput
-                      onSelectPatient={(patient) => {
+                      onSelectPatient={async (patient) => {
                         console.log('👤 onSelectPatient callback - Paciente recebido:', patient);
                         console.log('🔄 Atualizando field via field.onChange (React Hook Form)');
+
+                        // Atualizar tanto o form quanto o state local
                         field.onChange(patient as any);
-                        console.log('🔄 Atualizando selectedPatient state');
                         setSelectedPatient(patient);
+
+                        // Forçar validação do campo patient após mudança
+                        console.log('🔄 Forçando validação do campo patient...');
+                        await form.trigger('patient');
+
+                        // Verificar se a validação passou
+                        const errors = form.formState.errors;
+                        console.log('📋 Estado do formulário após validação:', {
+                          isValid: form.formState.isValid,
+                          errors: errors,
+                          patientValue: form.getValues('patient')
+                        });
+
                         console.log('✅ onSelectPatient callback - Sincronização completa');
                       }}
                       selectedPatient={field.value as any}
@@ -851,8 +871,19 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
             onClick={form.handleSubmit(
               handleSaveClick,
               (errors) => {
-                console.error('❌ Erros de validação do formulário:', errors);
-                showToast('Por favor, corrija os erros no formulário', 'error');
+                console.error('❌ VALIDAÇÃO FALHOU - Erros do formulário:', errors);
+                console.error('   Valores atuais do form:', form.getValues());
+                console.error('   Estado isValid:', form.formState.isValid);
+                console.error('   Estado isDirty:', form.formState.isDirty);
+                console.error('   Campos com erro:', Object.keys(errors));
+
+                // Mostrar erro específico do paciente se existir
+                if (errors.patient) {
+                  console.error('   ⚠️ ERRO NO CAMPO PACIENTE:', errors.patient.message);
+                  showToast(`Erro: ${errors.patient.message}`, 'error');
+                } else {
+                  showToast('Por favor, corrija os erros no formulário', 'error');
+                }
               }
             )}
             disabled={loadingState !== 'idle'}

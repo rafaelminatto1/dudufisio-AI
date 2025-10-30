@@ -48,14 +48,19 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
     <div className="space-y-4 p-4 bg-slate-50 border-b border-slate-200">
       {/* Busca */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" aria-hidden="true" />
         <Input
-          type="text"
+          type="search"
           placeholder="Buscar por nome ou CPF..."
           value={filters.searchTerm}
           onChange={(e) => updateFilter('searchTerm', e.target.value)}
           className="pl-10 bg-white"
+          aria-label="Buscar pacientes por nome, CPF ou telefone"
+          aria-describedby="search-help"
         />
+        <span id="search-help" className="sr-only">
+          Digite o nome, CPF ou telefone do paciente para buscar na lista
+        </span>
       </div>
 
       {/* Filtros */}
@@ -80,6 +85,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
         <Select 
           value={filters.riskLevel} 
           onValueChange={(value) => updateFilter('riskLevel', value)}
+          aria-label="Filtrar por nível de risco"
         >
           <SelectTrigger className="bg-white">
             <SelectValue placeholder="Nível de Risco" />
@@ -96,6 +102,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
         <Select 
           value={filters.attendanceRange} 
           onValueChange={(value) => updateFilter('attendanceRange', value)}
+          aria-label="Filtrar por taxa de presença"
         >
           <SelectTrigger className="bg-white">
             <SelectValue placeholder="Taxa Presença" />
@@ -113,6 +120,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
         <Select 
           value={filters.painLevel} 
           onValueChange={(value) => updateFilter('painLevel', value)}
+          aria-label="Filtrar por nível de dor"
         >
           <SelectTrigger className="bg-white">
             <SelectValue placeholder="Nível de Dor" />
@@ -130,6 +138,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
         <Select 
           value={filters.therapistId} 
           onValueChange={(value) => updateFilter('therapistId', value)}
+          aria-label="Filtrar por terapeuta"
         >
           <SelectTrigger className="bg-white">
             <SelectValue placeholder="Terapeuta" />
@@ -147,7 +156,7 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
 
       {/* Filtros ativos e botão limpar */}
       {activeFiltersCount > 0 && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2" role="status" aria-live="polite">
           <Badge variant="secondary" className="bg-blue-100 text-blue-700">
             {activeFiltersCount} filtro{activeFiltersCount > 1 ? 's' : ''} ativo{activeFiltersCount > 1 ? 's' : ''}
           </Badge>
@@ -156,8 +165,9 @@ export const FilterToolbar: React.FC<FilterToolbarProps> = ({
             size="sm"
             onClick={clearFilters}
             className="h-7 px-2 text-xs"
+            aria-label="Limpar todos os filtros aplicados"
           >
-            <X className="w-3 h-3 mr-1" />
+            <X className="w-3 h-3 mr-1" aria-hidden="true" />
             Limpar Filtros
           </Button>
         </div>

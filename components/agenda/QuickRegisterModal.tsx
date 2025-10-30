@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, UserPlus, AlertCircle } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -19,13 +19,36 @@ export const QuickRegisterModal: React.FC<QuickRegisterModalProps> = ({
   onConfirm,
   initialName,
 }) => {
-  const [step, setStep] = useState<'confirm' | 'form'>('confirm');
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleConfirm = () => {
-    setStep('form');
+  // Atualizar nome quando initialName mudar
+  useEffect(() => {
+    if (isOpen && initialName) {
+      setName(initialName);
+    }
+  }, [isOpen, initialName]);
+
+  // Função para formatar telefone brasileiro
+  const formatPhoneNumber = (value: string) => {
+    // Remove tudo que não é número
+    const numbers = value.replace(/\D/g, '');
+
+    // Aplica máscara (11) 99999-9999
+    if (numbers.length <= 2) {
+      return numbers;
+    } else if (numbers.length <= 7) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    } else if (numbers.length <= 11) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+    }
+    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,10 +59,11 @@ export const QuickRegisterModal: React.FC<QuickRegisterModalProps> = ({
 
     setIsSubmitting(true);
     try {
-      await onConfirm(name.trim(), phone.trim() || undefined);
+      // Remove formatação do telefone antes de enviar
+      const cleanPhone = phone.replace(/\D/g, '');
+      await onConfirm(name.trim(), cleanPhone || undefined);
       onClose();
       // Reset state
-      setStep('confirm');
       setName(initialName);
       setPhone('');
     } catch (error) {
@@ -50,7 +74,6 @@ export const QuickRegisterModal: React.FC<QuickRegisterModalProps> = ({
   };
 
   const handleClose = () => {
-    setStep('confirm');
     setName(initialName);
     setPhone('');
     onClose();
@@ -78,63 +101,7 @@ export const QuickRegisterModal: React.FC<QuickRegisterModalProps> = ({
           className="relative z-10 w-full max-w-md mx-4"
         >
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-xl">
-            {/* Confirmation Step */}
-            {step === 'confirm' && (
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
-                      <UserPlus className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-                    </div>
-                    <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-                      Cadastrar Novo Paciente?
-                    </h2>
-                  </div>
-                  <button
-                    onClick={handleClose}
-                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <div className="mb-6">
-                  <p className="text-slate-600 dark:text-slate-400 mb-4">
-                    Nenhum paciente foi encontrado com o nome:
-                  </p>
-                  <div className="p-4 bg-slate-100 dark:bg-slate-700/50 rounded-lg">
-                    <p className="font-semibold text-slate-900 dark:text-slate-100">
-                      {initialName}
-                    </p>
-                  </div>
-                  <p className="text-slate-600 dark:text-slate-400 mt-4">
-                    Deseja criar um cadastro rápido para este paciente?
-                  </p>
-                </div>
-
-                <div className="flex gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleClose}
-                    className="flex-1"
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={handleConfirm}
-                    className="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white"
-                  >
-                    Sim, Cadastrar
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Form Step */}
-            {step === 'form' && (
-              <form onSubmit={handleSubmit} className="p-6">
+            <form onSubmit={handleSubmit} className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
@@ -199,7 +166,7 @@ export const QuickRegisterModal: React.FC<QuickRegisterModalProps> = ({
                       id="patient-phone"
                       type="tel"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={handlePhoneChange}
                       placeholder="(11) 99999-9999"
                       className="mt-1"
                       disabled={isSubmitting}
@@ -246,7 +213,6 @@ export const QuickRegisterModal: React.FC<QuickRegisterModalProps> = ({
                   </Button>
                 </div>
               </form>
-            )}
           </div>
         </motion.div>
       </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertTriangle, AlertCircle, CheckCircle } from 'lucide-react';
 import { Badge } from '../ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import AccessibleTooltip from '../ui/AccessibleTooltip';
 import { RiskLevel } from '../../types';
 
 interface RiskBadgeProps {
@@ -46,24 +46,12 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({ level, reasons = [], showT
     return badge;
   }
 
+  const tooltipContent = `Critérios de risco: ${reasons.join(', ')}`;
+
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {badge}
-        </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-xs">
-          <div className="space-y-1">
-            <p className="font-semibold text-sm">Critérios de risco:</p>
-            <ul className="text-xs space-y-0.5">
-              {reasons.map((reason, idx) => (
-                <li key={idx}>• {reason}</li>
-              ))}
-            </ul>
-          </div>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <AccessibleTooltip content={tooltipContent} position="top">
+      {badge}
+    </AccessibleTooltip>
   );
 };
 

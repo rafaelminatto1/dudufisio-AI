@@ -63,7 +63,12 @@ export const KPICards: React.FC<KPICardsProps> = ({ metrics }) => {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div 
+      role="region" 
+      aria-labelledby="kpi-title"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+    >
+      <h2 id="kpi-title" className="sr-only">Métricas Principais de Monitoramento</h2>
       {cards.map((card, index) => (
         <KPICard key={index} {...card} />
       ))}
@@ -85,25 +90,39 @@ const KPICard: React.FC<KPICardData> = ({
   const trendPositive = trend && trend > 0;
   const trendColor = trendPositive ? 'text-green-600' : 'text-red-600';
 
+  // Construir descrição completa para aria-label
+  const ariaLabel = `${title}: ${value}${subtitle ? ` - ${subtitle}` : ''}${showTrend ? ` - ${trendPositive ? 'aumentou' : 'diminuiu'} ${Math.abs(trend!).toFixed(1)}% ${trendLabel}` : ''}`;
+
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card 
+      className="hover:shadow-md transition-shadow"
+      aria-label={ariaLabel}
+      role="article"
+    >
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <p className="text-sm font-medium text-slate-600 mb-1">{title}</p>
-            <p className="text-3xl font-bold text-slate-900 mb-1">{value}</p>
-            <p className="text-xs text-slate-500">{subtitle}</p>
+            <p className="text-sm font-medium text-slate-600 mb-1" role="heading" aria-level={3}>{title}</p>
+            <p className="text-3xl font-bold text-slate-900 mb-1" aria-live="polite">{value}</p>
+            <p className="text-xs text-slate-500" aria-label={`Subtítulo: ${subtitle}`}>{subtitle}</p>
             
             {showTrend && (
-              <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${trendColor}`}>
-                <span>{trendPositive ? '↑' : '↓'}</span>
+              <div 
+                className={`flex items-center gap-1 mt-2 text-xs font-medium ${trendColor}`}
+                role="status"
+                aria-label={`Tendência: ${trendPositive ? 'aumentou' : 'diminuiu'} ${Math.abs(trend!).toFixed(1)}% ${trendLabel}`}
+              >
+                <span aria-hidden="true">{trendPositive ? '↑' : '↓'}</span>
                 <span>{Math.abs(trend!).toFixed(1)}%</span>
                 {trendLabel && <span className="text-slate-400">{trendLabel}</span>}
               </div>
             )}
           </div>
           
-          <div className={`${iconBgColor} rounded-full p-3`}>
+          <div 
+            className={`${iconBgColor} rounded-full p-3`}
+            aria-hidden="true"
+          >
             <Icon className={`w-6 h-6 ${iconColor}`} />
           </div>
         </div>

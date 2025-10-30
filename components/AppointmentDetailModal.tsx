@@ -42,14 +42,22 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
 }) => {
   const { showToast } = useToast();
   const [isEditingValue, setIsEditingValue] = useState(false);
-  const [localValue, setLocalValue] = useState(appointment?.value || 0);
+  const DEFAULT_SESSION_PRICE = 180;
+  const [localValue, setLocalValue] = useState(
+    appointment && appointment.value && appointment.value > 0
+      ? appointment.value
+      : DEFAULT_SESSION_PRICE
+  );
   const [activeTab, setActiveTab] = useState('details');
   const [historyAppointments, setHistoryAppointments] = useState<Appointment[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLocalValue(appointment?.value || 0);
+    const nextValue = appointment && appointment.value && appointment.value > 0
+      ? appointment.value
+      : DEFAULT_SESSION_PRICE;
+    setLocalValue(nextValue);
     setIsEditingValue(false);
     setActiveTab('details');
   }, [appointment]);
@@ -351,7 +359,7 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
                   </div>
                 ) : (
                   <div className="text-2xl font-bold text-slate-900">
-                    R$ {(appointment.value ?? 0).toFixed(2)}
+                    R$ {(appointment.value && appointment.value > 0 ? appointment.value : DEFAULT_SESSION_PRICE).toFixed(2)}
                   </div>
                 )}
               </div>

@@ -35,7 +35,7 @@ const appointmentTypes = [
     label: 'Sessão Regular', 
     icon: Activity,
     duration: 50,
-    price: 120,
+    price: 180,
     color: 'emerald',
     description: 'Sessão de fisioterapia convencional'
   },
@@ -65,7 +65,7 @@ export default function BookingModal({ slot, onClose, onSuccess }: BookingModalP
   const [appointmentType, setAppointmentType] = useState<AppointmentType>(AppointmentType.Session);
   const [duration, setDuration] = useState(50);
   const [notes, setNotes] = useState('');
-  const [price, setPrice] = useState(120);
+  const [price, setPrice] = useState(180);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showToast } = useToast();
   

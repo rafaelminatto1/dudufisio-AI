@@ -113,15 +113,21 @@ export const saveAppointment = withSupabaseMutation(
             // Validar se therapistId é um UUID válido ou está vazio
             // IDs de mock começam com "therapist_" - não são UUIDs válidos
             const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-            
-            if (fullAppointmentData.therapistId && !isValidUUID.test(fullAppointmentData.therapistId)) {
-                throw new Error(`TherapistId "${fullAppointmentData.therapistId}" não é um UUID válido. Use IDs do Supabase ou deixe vazio.`);
+
+            // Se therapistId não é um UUID válido, converter para undefined
+            let therapistIdValido = fullAppointmentData.therapistId;
+            if (therapistIdValido && !isValidUUID.test(therapistIdValido)) {
+                secureLogger.warn('TherapistId inválido detectado, será convertido para undefined', {
+                    component: 'appointmentService',
+                    invalidId: therapistIdValido
+                });
+                therapistIdValido = undefined;
             }
-            
+
             // Se therapistId é inválido mas está vazio/null, converter para undefined
             const dataParaSupabase = {
                 ...fullAppointmentData,
-                therapistId: fullAppointmentData.therapistId || undefined
+                therapistId: therapistIdValido || undefined
             };
             
             // Se o agendamento tem ID que começa com "app_", é um novo agendamento (ID gerado localmente)
