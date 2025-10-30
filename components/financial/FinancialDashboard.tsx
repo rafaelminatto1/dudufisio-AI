@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { formatCurrencyBR } from '../../lib/format';
 import {
   TrendingUp,
   TrendingDown,
@@ -165,12 +166,7 @@ export default function FinancialDashboard() {
     setRefreshing(false);
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
+  const formatCurrency = (value: number) => formatCurrencyBR(value);
 
   const formatChange = (change: number) => {
     const isPositive = change >= 0;

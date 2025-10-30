@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react';
 import { LazyLineChart, LazyPieChart, LazyBarChart, LazyAreaChart } from '../components/charts/LazyCharts';
 import RevenueChart from '../components/financial/RevenueChart';
 import useFinancialData, { TimePeriod } from '../hooks/useFinancialData';
+import { formatCurrencyBR } from '../lib/format';
 import PageLoader from '../components/ui/PageLoader';
 import {
   PlusCircle, DollarSign, TrendingUp, TrendingDown, CreditCard,
@@ -302,7 +303,7 @@ const FinancialDashboardPage: React.FC = () => {
     setCashFlowPredictions(predictions);
   };
 
-  const formatCurrency = (value: number) => `R$ ${value.toFixed(2).replace('.', ',')}`;
+  const formatCurrency = (value: number) => formatCurrencyBR(value);
 
   const handleOpenModal = (transaction?: FinancialTransaction) => {
       setTransactionToEdit(transaction);
