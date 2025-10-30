@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Stethoscope,
@@ -10,7 +10,7 @@ import {
   AlertCircle,
   CheckCircle,
 } from 'lucide-react';
-import ReactLazy, { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Role } from '../../types';
 import { useSupabaseAuth } from '../../contexts/SupabaseAuthContext';
 import { Button } from '../../components/ui/button';
@@ -35,6 +35,47 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [loginMode, setLoginMode] = useState<'password' | 'otp'>('password');
+
+  // Prefetch/modulepreload dos chunks de rotas de autenticação assim que a tela monta
+  useEffect(() => {
+    const runWhenIdle = (cb: () => void) => {
+      if (typeof (window as any).requestIdleCallback === 'function') {
+        (window as any).requestIdleCallback(cb, { timeout: 1500 });
+      } else {
+        setTimeout(cb, 0);
+      }
+    };
+
+    const addLink = (rel: string, href: string) => {
+      const link = document.createElement('link');
+      link.rel = rel as HTMLLinkElement['rel'];
+      link.href = href;
+      if (rel === 'prefetch') {
+        link.as = 'script';
+      }
+      document.head.appendChild(link);
+      return link;
+    };
+
+    let created: HTMLLinkElement[] = [];
+    runWhenIdle(() => {
+      try {
+        const targets: string[] = [
+          import.meta.resolve('../RegisterPage'),
+          import.meta.resolve('../ForgotPasswordPage'),
+          import.meta.resolve('../ResetPasswordPage'),
+          import.meta.resolve('./TwoFactorSetupPage'),
+        ];
+        targets.forEach((href) => {
+          created.push(addLink('modulepreload', href));
+          created.push(addLink('prefetch', href));
+        });
+      } catch {
+        /* ignore - import.meta.resolve pode não estar disponível em alguns envs */
+      }
+    });
+    return () => { created.forEach((el) => el.remove()); };
+  }, []);
 
   const demoAccounts = [
     { email: 'admin@dudufisio.com', role: 'Administrador', description: 'Acesso completo ao sistema' },
@@ -100,7 +141,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
     }
   };
 
-  const SocialLoginButtons = ReactLazy(() => import('../../components/auth/SocialLoginButtons'));
+  const SocialLoginButtons = lazy(() => import('../../components/auth/SocialLoginButtons'));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
