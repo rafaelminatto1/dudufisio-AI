@@ -26,7 +26,6 @@ import {
   RefreshCw, 
   AlertTriangle, 
   Clock,
-  CheckCircle,
   X 
 } from 'lucide-react';
 import { useSafeOffline } from '../../contexts/SafeOfflineContext';
@@ -175,6 +174,9 @@ export const UnifiedOfflineIndicator: React.FC<UnifiedOfflineIndicatorProps> = (
         getPositionClasses(),
         className
       )}
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
     >
       <AnimatePresence mode="wait">
         {/* Indicador de Offline */}
@@ -186,7 +188,7 @@ export const UnifiedOfflineIndicator: React.FC<UnifiedOfflineIndicatorProps> = (
             exit={{ y: position.includes('bottom') ? 100 : -100, opacity: 0 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
           >
-            <Card className="bg-red-50 dark:bg-red-950 border-2 border-red-500 shadow-lg">
+            <Card className="bg-red-50 dark:bg-red-950 border-2 border-red-500 shadow-lg" role="alert">
               <div className="p-4">
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
@@ -233,7 +235,7 @@ export const UnifiedOfflineIndicator: React.FC<UnifiedOfflineIndicatorProps> = (
             exit={{ y: position.includes('bottom') ? 100 : -100, opacity: 0 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
           >
-            <Card className="bg-green-50 dark:bg-green-950 border-2 border-green-500 shadow-lg">
+            <Card className="bg-green-50 dark:bg-green-950 border-2 border-green-500 shadow-lg" role="status">
               <div className="p-4">
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
@@ -278,12 +280,15 @@ export const UnifiedOfflineIndicator: React.FC<UnifiedOfflineIndicatorProps> = (
             exit={{ y: position.includes('bottom') ? 100 : -100, opacity: 0 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
           >
-            <Card className={cn(
-              "border-2 shadow-lg",
-              failedCount > 0 
-                ? "bg-yellow-50 dark:bg-yellow-950 border-yellow-500"
-                : "bg-blue-50 dark:bg-blue-950 border-blue-500"
-            )}>
+            <Card 
+              className={cn(
+                "border-2 shadow-lg",
+                failedCount > 0 
+                  ? "bg-yellow-50 dark:bg-yellow-950 border-yellow-500"
+                  : "bg-blue-50 dark:bg-blue-950 border-blue-500"
+              )}
+              role="status"
+            >
               <div className="p-4">
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">

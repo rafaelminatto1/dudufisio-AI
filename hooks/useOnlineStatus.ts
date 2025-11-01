@@ -91,11 +91,9 @@ export function useOnlineStatus() {
   useEffect(() => {
     const currentIsOnline = offlineContext.hasError ? localIsOnline : offlineContext.isOnline;
     
-    if (currentIsOnline && !offlineContext.isOnline) {
-      setWasOffline(true);
-      const timer = setTimeout(() => setWasOffline(false), 3000);
-      return () => clearTimeout(timer);
-    }
+    // Se estava offline e agora está online, setar flag wasOffline
+    // Essa lógica já é tratada pelos handlers de evento, então não precisamos duplicar aqui
+    // O wasOffline é controlado pelos eventos online/offline diretamente
   }, [offlineContext.isOnline, offlineContext.hasError, localIsOnline]);
 
   // Retornar valores do context se disponível, senão valores locais

@@ -401,7 +401,7 @@ type SyncItemType =
   | 'sua-nova-acao'; // Adicione aqui
 ```
 
-2. **Use addToQueue no seu componente**:
+2. **Use enqueue no seu componente**:
 ```typescript
 import { syncQueue } from '@/lib/offline/syncQueue';
 import { useSafeOffline } from '@/contexts/SafeOfflineContext';
@@ -415,12 +415,7 @@ function MyComponent() {
       await api.post('/endpoint', data);
     } else {
       // Offline: adicionar à fila
-      await syncQueue.addToQueue({
-        type: 'sua-nova-acao',
-        data,
-        endpoint: '/endpoint',
-        method: 'POST',
-      });
+      await syncQueue.enqueue('sua-nova-acao', data);
     }
   };
 
