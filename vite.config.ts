@@ -279,8 +279,8 @@ export default defineConfig({
           }
           return 'assets/[name]-[hash].js';
         },
-        // Code splitting manual SIMPLIFICADO e confiável
-        // Mantemos apenas os chunks essenciais para evitar 404s
+        // Code splitting OTIMIZADO E GRANULAR
+        // Separa bibliotecas grandes em chunks individuais para melhor caching
         manualChunks: (id) => {
           // React core - sempre primeiro
           if (id.includes('node_modules/react') || 
@@ -289,19 +289,61 @@ export default defineConfig({
             return 'vendor-react';
           }
           
-          // React Router
+          // React Router - chunk separado
           if (id.includes('node_modules/react-router')) {
             return 'vendor-router';
           }
           
-          // Radix UI - componentes grandes
+          // Radix UI - componentes UI
           if (id.includes('node_modules/@radix-ui')) {
             return 'vendor-radix';
           }
           
-          // Tiptap Editor (apenas se usado)
-          if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror')) {
-            return 'vendor-editor';
+          // Tiptap - editor de texto
+          if (id.includes('node_modules/@tiptap')) {
+            return 'vendor-tiptap';
+          }
+          
+          // ProseMirror - dependência do Tiptap
+          if (id.includes('node_modules/prosemirror')) {
+            return 'vendor-prosemirror';
+          }
+          
+          // Recharts - gráficos
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
+            return 'vendor-charts';
+          }
+          
+          // Supabase - backend
+          if (id.includes('node_modules/@supabase')) {
+            return 'vendor-supabase';
+          }
+          
+          // Framer Motion - animações
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-animation';
+          }
+          
+          // React Hook Form + Zod - formulários
+          if (id.includes('node_modules/react-hook-form') || 
+              id.includes('node_modules/zod') ||
+              id.includes('node_modules/@hookform')) {
+            return 'vendor-forms';
+          }
+          
+          // Date-fns - datas
+          if (id.includes('node_modules/date-fns')) {
+            return 'vendor-dates';
+          }
+          
+          // Sentry - monitoramento
+          if (id.includes('node_modules/@sentry')) {
+            return 'vendor-sentry';
+          }
+          
+          // Lucide Icons - ícones
+          if (id.includes('node_modules/lucide-react')) {
+            return 'vendor-icons';
           }
           
           // Outros vendors node_modules
@@ -318,7 +360,7 @@ export default defineConfig({
         tryCatchDeoptimization: false,
       }
     },
-    chunkSizeWarningLimit: 500, // Mais restritivo
+    chunkSizeWarningLimit: 600, // Ajustado para vendor-libs (será otimizado)
     cssCodeSplit: true, // Split CSS
     assetsInlineLimit: 4096, // Inline assets < 4kb
   }
