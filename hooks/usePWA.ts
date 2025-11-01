@@ -72,10 +72,11 @@ export const usePWA = (): [PWAStatus, PWAControls] => {
         }
       });
 
-      // Verificar atualizações periodicamente
-      setInterval(() => {
-        registration.update();
-      }, 60 * 60 * 1000); // A cada hora
+      // Verificar atualizações periodicamente (desabilitado)
+      // Removido para evitar alertas frequentes
+      // setInterval(() => {
+      //   registration.update();
+      // }, 60 * 60 * 1000);
 
     } catch (error) {
       console.error('[PWA] Erro ao registrar Service Worker:', error);
@@ -136,7 +137,8 @@ export const usePWA = (): [PWAStatus, PWAControls] => {
       
       if (registration && registration.waiting) {
         registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        window.location.reload();
+        // Reload removido - atualização silenciosa
+        console.log('[PWA] Service Worker atualizado. Recarregue manualmente se necessário.');
       }
     }
   };

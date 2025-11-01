@@ -279,41 +279,35 @@ export default defineConfig({
           }
           return 'assets/[name]-[hash].js';
         },
-        // Code splitting manual otimizado conforme plano
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-radix': [
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-alert-dialog',
-            '@radix-ui/react-avatar',
-            '@radix-ui/react-checkbox',
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-label',
-            '@radix-ui/react-popover',
-            '@radix-ui/react-select',
-            '@radix-ui/react-separator',
-            '@radix-ui/react-slider',
-            '@radix-ui/react-switch',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-toast',
-            '@radix-ui/react-tooltip',
-          ],
-          'charts': ['recharts'],
-          'forms': ['react-hook-form', 'zod', '@hookform/resolvers'],
-          'editor-tiptap': [
-            '@tiptap/react',
-            '@tiptap/starter-kit',
-            '@tiptap/extension-color',
-            '@tiptap/extension-image',
-            '@tiptap/extension-link',
-            '@tiptap/extension-table',
-            '@tiptap/extension-text-align',
-            '@tiptap/extension-underline',
-          ],
-          'ai-sdk': ['@google/generative-ai', '@anthropic-ai/sdk'],
-          'supabase': ['@supabase/supabase-js'],
-          'utils': ['clsx', 'tailwind-merge', 'date-fns', 'uuid'],
+        // Code splitting manual SIMPLIFICADO e confiável
+        // Mantemos apenas os chunks essenciais para evitar 404s
+        manualChunks: (id) => {
+          // React core - sempre primeiro
+          if (id.includes('node_modules/react') || 
+              id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/scheduler')) {
+            return 'vendor-react';
+          }
+          
+          // React Router
+          if (id.includes('node_modules/react-router')) {
+            return 'vendor-router';
+          }
+          
+          // Radix UI - componentes grandes
+          if (id.includes('node_modules/@radix-ui')) {
+            return 'vendor-radix';
+          }
+          
+          // Tiptap Editor (apenas se usado)
+          if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror')) {
+            return 'vendor-editor';
+          }
+          
+          // Outros vendors node_modules
+          if (id.includes('node_modules')) {
+            return 'vendor-libs';
+          }
         },
         assetFileNames: 'assets/[name]-[hash].[ext]'
       },

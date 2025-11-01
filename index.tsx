@@ -86,29 +86,45 @@ if (!rootElement) {
       performance.measure('time_to_first_render', 'app_start', 'app_rendered');
     } catch {}
 
-    // Registrar service worker para offline cache (adiado)
-    import('./lib/serviceWorkerRegistration').then(({ registerServiceWorker }) => registerServiceWorker({
-      onSuccess: () => {
-        console.log('✅ Service worker registered successfully - App ready for offline use');
-      },
-      onUpdate: (registration) => {
-        console.log('🔄 New service worker version available');
-        // Notificação de atualização será mostrada automaticamente
-      },
-      onError: (error) => {
-        console.error('❌ Service worker registration failed:', error);
-      },
-    })).catch(() => {});
-
-    // Registrar Service Worker avançado (PWA Enterprise)
-    import('./lib/registerSW').then(({ registerServiceWorker: registerAdvancedSW, setupInstallPrompt }) => {
-      registerAdvancedSW().then(reg => {
-        if (reg) {
-          console.log('🚀 PWA Service Worker registrado');
-          setupInstallPrompt();
-        }
+    // Registrar service worker unificado para offline cache (adiado para não bloquear render)
+    import('./lib/serviceWorker').then(({ 
+      registerServiceWorker, 
+      setupInstallPrompt,
+      setupNetworkListeners 
+    }) => {
+      registerServiceWorker({
+        onSuccess: () => {
+          console.log('✅ Service worker registered successfully - App ready for offline use');
+        },
+        onUpdate: (registration) => {
+          console.log('🔄 New service worker version available');
+          // Notificação será mostrada pelo UnifiedOfflineIndicator
+        },
+        onError: (error) => {
+          console.error('❌ Service worker registration failed:', error);
+        },
+        enablePeriodicUpdates: true, // Verificar atualizações periodicamente
       });
-    }).catch(() => {});
+
+      // Configurar prompt de instalação PWA
+      setupInstallPrompt(
+        (prompt) => {
+          console.log('💾 PWA pode ser instalado');
+          // Prompt disponível para uso posterior
+        },
+        () => {
+          console.log('✅ PWA instalado com sucesso!');
+        }
+      );
+
+      // Configurar listeners de rede (opcional - o SafeOfflineContext já faz isso)
+      setupNetworkListeners(
+        () => console.log('🟢 Voltou online'),
+        () => console.log('🔴 Ficou offline')
+      );
+    }).catch((error) => {
+      console.error('❌ Erro ao carregar service worker module:', error);
+    });
 
   } catch (error) {
     console.error('💥 Error rendering React app:', error);

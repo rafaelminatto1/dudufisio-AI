@@ -34,6 +34,11 @@ class IndexedDBManager {
     if (this.db) return this.db;
     if (this.dbPromise) return this.dbPromise;
 
+    // Verificar se IndexedDB está disponível
+    if (typeof indexedDB === 'undefined' || !indexedDB || typeof indexedDB.open !== 'function') {
+      throw new Error('IndexedDB não está disponível neste navegador');
+    }
+
     this.dbPromise = new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
 
@@ -167,9 +172,29 @@ class IndexedDBManager {
 
 export const indexedDB = new IndexedDBManager();
 
-// Helper functions para settings
-export const getSettings = (key: string) => indexedDB.get('settings', key);
-export const setSettings = (key: string, value: any) =>
-  indexedDB.set('settings', { key, value, updatedAt: new Date() });
-export const deleteSettings = (key: string) => indexedDB.delete('settings', key);
+// Helper functions para settings com tratamento de erro
+export const getSettings = async (key: string) => {
+  try {
+    return await indexedDB.get('settings', key);
+  } catch (error) {
+    console.warn('Erro ao acessar IndexedDB:', error);
+    return undefined;
+  }
+};
+
+export const setSettings = async (key: string, value: any) => {
+  try {
+    return await indexedDB.set('settings', { key, value, updatedAt: new Date() });
+  } catch (error) {
+    console.warn('Erro ao salvar em IndexedDB:', error);
+  }
+};
+
+export const deleteSettings = async (key: string) => {
+  try {
+    return await indexedDB.delete('settings', key);
+  } catch (error) {
+    console.warn('Erro ao deletar de IndexedDB:', error);
+  }
+};
 

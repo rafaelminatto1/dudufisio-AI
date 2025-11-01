@@ -28,10 +28,12 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
     console.log('✅ Service Worker registrado:', registration.scope);
 
-    // Check for updates periodically
-    setInterval(() => {
-      registration.update();
-    }, 60 * 60 * 1000); // Every hour
+    // Check for updates periodically (desabilitado em dev)
+    if (import.meta.env.PROD) {
+      setInterval(() => {
+        registration.update();
+      }, 6 * 60 * 60 * 1000); // Every 6 hours (only in production)
+    }
 
     // Listen for updates
     registration.addEventListener('updatefound', () => {
@@ -40,20 +42,16 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
       newWorker?.addEventListener('statechange', () => {
         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          console.log('✨ Nova versão disponível! Recarregue a página para atualizar.');
-          
-          // Notify user
-          if (confirm('Nova versão disponível! Deseja recarregar a página?')) {
-            window.location.reload();
-          }
+          console.log('✨ Nova versão disponível! Recarregue a página manualmente se desejar atualizar.');
+          // Alerta removido - atualização silenciosa
         }
       });
     });
 
     // Handle controller change (when new SW takes over)
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('🔄 Service Worker atualizado, recarregando...');
-      window.location.reload();
+      console.log('🔄 Service Worker atualizado. Recarregue a página manualmente se necessário.');
+      // Reload automático removido para evitar interrupções
     });
 
     return registration;

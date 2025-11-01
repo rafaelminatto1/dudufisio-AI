@@ -10,10 +10,18 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import './lib/sentry'; // Inicializar Sentry
 
 /**
+ * 🎯 App - Entry Point Principal
+ * 
  * Mantido como entry point alternativo para cenários de testes/Storybook.
  * Encaminha diretamente para o roteador principal da aplicação.
  * 
- * Agora com React Query para cache e otimização de API calls
+ * Hierarquia de Providers:
+ * 1. ErrorBoundary (top-level, captura tudo)
+ * 2. QueryClientProvider (React Query)
+ * 3. AppRoutes (contém providers específicos da aplicação)
+ * 
+ * Nota: A hierarquia principal de providers está em AppRoutes.tsx
+ * para melhor organização e testabilidade.
  */
 const App: React.FC = () => {
   return (

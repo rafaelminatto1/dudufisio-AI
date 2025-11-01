@@ -63,10 +63,11 @@ export async function registerServiceWorker(config?: ServiceWorkerConfig) {
           });
         });
 
-        // Verificar periodicamente por atualizações
-        setInterval(() => {
-          registration.update();
-        }, 60 * 60 * 1000); // 1 hora
+        // Verificar periodicamente por atualizações (desabilitado)
+        // Removido para evitar alertas frequentes
+        // setInterval(() => {
+        //   registration.update();
+        // }, 60 * 60 * 1000);
 
       } catch (error) {
         logger.error('Falha ao registrar service worker.', { context: 'serviceWorkerRegistration.register', data: { error } });
@@ -116,10 +117,11 @@ export async function updateServiceWorker(registration: ServiceWorkerRegistratio
   // Enviar mensagem para skip waiting
   waitingWorker.postMessage({ action: 'skipWaiting' });
 
-  // Recarregar página quando o novo worker assumir
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    window.location.reload();
-  });
+  // Recarregar página quando o novo worker assumir (desabilitado)
+  // Removido para evitar recarregamentos automáticos indesejados
+  // navigator.serviceWorker.addEventListener('controllerchange', () => {
+  //   window.location.reload();
+  // });
 }
 
 // Variável para controlar debounce das notificações

@@ -31,31 +31,35 @@ interface UseDashboardStatsProps {
 
 export default function useDashboardStats({ patients, appointments }: UseDashboardStatsProps) {
     const stats: DashboardStats = useMemo(() => {
+        // Verificações de segurança
+        const safePatients = Array.isArray(patients) ? patients : [];
+        const safeAppointments = Array.isArray(appointments) ? appointments : [];
+
         // --- Date setup ---
         const now = new Date();
         const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
         // --- Calculations for THIS month ---
-        const revenueThisMonth = appointments
+        const revenueThisMonth = safeAppointments
             .filter(app => app.status === AppointmentStatus.Completed && new Date(app.startTime) >= startOfThisMonth)
             .reduce((sum, app) => sum + app.value, 0);
 
         // --- Calculations for LAST month (from the provided 60-day appointment data) ---
-        const revenueLastMonth = appointments
+        const revenueLastMonth = safeAppointments
             .filter(app => {
                 const appDate = new Date(app.startTime);
                 return app.status === AppointmentStatus.Completed && appDate >= startOfLastMonth && appDate < startOfThisMonth;
             })
             .reduce((sum, app) => sum + app.value, 0);
 
-        const newPatientsThisMonthCount = patients.filter(p => new Date(p.registrationDate) >= startOfThisMonth).length;
-        const newPatientsLastMonthCount = patients.filter(p => {
+        const newPatientsThisMonthCount = safePatients.filter(p => new Date(p.registrationDate) >= startOfThisMonth).length;
+        const newPatientsLastMonthCount = safePatients.filter(p => {
             const regDate = new Date(p.registrationDate);
             return regDate >= startOfLastMonth && regDate < startOfThisMonth;
         }).length;
         
-        const activePatientsCount = patients.filter(p => p.status === 'Active').length;
+        const activePatientsCount = safePatients.filter(p => p.status === 'Active').length;
         const revenueChange = calculateChange(revenueThisMonth, revenueLastMonth);
         const newPatientsChange = calculateChange(newPatientsThisMonthCount, newPatientsLastMonthCount);
 
@@ -64,7 +68,7 @@ export default function useDashboardStats({ patients, appointments }: UseDashboa
         const workingHoursPerDay = 8;
         const workingDaysPerMonth = 20;
         const totalPossibleSlots = workingHoursPerDay * workingDaysPerMonth;
-        const appointmentsThisMonth = appointments.filter(app => new Date(app.startTime) >= startOfThisMonth).length;
+        const appointmentsThisMonth = safeAppointments.filter(app => new Date(app.startTime) >= startOfThisMonth).length;
         const occupancyRate = totalPossibleSlots > 0 ? (appointmentsThisMonth / totalPossibleSlots) * 100 : 0;
 
         return {

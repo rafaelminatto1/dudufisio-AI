@@ -18,7 +18,8 @@ import { ToastProvider } from './contexts/ToastContext';
 import { DebugProvider } from './contexts/DebugContext';
 import { PatientProvider } from './contexts/PatientContext';
 import { ExerciseProvider } from './contexts/ExerciseContext';
-import { OfflineProvider } from './contexts/OfflineContext';
+import { SafeOfflineProvider } from './contexts/SafeOfflineContext';
+import { ProviderErrorBoundary } from './components/ProviderErrorBoundary';
 import AuthRoutes from './pages/auth/AuthRoutes';
 import { Role } from './types';
 
@@ -27,10 +28,8 @@ const MainDashboard = React.lazy(() => import('./pages/MainDashboard'));
 const PatientPortalDashboard = React.lazy(() => import('./pages/PatientPortalDashboard'));
 const PartnerPortalDashboard = React.lazy(() => import('./pages/PartnerPortalDashboard'));
 
-// SW e preloading serão importados sob demanda em idle
-import OfflineIndicator from './components/OfflineIndicator';
-import OfflineNotification from './components/OfflineNotification';
-import OfflineIndicatorEnterprise from './components/offline/OfflineIndicator';
+// Indicador offline unificado
+import UnifiedOfflineIndicator from './components/offline/UnifiedOfflineIndicator';
 import MobileLoadingScreen from './components/ui/MobileLoadingScreen';
 import { logger } from './lib/logger';
 import './lib/debugHelpers';
@@ -421,36 +420,50 @@ const RouterWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   <BrowserRouter>{children}</BrowserRouter>
 );
 
+/**
+ * 🏗️ AppRoutes - Hierarquia de Providers Reorganizada
+ * 
+ * Nova estrutura:
+ * 1. ProviderErrorBoundary - Captura erros de providers
+ * 2. SafeOfflineProvider - Provider offline robusto (FORA do AppErrorBoundary)
+ * 3. AppErrorBoundary - Captura erros da aplicação
+ * 4. Demais providers aninhados
+ * 
+ * Benefícios:
+ * - Providers críticos nunca quebram a aplicação
+ * - Recuperação granular de erros
+ * - Sistema offline sempre disponível
+ */
 const AppRoutes: React.FC = () => (
-  <AppErrorBoundary>
-    <RouterWrapper>
-      <DebugProvider>
-        <SupabaseAuthProvider>
-          <AppProvider>
-            <PatientProvider>
-              <ExerciseProvider>
-                <PerformanceProfiler
-                  id="AppRoutes"
-                  onRender={(id, _phase, actualDuration) => {
-                    logger.performance(id, actualDuration, 100);
-                  }}
-                >
-                  <ToastProvider>
-                    <OfflineProvider>
-                      <AppContent />
-                      <OfflineIndicator />
-                      <OfflineNotification />
-                      <OfflineIndicatorEnterprise />
-                    </OfflineProvider>
-                  </ToastProvider>
-                </PerformanceProfiler>
-              </ExerciseProvider>
-            </PatientProvider>
-          </AppProvider>
-        </SupabaseAuthProvider>
-      </DebugProvider>
-    </RouterWrapper>
-  </AppErrorBoundary>
+  <ProviderErrorBoundary providerName="Root Providers">
+    <SafeOfflineProvider>
+      <AppErrorBoundary>
+        <RouterWrapper>
+          <DebugProvider>
+            <SupabaseAuthProvider>
+              <AppProvider>
+                <PatientProvider>
+                  <ExerciseProvider>
+                    <PerformanceProfiler
+                      id="AppRoutes"
+                      onRender={(id, _phase, actualDuration) => {
+                        logger.performance(id, actualDuration, 100);
+                      }}
+                    >
+                      <ToastProvider>
+                        <AppContent />
+                        <UnifiedOfflineIndicator position="bottom-right" showSyncDetails />
+                      </ToastProvider>
+                    </PerformanceProfiler>
+                  </ExerciseProvider>
+                </PatientProvider>
+              </AppProvider>
+            </SupabaseAuthProvider>
+          </DebugProvider>
+        </RouterWrapper>
+      </AppErrorBoundary>
+    </SafeOfflineProvider>
+  </ProviderErrorBoundary>
 );
 
 export default AppRoutes;

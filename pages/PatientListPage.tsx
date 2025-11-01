@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import ResponsiveContainer from '@/components/ui/ResponsiveContainer';
-import PatientTable from '@/components/patients/PatientTable';
+import { PatientTable } from '@/components/patients/PatientTable';
 import { usePatient } from '@/contexts/PatientContext';
 import LoadingState from '@/components/ui/LoadingState';
 import ErrorState from '@/components/ui/ErrorState';
@@ -190,7 +190,11 @@ const PatientListPage: React.FC = () => {
 
         {/* Data Table (Supabase + shadcn) */}
         <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-fisio-neutral-200">
-          <PatientTable onView={handleViewPatient} />
+          <PatientTable 
+            patients={patients}
+            loading={isLoading}
+            onRowClick={handleViewPatient}
+          />
         </div>
       </ResponsiveContainer>
     </main>
