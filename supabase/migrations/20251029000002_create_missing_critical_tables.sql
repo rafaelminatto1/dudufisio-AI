@@ -220,37 +220,9 @@ CREATE INDEX IF NOT EXISTS idx_waitlist_created ON waitlist(created_at DESC);
 -- =====================================================
 -- 7. SCHEDULE_BLOCKS TABLE
 -- =====================================================
-CREATE TABLE IF NOT EXISTS schedule_blocks (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  therapist_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  
-  -- Block Info
-  title TEXT NOT NULL,
-  description TEXT,
-  block_type TEXT DEFAULT 'unavailable' CHECK (block_type IN ('unavailable', 'break', 'meeting', 'personal')),
-  
-  -- Timing
-  start_time TIMESTAMPTZ NOT NULL,
-  end_time TIMESTAMPTZ NOT NULL,
-  
-  -- Recurrence
-  is_recurring BOOLEAN DEFAULT FALSE,
-  recurrence_pattern TEXT, -- 'daily', 'weekly', 'monthly'
-  recurrence_end_date DATE,
-  
-  -- Status
-  is_active BOOLEAN DEFAULT TRUE,
-  
-  -- Metadata
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  deleted_at TIMESTAMPTZ
-);
-
--- Índices
-CREATE INDEX IF NOT EXISTS idx_schedule_blocks_therapist ON schedule_blocks(therapist_id) WHERE deleted_at IS NULL;
-CREATE INDEX IF NOT EXISTS idx_schedule_blocks_start_time ON schedule_blocks(start_time);
-CREATE INDEX IF NOT EXISTS idx_schedule_blocks_active ON schedule_blocks(is_active);
+-- NOTA: Esta tabela já foi criada em 20250117000004_agenda_tables.sql
+-- As colunas adicionais (title, description, is_active) serão adicionadas
+-- em 20251101033022_add_schedule_blocks_missing_columns.sql
 
 -- =====================================================
 -- 8. TRIGGERS PARA UPDATED_AT
