@@ -107,17 +107,24 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
     const patientMap = new Map<string, Patient>(patients.map(p => [p.id, p]));
     const therapistMap = new Map<string, Therapist>(therapists.map(t => [t.id, t]));
 
-    return appointments.map(app => ({
-        ...app,
-        // Defaults seguros
-        type: (app.type as any) || AppointmentType.Session,
-        value: typeof app.value === 'number' && Number.isFinite(app.value) ? app.value : 0,
-        patientPhone: patientMap.get(app.patientId)?.phone || '',
-        therapistColor: therapistMap.get(app.therapistId)?.color || 'slate',
-        typeColor: AppointmentTypeColors[(app.type as any) || AppointmentType.Session] || 'slate',
-        patientMedicalAlerts: patientMap.get(app.patientId)?.medicalAlerts,
-        therapistName: therapistMap.get(app.therapistId)?.name || '(escolher depois na evolução)',
-    }));
+    return appointments.map(app => {
+        const patient = patientMap.get(app.patientId);
+        
+        return {
+            ...app,
+            // Defaults seguros
+            type: (app.type as any) || AppointmentType.Session,
+            value: typeof app.value === 'number' && Number.isFinite(app.value) ? app.value : 0,
+            // 🔥 FIX: Garantir que patientName esteja sempre presente
+            patientName: app.patientName || patient?.name || 'Paciente não identificado',
+            patientPhone: patient?.phone || '',
+            patientAvatarUrl: app.patientAvatarUrl || patient?.avatarUrl || '',
+            therapistColor: therapistMap.get(app.therapistId)?.color || 'slate',
+            typeColor: AppointmentTypeColors[(app.type as any) || AppointmentType.Session] || 'slate',
+            patientMedicalAlerts: patient?.medicalAlerts,
+            therapistName: therapistMap.get(app.therapistId)?.name || '(escolher depois na evolução)',
+        };
+    });
   }, [appointments, patients, therapists]);
 
   return { 

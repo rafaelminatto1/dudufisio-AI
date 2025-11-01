@@ -1,9 +1,4 @@
-/**
- * components/common/ConfirmDialog.tsx
- * Componente reutilizável para diálogos de confirmação
- */
-
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,81 +8,33 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '../ui/alert-dialog';
-import { AlertTriangle, Info, HelpCircle, AlertCircle } from 'lucide-react';
+} from '@/components/ui/alert-dialog';
 
-// ============================================================================
-// TYPES
-// ============================================================================
-
-export type ConfirmDialogVariant = 'default' | 'destructive' | 'warning' | 'info';
-
-export interface ConfirmDialogProps {
+interface ConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  title: string;
-  description: string;
+  onConfirm: () => void;
+  title?: string;
+  description?: string | ReactNode;
   confirmText?: string;
   cancelText?: string;
-  variant?: ConfirmDialogVariant;
-  onConfirm: () => void | Promise<void>;
-  onCancel?: () => void;
-  isLoading?: boolean;
+  variant?: 'default' | 'destructive';
+  loading?: boolean;
 }
-
-// ============================================================================
-// VARIANT CONFIGS
-// ============================================================================
-
-const variantConfig = {
-  default: {
-    icon: HelpCircle,
-    iconColor: 'text-blue-500',
-    confirmButton: 'bg-blue-600 hover:bg-blue-700',
-  },
-  destructive: {
-    icon: AlertTriangle,
-    iconColor: 'text-red-500',
-    confirmButton: 'bg-red-600 hover:bg-red-700',
-  },
-  warning: {
-    icon: AlertCircle,
-    iconColor: 'text-yellow-500',
-    confirmButton: 'bg-yellow-600 hover:bg-yellow-700',
-  },
-  info: {
-    icon: Info,
-    iconColor: 'text-blue-500',
-    confirmButton: 'bg-blue-600 hover:bg-blue-700',
-  },
-};
-
-// ============================================================================
-// COMPONENT
-// ============================================================================
 
 export function ConfirmDialog({
   open,
   onOpenChange,
-  title,
-  description,
-  confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
-  variant = 'default',
   onConfirm,
-  onCancel,
-  isLoading = false,
+  title = "Você tem certeza?",
+  description = "Esta ação não pode ser desfeita.",
+  confirmText = "Confirmar",
+  cancelText = "Cancelar",
+  variant = 'default',
+  loading = false,
 }: ConfirmDialogProps) {
-  const config = variantConfig[variant];
-  const Icon = config.icon;
-
-  const handleConfirm = async () => {
-    await onConfirm();
-    onOpenChange(false);
-  };
-
-  const handleCancel = () => {
-    if (onCancel) onCancel();
+  const handleConfirm = () => {
+    onConfirm();
     onOpenChange(false);
   };
 
@@ -95,25 +42,23 @@ export function ConfirmDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <div className="flex items-center gap-3">
-            <Icon className={`h-6 w-6 ${config.iconColor}`} />
-            <AlertDialogTitle>{title}</AlertDialogTitle>
-          </div>
-          <AlertDialogDescription className="pt-2">
-            {description}
-          </AlertDialogDescription>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancel} disabled={isLoading}>
+          <AlertDialogCancel disabled={loading}>
             {cancelText}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
-            disabled={isLoading}
-            className={config.confirmButton}
+            disabled={loading}
+            className={
+              variant === 'destructive'
+                ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
+                : ''
+            }
           >
-            {isLoading ? 'Processando...' : confirmText}
+            {loading ? 'Processando...' : confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -121,111 +66,46 @@ export function ConfirmDialog({
   );
 }
 
-// ============================================================================
-// PRESET DIALOGS
-// ============================================================================
-
-export interface DeleteConfirmDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  itemName: string;
-  itemType?: string;
-  onConfirm: () => void | Promise<void>;
-  isLoading?: boolean;
-}
-
 /**
- * Diálogo de confirmação de exclusão pré-configurado
+ * Hook para usar o ConfirmDialog de forma programática
  */
-export function DeleteConfirmDialog({
-  open,
-  onOpenChange,
-  itemName,
-  itemType = 'item',
-  onConfirm,
-  isLoading,
-}: DeleteConfirmDialogProps) {
-  return (
+export function useConfirmDialog() {
+  const [state, setState] = React.useState<{
+    open: boolean;
+    title?: string;
+    description?: string | ReactNode;
+    onConfirm?: () => void;
+    variant?: 'default' | 'destructive';
+  }>({
+    open: false,
+  });
+
+  const confirm = React.useCallback(
+    (options: Omit<typeof state, 'open'>) => {
+      return new Promise<boolean>((resolve) => {
+        setState({
+          open: true,
+          ...options,
+          onConfirm: () => {
+            options.onConfirm?.();
+            resolve(true);
+          },
+        });
+      });
+    },
+    []
+  );
+
+  const dialog = (
     <ConfirmDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title={`Excluir ${itemType}?`}
-      description={`Tem certeza que deseja excluir "${itemName}"? Esta ação não pode ser desfeita.`}
-      confirmText="Sim, excluir"
-      cancelText="Cancelar"
-      variant="destructive"
-      onConfirm={onConfirm}
-      isLoading={isLoading}
+      open={state.open}
+      onOpenChange={(open) => setState({ ...state, open })}
+      onConfirm={state.onConfirm || (() => {})}
+      title={state.title}
+      description={state.description}
+      variant={state.variant}
     />
   );
-}
 
-export interface SaveConfirmDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  message?: string;
-  onConfirm: () => void | Promise<void>;
-  onCancel?: () => void;
-  isLoading?: boolean;
+  return { confirm, dialog };
 }
-
-/**
- * Diálogo de confirmação de salvamento pré-configurado
- */
-export function SaveConfirmDialog({
-  open,
-  onOpenChange,
-  message = 'Você tem alterações não salvas. Deseja salvá-las antes de sair?',
-  onConfirm,
-  onCancel,
-  isLoading,
-}: SaveConfirmDialogProps) {
-  return (
-    <ConfirmDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title="Salvar alterações?"
-      description={message}
-      confirmText="Salvar"
-      cancelText="Descartar"
-      variant="warning"
-      onConfirm={onConfirm}
-      onCancel={onCancel}
-      isLoading={isLoading}
-    />
-  );
-}
-
-export interface DischargeConfirmDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  patientName: string;
-  onConfirm: () => void | Promise<void>;
-  isLoading?: boolean;
-}
-
-/**
- * Diálogo de confirmação de alta do paciente
- */
-export function DischargeConfirmDialog({
-  open,
-  onOpenChange,
-  patientName,
-  onConfirm,
-  isLoading,
-}: DischargeConfirmDialogProps) {
-  return (
-    <ConfirmDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title="Dar alta ao paciente?"
-      description={`Tem certeza que deseja dar alta a ${patientName}? O paciente será marcado como "Concluído" e removido da lista de atendimentos ativos.`}
-      confirmText="Sim, dar alta"
-      cancelText="Cancelar"
-      variant="warning"
-      onConfirm={onConfirm}
-      isLoading={isLoading}
-    />
-  );
-}
-

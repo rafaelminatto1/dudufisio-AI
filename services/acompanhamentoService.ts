@@ -358,7 +358,7 @@ export const getQuickActionsData = async (
     const observations: Array<{ patientId: string; patientName: string; summary: string }> = [];
 
     for (const patient of patients) {
-        if (patient.communicationLogs?.length === 0) {
+        if (!patient.communicationLogs || patient.communicationLogs.length === 0) {
             contactLogsPending.push({
                 patientId: patient.id,
                 patientName: patient.name,

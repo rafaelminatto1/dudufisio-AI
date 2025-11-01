@@ -115,6 +115,7 @@ const ResponsiveSidebar: React.FC<ResponsiveSidebarProps> = ({
         { id: 'events-list', path: '/events-list', icon: Calendar, label: 'Lista de Eventos' },
         { id: 'partnerships', path: '/partnerships', icon: Handshake, label: 'Parcerias' },
         { id: 'subscriptions', path: '/subscription', icon: CreditCard, label: 'Assinaturas' },
+        { id: 'tasks', path: '/tasks', icon: ClipboardList, label: 'Tarefas' },
       ],
     });
   }
@@ -136,31 +137,18 @@ const ResponsiveSidebar: React.FC<ResponsiveSidebarProps> = ({
         { id: 'audit-log', path: '/audit-log', icon: ShieldCheck, label: 'Auditoria & Compliance' },
         { id: 'audit-log-page', path: '/audit-log-page', icon: FileCheck, label: 'Log de Auditoria' },
         { id: 'legal', path: '/legal', icon: FileText, label: 'Legal' },
-        { id: 'settings', path: '/settings', icon: Settings, label: 'Configurações' },
+        { id: 'settings-admin', path: '/settings', icon: Settings, label: 'Configurações' },
       ],
     });
-  }
-
-    // Seção Gestão - Apenas Admin
-    if (user.role === Role.Admin) {
-      sections.push({
-        title: 'Gestão',
-        items: [
-          { id: 'crm', path: '/crm', icon: Target, label: 'CRM & Leads' },
-          { id: 'whatsapp', path: '/whatsapp', icon: MessageSquare, label: 'WhatsApp' },
-          { id: 'inventory', path: '/inventory', icon: Package, label: 'Estoque' },
-          { id: 'tasks', path: '/tasks', icon: ClipboardList, label: 'Tarefas' },
-        ],
-      });
-    }
-
-    // Configurações - Para todos
+  } else {
+    // Configurações - Para não-admin
     sections.push({
       title: 'Sistema',
       items: [
         { id: 'settings', path: '/settings', icon: Settings, label: 'Configurações' },
       ],
     });
+  }
 
     return sections;
   }, [user, unreadCount]);

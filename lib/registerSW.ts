@@ -21,7 +21,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
     console.log('🔄 Registrando Service Worker...');
 
-    const registration = await navigator.serviceWorker.register('/workers/sw-advanced.js', {
+    const registration = await navigator.serviceWorker.register('/sw.js', {
       scope: '/',
       updateViaCache: 'none' // Always check for updates
     });

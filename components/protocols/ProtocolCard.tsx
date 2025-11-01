@@ -1,130 +1,160 @@
-/**
- * Card de Protocolo
- * Visualização compacta para lista/grid
- */
-
 import React from 'react';
-import { ExerciseProtocol } from '../../types/exercise';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Edit, Trash2, Copy, Users, Clock, Zap } from 'lucide-react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Protocol, EvidenceLevel, ProtocolCategory } from '@/types';
+import { ActionMenu } from '@/components/common/ActionMenu';
+import { FileText, Edit, Trash2, Copy, Star, Eye, Users } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ProtocolCardProps {
-  protocol: ExerciseProtocol;
+  protocol: Protocol;
+  onClick?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
-  onDuplicate?: () => void;
+  onView?: () => void;
+  onCopy?: () => void;
+  onApplyToPatient?: () => void;
 }
 
-const intensityColors: Record<string, string> = {
-  low: 'bg-green-50 text-green-700 border-green-200',
-  moderate: 'bg-blue-50 text-blue-700 border-blue-200',
-  high: 'bg-orange-50 text-orange-700 border-orange-200',
-  very_high: 'bg-red-50 text-red-700 border-red-200',
+const getCategoryColor = (category: ProtocolCategory) => {
+  const colors: Record<ProtocolCategory, string> = {
+    [ProtocolCategory.Orthopedic]: 'bg-blue-100 text-blue-700',
+    [ProtocolCategory.Neurological]: 'bg-purple-100 text-purple-700',
+    [ProtocolCategory.Cardiorespiratory]: 'bg-red-100 text-red-700',
+    [ProtocolCategory.Pediatric]: 'bg-pink-100 text-pink-700',
+    [ProtocolCategory.Sports]: 'bg-green-100 text-green-700',
+    [ProtocolCategory.Geriatric]: 'bg-amber-100 text-amber-700',
+    [ProtocolCategory.Oncology]: 'bg-indigo-100 text-indigo-700',
+    [ProtocolCategory.Women]: 'bg-rose-100 text-rose-700',
+  };
+  return colors[category] || 'bg-gray-100 text-gray-700';
 };
 
-const intensityLabels: Record<string, string> = {
-  low: 'Baixa',
-  moderate: 'Moderada',
-  high: 'Alta',
-  very_high: 'Muito Alta',
+const getEvidenceBadge = (level: EvidenceLevel) => {
+  const colors: Record<EvidenceLevel, string> = {
+    [EvidenceLevel.IA]: 'bg-emerald-500',
+    [EvidenceLevel.IB]: 'bg-green-500',
+    [EvidenceLevel.IIA]: 'bg-blue-500',
+    [EvidenceLevel.IIB]: 'bg-cyan-500',
+    [EvidenceLevel.III]: 'bg-yellow-500',
+    [EvidenceLevel.IV]: 'bg-orange-500',
+    [EvidenceLevel.V]: 'bg-red-500',
+  };
+  return colors[level] || 'bg-gray-500';
 };
 
-export const ProtocolCard: React.FC<ProtocolCardProps> = ({
+export function ProtocolCard({
   protocol,
+  onClick,
   onEdit,
   onDelete,
-  onDuplicate,
-}) => {
+  onView,
+  onCopy,
+  onApplyToPatient,
+}: ProtocolCardProps) {
   return (
-    <Card className="hover:shadow-lg transition-all duration-200">
-      <CardHeader>
+    <Card className="group cursor-pointer transition-all hover:shadow-lg" onClick={onClick}>
+      <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <CardTitle className="text-lg mb-1">{protocol.name}</CardTitle>
-            <p className="text-sm text-slate-600 line-clamp-2">
-              {protocol.description}
-            </p>
+            <h3 className="font-semibold line-clamp-2">{protocol.name}</h3>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Badge className={getCategoryColor(protocol.category)} variant="outline">
+                {protocol.category}
+              </Badge>
+              <Badge
+                className={cn('text-white', getEvidenceBadge(protocol.evidenceLevel))}
+              >
+                Evidência {protocol.evidenceLevel}
+              </Badge>
+            </div>
           </div>
-          <Badge 
-            variant={protocol.isActive ? 'default' : 'secondary'}
-            className="ml-2"
-          >
-            {protocol.isActive ? 'Ativo' : 'Inativo'}
-          </Badge>
+          <div onClick={(e) => e.stopPropagation()}>
+            <ActionMenu
+              items={[
+                {
+                  label: 'Visualizar',
+                  icon: <Eye className="h-4 w-4" />,
+                  onClick: () => onView?.(),
+                },
+                {
+                  label: 'Aplicar ao Paciente',
+                  icon: <Users className="h-4 w-4" />,
+                  onClick: () => onApplyToPatient?.(),
+                },
+                {
+                  label: 'Copiar',
+                  icon: <Copy className="h-4 w-4" />,
+                  onClick: () => onCopy?.(),
+                },
+                {
+                  label: 'Editar',
+                  icon: <Edit className="h-4 w-4" />,
+                  onClick: () => onEdit?.(),
+                  separator: true,
+                },
+                {
+                  label: 'Excluir',
+                  icon: <Trash2 className="h-4 w-4" />,
+                  onClick: () => onDelete?.(),
+                  variant: 'destructive',
+                },
+              ]}
+            />
+          </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
-        {/* Intensidade */}
-        <div className="flex items-center gap-2">
-          <Zap className="h-4 w-4 text-slate-400" />
-          <Badge className={`border ${intensityColors[protocol.intensity]}`}>
-            {intensityLabels[protocol.intensity]}
-          </Badge>
-        </div>
+      <CardContent>
+        <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
+          {protocol.description}
+        </p>
 
-        {/* Info Grid */}
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-slate-400" />
-            <span className="text-slate-600">
-              {protocol.exercises.length} exercícios
+        {/* Metadata */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Duração estimada:</span>
+            <span className="font-medium">
+              {protocol.estimatedDuration.min}-{protocol.estimatedDuration.max}{' '}
+              {protocol.estimatedDuration.unit}
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-slate-400" />
-            <span className="text-slate-600">
-              {protocol.duration} semanas
-            </span>
-          </div>
-          <div className="col-span-2 flex items-center gap-2">
-            <span className="text-slate-600">
-              {protocol.frequency}x por semana
-            </span>
-          </div>
-        </div>
 
-        {/* Condições Alvo */}
-        {protocol.targetConditions.length > 0 && (
-          <div>
-            <p className="text-xs text-slate-500 mb-1">Condições Alvo:</p>
-            <div className="flex flex-wrap gap-1">
-              {protocol.targetConditions.slice(0, 3).map((condition, idx) => (
-                <Badge key={idx} variant="outline" className="text-xs">
-                  {condition}
-                </Badge>
-              ))}
-              {protocol.targetConditions.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{protocol.targetConditions.length - 3}
-                </Badge>
-              )}
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Frequência:</span>
+            <span className="font-medium">{protocol.frequency}</span>
+          </div>
+
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Usado:</span>
+            <span className="font-medium">{protocol.timesUsed}x</span>
+          </div>
+
+          {protocol.successRate && (
+            <div className="flex items-center gap-2 text-sm">
+              <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+              <span className="font-medium">{Math.round(protocol.successRate)}% sucesso</span>
             </div>
+          )}
+        </div>
+
+        {/* Tags */}
+        {protocol.tags && protocol.tags.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-1">
+            {protocol.tags.slice(0, 3).map((tag) => (
+              <Badge key={tag} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+            {protocol.tags.length > 3 && (
+              <Badge variant="secondary" className="text-xs">
+                +{protocol.tags.length - 3}
+              </Badge>
+            )}
           </div>
         )}
       </CardContent>
-
-      <CardFooter className="flex gap-2 border-t pt-4">
-        {onEdit && (
-          <Button variant="outline" size="sm" onClick={onEdit} className="flex-1">
-            <Edit className="h-4 w-4 mr-1" />
-            Editar
-          </Button>
-        )}
-        {onDuplicate && (
-          <Button variant="outline" size="sm" onClick={onDuplicate}>
-            <Copy className="h-4 w-4" />
-          </Button>
-        )}
-        {onDelete && (
-          <Button variant="outline" size="sm" onClick={onDelete} className="text-red-600 hover:text-red-700">
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        )}
-      </CardFooter>
     </Card>
   );
-};
-
+}

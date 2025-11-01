@@ -436,10 +436,12 @@ const AppRoutes: React.FC = () => (
                   }}
                 >
                   <ToastProvider>
-                    <AppContent />
-                    <OfflineIndicator />
-                    <OfflineNotification />
-                    <OfflineIndicatorEnterprise />
+                    <OfflineProvider>
+                      <AppContent />
+                      <OfflineIndicator />
+                      <OfflineNotification />
+                      <OfflineIndicatorEnterprise />
+                    </OfflineProvider>
                   </ToastProvider>
                 </PerformanceProfiler>
               </ExerciseProvider>

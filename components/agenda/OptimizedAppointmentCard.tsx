@@ -15,7 +15,7 @@ import {
 import Tooltip from '../ui/tooltip';
 import { cn } from '../../lib/utils';
 import { EnrichedAppointment, AppointmentStatus } from '../../types';
-import { Clock, AlertCircle, CheckCircle2, Circle, User, Edit, Check, MoreVertical, Trash, Copy } from 'lucide-react';
+import { Clock, AlertCircle, User, Edit, Check, MoreVertical, Trash, Copy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import EditingIndicator from './EditingIndicator';
 
@@ -148,21 +148,6 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
       .join('')
       .toUpperCase()
       .slice(0, 2);
-  };
-
-  const getPaymentBadge = () => {
-    if (appointment.paymentStatus === 'paid') {
-      return (
-        <div className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0 shadow-sm" title="Pago">
-          <CheckCircle2 className="w-2.5 h-2.5 text-white" />
-        </div>
-      );
-    }
-    return (
-      <div className="w-2.5 h-2.5 bg-yellow-400 rounded-full flex-shrink-0 shadow-sm" title="Pendente">
-        <Circle className="w-2.5 h-2.5 text-white" />
-      </div>
-    );
   };
 
   // Cálculo de posicionamento corrigido para evitar sobreposição
@@ -317,19 +302,30 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
                       {appointment.conflictReason}
                     </p>
                   )}
+                  {/* Mostrar status de pagamento e recorrência no tooltip */}
+                  <div className="flex items-center gap-2 text-xs text-slate-600 mt-1">
+                    {appointment.paymentStatus && (
+                      <span className={appointment.paymentStatus === 'paid' ? 'text-green-600' : 'text-yellow-600'}>
+                        💰 {appointment.paymentStatus === 'paid' ? 'Pago' : 'Pendente'}
+                      </span>
+                    )}
+                    {isReturn && (
+                      <span>🔄 Retorno</span>
+                    )}
+                  </div>
                 </div>
               }
               side="top"
               delayDuration={200}
             >
-              <div className="font-bold text-xs leading-tight flex-1 text-slate-900 min-w-0 overflow-hidden">
-                <div className="font-semibold break-words" style={{ 
+              <div className="flex-1 text-slate-900 min-w-0 overflow-hidden">
+                <div className="text-[10px] leading-tight break-words" style={{ 
                   display: '-webkit-box',
-                  WebkitLineClamp: 2,
+                  WebkitLineClamp: 3,
                   WebkitBoxOrient: 'vertical',
                   overflow: 'hidden',
-                  lineHeight: '1.2',
-                  maxHeight: '2.4em', // 2 linhas * 1.2 line-height
+                  lineHeight: '1.3',
+                  maxHeight: '3.9em', // 3 linhas * 1.3 line-height
                   wordBreak: 'break-word'
                 }}>
                   {appointment.patientName}
@@ -337,15 +333,10 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
               </div>
             </Tooltip>
             <div className="flex items-center gap-1 flex-shrink-0 flex-wrap">
-              {/* Badge de Novo/Retorno */}
+              {/* Badge de Novo apenas para primeira consulta */}
               {isFirstAppointment && height > 35 && (
                 <Badge className="bg-blue-500 text-white text-[8px] px-1 py-0 h-4 leading-none">
                   🆕 Novo
-                </Badge>
-              )}
-              {isReturn && height > 35 && (
-                <Badge className="bg-purple-500 text-white text-[8px] px-1 py-0 h-4 leading-none">
-                  🔄
                 </Badge>
               )}
               {/* Badge de Urgente */}
@@ -359,7 +350,6 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
                   ⚠️
                 </span>
               )}
-              {getPaymentBadge()}
             </div>
           </div>
           <div className="flex items-center justify-between overflow-hidden">

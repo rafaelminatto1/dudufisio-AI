@@ -1,18 +1,19 @@
 import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import ResponsiveLayout from '../components/layout/ResponsiveLayout';
+import ResponsiveLayoutV2 from '../components/layout/ResponsiveLayoutV2';
 import { createLazyComponent } from '../lib/lazyLoading';
 import { PageSkeleton } from '../components/ui/PageSkeleton';
 import ErrorBoundary from '../components/ErrorBoundary';
 
 // ✅ Lazy load de todas as páginas principais
-const DashboardPage = createLazyComponent(() => import('./DashboardPage'));
+const DashboardPage = createLazyComponent(() => import('./DashboardPageV2'));
 const AgendaPage = createLazyComponent(() => import('./AgendaPage'));
-const PatientListPage = createLazyComponent(() => import('./PatientListPage'));
+const PatientListPage = createLazyComponent(() => import('./PatientListPageV2'));
 const PatientDetailPage = createLazyComponent(() => import('./PatientDetailPage'));
 const AcompanhamentoPage = createLazyComponent(() => import('./AcompanhamentoPage'));
-const ExerciseLibraryPage = createLazyComponent(() => import('./ExerciseLibraryPage'));
-const ProtocolsPage = createLazyComponent(() => import('./ProtocolsPage'));
+const ExerciseLibraryPage = createLazyComponent(() => import('./ExerciseListPage'));
+const ProtocolsPage = createLazyComponent(() => import('./ProtocolListPage'));
+const AppointmentListPage = createLazyComponent(() => import('./AppointmentListPage'));
 const FinancialPage = createLazyComponent(() => import('./FinancialPage'));
 const ClinicalAnalyticsPage = createLazyComponent(() => import('./ClinicalAnalyticsPage'));
 const ReportsPage = createLazyComponent(() => import('./ReportsPage'));
@@ -35,7 +36,7 @@ interface MainDashboardProps {
 
 const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
   return (
-    <ResponsiveLayout user={user} onLogout={onLogout}>
+    <ResponsiveLayoutV2 user={user} onLogout={onLogout}>
       <ErrorBoundary>
         <Suspense fallback={<PageLoader />}>
           <Routes>
@@ -50,6 +51,7 @@ const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
             <Route path="/patients" element={<PatientListPage />} />
             <Route path="/patients/:id" element={<PatientDetailPage />} />
             <Route path="/agenda" element={<AgendaPage />} />
+            <Route path="/appointments" element={<AppointmentListPage />} />
             <Route path="/agenda-analytics" element={<AnalyticsDashboardPage />} />
             <Route path="/checkin" element={<CheckInPage />} />
             <Route path="/acompanhamento" element={<AcompanhamentoPage />} />
@@ -78,7 +80,7 @@ const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
           </Routes>
         </Suspense>
       </ErrorBoundary>
-    </ResponsiveLayout>
+    </ResponsiveLayoutV2>
   );
 };
 
