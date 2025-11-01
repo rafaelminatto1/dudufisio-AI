@@ -1,318 +1,271 @@
 /**
- * services/ai/predictionService.ts
- * 
- * Serviço de análise preditiva usando IA (Gemini)
+ * AI Prediction Service
+ * Previsões inteligentes usando Gemini API
  */
 
+import { Prediction, DemandForecast, ChurnPrediction } from '../../types/analytics';
+import { EnrichedAppointment } from '../../types';
 import { generateText } from '../geminiService';
-import { Surgery, Pathology, PatientGoal } from '@/types';
+import { format, addDays } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
-export interface PredictionResult {
-  predictedDischargeDate: string;
-  daysToDischarge: number;
-  confidence: number;
-  similarCasesCount: number;
-}
-
-export interface RecidiveRiskResult {
-  risk: number; // 0-100
-  confidence: number;
-  factors: string[];
-  recommendations: string[];
-}
-
-export interface SatisfactionPrediction {
-  score: number; // 0-10
-  confidence: number;
-  factors: string[];
-}
-
-export interface AIRecommendation {
-  text: string;
-  priority: 'low' | 'medium' | 'high';
-  category: string;
-}
-
-export class PredictionService {
-  
+class PredictionService {
   /**
-   * Predizer data de alta do paciente
+   * Prevê demanda futura de consultas
    */
-  async predictDischargeDate(
-    surgery: Surgery | null,
-    pathologies: Pathology[],
-    goals: PatientGoal[],
-    currentSessionNumber: number
-  ): Promise<PredictionResult> {
+  async predictDemand(
+    historicalAppointments: EnrichedAppointment[],
+    horizon: number = 30
+  ): Promise<DemandForecast[]> {
     try {
+      // Preparar dados históricos
+      const dailyCounts = this.aggregateByDay(historicalAppointments);
+      const avgPerDay = dailyCounts.reduce((sum, d) => sum + d.count, 0) / dailyCounts.length;
+      
       const prompt = `
-Analise o caso do paciente e preveja a data de alta:
+Você é um especialista em analytics de saúde. Analise estes dados históricos de agendamentos:
 
-CIRURGIA:
-${surgery ? `
-- Nome: ${surgery.name}
-- Data: ${surgery.date}
-- Tempo de recuperação estimado: ${surgery.recoveryTimeDays} dias
-- Complicações: ${surgery.complications || 'Nenhuma'}
-` : 'Nenhuma cirurgia registrada'}
+${dailyCounts.map(d => `${d.date}: ${d.count} consultas`).join('\n')}
 
-PATOLOGIAS ATIVAS:
-${pathologies.map(p => `- ${p.name} (${p.severity}, ${p.status})`).join('\n') || 'Nenhuma'}
+Média diária: ${avgPerDay.toFixed(1)} consultas
 
-METAS ATIVAS:
-${goals.filter(g => g.status === 'active').map(g => `- ${g.title} (${g.currentProgress}% completo)`).join('\n') || 'Nenhuma'}
+Com base nestes dados, preveja a demanda para os próximos ${horizon} dias.
+Considere:
+- Tendências históricas
+- Sazonalidade (dia da semana)
+- Padrões de crescimento/declínio
 
-SESSÕES REALIZADAS: ${currentSessionNumber}
-
-Com base em padrões clínicos similares, preveja:
-1. Data estimada de alta (formato: YYYY-MM-DD)
-2. Número de dias até a alta
-3. Nível de confiança (0-100)
-4. Número estimado de casos similares na base de dados
-
-Responda APENAS em formato JSON:
+Retorne APENAS um JSON válido no formato:
 {
-  "predictedDate": "YYYY-MM-DD",
-  "daysToDischarge": número,
-  "confidence": número,
-  "similarCases": número
-}
-`;
-
-      const response = await generateText(prompt);
-      const result = JSON.parse(response);
-
-      return {
-        predictedDischargeDate: result.predictedDate,
-        daysToDischarge: result.daysToDischarge,
-        confidence: result.confidence,
-        similarCasesCount: result.similarCases
-      };
-    } catch (error) {
-      console.error('Erro ao prever data de alta:', error);
-      // Retornar valores padrão em caso de erro
-      return {
-        predictedDischargeDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        daysToDischarge: 90,
-        confidence: 50,
-        similarCasesCount: 0
-      };
-    }
-  }
-
-  /**
-   * Predizer risco de recidiva
-   */
-  async predictRecidiveRisk(
-    surgery: Surgery | null,
-    pathologies: Pathology[],
-    adherenceRate: number,
-    painReduction: number
-  ): Promise<RecidiveRiskResult> {
-    try {
-      const prompt = `
-Analise o risco de recidiva do paciente:
-
-CIRURGIA:
-${surgery ? `
-- Nome: ${surgery.name}
-- Data: ${surgery.date}
-- Complicações: ${surgery.complications || 'Nenhuma'}
-` : 'Nenhuma cirurgia registrada'}
-
-PATOLOGIAS:
-${pathologies.map(p => `- ${p.name} (${p.severity})`).join('\n') || 'Nenhuma'}
-
-ADERÊNCIA AO TRATAMENTO: ${adherenceRate}%
-REDUÇÃO DE DOR: ${painReduction}%
-
-Com base nos fatores de risco, calcule:
-1. Risco de recidiva (0-100)
-2. Nível de confiança (0-100)
-3. Principais fatores de risco
-4. Recomendações para reduzir o risco
-
-Responda APENAS em formato JSON:
-{
-  "risk": número,
-  "confidence": número,
-  "factors": ["fator1", "fator2"],
-  "recommendations": ["recomendação1", "recomendação2"]
-}
-`;
-
-      const response = await generateText(prompt);
-      const result = JSON.parse(response);
-
-      return {
-        risk: result.risk,
-        confidence: result.confidence,
-        factors: result.factors,
-        recommendations: result.recommendations
-      };
-    } catch (error) {
-      console.error('Erro ao prever risco de recidiva:', error);
-      return {
-        risk: 50,
-        confidence: 50,
-        factors: ['Dados insuficientes'],
-        recommendations: ['Continuar monitoramento']
-      };
-    }
-  }
-
-  /**
-   * Predizer satisfação esperada do paciente
-   */
-  async predictSatisfaction(
-    painReduction: number,
-    functionalGain: number,
-    adherenceRate: number,
-    goalsCompleted: number
-  ): Promise<SatisfactionPrediction> {
-    try {
-      const prompt = `
-Preveja a satisfação esperada do paciente:
-
-REDUÇÃO DE DOR: ${painReduction}%
-GANHO FUNCIONAL: ${functionalGain}%
-ADERÊNCIA: ${adherenceRate}%
-METAS ALCANÇADAS: ${goalsCompleted}
-
-Com base em feedback de pacientes similares, preveja:
-1. Score de satisfação (0-10)
-2. Nível de confiança (0-100)
-3. Fatores que influenciam a satisfação
-
-Responda APENAS em formato JSON:
-{
-  "score": número,
-  "confidence": número,
-  "factors": ["fator1", "fator2"]
-}
-`;
-
-      const response = await generateText(prompt);
-      const result = JSON.parse(response);
-
-      return {
-        score: result.score,
-        confidence: result.confidence,
-        factors: result.factors
-      };
-    } catch (error) {
-      console.error('Erro ao prever satisfação:', error);
-      return {
-        score: 7,
-        confidence: 50,
-        factors: ['Dados insuficientes']
-      };
-    }
-  }
-
-  /**
-   * Gerar recomendações inteligentes
-   */
-  async generateRecommendations(
-    surgery: Surgery | null,
-    pathologies: Pathology[],
-    goals: PatientGoal[],
-    adherenceRate: number,
-    painLevel: number
-  ): Promise<AIRecommendation[]> {
-    try {
-      const prompt = `
-Gere recomendações clínicas personalizadas para o paciente:
-
-CIRURGIA: ${surgery ? surgery.name : 'Nenhuma'}
-PATOLOGIAS: ${pathologies.map(p => p.name).join(', ') || 'Nenhuma'}
-METAS ATIVAS: ${goals.filter(g => g.status === 'active').length}
-ADERÊNCIA: ${adherenceRate}%
-NÍVEL DE DOR ATUAL: ${painLevel}/10
-
-Gere 3-5 recomendações práticas e acionáveis.
-Priorize por importância (high, medium, low).
-
-Responda APENAS em formato JSON:
-{
-  "recommendations": [
+  "forecasts": [
     {
-      "text": "texto da recomendação",
-      "priority": "high|medium|low",
-      "category": "categoria"
+      "date": "YYYY-MM-DD",
+      "predicted": número,
+      "confidence": 0-100,
+      "factors": ["fator1", "fator2"]
     }
   ]
 }
 `;
 
       const response = await generateText(prompt);
-      const result = JSON.parse(response);
+      const parsed = this.parseJSON(response);
 
-      return result.recommendations || [];
+      return parsed.forecasts.map((f: any) => ({
+        date: new Date(f.date),
+        predictedAppointments: Math.round(f.predicted),
+        confidence: f.confidence,
+        seasonalFactor: 1.0,
+        trendFactor: 1.0
+      }));
     } catch (error) {
-      console.error('Erro ao gerar recomendações:', error);
-      return [
-        {
-          text: 'Continue o protocolo de tratamento conforme prescrito',
-          priority: 'medium',
-          category: 'Tratamento'
-        }
-      ];
+      console.error('Prediction failed:', error);
+      
+      // Fallback: simple moving average
+      return this.fallbackDemandPrediction(historicalAppointments, horizon);
     }
   }
 
   /**
-   * Predizer progresso de uma meta
+   * Prevê risco de cancelamento de agendamento
    */
-  async predictGoalProgress(
-    goal: PatientGoal,
-    currentProgress: number,
-    daysElapsed: number,
-    targetDays: number
-  ): Promise<{ likelihood: number; predictedCompletionDate: string }> {
+  async predictCancellationRisk(appointment: EnrichedAppointment): Promise<number> {
+    // Fatores de risco
+    let risk = 0;
+
+    // 1. Histórico de no-shows do paciente (se disponível)
+    risk += 20;
+
+    // 2. Agendamento muito antecipado
+    const daysUntil = Math.floor((appointment.startTime.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    if (daysUntil > 30) risk += 15;
+    else if (daysUntil > 14) risk += 10;
+
+    // 3. Primeira consulta
+    if (appointment.sessionNumber === 1) risk += 15;
+
+    // 4. Horário
+    const hour = appointment.startTime.getHours();
+    if (hour < 8 || hour > 18) risk += 10;
+
+    // 5. Dia da semana
+    const day = appointment.startTime.getDay();
+    if (day === 0 || day === 6) risk += 5; // Fim de semana
+
+    // 6. Pagamento pendente
+    if (appointment.paymentStatus === 'pending') risk += 20;
+
+    return Math.min(100, risk);
+  }
+
+  /**
+   * Prevê risco de churn de paciente
+   */
+  async predictChurnRisk(
+    patientId: string,
+    patientAppointments: EnrichedAppointment[]
+  ): Promise<ChurnPrediction> {
+    const factors: ChurnPrediction['factors'] = [];
+    let totalRisk = 0;
+
+    // 1. Frequência decrescente
+    const recentCount = patientAppointments.filter(apt =>
+      apt.startTime.getTime() > Date.now() - 30 * 24 * 60 * 60 * 1000
+    ).length;
+
+    const olderCount = patientAppointments.filter(apt => {
+      const time = apt.startTime.getTime();
+      const now = Date.now();
+      return time > now - 60 * 24 * 60 * 60 * 1000 && time <= now - 30 * 24 * 60 * 60 * 1000;
+    }).length;
+
+    if (recentCount < olderCount) {
+      const impact = Math.min(40, ((olderCount - recentCount) / olderCount) * 40);
+      factors.push({ factor: 'Frequência decrescente', impact });
+      totalRisk += impact;
+    }
+
+    // 2. Cancelamentos frequentes
+    const canceledCount = patientAppointments.filter(apt => apt.status === 'canceled').length;
+    if (canceledCount > 2) {
+      const impact = Math.min(30, canceledCount * 10);
+      factors.push({ factor: `${canceledCount} cancelamentos`, impact });
+      totalRisk += impact;
+    }
+
+    // 3. Última consulta há muito tempo
+    const lastAppointment = patientAppointments
+      .filter(apt => apt.status === 'completed')
+      .sort((a, b) => b.endTime.getTime() - a.endTime.getTime())[0];
+
+    if (lastAppointment) {
+      const daysSinceLast = Math.floor((Date.now() - lastAppointment.endTime.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysSinceLast > 60) {
+        const impact = Math.min(40, (daysSinceLast / 90) * 40);
+        factors.push({ factor: `${daysSinceLast} dias desde última consulta`, impact });
+        totalRisk += impact;
+      }
+    }
+
+    // 4. NPS baixo (se disponível)
+    // factors.push({ factor: 'NPS baixo', impact: 20 });
+
+    const churnRisk = Math.min(100, totalRisk);
+    const recommendedActions: string[] = [];
+
+    if (churnRisk > 60) {
+      recommendedActions.push('Entrar em contato urgentemente');
+      recommendedActions.push('Oferecer desconto na próxima sessão');
+      recommendedActions.push('Agendar reunião de follow-up');
+    } else if (churnRisk > 30) {
+      recommendedActions.push('Enviar mensagem de check-in');
+      recommendedActions.push('Lembrar benefícios do tratamento');
+    }
+
+    return {
+      patientId,
+      patientName: patientAppointments[0]?.patientName || 'Unknown',
+      churnRisk,
+      factors,
+      recommendedActions,
+      predictedAt: new Date()
+    };
+  }
+
+  /**
+   * Prevê receita futura
+   */
+  async predictRevenue(
+    historicalAppointments: EnrichedAppointment[],
+    horizon: number = 30
+  ): Promise<Prediction> {
+    const completedAppointments = historicalAppointments.filter(apt => apt.status === 'completed');
+    const avgRevenuePerDay = completedAppointments.reduce((sum, apt) => sum + apt.value, 0) / 30;
+
+    // Simple model: avg * days with 10% variance
+    const predictedRevenue = avgRevenuePerDay * horizon;
+    const variance = predictedRevenue * 0.1;
+
+    return {
+      id: `revenue-pred-${Date.now()}`,
+      type: 'revenue',
+      value: predictedRevenue,
+      confidence: 75,
+      confidenceInterval: {
+        lower: predictedRevenue - variance,
+        upper: predictedRevenue + variance
+      },
+      factors: [
+        `Média diária: R$ ${avgRevenuePerDay.toFixed(2)}`,
+        `Baseado em ${completedAppointments.length} consultas completadas`,
+        `Tendência: ${horizon} dias`
+      ],
+      predictedAt: new Date(),
+      horizon
+    };
+  }
+
+  /**
+   * Helper: Agrega appointments por dia
+   */
+  private aggregateByDay(appointments: EnrichedAppointment[]): { date: string; count: number }[] {
+    const byDay = new Map<string, number>();
+
+    appointments.forEach(apt => {
+      const date = format(apt.startTime, 'yyyy-MM-dd');
+      byDay.set(date, (byDay.get(date) || 0) + 1);
+    });
+
+    return Array.from(byDay.entries()).map(([date, count]) => ({ date, count }));
+  }
+
+  /**
+   * Fallback prediction usando média móvel
+   */
+  private fallbackDemandPrediction(
+    appointments: EnrichedAppointment[],
+    horizon: number
+  ): DemandForecast[] {
+    const dailyCounts = this.aggregateByDay(appointments);
+    const avg = dailyCounts.reduce((sum, d) => sum + d.count, 0) / dailyCounts.length;
+
+    const forecasts: DemandForecast[] = [];
+    const today = new Date();
+
+    for (let i = 0; i < horizon; i++) {
+      const date = addDays(today, i);
+      
+      forecasts.push({
+        date,
+        predictedAppointments: Math.round(avg),
+        confidence: 60,
+        seasonalFactor: 1.0,
+        trendFactor: 1.0
+      });
+    }
+
+    return forecasts;
+  }
+
+  /**
+   * Parse JSON seguro
+   */
+  private parseJSON(text: string): any {
     try {
-      const prompt = `
-Preveja a probabilidade de conclusão da meta:
+      // Remove markdown code blocks if present
+      let cleaned = text.trim();
+      if (cleaned.startsWith('```json')) {
+        cleaned = cleaned.replace(/```json\n?/, '').replace(/```\n?$/, '');
+      } else if (cleaned.startsWith('```')) {
+        cleaned = cleaned.replace(/```\n?/, '').replace(/```\n?$/, '');
+      }
 
-META: ${goal.title}
-CATEGORIA: ${goal.category}
-PROGRESSO ATUAL: ${currentProgress}%
-DIAS DECORRIDOS: ${daysElapsed}
-DIAS ALVO: ${targetDays}
-
-Calcule:
-1. Probabilidade de alcançar a meta (0-100)
-2. Data prevista de conclusão (YYYY-MM-DD)
-
-Responda APENAS em formato JSON:
-{
-  "likelihood": número,
-  "predictedCompletionDate": "YYYY-MM-DD"
-}
-`;
-
-      const response = await generateText(prompt);
-      const result = JSON.parse(response);
-
-      return {
-        likelihood: result.likelihood,
-        predictedCompletionDate: result.predictedCompletionDate
-      };
+      return JSON.parse(cleaned);
     } catch (error) {
-      console.error('Erro ao prever progresso da meta:', error);
-      const progressRate = currentProgress / daysElapsed;
-      const remainingProgress = 100 - currentProgress;
-      const estimatedDays = Math.ceil(remainingProgress / progressRate);
-      const completionDate = new Date(Date.now() + estimatedDays * 24 * 60 * 60 * 1000);
-
-      return {
-        likelihood: 70,
-        predictedCompletionDate: completionDate.toISOString().split('T')[0]
-      };
+      console.error('JSON parse failed:', error, 'Text:', text);
+      throw new Error('Failed to parse AI response as JSON');
     }
   }
 }
 
-// Exportar instância singleton
 export const predictionService = new PredictionService();
-

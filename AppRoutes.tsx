@@ -18,6 +18,7 @@ import { ToastProvider } from './contexts/ToastContext';
 import { DebugProvider } from './contexts/DebugContext';
 import { PatientProvider } from './contexts/PatientContext';
 import { ExerciseProvider } from './contexts/ExerciseContext';
+import { OfflineProvider } from './contexts/OfflineContext';
 import AuthRoutes from './pages/auth/AuthRoutes';
 import { Role } from './types';
 
@@ -29,6 +30,7 @@ const PartnerPortalDashboard = React.lazy(() => import('./pages/PartnerPortalDas
 // SW e preloading serão importados sob demanda em idle
 import OfflineIndicator from './components/OfflineIndicator';
 import OfflineNotification from './components/OfflineNotification';
+import OfflineIndicatorEnterprise from './components/offline/OfflineIndicator';
 import MobileLoadingScreen from './components/ui/MobileLoadingScreen';
 import { logger } from './lib/logger';
 import './lib/debugHelpers';
@@ -437,6 +439,7 @@ const AppRoutes: React.FC = () => (
                     <AppContent />
                     <OfflineIndicator />
                     <OfflineNotification />
+                    <OfflineIndicatorEnterprise />
                   </ToastProvider>
                 </PerformanceProfiler>
               </ExerciseProvider>

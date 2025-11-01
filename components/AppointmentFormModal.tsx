@@ -334,6 +334,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
       title: appointmentToEdit?.title || `${appointmentType}`,
       startTime: startTime,
       endTime: endTime,
+      duration: duration, // 🔧 CORREÇÃO CRÍTICA: Campo duration obrigatório
       status: appointmentToEdit?.status || AppointmentStatus.Scheduled,
       type: appointmentType,
       observations: notes,

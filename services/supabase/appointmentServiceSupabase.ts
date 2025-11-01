@@ -169,6 +169,29 @@ class SupabaseAppointmentService {
   }
 
   /**
+   * Mapeia tipo de agendamento do frontend para o banco
+   */
+  private mapTypeToDB(type: string): string {
+    const typeMap: Record<string, string> = {
+      'Sessão': 'regular',
+      'sessao': 'regular',
+      'Avaliação': 'evaluation',
+      'avaliacao': 'evaluation',
+      'Retorno': 'followup',
+      'retorno': 'followup',
+      'Primeira Consulta': 'first_consultation',
+      'primeira consulta': 'first_consultation',
+      'Teleconsulta': 'teleconsultation',
+      'teleconsulta': 'teleconsultation',
+      'Grupo': 'group',
+      'grupo': 'group',
+      'Emergência': 'emergency',
+      'emergencia': 'emergency',
+    };
+    return typeMap[type] || 'regular';
+  }
+
+  /**
    * Mapeia Appointment para insert no banco
    */
   private mapAppointmentToInsert(appointment: Partial<Appointment>): Partial<AppointmentInsert> {
@@ -194,16 +217,16 @@ class SupabaseAppointmentService {
       throw new Error('end_time é obrigatório');
     }
     if (appointment.duration === undefined) {
-      throw new Error('duration_minutes é obrigatório');
+      throw new Error('duration é obrigatório');
     }
 
     insert.patient_id = appointment.patientId;
-    insert.patient_name = appointment.patientName;
+    // 🔧 REMOVIDO: patient_name não existe no schema (é obtido via JOIN)
     insert.title = appointment.title;
-    insert.appointment_type = String(appointment.type);
+    insert.type = this.mapTypeToDB(String(appointment.type)); // 🔧 CORREÇÃO: Mapear tipo para o banco
     insert.start_time = appointment.startTime.toISOString();
     insert.end_time = appointment.endTime.toISOString();
-    insert.duration_minutes = appointment.duration;
+    insert.duration = appointment.duration; // 🔧 CORREÇÃO: Mudado de duration_minutes para duration
 
     // Status should always be set (default to 'scheduled')
     insert.status = appointment.status ? this.mapStatusToDB(appointment.status) : 'scheduled';
@@ -212,11 +235,8 @@ class SupabaseAppointmentService {
     if (appointment.therapistId) insert.therapist_id = appointment.therapistId;
     if (appointment.user_id) insert.created_by = appointment.user_id;
 
-    if (appointment.patientPhone) insert.patient_phone = appointment.patientPhone;
-    if (appointment.email) insert.patient_email = appointment.email;
-    if (appointment.patientAvatarUrl) insert.patient_avatar_url = appointment.patientAvatarUrl;
-
-    if (appointment.therapistName) insert.therapist_name = appointment.therapistName;
+    // 🔧 REMOVIDO: patient_phone, patient_email, patient_avatar_url, therapist_name
+    // não existem no schema (são obtidos via JOIN)
 
     if (appointment.description) insert.description = appointment.description;
 
@@ -242,12 +262,17 @@ class SupabaseAppointmentService {
     if (appointment.checkedInAt) insert.checked_in_at = appointment.checkedInAt;
     if (appointment.checkedOutAt) insert.checked_out_at = appointment.checkedOutAt;
 
-    // Sempre definir payment_status (não pode ser null)
-    insert.payment_status = appointment.paymentStatus || 'pending';
-    // Mapear tanto value quanto paymentAmount para payment_amount
-    if (appointment.value !== undefined) insert.payment_amount = appointment.value;
-    else if (appointment.paymentAmount !== undefined) insert.payment_amount = appointment.paymentAmount;
-    if (appointment.paymentMethod) insert.payment_method = appointment.paymentMethod;
+    // 🔧 CORREÇÃO: Schema usa 'price' e 'paid', não 'payment_amount' e 'payment_status'
+    if (appointment.value !== undefined) insert.price = appointment.value;
+    else if (appointment.paymentAmount !== undefined) insert.price = appointment.paymentAmount;
+    
+    if (appointment.paymentStatus) {
+      insert.paid = appointment.paymentStatus === 'paid';
+    } else {
+      insert.paid = false; // Default: não pago
+    }
+    
+    // Nota: payment_method não existe no schema base
 
     if (appointment.tags) insert.tags = appointment.tags;
     if (appointment.color) insert.color = appointment.color;

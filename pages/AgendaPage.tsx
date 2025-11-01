@@ -58,6 +58,7 @@ import MobileAgendaView from '../components/agenda/MobileAgendaView';
 import useSessionEvolutionMode from '../hooks/useSessionEvolutionMode';
 import SessionEvolutionModal from '../components/session/SessionEvolutionModal';
 import RescheduleConfirmModal from '../components/agenda/RescheduleConfirmModal';
+import FloatingActionButton from '../components/agenda/FloatingActionButton';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
@@ -1137,6 +1138,16 @@ export default function AgendaPage() {
                     newTherapistName={therapists.find(t => t.id === pendingReschedule.therapistId)?.name}
                     onConfirm={handleConfirmReschedule}
                     onCancel={handleCancelReschedule}
+                />
+            )}
+
+            {/* Floating Action Button - Mobile Only */}
+            {user?.role !== Role.Patient && (
+                <FloatingActionButton
+                    onClick={() => {
+                        setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' });
+                        setIsFormOpen(true);
+                    }}
                 />
             )}
         </main>

@@ -1,489 +1,223 @@
-/**
- * Serviço de Sincronização de Calendários Externos
- * Suporta: Google Calendar, Outlook Calendar, iCal
- */
+import { EnrichedAppointment } from '../types';
+import { format } from 'date-fns';
 
-import { secureLogger } from '../lib/secureLogger';
+export type CalendarProvider = 'google' | 'outlook' | 'apple';
 
-export interface CalendarProvider {
-  id: string;
-  name: string;
-  type: 'google' | 'outlook' | 'ical' | 'apple';
-  isConnected: boolean;
-  lastSync?: Date;
-  email?: string;
-  calendarId?: string;
-}
-
-export interface ExternalEvent {
-  id: string;
+interface CalendarEvent {
   title: string;
-  description?: string;
-  start: Date;
-  end: Date;
+  description: string;
   location?: string;
+  startTime: Date;
+  endTime: Date;
   attendees?: string[];
-  provider: CalendarProvider['type'];
-  reminders?: number[];
-}
-
-export interface SyncConfig {
-  providerId: string;
-  syncDirection: 'one_way' | 'two_way';
-  syncFrequency: number; // em minutos
-  includeReminders: boolean;
-  includeAttendees: boolean;
-  calendarFilter?: string[];
 }
 
 class CalendarSyncService {
   /**
-   * Conecta com Google Calendar usando OAuth2
+   * Gera URL para adicionar evento ao Google Calendar
    */
-  async connectGoogleCalendar(authCode: string): Promise<CalendarProvider> {
-    try {
-      // Em produção, usar Google OAuth2
-      // const client = new google.auth.OAuth2(
-      //   process.env.GOOGLE_CLIENT_ID,
-      //   process.env.GOOGLE_CLIENT_SECRET,
-      //   process.env.GOOGLE_REDIRECT_URI
-      // );
-      
-      secureLogger.info('Connecting to Google Calendar', {
-        component: 'CalendarSyncService',
-        action: 'connectGoogleCalendar'
-      });
-
-      // Simulação de conexão
-      const provider: CalendarProvider = {
-        id: 'google_' + Date.now(),
-        name: 'Google Calendar',
-        type: 'google',
-        isConnected: true,
-        lastSync: new Date(),
-        email: 'usuario@gmail.com',
-        calendarId: 'primary'
-      };
-
-      return provider;
-    } catch (error) {
-      secureLogger.error('Failed to connect to Google Calendar', error, {
-        component: 'CalendarSyncService',
-        action: 'connectGoogleCalendar'
-      });
-      throw new Error('Falha na conexão com Google Calendar');
-    }
-  }
-
-  /**
-   * Conecta com Outlook Calendar usando Microsoft Graph API
-   */
-  async connectOutlookCalendar(authToken: string): Promise<CalendarProvider> {
-    try {
-      // Em produção, usar Microsoft Graph API
-      // const client = Client.init({
-      //   authProvider: (done) => {
-      //     done(null, authToken);
-      //   }
-      // });
-
-      secureLogger.info('Connecting to Outlook Calendar', {
-        component: 'CalendarSyncService',
-        action: 'connectOutlookCalendar'
-      });
-
-      const provider: CalendarProvider = {
-        id: 'outlook_' + Date.now(),
-        name: 'Outlook Calendar',
-        type: 'outlook',
-        isConnected: true,
-        lastSync: new Date(),
-        email: 'usuario@outlook.com',
-        calendarId: 'calendar'
-      };
-
-      return provider;
-    } catch (error) {
-      secureLogger.error('Failed to connect to Outlook Calendar', error, {
-        component: 'CalendarSyncService',
-        action: 'connectOutlookCalendar'
-      });
-      throw new Error('Falha na conexão com Outlook Calendar');
-    }
-  }
-
-  /**
-   * Busca URL de autorização do Google
-   */
-  getGoogleAuthUrl(): string {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_CLIENT_ID';
-    const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI || window.location.origin + '/oauth/google/callback';
-    const scope = 'https://www.googleapis.com/auth/calendar';
+  generateGoogleCalendarUrl(appointment: EnrichedAppointment): string {
+    const baseUrl = 'https://calendar.google.com/calendar/render';
     
-    return `https://accounts.google.com/o/oauth2/v2/auth?` +
-      `client_id=${clientId}&` +
-      `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-      `response_type=code&` +
-      `scope=${encodeURIComponent(scope)}&` +
-      `access_type=offline&` +
-      `prompt=consent`;
+    const params = new URLSearchParams({
+      action: 'TEMPLATE',
+      text: `${appointment.type} - ${appointment.patientName}`,
+      details: this.buildEventDescription(appointment),
+      location: appointment.location || 'Clínica FisioFlow',
+      dates: `${format(appointment.startTime, "yyyyMMdd'T'HHmmss")}/${format(appointment.endTime, "yyyyMMdd'T'HHmmss")}`,
+      ctz: 'America/Sao_Paulo'
+    });
+
+    return `${baseUrl}?${params.toString()}`;
   }
 
   /**
-   * Busca URL de autorização do Microsoft
+   * Gera URL para adicionar evento ao Outlook Calendar
    */
-  getMicrosoftAuthUrl(): string {
-    const clientId = import.meta.env.VITE_MICROSOFT_CLIENT_ID || 'YOUR_CLIENT_ID';
-    const redirectUri = import.meta.env.VITE_MICROSOFT_REDIRECT_URI || window.location.origin + '/oauth/microsoft/callback';
-    const scope = 'Calendars.ReadWrite offline_access';
+  generateOutlookCalendarUrl(appointment: EnrichedAppointment): string {
+    const baseUrl = 'https://outlook.office.com/calendar/0/deeplink/compose';
     
-    return `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?` +
-      `client_id=${clientId}&` +
-      `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-      `response_type=code&` +
-      `scope=${encodeURIComponent(scope)}&` +
-      `response_mode=query`;
+    const params = new URLSearchParams({
+      path: '/calendar/action/compose',
+      rru: 'addevent',
+      subject: `${appointment.type} - ${appointment.patientName}`,
+      body: this.buildEventDescription(appointment),
+      location: appointment.location || 'Clínica FisioFlow',
+      startdt: appointment.startTime.toISOString(),
+      enddt: appointment.endTime.toISOString()
+    });
+
+    return `${baseUrl}?${params.toString()}`;
   }
 
   /**
-   * Exporta eventos para formato iCal
+   * Gera arquivo .ics para download (compatível com Apple Calendar e outros)
    */
-  async exportToICal(events: ExternalEvent[]): Promise<string> {
-    try {
-      let ical = 'BEGIN:VCALENDAR\n';
-      ical += 'VERSION:2.0\n';
-      ical += 'PRODID:-//DuduFisio-AI//Calendar//PT\n';
-      ical += 'CALSCALE:GREGORIAN\n';
-
-      events.forEach(event => {
-        ical += 'BEGIN:VEVENT\n';
-        ical += `UID:${event.id}@dudufisio.ai\n`;
-        ical += `DTSTAMP:${this.formatICalDate(new Date())}\n`;
-        ical += `DTSTART:${this.formatICalDate(event.start)}\n`;
-        ical += `DTEND:${this.formatICalDate(event.end)}\n`;
-        ical += `SUMMARY:${event.title}\n`;
-        
-        if (event.description) {
-          ical += `DESCRIPTION:${event.description.replace(/\n/g, '\\n')}\n`;
-        }
-        
-        if (event.location) {
-          ical += `LOCATION:${event.location}\n`;
-        }
-
-        if (event.attendees && event.attendees.length > 0) {
-          event.attendees.forEach(attendee => {
-            ical += `ATTENDEE:mailto:${attendee}\n`;
-          });
-        }
-
-        if (event.reminders && event.reminders.length > 0) {
-          event.reminders.forEach(minutes => {
-            ical += 'BEGIN:VALARM\n';
-            ical += 'ACTION:DISPLAY\n';
-            ical += `TRIGGER:-PT${minutes}M\n`;
-            ical += 'END:VALARM\n';
-          });
-        }
-
-        ical += 'END:VEVENT\n';
-      });
-
-      ical += 'END:VCALENDAR';
-      return ical;
-    } catch (error) {
-      secureLogger.error('Failed to export to iCal', error, {
-        component: 'CalendarSyncService',
-        action: 'exportToICal'
-      });
-      throw new Error('Falha ao exportar calendário');
-    }
-  }
-
-  /**
-   * Formata data para formato iCal
-   */
-  private formatICalDate(date: Date): string {
-    const pad = (n: number) => n.toString().padStart(2, '0');
+  generateICalFile(appointment: EnrichedAppointment): void {
+    const icsContent = this.buildICalContent(appointment);
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
     
-    return date.getUTCFullYear() +
-      pad(date.getUTCMonth() + 1) +
-      pad(date.getUTCDate()) +
-      'T' +
-      pad(date.getUTCHours()) +
-      pad(date.getUTCMinutes()) +
-      pad(date.getUTCSeconds()) +
-      'Z';
-  }
-
-  /**
-   * Sincroniza eventos do Google Calendar
-   */
-  async syncGoogleCalendar(provider: CalendarProvider, config: SyncConfig): Promise<ExternalEvent[]> {
-    try {
-      // Em produção, usar API do Google Calendar
-      secureLogger.info('Syncing Google Calendar', {
-        component: 'CalendarSyncService',
-        action: 'syncGoogleCalendar',
-        providerId: provider.id
-      });
-
-      // Simulação de eventos
-      const mockEvents: ExternalEvent[] = [
-        {
-          id: 'google_event_1',
-          title: 'Consulta Dr. Silva',
-          description: 'Consulta de rotina',
-          start: new Date('2025-01-22T10:00:00'),
-          end: new Date('2025-01-22T11:00:00'),
-          location: 'Clínica Exemplo',
-          provider: 'google',
-          reminders: [15, 30]
-        },
-        {
-          id: 'google_event_2',
-          title: 'Reunião de Equipe',
-          start: new Date('2025-01-23T14:00:00'),
-          end: new Date('2025-01-23T15:00:00'),
-          provider: 'google',
-          reminders: [10]
-        }
-      ];
-
-      return mockEvents;
-    } catch (error) {
-      secureLogger.error('Failed to sync Google Calendar', error, {
-        component: 'CalendarSyncService',
-        action: 'syncGoogleCalendar',
-        providerId: provider.id
-      });
-      throw new Error('Falha na sincronização com Google Calendar');
-    }
-  }
-
-  /**
-   * Sincroniza eventos do Outlook Calendar
-   */
-  async syncOutlookCalendar(provider: CalendarProvider, config: SyncConfig): Promise<ExternalEvent[]> {
-    try {
-      // Em produção, usar Microsoft Graph API
-      secureLogger.info('Syncing Outlook Calendar', {
-        component: 'CalendarSyncService',
-        action: 'syncOutlookCalendar',
-        providerId: provider.id
-      });
-
-      const mockEvents: ExternalEvent[] = [
-        {
-          id: 'outlook_event_1',
-          title: 'Fisioterapia',
-          start: new Date('2025-01-24T09:00:00'),
-          end: new Date('2025-01-24T10:00:00'),
-          provider: 'outlook',
-          reminders: [30]
-        }
-      ];
-
-      return mockEvents;
-    } catch (error) {
-      secureLogger.error('Failed to sync Outlook Calendar', error, {
-        component: 'CalendarSyncService',
-        action: 'syncOutlookCalendar',
-        providerId: provider.id
-      });
-      throw new Error('Falha na sincronização com Outlook Calendar');
-    }
-  }
-
-  /**
-   * Cria evento em calendário externo
-   */
-  async createExternalEvent(provider: CalendarProvider, event: ExternalEvent): Promise<string> {
-    try {
-      secureLogger.info('Creating external event', {
-        component: 'CalendarSyncService',
-        action: 'createExternalEvent',
-        providerId: provider.id,
-        eventId: event.id
-      });
-
-      // Em produção, fazer requisição à API apropriada
-      const eventId = `${provider.type}_${Date.now()}`;
-
-      return eventId;
-    } catch (error) {
-      secureLogger.error('Failed to create external event', error, {
-        component: 'CalendarSyncService',
-        action: 'createExternalEvent',
-        providerId: provider.id
-      });
-      throw new Error('Falha ao criar evento no calendário externo');
-    }
-  }
-
-  /**
-   * Atualiza evento em calendário externo
-   */
-  async updateExternalEvent(provider: CalendarProvider, eventId: string, event: Partial<ExternalEvent>): Promise<void> {
-    try {
-      secureLogger.info('Updating external event', {
-        component: 'CalendarSyncService',
-        action: 'updateExternalEvent',
-        providerId: provider.id,
-        eventId
-      });
-
-      // Em produção, fazer requisição à API apropriada
-    } catch (error) {
-      secureLogger.error('Failed to update external event', error, {
-        component: 'CalendarSyncService',
-        action: 'updateExternalEvent',
-        providerId: provider.id,
-        eventId
-      });
-      throw new Error('Falha ao atualizar evento no calendário externo');
-    }
-  }
-
-  /**
-   * Deleta evento de calendário externo
-   */
-  async deleteExternalEvent(provider: CalendarProvider, eventId: string): Promise<void> {
-    try {
-      secureLogger.info('Deleting external event', {
-        component: 'CalendarSyncService',
-        action: 'deleteExternalEvent',
-        providerId: provider.id,
-        eventId
-      });
-
-      // Em produção, fazer requisição à API apropriada
-    } catch (error) {
-      secureLogger.error('Failed to delete external event', error, {
-        component: 'CalendarSyncService',
-        action: 'deleteExternalEvent',
-        providerId: provider.id,
-        eventId
-      });
-      throw new Error('Falha ao deletar evento do calendário externo');
-    }
-  }
-
-  /**
-   * Busca provedores conectados do usuário
-   */
-  async getConnectedProviders(userId: string): Promise<CalendarProvider[]> {
-    try {
-      // Simulação de provedores conectados
-      const providers: CalendarProvider[] = [
-        {
-          id: 'google_123',
-          name: 'Google Calendar',
-          type: 'google',
-          isConnected: true,
-          lastSync: new Date(),
-          email: 'usuario@gmail.com',
-          calendarId: 'primary'
-        }
-      ];
-
-      return providers;
-    } catch (error) {
-      secureLogger.error('Failed to fetch providers', error, {
-        component: 'CalendarSyncService',
-        action: 'getConnectedProviders'
-      });
-      throw new Error('Falha ao carregar provedores de calendário');
-    }
-  }
-
-  /**
-   * Desconecta provedor de calendário
-   */
-  async disconnectProvider(providerId: string): Promise<void> {
-    try {
-      secureLogger.info('Disconnecting provider', {
-        component: 'CalendarSyncService',
-        action: 'disconnectProvider',
-        providerId
-      });
-
-      // Em produção, revogar tokens e limpar dados
-    } catch (error) {
-      secureLogger.error('Failed to disconnect provider', error, {
-        component: 'CalendarSyncService',
-        action: 'disconnectProvider',
-        providerId
-      });
-      throw new Error('Falha ao desconectar calendário');
-    }
-  }
-
-  /**
-   * Configura webhook para sincronização automática
-   */
-  async setupWebhook(provider: CalendarProvider, webhookUrl: string): Promise<string> {
-    try {
-      secureLogger.info('Setting up webhook', {
-        component: 'CalendarSyncService',
-        action: 'setupWebhook',
-        providerId: provider.id,
-        providerType: provider.type
-      });
-
-      // Em produção, configurar webhook na API apropriada
-      const webhookId = `webhook_${Date.now()}`;
-
-      return webhookId;
-    } catch (error) {
-      secureLogger.error('Failed to setup webhook', error, {
-        component: 'CalendarSyncService',
-        action: 'setupWebhook',
-        providerId: provider.id
-      });
-      throw new Error('Falha ao configurar sincronização automática');
-    }
-  }
-
-  /**
-   * Download de arquivo iCal
-   */
-  downloadICalFile(content: string, filename: string = 'calendario.ics'): void {
-    const blob = new Blob([content], { type: 'text/calendar' });
-    const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = filename;
+    link.download = `agendamento_${appointment.id}.ics`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url);
   }
 
   /**
-   * Verifica status de sincronização
+   * Constrói conteúdo do arquivo iCal
    */
-  async checkSyncStatus(providerId: string): Promise<{
-    isActive: boolean;
-    lastSync: Date | null;
-    nextSync: Date | null;
-    errorCount: number;
-  }> {
-    try {
-      return {
-        isActive: true,
-        lastSync: new Date(),
-        nextSync: new Date(Date.now() + 15 * 60 * 1000), // 15 minutos
-        errorCount: 0
-      };
-    } catch (error) {
-      secureLogger.error('Failed to check sync status', error, {
-        component: 'CalendarSyncService',
-        action: 'checkSyncStatus',
-        providerId
-      });
-      throw new Error('Falha ao verificar status de sincronização');
+  private buildICalContent(appointment: EnrichedAppointment): string {
+    const formatDate = (date: Date): string => {
+      return format(date, "yyyyMMdd'T'HHmmss");
+    };
+
+    const description = this.buildEventDescription(appointment)
+      .replace(/\n/g, '\\n')
+      .replace(/,/g, '\\,');
+
+    return [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//FisioFlow//Agenda//PT',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `UID:${appointment.id}@fisioflow.com`,
+      `DTSTAMP:${formatDate(new Date())}`,
+      `DTSTART:${formatDate(appointment.startTime)}`,
+      `DTEND:${formatDate(appointment.endTime)}`,
+      `SUMMARY:${appointment.type} - ${appointment.patientName}`,
+      `DESCRIPTION:${description}`,
+      `LOCATION:${appointment.location || 'Clínica FisioFlow'}`,
+      `STATUS:${appointment.status === 'completed' ? 'CONFIRMED' : 'TENTATIVE'}`,
+      'BEGIN:VALARM',
+      'TRIGGER:-PT30M',
+      'ACTION:DISPLAY',
+      'DESCRIPTION:Lembrete: Consulta em 30 minutos',
+      'END:VALARM',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+  }
+
+  /**
+   * Constrói descrição do evento
+   */
+  private buildEventDescription(appointment: EnrichedAppointment): string {
+    const lines = [
+      `📋 Tipo: ${appointment.type}`,
+      `👤 Paciente: ${appointment.patientName}`,
+      `👨‍⚕️ Terapeuta: ${appointment.therapistName || 'Não definido'}`,
+      `📞 Telefone: ${appointment.patientPhone || 'Não informado'}`,
+      `💰 Valor: R$ ${appointment.value.toFixed(2)}`,
+      `💳 Pagamento: ${appointment.paymentStatus === 'paid' ? 'Pago' : 'Pendente'}`
+    ];
+
+    if (appointment.sessionNumber && appointment.totalSessions) {
+      lines.push(`🔢 Sessão: ${appointment.sessionNumber}/${appointment.totalSessions}`);
     }
+
+    if (appointment.notes) {
+      lines.push(``, `📝 Observações:`, appointment.notes);
+    }
+
+    lines.push(``, `---`, `Gerado por FisioFlow`);
+
+    return lines.join('\n');
+  }
+
+  /**
+   * Abre calendário do provedor especificado
+   */
+  openCalendarProvider(provider: CalendarProvider, appointment: EnrichedAppointment): void {
+    switch (provider) {
+      case 'google':
+        window.open(this.generateGoogleCalendarUrl(appointment), '_blank');
+        break;
+      case 'outlook':
+        window.open(this.generateOutlookCalendarUrl(appointment), '_blank');
+        break;
+      case 'apple':
+        this.generateICalFile(appointment);
+        break;
+    }
+  }
+
+  /**
+   * Copia informações do evento para clipboard
+   */
+  async copyEventToClipboard(appointment: EnrichedAppointment): Promise<boolean> {
+    const text = [
+      `📅 ${format(appointment.startTime, "dd/MM/yyyy 'às' HH:mm")}`,
+      ``,
+      this.buildEventDescription(appointment)
+    ].join('\n');
+
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (error) {
+      console.error('Erro ao copiar para clipboard:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Gera múltiplos eventos (para exportação em lote)
+   */
+  generateMultipleICalFile(appointments: EnrichedAppointment[], filename?: string): void {
+    const events = appointments.map((appointment, index) => {
+      const formatDate = (date: Date): string => {
+        return format(date, "yyyyMMdd'T'HHmmss");
+      };
+
+      const description = this.buildEventDescription(appointment)
+        .replace(/\n/g, '\\n')
+        .replace(/,/g, '\\,');
+
+      return [
+        'BEGIN:VEVENT',
+        `UID:${appointment.id}@fisioflow.com`,
+        `DTSTAMP:${formatDate(new Date())}`,
+        `DTSTART:${formatDate(appointment.startTime)}`,
+        `DTEND:${formatDate(appointment.endTime)}`,
+        `SUMMARY:${appointment.type} - ${appointment.patientName}`,
+        `DESCRIPTION:${description}`,
+        `LOCATION:${appointment.location || 'Clínica FisioFlow'}`,
+        `STATUS:${appointment.status === 'completed' ? 'CONFIRMED' : 'TENTATIVE'}`,
+        'BEGIN:VALARM',
+        'TRIGGER:-PT30M',
+        'ACTION:DISPLAY',
+        'DESCRIPTION:Lembrete: Consulta em 30 minutos',
+        'END:VALARM',
+        'END:VEVENT'
+      ].join('\r\n');
+    });
+
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//FisioFlow//Agenda//PT',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      ...events,
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename || `agenda_${format(new Date(), 'yyyy-MM-dd')}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 }
 

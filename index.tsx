@@ -6,6 +6,11 @@ import './index.css';
 import AppRoutes from './AppRoutes';
 // Importações adiadas para pós-render
 
+// Preload theme ANTES de render para evitar flash
+import('./lib/themePreloader').then(({ preloadTheme }) => {
+  preloadTheme().catch(() => console.warn('Theme preload failed'));
+});
+
 // Performance mark - início do app
 try { performance.mark('app_start'); } catch {}
 
@@ -94,6 +99,16 @@ if (!rootElement) {
         console.error('❌ Service worker registration failed:', error);
       },
     })).catch(() => {});
+
+    // Registrar Service Worker avançado (PWA Enterprise)
+    import('./lib/registerSW').then(({ registerServiceWorker: registerAdvancedSW, setupInstallPrompt }) => {
+      registerAdvancedSW().then(reg => {
+        if (reg) {
+          console.log('🚀 PWA Service Worker registrado');
+          setupInstallPrompt();
+        }
+      });
+    }).catch(() => {});
 
   } catch (error) {
     console.error('💥 Error rendering React app:', error);

@@ -228,11 +228,15 @@ class SupabaseAuthService {
   }
 
   private shouldUseMockAuth(credentials: LoginCredentials): boolean {
-    // Use mock auth for demo credentials
+    // ⚠️ ATUALIZAÇÃO: admin@dudufisio.com agora usa autenticação REAL no Supabase
+    // Removido admin@ da lista de mock credentials
+    // Use mock auth apenas para outros usuários demo (se necessário)
     const demoCredentials = [
-      'admin@dudufisio.com',
+      // 'admin@dudufisio.com', // ❌ REMOVIDO - agora usa auth real do Supabase
       'therapist@dudufisio.com',
+      'terapeuta@dudufisio.com',
       'patient@dudufisio.com',
+      'paciente@dudufisio.com',
       'educator@dudufisio.com'
     ];
     return demoCredentials.includes(credentials.email) && credentials.password === 'demo123456';
@@ -241,15 +245,19 @@ class SupabaseAuthService {
   private mockLogin(credentials: LoginCredentials): User {
     secureLogger.info('Login mock iniciado', {
       component: 'supabaseAuthService',
-      action: 'mockLogin'
+      action: 'mockLogin',
+      email: credentials.email
     });
 
+    // ⚠️ IMPORTANTE: admin@dudufisio.com foi REMOVIDO daqui
+    // Agora usa autenticação REAL no Supabase
     const mockUsers: Record<string, User> = {
-      'admin@dudufisio.com': {
-        id: 'mock-admin-1',
-        email: 'admin@dudufisio.com',
-        name: 'Administrador',
-        role: Role.Admin,
+      // 'admin@dudufisio.com': REMOVIDO - usa auth real ✅
+      'therapist@dudufisio.com': {
+        id: 'mock-therapist-1',
+        email: 'therapist@dudufisio.com',
+        fullName: 'Dr. João Silva',
+        role: Role.Therapist,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
@@ -259,6 +267,15 @@ class SupabaseAuthService {
         email: 'terapeuta@dudufisio.com',
         fullName: 'Dr. João Silva',
         role: Role.Therapist,
+        avatarUrl: '',
+        phone: undefined,
+        createdAt: new Date().toISOString()
+      },
+      'patient@dudufisio.com': {
+        id: 'mock-patient-1',
+        email: 'patient@dudufisio.com',
+        fullName: 'Maria Santos',
+        role: Role.Patient,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
@@ -329,27 +346,33 @@ class SupabaseAuthService {
   }
 
   async login(credentials: LoginCredentials): Promise<User> {
-    secureLogger.info('Tentativa de login', {
+    secureLogger.info('🔐 Tentativa de login', {
       component: 'supabaseAuthService',
-      action: 'login'
+      action: 'login',
+      email: credentials.email
     });
 
     try {
       // Check if we should use mock authentication for development
       if (this.shouldUseMockAuth(credentials)) {
-        secureLogger.info('Usando autenticação mock para credenciais demo', {
+        secureLogger.info('📋 Usando autenticação mock para credenciais demo', {
           component: 'supabaseAuthService',
-          action: 'login'
+          action: 'login',
+          email: credentials.email
         });
         const user = this.mockLogin(credentials);
         return user;
       }
 
-      // Try Supabase first with retry
-      secureLogger.info('Tentando login via Supabase', {
+      // ✅ AUTENTICAÇÃO REAL NO SUPABASE
+      // admin@dudufisio.com e outros usuários reais chegam aqui
+      secureLogger.info('🔄 Tentando login REAL via Supabase', {
         component: 'supabaseAuthService',
-        action: 'login'
+        action: 'login',
+        email: credentials.email,
+        isRealAuth: true
       });
+      
       const supa = await this.getSupabase();
       const { data, error } = await retryApiCall(
         () => supa.auth.signInWithPassword({
@@ -361,39 +384,57 @@ class SupabaseAuthService {
       );
 
       if (error) throw error;
-      if (!data.user) throw new Error('Login falhou');
+      if (!data.user) throw new Error('Login falhou - usuário não retornado');
+      if (!data.session) throw new Error('Login falhou - sessão não criada');
 
       const user = await this.mapSupabaseUserToUser(data.user);
-      secureLogger.info('Login via Supabase bem-sucedido', {
+      
+      secureLogger.info('✅ Login via Supabase bem-sucedido', {
         component: 'supabaseAuthService',
         action: 'login',
-        userId: user.id
+        userId: user.id,
+        email: user.email,
+        role: user.role,
+        hasSession: !!data.session,
+        sessionExpiresAt: data.session.expires_at
       });
+      
       return user;
     } catch (error: any) {
-      secureLogger.warn('Login Supabase falhou, tentando fallback', {
+      secureLogger.error('❌ Login Supabase falhou', {
         component: 'supabaseAuthService',
         action: 'login',
-        error: error.message
+        email: credentials.email,
+        error: error.message,
+        errorCode: error.code
       });
 
       // If Supabase fails, try fallback auth
       try {
+        secureLogger.info('🔄 Tentando fallback auth', {
+          component: 'supabaseAuthService',
+          action: 'login'
+        });
         return await fallbackAuthService.login(credentials.email, credentials.password);
       } catch (fallbackError) {
         // If fallback also fails and we have demo credentials, try mock auth
         if (this.shouldUseMockAuth(credentials)) {
-          secureLogger.info('Usando mock auth como último recurso', {
+          secureLogger.info('📋 Usando mock auth como último recurso', {
             component: 'supabaseAuthService',
-            action: 'login'
+            action: 'login',
+            email: credentials.email
           });
           const user = this.mockLogin(credentials);
           return user;
         }
-        secureLogger.error('Todos os métodos de login falharam', error, {
+        
+        secureLogger.error('❌ Todos os métodos de login falharam', {
           component: 'supabaseAuthService',
-          action: 'login'
+          action: 'login',
+          email: credentials.email,
+          error: error.message
         });
+        
         throw new Error(handleSupabaseError(error));
       }
     }

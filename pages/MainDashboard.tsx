@@ -19,6 +19,11 @@ const ReportsPage = createLazyComponent(() => import('./ReportsPage'));
 const SettingsPage = createLazyComponent(() => import('./SettingsPage'));
 const NotificationCenterPage = createLazyComponent(() => import('./NotificationCenterPage'));
 const CRMDashboardPage = createLazyComponent(() => import('./CRMDashboardPage'));
+const AnalyticsDashboardPage = createLazyComponent(() => import('./AnalyticsDashboardPage'));
+const CheckInPage = createLazyComponent(() => import('./CheckInPage'));
+const GamificationDashboard = createLazyComponent(() => import('./GamificationDashboard'));
+const ResourceManagementPage = createLazyComponent(() => import('./ResourceManagementPage'));
+const AdvancedAnalyticsDashboard = createLazyComponent(() => import('./AdvancedAnalyticsDashboard'));
 
 // Loading component
 const PageLoader = () => <PageSkeleton />;
@@ -45,6 +50,8 @@ const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
             <Route path="/patients" element={<PatientListPage />} />
             <Route path="/patients/:id" element={<PatientDetailPage />} />
             <Route path="/agenda" element={<AgendaPage />} />
+            <Route path="/agenda-analytics" element={<AnalyticsDashboardPage />} />
+            <Route path="/checkin" element={<CheckInPage />} />
             <Route path="/acompanhamento" element={<AcompanhamentoPage />} />
             <Route path="/acompanhamento/:patientId" element={<AcompanhamentoPage />} />
             <Route path="/exercises" element={<ExerciseLibraryPage />} />
@@ -54,6 +61,11 @@ const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/financial" element={<FinancialPage />} />
             <Route path="/analytics" element={<ClinicalAnalyticsPage />} />
+            <Route path="/ai-analytics" element={<AdvancedAnalyticsDashboard />} />
+            
+            {/* Gamification & Resources */}
+            <Route path="/gamification" element={<GamificationDashboard />} />
+            <Route path="/resources" element={<ResourceManagementPage />} />
             
             {/* CRM */}
             <Route path="/crm" element={<CRMDashboardPage />} />

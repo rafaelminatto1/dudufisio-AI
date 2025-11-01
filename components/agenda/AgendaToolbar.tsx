@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Filter, Calendar, AlertTriangle, Search, Users, Lock, MoreVertical, Download, Settings } from 'lucide-react';
+import { Plus, Filter, Calendar, AlertTriangle, Search, Users, Lock, MoreVertical, Download, Settings, BarChart3 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { cn } from '../../lib/utils';
+import ThemeSwitcher from '../ui/ThemeSwitcher';
 
 interface AgendaToolbarProps {
   onNewAppointment?: () => void;
@@ -25,6 +26,8 @@ interface AgendaToolbarProps {
   waitlistCount?: number;
   showFilters?: boolean;
   className?: string;
+  onExport?: () => void;
+  onCompareTherapists?: () => void;
 }
 
 const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
@@ -38,7 +41,9 @@ const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
   conflictsCount = 0,
   waitlistCount = 0,
   showFilters = false,
-  className
+  className,
+  onExport,
+  onCompareTherapists
 }) => {
   return (
     <div className={cn("bg-white border-b border-fisio-neutral-200 p-4 space-y-3 shadow-sm", className)}>
@@ -128,14 +133,18 @@ const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Download className="w-4 h-4 mr-2" />
-                  Exportar Agenda
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Imprimir Agenda
-                </DropdownMenuItem>
+                {onExport && (
+                  <DropdownMenuItem onClick={onExport}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Exportar Agenda
+                  </DropdownMenuItem>
+                )}
+                {onCompareTherapists && (
+                  <DropdownMenuItem onClick={onCompareTherapists}>
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Comparar Terapeutas
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <Settings className="w-4 h-4 mr-2" />
@@ -143,6 +152,8 @@ const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <ThemeSwitcher />
           </div>
 
           <Separator orientation="vertical" className="h-6" />

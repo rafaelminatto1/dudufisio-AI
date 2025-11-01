@@ -1,7 +1,7 @@
 {
-  "name": "DuduFisio-AI - Gestão Fisioterapêutica Inteligente",
-  "short_name": "DuduFisio-AI",
-  "description": "Sistema completo de gestão de clínicas de fisioterapia com IA integrada",
+  "name": "FisioFlow - Gestão em Fisioterapia",
+  "short_name": "FisioFlow",
+  "description": "Sistema completo de gestão para clínicas de fisioterapia com IA integrada",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -13,74 +13,64 @@
   "categories": ["health", "medical", "productivity", "business"],
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "/icon-192x192.png",
-      "type": "image/png",
+      "src": "/logo-192.png",
       "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512x512.png",
-      "type": "image/png",
+      "src": "/logo-512.png",
       "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/logo-1024.png",
-      "type": "image/png",
-      "sizes": "1024x1024",
-      "purpose": "any"
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ],
   "screenshots": [
     {
-      "src": "/screenshots/dashboard.png",
+      "src": "/screenshots/desktop-1.png",
+      "sizes": "1920x1080",
       "type": "image/png",
-      "sizes": "1280x720",
-      "label": "Dashboard principal"
+      "form_factor": "wide",
+      "label": "Dashboard Principal"
     },
     {
-      "src": "/screenshots/agenda.png",
+      "src": "/screenshots/mobile-1.png",
+      "sizes": "750x1334",
       "type": "image/png",
-      "sizes": "1280x720",
-      "label": "Agenda de atendimentos"
-    },
-    {
-      "src": "/screenshots/pacientes.png",
-      "type": "image/png",
-      "sizes": "1280x720",
-      "label": "Gestão de pacientes"
+      "form_factor": "narrow",
+      "label": "Agenda Mobile"
     }
   ],
   "shortcuts": [
     {
-      "name": "Nova Consulta",
-      "short_name": "Consulta",
-      "description": "Agendar nova consulta",
+      "name": "Agendar Consulta",
+      "short_name": "Agendar",
+      "description": "Criar novo agendamento rapidamente",
       "url": "/agenda?action=new",
       "icons": [{ "src": "/icons/calendar.png", "sizes": "96x96" }]
     },
     {
-      "name": "Pacientes",
-      "short_name": "Pacientes",
-      "description": "Ver lista de pacientes",
-      "url": "/pacientes",
-      "icons": [{ "src": "/icons/users.png", "sizes": "96x96" }]
+      "name": "Ver Agenda",
+      "short_name": "Agenda",
+      "description": "Visualizar agenda do dia",
+      "url": "/agenda",
+      "icons": [{ "src": "/icons/agenda.png", "sizes": "96x96" }]
     },
     {
-      "name": "Financeiro",
-      "short_name": "Financeiro",
-      "description": "Dashboard financeiro",
-      "url": "/financeiro",
-      "icons": [{ "src": "/icons/money.png", "sizes": "96x96" }]
+      "name": "Pacientes",
+      "short_name": "Pacientes",
+      "description": "Lista de pacientes",
+      "url": "/patients",
+      "icons": [{ "src": "/icons/users.png", "sizes": "96x96" }]
     }
   ],
   "share_target": {
-    "action": "/share",
+    "action": "/share-target",
     "method": "POST",
     "enctype": "multipart/form-data",
     "params": {
@@ -89,8 +79,8 @@
       "url": "url",
       "files": [
         {
-          "name": "documents",
-          "accept": ["image/*", "application/pdf", ".doc", ".docx"]
+          "name": "file",
+          "accept": ["image/*", "application/pdf"]
         }
       ]
     }
@@ -99,18 +89,8 @@
   "prefer_related_applications": false,
   "protocol_handlers": [
     {
-      "protocol": "web+dudufisio",
-      "url": "/handle-protocol?url=%s"
+      "protocol": "web+fisioflow",
+      "url": "/?protocol=%s"
     }
-  ],
-  "permissions": [
-    "notifications",
-    "geolocation"
-  ],
-  "features": [
-    "offline-support",
-    "push-notifications",
-    "background-sync",
-    "installable"
   ]
 }
