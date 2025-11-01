@@ -1,0 +1,43 @@
+{
+  "budgets": [
+    {
+      "name": "Total Bundle Size",
+      "limit": "500KB",
+      "limitBytes": 512000,
+      "status": "ok"
+    },
+    {
+      "name": "Main Thread Blocking Time",
+      "limit": "200ms",
+      "limitMs": 200,
+      "status": "ok"
+    },
+    {
+      "name": "Time to Interactive",
+      "limit": "3.8s",
+      "limitMs": 3800,
+      "status": "ok"
+    },
+    {
+      "name": "First Contentful Paint",
+      "limit": "1.8s",
+      "limitMs": 1800,
+      "status": "ok"
+    },
+    {
+      "name": "Largest Contentful Paint",
+      "limit": "2.5s",
+      "limitMs": 2500,
+      "status": "ok"
+    },
+    {
+      "name": "Cumulative Layout Shift",
+      "limit": "0.1",
+      "limitValue": 0.1,
+      "status": "ok"
+    }
+  ],
+  "lastChecked": null,
+  "violations": []
+}
+
