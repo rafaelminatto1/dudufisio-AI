@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Maximize2, Minimize2, LayoutGrid, Columns, List } from 'lucide-react';
+import { X, Save, Maximize2, Minimize2, LayoutGrid, Columns, List, AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useToast } from '../../contexts/ToastContext';
 import { Patient, EnrichedAppointment, SoapNote, Surgery, PatientGoal, Pathology, MandatoryTestAlert, MedicalInsight, AppointmentStatus } from '../../types';
@@ -16,6 +16,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { SessionLayoutA_Cards, SessionLayoutB_Columns, SessionLayoutC_Accordion, type SessionLayoutType } from './layouts';
 import type { PainData, PainModalData } from '../body-map-pro';
 import { handleError } from '../../lib/middleware/errorHandler';
+import { withTimeout } from '../../lib/utils/timeout';
 
 // Import all column components
 import { SOAPFormPanel } from './SOAPFormPanel';
@@ -61,6 +62,8 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
   const [mandatoryAlerts, setMandatoryAlerts] = useState<MandatoryTestAlert[]>([]);
   const [medicalInsights, setMedicalInsights] = useState<MedicalInsight[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState<string>('Iniciando...');
   const [isMaximized, setIsMaximized] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showBlockingDialog, setShowBlockingDialog] = useState(false);
@@ -69,66 +72,80 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
   const [painData, setPainData] = useState<PainData[]>([]);
   const [previousPainData, setPreviousPainData] = useState<PainData[]>([]);
 
-  useEffect(() => {
-    if (isOpen) {
-      loadData();
-      // Prevenir scroll do body quando modal está aberto
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, appointmentId]);
-
-  const loadData = async () => {
+  const loadData = React.useCallback(async (signal?: AbortSignal) => {
+    if (signal?.aborted) return;
+    
     setIsLoading(true);
+    setLoadError(null);
+    setLoadingMessage('Iniciando carregamento...');
+    
     try {
-      // Buscar agendamento
-      const appointments = await appointmentService.getAppointments();
-      const foundAppointment = appointments.find(a => a.id === appointmentId);
+      // 1. Buscar agendamento específico (otimizado)
+      if (signal?.aborted) return;
+      setLoadingMessage('Buscando agendamento...');
+      const foundAppointment = await withTimeout(
+        appointmentService.getAppointmentById(appointmentId),
+        10000,
+        'Timeout ao buscar agendamento. Verifique sua conexão.'
+      );
 
+      if (signal?.aborted) return;
       if (!foundAppointment) {
+        setLoadError('Agendamento não encontrado.');
         showToast('Agendamento não encontrado', 'error');
-        onClose();
         return;
       }
 
       setAppointment(foundAppointment as EnrichedAppointment);
 
-      // Buscar paciente
-      const patientData = await patientService.getPatientById(foundAppointment.patientId);
+      // 2. Buscar paciente
+      if (signal?.aborted) return;
+      setLoadingMessage('Carregando dados do paciente...');
+      const patientData = await withTimeout(
+        patientService.getPatientById(foundAppointment.patientId),
+        10000,
+        'Timeout ao buscar dados do paciente.'
+      );
+      
+      if (signal?.aborted) return;
       if (!patientData) {
+        setLoadError('Paciente não encontrado.');
         showToast('Paciente não encontrado', 'error');
-        onClose();
         return;
       }
 
       setPatient(patientData);
 
-      // Carregar todos os dados em paralelo
+      // 3. Carregar todos os dados em paralelo com timeout
+      if (signal?.aborted) return;
+      setLoadingMessage('Carregando histórico e dados clínicos...');
       const [
         notesData,
         surgeriesData,
         goalsData,
         pathologiesData,
         bodyMapSessions,
-      ] = await Promise.all([
-        soapNoteService.getNotesByPatientId(patientData.id),
-        surgeryService.getSurgeriesByPatientId(patientData.id),
-        patientGoalsService.getGoalsByPatientId(patientData.id),
-        pathologyService.getPathologiesByPatientId(patientData.id),
-        bodyMapService.getPatientBodyMapHistory(patientData.id),
-      ]);
+      ] = await withTimeout(
+        Promise.all([
+          soapNoteService.getNotesByPatientId(patientData.id),
+          surgeryService.getSurgeriesByPatientId(patientData.id),
+          patientGoalsService.getGoalsByPatientId(patientData.id),
+          pathologyService.getPathologiesByPatientId(patientData.id),
+          bodyMapService.getPatientBodyMapHistory(patientData.id),
+        ]),
+        15000, 
+        'Timeout ao carregar dados clínicos do paciente.'
+      );
 
+      if (signal?.aborted) return;
       setPatientNotes(notesData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
       setSurgeries(surgeriesData);
       setGoals(goalsData);
       setPathologies(pathologiesData);
 
-      // Processar dados de dor
+      // 4. Processar dados de dor
+      if (signal?.aborted) return;
+      setLoadingMessage('Processando dados de dor...');
       if (bodyMapSessions.length > 0) {
         const latestSession = bodyMapSessions[0];
         if (latestSession && latestSession.painRegions) {
@@ -142,26 +159,72 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
         }
       }
 
-      // Gerar alertas e insights
+      // 5. Gerar alertas e insights
+      if (signal?.aborted) return;
+      setLoadingMessage('Gerando alertas e insights clínicos...');
       const sessionNumber = notesData.length + 1;
-      const [alerts, insights] = await Promise.all([
-        mandatoryTestAlertService.generateMandatoryTestAlerts(patientData.id, sessionNumber),
-        medicalReportSuggestionsService.generateMedicalInsights(patientData.id),
-      ]);
+      const [alerts, insights] = await withTimeout(
+        Promise.all([
+          mandatoryTestAlertService.generateMandatoryTestAlerts(patientData.id, sessionNumber),
+          medicalReportSuggestionsService.generateMedicalInsights(patientData.id),
+        ]),
+        10000,
+        'Timeout ao gerar alertas e insights.'
+      );
 
+      if (signal?.aborted) return;
       setMandatoryAlerts(alerts);
       setMedicalInsights(insights);
+      
+      setLoadingMessage('Carregamento concluído!');
 
     } catch (error) {
-      console.error('❌ Erro detalhado ao carregar dados:', error);
-      console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack');
-      console.error('Error message:', error instanceof Error ? error.message : String(error));
-      showToast(`Erro ao carregar dados da sessão: ${error instanceof Error ? error.message : String(error)}`, 'error');
-      // NÃO fecha o modal imediatamente - deixa o usuário ver o erro
+      if (signal?.aborted) return;
+      
+      console.error('❌ Erro ao carregar dados da sessão:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido ao carregar dados';
+      setLoadError(errorMessage);
+      
+      // Log detalhado apenas no console
+      if (error instanceof Error) {
+        console.error('Stack trace:', error.stack);
+      }
+      
+      // Toast mais amigável ao usuário
+      if (errorMessage.includes('Timeout')) {
+        showToast('A operação demorou muito tempo. Por favor, tente novamente.', 'error');
+      } else if (errorMessage.includes('não encontrado')) {
+        showToast(errorMessage, 'error');
+      } else {
+        showToast('Erro ao carregar dados da sessão. Por favor, tente novamente.', 'error');
+      }
     } finally {
-      setIsLoading(false);
+      if (!signal?.aborted) {
+        setIsLoading(false);
+      }
     }
-  };
+  }, [appointmentId, showToast]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    if (isOpen) {
+      // Prevenir scroll do body quando modal está aberto
+      document.body.style.overflow = 'hidden';
+      
+      // Carregar dados com AbortSignal para cancelamento
+      loadData(abortController.signal);
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      // Abortar requisições pendentes quando o modal fechar ou componente desmontar
+      abortController.abort();
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, appointmentId, loadData]);
 
   // Handlers para Body Map
   const handleSavePainData = async (data: PainModalData) => {
@@ -461,11 +524,41 @@ export const SessionEvolutionModal: React.FC<SessionEvolutionModalProps> = ({
 
             {/* Modal Body */}
             <div className="flex-1 overflow-hidden" style={{ height: 'calc(100% - 140px)' }}>
-              {isLoading ? (
+              {loadError ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center max-w-md px-6">
+                    <div className="mx-auto mb-6 w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                      <AlertCircle className="w-8 h-8 text-red-600" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                      Erro ao Carregar Dados
+                    </h3>
+                    <p className="text-slate-600 mb-6">
+                      {loadError}
+                    </p>
+                    <div className="flex items-center justify-center gap-3">
+                      <Button
+                        onClick={loadData}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Tentar Novamente
+                      </Button>
+                      <Button
+                        onClick={onClose}
+                        variant="outline"
+                      >
+                        Voltar
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : isLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-slate-600">Carregando dados da sessão...</p>
+                    <p className="text-lg font-medium text-slate-900 mb-2">Carregando sessão...</p>
+                    <p className="text-sm text-slate-500">{loadingMessage}</p>
                   </div>
                 </div>
               ) : patient && appointment ? (

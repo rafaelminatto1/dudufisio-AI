@@ -33,6 +33,7 @@ import {
 import PatientInfoCards from '../components/evolution/PatientInfoCards';
 import { usePatientEvolutionData } from '../hooks/usePatientEvolutionData';
 import { useEvolutionKeyboardShortcuts } from '../hooks/useEvolutionKeyboardShortcuts';
+import { withTimeout } from '../lib/utils/timeout';
 
 const AtendimentoPage: React.FC = () => {
     const { appointmentId } = ReactRouterDOM.useParams<{ appointmentId: string }>();
@@ -83,15 +84,19 @@ const AtendimentoPage: React.FC = () => {
     const formData = watch();
     const [debouncedFormData] = useDebounce(formData, 2500); // 2.5s debounce
     
-    const fetchAllData = useCallback(async () => {
-        if (!appointmentId) return;
+    const fetchAllData = useCallback(async (signal?: AbortSignal) => {
+        if (!appointmentId || signal?.aborted) return;
 
         console.log('🔍 AtendimentoPage - Buscando agendamento com ID:', appointmentId);
-        const allAppointments = await appointmentService.getAppointments();
-        console.log('📋 AtendimentoPage - Total de agendamentos disponíveis:', allAppointments.length);
-        console.log('📋 AtendimentoPage - IDs dos agendamentos:', allAppointments.map(a => a.id));
         
-        const appData = allAppointments.find(a => a.id === appointmentId);
+        // Buscar agendamento específico com timeout (otimizado)
+        const appData = await withTimeout(
+            appointmentService.getAppointmentById(appointmentId),
+            10000,
+            'Timeout ao buscar agendamento. Verifique sua conexão.'
+        );
+        
+        if (signal?.aborted) return;
         if (!appData) {
             console.error('❌ AtendimentoPage - Agendamento não encontrado:', appointmentId);
             throw new Error("Consulta não encontrada.");
@@ -100,22 +105,44 @@ const AtendimentoPage: React.FC = () => {
         console.log('✅ AtendimentoPage - Agendamento encontrado:', appData);
         setAppointment(appData);
 
-        const patientData = await patientService.getPatientById(appData.patientId);
+        // Buscar paciente com timeout
+        if (signal?.aborted) return;
+        const patientData = await withTimeout(
+            patientService.getPatientById(appData.patientId),
+            10000,
+            'Timeout ao buscar dados do paciente.'
+        );
+        
+        if (signal?.aborted) return;
         if (!patientData) throw new Error("Paciente não encontrado.");
         setPatient(patientData);
         setActiveMetrics((patientData.trackedMetrics || []).filter(m => m.isActive));
 
-        const [notesData, planData] = await Promise.all([
-            soapNoteService.getNotesByPatientId(patientData.id),
-            treatmentService.getPlanByPatientId(patientData.id),
-        ]);
+        // Buscar notas e plano com timeout
+        if (signal?.aborted) return;
+        const [notesData, planData] = await withTimeout(
+            Promise.all([
+                soapNoteService.getNotesByPatientId(patientData.id),
+                treatmentService.getPlanByPatientId(patientData.id),
+            ]),
+            15000,
+            'Timeout ao carregar histórico do paciente.'
+        );
+        
+        if (signal?.aborted) return;
         setPreviousNote(notesData[0] || null);
         setAllPatientNotes(notesData);
 
-        if (planData) {
+        if (planData && !signal?.aborted) {
             setTreatmentPlan(planData);
-            const exercisesData = await treatmentService.getExercisesByPlanId(planData.id);
-            setPlanExercises(exercisesData);
+            const exercisesData = await withTimeout(
+                treatmentService.getExercisesByPlanId(planData.id),
+                10000,
+                'Timeout ao carregar exercícios do plano.'
+            );
+            if (!signal?.aborted) {
+                setPlanExercises(exercisesData);
+            }
         }
     }, [appointmentId]);
 
