@@ -459,7 +459,7 @@ class SupabaseAuthService {
       if (!data.user) throw new Error('Registro falhou');
 
       // Create user profile in our custom table
-      const { error: profileError } = await supabase
+      const { error: profileError } = await supa
         .from('user_profiles')
         .insert({
           id: data.user.id,

@@ -21,13 +21,9 @@ const STATIC_ASSETS = [
   '/offline.html',
 ];
 
-// ✅ CORRIGIDO: Vendors críticos atualizados para match com build atual
+// ✅ CORRIGIDO: Vendor único agora
 const CRITICAL_VENDORS = [
-  'vendor-react',      // Corrigido de 'vendor-react-core'
-  'vendor-radix',
-  'vendor-animation',  // Framer Motion
-  'vendor-icons',      // Lucide
-  'vendor-forms',      // React Hook Form + Zod
+  'vendor',  // Único chunk vendor com TODAS as bibliotecas
 ];
 
 // Estratégias de cache por padrão de URL

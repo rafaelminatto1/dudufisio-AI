@@ -164,11 +164,11 @@ export default defineConfig({
     modulePreload: {
       polyfill: true,
       resolveDependencies: (filename, deps, { hostId, hostType }) => {
-        // ✅ CORREÇÃO CRÍTICA: Garantir que vendor-react seja SEMPRE carregado primeiro
+        // ✅ CORREÇÃO: Com vendor único, garantir que seja carregado primeiro
         // Isso previne erros como "TypeError: Cp/Ay is not a function"
         const sortedDeps = deps.sort((a, b) => {
-          if (a.includes('vendor-react')) return -1;
-          if (b.includes('vendor-react')) return 1;
+          if (a.includes('vendor')) return -1;  // ✅ Corrigido: 'vendor' não 'vendor-react'
+          if (b.includes('vendor')) return 1;
           return 0;
         });
         return sortedDeps;
@@ -233,22 +233,12 @@ export default defineConfig({
       },
       output: {
         // ✅ Garantir ordem de carregamento dos chunks
-        // O chunk vendor-react deve ser carregado ANTES de todos os outros
+        // Com vendor único, todos os node_modules em um só chunk
         experimentalMinChunkSize: 20000,
         // Entry files com hash
-        entryFileNames: (chunkInfo) => {
-          if (chunkInfo.name === 'index') {
-            return 'assets/[name]-[hash].js';
-          }
-          return 'assets/[name]-[hash].js';
-        },
-        chunkFileNames: (chunkInfo) => {
-          // ✅ CORRIGIDO: Alinhado com manualChunks (vendor-react, não vendor-react-core)
-          if (chunkInfo.name === 'vendor-react') {
-            return 'assets/vendor-react-[hash].js';
-          }
-          return 'assets/[name]-[hash].js';
-        },
+        entryFileNames: 'assets/[name]-[hash].js',
+        // Chunk files com hash (lógica simplificada - vendor é tratado igual aos demais)
+        chunkFileNames: 'assets/[name]-[hash].js',
         // ✅ ULTRA-CONSERVADOR: Tudo em vendor ÚNICO para garantir ordem
         // Isso elimina COMPLETAMENTE problemas de dependências entre chunks
         manualChunks: (id) => {
