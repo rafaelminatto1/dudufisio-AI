@@ -160,9 +160,19 @@ export default defineConfig({
     cssMinify: true,
     // Garantir que os entry points sejam preservados para ordem de carregamento correta
     preserveEntrySignatures: 'strict',
-    // Configurar ordem de carregamento dos chunks
+    // Configurar ordem de carregamento dos chunks - CRÍTICO para evitar erros
     modulePreload: {
       polyfill: true,
+      resolveDependencies: (filename, deps, { hostId, hostType }) => {
+        // ✅ CORREÇÃO CRÍTICA: Garantir que vendor-react seja SEMPRE carregado primeiro
+        // Isso previne erros como "TypeError: Cp/Ay is not a function"
+        const sortedDeps = deps.sort((a, b) => {
+          if (a.includes('vendor-react')) return -1;
+          if (b.includes('vendor-react')) return 1;
+          return 0;
+        });
+        return sortedDeps;
+      }
     },
     // Configuração para melhor compressão
     commonjsOptions: {
