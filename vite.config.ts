@@ -249,66 +249,12 @@ export default defineConfig({
           }
           return 'assets/[name]-[hash].js';
         },
-        // ✅ Code splitting EXPANDIDO - Reduz vendor-libs de 1.55MB para ~450KB
+        // ✅ ULTRA-CONSERVADOR: Tudo em vendor ÚNICO para garantir ordem
+        // Isso elimina COMPLETAMENTE problemas de dependências entre chunks
         manualChunks: (id) => {
-          // React ecosystem - SEMPRE PRIMEIRO
-          if (id.includes('node_modules/react') || 
-              id.includes('node_modules/react-dom') ||
-              id.includes('node_modules/scheduler') ||
-              id.includes('node_modules/react-router')) {
-            return 'vendor-react';
-          }
-          
-          // Radix UI - componentes UI
-          if (id.includes('node_modules/@radix-ui')) {
-            return 'vendor-radix';
-          }
-          
-          // Tiptap + ProseMirror - editor
-          if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror')) {
-            return 'vendor-editor';
-          }
-          
-          // Recharts + D3 - gráficos
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
-            return 'vendor-charts';
-          }
-          
-          // Supabase
-          if (id.includes('node_modules/@supabase')) {
-            return 'vendor-supabase';
-          }
-          
-          // 🆕 Framer Motion - animações (110KB)
-          if (id.includes('node_modules/framer-motion')) {
-            return 'vendor-animation';
-          }
-          
-          // 🆕 Lucide React - ícones (100KB)
-          if (id.includes('node_modules/lucide-react')) {
-            return 'vendor-icons';
-          }
-          
-          // 🆕 Forms - React Hook Form + Zod (120KB)
-          if (id.includes('node_modules/react-hook-form') ||
-              id.includes('node_modules/@hookform') ||
-              id.includes('node_modules/zod')) {
-            return 'vendor-forms';
-          }
-          
-          // 🆕 Date-fns - utilitários de data (40KB)
-          if (id.includes('node_modules/date-fns')) {
-            return 'vendor-dates';
-          }
-          
-          // 🆕 Sentry - monitoramento (15KB)
-          if (id.includes('node_modules/@sentry')) {
-            return 'vendor-sentry';
-          }
-          
-          // Resto - vendor-libs MUITO menor agora (~450KB ao invés de 1.55MB)
+          // TODOS os node_modules no mesmo chunk
           if (id.includes('node_modules')) {
-            return 'vendor-libs';
+            return 'vendor';
           }
         },
         assetFileNames: 'assets/[name]-[hash].[ext]'
