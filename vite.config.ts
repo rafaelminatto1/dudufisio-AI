@@ -29,46 +29,6 @@ export default defineConfig({
       telemetry: false,
       silent: !process.env.CI, // Verbose em CI, silencioso localmente
     }),
-    // Plugin para garantir ordem de carregamento dos chunks
-    {
-      name: 'ensure-react-core-first',
-      generateBundle(options, bundle) {
-        // Este plugin garante que o vendor-react-core seja carregado primeiro
-        // A ordem é determinada pelas dependências entre os módulos
-        // Mas podemos garantir que o chunk seja referenciado primeiro no HTML
-      },
-      writeBundle() {
-        // Modificar o HTML após o build para garantir ordem de carregamento
-        const htmlPath = path.resolve(__dirname, 'dist/index.html');
-        if (fs.existsSync(htmlPath)) {
-          let html = fs.readFileSync(htmlPath, 'utf-8');
-          
-          // Extrair todos os modulepreload links
-          const preloadRegex = /<link rel="modulepreload"[^>]*>/g;
-          const preloads = html.match(preloadRegex) || [];
-          
-          // Separar vendor-react-core dos outros
-          const reactCorePreload = preloads.find(p => p.includes('vendor-react-core'));
-          const otherPreloads = preloads.filter(p => !p.includes('vendor-react-core'));
-          
-          // Remover todos os preloads
-          html = html.replace(preloadRegex, '');
-          
-          // Reinserir na ordem correta: vendor-react-core primeiro
-          if (reactCorePreload) {
-            const insertPoint = html.indexOf('<script type="module"');
-            if (insertPoint !== -1) {
-              html = html.slice(0, insertPoint) + 
-                     reactCorePreload + '\n' +
-                     otherPreloads.join('\n') + '\n' +
-                     html.slice(insertPoint);
-            }
-          }
-          
-          fs.writeFileSync(htmlPath, html);
-        }
-      }
-    }
   ].filter(Boolean), // Remove plugins undefined
   esbuild: {
     // Mantém console logs para debugging
@@ -279,19 +239,14 @@ export default defineConfig({
           }
           return 'assets/[name]-[hash].js';
         },
-        // Code splitting OTIMIZADO E GRANULAR
-        // Separa bibliotecas grandes em chunks individuais para melhor caching
+        // Code splitting SIMPLIFICADO - evita conflitos de ordem de carregamento
         manualChunks: (id) => {
-          // React core - sempre primeiro
+          // React ecosystem - mantém tudo junto para evitar conflitos
           if (id.includes('node_modules/react') || 
               id.includes('node_modules/react-dom') ||
-              id.includes('node_modules/scheduler')) {
+              id.includes('node_modules/scheduler') ||
+              id.includes('node_modules/react-router')) {
             return 'vendor-react';
-          }
-          
-          // React Router - chunk separado
-          if (id.includes('node_modules/react-router')) {
-            return 'vendor-router';
           }
           
           // Radix UI - componentes UI
@@ -299,14 +254,9 @@ export default defineConfig({
             return 'vendor-radix';
           }
           
-          // Tiptap - editor de texto
-          if (id.includes('node_modules/@tiptap')) {
-            return 'vendor-tiptap';
-          }
-          
-          // ProseMirror - dependência do Tiptap
-          if (id.includes('node_modules/prosemirror')) {
-            return 'vendor-prosemirror';
+          // Tiptap + ProseMirror - editor (manter junto)
+          if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror')) {
+            return 'vendor-editor';
           }
           
           // Recharts - gráficos
@@ -314,41 +264,14 @@ export default defineConfig({
             return 'vendor-charts';
           }
           
-          // Supabase - backend
+          // Supabase + dependências
           if (id.includes('node_modules/@supabase')) {
             return 'vendor-supabase';
           }
           
-          // Framer Motion - animações
-          if (id.includes('node_modules/framer-motion')) {
-            return 'vendor-animation';
-          }
-          
-          // React Hook Form + Zod - formulários
-          if (id.includes('node_modules/react-hook-form') || 
-              id.includes('node_modules/zod') ||
-              id.includes('node_modules/@hookform')) {
-            return 'vendor-forms';
-          }
-          
-          // Date-fns - datas
-          if (id.includes('node_modules/date-fns')) {
-            return 'vendor-dates';
-          }
-          
-          // Sentry - monitoramento
-          if (id.includes('node_modules/@sentry')) {
-            return 'vendor-sentry';
-          }
-          
-          // Lucide Icons - ícones
-          if (id.includes('node_modules/lucide-react')) {
-            return 'vendor-icons';
-          }
-          
-          // Outros vendors node_modules
+          // Demais vendors
           if (id.includes('node_modules')) {
-            return 'vendor-libs';
+            return 'vendor';
           }
         },
         assetFileNames: 'assets/[name]-[hash].[ext]'
