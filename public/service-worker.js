@@ -7,10 +7,11 @@
  * - Stale-While-Revalidate: UI components
  */
 
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v1.1.0';
 const STATIC_CACHE = `fisioflow-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `fisioflow-dynamic-${CACHE_VERSION}`;
 const API_CACHE = `fisioflow-api-${CACHE_VERSION}`;
+const VENDOR_CACHE = `fisioflow-vendor-${CACHE_VERSION}`; // Cache separado para vendors
 
 // Assets estáticos para cache (cache-first)
 const STATIC_ASSETS = [
@@ -20,13 +21,21 @@ const STATIC_ASSETS = [
   '/offline.html',
 ];
 
+// Vendors críticos para precache (carregamento mais rápido)
+const CRITICAL_VENDORS = [
+  'vendor-react-core',
+  'vendor-radix',
+];
+
 // Estratégias de cache por padrão de URL
 const CACHE_STRATEGIES = {
-  // Cache-First: Assets estáticos
+  // Cache-First: Assets estáticos (cache imutável)
   cacheFirst: [
-    /\.js$/,
-    /\.css$/,
-    /\.woff2?$/,
+    /\/assets\/.*\.js$/,        // JS chunks com hash
+    /\/assets\/.*\.css$/,       // CSS com hash
+    /\/assets\/vendor-.*\.js$/, // Vendor chunks (longa duração)
+    /\.woff2?$/,                // Fontes
+    /\.webp$/,                  // Imagens otimizadas
     /\.png$/,
     /\.jpg$/,
     /\.jpeg$/,
@@ -39,18 +48,22 @@ const CACHE_STRATEGIES = {
     /\/api\//,
     /\/supabase\//,
     /gemini/,
+    /openai/,
+    /anthropic/,
   ],
 
-  // Stale-While-Revalidate: UI components
+  // Stale-While-Revalidate: UI components e páginas
   staleWhileRevalidate: [
     /\/components\//,
     /\/pages\//,
+    /\/index\.html$/,
   ],
 };
 
-// Configuração de TTL para caches
+// Configuração de TTL para caches (otimizado para runtime performance)
 const CACHE_TTL = {
-  static: 7 * 24 * 60 * 60 * 1000,      // 7 dias
+  static: 30 * 24 * 60 * 60 * 1000,     // 30 dias (assets com hash)
+  vendor: 90 * 24 * 60 * 60 * 1000,     // 90 dias (vendors mudam raramente)
   dynamic: 24 * 60 * 60 * 1000,         // 1 dia
   api: 5 * 60 * 1000,                   // 5 minutos
 };
@@ -89,11 +102,12 @@ self.addEventListener('activate', (event) => {
         return Promise.all(
           cacheNames
             .filter((cacheName) => {
-              // Remover caches antigos
+              // Remover caches antigos (mantém apenas versão atual)
               return cacheName.startsWith('fisioflow-') &&
                      cacheName !== STATIC_CACHE &&
                      cacheName !== DYNAMIC_CACHE &&
-                     cacheName !== API_CACHE;
+                     cacheName !== API_CACHE &&
+                     cacheName !== VENDOR_CACHE;
             })
             .map((cacheName) => {
               console.log('[SW] Deleting old cache:', cacheName);
@@ -168,32 +182,38 @@ function determineStrategy(url) {
 }
 
 /**
- * Cache-First Strategy
+ * Cache-First Strategy (otimizado para runtime performance)
  * Busca no cache primeiro, fallback para network
  */
 async function cacheFirst(request) {
   try {
     const cached = await caches.match(request);
+    const url = request.url;
+    
+    // Determinar cache correto e TTL baseado no tipo de asset
+    const isVendor = /\/assets\/vendor-.*\.js$/.test(url);
+    const cacheName = isVendor ? VENDOR_CACHE : STATIC_CACHE;
+    const ttl = isVendor ? CACHE_TTL.vendor : CACHE_TTL.static;
 
     if (cached) {
       // Verificar TTL
-      const cacheTime = await getCacheTime(STATIC_CACHE, request.url);
+      const cacheTime = await getCacheTime(cacheName, url);
       const now = Date.now();
 
-      if (cacheTime && (now - cacheTime) < CACHE_TTL.static) {
-        console.log('[SW] Cache hit (cache-first):', request.url);
+      if (cacheTime && (now - cacheTime) < ttl) {
+        console.log(`[SW] Cache hit (${isVendor ? 'vendor' : 'static'}):`, url);
         return cached;
       }
     }
 
     // Se não está no cache ou expirou, buscar na network
-    console.log('[SW] Cache miss (cache-first), fetching:', request.url);
+    console.log('[SW] Cache miss, fetching:', url);
     const response = await fetch(request);
 
     if (response.ok) {
-      const cache = await caches.open(STATIC_CACHE);
+      const cache = await caches.open(cacheName);
       await cache.put(request, response.clone());
-      await setCacheTime(STATIC_CACHE, request.url, Date.now());
+      await setCacheTime(cacheName, url, Date.now());
     }
 
     return response;
@@ -203,6 +223,7 @@ async function cacheFirst(request) {
     // Fallback para cache mesmo se expirado
     const cached = await caches.match(request);
     if (cached) {
+      console.log('[SW] Serving expired cache due to network error');
       return cached;
     }
 

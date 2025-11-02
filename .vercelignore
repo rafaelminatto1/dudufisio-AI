@@ -1,7 +1,7 @@
-# Vercel Ignore
-# Arquivos que não devem ser deployados
+# Vercel Ignore - Otimizado
+# Apenas arquivos essenciais são enviados para o build
 
-# Node modules
+# Node modules (gerenciados pelo npm install na Vercel)
 node_modules/
 
 # Ambiente de desenvolvimento
@@ -9,37 +9,65 @@ node_modules/
 .env.development
 .env.test
 
-# Testes
+# Testes completos
 tests/
+testsprite_tests/
 **/*.test.ts
 **/*.test.tsx
 **/*.spec.ts
 **/*.spec.tsx
 coverage/
+playwright-report/
+test-results/
 
-# Build artifacts
+# Build artifacts locais
 .vite/
-dist/stats.html
+dist/
+build/
+.next/
+out/
 
-# IDE
+# IDE e editores
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
 
 # Git
 .git/
+.github/
 .gitignore
+.gitattributes
 
-# Documentação de desenvolvimento
+# Documentação (não necessária no deploy)
 docs/
 *.md
 !README.md
+*.plan.md
 
-# Scripts de desenvolvimento
+# Scripts de desenvolvimento (não usados no build)
 scripts/
 playwright.config.ts
+playwright.config.performance.ts
 vitest.config.ts
+.eslintrc*.json
+.prettierrc*
 
-# Source maps (já incluídos no build)
+# Database e migrations locais (não usadas no build)
+database/
+prisma/
+supabase/seed.sql
+supabase/migrations/
+
+# Arquivos de configuração desnecessários
+.husky/
+checkly/
+workers/
+
+# Source maps já gerados (incluídos no build se necessário)
 **/*.map
 
 # Logs
@@ -47,8 +75,26 @@ vitest.config.ts
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Misc
-.DS_Store
-Thumbs.db
+# Arquivos temporários e cache
+.turbo/
+.cache/
+tmp/
+temp/
+
+# Arquivos de configuração local
+.env*.local
+.vercel/
+
+# Arquivos grandes de mídia não otimizada
+**/*.psd
+**/*.ai
+**/*.sketch
+
+# Arquivos de backup
+**/*.bak
+**/*.backup
+**/*.old
 

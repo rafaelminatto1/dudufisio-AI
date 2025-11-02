@@ -1,0 +1,58 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".vite/**"],
+      "env": [
+        "NODE_ENV",
+        "VITE_SUPABASE_URL",
+        "VITE_SUPABASE_ANON_KEY",
+        "VITE_GEMINI_API_KEY",
+        "VITE_OPENAI_API_KEY",
+        "VITE_GROQ_API_KEY",
+        "VITE_ANTHROPIC_API_KEY",
+        "VITE_SENTRY_DSN",
+        "VITE_VERCEL_ANALYTICS_ID",
+        "VITE_APP_URL"
+      ],
+      "cache": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": [],
+      "cache": true
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": [],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"],
+      "cache": true
+    },
+    "test:unit": {
+      "outputs": ["coverage/**"],
+      "cache": true
+    }
+  },
+  "globalDependencies": [
+    ".env",
+    ".env.local",
+    "tsconfig.json",
+    "vite.config.ts",
+    "tailwind.config.js"
+  ],
+  "globalEnv": [
+    "NODE_ENV"
+  ],
+  "remoteCache": {
+    "enabled": true
+  }
+}
+

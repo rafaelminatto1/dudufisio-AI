@@ -1,42 +1,101 @@
 {
   "budgets": [
     {
-      "name": "Total Bundle Size",
-      "limit": "500KB",
-      "limitBytes": 512000,
-      "status": "ok"
+      "name": "Total Bundle Size (gzipped)",
+      "limit": "400KB",
+      "limitBytes": 409600,
+      "status": "ok",
+      "priority": "medium"
     },
     {
-      "name": "Main Thread Blocking Time",
-      "limit": "200ms",
-      "limitMs": 200,
-      "status": "ok"
+      "name": "Main Chunk Size",
+      "limit": "150KB",
+      "limitBytes": 153600,
+      "status": "ok",
+      "priority": "high"
     },
     {
-      "name": "Time to Interactive",
-      "limit": "3.8s",
-      "limitMs": 3800,
-      "status": "ok"
+      "name": "Vendor React Core",
+      "limit": "180KB",
+      "limitBytes": 184320,
+      "status": "ok",
+      "priority": "low"
     },
     {
-      "name": "First Contentful Paint",
-      "limit": "1.8s",
-      "limitMs": 1800,
-      "status": "ok"
+      "name": "First Contentful Paint (FCP)",
+      "limit": "1.5s",
+      "limitMs": 1500,
+      "status": "ok",
+      "priority": "critical",
+      "description": "Tempo até o primeiro conteúdo ser renderizado"
     },
     {
-      "name": "Largest Contentful Paint",
+      "name": "Largest Contentful Paint (LCP)",
       "limit": "2.5s",
       "limitMs": 2500,
-      "status": "ok"
+      "status": "ok",
+      "priority": "critical",
+      "description": "Tempo até o maior elemento visível ser renderizado"
     },
     {
-      "name": "Cumulative Layout Shift",
+      "name": "Time to Interactive (TTI)",
+      "limit": "3.0s",
+      "limitMs": 3000,
+      "status": "ok",
+      "priority": "critical",
+      "description": "Tempo até a página estar completamente interativa"
+    },
+    {
+      "name": "Total Blocking Time (TBT)",
+      "limit": "200ms",
+      "limitMs": 200,
+      "status": "ok",
+      "priority": "critical",
+      "description": "Soma do tempo de bloqueio da main thread"
+    },
+    {
+      "name": "Cumulative Layout Shift (CLS)",
       "limit": "0.1",
       "limitValue": 0.1,
-      "status": "ok"
+      "status": "ok",
+      "priority": "critical",
+      "description": "Estabilidade visual durante o carregamento"
+    },
+    {
+      "name": "Speed Index",
+      "limit": "3.0s",
+      "limitMs": 3000,
+      "status": "ok",
+      "priority": "high",
+      "description": "Velocidade de carregamento visual percebido"
+    },
+    {
+      "name": "First Input Delay (FID)",
+      "limit": "100ms",
+      "limitMs": 100,
+      "status": "ok",
+      "priority": "high",
+      "description": "Tempo de resposta à primeira interação"
     }
   ],
+  "targets": {
+    "mobile": {
+      "FCP": "< 1.8s",
+      "LCP": "< 2.5s",
+      "TTI": "< 3.8s",
+      "TBT": "< 300ms",
+      "CLS": "< 0.1",
+      "SI": "< 3.4s"
+    },
+    "desktop": {
+      "FCP": "< 1.0s",
+      "LCP": "< 1.5s",
+      "TTI": "< 2.0s",
+      "TBT": "< 150ms",
+      "CLS": "< 0.1",
+      "SI": "< 2.0s"
+    }
+  },
   "lastChecked": null,
   "violations": []
 }
