@@ -97,7 +97,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onSuccess, onBack }) => {
     setIsLoading(true);
     try {
       await register({
-        name: formData.name.trim(),
+        fullName: formData.name.trim(),
         email: formData.email.trim(),
         password: formData.password,
         role: formData.role,

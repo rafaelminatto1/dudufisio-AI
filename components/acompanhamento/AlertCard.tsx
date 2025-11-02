@@ -42,7 +42,7 @@ const AlertCard: React.FC<AlertCardProps> = ({ patient, onOpenObservationModal, 
                 date: new Date().toISOString(),
                 type: logType,
                 notes: `Tentativa de contato para acompanhamento via ${contactType}.`,
-                actor: user.name,
+                actor: user.fullName,
             });
             showToast(`Contato com ${patient.name} registrado.`, 'success');
             onUpdate();

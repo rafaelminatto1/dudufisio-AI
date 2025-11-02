@@ -17,7 +17,7 @@ export interface LoginCredentials {
 }
 
 export interface RegisterData extends LoginCredentials {
-  name: string;
+  fullName: string;
   role: Role;
   phone?: string;
 }
@@ -448,7 +448,7 @@ class SupabaseAuthService {
         password: userData.password,
         options: {
           data: {
-            full_name: userData.name,
+            full_name: userData.fullName,
             role: userData.role,
             phone: userData.phone,
           }
@@ -464,7 +464,7 @@ class SupabaseAuthService {
         .insert({
           id: data.user.id,
           email: userData.email,
-          full_name: userData.name,
+          full_name: userData.fullName,
           role: userData.role,
           phone: userData.phone,
           created_at: new Date().toISOString(),
