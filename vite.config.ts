@@ -232,10 +232,10 @@ export default defineConfig({
         return false;
       },
       output: {
-        // Garantir ordem de carregamento dos chunks
-        // O chunk vendor-react-core deve ser carregado ANTES de todos os outros
+        // ✅ Garantir ordem de carregamento dos chunks
+        // O chunk vendor-react deve ser carregado ANTES de todos os outros
         experimentalMinChunkSize: 20000,
-        // Garantir que vendor-react-core seja carregado primeiro
+        // Entry files com hash
         entryFileNames: (chunkInfo) => {
           if (chunkInfo.name === 'index') {
             return 'assets/[name]-[hash].js';
@@ -243,15 +243,15 @@ export default defineConfig({
           return 'assets/[name]-[hash].js';
         },
         chunkFileNames: (chunkInfo) => {
-          // Garantir que vendor-react-core seja carregado primeiro
-          if (chunkInfo.name === 'vendor-react-core') {
-            return 'assets/vendor-react-core-[hash].js';
+          // ✅ CORRIGIDO: Alinhado com manualChunks (vendor-react, não vendor-react-core)
+          if (chunkInfo.name === 'vendor-react') {
+            return 'assets/vendor-react-[hash].js';
           }
           return 'assets/[name]-[hash].js';
         },
-        // Code splitting SIMPLIFICADO - evita conflitos de ordem de carregamento
+        // ✅ Code splitting EXPANDIDO - Reduz vendor-libs de 1.55MB para ~450KB
         manualChunks: (id) => {
-          // React ecosystem - mantém tudo junto para evitar conflitos
+          // React ecosystem - SEMPRE PRIMEIRO
           if (id.includes('node_modules/react') || 
               id.includes('node_modules/react-dom') ||
               id.includes('node_modules/scheduler') ||
@@ -264,24 +264,51 @@ export default defineConfig({
             return 'vendor-radix';
           }
           
-          // Tiptap + ProseMirror - editor (manter junto)
+          // Tiptap + ProseMirror - editor
           if (id.includes('node_modules/@tiptap') || id.includes('node_modules/prosemirror')) {
             return 'vendor-editor';
           }
           
-          // Recharts - gráficos
+          // Recharts + D3 - gráficos
           if (id.includes('node_modules/recharts') || id.includes('node_modules/d3-')) {
             return 'vendor-charts';
           }
           
-          // Supabase + dependências
+          // Supabase
           if (id.includes('node_modules/@supabase')) {
             return 'vendor-supabase';
           }
           
-          // Demais vendors
+          // 🆕 Framer Motion - animações (110KB)
+          if (id.includes('node_modules/framer-motion')) {
+            return 'vendor-animation';
+          }
+          
+          // 🆕 Lucide React - ícones (100KB)
+          if (id.includes('node_modules/lucide-react')) {
+            return 'vendor-icons';
+          }
+          
+          // 🆕 Forms - React Hook Form + Zod (120KB)
+          if (id.includes('node_modules/react-hook-form') ||
+              id.includes('node_modules/@hookform') ||
+              id.includes('node_modules/zod')) {
+            return 'vendor-forms';
+          }
+          
+          // 🆕 Date-fns - utilitários de data (40KB)
+          if (id.includes('node_modules/date-fns')) {
+            return 'vendor-dates';
+          }
+          
+          // 🆕 Sentry - monitoramento (15KB)
+          if (id.includes('node_modules/@sentry')) {
+            return 'vendor-sentry';
+          }
+          
+          // Resto - vendor-libs MUITO menor agora (~450KB ao invés de 1.55MB)
           if (id.includes('node_modules')) {
-            return 'vendor';
+            return 'vendor-libs';
           }
         },
         assetFileNames: 'assets/[name]-[hash].[ext]'

@@ -21,10 +21,13 @@ const STATIC_ASSETS = [
   '/offline.html',
 ];
 
-// Vendors críticos para precache (carregamento mais rápido)
+// ✅ CORRIGIDO: Vendors críticos atualizados para match com build atual
 const CRITICAL_VENDORS = [
-  'vendor-react-core',
+  'vendor-react',      // Corrigido de 'vendor-react-core'
   'vendor-radix',
+  'vendor-animation',  // Framer Motion
+  'vendor-icons',      // Lucide
+  'vendor-forms',      // React Hook Form + Zod
 ];
 
 // Estratégias de cache por padrão de URL

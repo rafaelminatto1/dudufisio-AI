@@ -201,43 +201,8 @@ const AppContent: React.FC = memo(() => {
   const [show2FASetup, setShow2FASetup] = useState(false);
   const [loadingTimeout, setLoadingTimeout] = useState(false);
 
-  const initializeServiceWorkerCallback = useCallback(() => {
-    // Importar dinamicamente o registrador do SW
-    const loadAndInit = async () => {
-      const { initializeServiceWorker } = await import('./lib/serviceWorkerManager');
-      return initializeServiceWorker();
-    };
-    const isHeadless = /HeadlessChrome|PhantomJS|Puppeteer/.test(navigator.userAgent);
-
-    if (isHeadless) {
-      logger.info('Service Worker desabilitado: modo headless detectado.', { context: LOG_CONTEXT });
-      return;
-    }
-
-    if (import.meta.env.DEV) {
-      logger.info('Service Worker desabilitado em ambiente de desenvolvimento.', { context: LOG_CONTEXT });
-      return;
-    }
-
-    if (!import.meta.env.PROD) {
-      return;
-    }
-
-    logger.info('Inicializando Service Worker...', { context: LOG_CONTEXT });
-
-    loadAndInit()
-      .then(registered => {
-        if (registered) {
-          logger.info('Service Worker inicializado com sucesso.', { context: LOG_CONTEXT });
-        }
-      })
-      .catch(error => {
-        logger.error('Falha ao inicializar Service Worker.', {
-          context: LOG_CONTEXT,
-          data: error,
-        });
-      });
-  }, []);
+  // ✅ CORREÇÃO: Service Worker agora é registrado apenas em index.tsx
+  // Removida duplicação para evitar conflitos
 
   useEffect(() => {
     logger.info('Inicializando aplicação.', { context: LOG_CONTEXT });
@@ -245,9 +210,8 @@ const AppContent: React.FC = memo(() => {
     // Inicializar otimizações mobile primeiro (rápido e leve)
     initializeMobileOptimizations();
 
-    // Adiar o Service Worker para ocioso/pós-first paint
-    runWhenIdle(initializeServiceWorkerCallback);
-  }, [initializeServiceWorkerCallback]);
+    // Service Worker é registrado em index.tsx (não aqui)
+  }, []); // ✅ Sem dependências
 
   const preloadComponentsCallback = useCallback(() => {
     (async () => {
