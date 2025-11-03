@@ -24,13 +24,16 @@ const InsightsFeed: React.FC<InsightsFeedProps> = ({
   onDismiss,
   className
 }) => {
+  // Garantir que temos um array válido
+  const safeInsights = Array.isArray(insights) ? insights : [];
+  
   const [filter, setFilter] = useState<Insight['category'] | 'all'>('all');
 
   const filteredInsights = filter === 'all'
-    ? insights
-    : insights.filter(i => i.category === filter);
+    ? safeInsights
+    : safeInsights.filter(i => i.category === filter);
 
-  const unreadCount = insights.filter(i => !i.isRead).length;
+  const unreadCount = safeInsights.filter(i => !i.isRead).length;
 
   const getSeverityIcon = (severity: Insight['severity']) => {
     switch (severity) {

@@ -164,11 +164,21 @@ export default defineConfig({
     modulePreload: {
       polyfill: true,
       resolveDependencies: (filename, deps, { hostId, hostType }) => {
-        // ✅ CORREÇÃO: Com vendor único, garantir que seja carregado primeiro
-        // Isso previne erros como "TypeError: Cp/Ay is not a function"
+        // ✅ OTIMIZADO: Garantir ordem de carregamento correta dos vendors
+        // React PRIMEIRO, depois UI, depois resto
         const sortedDeps = deps.sort((a, b) => {
-          if (a.includes('vendor')) return -1;  // ✅ Corrigido: 'vendor' não 'vendor-react'
-          if (b.includes('vendor')) return 1;
+          // React core tem prioridade máxima
+          if (a.includes('vendor-react')) return -1;
+          if (b.includes('vendor-react')) return 1;
+          
+          // UI tem prioridade alta
+          if (a.includes('vendor-ui')) return -1;
+          if (b.includes('vendor-ui')) return 1;
+          
+          // Utils e outros depois
+          if (a.includes('vendor-utils')) return -1;
+          if (b.includes('vendor-utils')) return 1;
+          
           return 0;
         });
         return sortedDeps;
@@ -239,12 +249,61 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
         // Chunk files com hash (lógica simplificada - vendor é tratado igual aos demais)
         chunkFileNames: 'assets/[name]-[hash].js',
-        // ✅ ULTRA-CONSERVADOR: Tudo em vendor ÚNICO para garantir ordem
-        // Isso elimina COMPLETAMENTE problemas de dependências entre chunks
+        // ✅ OTIMIZADO: Code splitting inteligente por categoria
         manualChunks: (id) => {
-          // TODOS os node_modules no mesmo chunk
+          // React e dependências core - crítico carregar primeiro
+          if (id.includes('node_modules/react') || 
+              id.includes('node_modules/react-dom') ||
+              id.includes('node_modules/scheduler') ||
+              id.includes('node_modules/react-router')) {
+            return 'vendor-react';
+          }
+          
+          // UI Libraries - Radix UI e componentes
+          if (id.includes('node_modules/@radix-ui') ||
+              id.includes('node_modules/lucide-react') ||
+              id.includes('node_modules/framer-motion')) {
+            return 'vendor-ui';
+          }
+          
+          // Charts e visualizações
+          if (id.includes('node_modules/recharts') ||
+              id.includes('node_modules/d3-') ||
+              id.includes('node_modules/victory')) {
+            return 'vendor-charts';
+          }
+          
+          // Forms e validação
+          if (id.includes('node_modules/react-hook-form') ||
+              id.includes('node_modules/zod') ||
+              id.includes('node_modules/@hookform')) {
+            return 'vendor-forms';
+          }
+          
+          // Editor e rich text
+          if (id.includes('node_modules/@tiptap') ||
+              id.includes('node_modules/prosemirror')) {
+            return 'vendor-editor';
+          }
+          
+          // Date utilities
+          if (id.includes('node_modules/date-fns')) {
+            return 'vendor-dates';
+          }
+          
+          // Supabase e Database
+          if (id.includes('node_modules/@supabase')) {
+            return 'vendor-database';
+          }
+          
+          // Google/Gemini AI
+          if (id.includes('node_modules/@google')) {
+            return 'vendor-ai';
+          }
+          
+          // Outros node_modules
           if (id.includes('node_modules')) {
-            return 'vendor';
+            return 'vendor-utils';
           }
         },
         assetFileNames: 'assets/[name]-[hash].[ext]'

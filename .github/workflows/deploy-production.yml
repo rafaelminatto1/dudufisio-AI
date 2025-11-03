@@ -1,0 +1,85 @@
+name: 🚀 Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Permite deploy manual
+
+# Evitar múltiplos deploys simultâneos
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for better caching
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: 🔧 Install dependencies
+        run: npm ci
+      
+      - name: 🔍 Run linting
+        run: npm run lint
+        continue-on-error: true  # Não bloquear deploy por linting
+      
+      - name: 🧪 Run tests
+        run: npm test
+        continue-on-error: true  # Não bloquear deploy por testes
+      
+      - name: 🏗️  Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          CI: true
+      
+      - name: 📊 Analyze bundle size
+        run: node scripts/check-bundle-size.cjs
+        continue-on-error: true
+      
+      - name: 🚀 Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./
+      
+      - name: ✅ Deployment successful
+        if: success()
+        run: |
+          echo "🎉 Deploy para produção concluído com sucesso!"
+          echo "🔗 Verifique: https://moocafisio.com.br"
+      
+      - name: ❌ Deployment failed
+        if: failure()
+        run: |
+          echo "❌ Deploy falhou. Verifique os logs acima."
+          exit 1
+      
+      - name: 📢 Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Deploy falhou - ' + new Date().toISOString(),
+              body: 'O deploy automático para produção falhou. Verifique os logs em: ' + context.payload.repository.html_url + '/actions/runs/' + context.runId,
+              labels: ['bug', 'deployment', 'automated']
+            })
+
