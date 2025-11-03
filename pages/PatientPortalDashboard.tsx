@@ -201,7 +201,7 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
                         <div className="flex items-center space-x-3 mb-3">
                             <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
                                 <span className="text-teal-600 font-semibold">
-                                    {(user.fullName || user.name || 'U').split(' ').map((n: string) => n[0]).join('')}
+                                    {(user.fullName || user.name || 'U').split(' ').filter(n => n.length > 0).map((n: string) => n[0].toUpperCase()).join('').slice(0, 2) || 'U'}
                                 </span>
                             </div>
                             <div className="flex-1 min-w-0">

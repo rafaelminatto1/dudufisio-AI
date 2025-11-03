@@ -39,6 +39,7 @@ class IndexedDBManager {
     // Verificar se IndexedDB está disponível
     if (typeof indexedDB === 'undefined' || !indexedDB || typeof indexedDB.open !== 'function') {
       console.warn('⚠️ IndexedDB não está disponível neste navegador. Usando fallback em memória.');
+      this.isIndexedDBAvailable = false;
       throw new Error('IndexedDB não está disponível neste navegador');
     }
 
@@ -126,15 +127,21 @@ class IndexedDBManager {
     storeName: K,
     key: string
   ): Promise<void> {
-    const db = await this.init();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(storeName, 'readwrite');
-      const store = transaction.objectStore(storeName);
-      const request = store.delete(key);
+    try {
+      const db = await this.init();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.delete(key);
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve();
-    });
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve();
+      });
+    } catch (error) {
+      // Fallback para memória
+      const memKey = `${String(storeName)}:${key}`;
+      this.memoryFallback.delete(memKey);
+    }
   }
 
   async getAll<K extends keyof DBSchema>(storeName: K): Promise<DBSchema[K][]> {
@@ -162,41 +169,61 @@ class IndexedDBManager {
   }
 
   async clear<K extends keyof DBSchema>(storeName: K): Promise<void> {
-    const db = await this.init();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(storeName, 'readwrite');
-      const store = transaction.objectStore(storeName);
-      const request = store.clear();
+    try {
+      const db = await this.init();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.clear();
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve();
-    });
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve();
+      });
+    } catch (error) {
+      // Fallback para memória - limpar apenas itens deste store
+      const prefix = `${String(storeName)}:`;
+      for (const key of this.memoryFallback.keys()) {
+        if (key.startsWith(prefix)) {
+          this.memoryFallback.delete(key);
+        }
+      }
+    }
   }
 
   async cleanExpiredCache(): Promise<void> {
-    const db = await this.init();
-    const now = new Date();
+    try {
+      const db = await this.init();
+      const now = new Date();
 
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction('cache', 'readwrite');
-      const store = transaction.objectStore('cache');
-      const index = store.index('expiresAt');
-      const request = index.openCursor();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction('cache', 'readwrite');
+        const store = transaction.objectStore('cache');
+        const index = store.index('expiresAt');
+        const request = index.openCursor();
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = (event) => {
-        const cursor = (event.target as IDBRequest).result;
-        if (cursor) {
-          const value = cursor.value;
-          if (value.expiresAt < now) {
-            cursor.delete();
+        request.onerror = () => reject(request.error);
+        request.onsuccess = (event) => {
+          const cursor = (event.target as IDBRequest).result;
+          if (cursor) {
+            const value = cursor.value;
+            if (value.expiresAt < now) {
+              cursor.delete();
+            }
+            cursor.continue();
+          } else {
+            resolve();
           }
-          cursor.continue();
-        } else {
-          resolve();
+        };
+      });
+    } catch (error) {
+      // Fallback para memória - limpar cache expirado
+      const now = new Date();
+      for (const [key, value] of this.memoryFallback.entries()) {
+        if (key.startsWith('cache:') && value.expiresAt && value.expiresAt < now) {
+          this.memoryFallback.delete(key);
         }
-      };
-    });
+      }
+    }
   }
 }
 
