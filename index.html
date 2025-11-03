@@ -43,15 +43,12 @@
 </head>
   <body class="bg-slate-50 antialiased">
     <div id="root">
-      <div style="padding: 20px; text-align: center; font-family: system-ui, sans-serif;">
-        <div style="width: 48px; height: 48px; margin: 20px auto; border: 3px solid #e0f2fe; border-top-color: #0369a1; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        <h2 style="font-size: 20px; margin: 12px 0; color: #0f172a;">DuduFisio-AI</h2>
-        <p style="font-size: 14px; color: #64748b;">Carregando...</p>
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <h2 class="loading-title">DuduFisio-AI</h2>
+        <p class="loading-text">Carregando...</p>
       </div>
     </div>
-    <style>
-      @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

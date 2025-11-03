@@ -247,15 +247,102 @@ export default defineConfig({
       },
       output: {
         // ✅ Garantir ordem de carregamento dos chunks
-        // Com vendor único, todos os node_modules em um só chunk
         experimentalMinChunkSize: 20000,
         // Entry files com hash
         entryFileNames: 'assets/[name]-[hash].js',
-        // Chunk files com hash (lógica simplificada - vendor é tratado igual aos demais)
+        // Chunk files com hash
         chunkFileNames: 'assets/[name]-[hash].js',
-        // Deixar Vite fazer chunking automático para evitar problemas
-        // manualChunks removido temporariamente para debug
-        assetFileNames: 'assets/[name]-[hash].[ext]'
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+        // ✅ FASE 2: Code Splitting Otimizado
+        manualChunks(id) {
+          // React Core - Prioridade máxima (sempre carregado primeiro)
+          if (id.includes('node_modules/react/') ||
+              id.includes('node_modules/react-dom/') ||
+              id.includes('node_modules/scheduler/')) {
+            return 'vendor-react';
+          }
+
+          // Recharts - Chunk separado (349KB, usado em dashboards)
+          if (id.includes('node_modules/recharts/')) {
+            return 'vendor-recharts';
+          }
+
+          // jsPDF - Chunk separado (378KB, usado em relatórios)
+          if (id.includes('node_modules/jspdf/')) {
+            return 'vendor-jspdf';
+          }
+
+          // Tiptap Editor - Chunk separado (413KB, usado em notas clínicas)
+          if (id.includes('node_modules/@tiptap/') ||
+              id.includes('node_modules/prosemirror-')) {
+            return 'vendor-tiptap';
+          }
+
+          // html2canvas - Chunk separado (202KB, usado em screenshots)
+          if (id.includes('node_modules/html2canvas/')) {
+            return 'vendor-html2canvas';
+          }
+
+          // Framer Motion - Chunk separado (usado em animações)
+          if (id.includes('node_modules/framer-motion/')) {
+            return 'vendor-framer';
+          }
+
+          // Radix UI - Grupo de componentes
+          if (id.includes('node_modules/@radix-ui/')) {
+            return 'vendor-radix';
+          }
+
+          // React Hook Form + Zod - Forms
+          if (id.includes('node_modules/react-hook-form/') ||
+              id.includes('node_modules/@hookform/') ||
+              id.includes('node_modules/zod/')) {
+            return 'vendor-forms';
+          }
+
+          // Supabase Client
+          if (id.includes('node_modules/@supabase/')) {
+            return 'vendor-supabase';
+          }
+
+          // Google AI/Gemini
+          if (id.includes('node_modules/@google/')) {
+            return 'vendor-ai';
+          }
+
+          // Router
+          if (id.includes('node_modules/react-router')) {
+            return 'vendor-router';
+          }
+
+          // Lucide Icons
+          if (id.includes('node_modules/lucide-react/')) {
+            return 'vendor-icons';
+          }
+
+          // Date utilities
+          if (id.includes('node_modules/date-fns/')) {
+            return 'vendor-date';
+          }
+
+          // Utils (clsx, tailwind-merge, etc)
+          if (id.includes('node_modules/clsx/') ||
+              id.includes('node_modules/tailwind-merge/') ||
+              id.includes('node_modules/class-variance-authority/')) {
+            return 'vendor-utils';
+          }
+
+          // React ecosystem (toastify, etc)
+          if (id.includes('node_modules/react-toastify/') ||
+              id.includes('node_modules/sonner/')) {
+            return 'vendor-toast';
+          }
+
+          // Outros node_modules -> vendor-common (minimizar este)
+          if (id.includes('node_modules/')) {
+            return 'vendor-common';
+          }
+        }
       },
       // Tree shaking agressivo - OTIMIZADO
       treeshake: {
