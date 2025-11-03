@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Menu, X, Bell, Search, User, LogOut, Settings } from 'lucide-react';
+import { useLocation, NavLink } from 'react-router-dom';
+import { Menu, X, Bell, Search, User, LogOut, Settings, LayoutGrid, Calendar, Users } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Breadcrumbs from './Breadcrumbs';
 import SkipToContent from './ui/SkipToContent';
@@ -173,17 +173,43 @@ const Layout: React.FC<LayoutProps> = ({ user, onLogout, children }) => {
                 {isMobile && (
                     <nav className="fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-fisio-neutral-200 shadow-lg">
                         <div className="flex items-center justify-around h-16 px-2">
-                            <button className="flex flex-col items-center justify-center flex-1 py-2 px-1 text-fisio-primary-DEFAULT">
+                            <NavLink 
+                                to="/dashboard" 
+                                className={({ isActive }) => `flex flex-col items-center justify-center flex-1 py-2 px-1 transition-colors ${
+                                    isActive ? 'text-fisio-primary-DEFAULT' : 'text-fisio-neutral-500'
+                                }`}
+                            >
+                                <LayoutGrid className="w-5 h-5 mb-1" />
                                 <span className="text-xs font-medium">Dashboard</span>
-                            </button>
-                            <button className="flex flex-col items-center justify-center flex-1 py-2 px-1 text-fisio-neutral-500">
+                            </NavLink>
+                            
+                            <NavLink 
+                                to="/agenda" 
+                                className={({ isActive }) => `flex flex-col items-center justify-center flex-1 py-2 px-1 transition-colors ${
+                                    isActive ? 'text-fisio-primary-DEFAULT' : 'text-fisio-neutral-500'
+                                }`}
+                            >
+                                <Calendar className="w-5 h-5 mb-1" />
                                 <span className="text-xs font-medium">Agenda</span>
-                            </button>
-                            <button className="flex flex-col items-center justify-center flex-1 py-2 px-1 text-fisio-neutral-500">
+                            </NavLink>
+                            
+                            <NavLink 
+                                to="/patients" 
+                                className={({ isActive }) => `flex flex-col items-center justify-center flex-1 py-2 px-1 transition-colors ${
+                                    isActive ? 'text-fisio-primary-DEFAULT' : 'text-fisio-neutral-500'
+                                }`}
+                            >
+                                <Users className="w-5 h-5 mb-1" />
                                 <span className="text-xs font-medium">Pacientes</span>
-                            </button>
-                            <button className="flex flex-col items-center justify-center flex-1 py-2 px-1 text-fisio-neutral-500">
-                                <span className="text-xs font-medium">Mais</span>
+                            </NavLink>
+                            
+                            <button 
+                                onClick={toggleSidebar}
+                                className="flex flex-col items-center justify-center flex-1 py-2 px-1 text-fisio-neutral-500 transition-colors hover:text-fisio-primary-DEFAULT"
+                                aria-label="Abrir menu lateral"
+                            >
+                                <Menu className="w-5 h-5 mb-1" />
+                                <span className="text-xs font-medium">Menu</span>
                             </button>
                         </div>
                     </nav>
