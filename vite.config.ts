@@ -2,8 +2,12 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { visualizer } from 'rollup-plugin-visualizer';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [
@@ -249,63 +253,8 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
         // Chunk files com hash (lógica simplificada - vendor é tratado igual aos demais)
         chunkFileNames: 'assets/[name]-[hash].js',
-        // ✅ OTIMIZADO: Code splitting inteligente por categoria
-        manualChunks: (id) => {
-          // React e dependências core - crítico carregar primeiro
-          if (id.includes('node_modules/react') || 
-              id.includes('node_modules/react-dom') ||
-              id.includes('node_modules/scheduler') ||
-              id.includes('node_modules/react-router')) {
-            return 'vendor-react';
-          }
-          
-          // UI Libraries - Radix UI e componentes
-          if (id.includes('node_modules/@radix-ui') ||
-              id.includes('node_modules/lucide-react') ||
-              id.includes('node_modules/framer-motion')) {
-            return 'vendor-ui';
-          }
-          
-          // Charts e visualizações
-          if (id.includes('node_modules/recharts') ||
-              id.includes('node_modules/d3-') ||
-              id.includes('node_modules/victory')) {
-            return 'vendor-charts';
-          }
-          
-          // Forms e validação
-          if (id.includes('node_modules/react-hook-form') ||
-              id.includes('node_modules/zod') ||
-              id.includes('node_modules/@hookform')) {
-            return 'vendor-forms';
-          }
-          
-          // Editor e rich text
-          if (id.includes('node_modules/@tiptap') ||
-              id.includes('node_modules/prosemirror')) {
-            return 'vendor-editor';
-          }
-          
-          // Date utilities
-          if (id.includes('node_modules/date-fns')) {
-            return 'vendor-dates';
-          }
-          
-          // Supabase e Database
-          if (id.includes('node_modules/@supabase')) {
-            return 'vendor-database';
-          }
-          
-          // Google/Gemini AI
-          if (id.includes('node_modules/@google')) {
-            return 'vendor-ai';
-          }
-          
-          // Outros node_modules
-          if (id.includes('node_modules')) {
-            return 'vendor-utils';
-          }
-        },
+        // Deixar Vite fazer chunking automático para evitar problemas
+        // manualChunks removido temporariamente para debug
         assetFileNames: 'assets/[name]-[hash].[ext]'
       },
       // Tree shaking agressivo - OTIMIZADO

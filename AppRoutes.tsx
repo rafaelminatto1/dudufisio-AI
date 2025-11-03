@@ -398,36 +398,46 @@ const RouterWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
  * - Recuperação granular de erros
  * - Sistema offline sempre disponível
  */
-const AppRoutes: React.FC = () => (
-  <ProviderErrorBoundary providerName="Root Providers">
-    <SafeOfflineProvider>
-      <AppErrorBoundary>
-        <RouterWrapper>
-          <DebugProvider>
-            <SupabaseAuthProvider>
-              <AppProvider>
-                <PatientProvider>
-                  <ExerciseProvider>
-                    <PerformanceProfiler
-                      id="AppRoutes"
-                      onRender={(id, _phase, actualDuration) => {
-                        logger.performance(id, actualDuration, 100);
-                      }}
-                    >
-                      <ToastProvider>
-                        <AppContent />
-                        <UnifiedOfflineIndicator position="bottom-right" showSyncDetails />
-                      </ToastProvider>
-                    </PerformanceProfiler>
-                  </ExerciseProvider>
-                </PatientProvider>
-              </AppProvider>
-            </SupabaseAuthProvider>
-          </DebugProvider>
-        </RouterWrapper>
-      </AppErrorBoundary>
-    </SafeOfflineProvider>
-  </ProviderErrorBoundary>
-);
+const AppRoutes: React.FC = () => {
+  console.log('🎯 AppRoutes: Iniciando...');
+  
+  React.useEffect(() => {
+    console.log('🎯 AppRoutes: useEffect executado');
+  }, []);
+  
+  console.log('🎯 AppRoutes: Renderizando providers...');
+  
+  return (
+    <ProviderErrorBoundary providerName="Root Providers">
+      <SafeOfflineProvider>
+        <AppErrorBoundary>
+          <RouterWrapper>
+            <DebugProvider>
+              <SupabaseAuthProvider>
+                <AppProvider>
+                  <PatientProvider>
+                    <ExerciseProvider>
+                      <PerformanceProfiler
+                        id="AppRoutes"
+                        onRender={(id, _phase, actualDuration) => {
+                          logger.performance(id, actualDuration, 100);
+                        }}
+                      >
+                        <ToastProvider>
+                          <AppContent />
+                          <UnifiedOfflineIndicator position="bottom-right" showSyncDetails />
+                        </ToastProvider>
+                      </PerformanceProfiler>
+                    </ExerciseProvider>
+                  </PatientProvider>
+                </AppProvider>
+              </SupabaseAuthProvider>
+            </DebugProvider>
+          </RouterWrapper>
+        </AppErrorBoundary>
+      </SafeOfflineProvider>
+    </ProviderErrorBoundary>
+  );
+};
 
 export default AppRoutes;

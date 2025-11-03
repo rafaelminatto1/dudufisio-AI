@@ -60,14 +60,20 @@ if (import.meta.env.PROD) {
 }
 
 console.log('🚀 Starting React application...');
+console.log('📦 Environment:', import.meta.env.MODE);
+console.log('🔍 Production mode:', import.meta.env.PROD);
 
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
   console.error('❌ Root element not found!');
+  alert('ERRO: Elemento root não encontrado!');
 } else {
+  console.log('✅ Root element found');
   try {
+    console.log('🎨 Creating React root...');
     const root = createRoot(rootElement);
+    console.log('⚛️ Rendering React app...');
     root.render(
       <React.StrictMode>
         <QueryClientProvider client={queryClient}>
