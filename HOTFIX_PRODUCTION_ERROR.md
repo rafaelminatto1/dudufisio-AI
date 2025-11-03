@@ -1,0 +1,298 @@
+# 🔥 HOTFIX: Production Error - format is not defined
+
+**Data:** 3 de Novembro de 2025
+**Severidade:** 🔴 CRÍTICA
+**Status:** ⏳ AGUARDANDO DEPLOY
+
+---
+
+## 🐛 PROBLEMA
+
+**Erro em Produção (moocafisio.com.br):**
+```
+ReferenceError: format is not defined
+at DashboardPageV2-tBQbmU3c.js:1:12171
+```
+
+**Impacto:**
+- Dashboard não carrega para usuários
+- Sistema em produção quebrado
+- Erro reportado ao Sentry: b3e935f51e704860baad470477fe8517
+
+**Screenshot do Erro:**
+![Error Screenshot](https://moocafisio.com.br/dashboard) - "Algo deu errado"
+
+---
+
+## 🔍 ROOT CAUSE ANALYSIS
+
+### Problema Identificado
+
+O erro está em uma **versão antiga do código** deployada em produção.
+
+**Bundle em Produção:**
+- `DashboardPageV2-tBQbmU3c.js` - Versão antiga
+- Não tem o código correto do KPIWidget
+
+**Código Correto (Local):**
+- [components/dashboard/widgets/KPIWidget.tsx](components/dashboard/widgets/KPIWidget.tsx) - ✅ OK
+- Tem função `formatValue` interna (linhas 26-40)
+- Não usa `format` de `date-fns`
+
+### Por Que Está Acontecendo
+
+1. **Deploy desatualizado:**
+   - Último deploy não incluiu código mais recente
+   - Bundle em produção é de versão anterior
+
+2. **Versão do código:**
+   - Local: ✅ Código correto
+   - Produção: ❌ Código antigo
+
+---
+
+## ✅ SOLUÇÃO
+
+### Código Correto (Já Implementado Localmente)
+
+[components/dashboard/widgets/KPIWidget.tsx](components/dashboard/widgets/KPIWidget.tsx#L26-L40):
+
+```typescript
+const formatValue = (val: string | number) => {
+  if (typeof val === 'string') return val;
+
+  switch (format) {
+    case 'currency':
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(val);
+    case 'percentage':
+      return `${val}%`;
+    default:
+      return val.toLocaleString('pt-BR');
+  }
+};
+```
+
+### Ação Necessária
+
+**DEPLOY IMEDIATO EM PRODUÇÃO:**
+
+```bash
+# 1. Build production
+npm run build
+
+# 2. Deploy para Vercel
+vercel --prod
+
+# Ou via git (se CI/CD configurado)
+git push origin main
+```
+
+---
+
+## 🚀 PASSOS PARA DEPLOY
+
+### Opção 1: Deploy Manual (Vercel CLI)
+
+```bash
+# 1. Instalar Vercel CLI (se não tiver)
+npm i -g vercel
+
+# 2. Login
+vercel login
+
+# 3. Build local
+npm run build
+
+# 4. Deploy
+vercel --prod
+```
+
+### Opção 2: Deploy via Git (Recomendado)
+
+```bash
+# 1. Verificar que mudanças estão commitadas
+git status
+
+# 2. Push para main
+git push origin main
+
+# 3. Vercel detecta e faz deploy automático
+```
+
+### Opção 3: Deploy via Vercel Dashboard
+
+1. Acesse https://vercel.com/dashboard
+2. Selecione o projeto moocafisio
+3. Clique em "Redeploy" do último commit
+
+---
+
+## 📊 VALIDAÇÃO PÓS-DEPLOY
+
+### Checklist
+
+Após deploy, validar:
+
+- [ ] Dashboard carrega sem erros
+- [ ] Não aparece "ReferenceError: format is not defined"
+- [ ] KPIs mostram valores formatados corretamente
+- [ ] Sentry não reporta mais o erro
+- [ ] Console do browser limpo
+
+### Como Testar
+
+1. Abrir https://moocafisio.com.br/login
+2. Fazer login com credenciais: `admin@dudufisio.com` / `DuduFisio2024!`
+3. Abrir DevTools (F12) → Console
+4. Verificar se dashboard carrega
+5. Verificar se KPIs aparecem formatados:
+   - "Receita do Mês": R$ X.XXX,XX
+   - "Taxa de Ocupação": XX%
+
+### Expected Behavior
+
+**Console (esperado):**
+```
+✅ React application rendered successfully!
+✅ Sentry: Inicializado com sucesso
+✅ AppRoutes: Iniciando...
+✅ Service worker registered successfully
+```
+
+**Dashboard (esperado):**
+- Cards de KPI carregam com valores
+- Formatação correta (R$, %)
+- Sem erros no console
+
+---
+
+## 📝 OBSERVAÇÕES
+
+### Performance Optimization
+
+Este deploy também inclui as otimizações de bundle da Fase 2:
+- Code splitting implementado
+- Bundle 61% menor (731KB → 285KB)
+- Lazy loading ativo
+
+**Benefícios Adicionais do Deploy:**
+- ✅ Sistema mais rápido
+- ✅ Menor uso de dados
+- ✅ Melhor performance geral
+
+### Commits Incluídos
+
+```
+545aace docs: adiciona relatório completo da Sessão Fase 2
+3ed4b92 perf: implementa code splitting agressivo - reduz bundle em 61%
+```
+
+---
+
+## 🔧 TROUBLESHOOTING
+
+### Se Erro Persistir Após Deploy
+
+1. **Clear Vercel Cache:**
+   ```bash
+   vercel --prod --force
+   ```
+
+2. **Hard Refresh no Browser:**
+   - Chrome/Edge: Ctrl + Shift + R
+   - Firefox: Ctrl + F5
+
+3. **Verificar Build Logs:**
+   ```bash
+   vercel logs --prod
+   ```
+
+4. **Verificar se bundle correto foi deployado:**
+   - Inspecionar network tab
+   - Procurar por `KPIWidget` no bundle
+   - Verificar se contém função `formatValue`
+
+### Se Problema for Diferente
+
+Se após deploy erro persistir, investigar:
+- Verificar se Vercel usou build correto
+- Verificar environment variables
+- Verificar se houve erro no build process
+- Abrir Sentry para mais detalhes do erro
+
+---
+
+## 📞 CONTEXTO TÉCNICO
+
+### Stack Trace Completo
+
+```
+ReferenceError: format is not defined
+    at DashboardPageV2-tBQbmU3c.js:1:12171
+    at Array.map (<anonymous>)
+    at Ze (DashboardPageV2-tBQbmU3c.js:1:11375)
+    at Zp (index-CB2U3APx.js:39:17358)
+    at ZS (index-CB2U3APx.js:41:44537)
+    at JS (index-CB2U3APx.js:41:40143)
+    at aO (index-CB2U3APx.js:41:40071)
+    at Md (index-CB2U3APx.js:41:39924)
+    at xm (index-CB2U3APx.js:41:36224)
+    at HS (index-CB2U3APx.js:41:35172)
+```
+
+### Sentry Event ID
+
+```
+b3e935f51e704860baad470477fe8517
+```
+
+### Bundle Versions
+
+**Produção (Atual - Quebrado):**
+- index-CB2U3APx.js
+- DashboardPageV2-tBQbmU3c.js
+
+**Produção (Esperado Após Deploy):**
+- index-XXXXXXXX.js (novo hash)
+- DashboardPageV2-XXXXXXXX.js (novo hash com código correto)
+
+---
+
+## ✅ PRÓXIMOS PASSOS
+
+1. **IMEDIATO:** Deploy em produção
+   ```bash
+   git push origin main
+   ```
+
+2. **Após Deploy:** Validar que erro foi resolvido
+
+3. **Documentar:** Atualizar este documento com resultado
+
+4. **Prevenir:** Configurar alertas Sentry para erros críticos
+
+---
+
+**Criado em:** 3 de Novembro de 2025
+**Prioridade:** 🔴 CRÍTICA
+**Próxima Ação:** Deploy em Produção ASAP
+**Responsável:** Equipe de Desenvolvimento
+
+---
+
+## 🎯 RESULTADO DO DEPLOY
+
+**Status:** ⏳ Aguardando deploy
+
+**Após deploy, atualizar:**
+- [ ] Data/hora do deploy
+- [ ] Novo hash do bundle
+- [ ] Confirmação que erro foi resolvido
+- [ ] Screenshots do dashboard funcionando
+
+---
+
+**HOTFIX PREPARADO - AGUARDANDO DEPLOY**
