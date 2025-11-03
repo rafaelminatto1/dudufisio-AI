@@ -38,9 +38,11 @@ class IndexedDBManager {
 
     // Verificar se IndexedDB está disponível
     if (typeof indexedDB === 'undefined' || !indexedDB || typeof indexedDB.open !== 'function') {
-      console.warn('⚠️ IndexedDB não está disponível neste navegador. Usando fallback em memória.');
+      // Apenas log de warning, não lançar erro para não poluir o console
+      // O fallback em memória será usado automaticamente nos métodos get/set/etc
       this.isIndexedDBAvailable = false;
-      throw new Error('IndexedDB não está disponível neste navegador');
+      // Não fazer throw! O erro será capturado pelos try/catch dos métodos
+      return Promise.reject(new Error('IndexedDB não disponível - usando fallback em memória'));
     }
 
     this.dbPromise = new Promise((resolve, reject) => {
@@ -229,12 +231,12 @@ class IndexedDBManager {
 
 export const indexedDB = new IndexedDBManager();
 
-// Helper functions para settings com tratamento de erro
+// Helper functions para settings com tratamento de erro silencioso
 export const getSettings = async (key: string) => {
   try {
     return await indexedDB.get('settings', key);
   } catch (error) {
-    console.warn('Erro ao acessar IndexedDB:', error);
+    // Erro silencioso - fallback automático em memória
     return undefined;
   }
 };
@@ -243,7 +245,7 @@ export const setSettings = async (key: string, value: any) => {
   try {
     return await indexedDB.set('settings', { key, value, updatedAt: new Date() });
   } catch (error) {
-    console.warn('Erro ao salvar em IndexedDB:', error);
+    // Erro silencioso - fallback automático em memória
   }
 };
 
@@ -251,7 +253,7 @@ export const deleteSettings = async (key: string) => {
   try {
     return await indexedDB.delete('settings', key);
   } catch (error) {
-    console.warn('Erro ao deletar de IndexedDB:', error);
+    // Erro silencioso - fallback automático em memória
   }
 };
 
