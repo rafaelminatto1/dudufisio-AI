@@ -1,0 +1,7 @@
+# Vercel Deploy Trigger
+# This file is used to force a new deployment
+# Timestamp: 2025-11-03T03:20:00Z
+# Reason: Force redeploy to fix 404 errors on JS assets
+
+Deploy #3
+
