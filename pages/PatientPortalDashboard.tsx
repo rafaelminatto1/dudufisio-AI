@@ -201,11 +201,11 @@ const PatientPortalDashboard: React.FC<PatientPortalDashboardProps> = ({ user, o
                         <div className="flex items-center space-x-3 mb-3">
                             <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
                                 <span className="text-teal-600 font-semibold">
-                                    {user.name.split(' ').map((n: string) => n[0]).join('')}
+                                    {(user.fullName || user.name || 'U').split(' ').map((n: string) => n[0]).join('')}
                                 </span>
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-slate-900 truncate">{user.name}</p>
+                                <p className="text-sm font-medium text-slate-900 truncate">{user.fullName || user.name || 'Usuário'}</p>
                                 <p className="text-xs text-slate-500 truncate">Paciente</p>
                             </div>
                         </div>

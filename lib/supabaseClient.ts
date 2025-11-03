@@ -47,6 +47,8 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   global: {
     headers: {
       'x-application-name': 'dudufisio-ai',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
     },
   },
 });

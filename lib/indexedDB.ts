@@ -29,6 +29,8 @@ export interface DBSchema {
 class IndexedDBManager {
   private db: IDBDatabase | null = null;
   private dbPromise: Promise<IDBDatabase> | null = null;
+  private memoryFallback: Map<string, any> = new Map();
+  private isIndexedDBAvailable: boolean = true;
 
   async init(): Promise<IDBDatabase> {
     if (this.db) return this.db;
@@ -36,6 +38,7 @@ class IndexedDBManager {
 
     // Verificar se IndexedDB está disponível
     if (typeof indexedDB === 'undefined' || !indexedDB || typeof indexedDB.open !== 'function') {
+      console.warn('⚠️ IndexedDB não está disponível neste navegador. Usando fallback em memória.');
       throw new Error('IndexedDB não está disponível neste navegador');
     }
 
@@ -78,30 +81,45 @@ class IndexedDBManager {
     storeName: K,
     key: string
   ): Promise<DBSchema[K] | undefined> {
-    const db = await this.init();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(storeName, 'readonly');
-      const store = transaction.objectStore(storeName);
-      const request = store.get(key);
+    try {
+      const db = await this.init();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readonly');
+        const store = transaction.objectStore(storeName);
+        const request = store.get(key);
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+      });
+    } catch (error) {
+      // Fallback para memória
+      const memKey = `${String(storeName)}:${key}`;
+      return this.memoryFallback.get(memKey);
+    }
   }
 
   async set<K extends keyof DBSchema>(
     storeName: K,
     value: DBSchema[K]
   ): Promise<void> {
-    const db = await this.init();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(storeName, 'readwrite');
-      const store = transaction.objectStore(storeName);
-      const request = store.put(value);
+    try {
+      const db = await this.init();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.put(value);
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve();
-    });
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve();
+      });
+    } catch (error) {
+      // Fallback para memória
+      const key = (value as any).key || (value as any).id;
+      if (key) {
+        const memKey = `${String(storeName)}:${key}`;
+        this.memoryFallback.set(memKey, value);
+      }
+    }
   }
 
   async delete<K extends keyof DBSchema>(
@@ -120,15 +138,27 @@ class IndexedDBManager {
   }
 
   async getAll<K extends keyof DBSchema>(storeName: K): Promise<DBSchema[K][]> {
-    const db = await this.init();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction(storeName, 'readonly');
-      const store = transaction.objectStore(storeName);
-      const request = store.getAll();
+    try {
+      const db = await this.init();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(storeName, 'readonly');
+        const store = transaction.objectStore(storeName);
+        const request = store.getAll();
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+      });
+    } catch (error) {
+      // Fallback para memória
+      const prefix = `${String(storeName)}:`;
+      const results: DBSchema[K][] = [];
+      for (const [key, value] of this.memoryFallback.entries()) {
+        if (key.startsWith(prefix)) {
+          results.push(value);
+        }
+      }
+      return results;
+    }
   }
 
   async clear<K extends keyof DBSchema>(storeName: K): Promise<void> {
