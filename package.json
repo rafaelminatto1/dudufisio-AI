@@ -1,6 +1,6 @@
 {
   "name": "dudufisio-ai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -81,6 +81,7 @@
     "generate:clinical-content": "npx tsx scripts/populate-clinical-content.ts",
     "clinical:generate": "node scripts/run-clinical-content-generator.js",
     "setup:auth": "node scripts/setup-auth.js",
+    "setup:test-users": "node scripts/create-test-users.js",
     "test:calendar": "node scripts/test-calendar.js",
     "generate:cron-secret": "node scripts/generate-cron-secret.js",
     "check:deployment": "node scripts/check-deployment.js",
