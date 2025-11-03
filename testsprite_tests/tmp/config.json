@@ -4,15 +4,14 @@
   "scope": "codebase",
   "localEndpoint": "http://localhost:5173",
   "loginUser": "admin@dudufisio.com",
-  "loginPassword": "demo123456",
+  "loginPassword": "DuduFisio2024!",
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI",
     "testIds": [],
-    "additionalInstruction": "Execute apenas 1 teste (TC001) para verificar os logs de debug no console",
+    "additionalInstruction": "Bug corrigido - executar todos os testes para validar",
     "envs": {
       "API_KEY": "sk-user-8bMuKGfFoUIqX4t6ssw0xomOk6IV_HwEsApfdFk6dKdt9VPWsfekx6ge2QgANJyDuJqx8YqFAdjprxq5X_3Q2zFH6fc-rKwMqPACaMgJCt_jXILdR2OZYzCuap6y0uLjI58"
     }
-  },
-  "proxy": "http://f6caa23d-4ef7-467f-8ece-6ea99d8041e8:AqJlASebdeI5UCEX94qkwOuHUpAro6HN@tun.testsprite.com:8080"
+  }
 }
