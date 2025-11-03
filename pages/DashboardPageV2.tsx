@@ -22,8 +22,13 @@ import { startOfMonth, endOfMonth } from 'date-fns';
 
 const DashboardPageV2: React.FC = () => {
   const { user } = useApp();
-  const { data: patients = [], isLoading: isPatientsLoading } = useOptimizedPatients();
-  const { data: appointments = [], isLoading: isAppointmentsLoading } = useOptimizedAppointments();
+  const { data: patientsData, isLoading: isPatientsLoading } = useOptimizedPatients();
+  const { data: appointmentsData, isLoading: isAppointmentsLoading } = useOptimizedAppointments();
+  
+  // Garantir que sempre temos arrays, mesmo quando os dados são null
+  const patients = Array.isArray(patientsData) ? patientsData : [];
+  const appointments = Array.isArray(appointmentsData) ? appointmentsData : [];
+  
   const { stats } = useDashboardStats({ patients, appointments });
   
   const isLoading = isPatientsLoading || isAppointmentsLoading;
@@ -47,11 +52,15 @@ const DashboardPageV2: React.FC = () => {
 
   // Filtered data based on filters
   const filteredData = useMemo(() => {
-    let filteredAppointments = appointments;
-    let filteredPatients = patients;
+    // Garantir que temos arrays válidos
+    const safeAppointments = Array.isArray(appointments) ? appointments : [];
+    const safePatients = Array.isArray(patients) ? patients : [];
+    
+    let filteredAppointments = safeAppointments;
+    let filteredPatients = safePatients;
 
     if (filters.dateRange?.from && filters.dateRange?.to) {
-      filteredAppointments = appointments.filter((app) => {
+      filteredAppointments = safeAppointments.filter((app) => {
         const appDate = new Date(app.startTime);
         return (
           appDate >= filters.dateRange!.from! &&
@@ -79,7 +88,7 @@ const DashboardPageV2: React.FC = () => {
           const appDate = new Date(a.startTime);
           return appDate.toDateString() === today.toDateString();
         }).length,
-        occupancyRate: stats.occupancyRate || 0,
+        occupancyRate: stats?.occupancyRate || 0,
       },
     };
   }, [appointments, patients, filters, stats]);

@@ -14,7 +14,10 @@ interface AppointmentsWidgetProps {
 }
 
 export function AppointmentsWidget({ appointments, maxItems = 5 }: AppointmentsWidgetProps) {
-  const upcomingAppointments = appointments
+  // Garantir que temos um array válido
+  const safeAppointments = Array.isArray(appointments) ? appointments : [];
+  
+  const upcomingAppointments = safeAppointments
     .filter((app) => new Date(app.startTime) > new Date())
     .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
     .slice(0, maxItems);

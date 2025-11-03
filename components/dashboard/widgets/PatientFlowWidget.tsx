@@ -11,13 +11,16 @@ interface PatientFlowWidgetProps {
 export function PatientFlowWidget({ patients, days = 30 }: PatientFlowWidgetProps) {
   const data = useMemo(() => {
     const cutoffDate = subDays(new Date(), days);
+    
+    // Garantir que temos um array válido
+    const safePatients = Array.isArray(patients) ? patients : [];
 
-    const newPatients = patients.filter((p) => {
+    const newPatients = safePatients.filter((p) => {
       const regDate = new Date(p.registration_date || p.registrationDate);
       return isAfter(regDate, cutoffDate);
     }).length;
 
-    const returningPatients = patients.filter((p) => {
+    const returningPatients = safePatients.filter((p) => {
       const regDate = new Date(p.registration_date || p.registrationDate);
       return !isAfter(regDate, cutoffDate);
     }).length;

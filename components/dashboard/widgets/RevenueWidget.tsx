@@ -21,12 +21,15 @@ export function RevenueWidget({ appointments, days = 30 }: RevenueWidgetProps) {
   const chartData = useMemo(() => {
     const data: Array<{ date: string; revenue: number }> = [];
     const now = new Date();
+    
+    // Garantir que temos um array válido
+    const safeAppointments = Array.isArray(appointments) ? appointments : [];
 
     for (let i = days - 1; i >= 0; i--) {
       const date = subDays(now, i);
       const dateStr = format(date, 'yyyy-MM-dd');
 
-      const dayRevenue = appointments
+      const dayRevenue = safeAppointments
         .filter((app) => {
           const appDate = format(new Date(app.startTime), 'yyyy-MM-dd');
           return appDate === dateStr && app.paymentStatus === 'paid';

@@ -44,16 +44,20 @@ const DashboardPage: React.FC = () => {
     // 📊 Hooks otimizados para dados
     const { therapists, isLoading: isTherapistsLoading } = useData();
     const { 
-        data: patients, 
+        data: patientsData, 
         isLoading: isPatientsLoading, 
         refetch: refetchPatients 
     } = useOptimizedPatients({ ttl: 2 * 60 * 1000 });
     
     const { 
-        data: appointments, 
+        data: appointmentsData, 
         isLoading: isAppointmentsLoading,
         refetch: refetchAppointments 
     } = useOptimizedAppointments({ ttl: 1 * 60 * 1000 });
+    
+    // Garantir que sempre temos arrays, mesmo quando os dados são null
+    const patients = patientsData ?? [];
+    const appointments = appointmentsData ?? [];
 
     // 🔄 Event listeners para invalidação de cache
     useEffect(() => {
@@ -75,8 +79,6 @@ const DashboardPage: React.FC = () => {
     
     // 📊 Dados enriquecidos com memoização otimizada
     const enrichedTodaysAppointments = useMemoWithTTL(() => {
-        if (!appointments || !patients) return [];
-        
         const todays = appointments.filter(app => isToday(new Date(app.startTime)));
 
         const therapistMap = new Map(therapists.map(t => [t.id, t]));
@@ -97,8 +99,8 @@ const DashboardPage: React.FC = () => {
     }, [appointments, patients, therapists], 15000); // Cache por 15 segundos
 
     const { stats } = useDashboardStats({ 
-        patients: patients || [], 
-        appointments: appointments || [] 
+        patients, 
+        appointments 
     });
 
     // 🎨 Loading state otimizado com skeleton

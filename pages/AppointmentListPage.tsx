@@ -16,7 +16,8 @@ import { toast } from 'sonner';
 
 const AppointmentListPage: React.FC = () => {
   const navigate = useNavigate();
-  const { data: appointments = [], isLoading } = useOptimizedAppointments();
+  const { data: appointmentsData, isLoading } = useOptimizedAppointments();
+  const appointments = appointmentsData ?? []; // Garantir array vazio se null
   const { therapists } = useData();
 
   // Filters
