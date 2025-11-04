@@ -929,3 +929,12 @@ const ClinicalAnalyticsPage: React.FC = () => {
 };
 
 export default ClinicalAnalyticsPage;
+
+// Incremental Static Regeneration (safe defaults)
+export async function getStaticProps() {
+  return {
+    props: {},
+    // Revalidate every 10 minutes to keep analytics UI fresh
+    revalidate: 600,
+  };
+}

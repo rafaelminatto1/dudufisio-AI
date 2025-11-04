@@ -1,0 +1,20 @@
+{
+  "name": "@moocafisio/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./components/*": "./components/*",
+    "./services/*": "./services/*",
+    "./contexts/*": "./contexts/*",
+    "./types/*": "./types/*"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
+

@@ -26,21 +26,26 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'pnpm'
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.20.0
       
       - name: 🔧 Install dependencies
-        run: npm ci
+        run: pnpm install --prefer-offline
       
       - name: 🔍 Run linting
-        run: npm run lint
+        run: pnpm run lint
         continue-on-error: true  # Não bloquear deploy por linting
       
       - name: 🧪 Run tests
-        run: npm test
+        run: pnpm test
         continue-on-error: true  # Não bloquear deploy por testes
       
       - name: 🏗️  Build application
-        run: npm run build
+        run: pnpm run build
         env:
           NODE_ENV: production
           CI: true

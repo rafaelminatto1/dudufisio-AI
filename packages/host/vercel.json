@@ -1,0 +1,13 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "framework": null,
+  "devCommand": "npm run dev",
+  "env": {
+    "VITE_AGENDA_PACIENTES_URL": "@agenda-pacientes-url",
+    "VITE_TRATAMENTOS_URL": "@tratamentos-url",
+    "VITE_FINANCEIRO_URL": "@financeiro-url"
+  }
+}
+

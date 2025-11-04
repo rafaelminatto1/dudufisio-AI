@@ -157,11 +157,12 @@ export default defineConfig({
     }
   },
   build: {
-    target: 'es2020',
-    sourcemap: true,
-    reportCompressedSize: true,
-    minify: 'esbuild',
-    cssMinify: true,
+    // ✅ FASE 3: Build Ultra-Otimizado para Deploy Rápido
+    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+    sourcemap: false, // 🚀 CRÍTICO: Desabilitar sourcemaps em produção
+    minify: 'esbuild', // 🚀 Mais rápido que terser
+    cssMinify: 'esbuild',
+    reportCompressedSize: false, // 🚀 Acelera o build
     // Garantir que os entry points sejam preservados para ordem de carregamento correta
     preserveEntrySignatures: 'strict',
     // Configurar ordem de carregamento dos chunks - CRÍTICO para evitar erros
@@ -192,9 +193,17 @@ export default defineConfig({
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    // ✅ Compressão avançada
     rollupOptions: {
-      // Suprimir warnings de bibliotecas externas
+      // 🚀 CRÍTICO: Suprimir warnings desnecessários
       onwarn(warning, warn) {
+        // Ignorar warnings específicos que não afetam funcionalidade
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+        if (warning.code === 'SOURCEMAP_ERROR') return;
+        if (warning.code === 'INVALID_ANNOTATION') return;
+        if (warning.message.includes('Use of eval')) return;
+        if (warning.message.includes('Circular dependency')) return;
+        
         // Lista de códigos de warning para suprimir
         const suppressedCodes = [
           'DUPLICATE_CASE',
@@ -211,7 +220,6 @@ export default defineConfig({
         const suppressedMessages = [
           'case clause will never be evaluated',
           'duplicates an earlier case clause',
-          'Circular dependency',
           'sourcemap'
         ];
         
@@ -228,8 +236,8 @@ export default defineConfig({
         // Mostrar outros warnings
         warn(warning);
       },
-      // NUNCA externalizar React - sempre incluir no bundle
-      // Isso previne múltiplas instâncias do React
+      
+      // 🔥 AGRESSIVO: Externalizar dependências de build
       external: (id) => {
         // Excluir scripts de build
         if (id.includes('/scripts/') || id.includes('\\scripts\\')) {
@@ -243,115 +251,244 @@ export default defineConfig({
             id.includes('redis')) {
           return true;
         }
+        // Excluir dependências de desenvolvimento
+        if (id.match(/^node:/) ||
+            id.includes('fsevents') ||
+            id.includes('@playwright/test') ||
+            id.includes('vitest') ||
+            id.includes('playwright') ||
+            id.includes('electron')) {
+          return true;
+        }
         return false;
       },
+      
+      // ✅ Otimizações experimentais
+      experimentalMinChunkSize: 1000, // Chunks menores que 1KB são mesclados
       output: {
         // ✅ Garantir ordem de carregamento dos chunks
         experimentalMinChunkSize: 20000,
-        // Entry files com hash
-        entryFileNames: 'assets/[name]-[hash].js',
-        // Chunk files com hash
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]',
-        // ✅ FASE 2: Code Splitting Otimizado
+        // 🚀 Nomes de arquivo otimizados
+        entryFileNames: 'assets/[name]-[hash:8].js',
+        chunkFileNames: 'assets/[name]-[hash:8].js',
+        assetFileNames: 'assets/[name]-[hash:8].[ext]',
+        // ✅ FASE 3: Code Splitting Ultra-Otimizado para Deploy Rápido
         manualChunks(id) {
-          // React Core - Prioridade máxima (sempre carregado primeiro)
-          if (id.includes('node_modules/react/') ||
-              id.includes('node_modules/react-dom/') ||
-              id.includes('node_modules/scheduler/')) {
-            return 'vendor-react';
+          const normalizedId = id.replace(/\\/g, '/');
+          // 🚀 PRIORIDADE 1: React Core (sempre primeiro)
+          if (normalizedId.includes('node_modules/react/') ||
+              normalizedId.includes('node_modules/react-dom/') ||
+              normalizedId.includes('node_modules/scheduler/')) {
+            return 'vendor-react-core';
           }
 
-          // Recharts - Chunk separado (349KB, usado em dashboards)
-          if (id.includes('node_modules/recharts/')) {
-            return 'vendor-recharts';
-          }
-
-          // jsPDF - Chunk separado (378KB, usado em relatórios)
-          if (id.includes('node_modules/jspdf/')) {
-            return 'vendor-jspdf';
-          }
-
-          // Tiptap Editor - Chunk separado (413KB, usado em notas clínicas)
-          if (id.includes('node_modules/@tiptap/') ||
-              id.includes('node_modules/prosemirror-')) {
-            return 'vendor-tiptap';
-          }
-
-          // html2canvas - Chunk separado (202KB, usado em screenshots)
-          if (id.includes('node_modules/html2canvas/')) {
-            return 'vendor-html2canvas';
-          }
-
-          // Framer Motion - Chunk separado (usado em animações)
-          if (id.includes('node_modules/framer-motion/')) {
-            return 'vendor-framer';
-          }
-
-          // Radix UI - Grupo de componentes
-          if (id.includes('node_modules/@radix-ui/')) {
-            return 'vendor-radix';
-          }
-
-          // React Hook Form + Zod - Forms
-          if (id.includes('node_modules/react-hook-form/') ||
-              id.includes('node_modules/@hookform/') ||
-              id.includes('node_modules/zod/')) {
-            return 'vendor-forms';
-          }
-
-          // Supabase Client
-          if (id.includes('node_modules/@supabase/')) {
-            return 'vendor-supabase';
-          }
-
-          // Google AI/Gemini
-          if (id.includes('node_modules/@google/')) {
-            return 'vendor-ai';
-          }
-
-          // Router
-          if (id.includes('node_modules/react-router')) {
+          // 🚀 PRIORIDADE 2: Router (crítico para SPA)
+          if (normalizedId.includes('node_modules/react-router')) {
             return 'vendor-router';
           }
 
-          // Lucide Icons
-          if (id.includes('node_modules/lucide-react/')) {
+          // 🚀 PRIORIDADE 3: UI Framework (Radix + Framer)
+          if (normalizedId.includes('node_modules/@radix-ui/')) {
+            return 'vendor-ui-radix';
+          }
+          if (normalizedId.includes('node_modules/framer-motion/')) {
+            return 'vendor-ui-framer';
+          }
+
+          // 📊 CHUNK ESPECÍFICO: Dashboard & Charts (lazy load)
+          if (normalizedId.includes('node_modules/recharts/')) {
+            return 'feature-charts';
+          }
+
+          // 📅 CHUNK ESPECÍFICO: Date picker
+          if (normalizedId.includes('node_modules/react-day-picker/')) {
+            return 'vendor-daypicker';
+          }
+
+          // 📝 CHUNK ESPECÍFICO: Editor (lazy load)
+          if (normalizedId.includes('node_modules/@tiptap/') ||
+              normalizedId.includes('node_modules/prosemirror-')) {
+            return 'feature-editor';
+          }
+
+          // 📄 CHUNK ESPECÍFICO: PDF Generation (lazy load)
+          if (normalizedId.includes('node_modules/jspdf/')) {
+            return 'feature-pdf';
+          }
+
+          // 📸 CHUNK ESPECÍFICO: Image Processing (lazy load)
+          if (normalizedId.includes('node_modules/html2canvas/')) {
+            return 'feature-capture';
+          }
+
+          // 🔐 CHUNK: Authentication & Database
+          if (normalizedId.includes('node_modules/@supabase/')) {
+            return 'vendor-supabase';
+          }
+
+          // 🤖 CHUNK: AI Features (lazy load)
+          if (normalizedId.includes('node_modules/@google/')) {
+            return 'feature-ai';
+          }
+
+          // 📋 CHUNK: Forms & Validation
+          if (normalizedId.includes('node_modules/react-hook-form/') ||
+              normalizedId.includes('node_modules/@hookform/') ||
+              normalizedId.includes('node_modules/zod/')) {
+            return 'vendor-forms';
+          }
+
+          // 🎨 CHUNK: Icons & Utils
+          if (normalizedId.includes('node_modules/lucide-react/')) {
             return 'vendor-icons';
           }
 
-          // Date utilities
-          if (id.includes('node_modules/date-fns/')) {
+          // 📅 CHUNK: Date utilities
+          if (normalizedId.includes('node_modules/date-fns/')) {
             return 'vendor-date';
           }
 
-          // Utils (clsx, tailwind-merge, etc)
-          if (id.includes('node_modules/clsx/') ||
-              id.includes('node_modules/tailwind-merge/') ||
-              id.includes('node_modules/class-variance-authority/')) {
+          // 🛠️ CHUNK: Utils (pequenos, podem ser agrupados)
+          if (normalizedId.includes('node_modules/clsx/') ||
+              normalizedId.includes('node_modules/tailwind-merge/') ||
+              normalizedId.includes('node_modules/class-variance-authority/')) {
             return 'vendor-utils';
           }
 
-          // React ecosystem (toastify, etc)
-          if (id.includes('node_modules/react-toastify/') ||
-              id.includes('node_modules/sonner/')) {
-            return 'vendor-toast';
+          // 🔔 CHUNK: Notifications
+          if (normalizedId.includes('node_modules/react-toastify/') ||
+              normalizedId.includes('node_modules/sonner/')) {
+            return 'vendor-notifications';
           }
 
-          // Outros node_modules -> vendor-common (minimizar este)
-          if (id.includes('node_modules/')) {
-            return 'vendor-common';
+          // 🧰 Vendors pesados (quebrar vendor-misc)
+          if (normalizedId.includes('node_modules/@tanstack/react-query')) {
+            return 'vendor-query';
           }
+          if (normalizedId.includes('node_modules/@tanstack/table') ||
+              normalizedId.includes('node_modules/@tanstack/react-table')) {
+            return 'vendor-table';
+          }
+          if (normalizedId.includes('node_modules/axios/')) {
+            return 'vendor-axios';
+          }
+          if (normalizedId.includes('node_modules/dompurify/')) {
+            return 'vendor-dom';
+          }
+          if (normalizedId.includes('node_modules/fast-xml-parser/')) {
+            return 'vendor-xml';
+          }
+          if (normalizedId.includes('node_modules/uuid/')) {
+            return 'vendor-uuid';
+          }
+          if (normalizedId.includes('node_modules/cmdk/')) {
+            return 'vendor-cmdk';
+          }
+          if (normalizedId.includes('node_modules/react-hotkeys-hook/')) {
+            return 'vendor-hotkeys';
+          }
+          if (normalizedId.includes('node_modules/react-resizable-panels/')) {
+            return 'vendor-resizable';
+          }
+          if (normalizedId.includes('node_modules/react-window/') ||
+              normalizedId.includes('node_modules/@tanstack/virtual-core') ||
+              normalizedId.includes('node_modules/@tanstack/react-virtual')) {
+            return 'vendor-virtual';
+          }
+          if (normalizedId.includes('node_modules/stripe/') ||
+              normalizedId.includes('node_modules/@stripe/')) {
+            return 'vendor-stripe';
+          }
+
+          // 🏠 CHUNK: Páginas principais (agrupadas por funcionalidade)
+          if (normalizedId.includes('/pages/')) {
+            if (normalizedId.includes('Dashboard') || normalizedId.includes('Home')) {
+              return 'page-dashboard';
+            }
+            if (normalizedId.includes('Patient') || normalizedId.includes('Appointment')) {
+              return 'page-clinical';
+            }
+            if (normalizedId.includes('Financial') || normalizedId.includes('Report')) {
+              return 'page-business';
+            }
+            if (normalizedId.includes('Settings') || normalizedId.includes('Profile')) {
+              return 'page-settings';
+            }
+            return 'page-other';
+          }
+
+          // 🧩 CHUNK: Componentes por categoria
+          if (normalizedId.includes('/components/')) {
+            // Subchunks categorizados
+            if (normalizedId.includes('/components/forms/')) {
+              return 'comp-forms';
+            }
+            if (normalizedId.includes('/components/tables/') || normalizedId.includes('/components/table/')) {
+              return 'comp-tables';
+            }
+            if (normalizedId.includes('/components/charts/')) {
+              return 'comp-charts';
+            }
+            if (normalizedId.includes('/components/analytics/')) {
+              return 'comp-analytics';
+            }
+            if (normalizedId.includes('/components/medical/') ||
+                normalizedId.includes('/components/patient/') ||
+                normalizedId.includes('/components/body-map/') ||
+                normalizedId.includes('/components/clinical/')) {
+              return 'comp-medical';
+            }
+
+            // Categorias existentes
+            if (normalizedId.includes('dashboard') || normalizedId.includes('widgets')) {
+              return 'comp-dashboard';
+            }
+            if (normalizedId.includes('/components/ui/')) {
+              return 'comp-ui';
+            }
+            if (normalizedId.includes('auth') || normalizedId.includes('crm')) {
+              return 'comp-features';
+            }
+            return 'comp-common';
+          }
+
+          // ⚡ RESTO: Vendor comum (minimizar este chunk)
+          if (normalizedId.includes('node_modules/')) {
+            return 'vendor-misc';
+          }
+
+          // 📦 Código da aplicação
+          return 'app-main';
         }
       },
-      // Tree shaking agressivo - OTIMIZADO
+      // ✅ FASE 3: Tree Shaking Ultra-Agressivo
       treeshake: {
-        moduleSideEffects: false,
+        preset: 'recommended',
+        moduleSideEffects: (id, external) => {
+          // 🚀 CRÍTICO: Preservar side effects apenas onde necessário
+          if (id.includes('polyfill') || id.includes('shim')) return true;
+          if (id.includes('css') || id.includes('.css')) return true;
+          if (id.includes('supabase') && id.includes('auth')) return true;
+          if (id.includes('react-dom') && id.includes('client')) return true;
+          
+          // 🔥 AGRESSIVO: Remover side effects de bibliotecas UI
+          if (id.includes('@radix-ui/') || 
+              id.includes('framer-motion/') ||
+              id.includes('lucide-react/')) return false;
+          
+          // 🔥 AGRESSIVO: Remover side effects de utilitários
+          if (id.includes('clsx') || 
+              id.includes('tailwind-merge') ||
+              id.includes('class-variance-authority')) return false;
+          
+          return false; // Default: sem side effects
+        },
         propertyReadSideEffects: false,
         tryCatchDeoptimization: false,
+        unknownGlobalSideEffects: false
       }
     },
-    chunkSizeWarningLimit: 600, // Ajustado para vendor-libs (será otimizado)
+    chunkSizeWarningLimit: 500, // 🔥 Mais restritivo
     cssCodeSplit: true, // Split CSS
     assetsInlineLimit: 4096, // Inline assets < 4kb
   }

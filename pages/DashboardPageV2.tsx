@@ -241,3 +241,12 @@ const DashboardPageV2: React.FC = () => {
 
 export default DashboardPageV2;
 
+// Incremental Static Regeneration (safe defaults)
+export async function getStaticProps() {
+  return {
+    props: {},
+    // Revalidate every 5 minutes for dashboard chrome and static UI
+    revalidate: 300,
+  };
+}
+

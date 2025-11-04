@@ -10,7 +10,7 @@
 ### 1. **Resend API Key Configurada**
 - ✅ Chave adicionada no `.env.local`
 - ✅ `RESEND_API_KEY=re_Mezq7Vga_HYycFnWej9d9EgGsjQdksWZg`
-- ✅ `EMAIL_FROM=DuduFisio <noreply@dudufisio.com>`
+- ✅ `EMAIL_FROM=MoocaFisio <noreply@moocafisio.com.br>`
 
 ### 2. **Migration Aplicada no Supabase**
 - ✅ Tabela `notification_logs` criada
@@ -77,7 +77,7 @@ supabase link --project-ref ohkwqcfwtnndhvmswvtd
 
 # Configurar secrets (IMPORTANTE!)
 supabase secrets set RESEND_API_KEY=re_Mezq7Vga_HYycFnWej9d9EgGsjQdksWZg
-supabase secrets set EMAIL_FROM="DuduFisio <noreply@dudufisio.com>"
+supabase secrets set EMAIL_FROM="MoocaFisio <noreply@moocafisio.com.br>"
 
 # Deploy da função
 supabase functions deploy send-email
@@ -200,7 +200,7 @@ supabase secrets set RESEND_API_KEY=re_Mezq7Vga_HYycFnWej9d9EgGsjQdksWZg
 ### Problema 3: "401 Unauthorized"
 **Solução:** Email não verificado no Resend
 1. Acesse: https://resend.com/domains
-2. Adicione domínio `dudufisio.com`
+2. Adicione domínio `moocafisio.com.br`
 3. Configure DNS records
 4. Ou use email de teste do Resend
 

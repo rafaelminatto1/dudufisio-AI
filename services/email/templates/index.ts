@@ -1,5 +1,5 @@
 /**
- * Professional Email Templates for DuduFisio-AI
+ * Professional Email Templates for MoocaFisio
  *
  * Templates use inline CSS for maximum compatibility
  * Tested across major email clients (Gmail, Outlook, Yahoo, Apple Mail)
@@ -28,7 +28,7 @@ export const emailTemplates = {
     <!-- Header -->
     <div style="${baseStyles.header}">
       <h1 style="margin: 0; font-size: 28px;">✓ Consulta Confirmada</h1>
-      <p style="margin: 10px 0 0 0; opacity: 0.9;">DuduFisio-AI</p>
+      <p style="margin: 10px 0 0 0; opacity: 0.9;">MoocaFisio</p>
     </div>
 
     <!-- Body -->
@@ -73,7 +73,7 @@ export const emailTemplates = {
 
     <!-- Footer -->
     <div style="${baseStyles.footer}">
-      <p style="margin: 0 0 8px 0;">DuduFisio-AI - Gestão Inteligente de Fisioterapia</p>
+      <p style="margin: 0 0 8px 0;">MoocaFisio - Gestão Inteligente de Fisioterapia</p>
       <p style="margin: 0; font-size: 12px;">
         <a href="{{unsubscribeLink}}" style="color: #667eea; text-decoration: none;">Cancelar inscrição</a>
       </p>
@@ -83,7 +83,7 @@ export const emailTemplates = {
 </html>
     `,
     text: `
-Consulta Confirmada - DuduFisio-AI
+Consulta Confirmada - MoocaFisio
 
 Olá {{patientName}},
 
@@ -101,7 +101,7 @@ Traga documentos e exames anteriores se houver.
 Acesse o Portal do Paciente: {{portalLink}}
 
 ---
-DuduFisio-AI - Gestão Inteligente de Fisioterapia
+MoocaFisio - Gestão Inteligente de Fisioterapia
 Cancelar inscrição: {{unsubscribeLink}}
     `,
   },
@@ -156,7 +156,7 @@ Cancelar inscrição: {{unsubscribeLink}}
     </div>
 
     <div style="${baseStyles.footer}">
-      <p style="margin: 0;">DuduFisio-AI</p>
+      <p style="margin: 0;">MoocaFisio</p>
     </div>
   </div>
 </body>
@@ -177,7 +177,7 @@ Confirme sua presença: {{confirmLink}}
 Precisa remarcar? {{rescheduleLink}}
 
 ---
-DuduFisio-AI
+MoocaFisio
     `,
   },
 
@@ -235,7 +235,7 @@ Não se esqueça de trazer seus documentos e exames!
 
 Nos vemos em breve! 😊
 ---
-DuduFisio-AI
+MoocaFisio
     `,
   },
 
@@ -288,7 +288,7 @@ DuduFisio-AI
     </div>
 
     <div style="${baseStyles.footer}">
-      <p style="margin: 0;">DuduFisio-AI</p>
+      <p style="margin: 0;">MoocaFisio</p>
     </div>
   </div>
 </body>
@@ -309,7 +309,7 @@ Motivo: {{reason}}
 Gostaria de reagendar? {{rescheduleLink}}
 
 ---
-DuduFisio-AI
+MoocaFisio
     `,
   },
 
@@ -459,7 +459,7 @@ Sua avaliação é anônima e nos ajuda a melhorar continuamente.
 
 Obrigado por confiar em nós! 💙
 ---
-DuduFisio-AI
+MoocaFisio
     `,
   },
 
@@ -524,7 +524,7 @@ DuduFisio-AI
     </div>
 
     <div style="${baseStyles.footer}">
-      <p style="margin: 0;">DuduFisio-AI</p>
+      <p style="margin: 0;">MoocaFisio</p>
     </div>
   </div>
 </body>
@@ -548,7 +548,7 @@ Baixar PDF: {{downloadLink}}
 Guarde este recibo para seus registros.
 
 ---
-DuduFisio-AI
+MoocaFisio
     `,
   },
 
@@ -627,7 +627,7 @@ Estamos prontos para retomar seu tratamento quando você estiver!
 
 Cuidando de você sempre! 💙
 ---
-DuduFisio-AI
+MoocaFisio
     `,
   },
 };

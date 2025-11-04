@@ -18,11 +18,11 @@ async function testEmailService() {
     console.log('📧 Teste 1: Email de Boas-vindas');
     const welcomeResult = await resendEmailService.sendWelcomeEmail({
       to: {
-        email: 'teste@dudufisio.com',
+        email: 'teste@moocafisio.com.br',
         name: 'Usuario Teste'
       },
       patientName: 'Usuario Teste',
-      clinicName: 'DuduFisio-AI - Clínica Modelo'
+      clinicName: 'MoocaFisio - Clínica Modelo'
     });
 
     if (welcomeResult.success) {
@@ -37,7 +37,7 @@ async function testEmailService() {
     console.log('📧 Teste 2: Confirmação de Consulta');
     const confirmationResult = await resendEmailService.sendAppointmentConfirmation({
       to: {
-        email: 'teste@dudufisio.com',
+        email: 'teste@moocafisio.com.br',
         name: 'Usuario Teste'
       },
       patientName: 'Usuario Teste',
@@ -59,7 +59,7 @@ async function testEmailService() {
     console.log('📧 Teste 3: Lembrete 24h antes');
     const reminderResult = await resendEmailService.sendAppointmentReminder24h({
       to: {
-        email: 'teste@dudufisio.com',
+        email: 'teste@moocafisio.com.br',
         name: 'Usuario Teste'
       },
       patientName: 'Usuario Teste',
@@ -80,13 +80,13 @@ async function testEmailService() {
     console.log('📧 Teste 4: Email Customizado');
     const customResult = await resendEmailService.sendEmail({
       to: {
-        email: 'teste@dudufisio.com',
+        email: 'teste@moocafisio.com.br',
         name: 'Usuario Teste'
       },
       subject: 'Teste de Email Customizado',
       html: `
         <h1>Teste de Email</h1>
-        <p>Este é um email customizado do DuduFisio-AI.</p>
+        <p>Este é um email customizado da MoocaFisio.</p>
         <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
         <p>Sistema funcionando perfeitamente! ✅</p>
       `,

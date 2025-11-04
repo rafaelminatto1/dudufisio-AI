@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@moocafisio/shared": ["../../shared"],
+      "@moocafisio/shared/*": ["../../shared/*"]
+    }
+  },
+  "include": ["src", "../../shared"],
+  "references": [
+    { "path": "../../shared" }
+  ]
+}
+

@@ -1,0 +1,20 @@
+[
+  {
+    "env": "local",
+    "ok": true,
+    "startedAt": "2025-11-04T01:58:57.251Z",
+    "finishedAt": "2025-11-04T02:00:03.303Z",
+    "durationMs": 66052,
+    "durationHuman": "66.1s",
+    "node": "v24.11.0"
+  },
+  {
+    "env": "local",
+    "ok": true,
+    "startedAt": "2025-11-04T02:06:10.976Z",
+    "finishedAt": "2025-11-04T02:07:17.877Z",
+    "durationMs": 66901,
+    "durationHuman": "66.9s",
+    "node": "v24.11.0"
+  }
+]

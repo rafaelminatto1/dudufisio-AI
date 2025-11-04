@@ -1,6 +1,12 @@
-# DuduFisio-AI - CLAUDE.md
+# MoocaFisio - CLAUDE.md
 
-Este arquivo fornece orientações para Claude Code (claude.ai/code) ao trabalhar com o código neste repositório do DuduFisio-AI.
+Este arquivo fornece orientações para Claude Code (claude.ai/code) ao trabalhar com o código neste repositório do MoocaFisio.
+
+> **🏥 BRANDING OFICIAL:**
+> - **Nome:** MoocaFisio
+> - **Domínio:** moocafisio.com.br
+> - **Email:** noreply@moocafisio.com.br
+> - ⚠️ **NUNCA use "DuduFisio" ou "dudufisio.com"** - sempre use MoocaFisio/moocafisio.com.br
 
 > **📌 IMPORTANTE:** Para contexto completo e atualizado, leia **[AI_CONTEXT.md](./AI_CONTEXT.md)** que contém guia detalhado para LLMs.
 
