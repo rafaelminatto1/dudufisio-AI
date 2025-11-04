@@ -164,6 +164,12 @@ Este arquivo serve como ponto de entrada para toda a documentação do projeto.
 - Pull Requests
 - Discussions
 
+### Ferramentas de Documentação
+
+| Documento | Descrição |
+|-----------|-----------|
+| [docs/DOCVIEW_TRAE.md](./docs/DOCVIEW_TRAE.md) | Guia para visualizar e manter docs no Trae |
+
 ---
 
 ## 📅 Última Atualização

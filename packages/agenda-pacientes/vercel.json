@@ -4,6 +4,7 @@
   "installCommand": "npm install",
   "framework": null,
   "devCommand": "npm run dev",
+  "ignoreCommand": "bash ../scripts/ignore-build-step.sh agenda-pacientes",
   "headers": [
     {
       "source": "/assets/(.*)",

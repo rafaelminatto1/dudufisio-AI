@@ -140,6 +140,14 @@
 
 ---
 
+### 🧰 Ferramentas de Documentação
+
+| Documento | Descrição | Status |
+|-----------|-----------|--------|
+| [`DOCVIEW_TRAE.md`](DOCVIEW_TRAE.md) | Guia de uso do DocView no Trae | ✅ Criado |
+
+---
+
 ## 📋 Relatórios de Melhorias (2025)
 
 ### Outubro 2025
