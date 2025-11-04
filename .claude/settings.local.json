@@ -23,7 +23,14 @@
       "Bash(fi)",
       "Bash(node scripts/analyze-bundle-size.js:*)",
       "Bash(node scripts/analyze-bundle-size.cjs:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(node scripts/find-uncategorized-deps.cjs:*)",
+      "Bash(if [ -f \".mcp.json\" ])",
+      "Bash(then cat .mcp.json)",
+      "Bash(else echo \"Arquivo não encontrado\")",
+      "Bash(npm run bundle:analyze:size:*)",
+      "Bash(nul)",
+      "Bash(Select-Object -First 15)"
     ],
     "deny": [],
     "ask": []

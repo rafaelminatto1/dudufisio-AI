@@ -381,7 +381,7 @@ export async function calculateAssessmentStatistics(
     throw new Error('Não foi possível calcular as estatísticas');
   }
 
-  if (data?.length === 0) {
+  if (!data || data.length === 0) {
     return {
       fieldName,
       unit: undefined,
@@ -395,26 +395,70 @@ export async function calculateAssessmentStatistics(
     };
   }
 
-  const values = data.map(d => d.field_value);
+  // Preparar dados para cálculo via Worker
+  const points = data.map(d => ({
+    value: d.field_value as number,
+    unit: d.unit as string | undefined,
+    measuredAt: d.measured_at as string | undefined,
+  }));
+
+  // Tentar calcular via Web Worker (fallback para cálculo inline se indisponível)
+  try {
+    if (typeof Worker !== 'undefined') {
+      const worker = new Worker(new URL('../workers/metricsCalculator.worker.ts', import.meta.url), { type: 'module' });
+      const result = await new Promise<AssessmentStatistics>((resolve, reject) => {
+        const handleMessage = (event: MessageEvent) => {
+          const { type, payload } = event.data || {};
+          if (type === 'ASSESSMENT_STATS_READY' && payload?.fieldName === fieldName) {
+            worker.removeEventListener('message', handleMessage);
+            worker.terminate();
+            resolve({
+              fieldName: payload.fieldName,
+              unit: payload.unit,
+              count: payload.count,
+              min: payload.min,
+              max: payload.max,
+              average: payload.average,
+              latest: payload.latest,
+              percentChange: payload.percentChange,
+              trend: payload.trend,
+            });
+          } else if (type === 'ERROR') {
+            worker.removeEventListener('message', handleMessage);
+            worker.terminate();
+            reject(new Error(payload?.message || 'Worker error'));
+          }
+        };
+        worker.addEventListener('message', handleMessage);
+        worker.postMessage({
+          type: 'CALCULATE_ASSESSMENT_STATS',
+          payload: { fieldName, data: points },
+        });
+      });
+      return result;
+    }
+  } catch (e) {
+    console.warn('Worker indisponível, calculando inline:', e);
+  }
+
+  // Fallback: cálculo inline
+  const values = points.map(p => p.value);
+  const unit = points.find(p => p.unit)?.unit;
+  const count = values.length;
   const min = Math.min(...values);
   const max = Math.max(...values);
-  const average = values.reduce((a, b) => a + b, 0) / values.length;
-  const latest = values[values.length - 1];
+  const average = values.reduce((a, b) => a + b, 0) / count;
+  const latest = values[count - 1];
   const first = values[0];
   const percentChange = first !== 0 ? ((latest - first) / first) * 100 : 0;
 
-  // Determinar trend (baseado nos últimos 3 valores se disponíveis)
   let trend: 'improving' | 'stable' | 'declining' = 'stable';
   if (values.length >= 3) {
     const lastThree = values.slice(-3);
     const isIncreasing = lastThree[2] > lastThree[0];
     const changePercent = Math.abs(((lastThree[2] - lastThree[0]) / lastThree[0]) * 100);
-    
     if (changePercent > 5) {
-      // Para métricas onde aumentar é bom (força, amplitude)
       trend = isIncreasing ? 'improving' : 'declining';
-      
-      // Para métricas onde diminuir é bom (dor, edema) - inverter lógica
       if (fieldName.toLowerCase().includes('dor') || fieldName.toLowerCase().includes('edema')) {
         trend = isIncreasing ? 'declining' : 'improving';
       }
@@ -423,14 +467,14 @@ export async function calculateAssessmentStatistics(
 
   return {
     fieldName,
-    unit: data[0].unit,
-    count: data.length,
+    unit,
+    count,
     min,
     max,
-    average: Math.round(average * 100) / 100,
+    average,
     latest,
-    percentChange: Math.round(percentChange * 100) / 100,
-    trend
+    percentChange,
+    trend,
   };
 }
 

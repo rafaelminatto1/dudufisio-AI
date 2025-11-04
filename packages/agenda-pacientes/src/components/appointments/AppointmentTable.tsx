@@ -204,6 +204,11 @@ export function AppointmentTable({
       showColumnToggle
       enableSorting
       enableFiltering
+      // Virtualization tuning for appointments list
+      enableVirtualization
+      virtualizationThreshold={100}
+      tableHeight={640}
+      rowHeight={56}
       emptyState={
         <div className="flex flex-col items-center justify-center py-12">
           <Calendar className="mb-4 h-12 w-12 text-muted-foreground" />

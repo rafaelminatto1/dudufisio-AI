@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useMemo, useCallback } from 'react';
 import { ToastMessage, ToastContextType } from '../types';
 import { useDebug } from './DebugContext';
 import { logger } from '../lib/logger';
@@ -17,7 +17,11 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const debug = useDebug();
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+  const removeToast = useCallback((id: number) => {
+    setToasts(prevToasts => prevToasts.filter(toast => toast.id !== id));
+  }, []);
+
+  const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
     const id = Date.now();
     // debug.logContextAccess('ToastContext', 'showToast'); // Desabilitado para reduzir logs
 
@@ -28,13 +32,9 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setTimeout(() => {
       removeToast(id);
     }, 5000);
-  };
-
-  const removeToast = (id: number) => {
-    setToasts(prevToasts => prevToasts.filter(toast => toast.id !== id));
-  };
+  }, [removeToast]);
   
-  const value: FullToastContextType = { toasts, showToast, removeToast };
+  const value: FullToastContextType = useMemo(() => ({ toasts, showToast, removeToast }), [toasts, showToast, removeToast]);
 
   return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>;
 };

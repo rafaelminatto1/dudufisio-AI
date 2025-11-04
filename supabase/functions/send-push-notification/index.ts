@@ -1,3 +1,8 @@
+/**
+ * Supabase Edge Function: Send Push Notification
+ * MoocaFisio - Envia notificações push via Firebase Cloud Messaging
+ */
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -13,124 +18,7 @@ interface PushNotificationRequest {
   body: string;
   data?: Record<string, any>;
   url?: string;
-}
-
-/**
- * Get OAuth2 access token for FCM v1 API
- */
-async function getAccessToken(): Promise<string> {
-  const serviceAccount = JSON.parse(Deno.env.get('FIREBASE_SERVICE_ACCOUNT') ?? '{}')
-  
-  const jwtHeader = btoa(JSON.stringify({
-    alg: 'RS256',
-    typ: 'JWT',
-  }))
-
-  const now = Math.floor(Date.now() / 1000)
-  const jwtClaimSet = btoa(JSON.stringify({
-    iss: serviceAccount.client_email,
-    scope: 'https://www.googleapis.com/auth/firebase.messaging',
-    aud: 'https://oauth2.googleapis.com/token',
-    exp: now + 3600,
-    iat: now,
-  }))
-
-  const signatureInput = `${jwtHeader}.${jwtClaimSet}`
-  
-  // Import private key
-  const privateKey = await crypto.subtle.importKey(
-    'pkcs8',
-    str2ab(atob(serviceAccount.private_key.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\n/g, ''))),
-    {
-      name: 'RSASSA-PKCS1-v1_5',
-      hash: 'SHA-256',
-    },
-    false,
-    ['sign']
-  )
-
-  // Sign JWT
-  const signature = await crypto.subtle.sign(
-    'RSASSA-PKCS1-v1_5',
-    privateKey,
-    new TextEncoder().encode(signatureInput)
-  )
-
-  const jwt = `${signatureInput}.${btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')}`
-
-  // Exchange JWT for access token
-  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion: jwt,
-    }).toString(),
-  })
-
-  const tokenData = await tokenResponse.json()
-  return tokenData.access_token
-}
-
-function str2ab(str: string): ArrayBuffer {
-  const buf = new ArrayBuffer(str.length)
-  const bufView = new Uint8Array(buf)
-  for (let i = 0; i < str.length; i++) {
-    bufView[i] = str.charCodeAt(i)
-  }
-  return buf
-}
-
-/**
- * Send push notification via FCM v1 API
- */
-async function sendFCMNotification(
-  token: string,
-  title: string,
-  body: string,
-  data?: Record<string, any>,
-  url?: string
-): Promise<any> {
-  const accessToken = await getAccessToken()
-  const projectId = JSON.parse(Deno.env.get('FIREBASE_SERVICE_ACCOUNT') ?? '{}').project_id
-
-  const response = await fetch(
-    `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: {
-          token,
-          notification: {
-            title,
-            body,
-          },
-          data: {
-            ...data,
-            url: url || '/',
-          },
-          webpush: {
-            fcm_options: {
-              link: url || '/',
-            },
-            notification: {
-              icon: '/logo.png',
-              badge: '/badge.png',
-              requireInteraction: true,
-            },
-          },
-        },
-      }),
-    }
-  )
-
-  return response.json()
+  icon?: string;
 }
 
 serve(async (req) => {
@@ -139,36 +27,34 @@ serve(async (req) => {
   }
 
   try {
-    const { userId, userIds, title, body, data, url }: PushNotificationRequest = await req.json()
+    const { userId, userIds, title, body, data, url, icon }: PushNotificationRequest = await req.json()
 
-    // Validate input
     if (!title || !body) {
-      throw new Error('Title and body are required')
+      return new Response(
+        JSON.stringify({ error: 'Title and body are required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      )
     }
 
-    // Initialize Supabase
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Get FCM tokens
     let query = supabaseClient
       .from('push_notification_tokens')
-      .select('token')
+      .select('token, user_id')
       .eq('enabled', true)
 
     if (userId) {
       query = query.eq('user_id', userId)
     } else if (userIds && userIds.length > 0) {
       query = query.in('user_id', userIds)
-    } else {
-      throw new Error('Either userId or userIds must be provided')
     }
 
-    const { data: tokenData, error } = await query
+    const { data: tokenData, error: tokenError } = await query
 
-    if (error) throw error
+    if (tokenError) throw new Error(`Failed to fetch tokens: ${tokenError.message}`)
 
     if (!tokenData || tokenData.length === 0) {
       return new Response(
@@ -177,39 +63,51 @@ serve(async (req) => {
       )
     }
 
-    // Send notifications
-    const promises = tokenData.map(({ token }) =>
-      sendFCMNotification(token, title, body, data, url)
-        .catch((error) => ({ error: error.message, token }))
-    )
+    const fcmServerKey = Deno.env.get('FCM_SERVER_KEY')
+    if (!fcmServerKey) throw new Error('FCM_SERVER_KEY not configured')
+
+    const promises = tokenData.map(async ({ token, user_id }) => {
+      try {
+        const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+          method: 'POST',
+          headers: {
+            'Authorization': `key=${fcmServerKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: token,
+            notification: { title, body, icon: icon || '/logo.png', click_action: url || '/' },
+            data: { ...data, url: url || '/', timestamp: new Date().toISOString() },
+          }),
+        })
+
+        const result = await response.json()
+
+        if (result.success === 1) {
+          await supabaseClient
+            .from('push_notification_tokens')
+            .update({ last_used_at: new Date().toISOString() })
+            .eq('token', token)
+        }
+
+        return { user_id, success: result.success === 1, error: result.results?.[0]?.error || null }
+      } catch (error) {
+        return { user_id, success: false, error: error.message }
+      }
+    })
 
     const results = await Promise.all(promises)
-
-    const successCount = results.filter((r) => !r.error).length
-    const failureCount = results.filter((r) => r.error).length
+    const successCount = results.filter(r => r.success).length
+    const failureCount = results.filter(r => !r.success).length
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        sent: successCount,
-        failed: failureCount,
-        total: results.length,
-        results,
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      }
+      JSON.stringify({ success: true, sent: successCount, failed: failureCount, total: results.length, results }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     )
   } catch (error) {
-    console.error('Error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     )
   }
 })
-

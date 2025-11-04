@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback, useMemo } from 'react';
 import { User, Therapist, Patient, Appointment } from '../types';
 import type { Result } from '../types/utils';
 import { useSupabaseAuth } from './SupabaseAuthContext';
@@ -166,7 +166,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, [user, authLoading, fetchData]);
 
-  const value: AppContextType = {
+  const value: AppContextType = useMemo(() => ({
     // Auth (from SupabaseAuthContext) with safety
     user,
     isAuthenticated,
@@ -187,7 +187,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     safeGetPatient,
     safeGetTherapist,
     safeGetAppointment,
-  };
+  }), [
+    user,
+    isAuthenticated,
+    authLoading,
+    login,
+    safeLogout,
+    therapists,
+    patients,
+    appointments,
+    dataLoading,
+    error,
+    partialErrors,
+    fetchData,
+    safeGetPatient,
+    safeGetTherapist,
+    safeGetAppointment,
+  ]);
 
   return (
     <AppContext.Provider value={value}>

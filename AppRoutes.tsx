@@ -380,9 +380,9 @@ const AppContent: React.FC = memo(() => {
   );
 });
 
-const RouterWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+const RouterWrapper: React.FC<{ children: React.ReactNode }> = memo(({ children }) => (
   <BrowserRouter>{children}</BrowserRouter>
-);
+));
 
 /**
  * 🏗️ AppRoutes - Hierarquia de Providers Reorganizada
@@ -407,32 +407,43 @@ const AppRoutes: React.FC = () => {
   
   console.log('🎯 AppRoutes: Renderizando providers...');
   
+  const memoizedProviders = useMemo(() => ({
+    debug: <DebugProvider>{/* children injected below */}</DebugProvider>,
+    supabase: <SupabaseAuthProvider>{/* children injected below */}</SupabaseAuthProvider>,
+    app: <AppProvider>{/* children injected below */}</AppProvider>,
+    patient: <PatientProvider>{/* children injected below */}</PatientProvider>,
+    exercise: <ExerciseProvider>{/* children injected below */}</ExerciseProvider>,
+    toast: <ToastProvider>{/* children injected below */}</ToastProvider>,
+  }), []);
+
   return (
     <ProviderErrorBoundary providerName="Root Providers">
       <SafeOfflineProvider>
         <AppErrorBoundary>
           <RouterWrapper>
-            <DebugProvider>
-              <SupabaseAuthProvider>
-                <AppProvider>
-                  <PatientProvider>
-                    <ExerciseProvider>
-                      <PerformanceProfiler
-                        id="AppRoutes"
-                        onRender={(id, _phase, actualDuration) => {
-                          logger.performance(id, actualDuration, 100);
-                        }}
-                      >
-                        <ToastProvider>
-                          <AppContent />
-                          <UnifiedOfflineIndicator position="bottom-right" showSyncDetails />
-                        </ToastProvider>
-                      </PerformanceProfiler>
-                    </ExerciseProvider>
-                  </PatientProvider>
-                </AppProvider>
-              </SupabaseAuthProvider>
-            </DebugProvider>
+            {memoizedProviders.debug && (
+              <DebugProvider>
+                <SupabaseAuthProvider>
+                  <AppProvider>
+                    <PatientProvider>
+                      <ExerciseProvider>
+                        <PerformanceProfiler
+                          id="AppRoutes"
+                          onRender={(id, _phase, actualDuration) => {
+                            logger.performance(id, actualDuration, 100);
+                          }}
+                        >
+                          <ToastProvider>
+                            <AppContent />
+                            <UnifiedOfflineIndicator position="bottom-right" showSyncDetails />
+                          </ToastProvider>
+                        </PerformanceProfiler>
+                      </ExerciseProvider>
+                    </PatientProvider>
+                  </AppProvider>
+                </SupabaseAuthProvider>
+              </DebugProvider>
+            )}
           </RouterWrapper>
         </AppErrorBoundary>
       </SafeOfflineProvider>

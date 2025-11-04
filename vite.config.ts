@@ -313,7 +313,8 @@ export default defineConfig({
           }
 
           // 📄 CHUNK ESPECÍFICO: PDF Generation (lazy load)
-          if (normalizedId.includes('node_modules/jspdf/')) {
+          if (normalizedId.includes('node_modules/jspdf/') ||
+              normalizedId.includes('node_modules/html2pdf.js/')) {
             return 'feature-pdf';
           }
 
@@ -460,8 +461,67 @@ export default defineConfig({
             return 'page-other';
           }
 
-          // 🧩 CHUNK: Componentes por categoria
-          if (normalizedId.includes('/components/')) {
+          // 🧩 CHUNK: Shared Components (split granular com regex)
+          if (normalizedId.match(/[/\\]shared[/\\]components[/\\]/) ||
+              normalizedId.includes('@/shared/components/')) {
+
+            // UI básico (buttons, inputs, etc) - case insensitive
+            if (normalizedId.match(/button|input|select|checkbox|radio|switch|label|badge/i)) {
+              return 'shared-ui-basic';
+            }
+
+            // UI overlay/modal
+            if (normalizedId.match(/dialog|modal|dropdown|popover|tooltip|sheet|alert-dialog|drawer|hover-card/i)) {
+              return 'shared-ui-overlay';
+            }
+
+            // Forms e validação
+            if (normalizedId.match(/form|textarea|slider|toggle/i)) {
+              return 'shared-forms';
+            }
+
+            // Tables e data display
+            if (normalizedId.match(/table|data-table|accordion|collapsible|separator/i)) {
+              return 'shared-tables';
+            }
+
+            // Layout e navegação
+            if (normalizedId.match(/layout|header|sidebar|nav|footer|breadcrumb|tabs|navigation-menu/i)) {
+              return 'shared-layout';
+            }
+
+            // Charts e visualização
+            if (normalizedId.match(/chart|progress|scroll-area/i)) {
+              return 'shared-charts';
+            }
+
+            // Resto dos componentes compartilhados
+            return 'shared-common';
+          }
+
+          // 🔧 CHUNK: Shared Services/Contexts/Types
+          if (normalizedId.match(/[/\\]shared[/\\]services[/\\]/) ||
+              normalizedId.includes('@/shared/services/')) {
+            if (normalizedId.includes('supabase') || normalizedId.includes('database')) {
+              return 'shared-database';
+            }
+            return 'shared-services';
+          }
+
+          if (normalizedId.match(/[/\\]shared[/\\]contexts[/\\]/) ||
+              normalizedId.includes('@/shared/contexts/')) {
+            return 'shared-contexts';
+          }
+
+          if (normalizedId.match(/[/\\]shared[/\\]types[/\\]/) ||
+              normalizedId.includes('@/shared/types/')) {
+            return 'shared-types';
+          }
+
+          // 🧩 CHUNK: Componentes por categoria (EXCLUINDO shared)
+          if (normalizedId.includes('/components/') &&
+              !normalizedId.match(/[/\\]shared[/\\]/) &&
+              !normalizedId.includes('@/shared/')) {
             // Subchunks categorizados
             if (normalizedId.includes('/components/forms/')) {
               return 'comp-forms';

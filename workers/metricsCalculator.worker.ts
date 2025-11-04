@@ -10,13 +10,15 @@ import { Patient, Appointment, AppointmentStatus, PatientStatus } from '../types
 type WorkerMessage =
   | { type: 'CALCULATE_METRICS'; payload: { patients: Patient[]; appointments: Appointment[] } }
   | { type: 'CALCULATE_RISK'; payload: { consecutiveMisses: number; daysSinceLastSession: number; painChange?: number } }
-  | { type: 'EXPORT_DATA'; payload: { patients: any[]; format: 'csv' | 'excel' } };
+  | { type: 'EXPORT_DATA'; payload: { patients: any[]; format: 'csv' | 'excel' } }
+  | { type: 'CALCULATE_ASSESSMENT_STATS'; payload: { fieldName: string; data: { value: number; unit?: string; measuredAt?: string }[] } };
 
 // Tipos de respostas do worker
 type WorkerResponse =
   | { type: 'METRICS_READY'; payload: any }
   | { type: 'RISK_CALCULATED'; payload: { level: string; reasons: string[] } }
   | { type: 'EXPORT_READY'; payload: { data: string; filename: string } }
+  | { type: 'ASSESSMENT_STATS_READY'; payload: { fieldName: string; unit?: string; count: number; min: number; max: number; average: number; latest: number; percentChange: number; trend: 'improving' | 'stable' | 'declining' } }
   | { type: 'ERROR'; payload: { message: string } };
 
 /**
@@ -168,6 +170,69 @@ self.onmessage = (event: MessageEvent<WorkerMessage>) => {
           payload: {
             data,
             filename: `export-${Date.now()}.${format}`,
+          },
+        };
+        self.postMessage(response);
+        break;
+      }
+
+      case 'CALCULATE_ASSESSMENT_STATS': {
+        const { fieldName, data } = payload;
+        const values = data.map(d => d.value).filter(v => typeof v === 'number');
+        const unit = data.find(d => d.unit)?.unit;
+
+        const count = values.length;
+        if (count === 0) {
+          const response: WorkerResponse = {
+            type: 'ASSESSMENT_STATS_READY',
+            payload: {
+              fieldName,
+              unit,
+              count: 0,
+              min: 0,
+              max: 0,
+              average: 0,
+              latest: 0,
+              percentChange: 0,
+              trend: 'stable'
+            }
+          };
+          self.postMessage(response);
+          break;
+        }
+
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const average = values.reduce((a, b) => a + b, 0) / count;
+        const latest = values[count - 1];
+        const first = values[0];
+        const percentChange = first !== 0 ? ((latest - first) / first) * 100 : 0;
+
+        let trend: 'improving' | 'stable' | 'declining' = 'stable';
+        if (values.length >= 3) {
+          const lastThree = values.slice(-3);
+          const isIncreasing = lastThree[2] > lastThree[0];
+          const changePercent = Math.abs(((lastThree[2] - lastThree[0]) / lastThree[0]) * 100);
+          if (changePercent > 5) {
+            trend = isIncreasing ? 'improving' : 'declining';
+            if (fieldName.toLowerCase().includes('dor') || fieldName.toLowerCase().includes('edema')) {
+              trend = isIncreasing ? 'declining' : 'improving';
+            }
+          }
+        }
+
+        const response: WorkerResponse = {
+          type: 'ASSESSMENT_STATS_READY',
+          payload: {
+            fieldName,
+            unit,
+            count,
+            min,
+            max,
+            average,
+            latest,
+            percentChange,
+            trend,
           },
         };
         self.postMessage(response);

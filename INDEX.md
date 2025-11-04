@@ -63,6 +63,32 @@ Este arquivo serve como ponto de entrada para toda a documentação do projeto.
 
 ---
 
+## 🔥 Hotfixes e Otimizações
+
+### Hotfix de Produção - 3 Nov 2025
+
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [SESSAO_HOTFIX_03_NOV_2025.md](./SESSAO_HOTFIX_03_NOV_2025.md) | **📌 INÍCIO** - Resumo executivo do hotfix (62min) | 300+ |
+| [HOTFIX_PRODUCTION_ERROR.md](./HOTFIX_PRODUCTION_ERROR.md) | Análise detalhada do erro "format is not defined" | 580+ |
+
+### Otimização de Performance - 4 Nov 2025
+
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [SESSAO_OTIMIZACAO_COMPLETA_04_NOV.md](./SESSAO_OTIMIZACAO_COMPLETA_04_NOV.md) | **📌 RESUMO COMPLETO** - Sessão de 4h de otimização | 800+ |
+| [FASE_2_RESULTADOS_FINAIS.md](./FASE_2_RESULTADOS_FINAIS.md) | Resultados da Fase 2 (vendor-misc -45%) | 600+ |
+| [BUNDLE_OPTIMIZATION_PLAN.md](./BUNDLE_OPTIMIZATION_PLAN.md) | Plano detalhado de otimização de bundles | 500+ |
+
+### Runbooks e Procedimentos
+
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [RUNBOOK_CACHE_DEPLOYMENT_ISSUES.md](./RUNBOOK_CACHE_DEPLOYMENT_ISSUES.md) | Procedimentos para problemas de cache do Vercel | 300+ |
+| [SENTRY_MONITORING_SETUP.md](./SENTRY_MONITORING_SETUP.md) | Configuração completa de monitoramento Sentry | 400+ |
+
+---
+
 ## 🛠️ Recursos Técnicos
 
 ### Código Implementado
@@ -77,11 +103,29 @@ Este arquivo serve como ponto de entrada para toda a documentação do projeto.
 
 ### Scripts de Automação
 
+#### Deployment e Validação
+
+| Arquivo | Descrição | Linhas |
+|---------|-----------|--------|
+| [scripts/validate-deployment.js](./scripts/validate-deployment.js) | ✨ Validação completa de deployment (site, bundles, headers) | 350 |
+| [scripts/verify-bundle-hash.js](./scripts/verify-bundle-hash.js) | ✨ Verificação de bundle hash (detecta cache) | 400 |
+| [scripts/validate-sentry-setup.js](./scripts/validate-sentry-setup.js) | ✨ Validação de configuração do Sentry | 250 |
+| [scripts/analyze-bundle-size.cjs](./scripts/analyze-bundle-size.cjs) | ✨ Análise detalhada de bundle size | 300 |
+| [scripts/find-uncategorized-deps.cjs](./scripts/find-uncategorized-deps.cjs) | ✨ Identificar deps não categorizadas | 200 |
+
+#### CI/CD Workflows
+
+| Arquivo | Descrição |
+|---------|-----------|
+| [.github/workflows/verify-deployment.yml](./.github/workflows/verify-deployment.yml) | ✨ Workflow automático de validação pós-deploy |
+| [.github/workflows/ci.yml](./.github/workflows/ci.yml) | Pipeline CI/CD |
+
+#### Outros Scripts
+
 | Arquivo | Descrição |
 |---------|-----------|
 | [scripts/validate-project.sh](./scripts/validate-project.sh) | Validação completa do projeto |
 | [scripts/migrate-to-typescript.sh](./scripts/migrate-to-typescript.sh) | Migração .jsx → .tsx |
-| [.github/workflows/ci.yml](./.github/workflows/ci.yml) | Pipeline CI/CD |
 | [.husky/pre-commit](./.husky/pre-commit) | Pre-commit hooks |
 
 ---

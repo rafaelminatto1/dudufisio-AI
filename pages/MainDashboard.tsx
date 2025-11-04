@@ -4,6 +4,7 @@ import ResponsiveLayoutV2 from '../components/layout/ResponsiveLayoutV2';
 import { createLazyComponent } from '../lib/lazyLoading';
 import { PageSkeleton } from '../components/ui/PageSkeleton';
 import ErrorBoundary from '../components/ErrorBoundary';
+import { ThemeProvider } from '../src/contexts/ThemeContext';
 
 // ✅ Lazy load de todas as páginas principais
 const DashboardPage = createLazyComponent(() => import('./DashboardPageV2'));
@@ -184,7 +185,7 @@ const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
             <Route path="/settings/*" element={<SettingsPage />} />
             
             {/* Design System */}
-            <Route path="/design-system" element={<DesignSystemPage />} />
+            <Route path="/design-system" element={<ThemeProvider><DesignSystemPage /></ThemeProvider>} />
             
             {/* 404 - Redireciona para dashboard */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />

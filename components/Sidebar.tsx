@@ -31,6 +31,24 @@ const NavLinkComponent = withMemoization(({ to, icon: Icon, label, isCollapsed, 
         } ${isCollapsed ? 'justify-center' : ''}`
       }
       title={isCollapsed ? label : undefined}
+      onMouseEnter={() => {
+        // Preload por intenção: mapear rotas comuns
+        try {
+          const { preloadComponent } = require('../lib/intelligentPreloading');
+          // Mapa simples de href -> path chave do PRELOADABLE_COMPONENTS
+          const map: Record<string, string> = {
+            '/dashboard': 'pages/DashboardPage',
+            '/agenda': 'pages/AgendaPage',
+            '/patients': 'pages/PatientListPage',
+            '/therapist-dashboard': 'pages/TherapistDashboard',
+            '/admin-dashboard': 'pages/AdminDashboardPage',
+            '/reports': 'pages/ReportsPage',
+            '/financials': 'pages/FinancialPage',
+          };
+          const key = map[to];
+          if (key) preloadComponent(key);
+        } catch {}
+      }}
     >
         <div className="relative flex items-center w-full min-w-0">
             <Icon className={`w-4 h-4 shrink-0 ${isCollapsed ? '' : 'mr-2'}`} />
@@ -155,6 +173,7 @@ const getFilteredNavigation = (userRole: Role, unreadCount: number) => {
             { to: '/audit-log', icon: ShieldCheck, label: 'Auditoria & Compliance' },
             { to: '/audit-log-page', icon: FileCheck, label: 'Log de Auditoria' },
             { to: '/legal', icon: FileText, label: 'Legal' },
+            { to: '/design-system', icon: Sparkles, label: 'Design System' },
             { to: '/settings', icon: Cog, label: 'Configurações' },
           ]
         };

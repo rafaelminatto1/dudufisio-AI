@@ -105,10 +105,32 @@ export function useMetricsWorker() {
     []
   );
 
+  const calculateAssessmentStats = useCallback(
+    (
+      fieldName: string,
+      data: { value: number; unit?: string; measuredAt?: string }[],
+      onComplete: (result: { fieldName: string; unit?: string; count: number; min: number; max: number; average: number; latest: number; percentChange: number; trend: 'improving' | 'stable' | 'declining' }) => void
+    ) => {
+      if (!workerRef.current) {
+        console.warn('Worker não disponível');
+        return;
+      }
+
+      callbacksRef.current.set('ASSESSMENT_STATS_READY', onComplete);
+      
+      workerRef.current.postMessage({
+        type: 'CALCULATE_ASSESSMENT_STATS',
+        payload: { fieldName, data },
+      });
+    },
+    []
+  );
+
   return {
     calculateMetrics,
     calculateRisk,
     exportData,
+    calculateAssessmentStats,
     isAvailable: !!workerRef.current,
   };
 }

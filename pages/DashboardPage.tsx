@@ -1,11 +1,11 @@
 
-import React, { useMemo, useEffect, memo } from 'react';
+import React, { useMemo, useEffect, memo, Suspense } from 'react';
 import PageHeader from '../components/PageHeader';
-import KPICards from '../components/dashboard/KPICards';
-import RevenueChart from '../components/financial/RevenueChart';
-import PatientFlowChart from '../components/dashboard/PatientFlowChart';
-import TeamProductivityChart from '../components/dashboard/TeamProductivityChart';
-import AppointmentHeatmap from '../components/dashboard/AppointmentHeatmap';
+const KPICards = React.lazy(() => import('../components/dashboard/KPICards'));
+const RevenueChart = React.lazy(() => import('../components/financial/RevenueChart'));
+const PatientFlowChart = React.lazy(() => import('../components/dashboard/PatientFlowChart'));
+const TeamProductivityChart = React.lazy(() => import('../components/dashboard/TeamProductivityChart'));
+const AppointmentHeatmap = React.lazy(() => import('../components/dashboard/AppointmentHeatmap'));
 import { Activity, Users, Calendar, DollarSign, TrendingUp, Users as UsersIcon, Clock } from 'lucide-react';
 import { useData } from "../contexts/AppContext";
 import TodaysAppointments from '../components/dashboard/glance/TodaysAppointments';
@@ -241,7 +241,9 @@ const DashboardPage: React.FC = () => {
 
                 {/* KPI Cards */}
                 <ScrollReveal animation="fadeInUp" className="mb-8">
-                    <KPICards stats={stats} isLoading={isLoading} />
+                    <Suspense fallback={<OptimizedLoader />}>
+                        <KPICards stats={stats} isLoading={isLoading} />
+                    </Suspense>
                 </ScrollReveal>
 
                 {/* Daily Summary */}
@@ -274,7 +276,9 @@ const DashboardPage: React.FC = () => {
                             }}
                             variant="default"
                         >
-                            <RevenueChart appointments={appointments ?? []} />
+                            <Suspense fallback={<OptimizedLoader />}>
+                                <RevenueChart appointments={appointments ?? []} />
+                            </Suspense>
                         </GlassCard>
                         <GlassCard 
                             header={{ 
@@ -283,7 +287,9 @@ const DashboardPage: React.FC = () => {
                             }}
                             variant="default"
                         >
-                            <PatientFlowChart patients={patients ?? []} />
+                            <Suspense fallback={<OptimizedLoader />}>
+                                <PatientFlowChart patients={patients ?? []} />
+                            </Suspense>
                         </GlassCard>
                     </ResponsiveGrid>
                 </ScrollReveal>
@@ -301,7 +307,9 @@ const DashboardPage: React.FC = () => {
                             overflow="auto"
                         >
                             <div className="overflow-x-auto">
-                                <AppointmentHeatmap appointments={appointments ?? []} />
+                                <Suspense fallback={<OptimizedLoader />}>
+                                    <AppointmentHeatmap appointments={appointments ?? []} />
+                                </Suspense>
                             </div>
                         </GlassCard>
                         
@@ -312,7 +320,9 @@ const DashboardPage: React.FC = () => {
                             }}
                             variant="default"
                         >
-                            <TeamProductivityChart appointments={appointments ?? []} therapists={therapists} />
+                            <Suspense fallback={<OptimizedLoader />}>
+                                <TeamProductivityChart appointments={appointments ?? []} therapists={therapists} />
+                            </Suspense>
                         </GlassCard>
                     </ResponsiveGrid>
                 </ScrollReveal>

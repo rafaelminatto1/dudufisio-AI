@@ -234,6 +234,11 @@ export function PatientTable({
       showColumnToggle
       enableSorting
       enableFiltering
+      // Virtualization tuning for patient list
+      enableVirtualization
+      virtualizationThreshold={50}
+      tableHeight={640}
+      rowHeight={64}
       emptyState={
         <div className="flex flex-col items-center justify-center py-12">
           <p className="text-lg font-medium">Nenhum paciente encontrado</p>

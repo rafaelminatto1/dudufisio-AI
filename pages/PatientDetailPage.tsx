@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Calendar, Phone, Mail, User, FileText, Clock, Target, MessageCircle, Activity, BarChart, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -706,4 +706,4 @@ const PatientDetailPage: React.FC = () => {
     );
 };
 
-export default PatientDetailPage;
+export default memo(PatientDetailPage);

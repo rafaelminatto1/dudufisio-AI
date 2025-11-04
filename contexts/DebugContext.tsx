@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, ReactNode, useEffect, useMemo, useCallback } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 
 interface DebugContextType {
@@ -14,35 +14,35 @@ export const DebugProvider: React.FC<{ children: ReactNode; enabled?: boolean }>
   children,
   enabled = process.env['NODE_ENV'] === 'development'
 }) => {
-  const logRouterChange = (location: any) => {
+  const logRouterChange = useCallback((location: any) => {
     if (!enabled) return;
     console.log('🧭 Router Debug - Location change:', {
       pathname: location.pathname,
       search: location.search,
       timestamp: new Date().toISOString()
     });
-  };
+  }, [enabled]);
 
-  const logHookCall = (hookName: string, component?: string) => {
+  const logHookCall = useCallback((hookName: string, component?: string) => {
     if (!enabled) return;
     console.log(`🪝 Hook Debug - ${hookName} called${component ? ` in ${component}` : ''}`, {
       timestamp: new Date().toISOString()
     });
-  };
+  }, [enabled]);
 
-  const logContextAccess = (contextName: string, component?: string) => {
+  const logContextAccess = useCallback((contextName: string, component?: string) => {
     if (!enabled) return;
     console.log(`🔄 Context Debug - ${contextName} accessed${component ? ` in ${component}` : ''}`, {
       timestamp: new Date().toISOString()
     });
-  };
+  }, [enabled]);
 
-  const value: DebugContextType = {
+  const value: DebugContextType = useMemo(() => ({
     enabled,
     logRouterChange,
     logHookCall,
     logContextAccess,
-  };
+  }), [enabled, logRouterChange, logHookCall, logContextAccess]);
 
   return (
     <DebugContext.Provider value={value}>

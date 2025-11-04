@@ -370,4 +370,4 @@ const TherapistDashboard: React.FC = () => {
   );
 };
 
-export default TherapistDashboard;
+export default memo(TherapistDashboard);

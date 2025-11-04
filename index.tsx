@@ -50,6 +50,15 @@ const queryClient = new QueryClient({
 // Inicializar sistema de monitoramento de erros (adiado)
 import('./lib/monitoring/initMonitoring').then(m => m.initMonitoring()).catch(() => {});
 
+// Monitoramento contínuo de performance (dev e prod)
+import('./lib/debugHelpers').then(({ startPerformanceMonitoring }) => {
+  try {
+    startPerformanceMonitoring();
+  } catch (e) {
+    console.warn('PerformanceObserver indisponível:', e);
+  }
+});
+
 // Web Vitals monitoring (apenas em produção)
 if (import.meta.env.PROD) {
   import('./lib/analytics/webVitalsTracker').then(({ initWebVitalsTracking }) => {
@@ -108,6 +117,7 @@ if (!rootElement) {
           console.error('❌ Service worker registration failed:', error);
         },
         enablePeriodicUpdates: true, // Verificar atualizações periodicamente
+        updateInterval: 2 * 60 * 60 * 1000, // 2 horas
       });
 
       // Configurar prompt de instalação PWA

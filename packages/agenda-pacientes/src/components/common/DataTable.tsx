@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useRef } from 'react';
 import {
   ColumnDef,
   Column,
@@ -12,6 +12,7 @@ import {
   getFilteredRowModel,
   VisibilityState,
 } from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   Table,
   TableBody,
@@ -66,6 +67,12 @@ interface DataTableProps<TData, TValue> {
   manualPagination?: boolean;
   pageCount?: number;
   onPaginationChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
+  // Virtualization options
+  enableVirtualization?: boolean;
+  virtualizationThreshold?: number;
+  tableHeight?: number;
+  rowHeight?: number;
+  overscan?: number;
 }
 
 export function DataTable<TData, TValue>({
@@ -84,6 +91,11 @@ export function DataTable<TData, TValue>({
   manualPagination = false,
   pageCount,
   onPaginationChange,
+  enableVirtualization = true,
+  virtualizationThreshold = 100,
+  tableHeight = 600,
+  rowHeight = 52,
+  overscan = 5,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -125,6 +137,25 @@ export function DataTable<TData, TValue>({
     return <SkeletonTable columns={columns.length} rows={pageSize} />;
   }
 
+  const rows = table.getRowModel().rows;
+  const shouldVirtualize = enableVirtualization && rows.length >= virtualizationThreshold;
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => rowHeight,
+    overscan,
+  });
+
+  const virtualItems = rowVirtualizer.getVirtualItems();
+  const totalSize = rowVirtualizer.getTotalSize();
+
+  const paddingTop = shouldVirtualize && virtualItems.length > 0 ? virtualItems[0].start : 0;
+  const paddingBottom = shouldVirtualize && virtualItems.length > 0
+    ? totalSize - virtualItems[virtualItems.length - 1].end
+    : 0;
+
   return (
     <div className={cn("space-y-4", className)}>
       {/* Column Toggle */}
@@ -159,7 +190,11 @@ export function DataTable<TData, TValue>({
       )}
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div
+        className={cn('rounded-md border', shouldVirtualize ? 'overflow-auto' : '')}
+        ref={shouldVirtualize ? parentRef : undefined}
+        style={shouldVirtualize ? { height: tableHeight } : undefined}
+      >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -180,21 +215,54 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  onClick={() => onRowClick?.(row.original)}
-                  className={onRowClick ? 'cursor-pointer' : ''}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+            {rows?.length ? (
+              shouldVirtualize ? (
+                <>
+                  {paddingTop > 0 && (
+                    <tr>
+                      <td style={{ height: `${paddingTop}px` }} />
+                    </tr>
+                  )}
+                  {virtualItems.map((virtualRow) => {
+                    const row = rows[virtualRow.index];
+                    return (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && 'selected'}
+                        onClick={() => onRowClick?.(row.original)}
+                        className={onRowClick ? 'cursor-pointer' : ''}
+                        style={{ height: `${rowHeight}px` }}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
+                  {paddingBottom > 0 && (
+                    <tr>
+                      <td style={{ height: `${paddingBottom}px` }} />
+                    </tr>
+                  )}
+                </>
+              ) : (
+                rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    onClick={() => onRowClick?.(row.original)}
+                    className={onRowClick ? 'cursor-pointer' : ''}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              )
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
