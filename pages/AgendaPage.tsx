@@ -863,6 +863,7 @@ export default function AgendaPage() {
                             <div className="flex items-center gap-2">
                                 <div className="flex items-center rounded-md border border-slate-200 bg-white">
                                     <Button
+                                        data-testid="btn-prev-period"
                                         variant="ghost"
                                         size="sm"
                                         onClick={handlePrevious}
@@ -872,6 +873,7 @@ export default function AgendaPage() {
                                     </Button>
                                     <div className="h-4 w-px bg-slate-200" />
                                     <Button
+                                        data-testid="btn-today"
                                         variant="ghost"
                                         size="sm"
                                         onClick={handleToday}
@@ -881,6 +883,7 @@ export default function AgendaPage() {
                                     </Button>
                                     <div className="h-4 w-px bg-slate-200 hidden sm:block" />
                                     <Button
+                                        data-testid="btn-next-period"
                                         variant="ghost"
                                         size="sm"
                                         onClick={handleNext}
@@ -893,6 +896,7 @@ export default function AgendaPage() {
                                 {/* Add appointment button */}
                                 {user?.role !== Role.Patient && (
                                     <Button
+                                        data-testid="btn-new-appointment"
                                         onClick={() => {
                                             setInitialFormData({ date: new Date(), therapistId: therapists[0]?.id || '' });
                                             setIsFormOpen(true);

@@ -216,18 +216,28 @@ const MultiTherapistAppointmentCard: React.FC<{
       }}
     >
       <div className="flex-grow min-h-0 flex flex-col justify-between">
-        <div className="flex items-center justify-between gap-1 mb-1">
+        <div className="mb-1">
           <Tooltip 
             content={`${appointment.patientName}${appointment.therapistName ? ` - ${appointment.therapistName}` : ''}`}
             side="top"
             delayDuration={200}
           >
-            <div className="font-bold text-sm leading-tight flex-1 text-slate-900 min-w-0" data-testid="appointment-text">
+            <div className="font-bold text-sm leading-tight text-slate-900" data-testid="appointment-text">
               <div className="truncate">
                 {appointment.patientName.split(' ').slice(0, 2).join(' ')}
               </div>
             </div>
           </Tooltip>
+        </div>
+        <div className="flex items-center justify-between gap-1.5">
+          <div className="flex items-center gap-1.5">
+            <div className="text-xs leading-tight font-mono text-slate-700 font-bold">
+              {format(appointment.startTime, 'HH:mm')}
+            </div>
+            <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
+              {appointment.type?.substring(0, 3) || ''}
+            </div>
+          </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {appointment.hasConflict && (
               <span className="text-orange-600 text-base" title={appointment.conflictReason}>
@@ -235,16 +245,8 @@ const MultiTherapistAppointmentCard: React.FC<{
               </span>
             )}
             {appointment.paymentStatus === 'paid' && (
-              <div className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0 shadow-sm"></div>
+              <div className="w-2.5 h-2.5 bg-green-500 rounded-full flex-shrink-0 shadow-sm" title="Pago"></div>
             )}
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="text-xs leading-tight font-mono text-slate-700 font-bold">
-            {format(appointment.startTime, 'HH:mm')}
-          </div>
-          <div className="text-[10px] font-semibold text-slate-600 uppercase tracking-wide">
-            {appointment.type?.substring(0, 3) || ''}
           </div>
         </div>
       </div>

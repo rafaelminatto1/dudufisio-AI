@@ -274,8 +274,8 @@ npm run test:report
 - [ ] Servidor dev rodando (`npm run dev`)
 - [ ] Porta 5173 acessível (http://localhost:5173)
 - [ ] Usuário de teste existe no Supabase
-  - Email: admin@moocafisio.com.br
-  - Senha: admin123
+  - Email: admin@dudufisio.com
+  - Senha: DuduFisio2024!
 - [ ] Browsers instalados (`npx playwright install`)
 
 ### Após Executar Testes

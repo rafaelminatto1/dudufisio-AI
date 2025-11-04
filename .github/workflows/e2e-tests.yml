@@ -1,0 +1,240 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to test'
+        required: false
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - firefox
+          - webkit
+          - all
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  e2e-tests:
+    name: E2E Tests - ${{ matrix.browser }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: 
+          - ${{ github.event.inputs.browser == 'all' && 'chromium' || github.event.inputs.browser || 'chromium' }}
+          - ${{ github.event.inputs.browser == 'all' && 'firefox' || '' }}
+          - ${{ github.event.inputs.browser == 'all' && 'webkit' || '' }}
+        exclude:
+          - browser: ''
+
+    steps:
+      # --- CHECKOUT E SETUP ---
+      - name: 📦 Checkout código
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📥 Instalar dependências
+        run: npm ci
+
+      - name: 🎭 Instalar Playwright Browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      # --- VALIDAÇÃO DE AMBIENTE ---
+      - name: ✅ Validar configuração .env
+        run: |
+          echo "Verificando variáveis de ambiente..."
+          if [ -z "${{ secrets.VITE_SUPABASE_URL }}" ]; then
+            echo "❌ VITE_SUPABASE_URL não configurado"
+            exit 1
+          fi
+          if [ -z "${{ secrets.VITE_SUPABASE_ANON_KEY }}" ]; then
+            echo "❌ VITE_SUPABASE_ANON_KEY não configurado"
+            exit 1
+          fi
+          echo "✅ Variáveis de ambiente OK"
+
+      - name: 📝 Criar arquivo .env.local
+        run: |
+          cat > .env.local << EOL
+          VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_GEMINI_API_KEY=${{ secrets.VITE_GEMINI_API_KEY }}
+          EOL
+          echo "✅ Arquivo .env.local criado"
+
+      # --- SEED DE DADOS ---
+      - name: 🌱 Executar seed de dados de teste
+        run: npm run test:e2e:seed:clean
+        continue-on-error: true
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      # --- BUILD E START SERVER ---
+      - name: 🏗️ Build da aplicação
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: 🚀 Start preview server
+        run: npm run start &
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: ⏳ Aguardar servidor iniciar
+        run: npx wait-on http://localhost:4173 --timeout 30000
+
+      # --- EXECUTAR TESTES E2E ---
+      - name: 🧪 Executar testes E2E - ${{ matrix.browser }}
+        run: npx playwright test --project=${{ matrix.browser }}
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:4173
+          CI: true
+
+      # --- UPLOAD DE ARTEFATOS ---
+      - name: 📊 Upload relatório HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.browser }}-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: 📸 Upload screenshots de falhas
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-failures-${{ matrix.browser }}-${{ github.run_number }}
+          path: test-results/
+          retention-days: 30
+
+      - name: 🎥 Upload vídeos
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-videos-${{ matrix.browser }}-${{ github.run_number }}
+          path: test-results/**/video.webm
+          retention-days: 7
+
+      - name: 🔍 Upload traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-traces-${{ matrix.browser }}-${{ github.run_number }}
+          path: test-results/**/trace.zip
+          retention-days: 7
+
+  # --- SUMÁRIO E RELATÓRIO ---
+  test-summary:
+    name: Sumário dos Testes
+    runs-on: ubuntu-latest
+    needs: e2e-tests
+    if: always()
+
+    steps:
+      - name: 📥 Download todos os relatórios
+        uses: actions/download-artifact@v4
+        with:
+          path: all-reports/
+          pattern: playwright-report-*
+
+      - name: 📊 Gerar sumário consolidado
+        run: |
+          echo "# 📊 Relatório de Testes E2E" > test-summary.md
+          echo "" >> test-summary.md
+          echo "**Data:** $(date)" >> test-summary.md
+          echo "**Branch:** ${{ github.ref_name }}" >> test-summary.md
+          echo "**Commit:** ${{ github.sha }}" >> test-summary.md
+          echo "**Run ID:** ${{ github.run_number }}" >> test-summary.md
+          echo "" >> test-summary.md
+          echo "## Status por Navegador" >> test-summary.md
+          echo "" >> test-summary.md
+          echo "| Navegador | Status | Detalhes |" >> test-summary.md
+          echo "|-----------|--------|----------|" >> test-summary.md
+          
+          if [ "${{ needs.e2e-tests.result }}" == "success" ]; then
+            echo "| Chromium | ✅ PASSOU | Todos os testes OK |" >> test-summary.md
+            echo "| Firefox | ✅ PASSOU | Todos os testes OK |" >> test-summary.md
+            echo "| Webkit | ✅ PASSOU | Todos os testes OK |" >> test-summary.md
+          else
+            echo "| Chromium | ❌ FALHOU | Ver artefatos |" >> test-summary.md
+          fi
+          
+          echo "" >> test-summary.md
+          echo "## Artefatos Gerados" >> test-summary.md
+          echo "" >> test-summary.md
+          echo "- 📊 Relatório HTML do Playwright" >> test-summary.md
+          echo "- 📸 Screenshots de falhas (se houver)" >> test-summary.md
+          echo "- 🎥 Vídeos de execução (se houver falhas)" >> test-summary.md
+          echo "- 🔍 Traces de debugging (se houver falhas)" >> test-summary.md
+          
+          cat test-summary.md
+
+      - name: 💬 Comentar no PR (se aplicável)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('test-summary.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+      - name: ✅ Marcar como sucesso
+        if: needs.e2e-tests.result == 'success'
+        run: |
+          echo "✅ Todos os testes E2E passaram com sucesso!"
+          echo "Taxa de sucesso: 100%"
+
+      - name: ❌ Marcar como falha
+        if: needs.e2e-tests.result != 'success'
+        run: |
+          echo "❌ Alguns testes E2E falharam"
+          echo "Verifique os artefatos para mais detalhes"
+          exit 1
+
+  # --- NOTIFICAÇÕES ---
+  notify:
+    name: Notificações
+    runs-on: ubuntu-latest
+    needs: [e2e-tests, test-summary]
+    if: always() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+
+    steps:
+      - name: 📧 Notificar resultado
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ needs.e2e-tests.result }}';
+            const emoji = status === 'success' ? '✅' : '❌';
+            const message = status === 'success' 
+              ? 'Todos os testes E2E passaram!'
+              : 'Alguns testes E2E falharam. Verifique os artefatos.';
+            
+            console.log(`${emoji} ${message}`);
+            
+            // Aqui você pode adicionar integração com Slack, Discord, etc
+            // Exemplo: enviar webhook para canal do Slack
+

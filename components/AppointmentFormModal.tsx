@@ -638,6 +638,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                       <Badge variant="destructive" className="text-xs">Obrigatório</Badge>
                     </div>
             <PatientSearchInput
+                      data-testid="select-patient"
                       onSelectPatient={async (patient) => {
                         console.log('👤 onSelectPatient callback - Paciente recebido:', patient);
                         console.log('🔄 Atualizando field via field.onChange (React Hook Form)');
@@ -737,6 +738,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                   <div className="space-y-2">
                     <Label>Duração</Label>
                     <RadioGroup 
+                      data-testid="radio-group-duration"
                       value={field.value.toString()} 
                       onValueChange={(v) => {
                         field.onChange(Number(v));
@@ -746,7 +748,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
                       <div className="flex gap-4">
               {[30, 45, 60].map(min => (
                           <div key={min} className="flex items-center space-x-2">
-                            <RadioGroupItem value={min.toString()} id={`duration-${min}`} />
+                            <RadioGroupItem value={min.toString()} id={`duration-${min}`} data-testid={`duration-${min}`} />
                             <Label htmlFor={`duration-${min}`} className="cursor-pointer">{min} min</Label>
                           </div>
               ))}
@@ -864,11 +866,12 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
         </div>
         
         <div className="flex items-center justify-end gap-3 px-6 py-4 bg-muted/50 rounded-b-lg border-t">
-          <Button variant="outline" onClick={onClose} disabled={loadingState !== 'idle'}>
+          <Button data-testid="btn-cancel-appointment-form" variant="outline" onClick={onClose} disabled={loadingState !== 'idle'}>
             Cancelar
           </Button>
           <Button
             type="button"
+            data-testid="btn-save-appointment"
             onClick={form.handleSubmit(
               handleSaveClick,
               (errors) => {

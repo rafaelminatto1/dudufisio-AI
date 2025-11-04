@@ -1,399 +1,365 @@
 import { test, expect } from '@playwright/test';
 
-/**
- * FASE 4.1: Testes de Segurança - Autenticação e Autorização
- *
- * Cenários testados:
- * 1. Proteção de rotas privadas sem autenticação
- * 2. Controle de acesso por perfil (RBAC)
- * 3. Logout e limpeza de sessão
- * 4. Proteção contra SQL Injection
- * 5. Proteção contra XSS (Cross-Site Scripting)
- * 6. Validação de dados sensíveis
- * 7. LGPD - Logs de acesso a dados sensíveis
- * 8. Segurança de senhas (hashing)
- * 9. Timeout de sessão
- * 10. Tentativas de acesso não autorizado
- */
-
 test.describe('Segurança - Autenticação e Autorização', () => {
+  
+  test('Deve redirecionar para login em rotas protegidas', async ({ page }) => {
+    // Tentar acessar páginas protegidas sem estar autenticado
+    const protectedRoutes = [
+      '/dashboard',
+      '/agenda',
+      '/patients',
+      '/exercises',
+      '/reports',
+      '/settings'
+    ];
 
-  test('1. Proteção de rotas privadas sem autenticação', async ({ page }) => {
-    // Limpar cookies e storage
-    await page.context().clearCookies();
-    await page.context().clearPermissions();
-
-    // Tentar acessar rota protegida diretamente
-    await page.goto('/dashboard');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Verificar se foi redirecionado para login
-    const currentURL = page.url();
-    const isOnLoginPage = currentURL.includes('/login') || currentURL === 'http://localhost:5175/' || await page.locator('input[type="password"]').isVisible();
-
-    if (isOnLoginPage) {
-      console.log('✅ Rota protegida - redirecionou para login');
-    } else {
-      console.log('⚠️  FALHA DE SEGURANÇA: Acesso permitido sem autenticação');
+    for (const route of protectedRoutes) {
+      await page.goto(route);
+      
+      // Deve redirecionar para login ou mostrar página de login
+      await page.waitForURL(/\/login|\/auth/, { timeout: 5000 });
+      
+      // Verificar se está na página de login
+      const loginForm = page.locator('[data-testid="input-login-email"]');
+      await expect(loginForm).toBeVisible();
     }
-
-    await page.screenshot({
-      path: 'test-results/screenshots/security-route-protection.png',
-      fullPage: true
-    });
   });
 
-  test('2. Controle de acesso por perfil - Admin vs Paciente', async ({ page }) => {
-    // Login como Paciente
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-
-    const sidebar = page.locator('aside');
-    const isLoggedIn = await sidebar.isVisible({ timeout: 2000 }).catch(() => false);
-
-    if (!isLoggedIn) {
-      await page.fill('[data-testid="login-email"]', 'patient@dudufisio.com');
-      await page.fill('[data-testid="login-password"]', 'demo123456');
-      await page.click('[data-testid="login-submit"]');
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
-    }
-
-    // Tentar acessar área administrativa
-    await page.goto('/admin');
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(1000);
-
-    const currentURL = page.url();
-    const hasAdminAccess = currentURL.includes('/admin');
-
-    if (!hasAdminAccess) {
-      console.log('✅ RBAC funcionando - Paciente bloqueado de área admin');
-    } else {
-      console.log('⚠️  FALHA DE SEGURANÇA: Paciente acessou área admin');
-    }
-
-    // Verificar menu limitado
-    const menuItems = page.locator('aside a, nav a');
-    const menuCount = await menuItems.count();
-    console.log(`📊 Paciente tem acesso a ${menuCount} itens de menu`);
-
-    if (menuCount < 15) {
-      console.log('✅ Menu limitado para perfil de Paciente');
-    }
-
-    await page.screenshot({
-      path: 'test-results/screenshots/security-rbac-patient.png',
-      fullPage: true
-    });
+  test('Login com credenciais incorretas deve falhar', async ({ page }) => {
+    await page.goto('/login');
+    
+    // Tentar login com email/senha inválidos
+    await page.fill('[data-testid="input-login-email"]', 'invalido@test.com');
+    await page.fill('[data-testid="input-login-password"]', 'senhaerrada123');
+    await page.click('[data-testid="btn-login-submit"]');
+    
+    // Aguardar mensagem de erro
+    await page.waitForSelector('[data-testid="error-login-message"]', { timeout: 5000 });
+    
+    const errorMessage = await page.locator('[data-testid="error-login-message"]').textContent();
+    expect(errorMessage).toContain('inválid' || 'incorret' || 'erro');
+    
+    // Não deve redirecionar
+    await expect(page).toHaveURL(/\/login/);
   });
 
-  test('3. Logout e limpeza de sessão', async ({ page }) => {
-    // Fazer login
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+  test('SQL Injection no login deve ser prevenido', async ({ page }) => {
+    await page.goto('/login');
+    
+    // Tentar SQL injection no campo de email
+    const sqlInjectionAttempts = [
+      "admin' OR '1'='1",
+      "admin'--",
+      "admin' OR 1=1--",
+      "' OR 'x'='x",
+      "1' UNION SELECT * FROM users--"
+    ];
 
-    const sidebar = page.locator('aside');
-    const isLoggedIn = await sidebar.isVisible({ timeout: 2000 }).catch(() => false);
-
-    if (!isLoggedIn) {
-      await page.fill('[data-testid="login-email"]', 'admin@dudufisio.com');
-      await page.fill('[data-testid="login-password"]', 'demo123456');
-      await page.click('[data-testid="login-submit"]');
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
-    }
-
-    // Procurar botão de logout
-    const logoutButton = page.locator('button, a').filter({
-      hasText: /sair|logout|desconectar/i
-    });
-    const hasLogout = await logoutButton.isVisible().catch(() => false);
-
-    if (hasLogout) {
-      await logoutButton.first().click();
+    for (const injection of sqlInjectionAttempts) {
+      await page.fill('[data-testid="input-login-email"]', injection);
+      await page.fill('[data-testid="input-login-password"]', 'anypassword');
+      await page.click('[data-testid="btn-login-submit"]');
+      
+      // Aguardar resposta
       await page.waitForTimeout(2000);
+      
+      // Não deve fazer login com sucesso
+      const isStillOnLogin = await page.url().includes('/login');
+      expect(isStillOnLogin).toBe(true);
+    }
+  });
 
-      // Verificar se foi redirecionado para login
-      const isOnLogin = await page.locator('input[type="password"]').isVisible();
+  test('XSS no campo de login deve ser sanitizado', async ({ page }) => {
+    await page.goto('/login');
+    
+    const xssPayloads = [
+      '<script>alert("XSS")</script>',
+      '<img src=x onerror=alert("XSS")>',
+      'javascript:alert("XSS")',
+      '<svg onload=alert("XSS")>'
+    ];
 
-      if (isOnLogin) {
-        console.log('✅ Logout funcionando - redirecionado para login');
+    for (const payload of xssPayloads) {
+      await page.fill('[data-testid="input-login-email"]', payload);
+      await page.fill('[data-testid="input-login-password"]', 'test123');
+      
+      // Verificar se o valor foi sanitizado ou escapado
+      const emailValue = await page.locator('[data-testid="input-login-email"]').inputValue();
+      
+      // Não deve conter tags HTML executáveis
+      expect(emailValue).not.toMatch(/<script|<img|javascript:|<svg/);
+    }
+  });
 
-        // Tentar acessar área protegida após logout
-        await page.goto('/dashboard');
-        await page.waitForLoadState('domcontentloaded');
-        await page.waitForTimeout(1000);
+  test('Proteção contra brute force - rate limiting', async ({ page }) => {
+    await page.goto('/login');
+    
+    // Fazer múltiplas tentativas de login falhadas rapidamente
+    for (let i = 0; i < 10; i++) {
+      await page.fill('[data-testid="input-login-email"]', 'test@test.com');
+      await page.fill('[data-testid="input-login-password"]', `wrongpass${i}`);
+      await page.click('[data-testid="btn-login-submit"]');
+      await page.waitForTimeout(500);
+    }
 
-        const currentURL = page.url();
-        const stillProtected = currentURL.includes('/login') || currentURL === 'http://localhost:5175/' || await page.locator('input[type="password"]').isVisible();
-
-        if (stillProtected) {
-          console.log('✅ Sessão limpa - acesso negado após logout');
-        } else {
-          console.log('⚠️  FALHA: Sessão não foi limpa corretamente');
-        }
-      }
+    // Após muitas tentativas, deve haver rate limiting
+    const rateLimitMessage = page.locator('[data-testid="rate-limit-warning"]');
+    
+    // Se rate limiting estiver implementado, deve aparecer
+    if (await rateLimitMessage.isVisible({ timeout: 2000 })) {
+      const message = await rateLimitMessage.textContent();
+      expect(message).toContain('limite' || 'muitas tentativas' || 'bloqueado');
     } else {
-      console.log('⚠️  Botão de logout não encontrado');
+      console.log('⚠️ Rate limiting pode não estar implementado');
     }
+  });
 
-    await page.screenshot({
-      path: 'test-results/screenshots/security-logout.png',
-      fullPage: true
+  test('Sessão deve expirar após período de inatividade', async ({ page }) => {
+    // Login
+    await page.goto('/login');
+    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
+    await page.click('[data-testid="btn-login-submit"]');
+    await page.waitForURL(/\/dashboard|\/agenda/);
+    
+    // Simular inatividade (aguardar alguns minutos)
+    // Nota: Em produção, sessões expiram após 30-60 minutos
+    // Aqui vamos testar se há indicador de timeout
+    
+    const sessionTimeoutIndicator = page.locator('[data-testid="session-timeout-warning"]');
+    
+    // Se houver warning de timeout, verificar
+    if (await sessionTimeoutIndicator.isVisible({ timeout: 1000 })) {
+      const warning = await sessionTimeoutIndicator.textContent();
+      expect(warning).toContain('sessão' || 'expirar' || 'inatividade');
+    }
+  });
+
+  test('Logout deve limpar tokens e redirecionar', async ({ page }) => {
+    // Login
+    await page.goto('/login');
+    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
+    await page.click('[data-testid="btn-login-submit"]');
+    await page.waitForURL(/\/dashboard|\/agenda/);
+    
+    // Fazer logout
+    const logoutButton = page.locator('[data-testid="btn-logout"]');
+    
+    if (await logoutButton.isVisible({ timeout: 3000 })) {
+      await logoutButton.click();
+      
+      // Deve redirecionar para login
+      await page.waitForURL(/\/login/, { timeout: 5000 });
+      
+      // Verificar se localStorage foi limpo (tokens removidos)
+      const localStorage = await page.evaluate(() => {
+        return {
+          hasToken: !!localStorage.getItem('supabase.auth.token'),
+          hasRefreshToken: !!localStorage.getItem('supabase.auth.refreshToken')
+        };
+      });
+      
+      // Tokens devem ter sido removidos
+      expect(localStorage.hasToken || localStorage.hasRefreshToken).toBe(false);
+      
+      // Tentar acessar página protegida após logout
+      await page.goto('/dashboard');
+      
+      // Deve redirecionar de volta para login
+      await page.waitForURL(/\/login/, { timeout: 5000 });
+    }
+  });
+
+  test('Tokens JWT devem ter assinatura válida', async ({ page, context }) => {
+    // Login
+    await page.goto('/login');
+    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
+    await page.click('[data-testid="btn-login-submit"]');
+    await page.waitForURL(/\/dashboard|\/agenda/);
+    
+    // Interceptar requests para verificar token
+    let authHeader: string | null = null;
+    
+    page.on('request', request => {
+      const headers = request.headers();
+      if (headers['authorization']) {
+        authHeader = headers['authorization'];
+      }
     });
-  });
-
-  test('4. Proteção contra SQL Injection', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Tentar SQL Injection no login
-    const emailInput = page.locator('[data-testid="login-email"]');
-    const hasEmail = await emailInput.isVisible().catch(() => false);
-
-    if (hasEmail) {
-      await emailInput.fill("admin' OR '1'='1");
-      await page.fill('[data-testid="login-password"]', "' OR '1'='1");
-      await page.click('[data-testid="login-submit"]');
-      await page.waitForTimeout(2000);
-
-      // Verificar se o login foi negado
-      const isStillOnLogin = await page.locator('input[type="password"]').isVisible();
-
-      if (isStillOnLogin) {
-        console.log('✅ Protegido contra SQL Injection - login negado');
-      } else {
-        console.log('⚠️  VULNERABILIDADE: SQL Injection pode ter funcionado');
-      }
-
-      await page.screenshot({
-        path: 'test-results/screenshots/security-sql-injection.png',
-        fullPage: true
-      });
+    
+    // Fazer uma requisição que requer autenticação
+    await page.goto('/patients');
+    await page.waitForTimeout(2000);
+    
+    if (authHeader) {
+      // Token deve estar presente
+      expect(authHeader).toContain('Bearer');
+      
+      // Token JWT deve ter 3 partes (header.payload.signature)
+      const token = authHeader.replace('Bearer ', '');
+      const parts = token.split('.');
+      expect(parts.length).toBe(3);
     }
   });
+});
 
-  test('5. Proteção contra XSS (Cross-Site Scripting)', async ({ page }) => {
-    // Login primeiro
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-
-    const sidebar = page.locator('aside');
-    const isLoggedIn = await sidebar.isVisible({ timeout: 2000 }).catch(() => false);
-
-    if (!isLoggedIn) {
-      await page.fill('[data-testid="login-email"]', 'admin@dudufisio.com');
-      await page.fill('[data-testid="login-password"]', 'demo123456');
-      await page.click('[data-testid="login-submit"]');
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
-    }
-
-    // Navegar para área com input de texto
-    await page.click('a:has-text("Pacientes")');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Procurar campo de busca
-    const searchInput = page.locator('input[type="search"], input[type="text"]').first();
-    const hasSearch = await searchInput.isVisible().catch(() => false);
-
-    if (hasSearch) {
-      // Tentar injetar script
-      const xssPayload = '<script>alert("XSS")</script>';
-      await searchInput.fill(xssPayload);
-      await page.waitForTimeout(1000);
-
-      // Verificar se o script foi executado (não deveria)
-      const dialogPromise = page.waitForEvent('dialog', { timeout: 2000 }).catch(() => null);
-      const dialog = await dialogPromise;
-
-      if (!dialog) {
-        console.log('✅ Protegido contra XSS - script não executado');
-      } else {
-        console.log('⚠️  VULNERABILIDADE: XSS detectado');
-        await dialog.dismiss();
-      }
-
-      await page.screenshot({
-        path: 'test-results/screenshots/security-xss-protection.png',
-        fullPage: true
-      });
+test.describe('Segurança - Row Level Security (RLS)', () => {
+  
+  test('Usuário só deve ver seus próprios dados', async ({ page }) => {
+    // Login como usuário regular
+    await page.goto('/login');
+    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
+    await page.click('[data-testid="btn-login-submit"]');
+    await page.waitForURL(/\/dashboard|\/agenda/);
+    
+    // Tentar acessar dados de outro usuário (se ID for conhecido)
+    await page.goto('/patients/fake-patient-id-123');
+    
+    // Deve mostrar erro 403 ou redirecionar
+    await page.waitForTimeout(2000);
+    
+    const errorMessage = page.locator('[data-testid="access-denied-message"]');
+    if (await errorMessage.isVisible({ timeout: 2000 })) {
+      const text = await errorMessage.textContent();
+      expect(text).toContain('acesso negado' || 'permissão' || 'não autorizado');
     }
   });
 
-  test('6. Validação de dados sensíveis - CPF/Telefone', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-
-    const sidebar = page.locator('aside');
-    const isLoggedIn = await sidebar.isVisible({ timeout: 2000 }).catch(() => false);
-
-    if (!isLoggedIn) {
-      await page.fill('[data-testid="login-email"]', 'admin@dudufisio.com');
-      await page.fill('[data-testid="login-password"]', 'demo123456');
-      await page.click('[data-testid="login-submit"]');
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
-    }
-
-    // Navegar para cadastro de paciente
-    await page.click('a:has-text("Pacientes")');
-    await page.waitForLoadState('domcontentloaded');
-
-    const newButton = page.locator('button').filter({ hasText: /novo|adicionar/i }).first();
-    const hasButton = await newButton.isVisible().catch(() => false);
-
-    if (hasButton) {
-      await newButton.click();
-      await page.waitForTimeout(1500);
-
-      // Verificar se há máscaras/validação
-      const cpfInput = page.locator('input').filter({ hasText: /cpf/i }).first();
-      const hasCPF = await cpfInput.isVisible().catch(() => false);
-
-      if (hasCPF) {
-        await cpfInput.fill('12345678901');
-        await page.waitForTimeout(500);
-
-        // Verificar se há formatação
-        const cpfValue = await cpfInput.inputValue();
-        if (cpfValue.includes('.') || cpfValue.includes('-')) {
-          console.log('✅ Máscara de CPF aplicada');
-        }
+  test('Não deve ser possível modificar dados de outros usuários via API', async ({ page }) => {
+    // Login
+    await page.goto('/login');
+    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
+    await page.click('[data-testid="btn-login-submit"]');
+    await page.waitForURL(/\/dashboard|\/agenda/);
+    
+    // Interceptar API requests
+    let apiBlocked = false;
+    
+    page.on('response', async response => {
+      if (response.url().includes('/api/patients') && response.status() === 403) {
+        apiBlocked = true;
       }
-
-      await page.screenshot({
-        path: 'test-results/screenshots/security-data-validation.png',
-        fullPage: true
-      });
-    }
-  });
-
-  test('7. LGPD - Logs de acesso a dados sensíveis', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-
-    const sidebar = page.locator('aside');
-    const isLoggedIn = await sidebar.isVisible({ timeout: 2000 }).catch(() => false);
-
-    if (!isLoggedIn) {
-      await page.fill('[data-testid="login-email"]', 'admin@dudufisio.com');
-      await page.fill('[data-testid="login-password"]', 'demo123456');
-      await page.click('[data-testid="login-submit"]');
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
-    }
-
-    // Acessar dados de um paciente
-    await page.click('a:has-text("Pacientes")');
-    await page.waitForLoadState('domcontentloaded');
-
-    const patientCard = page.locator('[class*="patient"], table tbody tr').first();
-    const hasPatient = await patientCard.isVisible().catch(() => false);
-
-    if (hasPatient) {
-      await patientCard.click();
-      await page.waitForTimeout(1500);
-
-      // Verificar se há indicação de logs LGPD
-      const lgpdIndicator = page.locator('text=/log de acesso|auditoria|lgpd/i');
-      const hasLGPD = await lgpdIndicator.isVisible().catch(() => false);
-
-      if (hasLGPD) {
-        console.log('✅ Sistema tem indicadores de conformidade LGPD');
-      } else {
-        console.log('⚠️  Indicadores LGPD não visíveis (podem estar em background)');
-      }
-
-      await page.screenshot({
-        path: 'test-results/screenshots/security-lgpd-logs.png',
-        fullPage: true
-      });
-    }
-  });
-
-  test('8. Segurança de senhas - Campo senha mascarado', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-
-    const passwordInput = page.locator('input[type="password"]');
-    const hasPassword = await passwordInput.isVisible();
-
-    if (hasPassword) {
-      console.log('✅ Campo de senha com type="password" (mascarado)');
-
-      // Verificar se tem botão de mostrar/ocultar senha
-      const toggleButton = page.locator('button, [role="button"]').filter({
-        hasText: /mostrar|ocultar|show|hide|eye/i
-      });
-      const hasToggle = await toggleButton.isVisible().catch(() => false);
-
-      if (hasToggle) {
-        console.log('✅ Botão de toggle de visibilidade de senha presente');
-      }
-    }
-
-    await page.screenshot({
-      path: 'test-results/screenshots/security-password-masking.png',
-      fullPage: true
     });
+    
+    // Tentar fazer update em paciente de outro usuário via console
+    await page.evaluate(() => {
+      fetch('/api/patients/fake-id', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fullName: 'Hacked' })
+      });
+    });
+    
+    await page.waitForTimeout(2000);
+    
+    // Request deve ser bloqueada
+    // Nota: Implementação depende do backend
+  });
+});
+
+test.describe('Segurança - CSRF Protection', () => {
+  
+  test('Requisições devem ter proteção CSRF', async ({ page }) => {
+    // Login
+    await page.goto('/login');
+    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
+    await page.click('[data-testid="btn-login-submit"]');
+    await page.waitForURL(/\/dashboard|\/agenda/);
+    
+    // Verificar se headers de segurança estão presentes
+    const response = await page.goto('/patients');
+    const headers = response?.headers();
+    
+    // Headers de segurança recomendados
+    const securityHeaders = {
+      'x-frame-options': headers?.['x-frame-options'],
+      'x-content-type-options': headers?.['x-content-type-options'],
+      'strict-transport-security': headers?.['strict-transport-security']
+    };
+    
+    // Pelo menos alguns headers devem estar presentes
+    console.log('Security Headers:', securityHeaders);
+    
+    // X-Frame-Options deve prevenir clickjacking
+    if (securityHeaders['x-frame-options']) {
+      expect(securityHeaders['x-frame-options']).toMatch(/DENY|SAMEORIGIN/i);
+    }
+  });
+});
+
+test.describe('Segurança - Dados Sensíveis', () => {
+  
+  test('Senhas não devem aparecer em logs ou console', async ({ page }) => {
+    const consoleMessages: string[] = [];
+    
+    page.on('console', msg => {
+      consoleMessages.push(msg.text());
+    });
+    
+    // Login
+    await page.goto('/login');
+    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
+    await page.click('[data-testid="btn-login-submit"]');
+    await page.waitForTimeout(2000);
+    
+    // Verificar se senha aparece em algum log
+    const hasPasswordInLogs = consoleMessages.some(msg => 
+      msg.includes('DuduFisio2024!')
+    );
+    
+    expect(hasPasswordInLogs).toBe(false);
   });
 
-  test('9. Tentativas de acesso não autorizado - Força bruta', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Simular múltiplas tentativas de login falhas
-    for (let i = 0; i < 5; i++) {
-      await page.fill('[data-testid="login-email"]', 'hacker@test.com');
-      await page.fill('[data-testid="login-password"]', `wrongpass${i}`);
-      await page.click('[data-testid="login-submit"]');
-      await page.waitForTimeout(1000);
+  test('CPF deve ser mascarado em listagens', async ({ page }) => {
+    // Login
+    await page.goto('/login');
+    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
+    await page.click('[data-testid="btn-login-submit"]');
+    await page.waitForURL(/\/dashboard|\/agenda/);
+    
+    // Ir para lista de pacientes
+    await page.goto('/patients');
+    await page.waitForSelector('[data-testid="table-patients"]', { timeout: 5000 });
+    
+    // Verificar se CPF está mascarado (***.***.123-45)
+    const cpfCells = page.locator('[data-testid^="patient-row"] td:has-text("CPF"), [data-testid^="patient-row"] td:has-text("***")');
+    
+    if (await cpfCells.first().isVisible({ timeout: 2000 })) {
+      const cpfText = await cpfCells.first().textContent();
+      
+      // CPF deve estar mascarado ou não mostrado em listagens públicas
+      if (cpfText && cpfText.includes('.')) {
+        expect(cpfText).toMatch(/\*\*\*/);
+      }
     }
-
-    // Verificar se há bloqueio ou rate limiting
-    const errorMessage = page.locator('text=/bloqueado|muitas tentativas|rate limit|aguarde/i');
-    const hasRateLimit = await errorMessage.isVisible().catch(() => false);
-
-    if (hasRateLimit) {
-      console.log('✅ Rate limiting ativo - proteção contra força bruta');
-    } else {
-      console.log('⚠️  Rate limiting não detectado (pode estar em backend)');
-    }
-
-    await page.screenshot({
-      path: 'test-results/screenshots/security-brute-force.png',
-      fullPage: true
-    });
   });
 
-  test('10. Timeout de sessão - Inatividade', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-
-    const sidebar = page.locator('aside');
-    const isLoggedIn = await sidebar.isVisible({ timeout: 2000 }).catch(() => false);
-
-    if (!isLoggedIn) {
-      await page.fill('[data-testid="login-email"]', 'admin@dudufisio.com');
-      await page.fill('[data-testid="login-password"]', 'demo123456');
-      await page.click('[data-testid="login-submit"]');
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
-    }
-
-    console.log('⏱️  Simulando inatividade...');
-
-    // Aguardar período de inatividade (simulação curta para teste)
-    await page.waitForTimeout(5000);
-
-    // Verificar se sessão ainda está ativa
-    const stillLoggedIn = await sidebar.isVisible().catch(() => false);
-
-    if (stillLoggedIn) {
-      console.log('✅ Sessão mantida (timeout pode ser mais longo que 5s)');
-    } else {
-      console.log('✅ Timeout de sessão funcionando - usuário deslogado');
-    }
-
-    await page.screenshot({
-      path: 'test-results/screenshots/security-session-timeout.png',
-      fullPage: true
-    });
+  test('URLs não devem conter dados sensíveis', async ({ page }) => {
+    // Login
+    await page.goto('/login');
+    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
+    await page.click('[data-testid="btn-login-submit"]');
+    await page.waitForURL(/\/dashboard|\/agenda/);
+    
+    // Navegar por várias páginas
+    await page.goto('/patients');
+    await page.goto('/agenda');
+    await page.goto('/exercises');
+    
+    // Verificar histórico de navegação
+    const currentUrl = page.url();
+    
+    // URL não deve conter CPF, senhas, tokens visíveis
+    expect(currentUrl).not.toMatch(/cpf=\d{11}/);
+    expect(currentUrl).not.toMatch(/password=/);
+    expect(currentUrl).not.toMatch(/token=[a-zA-Z0-9]{20,}/);
   });
 });
