@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Email - DuduFisio-AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #718096;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .result.success {
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+            color: #166534;
+            display: block;
+        }
+
+        .result.error {
+            background: #fef2f2;
+            border: 2px solid #fca5a5;
+            color: #991b1b;
+            display: block;
+        }
+
+        .result.loading {
+            background: #eff6ff;
+            border: 2px solid #93c5fd;
+            color: #1e40af;
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(30, 64, 175, 0.3);
+            border-top-color: #1e40af;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .config-info {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #92400e;
+        }
+
+        .config-info strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        code {
+            background: #fef3c7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 Teste de Email</h1>
+        <p class="subtitle">DuduFisio-AI - Sistema de Notificações</p>
+
+        <div class="config-info">
+            <strong>⚙️ Configuração:</strong>
+            ✅ Resend API configurada<br>
+            ✅ Tabela notification_logs criada<br>
+            ✅ Edge Function: <code>/functions/v1/send-email</code>
+        </div>
+
+        <form id="emailForm">
+            <div class="form-group">
+                <label for="email">Email do destinatário</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="seu-email@exemplo.com"
+                    required
+                    value="teste@dudufisio.com"
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="template">Template</label>
+                <select id="template" required>
+                    <option value="welcome">Boas-vindas</option>
+                    <option value="confirmation">Confirmação de Consulta</option>
+                    <option value="reminder">Lembrete 24h</option>
+                    <option value="custom">Email Customizado</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn">
+                Enviar Email de Teste
+            </button>
+        </form>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('emailForm');
+        const resultDiv = document.getElementById('result');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Configuração
+        const SUPABASE_URL = 'https://urfxniitfbbvsaskicfo.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZnhuaWl0ZmJidnNhc2tpY2ZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgzMDU0NDcsImV4cCI6MjA3Mzg4MTQ0N30.1duUQHT_MjGOmMKP-b-R6A9VByGzHgj296A2UR-IXvA';
+
+        function showResult(type, message) {
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = message;
+        }
+
+        function getEmailContent(template, email) {
+            const templates = {
+                welcome: {
+                    subject: 'Bem-vindo ao DuduFisio-AI!',
+                    html: `
+                        <h1>🎉 Bem-vindo!</h1>
+                        <p>Olá,</p>
+                        <p>É um prazer tê-lo conosco no <strong>DuduFisio-AI</strong>!</p>
+                        <p>Este é um email de teste para verificar se o sistema está funcionando corretamente.</p>
+                        <p><strong>Data do teste:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                        <p>Se você recebeu este email, significa que tudo está funcionando perfeitamente! ✅</p>
+                        <hr>
+                        <p style="color: #718096; font-size: 12px;">DuduFisio-AI - Sistema de Gestão Inteligente</p>
+                    `
+                },
+                confirmation: {
+                    subject: 'Confirmação de Consulta - DuduFisio-AI',
+                    html: `
+                        <h1>✓ Consulta Confirmada</h1>
+                        <p>Sua consulta foi confirmada com sucesso!</p>
+                        <div style="background: #edf2f7; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                            <p><strong>📅 Data:</strong> 15/11/2025 (Sexta-feira)</p>
+                            <p><strong>⏰ Horário:</strong> 14:30</p>
+                            <p><strong>👨‍⚕️ Fisioterapeuta:</strong> Dr. Pedro Santos</p>
+                            <p><strong>📍 Local:</strong> Rua Exemplo, 123</p>
+                        </div>
+                        <p style="color: #718096;">Este é um email de teste.</p>
+                    `
+                },
+                reminder: {
+                    subject: '⏰ Lembrete: Consulta Amanhã',
+                    html: `
+                        <h1>⏰ Lembrete de Consulta</h1>
+                        <p>Você tem uma consulta marcada para <strong>amanhã</strong>!</p>
+                        <div style="background: #fef5e7; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                            <p><strong>📅 Data:</strong> Amanhã, 15/11</p>
+                            <p><strong>⏰ Horário:</strong> 14:30</p>
+                        </div>
+                        <p>Não esqueça! Por favor, chegue com 10 minutos de antecedência.</p>
+                        <p style="color: #718096;">Este é um email de teste.</p>
+                    `
+                },
+                custom: {
+                    subject: 'Teste de Email - DuduFisio-AI',
+                    html: `
+                        <h1>🧪 Teste de Email</h1>
+                        <p>Este é um email de teste customizado do <strong>DuduFisio-AI</strong>.</p>
+                        <p><strong>Hora do teste:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                        <p><strong>Email do destinatário:</strong> ${email}</p>
+                        <p>✅ Se você está vendo isso, o sistema de email está funcionando perfeitamente!</p>
+                        <hr>
+                        <p style="color: #718096; font-size: 12px;">
+                            DuduFisio-AI - Powered by Resend<br>
+                            Email Service Production-Ready
+                        </p>
+                    `
+                }
+            };
+
+            return templates[template];
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const template = document.getElementById('template').value;
+            const emailContent = getEmailContent(template, email);
+
+            // Desabilitar botão e mostrar loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Enviando...';
+            showResult('loading', '<span class="spinner"></span> Enviando email...');
+
+            try {
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/send-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    },
+                    body: JSON.stringify({
+                        to: email,
+                        subject: emailContent.subject,
+                        html: emailContent.html,
+                        text: emailContent.html.replace(/<[^>]*>/g, '')
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showResult('success', `
+                        <strong>✅ Email enviado com sucesso!</strong><br><br>
+                        📧 Destinatário: ${email}<br>
+                        📝 Template: ${template}<br>
+                        🆔 Message ID: ${data.messageId || 'N/A'}<br>
+                        ⏰ Hora: ${new Date().toLocaleTimeString('pt-BR')}<br><br>
+                        <em>Verifique sua caixa de entrada!</em>
+                    `);
+                } else {
+                    throw new Error(data.error || 'Erro desconhecido');
+                }
+            } catch (error) {
+                showResult('error', `
+                    <strong>❌ Erro ao enviar email</strong><br><br>
+                    ${error.message}<br><br>
+                    <em>Verifique:</em><br>
+                    • Edge Function está deployada?<br>
+                    • RESEND_API_KEY está configurada?<br>
+                    • Conexão com internet OK?
+                `);
+            } finally {
+                // Reabilitar botão
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Enviar Email de Teste';
+            }
+        });
+    </script>
+</body>
+</html>
