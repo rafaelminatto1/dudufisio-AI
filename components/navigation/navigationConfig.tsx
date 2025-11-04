@@ -35,6 +35,7 @@ import {
   Zap,
   Globe,
   Wrench,
+  Palette,
 } from 'lucide-react';
 import { Role } from '@/types';
 import { NavItemConfig } from './NavItem';
@@ -361,6 +362,12 @@ export function getNavigationConfig(role: Role, unreadCount: number = 0): Naviga
                 to: '/audit-log',
                 icon: FileCheck,
                 label: 'Auditoria',
+              },
+              {
+                id: 'design-system',
+                to: '/design-system',
+                icon: Palette,
+                label: 'Design System',
               },
               {
                 id: 'settings',

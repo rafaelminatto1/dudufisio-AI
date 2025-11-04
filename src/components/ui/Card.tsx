@@ -1,6 +1,6 @@
 import React from 'react';
-import { cn } from '@/lib/utils';
-import { useTheme } from '@/contexts/ThemeContext';
+import { cn } from '../../lib/utils';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'elevated' | 'outlined';

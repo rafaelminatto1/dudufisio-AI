@@ -76,6 +76,7 @@ const BIIntegrationTestPage = createLazyComponent(() => import('./BIIntegrationT
 const AiSettingsPage = createLazyComponent(() => import('./AiSettingsPage'));
 const AuditLogPage = createLazyComponent(() => import('./AuditLogPage'));
 const LegalPage = createLazyComponent(() => import('./LegalPage'));
+const DesignSystemPage = createLazyComponent(() => import('../src/pages/DesignSystem'));
 
 // Loading component
 const PageLoader = () => <PageSkeleton />;
@@ -181,6 +182,9 @@ const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
             
             {/* Configurações */}
             <Route path="/settings/*" element={<SettingsPage />} />
+            
+            {/* Design System */}
+            <Route path="/design-system" element={<DesignSystemPage />} />
             
             {/* 404 - Redireciona para dashboard */}
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
