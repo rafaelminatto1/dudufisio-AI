@@ -13,6 +13,8 @@ import { Appointment, AppointmentStatus } from '@/types';
 import { useOptimizedAppointments } from '@/hooks/useOptimizedData';
 import { useData } from '@/contexts/AppContext';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 const AppointmentListPage: React.FC = () => {
   const navigate = useNavigate();

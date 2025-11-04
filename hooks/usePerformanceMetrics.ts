@@ -112,7 +112,7 @@ export function useCacheMetrics() {
 export function useComponentPerformance(componentName: string) {
   useEffect(() => {
     const measurement = performanceMonitor.mark(`${componentName}-render-start`);
-    
+
     return () => {
       performanceMonitor.mark(`${componentName}-render-end`);
       const duration = performanceMonitor.measure(
@@ -130,7 +130,7 @@ export function useComponentPerformance(componentName: string) {
         });
       }
     };
-  });
+  }, []); // 🐛 FIX: Adiciona array vazio para rodar apenas no mount/unmount
 }
 
 export default usePerformanceMetrics;

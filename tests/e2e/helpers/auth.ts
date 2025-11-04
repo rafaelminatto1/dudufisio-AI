@@ -7,7 +7,7 @@ import { Page } from '@playwright/test';
 export const DEMO_ACCOUNTS = {
   admin: {
     email: 'admin@dudufisio.com',
-    password: 'demo123456',
+    password: 'DuduFisio2024!',
     role: 'Administrador'
   },
   therapist: {
@@ -37,7 +37,7 @@ export async function loginWithDemoAccount(
   console.log(`🔐 Fazendo login como: ${credentials.role} (${credentials.email})`);
 
   // Navegar para a página de login
-  await page.goto('http://localhost:5177/login');
+  await page.goto('http://localhost:5173/login');
   await page.waitForLoadState('networkidle');
 
   // Preencher credenciais
@@ -77,6 +77,6 @@ export async function logout(page: Page): Promise<void> {
   console.log('🚪 Fazendo logout...');
 
   // Navegar para login (força logout)
-  await page.goto('http://localhost:5177/login');
+  await page.goto('http://localhost:5173/login');
   await page.waitForLoadState('networkidle');
 }
