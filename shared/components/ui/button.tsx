@@ -9,20 +9,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-fisio-primary-DEFAULT text-white hover:bg-fisio-primary-600 shadow-sm",
+        default: "bg-fisio-primary text-white hover:bg-fisio-primary-600 shadow-sm",
         destructive:
-          "bg-fisio-error-DEFAULT text-white hover:bg-fisio-error-600 shadow-sm",
+          "bg-fisio-error text-white hover:bg-fisio-error-600 shadow-sm",
         outline:
-          "border-2 border-fisio-primary-DEFAULT bg-white text-fisio-primary-DEFAULT hover:bg-fisio-primary-50",
+          "border-2 border-fisio-primary bg-white text-fisio-primary hover:bg-fisio-primary-50",
         secondary:
-          "bg-fisio-secondary-DEFAULT text-white hover:bg-fisio-secondary-600 shadow-sm",
+          "bg-fisio-secondary text-white hover:bg-fisio-secondary-600 shadow-sm",
         ghost: "hover:bg-fisio-neutral-100 text-fisio-neutral-700",
-        link: "text-fisio-primary-DEFAULT underline-offset-4 hover:underline",
+        link: "text-fisio-primary underline-offset-4 hover:underline",
         // FisioFlow variants
-        success: "bg-fisio-secondary-DEFAULT text-white hover:bg-fisio-secondary-600 shadow-sm",
-        warning: "bg-fisio-warning-DEFAULT text-white hover:bg-fisio-warning-600 shadow-sm",
+        success: "bg-fisio-secondary text-white hover:bg-fisio-secondary-600 shadow-sm",
+        warning: "bg-fisio-warning text-white hover:bg-fisio-warning-600 shadow-sm",
         info: "bg-fisio-primary-400 text-white hover:bg-fisio-primary-500 shadow-sm",
-        danger: "bg-fisio-error-DEFAULT text-white hover:bg-fisio-error-600 shadow-sm",
+        danger: "bg-fisio-error text-white hover:bg-fisio-error-600 shadow-sm",
       },
       size: {
         default: "h-10 px-4 py-2",

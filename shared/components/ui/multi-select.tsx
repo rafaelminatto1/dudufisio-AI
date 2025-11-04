@@ -95,7 +95,7 @@ export function MultiSelect({
             onFocus={() => setOpen(true)}
             placeholder={selected.length === 0 ? placeholder : undefined}
             disabled={disabled}
-            className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+            className="ml-2 flex-1 bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
           />
         </div>
       </div>
