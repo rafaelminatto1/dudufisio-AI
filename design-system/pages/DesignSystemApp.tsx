@@ -8,7 +8,8 @@ import { Input } from '../components/inputs/Input';
 import { Select } from '../components/inputs/Select';
 import ColorPalette from '../components/foundation/ColorPalette';
 import TypographyScale from '../components/foundation/TypographyScale';
-import ThemeCustomizer from '../components/ThemeCustomizer';
+import { ThemeCustomizer } from '../components/ThemeCustomizer';
+import { AnimationsShowcase } from '../components/showcase/AnimationsShowcase';
 
 const DesignSystemApp: React.FC = () => {
   const { theme, toggleTheme, themeConfig } = useTheme();
@@ -20,6 +21,7 @@ const DesignSystemApp: React.FC = () => {
     { label: 'Tipografia', value: 'typography' },
     { label: 'Componentes', value: 'components' },
     { label: 'Layouts', value: 'layouts' },
+    { label: 'Animações', value: 'animations' },
     { label: 'Personalizar', value: 'customizer' },
   ];
 
@@ -53,6 +55,8 @@ const DesignSystemApp: React.FC = () => {
         return <ComponentsPage />;
       case 'layouts':
         return <LayoutsPage />;
+      case 'animations':
+        return <AnimationsShowcase />;
       case 'customizer':
         return <CustomizerPage />;
       default:
@@ -75,6 +79,55 @@ const DesignSystemApp: React.FC = () => {
           {renderCurrentPage()}
         </Container>
       </main>
+    </div>
+  );
+};
+
+const CustomizerPage: React.FC = () => {
+  return (
+    <div className="space-y-8">
+      <div className="text-center space-y-4">
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          Personalizador de Temas
+        </h1>
+        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          Personalize cores, tipografia e estilos do seu sistema de design em tempo real
+        </p>
+      </div>
+      
+      <ThemeCustomizer />
+      
+      {/* Additional customization options */}
+      <Card className="p-8">
+        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+          Configurações Avançadas
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+              Espaçamentos
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Ajuste os espaçamentos do sistema para criar layouts mais compactos ou espaçados.
+            </p>
+            <Button variant="outline" size="sm">
+              Configurar Espaçamentos
+            </Button>
+          </div>
+          
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+              Animações
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Personalize a velocidade e intensidade das animações do sistema.
+            </p>
+            <Button variant="outline" size="sm">
+              Configurar Animações
+            </Button>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme, ThemeConfig } from '../contexts/ThemeContext';
-import { Card, CardContent, CardHeader } from '../layout/Card';
-import { Button } from '../inputs/Button';
-import { Input } from '../inputs/Input';
-import { Select } from '../inputs/Select';
+import { Card, CardContent, CardHeader } from './layout/Card';
+import { Button } from './inputs/Button';
+import { Input } from './inputs/Input';
+import { Select } from './inputs/Select';
 
 interface ThemeCustomizerProps {
   className?: string;

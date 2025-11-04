@@ -1,5 +1,6 @@
 import React from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import { animations, animationVariants } from '../../utils/animations';
 
 interface CardProps {
   children: React.ReactNode;
@@ -63,6 +64,7 @@ export const Card: React.FC<CardProps> = ({
           bg-white dark:bg-gray-900
           border border-gray-200 dark:border-gray-700
           shadow-md hover:shadow-lg
+          ${animationVariants.card}
         `;
     }
   };

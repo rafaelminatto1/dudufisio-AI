@@ -1,5 +1,6 @@
 import React from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import { animations, animationVariants } from '../../utils/animations';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -143,6 +144,7 @@ export const Button: React.FC<ButtonProps> = ({
         ${getVariantStyles()}
         ${getSizeStyles()}
         ${fullWidth ? 'w-full' : ''}
+        ${animationVariants.button}
         ${className}
       `}
       style={{

@@ -190,6 +190,18 @@
   --transition-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --transition-easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
+  /* Animation Timing */
+  --animation-fast: 150ms;
+  --animation-medium: 300ms;
+  --animation-slow: 500ms;
+  --animation-slower: 700ms;
+
+  /* Animation Easing */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
   /* Z-index - Hierarquia de Camadas */
   --z-index-dropdown: 1000;
   --z-index-sticky: 1020;
@@ -213,6 +225,132 @@
   --container-lg: 1024px;
   --container-xl: 1280px;
   --container-2xl: 1536px;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-50px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(0);
+  }
+  70% {
+    transform: scale(0.9) translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--color-primary-light), 0 0 10px var(--color-primary-light);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--color-primary-light), 0 0 30px var(--color-primary-light);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(5deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+}
+
+/* Animation Classes */
+.animate-fadeIn {
+  animation: fadeIn var(--animation-medium) var(--ease-out) forwards;
+}
+
+.animate-slideIn {
+  animation: slideIn var(--animation-medium) var(--ease-out) forwards;
+}
+
+.animate-scaleIn {
+  animation: scaleIn var(--animation-medium) var(--ease-out) forwards;
+}
+
+.animate-bounceIn {
+  animation: bounceIn var(--animation-slow) var(--ease-bounce) forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-wiggle {
+  animation: wiggle 0.5s ease-in-out infinite;
 }
 
 /* Tema Escuro Premium */

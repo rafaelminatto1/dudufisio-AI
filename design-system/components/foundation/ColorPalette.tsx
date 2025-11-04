@@ -1,6 +1,6 @@
 import React from 'react';
-import { useTheme } from '../contexts/ThemeContext';
-import { Card } from '../components/layout/Card';
+import { useTheme } from '../../contexts/ThemeContext';
+import { Card } from '../layout/Card';
 
 interface ColorSwatchProps {
   name: string;

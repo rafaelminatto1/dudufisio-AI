@@ -118,7 +118,10 @@
     "test:critical": "playwright test tests/e2e/session-evolution-complete.spec.ts tests/e2e/conduct-templates.spec.ts tests/e2e/keyboard-shortcuts.spec.ts",
     "report:daily": "node scripts/daily-summary.cjs",
     "check:dependencies": "node scripts/check-dependencies.cjs",
-    "alert:vulnerabilities": "node scripts/alert-vulnerabilities.cjs"
+    "alert:vulnerabilities": "node scripts/alert-vulnerabilities.cjs",
+    "design-system:dev": "vite --config vite.config.design-system.ts",
+    "design-system:build": "vite build --config vite.config.design-system.ts",
+    "design-system:preview": "vite preview --config vite.config.design-system.ts --port 3001"
   },
   "dependencies": {
     "@ai-sdk/groq": "^2.0.25",
