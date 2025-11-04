@@ -674,9 +674,9 @@ class SupabaseAuthService {
       // Check if profile already exists
       const supa = await this.getSupabase();
       const { data: existingProfile } = await supa
-        .from('user_profiles')
+        .from('users')
         .select('id')
-        .eq('id', supabaseUser.id)
+        .eq('auth_id', supabaseUser.id)
         .single();
 
       if (!existingProfile) {
@@ -688,11 +688,11 @@ class SupabaseAuthService {
 
         // Create profile for OAuth user
         const { error: profileError } = await supa
-          .from('user_profiles')
+          .from('users')
           .insert({
-            id: supabaseUser.id,
+            auth_id: supabaseUser.id,
             email: supabaseUser.email || '',
-            name: supabaseUser.user_metadata?.['name'] || 
+            full_name: supabaseUser.user_metadata?.['name'] || 
                   supabaseUser.user_metadata?.['full_name'] || 
                   supabaseUser.user_metadata?.['user_name'] ||
                   'Usuário',
@@ -700,10 +700,11 @@ class SupabaseAuthService {
             phone: supabaseUser.user_metadata?.['phone'] || '',
             avatar_url: supabaseUser.user_metadata?.['avatar_url'] || 
                        supabaseUser.user_metadata?.['picture'] ||
-                       supabaseUser.user_metadata?.['avatar_url'] ||
                        '',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            status: 'active',
+            is_active: true,
+            email_verified: true,
+            email_verified_at: new Date().toISOString(),
           } as any);
 
         if (profileError) {

@@ -8,20 +8,26 @@ import { Input } from '../components/inputs/Input';
 import { Select } from '../components/inputs/Select';
 import ColorPalette from '../components/foundation/ColorPalette';
 import TypographyScale from '../components/foundation/TypographyScale';
-import { ThemeCustomizer } from '../components/ThemeCustomizer';
+import ThemeCustomizer from '../components/ThemeCustomizer';
 import { AnimationsShowcase } from '../components/showcase/AnimationsShowcase';
+import { DocumentationPage } from './DocumentationPage';
+import { ResponsiveShowcase } from '../components/showcase/ResponsiveShowcase';
+import { ComponentStatesShowcase } from '../components/showcase/ComponentStatesShowcase';
 
 const DesignSystemApp: React.FC = () => {
   const { theme, toggleTheme, themeConfig } = useTheme();
   const [currentPage, setCurrentPage] = React.useState('overview');
 
   const navigationItems = [
+    { label: 'Documentação', value: 'docs' },
     { label: 'Visão Geral', value: 'overview' },
     { label: 'Cores', value: 'colors' },
     { label: 'Tipografia', value: 'typography' },
     { label: 'Componentes', value: 'components' },
     { label: 'Layouts', value: 'layouts' },
     { label: 'Animações', value: 'animations' },
+    { label: 'Responsividade', value: 'responsive' },
+    { label: 'Estados', value: 'states' },
     { label: 'Personalizar', value: 'customizer' },
   ];
 
@@ -57,6 +63,12 @@ const DesignSystemApp: React.FC = () => {
         return <LayoutsPage />;
       case 'animations':
         return <AnimationsShowcase />;
+      case 'responsive':
+        return <ResponsiveShowcase />;
+      case 'states':
+        return <ComponentStatesShowcase />;
+      case 'docs':
+        return <DocumentationPage />;
       case 'customizer':
         return <CustomizerPage />;
       default:

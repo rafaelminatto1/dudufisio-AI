@@ -1,0 +1,190 @@
+name: Verify Deployment
+
+on:
+  # Trigger após deployment no Vercel
+  deployment_status:
+
+  # Trigger manual para testes
+  workflow_dispatch:
+    inputs:
+      deployment_url:
+        description: 'URL do deployment para verificar'
+        required: false
+        default: 'https://moocafisio.com.br'
+
+jobs:
+  verify-bundle-hash:
+    name: Verificar Bundle Hash
+    runs-on: ubuntu-latest
+
+    # Só executar se deployment foi bem-sucedido
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Buscar último commit também
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Restaurar cache de bundle hash
+        uses: actions/cache@v4
+        with:
+          path: scripts/.bundle-hash-cache.json
+          key: bundle-hash-${{ github.sha }}
+          restore-keys: |
+            bundle-hash-
+
+      - name: Verificar Bundle Hash
+        id: verify_hash
+        env:
+          DEBUG: ${{ runner.debug == '1' && '1' || '' }}
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            URL="${{ github.event.inputs.deployment_url }}"
+            echo "Verificando deployment manual: $URL"
+            node scripts/verify-bundle-hash.js --url2="$URL"
+          else
+            URL="${{ github.event.deployment_status.target_url }}"
+            echo "Verificando deployment: $URL"
+            node scripts/verify-bundle-hash.js --url2="$URL"
+          fi
+        continue-on-error: false
+
+      - name: Salvar cache de bundle hash
+        if: success()
+        uses: actions/cache/save@v4
+        with:
+          path: scripts/.bundle-hash-cache.json
+          key: bundle-hash-${{ github.sha }}
+
+      - name: Comentar no PR (se bundle não mudou)
+        if: failure() && github.event.pull_request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## ⚠️ Atenção: Bundle Hash Não Mudou\n\n' +
+                    'O deployment foi concluído mas o bundle hash **não mudou**.\n\n' +
+                    'Isso pode indicar um problema de cache do Vercel.\n\n' +
+                    '### 🛠️ Possíveis Soluções:\n\n' +
+                    '1. **Force rebuild:**\n' +
+                    '   ```bash\n' +
+                    '   git commit --allow-empty -m "chore: force rebuild"\n' +
+                    '   git push\n' +
+                    '   ```\n\n' +
+                    '2. **Clear cache manual via Vercel Dashboard**\n\n' +
+                    '3. **Consultar runbook:** [RUNBOOK_CACHE_DEPLOYMENT_ISSUES.md](../blob/main/RUNBOOK_CACHE_DEPLOYMENT_ISSUES.md)\n\n' +
+                    '---\n' +
+                    '*Verificação automática via GitHub Actions*'
+            })
+
+  validate-deployment:
+    name: Validar Deployment Completo
+    runs-on: ubuntu-latest
+    needs: verify-bundle-hash
+
+    if: success()
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Validar Deployment
+        env:
+          DEPLOYMENT_URL: ${{ github.event.deployment_status.target_url || github.event.inputs.deployment_url || 'https://moocafisio.com.br' }}
+        run: |
+          echo "Validando deployment: $DEPLOYMENT_URL"
+
+          # Atualizar CONFIG no script para usar URL do deployment
+          if [ -n "$DEPLOYMENT_URL" ] && [ "$DEPLOYMENT_URL" != "https://moocafisio.com.br" ]; then
+            sed -i "s|productionUrl: 'https://moocafisio.com.br'|productionUrl: '$DEPLOYMENT_URL'|g" scripts/validate-deployment.js
+          fi
+
+          node scripts/validate-deployment.js
+
+      - name: Criar Issue se Validação Falhar
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '🚨 Validação de Deployment Falhou';
+            const body = `## Validação de Deployment Falhou\n\n` +
+                        `**Deployment URL:** ${{ github.event.deployment_status.target_url || github.event.inputs.deployment_url }}\n` +
+                        `**Commit:** ${{ github.sha }}\n` +
+                        `**Branch:** ${{ github.ref }}\n` +
+                        `**Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n\n` +
+                        `### 🔍 Próximos Passos:\n\n` +
+                        `1. Verificar logs do workflow acima\n` +
+                        `2. Testar manualmente: ${{ github.event.deployment_status.target_url || github.event.inputs.deployment_url }}\n` +
+                        `3. Consultar [RUNBOOK_CACHE_DEPLOYMENT_ISSUES.md](../blob/main/RUNBOOK_CACHE_DEPLOYMENT_ISSUES.md)\n` +
+                        `4. Verificar Sentry para erros em produção\n\n` +
+                        `---\n` +
+                        `*Issue criada automaticamente por GitHub Actions*`;
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['deployment', 'bug', 'high-priority']
+            });
+
+  notify-success:
+    name: Notificar Sucesso
+    runs-on: ubuntu-latest
+    needs: [verify-bundle-hash, validate-deployment]
+
+    if: success()
+
+    steps:
+      - name: Comentar Sucesso no PR
+        if: github.event.pull_request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '## ✅ Deployment Validado com Sucesso\n\n' +
+                    '- ✅ Bundle hash mudou\n' +
+                    '- ✅ Site acessível\n' +
+                    '- ✅ Endpoints críticos funcionando\n' +
+                    '- ✅ Security headers configurados\n\n' +
+                    '**Deployment URL:** ${{ github.event.deployment_status.target_url }}\n\n' +
+                    '---\n' +
+                    '*Verificação automática via GitHub Actions*'
+            })
+
+      - name: Adicionar Label no PR
+        if: success() && github.event.pull_request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['deployment-verified']
+            })

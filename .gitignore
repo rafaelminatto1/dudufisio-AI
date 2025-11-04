@@ -55,3 +55,4 @@ nul
 # TS incremental build artifact
 tsconfig.tsbuildinfo
 
+minatto/

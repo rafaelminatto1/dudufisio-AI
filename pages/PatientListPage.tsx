@@ -122,13 +122,13 @@ const PatientListPage: React.FC = () => {
         </header>
 
         {/* Estatísticas com Gradientes Vibrantes - Paleta FisioFlow */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <Card className="bg-gradient-to-br from-fisio-primary-500 to-fisio-primary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" data-testid="patient-stats">
+          <Card className="bg-gradient-to-br from-fisio-primary-500 to-fisio-primary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200" data-testid="stat-total">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Total de Pacientes</p>
-                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.total}</p>
+                  <p className="text-3xl font-bold" data-testid="stat-total-value">{stats.loading ? '...' : stats.total}</p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,12 +139,12 @@ const PatientListPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-fisio-secondary-500 to-fisio-secondary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+          <Card className="bg-gradient-to-br from-fisio-secondary-500 to-fisio-secondary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200" data-testid="stat-active">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Pacientes Ativos</p>
-                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.active}</p>
+                  <p className="text-3xl font-bold" data-testid="stat-active-value">{stats.loading ? '...' : stats.active}</p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -155,12 +155,12 @@ const PatientListPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-fisio-warning-500 to-fisio-warning-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+          <Card className="bg-gradient-to-br from-fisio-warning-500 to-fisio-warning-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200" data-testid="stat-inactive">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Pacientes Inativos</p>
-                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.inactive}</p>
+                  <p className="text-3xl font-bold" data-testid="stat-inactive-value">{stats.loading ? '...' : stats.inactive}</p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,12 +171,12 @@ const PatientListPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-500 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+          <Card className="bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-500 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200" data-testid="stat-discharged">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Pacientes com Alta</p>
-                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.discharged}</p>
+                  <p className="text-3xl font-bold" data-testid="stat-discharged-value">{stats.loading ? '...' : stats.discharged}</p>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

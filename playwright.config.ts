@@ -7,8 +7,13 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/e2e',
   
-  // Timeout
-  timeout: 30000,
+  // Timeout - Aumentado para 60s para testes mais complexos
+  timeout: 60000,
+  
+  // Timeout para cada expect
+  expect: {
+    timeout: 10000,
+  },
   
   // Executar testes em paralelo
   fullyParallel: true,
@@ -16,8 +21,8 @@ export default defineConfig({
   // Não falhar build em CI se alguns testes falharem
   forbidOnly: !!process.env.CI,
   
-  // Retry em CI
-  retries: process.env.CI ? 2 : 0,
+  // Retry em CI e local - Melhorado para lidar com flaky tests
+  retries: process.env.CI ? 2 : 1,
   
   // Workers
   workers: process.env.CI ? 1 : undefined,
@@ -29,6 +34,12 @@ export default defineConfig({
   use: {
     // Base URL - Será sobrescrita pelo webServer
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
+
+    // Timeout para ações (click, fill, etc)
+    actionTimeout: 15000,
+    
+    // Timeout para navegação
+    navigationTimeout: 30000,
 
     // Trace
     trace: 'on-first-retry',

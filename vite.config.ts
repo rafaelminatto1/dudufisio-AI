@@ -400,6 +400,48 @@ export default defineConfig({
             return 'vendor-stripe';
           }
 
+          // 📊 CHUNK: Analytics & Monitoring
+          if (normalizedId.includes('node_modules/@sentry/') ||
+              normalizedId.includes('node_modules/@vercel/analytics') ||
+              normalizedId.includes('node_modules/@vercel/speed-insights')) {
+            return 'vendor-analytics';
+          }
+
+          // 🤖 CHUNK: AI & MCP
+          if (normalizedId.includes('node_modules/@anthropic-ai/') ||
+              normalizedId.includes('node_modules/@ai-sdk/') ||
+              normalizedId.includes('node_modules/@modelcontextprotocol/') ||
+              normalizedId.includes('node_modules/ai/')) {
+            return 'vendor-ai';
+          }
+
+          // 🔥 CHUNK: Firebase
+          if (normalizedId.includes('node_modules/firebase/')) {
+            return 'vendor-firebase';
+          }
+
+          // 🎯 CHUNK: Interaction Libraries
+          if (normalizedId.includes('node_modules/@use-gesture/') ||
+              normalizedId.includes('node_modules/react-swipeable/')) {
+            return 'vendor-interaction';
+          }
+
+          // 📝 CHUNK: Input & Formatting
+          if (normalizedId.includes('node_modules/react-input-mask/') ||
+              normalizedId.includes('node_modules/use-debounce/')) {
+            return 'vendor-input';
+          }
+
+          // 🎨 CHUNK: Theming
+          if (normalizedId.includes('node_modules/next-themes/')) {
+            return 'vendor-theming';
+          }
+
+          // 📐 CHUNK: Vaul (drawer component)
+          if (normalizedId.includes('node_modules/vaul/')) {
+            return 'vendor-vaul';
+          }
+
           // 🏠 CHUNK: Páginas principais (agrupadas por funcionalidade)
           if (normalizedId.includes('/pages/')) {
             if (normalizedId.includes('Dashboard') || normalizedId.includes('Home')) {

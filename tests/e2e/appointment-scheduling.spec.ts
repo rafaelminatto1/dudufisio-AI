@@ -1,357 +1,412 @@
-import { test, expect } from '@playwright/test';
-
 /**
- * FASE 2.2: Testes E2E - Agendamento de Consulta
- *
- * Cenários testados:
- * 1. Visualizar calendário semanal
- * 2. Criar novo agendamento
- * 3. Selecionar paciente
- * 4. Escolher data e horário
- * 5. Adicionar observações
- * 6. Confirmar agendamento
- * 7. Verificar agendamento no calendário
- * 8. Editar agendamento
- * 9. Cancelar agendamento
- * 10. Testar agendamentos recorrentes
- * 11. Buscar agendamentos
+ * Testes E2E - Agendamento de Consulta
+ * 
+ * Testa o fluxo completo de agendamento de consultas:
+ * - Visualização do calendário
+ * - Criação de agendamentos
+ * - Detecção de conflitos
+ * - Edição e cancelamento
+ * - Agendamentos recorrentes
  */
 
-test.describe('Agendamento de Consultas - Fluxo Completo', () => {
+import { test, expect } from '@playwright/test';
 
+// Helper para login (reutilizável)
+async function loginAsTherapist(page) {
+  await page.goto('/');
+  await page.getByLabel(/email/i).fill('admin@moocafisio.com.br');
+  await page.getByLabel(/senha/i).fill('admin123');
+  await page.getByRole('button', { name: /entrar|login/i }).click();
+  
+  // Aguardar redirecionamento
+  await page.waitForURL(/\/dashboard|\/agenda/i, { timeout: 15000 });
+}
+
+// Helper para navegar até a agenda
+async function navigateToAgenda(page) {
+  // Tentar pelo sidebar
+  const agendaLink = page.getByTestId('nav--agenda') || 
+                     page.getByRole('link', { name: /agenda/i });
+  
+  if (await agendaLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await agendaLink.click();
+  } else {
+    // Fallback: navegação direta
+    await page.goto('/agenda');
+  }
+  
+  await page.waitForLoadState('networkidle');
+}
+
+test.describe('Agendamento de Consultas', () => {
+  
   test.beforeEach(async ({ page }) => {
-    // Login como Admin
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Verificar se já está logado (verificar se sidebar está visível)
-    const sidebar = page.locator('aside');
-
-    try {
-      await sidebar.waitFor({ state: 'visible', timeout: 2000 });
-      console.log('✅ Já está logado');
-    } catch {
-      // Não está logado, fazer login
-      console.log('ℹ️  Fazendo login...');
-      await page.fill('[data-testid="login-email"]', 'admin@dudufisio.com');
-      await page.fill('[data-testid="login-password"]', 'demo123456');
-      await page.click('[data-testid="login-submit"]');
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
-      await sidebar.waitFor({ state: 'visible', timeout: 10000 });
-      console.log('✅ Login realizado com sucesso');
-    }
+    await loginAsTherapist(page);
   });
 
-  test('1. Visualizar calendário semanal da agenda', async ({ page }) => {
-    // Navegar para Agenda
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
+  test('deve visualizar o calendário semanal', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Verificar elementos principais do calendário
+    await expect(page.getByRole('heading', { name: /agenda/i })).toBeVisible();
+    
+    // Verificar dias da semana
+    const diasSemana = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+    for (const dia of diasSemana) {
+      await expect(page.getByText(new RegExp(dia, 'i'))).toBeVisible({ timeout: 5000 });
+    }
+    
+    // Verificar controles de navegação
+    await expect(page.getByRole('button', { name: /anterior|prev/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /próxim|next/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /hoje|today/i })).toBeVisible();
+  });
 
-    // Verificar se calendário está visível
-    const hasCalendar = await page.locator('text=/Agenda|Calendário/i').isVisible().catch(() => false);
-
-    if (hasCalendar) {
-      // Screenshot do calendário
-      await page.screenshot({
-        path: 'test-results/screenshots/agenda-calendar-view.png',
-        fullPage: true
-      });
-      console.log('✅ Calendário semanal visível');
+  test('deve criar novo agendamento com sucesso', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Clicar no botão de novo agendamento
+    const newAppointmentBtn = page.getByRole('button', { name: /novo agendamento|nova consulta/i });
+    await newAppointmentBtn.click();
+    
+    // Aguardar modal/formulário abrir
+    await page.waitForSelector('[role="dialog"], [data-testid*="appointment-form"]', { timeout: 10000 });
+    
+    // Preencher formulário
+    // Selecionar paciente
+    const patientSelect = page.getByLabel(/paciente/i);
+    await patientSelect.click();
+    await page.waitForTimeout(500);
+    
+    // Selecionar primeiro paciente da lista
+    const firstPatient = page.locator('[role="option"]').first();
+    if (await firstPatient.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await firstPatient.click();
     } else {
-      console.log('⚠️  Página de agenda carregada, mas calendário não detectado');
-      await page.screenshot({
-        path: 'test-results/screenshots/agenda-page-loaded.png',
-        fullPage: true
-      });
+      // Fallback: digitar e selecionar
+      await patientSelect.fill('Maria');
+      await page.waitForTimeout(500);
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
     }
-
-    // Verificar se há indicadores de navegação (próxima semana, semana anterior)
-    const navigationButtons = page.locator('button').filter({ hasText: /próxim|anterior|today|hoje/i });
-    const hasNavigation = await navigationButtons.count() > 0;
-
-    if (hasNavigation) {
-      console.log('✅ Navegação de calendário encontrada');
+    
+    // Selecionar data (usar data futura)
+    const dateInput = page.getByLabel(/data/i);
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 7); // 7 dias no futuro
+    const dateStr = futureDate.toISOString().split('T')[0];
+    await dateInput.fill(dateStr);
+    
+    // Selecionar horário
+    const timeInput = page.getByLabel(/hor[aá]rio|hora/i);
+    await timeInput.fill('14:00');
+    
+    // Selecionar duração
+    const durationInput = page.getByLabel(/dura[çc][ãa]o/i);
+    if (await durationInput.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await durationInput.fill('60');
     }
+    
+    // Salvar
+    await page.getByRole('button', { name: /salvar|confirmar|agendar/i }).click();
+    
+    // Verificar sucesso
+    await expect(page.getByText(/agendamento criado|sucesso/i)).toBeVisible({ timeout: 10000 });
+    
+    // Verificar que o agendamento aparece no calendário
+    await page.waitForTimeout(1000);
+    await expect(page.getByText(/14:00|Maria/i)).toBeVisible({ timeout: 5000 });
   });
 
-  test('2. Abrir modal de novo agendamento', async ({ page }) => {
-    // Navegar para Agenda
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
+  test('deve impedir agendamento em horário conflitante', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Criar primeiro agendamento
+    const newBtn = page.getByRole('button', { name: /novo agendamento/i });
+    await newBtn.click();
+    
+    await page.waitForSelector('[role="dialog"]', { timeout: 10000 });
+    
+    // Preencher com horário específico
+    const patientSelect = page.getByLabel(/paciente/i);
+    await patientSelect.click();
+    await page.waitForTimeout(300);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 3);
+    const dateStr = futureDate.toISOString().split('T')[0];
+    
+    await page.getByLabel(/data/i).fill(dateStr);
+    await page.getByLabel(/hor[aá]rio/i).fill('10:00');
+    
+    await page.getByRole('button', { name: /salvar/i }).click();
+    await page.waitForTimeout(2000);
+    
+    // Tentar criar segundo agendamento no mesmo horário
+    await newBtn.click();
+    await page.waitForSelector('[role="dialog"]', { timeout: 10000 });
+    
+    await page.getByLabel(/paciente/i).click();
+    await page.waitForTimeout(300);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    await page.getByLabel(/data/i).fill(dateStr);
+    await page.getByLabel(/hor[aá]rio/i).fill('10:00'); // Mesmo horário
+    
+    await page.getByRole('button', { name: /salvar/i }).click();
+    
+    // Verificar mensagem de conflito
+    await expect(page.getByText(/conflito|já existe|ocupado/i)).toBeVisible({ timeout: 10000 });
+  });
 
-    // Procurar botão de novo agendamento
-    const newAppointmentButton = page.locator('button').filter({
-      hasText: /novo|adicionar|agendar/i
-    }).first();
-
-    const buttonVisible = await newAppointmentButton.isVisible().catch(() => false);
-
-    if (buttonVisible) {
-      await newAppointmentButton.click();
+  test('deve editar agendamento existente', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Localizar um agendamento existente
+    const appointment = page.locator('[data-testid*="appointment"]').first();
+    
+    if (await appointment.isVisible({ timeout: 5000 }).catch(() => false)) {
+      // Clicar no agendamento
+      await appointment.click();
+      
+      // Aguardar modal de detalhes
       await page.waitForTimeout(1000);
-
-      // Screenshot do modal/form
-      await page.screenshot({
-        path: 'test-results/screenshots/agenda-new-appointment-modal.png',
-        fullPage: true
-      });
-
-      console.log('✅ Modal de novo agendamento aberto');
+      
+      // Clicar em editar
+      const editBtn = page.getByRole('button', { name: /editar/i });
+      if (await editBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await editBtn.click();
+        
+        // Modificar horário
+        const timeInput = page.getByLabel(/hor[aá]rio/i);
+        await timeInput.clear();
+        await timeInput.fill('15:30');
+        
+        // Salvar
+        await page.getByRole('button', { name: /salvar/i }).click();
+        
+        // Verificar sucesso
+        await expect(page.getByText(/atualizado|sucesso/i)).toBeVisible({ timeout: 10000 });
+      }
     } else {
-      console.log('⚠️  Botão de novo agendamento não encontrado');
+      test.skip(true, 'Nenhum agendamento disponível para editar');
+    }
+  });
 
-      // Tentar clicar em célula vazia do calendário
-      const calendarCell = page.locator('[class*="calendar"], [class*="day"]').first();
-      const cellVisible = await calendarCell.isVisible().catch(() => false);
-
-      if (cellVisible) {
-        await calendarCell.click();
-        await page.waitForTimeout(1000);
-        await page.screenshot({
-          path: 'test-results/screenshots/agenda-cell-click.png',
-          fullPage: true
-        });
-        console.log('✅ Clicou em célula do calendário');
+  test('deve cancelar agendamento', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Criar um agendamento para cancelar
+    const newBtn = page.getByRole('button', { name: /novo agendamento/i });
+    await newBtn.click();
+    
+    await page.waitForSelector('[role="dialog"]', { timeout: 10000 });
+    
+    await page.getByLabel(/paciente/i).click();
+    await page.waitForTimeout(300);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 5);
+    const dateStr = futureDate.toISOString().split('T')[0];
+    
+    await page.getByLabel(/data/i).fill(dateStr);
+    await page.getByLabel(/hor[aá]rio/i).fill('16:00');
+    
+    await page.getByRole('button', { name: /salvar/i }).click();
+    await page.waitForTimeout(2000);
+    
+    // Localizar e cancelar
+    const appointment = page.getByText(/16:00/).first();
+    if (await appointment.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await appointment.click();
+      await page.waitForTimeout(1000);
+      
+      const cancelBtn = page.getByRole('button', { name: /cancelar|remover/i });
+      if (await cancelBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+        await cancelBtn.click();
+        
+        // Confirmar cancelamento
+        const confirmBtn = page.getByRole('button', { name: /sim|confirmar/i });
+        if (await confirmBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await confirmBtn.click();
+        }
+        
+        // Verificar que foi cancelado
+        await expect(page.getByText(/cancelado|removido/i)).toBeVisible({ timeout: 10000 });
       }
     }
   });
 
-  test('3. Verificar campos do formulário de agendamento', async ({ page }) => {
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Tentar abrir form de novo agendamento
-    const newButton = page.locator('button').filter({ hasText: /novo|adicionar/i }).first();
-    const buttonExists = await newButton.isVisible().catch(() => false);
-
-    if (buttonExists) {
-      await newButton.click();
-      await page.waitForTimeout(1500);
-
-      // Verificar campos esperados
-      const expectedFields = [
-        { selector: 'input[type="text"]', name: 'Campo de texto (paciente)' },
-        { selector: 'select', name: 'Campo select' },
-        { selector: 'input[type="date"], input[type="datetime-local"]', name: 'Campo de data/hora' },
-        { selector: 'textarea', name: 'Campo de observações' },
-        { selector: 'button[type="submit"]', name: 'Botão de salvar' },
-      ];
-
-      for (const field of expectedFields) {
-        const fieldExists = await page.locator(field.selector).first().isVisible().catch(() => false);
-        if (fieldExists) {
-          console.log(`✅ ${field.name} encontrado`);
-        } else {
-          console.log(`⚠️  ${field.name} não encontrado`);
+  test('deve criar agendamento recorrente semanal', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    const newBtn = page.getByRole('button', { name: /novo agendamento/i });
+    await newBtn.click();
+    
+    await page.waitForSelector('[role="dialog"]', { timeout: 10000 });
+    
+    // Preencher dados básicos
+    await page.getByLabel(/paciente/i).click();
+    await page.waitForTimeout(300);
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 2);
+    const dateStr = futureDate.toISOString().split('T')[0];
+    
+    await page.getByLabel(/data/i).fill(dateStr);
+    await page.getByLabel(/hor[aá]rio/i).fill('09:00');
+    
+    // Ativar recorrência
+    const recurrenceCheckbox = page.getByLabel(/recorr[eê]ncia|repetir/i);
+    if (await recurrenceCheckbox.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await recurrenceCheckbox.check();
+      
+      // Selecionar frequência semanal
+      const frequencySelect = page.getByLabel(/frequ[eê]ncia|repetir a cada/i);
+      if (await frequencySelect.isVisible({ timeout: 2000 }).catch(() => false)) {
+        await frequencySelect.selectOption('semanal');
+        
+        // Definir número de repetições
+        const repeatCount = page.getByLabel(/repeti[çc][õo]es|n[úu]mero/i);
+        if (await repeatCount.isVisible({ timeout: 2000 }).catch(() => false)) {
+          await repeatCount.fill('4'); // 4 semanas
         }
       }
-
-      await page.screenshot({
-        path: 'test-results/screenshots/agenda-form-fields.png',
-        fullPage: true
-      });
     }
+    
+    await page.getByRole('button', { name: /salvar/i }).click();
+    
+    // Verificar sucesso
+    await expect(page.getByText(/agendamento.*criado|sucesso/i)).toBeVisible({ timeout: 10000 });
   });
 
-  test('4. Testar seleção de data no calendário', async ({ page }) => {
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Procurar input de data
-    const dateInput = page.locator('input[type="date"]').first();
-    const hasDateInput = await dateInput.isVisible().catch(() => false);
-
-    if (hasDateInput) {
-      await dateInput.fill('2024-12-25'); // Data de teste
-      console.log('✅ Data selecionada no input');
-    }
-
-    // Procurar botão "hoje" ou similar
-    const todayButton = page.locator('button').filter({ hasText: /hoje|today|agora/i }).first();
-    const hasTodayButton = await todayButton.isVisible().catch(() => false);
-
-    if (hasTodayButton) {
-      await todayButton.click();
-      console.log('✅ Botão "hoje" clicado');
-    }
-
-    await page.screenshot({
-      path: 'test-results/screenshots/agenda-date-selection.png',
-      fullPage: true
-    });
-  });
-
-  test('5. Navegar entre semanas do calendário', async ({ page }) => {
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Botão próxima semana
-    const nextButton = page.locator('button').filter({ hasText: /próxim|next|>/i }).first();
-    const hasNext = await nextButton.isVisible().catch(() => false);
-
-    if (hasNext) {
-      await nextButton.click();
-      await page.waitForTimeout(500);
-      await page.screenshot({
-        path: 'test-results/screenshots/agenda-next-week.png',
-        fullPage: true
-      });
-      console.log('✅ Navegou para próxima semana');
-    }
-
-    // Botão semana anterior
-    const prevButton = page.locator('button').filter({ hasText: /anterior|prev|</i }).first();
-    const hasPrev = await prevButton.isVisible().catch(() => false);
-
-    if (hasPrev) {
-      await prevButton.click();
-      await page.waitForTimeout(500);
-      await page.screenshot({
-        path: 'test-results/screenshots/agenda-prev-week.png',
-        fullPage: true
-      });
-      console.log('✅ Navegou para semana anterior');
-    }
-  });
-
-  test('6. Verificar visualização de agendamentos existentes', async ({ page }) => {
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Procurar por cards/items de agendamento
-    const appointments = page.locator('[class*="appointment"], [class*="event"], [class*="booking"]');
-    const count = await appointments.count();
-
-    console.log(`📊 Agendamentos encontrados: ${count}`);
-
-    if (count > 0) {
-      // Clicar no primeiro agendamento
-      await appointments.first().click();
+  test('deve buscar agendamento por paciente', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Localizar campo de busca
+    const searchInput = page.getByPlaceholder(/buscar|pesquisar/i) ||
+                        page.getByRole('searchbox');
+    
+    if (await searchInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+      // Digitar nome do paciente
+      await searchInput.fill('Maria');
       await page.waitForTimeout(1000);
-
-      await page.screenshot({
-        path: 'test-results/screenshots/agenda-appointment-details.png',
-        fullPage: true
-      });
-
-      console.log('✅ Detalhes do agendamento visualizados');
-    } else {
-      console.log('ℹ️  Nenhum agendamento existente encontrado');
-    }
-  });
-
-  test('7. Testar filtro por terapeuta/profissional', async ({ page }) => {
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Procurar select/dropdown de filtro
-    const filterSelect = page.locator('select, [role="combobox"]').first();
-    const hasFilter = await filterSelect.isVisible().catch(() => false);
-
-    if (hasFilter) {
-      const options = await filterSelect.locator('option').count();
-      console.log(`✅ Filtro encontrado com ${options} opções`);
-
-      await page.screenshot({
-        path: 'test-results/screenshots/agenda-filter.png',
-        fullPage: true
-      });
-    } else {
-      console.log('ℹ️  Filtro de terapeuta não encontrado');
-    }
-  });
-
-  test('8. Verificar diferentes visualizações (dia/semana/mês)', async ({ page }) => {
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Procurar botões de visualização
-    const viewButtons = ['Dia', 'Semana', 'Mês', 'Day', 'Week', 'Month'];
-
-    for (const viewName of viewButtons) {
-      const viewButton = page.locator('button').filter({ hasText: new RegExp(viewName, 'i') });
-      const exists = await viewButton.isVisible().catch(() => false);
-
-      if (exists) {
-        await viewButton.click();
-        await page.waitForTimeout(500);
-
-        await page.screenshot({
-          path: `test-results/screenshots/agenda-view-${viewName.toLowerCase()}.png`,
-          fullPage: true
-        });
-
-        console.log(`✅ Visualização ${viewName} testada`);
+      
+      // Verificar que apenas agendamentos de Maria aparecem
+      const appointments = page.locator('[data-testid*="appointment"]');
+      const count = await appointments.count();
+      
+      if (count > 0) {
+        // Verificar que todos contêm "Maria"
+        for (let i = 0; i < Math.min(count, 3); i++) {
+          const text = await appointments.nth(i).textContent();
+          expect(text?.toLowerCase()).toContain('maria');
+        }
       }
-    }
-  });
-
-  test('9. Testar busca de agendamentos', async ({ page }) => {
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Procurar input de busca
-    const searchInput = page.locator('input[type="search"], input[placeholder*="buscar" i], input[placeholder*="search" i]').first();
-    const hasSearch = await searchInput.isVisible().catch(() => false);
-
-    if (hasSearch) {
-      await searchInput.fill('João Silva');
-      await page.waitForTimeout(1000);
-
-      await page.screenshot({
-        path: 'test-results/screenshots/agenda-search-results.png',
-        fullPage: true
-      });
-
-      console.log('✅ Busca de agendamentos testada');
     } else {
-      console.log('ℹ️  Campo de busca não encontrado');
+      test.skip(true, 'Campo de busca não encontrado');
     }
   });
 
-  test('10. Verificar legenda de cores/status dos agendamentos', async ({ page }) => {
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Procurar legenda
-    const legend = page.locator('text=/legenda|status|cores/i');
-    const hasLegend = await legend.isVisible().catch(() => false);
-
-    if (hasLegend) {
-      console.log('✅ Legenda de cores encontrada');
+  test('deve filtrar agendamentos por terapeuta', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Localizar filtro de terapeuta
+    const therapistFilter = page.getByLabel(/terapeuta|profissional/i);
+    
+    if (await therapistFilter.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await therapistFilter.click();
+      await page.waitForTimeout(500);
+      
+      // Selecionar um terapeuta
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      
+      await page.waitForTimeout(1000);
+      
+      // Verificar que a visualização foi filtrada
+      const appointments = page.locator('[data-testid*="appointment"]');
+      const count = await appointments.count();
+      
+      expect(count).toBeGreaterThanOrEqual(0);
+    } else {
+      test.skip(true, 'Filtro de terapeuta não encontrado');
     }
-
-    // Verificar diferentes status visualmente
-    const statusElements = page.locator('[class*="confirmed"], [class*="pending"], [class*="canceled"], [class*="status"]');
-    const statusCount = await statusElements.count();
-
-    console.log(`📊 ${statusCount} elementos com indicadores de status encontrados`);
-
-    await page.screenshot({
-      path: 'test-results/screenshots/agenda-legend.png',
-      fullPage: true
-    });
   });
 
-  test('11. Teste de responsividade da agenda', async ({ page }) => {
-    await page.click('a:has-text("Agenda")');
-    await page.waitForLoadState('domcontentloaded');
+  test('deve visualizar detalhes do agendamento', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Localizar primeiro agendamento
+    const appointment = page.locator('[data-testid*="appointment"]').first();
+    
+    if (await appointment.isVisible({ timeout: 5000 }).catch(() => false)) {
+      await appointment.click();
+      
+      // Aguardar modal de detalhes
+      await page.waitForTimeout(1000);
+      
+      // Verificar que informações essenciais estão visíveis
+      await expect(page.getByText(/paciente/i)).toBeVisible();
+      await expect(page.getByText(/data|hor[aá]rio/i)).toBeVisible();
+      
+      // Verificar botões de ação
+      const actionButtons = page.getByRole('button');
+      const buttonCount = await actionButtons.count();
+      
+      expect(buttonCount).toBeGreaterThan(0);
+    } else {
+      test.skip(true, 'Nenhum agendamento disponível');
+    }
+  });
 
-    // Teste em mobile
-    await page.setViewportSize({ width: 375, height: 667 });
-    await page.waitForTimeout(500);
+  test('deve navegar entre semanas do calendário', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Capturar data atual exibida
+    const currentWeekText = await page.locator('h1, h2, [data-testid*="week"]').first().textContent();
+    
+    // Clicar em "Próxima semana"
+    const nextBtn = page.getByRole('button', { name: /próxim|next/i });
+    await nextBtn.click();
+    await page.waitForTimeout(1000);
+    
+    // Verificar que a semana mudou
+    const newWeekText = await page.locator('h1, h2, [data-testid*="week"]').first().textContent();
+    expect(newWeekText).not.toBe(currentWeekText);
+    
+    // Voltar para semana anterior
+    const prevBtn = page.getByRole('button', { name: /anterior|prev/i });
+    await prevBtn.click();
+    await page.waitForTimeout(1000);
+    
+    // Clicar em "Hoje" para voltar à semana atual
+    const todayBtn = page.getByRole('button', { name: /hoje|today/i });
+    await todayBtn.click();
+    await page.waitForTimeout(1000);
+  });
 
-    await page.screenshot({
-      path: 'test-results/screenshots/agenda-mobile-view.png',
-      fullPage: true
-    });
-
-    console.log('✅ Visualização mobile da agenda testada');
-
-    // Voltar para desktop
-    await page.setViewportSize({ width: 1280, height: 720 });
-    await page.waitForTimeout(500);
-
-    console.log('✅ Teste de responsividade concluído');
+  test('deve validar campos obrigatórios no formulário', async ({ page }) => {
+    await navigateToAgenda(page);
+    
+    // Abrir formulário
+    const newBtn = page.getByRole('button', { name: /novo agendamento/i });
+    await newBtn.click();
+    
+    await page.waitForSelector('[role="dialog"]', { timeout: 10000 });
+    
+    // Tentar salvar sem preencher
+    await page.getByRole('button', { name: /salvar/i }).click();
+    
+    // Verificar mensagens de validação
+    await expect(page.getByText(/obrigat[óo]rio|required|preencha/i)).toBeVisible({ timeout: 5000 });
   });
 });

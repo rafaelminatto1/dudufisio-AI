@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface GridProps {
   children: React.ReactNode;
@@ -397,5 +397,3 @@ export const Divider: React.FC<DividerProps> = ({
     />
   );
 };
-
-export { Grid, GridItem, Container, Stack, Divider };

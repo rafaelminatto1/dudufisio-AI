@@ -4,9 +4,10 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  root: '.',
+  // Isola o root para o design-system para evitar escanear o projeto inteiro
+  root: path.resolve(__dirname, 'design-system'),
   build: {
-    outDir: 'dist-design-system',
+    outDir: path.resolve(__dirname, 'dist-design-system'),
     emptyOutDir: true,
     rollupOptions: {
       input: {
@@ -16,16 +17,24 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './design-system'),
-      '@/src': path.resolve(__dirname, './src'),
+      // Prioriza utilitários compartilhados do root
+      '@/lib': path.resolve(__dirname, './lib'),
+      'design-system': path.resolve(__dirname, './design-system'),
+      '@/design-system': path.resolve(__dirname, './design-system'),
+      // Map '@' to project root to support root-level imports
+      '@': path.resolve(__dirname, '.'),
     },
   },
   server: {
     port: 3001,
-    open: '/design-system/index.html',
+    open: '/index.html',
+    fs: {
+      // Allow imports from project root when using a custom root
+      allow: [path.resolve(__dirname)],
+    },
   },
   css: {
-    postcss: './postcss.config.mjs',
+    postcss: path.resolve(__dirname, 'postcss.config.mjs'),
   },
   optimizeDeps: {
     exclude: ['src', 'lib', 'services', 'components/ui'],

@@ -13,7 +13,17 @@
       "Bash(dir:*)",
       "Bash(findstr:*)",
       "Bash(Select-String -Pattern \"format\" -Context 3)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir:*)",
+      "Bash(if [ -d \"dist/assets\" ])",
+      "Bash(then ls -lh dist/assets/*.js)",
+      "Bash(awk:*)",
+      "Bash(else echo \"Build não encontrado. Execute npm run build primeiro.\")",
+      "Bash(fi)",
+      "Bash(node scripts/analyze-bundle-size.js:*)",
+      "Bash(node scripts/analyze-bundle-size.cjs:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
