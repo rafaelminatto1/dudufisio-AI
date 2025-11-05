@@ -1,10 +1,11 @@
 {
   "status": "commited",
-  "type": "frontend",
+  "type": "backend",
   "scope": "codebase",
   "localEndpoint": "http://localhost:5173",
-  "loginUser": "admin@dudufisio.com",
-  "loginPassword": "DuduFisio2024!",
+  "backendAuthType": "basic token",
+  "backendUsername": "admin@dudufisio.com",
+  "backendPassword": "DuduFisio2024!",
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI",
@@ -14,10 +15,9 @@
       "TC007",
       "TC008"
     ],
-    "additionalInstruction": "Focar nos testes das funcionalidades de IA: transcrição de áudio, estruturação SOAP, sugestão de exercícios e resumo de progresso. Use as credenciais de login: admin@dudufisio.com / DuduFisio2024!",
+    "additionalInstruction": "Testar funcionalidades de IA no módulo de evolução: transcrição de áudio, estruturação SOAP, sugestão de exercícios e resumo de progresso. Use credenciais: admin@dudufisio.com / DuduFisio2024!. Verifique se o card \"Assistente de IA\" está presente no Editor de Evolução e se todas as funcionalidades estão funcionando corretamente.",
     "envs": {
       "API_KEY": "sk-user-8bMuKGfFoUIqX4t6ssw0xomOk6IV_HwEsApfdFk6dKdt9VPWsfekx6ge2QgANJyDuJqx8YqFAdjprxq5X_3Q2zFH6fc-rKwMqPACaMgJCt_jXILdR2OZYzCuap6y0uLjI58"
     }
-  },
-  "proxy": "http://32b74546-a14a-4a15-98e8-422fd325b2d9:3VFAXKHLqxo2sJhstduDUd4rArfTzZcJ@tun.testsprite.com:8080"
+  }
 }

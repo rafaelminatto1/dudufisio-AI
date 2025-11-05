@@ -1,146 +1,242 @@
 {
   "meta": {
-    "project": "DuduFisio-AI Physiotherapy Clinic Management System",
+    "project": "DuduFisio-AI",
     "date": "2025-11-04",
     "prepared_by": "Software Development Manager"
   },
-  "product_overview": "DuduFisio-AI is an integrated management system for physiotherapy clinics combining traditional clinical management features with advanced Artificial Intelligence assistance to optimize patient care, clinical documentation, and operational management.",
+  "product_overview": "DuduFisio-AI is an integrated management system designed specifically for physiotherapy clinics that combines traditional clinical management with AI assistance to optimize care delivery, clinical documentation, and operational management.",
   "core_goals": [
-    "Digitize and automate clinical physiotherapy processes",
-    "Enhance the quality of clinical documentation using AI",
-    "Increase operational efficiency and patient satisfaction"
+    "Digitize and automate physiotherapy clinical processes",
+    "Enhance the quality of clinical documentation through AI",
+    "Increase operational efficiency and patient satisfaction",
+    "Provide a comprehensive platform for patient management, scheduling, and exercise prescription",
+    "Enable insightful analytics and professional reporting"
   ],
   "key_features": [
-    "Comprehensive patient management including detailed profiles, medical histories, and interactive pain mapping",
-    "Robust appointment scheduling system supporting multiple therapists, recurrence, conflict prevention and notifications",
-    "Rich SOAP notes editor with auto-saving, version control, templates and AI-generated clinical reports",
-    "AI Assistant providing automatic report generation, treatment protocol suggestions, risk analysis, and clinical inquiry responses",
-    "Therapeutic exercise library with categorized, multimedia rich and personalized prescription capabilities",
-    "Secure patient portal for access to health records, prescribed exercises, and communication",
-    "Interactive dashboards and reports with financial and clinical analytics",
-    "Full financial management with payment tracking, invoicing and multiple payment methods support",
-    "Inventory management with stock alerts and transaction history",
+    "Comprehensive patient management with medical history, interactive body map, and secure photo storage",
+    "Robust appointment scheduling with calendar views, conflict prevention, recurring appointments, and notifications",
+    "Rich clinical documentation supporting SOAP notes, customizable templates, version history, and AI-generated reports",
+    "AI Assistant for generating physiotherapy reports, treatment protocols, risk analysis, clinical queries, and economic insights",
+    "Exercise library categorized by specialties with multimedia, personalized prescription, contraindication alerts, and difficulty levels",
+    "Patient portal offering secure login, access to exercises, appointment management, and communication with the clinic",
+    "Dashboard with KPIs, financial and clinical analytics, interactive reports, and PDF export",
+    "Financial management including payments, revenue tracking, delinquency management, and multiple payment methods",
+    "Inventory control with alerts and historical tracking",
     "Task management system with prioritization, progress tracking and notifications"
   ],
   "user_flow_summary": [
-    "Administrator logs in to access full system controls, financial dashboards, and manage users and inventory",
-    "Physiotherapist manages patient records, documents clinical evolutions using the editor with optional AI assistance, schedules sessions and prescribes exercises",
-    "Intern accesses limited patient and scheduling views for observational purposes",
-    "Patients log into the portal to view their medical records, follow exercises and request appointments",
-    "Users interact with AI features to transcribe spoken notes, generate structured SOAP notes, suggest exercises, and compile progress summaries"
+    "Users authenticate securely via Supabase Auth and are authorized based on role",
+    "Administrators manage users, financials, inventory, and task assignments",
+    "Physiotherapists access patient profiles, review medical history, and document SOAP notes using rich editor with AI support",
+    "Physiotherapists prescribe exercises from the library specifying parameters for patients",
+    "Sessions are timed automatically and progress photos can be uploaded and managed within patient evolution records",
+    "Appointment scheduling with calendar interface prevents conflicts and supports notifications and rescheduling",
+    "Templates allow reuse of common treatment plans and exercise sets",
+    "Patient users log into portal to view prescriptions, history, schedule appointments, and communicate with clinic staff",
+    "Reports and dashboards provide insights into clinical, operational, and financial data with export options"
   ],
   "validation_criteria": [
-    "System supports role-based authentication and access control with secure session management",
-    "Patient management supports complete data input, search with filters, and interactive pain mapping",
-    "Appointment system prevents scheduling conflicts and handles recurring events correctly",
-    "SOAP documentation editor autosaves inputs and manages version histories effectively",
-    "AI-generated content meets 95% accuracy in clinical reports and suggestions",
-    "Patient portal allows secure access to personalized data and communication with the clinic",
-    "Dashboards reflect accurate operational, clinical and financial metrics with export capability",
-    "System meets performance standards of under 2-second page load times and 99.5% uptime",
-    "Compliance with data protection laws including encryption and audit logging is ensured"
+    "System supports 100 concurrent users with page load times under 2 seconds",
+    "Accurate role-based access control and session management with timeout",
+    "Effective prevention of appointment scheduling conflicts, including recurring appointments",
+    "Reliable auto-save, version control, and template management for clinical notes",
+    "Successful integration with Google Gemini AI for report generation and clinical queries with fallback mechanisms",
+    "Secure upload and deletion of progress photos with proper storage management",
+    "Exercise prescription matches specified parameters and contraindication alerts are triggered",
+    "Notifications for appointments and task reminders are sent and received reliably",
+    "Exported reports in PDF format include all relevant data and maintain formatting quality",
+    "Full compliance with LGPD including encryption, audit logs, and user data protection"
   ],
   "code_summary": {
     "tech_stack": [
-      "React 19",
       "TypeScript",
+      "React 19",
       "Vite",
       "TailwindCSS",
+      "Supabase",
+      "PostgreSQL",
       "React Router DOM",
-      "Google Gemini API",
       "React Hook Form",
       "Zod",
-      "Lucide React",
-      "Recharts",
+      "@react-pdf/renderer",
       "Framer Motion",
-      "React Toastify"
+      "Lucide React"
     ],
     "features": [
       {
-        "name": "AI Audio Transcription",
-        "description": "Transcreve áudio do fisioterapeuta em texto usando Google Gemini 1.5 Flash. Permite gravação de evolução falada com conversão automática para texto.",
+        "name": "Evolution Module - Exercise Prescription",
+        "description": "Permite prescrever exercícios da biblioteca para pacientes com parâmetros específicos (séries, repetições, carga, duração)",
         "files": [
-          "services/ai/speechToTextService.ts",
-          "components/evolution/AudioRecorder.tsx",
-          "services/geminiService.ts"
-        ]
-      },
-      {
-        "name": "AI SOAP Structuring",
-        "description": "Estrutura automaticamente texto livre em formato SOAP (Subjetivo, Objetivo, Avaliação, Plano) usando IA do Gemini Pro.",
-        "files": [
-          "services/ai/soapStructureService.ts",
-          "services/geminiService.ts",
-          "components/medical-records/EvolutionEditor.tsx"
-        ]
-      },
-      {
-        "name": "AI Exercise Suggestion",
-        "description": "Sugere exercícios terapêuticos baseados no diagnóstico, local da dor, limitações funcionais e objetivos do paciente usando IA.",
-        "files": [
-          "services/ai/exerciseSuggestionService.ts",
-          "services/geminiService.ts",
-          "components/medical-records/EvolutionEditor.tsx"
-        ]
-      },
-      {
-        "name": "AI Progress Summary",
-        "description": "Gera resumos profissionais do progresso do paciente ao longo de múltiplas sessões usando IA do Gemini.",
-        "files": [
-          "services/ai/progressSummaryService.ts",
-          "services/geminiService.ts",
-          "pages/PatientProgressSummaryPage.tsx"
-        ]
-      },
-      {
-        "name": "Evolution Editor",
-        "description": "Editor completo para registro de evolução de pacientes com integração de IA. Permite registro manual ou assistido por IA.",
-        "files": [
+          "components/evolution/ExerciseSelector.tsx",
+          "components/evolution/PrescribedExerciseList.tsx",
           "components/medical-records/EvolutionEditor.tsx",
-          "pages/PatientDetailPage.tsx"
+          "services/exerciseService.ts",
+          "types.ts"
+        ],
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/exercises",
+            "description": "Lista exercícios da biblioteca com filtros"
+          }
+        ]
+      },
+      {
+        "name": "Evolution Module - Templates",
+        "description": "Sistema de templates reutilizáveis para evoluções SOAP com condutas e exercícios pré-definidos",
+        "files": [
+          "components/evolution/TemplateSelector.tsx",
+          "components/evolution/TemplateSaveDialog.tsx",
+          "services/evolutionTemplateService.ts",
+          "types.ts"
+        ],
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/api/evolution-templates",
+            "description": "Lista templates do terapeuta"
+          },
+          {
+            "method": "POST",
+            "path": "/api/evolution-templates",
+            "description": "Cria novo template"
+          },
+          {
+            "method": "PUT",
+            "path": "/api/evolution-templates/:id/increment-usage",
+            "description": "Incrementa contador de uso do template"
+          }
+        ]
+      },
+      {
+        "name": "Evolution Module - Session Timer",
+        "description": "Timer automático que rastreia a duração da sessão de atendimento",
+        "files": [
+          "components/evolution/SessionTimer.tsx",
+          "components/medical-records/EvolutionEditor.tsx",
+          "types.ts"
+        ]
+      },
+      {
+        "name": "Evolution Module - Progress Photos",
+        "description": "Upload e gestão de fotos de progresso do paciente com legendas",
+        "files": [
+          "components/evolution/PhotoUpload.tsx",
+          "services/storage/photoUploadService.ts",
+          "components/medical-records/EvolutionEditor.tsx",
+          "types.ts"
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/storage/v1/object/progress-photos",
+            "description": "Upload de foto de progresso (Supabase Storage)"
+          },
+          {
+            "method": "DELETE",
+            "path": "/storage/v1/object/progress-photos/:path",
+            "description": "Remove foto de progresso"
+          }
+        ]
+      },
+      {
+        "name": "Evolution Module - Previous Session Comparison",
+        "description": "Exibe informações da última sessão do paciente para comparação rápida",
+        "files": [
+          "components/evolution/PreviousSessionComparison.tsx",
+          "services/sessionEvolutionService.ts",
+          "components/medical-records/EvolutionEditor.tsx",
+          "types.ts"
+        ],
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/api/session-evolutions/patient/:patientId/latest",
+            "description": "Obtém última sessão de evolução do paciente"
+          }
+        ]
+      },
+      {
+        "name": "Evolution Module - PDF Export",
+        "description": "Exportação profissional da evolução em formato PDF com todas as informações",
+        "files": [
+          "services/pdf/evolutionReportService.tsx",
+          "components/medical-records/EvolutionEditor.tsx",
+          "types.ts"
         ]
       },
       {
         "name": "Patient Management",
-        "description": "Sistema completo de gerenciamento de pacientes incluindo listagem, detalhes, histórico médico e evoluções.",
+        "description": "Gestão completa de pacientes com histórico médico e evoluções",
         "files": [
           "pages/PatientListPage.tsx",
           "pages/PatientDetailPage.tsx",
-          "services/database/mockPatientService.ts"
+          "services/patientService.ts",
+          "types.ts"
+        ],
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/api/patients",
+            "description": "Lista pacientes"
+          },
+          {
+            "method": "GET",
+            "path": "/api/patients/:id",
+            "description": "Detalhes do paciente"
+          }
         ]
       },
       {
         "name": "Appointment Scheduling",
-        "description": "Sistema de agendamento com calendário semanal, suporte a múltiplos terapeutas e agendamentos recorrentes.",
+        "description": "Agendamento de consultas com visualização em calendário",
         "files": [
           "pages/AgendaPage.tsx",
           "services/scheduling/appointmentService.ts",
-          "components/agenda/WeeklyCalendar.tsx"
+          "types.ts"
+        ],
+        "endpoints": [
+          {
+            "method": "GET",
+            "path": "/api/appointments",
+            "description": "Lista agendamentos"
+          },
+          {
+            "method": "POST",
+            "path": "/api/appointments",
+            "description": "Cria novo agendamento"
+          }
         ]
       },
       {
         "name": "Authentication",
-        "description": "Sistema de autenticação com login/logout e gerenciamento de sessão de usuário.",
+        "description": "Sistema de autenticação de usuários com Supabase Auth",
         "files": [
-          "pages/LoginPage.tsx",
           "contexts/AuthContext.tsx",
-          "services/authService.ts"
+          "lib/supabaseClient.ts",
+          "types.ts"
+        ],
+        "endpoints": [
+          {
+            "method": "POST",
+            "path": "/auth/v1/token",
+            "description": "Login de usuário"
+          },
+          {
+            "method": "POST",
+            "path": "/auth/v1/logout",
+            "description": "Logout de usuário"
+          }
         ]
       },
       {
-        "name": "Financial Management",
-        "description": "Dashboard financeiro com tracking de receitas, pagamentos e relatórios analíticos.",
+        "name": "Dashboard",
+        "description": "Dashboard principal com KPIs e métricas da clínica",
         "files": [
-          "pages/FinancialDashboardPage.tsx",
-          "services/financialService.ts"
-        ]
-      },
-      {
-        "name": "Treatment Tracking",
-        "description": "Acompanhamento de tratamentos com notas de sessão, progresso e condutas terapêuticas.",
-        "files": [
-          "pages/AcompanhamentoPage.tsx",
-          "components/medical-records/SessionNote.tsx"
+          "pages/DashboardPageV2.tsx",
+          "components/dashboard/KPIWidget.tsx",
+          "services/database/mockData.ts",
+          "types.ts"
         ]
       }
     ]

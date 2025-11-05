@@ -1,104 +1,193 @@
 {
   "tech_stack": [
-    "React 19",
     "TypeScript",
+    "React 19",
     "Vite",
     "TailwindCSS",
+    "Supabase",
+    "PostgreSQL",
     "React Router DOM",
-    "Google Gemini API",
     "React Hook Form",
     "Zod",
-    "Lucide React",
-    "Recharts",
+    "@react-pdf/renderer",
     "Framer Motion",
-    "React Toastify"
+    "Lucide React"
   ],
   "features": [
     {
-      "name": "AI Audio Transcription",
-      "description": "Transcreve áudio do fisioterapeuta em texto usando Google Gemini 1.5 Flash. Permite gravação de evolução falada com conversão automática para texto.",
+      "name": "Evolution Module - Exercise Prescription",
+      "description": "Permite prescrever exercícios da biblioteca para pacientes com parâmetros específicos (séries, repetições, carga, duração)",
       "files": [
-        "services/ai/speechToTextService.ts",
-        "components/evolution/AudioRecorder.tsx",
-        "services/geminiService.ts"
-      ]
-    },
-    {
-      "name": "AI SOAP Structuring",
-      "description": "Estrutura automaticamente texto livre em formato SOAP (Subjetivo, Objetivo, Avaliação, Plano) usando IA do Gemini Pro.",
-      "files": [
-        "services/ai/soapStructureService.ts",
-        "services/geminiService.ts",
-        "components/medical-records/EvolutionEditor.tsx"
-      ]
-    },
-    {
-      "name": "AI Exercise Suggestion",
-      "description": "Sugere exercícios terapêuticos baseados no diagnóstico, local da dor, limitações funcionais e objetivos do paciente usando IA.",
-      "files": [
-        "services/ai/exerciseSuggestionService.ts",
-        "services/geminiService.ts",
-        "components/medical-records/EvolutionEditor.tsx"
-      ]
-    },
-    {
-      "name": "AI Progress Summary",
-      "description": "Gera resumos profissionais do progresso do paciente ao longo de múltiplas sessões usando IA do Gemini.",
-      "files": [
-        "services/ai/progressSummaryService.ts",
-        "services/geminiService.ts",
-        "pages/PatientProgressSummaryPage.tsx"
-      ]
-    },
-    {
-      "name": "Evolution Editor",
-      "description": "Editor completo para registro de evolução de pacientes com integração de IA. Permite registro manual ou assistido por IA.",
-      "files": [
+        "components/evolution/ExerciseSelector.tsx",
+        "components/evolution/PrescribedExerciseList.tsx",
         "components/medical-records/EvolutionEditor.tsx",
-        "pages/PatientDetailPage.tsx"
+        "services/exerciseService.ts",
+        "types.ts"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/exercises",
+          "description": "Lista exercícios da biblioteca com filtros"
+        }
+      ]
+    },
+    {
+      "name": "Evolution Module - Templates",
+      "description": "Sistema de templates reutilizáveis para evoluções SOAP com condutas e exercícios pré-definidos",
+      "files": [
+        "components/evolution/TemplateSelector.tsx",
+        "components/evolution/TemplateSaveDialog.tsx",
+        "services/evolutionTemplateService.ts",
+        "types.ts"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/evolution-templates",
+          "description": "Lista templates do terapeuta"
+        },
+        {
+          "method": "POST",
+          "path": "/api/evolution-templates",
+          "description": "Cria novo template"
+        },
+        {
+          "method": "PUT",
+          "path": "/api/evolution-templates/:id/increment-usage",
+          "description": "Incrementa contador de uso do template"
+        }
+      ]
+    },
+    {
+      "name": "Evolution Module - Session Timer",
+      "description": "Timer automático que rastreia a duração da sessão de atendimento",
+      "files": [
+        "components/evolution/SessionTimer.tsx",
+        "components/medical-records/EvolutionEditor.tsx",
+        "types.ts"
+      ]
+    },
+    {
+      "name": "Evolution Module - Progress Photos",
+      "description": "Upload e gestão de fotos de progresso do paciente com legendas",
+      "files": [
+        "components/evolution/PhotoUpload.tsx",
+        "services/storage/photoUploadService.ts",
+        "components/medical-records/EvolutionEditor.tsx",
+        "types.ts"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/storage/v1/object/progress-photos",
+          "description": "Upload de foto de progresso (Supabase Storage)"
+        },
+        {
+          "method": "DELETE",
+          "path": "/storage/v1/object/progress-photos/:path",
+          "description": "Remove foto de progresso"
+        }
+      ]
+    },
+    {
+      "name": "Evolution Module - Previous Session Comparison",
+      "description": "Exibe informações da última sessão do paciente para comparação rápida",
+      "files": [
+        "components/evolution/PreviousSessionComparison.tsx",
+        "services/sessionEvolutionService.ts",
+        "components/medical-records/EvolutionEditor.tsx",
+        "types.ts"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/session-evolutions/patient/:patientId/latest",
+          "description": "Obtém última sessão de evolução do paciente"
+        }
+      ]
+    },
+    {
+      "name": "Evolution Module - PDF Export",
+      "description": "Exportação profissional da evolução em formato PDF com todas as informações",
+      "files": [
+        "services/pdf/evolutionReportService.tsx",
+        "components/medical-records/EvolutionEditor.tsx",
+        "types.ts"
       ]
     },
     {
       "name": "Patient Management",
-      "description": "Sistema completo de gerenciamento de pacientes incluindo listagem, detalhes, histórico médico e evoluções.",
+      "description": "Gestão completa de pacientes com histórico médico e evoluções",
       "files": [
         "pages/PatientListPage.tsx",
         "pages/PatientDetailPage.tsx",
-        "services/database/mockPatientService.ts"
+        "services/patientService.ts",
+        "types.ts"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/patients",
+          "description": "Lista pacientes"
+        },
+        {
+          "method": "GET",
+          "path": "/api/patients/:id",
+          "description": "Detalhes do paciente"
+        }
       ]
     },
     {
       "name": "Appointment Scheduling",
-      "description": "Sistema de agendamento com calendário semanal, suporte a múltiplos terapeutas e agendamentos recorrentes.",
+      "description": "Agendamento de consultas com visualização em calendário",
       "files": [
         "pages/AgendaPage.tsx",
         "services/scheduling/appointmentService.ts",
-        "components/agenda/WeeklyCalendar.tsx"
+        "types.ts"
+      ],
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/appointments",
+          "description": "Lista agendamentos"
+        },
+        {
+          "method": "POST",
+          "path": "/api/appointments",
+          "description": "Cria novo agendamento"
+        }
       ]
     },
     {
       "name": "Authentication",
-      "description": "Sistema de autenticação com login/logout e gerenciamento de sessão de usuário.",
+      "description": "Sistema de autenticação de usuários com Supabase Auth",
       "files": [
-        "pages/LoginPage.tsx",
         "contexts/AuthContext.tsx",
-        "services/authService.ts"
+        "lib/supabaseClient.ts",
+        "types.ts"
+      ],
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/auth/v1/token",
+          "description": "Login de usuário"
+        },
+        {
+          "method": "POST",
+          "path": "/auth/v1/logout",
+          "description": "Logout de usuário"
+        }
       ]
     },
     {
-      "name": "Financial Management",
-      "description": "Dashboard financeiro com tracking de receitas, pagamentos e relatórios analíticos.",
+      "name": "Dashboard",
+      "description": "Dashboard principal com KPIs e métricas da clínica",
       "files": [
-        "pages/FinancialDashboardPage.tsx",
-        "services/financialService.ts"
-      ]
-    },
-    {
-      "name": "Treatment Tracking",
-      "description": "Acompanhamento de tratamentos com notas de sessão, progresso e condutas terapêuticas.",
-      "files": [
-        "pages/AcompanhamentoPage.tsx",
-        "components/medical-records/SessionNote.tsx"
+        "pages/DashboardPageV2.tsx",
+        "components/dashboard/KPIWidget.tsx",
+        "services/database/mockData.ts",
+        "types.ts"
       ]
     }
   ]

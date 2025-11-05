@@ -1,358 +1,227 @@
-# 📚 TestSprite - Documentação de Testes
+# 🧪 Testes Automatizados com Playwright
 
-## 🎯 Visão Geral
+## 📋 Funcionalidades Testadas
 
-Este diretório contém todos os resultados e análises da execução do TestSprite no projeto **DuduFisio AI**.
+### Módulo de Evolução Avançada (6 funcionalidades):
 
-**Data de Execução:** 24 de Outubro de 2025  
-**Ferramenta:** TestSprite + Playwright  
-**Resultado Geral:** ⚠️ 38.9% de sucesso (14/36 testes)
+1. **⏱️ Timer de Sessão** - Verifica se timer inicia automaticamente
+2. **📊 Sessão Anterior** - Testa exibição de dados da última sessão
+3. **💪 Prescrição de Exercícios** - Valida modal de seleção de exercícios
+4. **📸 Upload de Fotos** - Confirma presença de campo de upload
+5. **📝 Templates** - Testa abertura de modal de templates
+6. **📄 Exportação PDF** - Verifica existência do botão de PDF
+7. **🔄 Salvar como Template** - Testa dialog de criar template
+8. **✅ Integração** - Verifica ausência de erros no console
+9. **📱 Layout Responsivo** - Valida presença da sidebar
+10. **📝 Formulário SOAP** - Confirma todos campos principais
+
+### Testes de Performance:
+- Carregamento da página de evolução (< 5s)
 
 ---
 
-## 📁 Estrutura de Arquivos
+## 🚀 Como Executar os Testes
+
+### 1. Instalar Playwright (primeira vez)
+
+```bash
+npm install -D @playwright/test
+npx playwright install
+```
+
+### 2. Iniciar o servidor de desenvolvimento
+
+```bash
+npm run dev
+```
+
+O servidor deve estar rodando em `http://localhost:5173`
+
+### 3. Executar os testes
+
+**Todos os testes:**
+```bash
+npx playwright test
+```
+
+**Apenas testes de evolução:**
+```bash
+npx playwright test evolution-advanced-features
+```
+
+**Com interface gráfica:**
+```bash
+npx playwright test --ui
+```
+
+**Modo debug:**
+```bash
+npx playwright test --debug
+```
+
+**Executar teste específico:**
+```bash
+npx playwright test -g "Timer de Sessão"
+```
+
+---
+
+## 📊 Relatórios
+
+Após executar os testes, visualize o relatório HTML:
+
+```bash
+npx playwright show-report testsprite_tests/reports/html
+```
+
+Os relatórios incluem:
+- ✅ Testes que passaram
+- ❌ Testes que falharam
+- 📸 Screenshots de falhas
+- 🎥 Vídeos de testes que falharam
+- 📈 Métricas de performance
+
+---
+
+## ⚙️ Configuração
+
+**Arquivo:** `playwright.config.ts`
+
+Configurações principais:
+- **baseURL:** http://localhost:5173
+- **timeout:** 30 segundos por teste
+- **workers:** 1 (testes em sequência)
+- **retries:** 0 em dev, 2 em CI
+- **screenshots:** Apenas em falhas
+- **videos:** Apenas em falhas
+
+---
+
+## 🔧 Customização
+
+### Adicionar Novo Teste
+
+Edite `testsprite_tests/evolution-advanced-features.spec.ts`:
+
+```typescript
+test('Meu novo teste', async ({ page }) => {
+  // Seu código aqui
+  await page.click('text=Meu Botão');
+  expect(await page.locator('.resultado').count()).toBeGreaterThan(0);
+});
+```
+
+### Alterar Credenciais de Teste
+
+No arquivo `evolution-advanced-features.spec.ts`, linha 16:
+
+```typescript
+const TEST_USER = {
+  email: 'seu-email@moocafisio.com.br',
+  password: 'sua-senha'
+};
+```
+
+---
+
+## 📝 Estrutura dos Testes
 
 ```
 testsprite_tests/
-├── 📄 README.md                          ← Você está aqui!
-├── 📄 RESUMO_EXECUTIVO.md                ← Leia isto primeiro!
-├── 📄 RELATORIO_TESTES_TESTSPRITE.md     ← Relatório completo
-├── 📄 GUIA_CORRECAO_SIDEBAR.md           ← Como corrigir o problema
-└── tmp/
-    └── code_summary.json                 ← Resumo técnico do código
+├── evolution-advanced-features.spec.ts  # Testes principais
+├── reports/                             # Relatórios gerados
+│   ├── html/                           # Relatório HTML
+│   └── results.json                    # Resultados em JSON
+└── README.md                           # Esta documentação
 ```
 
 ---
 
-## 🚀 COMECE AQUI
+## 🎯 CI/CD
 
-### 1️⃣ Para Executivos e Product Owners
-📖 **Leia:** [RESUMO_EXECUTIVO.md](./RESUMO_EXECUTIVO.md)
-- Resultados em formato visual
-- Impacto no negócio
-- ROI da correção
-- Próximos passos
+Para integrar com GitHub Actions:
 
-### 2️⃣ Para Desenvolvedores
-🔧 **Leia:** [GUIA_CORRECAO_SIDEBAR.md](./GUIA_CORRECAO_SIDEBAR.md)
-- Passo a passo para corrigir
-- Comandos práticos
-- Checklist de validação
-- Troubleshooting
+```yaml
+# .github/workflows/playwright.yml
+name: Playwright Tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-### 3️⃣ Para QA e Analistas
-📊 **Leia:** [RELATORIO_TESTES_TESTSPRITE.md](./RELATORIO_TESTES_TESTSPRITE.md)
-- Análise detalhada de cada teste
-- Screenshots e traces
-- Métricas de qualidade
-- Cobertura de testes
-
-### 4️⃣ Para Arquitetos e Tech Leads
-🏗️ **Leia:** [tmp/code_summary.json](./tmp/code_summary.json)
-- Stack tecnológico completo
-- 48 features mapeadas
-- Estrutura do código
-- Dependências
-
----
-
-## 📊 Resultados em Números
-
-### Testes Executados
-
-```
-┌──────────────────────────────────────────┐
-│           RESUMO GERAL                   │
-├──────────────────────────────────────────┤
-│  Total de Testes:        36              │
-│  ✅ Passaram:            14 (38.9%)      │
-│  ❌ Falharam:            22 (61.1%)      │
-│  ⏱️  Tempo Total:         ~3 minutos     │
-│  🎯 Meta:                80%+            │
-└──────────────────────────────────────────┘
-```
-
-### Distribuição de Falhas
-
-```
-Suite de Testes              Status     Testes
-─────────────────────────────────────────────
-Navegação Simples           ✅ 100%    14/14
-Gestão de Pacientes         ❌ 0%      0/4
-Agendamento de Consultas    ❌ 0%      0/11
-Outros (não executados)     ⏸️  N/A     7+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: playwright-report
+        path: testsprite_tests/reports/
+        retention-days: 30
 ```
 
 ---
 
-## 🚨 PROBLEMA CRÍTICO
+## 🐛 Troubleshooting
 
-### Sidebar Duplicado
-
-**Descrição:** O sistema está renderizando duas sidebars simultaneamente, causando "strict mode violation" no Playwright.
-
-**Impacto:**
-- 🔴 Bloqueando 22 testes (61%)
-- 🔴 Gestão de Pacientes inacessível
-- 🔴 Agendamento bloqueado
-- 🔴 Experiência de desenvolvimento prejudicada
-
-**Solução:**
-👉 Siga o [GUIA_CORRECAO_SIDEBAR.md](./GUIA_CORRECAO_SIDEBAR.md)
-
-**Tempo Estimado:** 2-4 horas  
-**Dificuldade:** 🟡 Baixa a Média  
-**ROI:** 🟢 Alto (+41% de cobertura)
-
----
-
-## 🎯 Ações Imediatas
-
-### ⚡ URGENTE (Hoje)
+### Erro: "Browser not found"
 
 ```bash
-# 1. Ler o guia de correção
-cat testsprite_tests/GUIA_CORRECAO_SIDEBAR.md
-
-# 2. Localizar sidebars duplicadas
-grep -r "<aside" components/ --include="*.tsx"
-
-# 3. Corrigir o código
-# (Seguir passo a passo do guia)
-
-# 4. Testar
-npm run build && npm run start
-npx playwright test tests/e2e/patient-management.spec.ts
+npx playwright install
 ```
 
-### 📅 Esta Semana
+### Erro: "Timeout waiting for page"
 
-- [ ] Corrigir sidebar duplicado
-- [ ] Re-executar todos os testes
-- [ ] Adicionar data-testids faltantes
-- [ ] Documentar padrões de teste
+- Verifique se o servidor dev está rodando
+- Aumente o timeout em `playwright.config.ts`
 
-### 📆 Próximas 2 Semanas
+### Erro: "Element not found"
 
-- [ ] Expandir cobertura para módulos restantes
-- [ ] Configurar CI/CD com testes
-- [ ] Implementar testes de regressão visual
-- [ ] Treinamento do time em boas práticas
+- Os seletores podem ter mudado
+- Verifique a estrutura HTML da página
+- Use `--debug` para inspecionar
+
+### Testes falhando no CI
+
+- Adicione mais retries em `playwright.config.ts`
+- Use `waitForLoadState('networkidle')`
+- Adicione `await page.waitForTimeout(1000)` se necessário
 
 ---
 
-## 📖 Guia de Leitura Recomendado
+## 📚 Recursos
 
-### Fluxo Rápido (15 minutos)
-1. 📄 README.md (este arquivo) - 3 min
-2. 📄 RESUMO_EXECUTIVO.md - 5 min
-3. 🔧 GUIA_CORRECAO_SIDEBAR.md - 7 min
-
-### Fluxo Completo (45 minutos)
-1. 📄 README.md - 3 min
-2. 📄 RESUMO_EXECUTIVO.md - 10 min
-3. 📊 RELATORIO_TESTES_TESTSPRITE.md - 20 min
-4. 🔧 GUIA_CORRECAO_SIDEBAR.md - 12 min
-
-### Fluxo Técnico (60+ minutos)
-1. 📄 Todos os arquivos acima
-2. 🏗️ tmp/code_summary.json - 15 min
-3. 🔍 Análise dos traces e screenshots - 20+ min
-4. 📝 Planejamento de melhorias - 15+ min
+- [Documentação Playwright](https://playwright.dev)
+- [Best Practices](https://playwright.dev/docs/best-practices)
+- [API Reference](https://playwright.dev/docs/api/class-playwright)
+- [Seletores](https://playwright.dev/docs/selectors)
 
 ---
 
-## 🛠️ Comandos Úteis
+## ✅ Checklist de Validação
 
-### Executar Testes
+Antes de fazer push:
 
-```bash
-# Todos os testes
-npm run test:e2e
-
-# Suite específica
-npm run test:e2e -- tests/e2e/simple-navigation-test.spec.ts
-
-# Com interface visual
-npm run test:e2e:ui
-
-# Com navegador visível
-npm run test:e2e:headed
-
-# Apenas Chromium
-npx playwright test --project=chromium
-```
-
-### Visualizar Resultados
-
-```bash
-# Relatório HTML
-npx playwright show-report
-
-# Trace específico
-npx playwright show-trace test-results/[pasta]/trace.zip
-
-# Screenshots
-# Veja em: test-results/[pasta]/test-failed-1.png
-```
-
-### Build e Preview
-
-```bash
-# Build de produção
-npm run build
-
-# Servidor preview (porta 4173)
-npm run start
-
-# Definir porta personalizada
-$env:PLAYWRIGHT_BASE_URL='http://localhost:4173'
-```
+- [ ] Todos testes passando localmente
+- [ ] Screenshots de falhas revisadas
+- [ ] Relatório HTML gerado e revisado
+- [ ] Credenciais de teste corretas
+- [ ] Servidor dev rodando na porta correta
+- [ ] Timeout adequado para testes lentos
 
 ---
 
-## 📈 Evolução Esperada
-
-### Antes da Correção
-```
-████████████░░░░░░░░░░░░░░░░  38.9% ✅
-```
-
-### Após Correção do Sidebar
-```
-████████████████████████░░░░  80%+ ✅
-```
-
-### Meta Final (Com Testes Completos)
-```
-████████████████████████████  95%+ ✅
-```
-
----
-
-## 🎓 Informações Técnicas
-
-### Stack de Testes
-- **Framework:** Playwright 1.55.1
-- **Linguagem:** TypeScript
-- **Runners:** Chromium, Firefox, WebKit
-- **CI/CD:** Pronto para integração
-
-### Arquitetura de Testes
-```
-tests/
-├── e2e/              # 52+ testes end-to-end
-├── integration/      # 13 testes de integração
-├── unit/            # Testes unitários
-├── accessibility/   # Testes WCAG
-├── performance/     # Testes de performance
-├── responsive/      # Testes responsivos
-└── security/        # Testes de segurança
-```
-
-### Features Mapeadas
-- ✅ 48 módulos principais identificados
-- ✅ 15+ tecnologias no stack
-- ✅ 250+ componentes catalogados
-- ✅ 150+ serviços mapeados
-
----
-
-## 💡 Boas Práticas Identificadas
-
-### ✅ O que está Bom
-- Estrutura de testes bem organizada
-- Uso de Page Objects
-- Helpers reutilizáveis
-- Fixtures consistentes
-- Cobertura de código ampla
-
-### ⚠️ O que Precisa Melhorar
-- Sidebar duplicado (crítico)
-- Faltam data-testids em alguns componentes
-- Timeouts podem ser otimizados
-- Documentação de testes pode expandir
-
----
-
-## 🔗 Links Importantes
-
-### Documentação Oficial
-- [Playwright Docs](https://playwright.dev/docs/intro)
-- [Testing Best Practices](https://playwright.dev/docs/best-practices)
-- [Debugging Tests](https://playwright.dev/docs/debug)
-
-### Arquivos do Projeto
-- [Configuração Playwright](../playwright.config.ts)
-- [Package.json](../package.json)
-- [Vite Config](../vite.config.ts)
-
-### Relatórios Gerados
-- HTML Report: `playwright-report/index.html`
-- Test Results: `test-results/`
-- Screenshots: `test-results/[suite]/test-failed-*.png`
-- Videos: `test-results/[suite]/video.webm`
-- Traces: `test-results/[suite]/trace.zip`
-
----
-
-## 📞 Suporte
-
-### Em Caso de Dúvidas
-
-1. **Consulte os documentos:**
-   - RESUMO_EXECUTIVO.md
-   - GUIA_CORRECAO_SIDEBAR.md
-   - RELATORIO_TESTES_TESTSPRITE.md
-
-2. **Analise os traces:**
-   ```bash
-   npx playwright show-trace test-results/[pasta]/trace.zip
-   ```
-
-3. **Verifique screenshots:**
-   ```
-   test-results/[pasta]/test-failed-1.png
-   ```
-
-4. **Execute com debug:**
-   ```bash
-   npx playwright test --debug
-   ```
-
----
-
-## 🎯 Conclusão
-
-O sistema **DuduFisio AI** possui uma base sólida de testes com cobertura abrangente. O problema de sidebar duplicado é **facilmente corrigível** e, uma vez resolvido, desbloqueará **mais de 20 testes adicionais**, elevando a taxa de sucesso de 39% para potencialmente **80%+**.
-
-### Próxima Ação
-👉 **Comece pelo** [GUIA_CORRECAO_SIDEBAR.md](./GUIA_CORRECAO_SIDEBAR.md)
-
----
-
-## 📊 Estatísticas Finais
-
-```
-┌─────────────────────────────────────────────┐
-│         TESTSPRITE ANALYSIS SUMMARY         │
-├─────────────────────────────────────────────┤
-│  Arquivos Analisados:     250+              │
-│  Features Mapeadas:       48                │
-│  Testes Executados:       36                │
-│  Testes Passaram:         14 (38.9%)        │
-│  Problema Crítico:        1 (Sidebar)       │
-│  Tempo de Análise:        ~1 hora           │
-│  Tempo para Correção:     2-4 horas         │
-│  ROI Esperado:            +41% cobertura    │
-└─────────────────────────────────────────────┘
-```
-
----
-
-**🎉 Obrigado por usar TestSprite!**
-
-**Gerado em:** 24 de Outubro de 2025  
-**Versão:** 1.0.0  
-**Status:** ✅ Análise Completa
-
+**🎉 Testes prontos para garantir qualidade das funcionalidades avançadas! 🎉**
