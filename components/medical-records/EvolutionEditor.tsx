@@ -1,6 +1,7 @@
 /**
  * Componente: Editor de Evolução de Sessão
  * Editor integrado com mapa corporal para evoluções clínicas
+ * Versão atualizada com funcionalidades avançadas
  */
 
 import React, { useState, useEffect } from 'react';
@@ -67,7 +68,6 @@ import {
   Heart,
   Brain,
   Bone,
-  // Lungs, // Substituído por MdLungs
   Baby,
   Zap,
   Shield,
@@ -81,9 +81,28 @@ import {
   TrendingDown,
   Minus,
   MapPin,
-  // PainChart // Substituído por MdAssessment
+  FileText,
+  Download,
+  Dumbbell,
 } from 'lucide-react';
 import { MdHealthAndSafety, MdAssessment } from 'react-icons/md';
+import { Conduct } from '../../types/conducts';
+import { ConductForm } from '../evolution/ConductForm';
+import { ConductList } from '../evolution/ConductList';
+import { generatePlanText } from '../../lib/evolution/conductsFormatter';
+
+// Novos imports para funcionalidades avançadas
+import { SessionTimer, useSessionTimer } from '../evolution/SessionTimer';
+import { PreviousSessionComparison } from '../evolution/PreviousSessionComparison';
+import { ExerciseSelector } from '../evolution/ExerciseSelector';
+import { PrescribedExerciseList } from '../evolution/PrescribedExerciseList';
+import { PhotoUpload } from '../evolution/PhotoUpload';
+import { TemplateSelector } from '../evolution/TemplateSelector';
+import { TemplateSaveDialog } from '../evolution/TemplateSaveDialog';
+import { PrescribedExercise, ProgressPhoto, Patient, Therapist } from '@/types';
+import { downloadEvolutionPDF } from '@/services/pdf/evolutionReportService';
+import { useToast } from '@/contexts/ToastContext';
+import { useApp } from '@/contexts/AppContext';
 
 // Schema de validação
 const evolutionSchema = z.object({
@@ -100,24 +119,18 @@ const evolutionSchema = z.object({
   objectiveFindings: z.string().min(20, 'Achados objetivos devem ter pelo menos 20 caracteres'),
   measurements: z.record(z.any()).optional(),
   
-  // Intervenções
-  techniquesApplied: z.array(z.object({
-    name: z.string().min(1, 'Nome da técnica é obrigatório'),
-    duration: z.string().min(1, 'Duração é obrigatória'),
-    parameters: z.record(z.any()),
-    response: z.string().min(1, 'Resposta é obrigatória')
-  })).min(1, 'Pelo menos uma técnica deve ser aplicada'),
-  
-  exercisesPerformed: z.array(z.object({
-    name: z.string().min(1, 'Nome do exercício é obrigatório'),
-    description: z.string().min(1, 'Descrição é obrigatória'),
-    repetitions: z.number().min(1, 'Repetições devem ser pelo menos 1'),
-    sets: z.number().min(1, 'Séries devem ser pelo menos 1'),
+  // Condutas estruturadas (novo sistema)
+  conducts: z.array(z.object({
+    id: z.string(),
+    category: z.string(),
+    name: z.string(),
+    details: z.string().optional(),
     duration: z.string().optional(),
-    instructions: z.string().min(1, 'Instruções são obrigatórias')
+    equipment: z.string().optional(),
+    notes: z.string().optional()
   })).optional(),
   
-  equipmentUsed: z.array(z.string()).optional(),
+  planGeneralNotes: z.string().optional(),
   
   // Resposta do paciente
   patientResponse: z.string().min(10, 'Resposta do paciente deve ter pelo menos 10 caracteres'),
@@ -170,10 +183,24 @@ export function EvolutionEditor({
   isLoading = false,
   previousEvolution
 }: EvolutionEditorProps) {
+  const { user } = useApp();
+  const { showToast } = useToast();
+  
+  // Estados existentes
   const [currentTab, setCurrentTab] = useState('subjective');
   const [progress, setProgress] = useState(0);
   const [isDraft, setIsDraft] = useState(false);
   const [showBodyMap, setShowBodyMap] = useState(false);
+  const [conducts, setConducts] = useState<Conduct[]>([]);
+  const [showConductForm, setShowConductForm] = useState(false);
+  
+  // Novos estados para funcionalidades avançadas
+  const [prescribedExercises, setPrescribedExercises] = useState<PrescribedExercise[]>([]);
+  const [progressPhotos, setProgressPhotos] = useState<ProgressPhoto[]>([]);
+  const [showExerciseSelector, setShowExerciseSelector] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [showTemplateSaveDialog, setShowTemplateSaveDialog] = useState(false);
+  const { timerData, handleTimeUpdate } = useSessionTimer();
 
   const form = useForm<EvolutionFormData>({
     resolver: zodResolver(evolutionSchema),
@@ -185,9 +212,8 @@ export function EvolutionEditor({
       painLevelAfter: 0,
       objectiveFindings: '',
       measurements: {},
-      techniquesApplied: [],
-      exercisesPerformed: [],
-      equipmentUsed: [],
+      conducts: [],
+      planGeneralNotes: '',
       patientResponse: '',
       adverseReactions: '',
       nextSessionPlan: '',
@@ -197,6 +223,13 @@ export function EvolutionEditor({
       ...initialData
     }
   });
+
+  // Inicializar conducts do initialData se existir
+  React.useEffect(() => {
+    if (initialData?.conducts) {
+      setConducts(initialData.conducts as Conduct[]);
+    }
+  }, [initialData]);
 
   const { watch, formState: { errors, isValid } } = form;
   const watchedValues = watch();
@@ -213,7 +246,19 @@ export function EvolutionEditor({
   const handleSave = async () => {
     try {
       setIsDraft(false);
-      await onSave(watchedValues);
+      // Incluir todos os dados avançados no save
+      const dataToSave = {
+        ...watchedValues,
+        conducts: conducts,
+        prescribedExercises: prescribedExercises,
+        progressPhotos: progressPhotos,
+        sessionTimer: timerData.startTime ? {
+          startTime: timerData.startTime.toISOString(),
+          endTime: timerData.endTime?.toISOString(),
+          duration: timerData.duration
+        } : undefined
+      };
+      await onSave(dataToSave as any);
     } catch (error) {
       console.error('Error saving evolution:', error);
     }
@@ -222,47 +267,93 @@ export function EvolutionEditor({
   const handleSaveDraft = async () => {
     try {
       setIsDraft(true);
-      await onSaveDraft(watchedValues);
+      // Incluir todos os dados avançados no save draft
+      const dataToSave = {
+        ...watchedValues,
+        conducts: conducts,
+        prescribedExercises: prescribedExercises,
+        progressPhotos: progressPhotos,
+        sessionTimer: timerData.startTime ? {
+          startTime: timerData.startTime.toISOString(),
+          endTime: timerData.endTime?.toISOString(),
+          duration: timerData.duration
+        } : undefined
+      };
+      await onSaveDraft(dataToSave as any);
     } catch (error) {
       console.error('Error saving draft:', error);
     }
   };
 
-  const addTechnique = () => {
-    const currentTechniques = form.getValues('techniquesApplied') || [];
-    form.setValue('techniquesApplied', [
-      ...currentTechniques,
-      {
-        name: '',
-        duration: '',
-        parameters: {},
-        response: ''
-      }
-    ]);
+  // Handler para aplicar template
+  const handleApplyTemplate = (template: any) => {
+    // Aplicar textos do template
+    if (template.subjective_template) {
+      form.setValue('subjectiveAssessment', template.subjective_template);
+    }
+    if (template.objective_template) {
+      form.setValue('objectiveFindings', template.objective_template);
+    }
+    if (template.assessment_template) {
+      // Assumindo que temos um campo assessment no form
+    }
+    
+    // Aplicar conducts
+    if (template.conducts && template.conducts.length > 0) {
+      setConducts(template.conducts);
+    }
+    
+    // Aplicar exercícios
+    if (template.exercises && template.exercises.length > 0) {
+      setPrescribedExercises(template.exercises);
+    }
+    
+    setShowTemplateSelector(false);
+    showToast('Template aplicado com sucesso!', 'success');
   };
 
-  const removeTechnique = (index: number) => {
-    const currentTechniques = form.getValues('techniquesApplied') || [];
-    form.setValue('techniquesApplied', currentTechniques.filter((_, i) => i !== index));
+  // Handler para exportar PDF
+  const handleExportPDF = async () => {
+    try {
+      // Mock de dados do paciente e terapeuta - ajuste conforme sua implementação
+      const patient: Patient = {
+        id: patientId,
+        name: 'Nome do Paciente',
+        cpf: '',
+        dateOfBirth: '',
+      } as Patient;
+      
+      const therapist: Therapist = {
+        id: user?.id || '',
+        name: user?.fullName || 'Terapeuta',
+        color: 'blue',
+        avatarUrl: '',
+      };
+
+      const evolutionData: any = {
+        ...watchedValues,
+        conducts: conducts,
+        sessionNumber: 1,
+        sessionDate: new Date().toISOString(),
+        therapistId: therapist.id,
+        therapistName: therapist.name,
+      };
+
+      await downloadEvolutionPDF(patient, evolutionData, therapist, prescribedExercises);
+      showToast('PDF exportado com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao exportar PDF:', error);
+      showToast('Erro ao exportar PDF', 'error');
+    }
   };
 
-  const addExercise = () => {
-    const currentExercises = form.getValues('exercisesPerformed') || [];
-    form.setValue('exercisesPerformed', [
-      ...currentExercises,
-      {
-        name: '',
-        description: '',
-        repetitions: 1,
-        sets: 1,
-        instructions: ''
-      }
-    ]);
+  const handleAddConduct = (conduct: Conduct) => {
+    setConducts([...conducts, conduct]);
+    setShowConductForm(false);
   };
 
-  const removeExercise = (index: number) => {
-    const currentExercises = form.getValues('exercisesPerformed') || [];
-    form.setValue('exercisesPerformed', currentExercises.filter((_, i) => i !== index));
+  const handleRemoveConduct = (id: string) => {
+    setConducts(conducts.filter(c => c.id !== id));
   };
 
   const addHomeExercise = () => {
@@ -287,8 +378,9 @@ export function EvolutionEditor({
   const tabs = [
     { id: 'subjective', label: 'Avaliação Subjetiva', icon: User },
     { id: 'objective', label: 'Avaliação Objetiva', icon: Activity },
-    { id: 'interventions', label: 'Intervenções', icon: Target },
-    { id: 'response', label: 'Resposta do Paciente', icon: Heart },
+    { id: 'conducts', label: 'P - Plano (Condutas)', icon: Zap },
+    { id: 'exercises', label: 'Exercícios Prescritos', icon: Dumbbell },
+    { id: 'response', label: 'Resposta + Fotos', icon: Heart },
     { id: 'planning', label: 'Planejamento', icon: Calendar }
   ];
 
@@ -298,49 +390,64 @@ export function EvolutionEditor({
     : 0;
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="p-3 bg-green-100 rounded-lg">
-            <Activity className="h-6 w-6 text-green-600" />
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Coluna Principal (3/4) */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-green-100 rounded-lg">
+                <Activity className="h-6 w-6 text-green-600" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Evolução de Sessão
+                </h1>
+                <p className="text-gray-600">
+                  Paciente: {patientId} | Sessão: {sessionId}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Badge variant={isValid ? "default" : "secondary"}>
+                {isValid ? (
+                  <>
+                    <CheckCircle className="h-4 w-4 mr-1" />
+                    Completo
+                  </>
+                ) : (
+                  <>
+                    <AlertCircle className="h-4 w-4 mr-1" />
+                    Incompleto
+                  </>
+                )}
+              </Badge>
+              
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowTemplateSelector(true)}
+                className="gap-2"
+              >
+                <FileText className="h-4 w-4" />
+                Templates
+              </Button>
+              
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowBodyMap(!showBodyMap)}
+                className="gap-2"
+              >
+                <MapPin className="h-4 w-4" />
+                Mapa
+              </Button>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Evolução de Sessão
-            </h1>
-            <p className="text-gray-600">
-              Paciente: {patientId} | Sessão: {sessionId}
-            </p>
-          </div>
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          <Badge variant={isValid ? "default" : "secondary"}>
-            {isValid ? (
-              <>
-                <CheckCircle className="h-4 w-4 mr-1" />
-                Completo
-              </>
-            ) : (
-              <>
-                <AlertCircle className="h-4 w-4 mr-1" />
-                Incompleto
-              </>
-            )}
-          </Badge>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowBodyMap(!showBodyMap)}
-            className="flex items-center space-x-2"
-          >
-            <MapPin className="h-4 w-4" />
-            <span>Mapa Corporal</span>
-          </Button>
-        </div>
-      </div>
 
       {/* Progress Bar */}
       <Card>
@@ -414,7 +521,7 @@ export function EvolutionEditor({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSave)} className="space-y-6">
           <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -556,219 +663,115 @@ export function EvolutionEditor({
               </Card>
             </TabsContent>
 
-            {/* Intervenções */}
-            <TabsContent value="interventions" className="space-y-6">
+            {/* P - Plano (Condutas Estruturadas) */}
+            <TabsContent value="conducts" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Target className="h-5 w-5" />
-                    <span>Intervenções Realizadas</span>
+                  <CardTitle className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Zap className="h-5 w-5" />
+                      <span>P - Plano (Condutas Realizadas)</span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowConductForm(!showConductForm)}
+                      className="gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      {showConductForm ? 'Ocultar Formulário' : 'Adicionar Conduta'}
+                    </Button>
                   </CardTitle>
                   <CardDescription>
-                    Técnicas e exercícios aplicados na sessão
+                    Condutas e intervenções realizadas na sessão, organizadas por categoria
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Técnicas Aplicadas */}
+                  {/* Formulário de Adição */}
+                  {showConductForm && (
+                    <ConductForm 
+                      onAdd={handleAddConduct}
+                      onCancel={() => setShowConductForm(false)}
+                    />
+                  )}
+
+                  {/* Lista de Condutas */}
+                  <ConductList
+                    conducts={conducts}
+                    onRemove={handleRemoveConduct}
+                  />
+
+                  {/* Campo livre para observações gerais (opcional) */}
                   <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Técnicas Aplicadas</h3>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={addTechnique}
-                        className="flex items-center space-x-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                        <span>Adicionar Técnica</span>
-                      </Button>
-                    </div>
-
-                    <div className="space-y-4">
-                      {watchedValues.techniquesApplied?.map((technique, index) => (
-                        <Card key={index}>
-                          <CardContent className="pt-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <FormField
-                                control={form.control}
-                                name={`techniquesApplied.${index}.name`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Nome da Técnica</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="Ex: Mobilização articular" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              <FormField
-                                control={form.control}
-                                name={`techniquesApplied.${index}.duration`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Duração</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="Ex: 15 minutos" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              <FormField
-                                control={form.control}
-                                name={`techniquesApplied.${index}.response`}
-                                render={({ field }) => (
-                                  <FormItem className="md:col-span-2">
-                                    <FormLabel>Resposta</FormLabel>
-                                    <FormControl>
-                                      <Textarea
-                                        placeholder="Como o paciente respondeu à técnica..."
-                                        className="min-h-[60px]"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </div>
-
-                            <div className="flex justify-end mt-4">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => removeTechnique(index)}
-                                className="text-red-600 hover:text-red-700"
-                              >
-                                <Trash2 className="h-4 w-4 mr-1" />
-                                Remover
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Exercícios Realizados */}
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Exercícios Realizados</h3>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={addExercise}
-                        className="flex items-center space-x-2"
-                      >
-                        <Plus className="h-4 w-4" />
-                        <span>Adicionar Exercício</span>
-                      </Button>
-                    </div>
-
-                    <div className="space-y-4">
-                      {watchedValues.exercisesPerformed?.map((exercise, index) => (
-                        <Card key={index}>
-                          <CardContent className="pt-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <FormField
-                                control={form.control}
-                                name={`exercisesPerformed.${index}.name`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Nome do Exercício</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="Ex: Fortalecimento quadríceps" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              <FormField
-                                control={form.control}
-                                name={`exercisesPerformed.${index}.repetitions`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Repetições</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="number"
-                                        min="1"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              <FormField
-                                control={form.control}
-                                name={`exercisesPerformed.${index}.sets`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel>Séries</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="number"
-                                        min="1"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              <FormField
-                                control={form.control}
-                                name={`exercisesPerformed.${index}.instructions`}
-                                render={({ field }) => (
-                                  <FormItem className="md:col-span-2">
-                                    <FormLabel>Instruções</FormLabel>
-                                    <FormControl>
-                                      <Textarea
-                                        placeholder="Instruções específicas do exercício..."
-                                        className="min-h-[60px]"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                            </div>
-
-                            <div className="flex justify-end mt-4">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => removeExercise(index)}
-                                className="text-red-600 hover:text-red-700"
-                              >
-                                <Trash2 className="h-4 w-4 mr-1" />
-                                Remover
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="planGeneralNotes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Observações Gerais do Plano</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Observações adicionais sobre o plano de tratamento..."
+                              rows={3}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Campo livre para anotações adicionais que não se encaixam nas condutas estruturadas.
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            {/* Resposta do Paciente */}
+            {/* Exercícios Prescritos (Nova Tab) */}
+            <TabsContent value="exercises" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Dumbbell className="h-5 w-5" />
+                      <span>Exercícios Prescritos</span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowExerciseSelector(!showExerciseSelector)}
+                      className="gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      {showExerciseSelector ? 'Ocultar' : 'Adicionar Exercícios'}
+                    </Button>
+                  </CardTitle>
+                  <CardDescription>
+                    Selecione e prescreva exercícios da biblioteca com parâmetros específicos
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Seletor de exercícios */}
+                  {showExerciseSelector && (
+                    <ExerciseSelector
+                      onSelect={setPrescribedExercises}
+                      selectedExercises={prescribedExercises}
+                    />
+                  )}
+
+                  {/* Lista de exercícios prescritos */}
+                  <PrescribedExerciseList
+                    exercises={prescribedExercises}
+                    onUpdate={setPrescribedExercises}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Resposta do Paciente + Fotos */}
             <TabsContent value="response" className="space-y-6">
               <Card>
                 <CardHeader>
@@ -816,6 +819,16 @@ export function EvolutionEditor({
                       </FormItem>
                     )}
                   />
+
+                  {/* Fotos de Progresso (Novo) */}
+                  <div className="pt-4 border-t">
+                    <PhotoUpload
+                      patientId={patientId}
+                      sessionId={sessionId}
+                      photos={progressPhotos}
+                      onPhotosChange={setProgressPhotos}
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -984,7 +997,7 @@ export function EvolutionEditor({
           </Tabs>
 
           {/* Actions */}
-          <div className="flex justify-between items-center pt-6 border-t">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-6 border-t gap-4">
             <Button
               type="button"
               variant="outline"
@@ -994,32 +1007,54 @@ export function EvolutionEditor({
               Cancelar
             </Button>
 
-            <div className="flex space-x-3">
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowTemplateSaveDialog(true)}
+                disabled={isLoading}
+                className="gap-2"
+              >
+                <FileText className="h-4 w-4" />
+                Salvar como Template
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleExportPDF}
+                disabled={isLoading}
+                className="gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Exportar PDF
+              </Button>
+
               <Button
                 type="button"
                 variant="secondary"
                 onClick={handleSaveDraft}
                 disabled={isLoading}
-                className="flex items-center space-x-2"
+                className="gap-2"
               >
                 <Save className="h-4 w-4" />
-                <span>Salvar Rascunho</span>
+                Salvar Rascunho
               </Button>
 
               <Button
                 type="submit"
                 disabled={!isValid || isLoading}
-                className="flex items-center space-x-2"
+                className="gap-2"
               >
                 {isLoading ? (
                   <>
                     <Clock className="h-4 w-4 animate-spin" />
-                    <span>Salvando...</span>
+                    Salvando...
                   </>
                 ) : (
                   <>
                     <Send className="h-4 w-4" />
-                    <span>Finalizar Evolução</span>
+                    Finalizar Evolução
                   </>
                 )}
               </Button>
@@ -1027,6 +1062,64 @@ export function EvolutionEditor({
           </div>
         </form>
       </Form>
+        </div>
+
+        {/* Barra Lateral Direita (1/4) - Sticky */}
+        <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-6 lg:self-start">
+          {/* Timer de Sessão */}
+          <SessionTimer onTimeUpdate={handleTimeUpdate} autoStart={true} />
+
+          {/* Comparação com Sessão Anterior */}
+          <PreviousSessionComparison 
+            patientId={patientId}
+            currentPainLevel={watchedValues.painLevelAfter}
+          />
+        </div>
+      </div>
+
+      {/* Dialogs */}
+      {showTemplateSelector && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold">Carregar Template</h2>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowTemplateSelector(false)}
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+              <TemplateSelector
+                therapistId={user?.id || ''}
+                onSelect={handleApplyTemplate}
+                onCreateNew={() => {
+                  setShowTemplateSelector(false);
+                  setShowTemplateSaveDialog(true);
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Dialog para salvar template */}
+      <TemplateSaveDialog
+        open={showTemplateSaveDialog}
+        onOpenChange={setShowTemplateSaveDialog}
+        therapistId={user?.id || ''}
+        templateData={{
+          subjective_template: watchedValues.subjectiveAssessment,
+          objective_template: watchedValues.objectiveFindings,
+          assessment_template: '',
+          conducts: conducts,
+          exercises: prescribedExercises
+        }}
+        onSuccess={() => showToast('Template salvo com sucesso!', 'success')}
+      />
     </div>
   );
 }

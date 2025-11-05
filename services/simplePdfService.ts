@@ -38,7 +38,7 @@ export class SimplePDFService {
       // Add footer
       const pageHeight = doc.internal.pageSize.height;
       doc.setFontSize(8);
-      doc.text('Gerado pelo sistema DuduFisio-AI', 20, pageHeight - 10);
+      doc.text('Gerado pelo sistema MoocaFisio-AI', 20, pageHeight - 10);
       doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 20, pageHeight - 5);
       
       // Generate blob and download
@@ -73,7 +73,7 @@ ${title}
 ${content}
 
 =====================================
-Gerado pelo sistema DuduFisio-AI
+Gerado pelo sistema MoocaFisio-AI
 Data: ${new Date().toLocaleDateString('pt-BR')}
       `;
       

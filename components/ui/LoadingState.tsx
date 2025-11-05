@@ -1,5 +1,5 @@
 /**
- * LoadingState Component - DuduFisio-AI
+ * LoadingState Component - MoocaFisio-AI
  * 
  * Componente reutilizável para estados de carregamento
  * com skeleton/spinner consistente.

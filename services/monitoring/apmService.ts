@@ -739,13 +739,56 @@ class APMService {
   }
 
   private async sendSlackAlert(alert: Alert, event: AlertEvent): Promise<void> {
-    // Implementation for Slack notifications
-    
+    try {
+      const webhookUrl = (import.meta as any).env?.VITE_SLACK_WEBHOOK_URL || (window as any).SLACK_WEBHOOK_URL;
+      if (!webhookUrl) {
+        console.warn('Slack webhook URL not configured (VITE_SLACK_WEBHOOK_URL)');
+        return;
+      }
+
+      const payload = {
+        text: `\u26a0\ufe0f Alerta de Performance: ${alert.name}`,
+        attachments: [
+          {
+            color: alert.severity === 'critical' ? 'danger' : 'warning',
+            title: `${alert.metric} acima do limite`,
+            text: alert.description || 'Orçamento de performance violado ou anomalia detectada.',
+            fields: [
+              { title: 'Métrica', value: alert.metric, short: true },
+              { title: 'Valor', value: String(event.value), short: true },
+              { title: 'Limite', value: String(event.threshold), short: true },
+              { title: 'Severidade', value: alert.severity, short: true },
+              { title: 'Página', value: window.location.pathname, short: true }
+            ],
+            footer: `Sessão: ${this.sessionId}`,
+            ts: Math.floor(Date.now() / 1000)
+          }
+        ]
+      };
+
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (error) {
+      console.error('Failed to send Slack alert', error);
+    }
   }
 
   private async sendWebhookAlert(alert: Alert, event: AlertEvent): Promise<void> {
-    // Implementation for webhook notifications
-    
+    try {
+      const webhookUrl = (import.meta as any).env?.VITE_ALERTS_WEBHOOK_URL;
+      if (!webhookUrl) return;
+
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ alert, event, sessionId: this.sessionId, url: window.location.href })
+      });
+    } catch (error) {
+      console.error('Failed to send generic webhook alert', error);
+    }
   }
 
   private async sendSMSAlert(alert: Alert, event: AlertEvent): Promise<void> {
@@ -767,14 +810,10 @@ class APMService {
   }
 
   private checkPerformanceBudgets(vital: WebVital): void {
-    // Check if any performance budgets are exceeded
     const budgets = this.getPerformanceBudgets();
-
     for (const budget of budgets) {
-      const budgetMetric = budget.metrics.find(m =>
-        m.metric.toLowerCase() === vital.name.toLowerCase()
-      );
-
+      if (!budget.enabled) continue;
+      const budgetMetric = budget.metrics.find(m => m.metric.toLowerCase() === vital.name.toLowerCase());
       if (budgetMetric && vital.value > budgetMetric.threshold) {
         console.warn(`Performance budget exceeded: ${vital.name} = ${vital.value}${budgetMetric.unit}, budget: ${budgetMetric.threshold}${budgetMetric.unit}`);
 
@@ -790,18 +829,76 @@ class APMService {
               budget: budget.name,
             },
           });
+
+          // Proactive Slack alert
+          const severity: Alert['severity'] = vital.rating === 'poor'
+            ? 'critical'
+            : vital.rating === 'needs-improvement'
+              ? 'medium'
+              : 'low';
+
+          const alert: Alert = {
+            id: crypto.randomUUID(),
+            name: `Budget breach: ${budget.name}`,
+            condition: '>',
+            threshold: budgetMetric.threshold,
+            metric: vital.name,
+            severity,
+            enabled: true,
+            channels: ['slack'],
+            recipients: budget.recipients || [],
+            status: 'active',
+            createdBy: 'apm',
+            createdAt: new Date(),
+          } as any;
+
+          const event: any = {
+            id: crypto.randomUUID(),
+            alertId: alert.id,
+            timestamp: new Date(),
+            value: vital.value,
+            threshold: budgetMetric.threshold,
+            status: 'triggered',
+            message: `Budget ${budget.name} for ${vital.name} exceeded`,
+            notificationsSent: ['slack'],
+            metadata: { page: window.location.pathname },
+          };
+
+          this.sendSlackAlert(alert, event);
         }
       }
     }
   }
 
   private getPerformanceBudgets(): PerformanceBudget[] {
+    try {
+      const raw = (import.meta as any).env?.VITE_APM_BUDGETS || (window as any).__APM_BUDGETS__;
+      if (raw) {
+        const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        if (Array.isArray(parsed) && parsed.length) {
+          return parsed.map((b: any) => ({
+            name: String(b.name || 'Custom Budget'),
+            enabled: b.enabled !== false,
+            alertOnBreach: b.alertOnBreach !== false,
+            recipients: Array.isArray(b.recipients) ? b.recipients : [],
+            metrics: Array.isArray(b.metrics) ? b.metrics.map((m: any) => ({
+              metric: String(m.metric),
+              threshold: Number(m.threshold),
+              unit: String(m.unit || 'ms'),
+            })) : [],
+          }));
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse VITE_APM_BUDGETS. Using defaults.', e);
+    }
+
     return [
       {
         name: 'Core Web Vitals',
         enabled: true,
         alertOnBreach: true,
-        recipients: ['admin@dudufisio.com'],
+        recipients: ['admin@moocafisio.com.br'],
         metrics: [
           { metric: 'CLS', threshold: 0.1, unit: '' },
           { metric: 'FID', threshold: 100, unit: 'ms' },

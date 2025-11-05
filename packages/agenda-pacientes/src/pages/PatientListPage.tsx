@@ -8,6 +8,7 @@ import LoadingState from '@/components/ui/LoadingState';
 import ErrorState from '@/components/ui/ErrorState';
 import EmptyState from '@/components/ui/EmptyState';
 import { handleError } from '@/lib/middleware/errorHandler';
+import { H1, Body, Small, NumericValue } from '@/components/ui/Typography';
 
 const PatientListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -109,26 +110,26 @@ const PatientListPage: React.FC = () => {
     <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
       <ResponsiveContainer>
         {/* Header */}
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 space-y-2 sm:space-y-0">
           <div>
-            <h1 className="heading-lg-responsive font-bold text-fisio-neutral-800 mb-2">
+            <H1 className="mb-2">
               Lista de Pacientes
-            </h1>
-            <p className="text-responsive text-fisio-neutral-600">
+            </H1>
+            <Body>
               Gerencie todos os pacientes da clínica
-            </p>
+            </Body>
           </div>
           {/* Botão agora fica na toolbar do PatientTable */}
         </header>
 
         {/* Estatísticas com Gradientes Vibrantes - Paleta FisioFlow */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="bg-gradient-to-br from-fisio-primary-500 to-fisio-primary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm opacity-90 mb-1">Total de Pacientes</p>
-                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.total}</p>
+                  <Small className="opacity-90 mb-2 text-white">Total de Pacientes</Small>
+                  <NumericValue className="text-white">{stats.loading ? '...' : stats.total}</NumericValue>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,8 +144,8 @@ const PatientListPage: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm opacity-90 mb-1">Pacientes Ativos</p>
-                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.active}</p>
+                  <Small className="opacity-90 mb-2 text-white">Pacientes Ativos</Small>
+                  <NumericValue className="text-white">{stats.loading ? '...' : stats.active}</NumericValue>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,8 +160,8 @@ const PatientListPage: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm opacity-90 mb-1">Pacientes Inativos</p>
-                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.inactive}</p>
+                  <Small className="opacity-90 mb-2 text-white">Pacientes Inativos</Small>
+                  <NumericValue className="text-white">{stats.loading ? '...' : stats.inactive}</NumericValue>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,8 +176,8 @@ const PatientListPage: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm opacity-90 mb-1">Pacientes com Alta</p>
-                  <p className="text-3xl font-bold">{stats.loading ? '...' : stats.discharged}</p>
+                  <Small className="opacity-90 mb-2 text-white">Pacientes com Alta</Small>
+                  <NumericValue className="text-white">{stats.loading ? '...' : stats.discharged}</NumericValue>
                 </div>
                 <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,7 +190,7 @@ const PatientListPage: React.FC = () => {
         </div>
 
         {/* Data Table (Supabase + shadcn) */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-fisio-neutral-200">
+        <div className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100">
           <PatientTable 
             patients={patients}
             loading={isLoading}

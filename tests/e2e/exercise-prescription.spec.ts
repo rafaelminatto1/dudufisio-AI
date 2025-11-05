@@ -16,7 +16,7 @@ import { test, expect } from '@playwright/test';
 // Helper para login como terapeuta
 async function loginAsTherapist(page) {
   await page.goto('/');
-  await page.getByLabel(/email/i).fill('admin@dudufisio.com');
+  await page.getByLabel(/email/i).fill('admin@moocafisio.com.br');
   await page.getByLabel(/senha/i).fill('DuduFisio2024!');
   await page.getByTestId('login-submit').click();
   await page.waitForURL(/\/dashboard|\/agenda/i, { timeout: 15000 });
@@ -25,7 +25,7 @@ async function loginAsTherapist(page) {
 // Helper para login como paciente
 async function loginAsPatient(page) {
   await page.goto('/');
-  await page.getByLabel(/email/i).fill('paciente@dudufisio.com');
+  await page.getByLabel(/email/i).fill('paciente@moocafisio.com.br');
   await page.getByLabel(/senha/i).fill('Paciente2024!');
   await page.getByTestId('login-submit').click();
   await page.waitForURL(/\/dashboard|\/patient/i, { timeout: 15000 });

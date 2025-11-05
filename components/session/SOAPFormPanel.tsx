@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Copy, RotateCcw, AlertTriangle } from 'lucide-react';
+import { Save, Copy, RotateCcw, AlertTriangle, MessageSquare, Eye, ClipboardCheck, ListChecks, CheckCircle } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useToast } from '../../contexts/ToastContext';
 import { SoapNote, MandatoryTestAlert } from '../../types';
 import * as conductReplicationService from '../../services/conductReplicationService';
 import * as mandatoryTestAlertService from '../../services/mandatoryTestAlertService';
+import { format } from 'date-fns';
 
 /**
  * Painel de Formulário SOAP
@@ -43,11 +44,81 @@ export const SOAPFormPanel: React.FC<SOAPFormPanelProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [mandatoryAlerts, setMandatoryAlerts] = useState<MandatoryTestAlert[]>([]);
   const [showConductReplicationDialog, setShowConductReplicationDialog] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  
+  // Auto-save key
+  const AUTOSAVE_KEY = `evolution_draft_${patientId}_${sessionNumber}`;
 
   // Load mandatory alerts
   useEffect(() => {
     loadMandatoryAlerts();
   }, [patientId, sessionNumber]);
+
+  // Auto-save effect
+  useEffect(() => {
+    if (!isDirty) return;
+    
+    const timer = setTimeout(() => {
+      const draftData = {
+        subjective,
+        objective,
+        assessment,
+        plan,
+        painScale,
+        bodyParts,
+        lastSaved: new Date().toISOString(),
+      };
+      
+      try {
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(draftData));
+        setLastSaved(new Date());
+        console.log('✅ Auto-save realizado');
+      } catch (error) {
+        console.error('❌ Erro no auto-save:', error);
+      }
+    }, 30000); // 30 segundos
+    
+    return () => clearTimeout(timer);
+  }, [subjective, objective, assessment, plan, painScale, bodyParts, isDirty, AUTOSAVE_KEY]);
+
+  // Recuperar rascunho ao carregar
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(AUTOSAVE_KEY);
+    
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        const lastSavedDate = new Date(draft.lastSaved);
+        const hoursSince = (Date.now() - lastSavedDate.getTime()) / (1000 * 60 * 60);
+        
+        // Só recupera se tiver menos de 24 horas
+        if (hoursSince < 24) {
+          const shouldRestore = window.confirm(
+            `Encontramos um rascunho salvo em ${lastSavedDate.toLocaleString('pt-BR')}. Deseja recuperá-lo?`
+          );
+          
+          if (shouldRestore) {
+            setSubjective(draft.subjective || '');
+            setObjective(draft.objective || '');
+            setAssessment(draft.assessment || '');
+            setPlan(draft.plan || '');
+            setPainScale(draft.painScale);
+            setBodyParts(draft.bodyParts || []);
+            setLastSaved(lastSavedDate);
+            showToast('Rascunho recuperado!', 'success');
+          } else {
+            localStorage.removeItem(AUTOSAVE_KEY);
+          }
+        } else {
+          // Remove rascunhos antigos automaticamente
+          localStorage.removeItem(AUTOSAVE_KEY);
+        }
+      } catch (error) {
+        console.error('Erro ao recuperar rascunho:', error);
+        localStorage.removeItem(AUTOSAVE_KEY);
+      }
+    }
+  }, []); // Executa apenas na montagem
 
   const loadMandatoryAlerts = async () => {
     try {
@@ -99,22 +170,54 @@ export const SOAPFormPanel: React.FC<SOAPFormPanelProps> = ({
   };
 
   const handleSave = async () => {
-    // Validações
-    if (!subjective.trim() && !objective.trim() && !assessment.trim() && !plan.trim()) {
-      showToast('Preencha pelo menos um campo do formulário SOAP', 'error');
+    // 1. Validar se pelo menos um campo SOAP está preenchido
+    const hasContent = subjective.trim() || objective.trim() || 
+                       assessment.trim() || plan.trim();
+    
+    if (!hasContent) {
+      showToast('Preencha pelo menos um campo do SOAP', 'error');
       return;
     }
-
-    // Verificar alertas críticos
+    
+    // 2. Validar campos obrigatórios (S, O, A, P devem ter mínimo de caracteres)
+    const minChars = 10;
+    const errors: string[] = [];
+    
+    if (subjective.trim().length > 0 && subjective.trim().length < minChars) {
+      errors.push('Subjetivo deve ter pelo menos 10 caracteres');
+    }
+    if (objective.trim().length > 0 && objective.trim().length < minChars) {
+      errors.push('Objetivo deve ter pelo menos 10 caracteres');
+    }
+    if (assessment.trim().length > 0 && assessment.trim().length < minChars) {
+      errors.push('Avaliação deve ter pelo menos 10 caracteres');
+    }
+    if (plan.trim().length > 0 && plan.trim().length < minChars) {
+      errors.push('Plano deve ter pelo menos 10 caracteres');
+    }
+    
+    if (errors.length > 0) {
+      showToast(errors.join(' | '), 'error');
+      return;
+    }
+    
+    // 3. Validar EVA se preenchida
+    if (painScale !== undefined && (painScale < 0 || painScale > 10)) {
+      showToast('Escala de dor deve estar entre 0 e 10', 'error');
+      return;
+    }
+    
+    // 4. Verificar alertas críticos
     const incompleteCritical = criticalAlerts.filter(a => !a.isCompleted);
     if (incompleteCritical.length > 0) {
       showToast(
-        `${incompleteCritical.length} teste(s) obrigatório(s) não realizado(s). Sessão não pode ser salva.`,
+        `${incompleteCritical.length} teste(s) obrigatório(s) não realizado(s)`,
         'error'
       );
       return;
     }
 
+    // 5. Salvar
     setIsSaving(true);
     try {
       await onSave({
@@ -126,20 +229,29 @@ export const SOAPFormPanel: React.FC<SOAPFormPanelProps> = ({
         painScale,
         bodyParts,
       });
+      
+      // Limpar rascunho após sucesso
+      localStorage.removeItem(AUTOSAVE_KEY);
+      setLastSaved(null);
 
       showToast('Sessão salva com sucesso!', 'success');
       setIsDirty(false);
     } catch (error) {
       console.error('Erro ao salvar sessão:', error);
-      showToast('Erro ao salvar sessão', 'error');
+      showToast('Erro ao salvar sessão. Tente novamente.', 'error');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleClear = () => {
-    if (isDirty) {
-      const confirmed = window.confirm('Tem certeza que deseja limpar todos os campos?');
+    const hasContent = subjective || objective || assessment || plan;
+    
+    if (hasContent) {
+      const confirmed = window.confirm(
+        '⚠️ Tem certeza que deseja limpar todos os campos?\n\n' +
+        'Esta ação não pode ser desfeita e o rascunho será removido.'
+      );
       if (!confirmed) return;
     }
 
@@ -150,6 +262,12 @@ export const SOAPFormPanel: React.FC<SOAPFormPanelProps> = ({
     setPainScale(undefined);
     setBodyParts([]);
     setIsDirty(false);
+    
+    // Limpar rascunho também
+    localStorage.removeItem(AUTOSAVE_KEY);
+    setLastSaved(null);
+    
+    showToast('Formulário limpo', 'info');
   };
 
   return (
@@ -238,72 +356,88 @@ export const SOAPFormPanel: React.FC<SOAPFormPanelProps> = ({
       <div className="flex-1 overflow-y-auto space-y-5">
         {/* Subjetivo */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-            S - Subjetivo
-            <span className="text-xs font-normal text-slate-500 ml-2">
-              (Queixas e sintomas relatados pelo paciente)
+          <div className="flex items-center justify-between mb-2">
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <MessageSquare className="w-4 h-4 text-gray-400" />
+              S - Subjetivo
+              <span className="text-red-500">*</span>
+            </label>
+            <span className={`text-xs ${subjective.length < 10 ? 'text-red-500' : subjective.length > 4500 ? 'text-amber-600' : 'text-slate-400'}`}>
+              {subjective.length} caracteres
             </span>
-          </label>
+          </div>
           <textarea
             value={subjective}
             onChange={(e) => handleFieldChange(setSubjective)(e.target.value)}
-            placeholder="Ex: Paciente relata dor no joelho direito, intensidade 6/10, que piora ao subir escadas..."
+            placeholder="Ex: Paciente relata melhora da dor lombar após última sessão. Refere desconforto em trapézio direito durante elevação do braço acima de 90°. Nega dor em repouso. Escala de dor atual: 5/10 (era 7/10 na última sessão)."
             rows={4}
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y text-sm"
             disabled={isLoading || isSaving}
           />
         </div>
 
         {/* Objetivo */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-            O - Objetivo
-            <span className="text-xs font-normal text-slate-500 ml-2">
-              (Observações e avaliações do profissional)
+          <div className="flex items-center justify-between mb-2">
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <Eye className="w-4 h-4 text-gray-400" />
+              O - Objetivo
+              <span className="text-red-500">*</span>
+            </label>
+            <span className={`text-xs ${objective.length < 10 ? 'text-red-500' : objective.length > 4500 ? 'text-amber-600' : 'text-slate-400'}`}>
+              {objective.length} caracteres
             </span>
-          </label>
+          </div>
           <textarea
             value={objective}
             onChange={(e) => handleFieldChange(setObjective)(e.target.value)}
-            placeholder="Ex: ROM joelho direito: 0-110°, edema leve em região patelar, força quadríceps 4/5..."
-            rows={4}
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+            placeholder="Ex: ROM ombro D: flexão 120° (era 105°), abdução 110° (era 95°) | Força: trapézio 4/5, deltóide 4/5 | Palpação: tensão em trapézio superior D, trigger points ativos | Edema: leve em região patelar E | Marcha: simétrica, sem claudicação"
+            rows={5}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y text-sm"
             disabled={isLoading || isSaving}
           />
         </div>
 
         {/* Avaliação */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-            A - Avaliação
-            <span className="text-xs font-normal text-slate-500 ml-2">
-              (Análise e interpretação clínica)
+          <div className="flex items-center justify-between mb-2">
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <ClipboardCheck className="w-4 h-4 text-gray-400" />
+              A - Avaliação
+              <span className="text-red-500">*</span>
+            </label>
+            <span className={`text-xs ${assessment.length < 10 ? 'text-red-500' : assessment.length > 4500 ? 'text-amber-600' : 'text-slate-400'}`}>
+              {assessment.length} caracteres
             </span>
-          </label>
+          </div>
           <textarea
             value={assessment}
             onChange={(e) => handleFieldChange(setAssessment)(e.target.value)}
-            placeholder="Ex: Paciente apresenta evolução positiva, com redução de dor e ganho de amplitude. Responde adequadamente ao tratamento proposto..."
-            rows={4}
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+            placeholder="Ex: Paciente apresenta evolução positiva, com redução de 30% da dor (EVA 7→5) e ganho de 15° em flexão de ombro. Responde bem ao tratamento proposto. Mantem limitação funcional para atividades acima da cabeça."
+            rows={3}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y text-sm"
             disabled={isLoading || isSaving}
           />
         </div>
 
         {/* Plano */}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
-            P - Plano
-            <span className="text-xs font-normal text-slate-500 ml-2">
-              (Conduta e intervenções realizadas)
+          <div className="flex items-center justify-between mb-2">
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <ListChecks className="w-4 h-4 text-gray-400" />
+              P - Plano
+              <span className="text-red-500">*</span>
+            </label>
+            <span className={`text-xs ${plan.length < 10 ? 'text-red-500' : plan.length > 4500 ? 'text-amber-600' : 'text-slate-400'}`}>
+              {plan.length} caracteres
             </span>
-          </label>
+          </div>
           <textarea
             value={plan}
             onChange={(e) => handleFieldChange(setPlan)(e.target.value)}
-            placeholder="Ex: Mobilização patelar, fortalecimento de quadríceps (3x15), alongamento de isquiotibiais, crioterapia 15min..."
-            rows={4}
-            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+            placeholder="Ex: 1) Liberação miofascial em trapézio D (10min) | 2) Mobilização glenoumeral (3 séries) | 3) Fortalecimento de manguito rotador: rotação externa com elástico (3x12) | 4) Alongamento de peitoral (3x30s) | 5) TENS em trapézio (20min, 100Hz) | 6) Orientações: aplicar gelo 2x/dia, evitar movimentos repetitivos"
+            rows={8}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y text-sm"
             disabled={isLoading || isSaving}
           />
         </div>
@@ -342,8 +476,17 @@ export const SOAPFormPanel: React.FC<SOAPFormPanelProps> = ({
       {/* Footer com botões de ação */}
       <div className="flex items-center justify-between pt-4 border-t border-slate-200">
         <div className="flex items-center space-x-2">
-          {isDirty && (
-            <span className="text-xs text-orange-600">• Alterações não salvas</span>
+          {isDirty && !lastSaved && (
+            <span className="text-xs text-orange-600 flex items-center gap-1">
+              <span className="w-2 h-2 bg-orange-600 rounded-full animate-pulse"></span>
+              Alterações não salvas
+            </span>
+          )}
+          {lastSaved && (
+            <span className="text-xs text-green-600 flex items-center gap-1">
+              <CheckCircle className="w-3 h-3" />
+              Auto-save: {format(lastSaved, 'HH:mm:ss')}
+            </span>
           )}
         </div>
 

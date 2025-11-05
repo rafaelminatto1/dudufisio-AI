@@ -5,7 +5,7 @@ test.describe('Integração com AI (Gemini)', () => {
     await page.goto('/');
     
     // Login
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     
@@ -216,7 +216,7 @@ test.describe('Integração com AI (Gemini)', () => {
 test.describe('Integração AI - Casos de Borda', () => {
   test('Resposta AI com caracteres especiais', async ({ page }) => {
     await page.goto('/');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -245,7 +245,7 @@ test.describe('Integração AI - Casos de Borda', () => {
   test('Múltiplas requisições AI simultâneas', async ({ page }) => {
     // Testar se sistema lida com múltiplas requests AI ao mesmo tempo
     await page.goto('/');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);

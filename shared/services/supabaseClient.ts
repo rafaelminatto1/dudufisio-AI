@@ -1,7 +1,7 @@
 /**
  * lib/supabaseClient.ts
  * 
- * Cliente Supabase configurado para o projeto DuduFisio-AI
+ * Cliente Supabase configurado para o projeto MoocaFisio-AI
  * Singleton compartilhado por toda a aplicação
  * 
  * ⚠️ IMPORTANTE: Este é um projeto VITE (não Next.js)

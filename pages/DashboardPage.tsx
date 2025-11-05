@@ -108,21 +108,21 @@ const DashboardPage: React.FC = () => {
         return (
             <div className="space-y-6 pb-20 lg:pb-6">
                 {/* Skeleton Header */}
-                <div className="bg-white rounded-xl shadow-sm border border-fisio-neutral-200 p-4 sm:p-6">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                     <div className="animate-pulse">
-                        <div className="h-8 bg-fisio-neutral-200 rounded w-1/3 mb-2"></div>
-                        <div className="h-4 bg-fisio-neutral-200 rounded w-1/2"></div>
+                        <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                     </div>
                 </div>
 
                 {/* Skeleton Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="bg-white rounded-xl shadow-sm border border-fisio-neutral-200 p-4 sm:p-6">
+                        <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                             <div className="animate-pulse">
-                                <div className="h-4 bg-fisio-neutral-200 rounded w-24 mb-2"></div>
-                                <div className="h-8 bg-fisio-neutral-200 rounded w-32 mb-2"></div>
-                                <div className="h-3 bg-fisio-neutral-200 rounded w-40"></div>
+                                <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+                                <div className="h-8 bg-gray-200 rounded w-32 mb-2"></div>
+                                <div className="h-3 bg-gray-200 rounded w-40"></div>
                             </div>
                         </div>
                     ))}
@@ -131,10 +131,10 @@ const DashboardPage: React.FC = () => {
                 {/* Skeleton Charts */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {[1, 2].map((i) => (
-                        <div key={i} className="bg-white rounded-xl shadow-sm border border-fisio-neutral-200 p-4 sm:p-6">
+                        <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
                             <div className="animate-pulse">
-                                <div className="h-6 bg-fisio-neutral-200 rounded w-48 mb-4"></div>
-                                <div className="h-64 bg-fisio-neutral-200 rounded"></div>
+                                <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
+                                <div className="h-64 bg-gray-200 rounded"></div>
                             </div>
                         </div>
                     ))}
@@ -170,7 +170,7 @@ const DashboardPage: React.FC = () => {
 
                 {/* Quick Stats */}
                 <AnimatedContainer animation="stagger" className="mb-8">
-                    <ResponsiveGrid cols={{ base: 1, sm: 2, lg: 4 }} gap="lg">
+                    <ResponsiveGrid cols={{ base: 1, sm: 2, lg: 4 }} gap="lg" className="space-responsive">
                         <StatCard
                             title="Pacientes Hoje"
                             value={enrichedTodaysAppointments.length}
@@ -209,11 +209,11 @@ const DashboardPage: React.FC = () => {
 
                 {/* Quick Actions */}
                 <ScrollReveal animation="slideInLeft" className="mb-8">
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                             Ações Rápidas
                         </h2>
-                        <ResponsiveGrid cols={{ base: 1, sm: 2, lg: 3 }} gap="lg">
+                        <ResponsiveGrid cols={{ base: 1, sm: 2, lg: 3 }} gap="lg" className="space-responsive">
                             <FeatureCard
                                 icon={Calendar}
                                 title="Agendar Consulta"
@@ -248,11 +248,11 @@ const DashboardPage: React.FC = () => {
 
                 {/* Daily Summary */}
                 <ScrollReveal animation="slideInRight" className="mb-8">
-                    <div className="space-y-6">
+                    <div className="space-y-8">
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                             Resumo do Dia
                         </h2>
-                        <ResponsiveGrid cols={{ base: 1, lg: 3 }} gap="lg">
+                        <ResponsiveGrid cols={{ base: 1, lg: 3 }} gap="lg" className="space-responsive">
                             <GlassCard variant="default">
                                 <TodaysAppointments appointments={enrichedTodaysAppointments} />
                             </GlassCard>
@@ -268,7 +268,7 @@ const DashboardPage: React.FC = () => {
 
                 {/* Charts Section */}
                 <ScrollReveal animation="fadeInUp" className="mb-8">
-                    <ResponsiveGrid cols={{ base: 1, xl: 2 }} gap="lg">
+                    <ResponsiveGrid cols={{ base: 1, xl: 2 }} gap="lg" className="space-responsive">
                         <GlassCard 
                             header={{ 
                                 title: "Evolução da Receita",
@@ -296,7 +296,7 @@ const DashboardPage: React.FC = () => {
 
                 {/* Analytics Section */}
                 <ScrollReveal animation="scaleIn" className="mb-8">
-                    <ResponsiveGrid cols={{ base: 1, lg: 3 }} gap="lg">
+                    <ResponsiveGrid cols={{ base: 1, lg: 3 }} gap="lg" className="space-responsive">
                         <GlassCard 
                             className="lg:col-span-2"
                             header={{ 

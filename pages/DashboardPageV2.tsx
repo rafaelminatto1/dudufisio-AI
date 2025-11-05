@@ -19,6 +19,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { startOfMonth, endOfMonth } from 'date-fns';
+import { NotificationPermissionPrompt } from '@/components/notifications/NotificationPermissionPrompt';
 
 const DashboardPageV2: React.FC = () => {
   const { user } = useApp();
@@ -144,6 +145,9 @@ const DashboardPageV2: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Push Notifications Prompt */}
+      <NotificationPermissionPrompt />
+
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

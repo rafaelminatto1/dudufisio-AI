@@ -1,6 +1,6 @@
 {
-  "name": "FisioFlow - Gestão em Fisioterapia",
-  "short_name": "FisioFlow",
+  "name": "MoocaFisio - Gestão de Clínicas de Fisioterapia",
+  "short_name": "MoocaFisio",
   "description": "Sistema completo de gestão para clínicas de fisioterapia com IA integrada",
   "start_url": "/",
   "display": "standalone",
@@ -89,7 +89,7 @@
   "prefer_related_applications": false,
   "protocol_handlers": [
     {
-      "protocol": "web+fisioflow",
+      "protocol": "web+moocafisio",
       "url": "/?protocol=%s"
     }
   ]

@@ -6,6 +6,8 @@ import * as appointmentService from '../services/appointmentService';
 import { useData } from '../contexts/AppContext';
 import { eventService } from '../services/eventService';
 import { AppointmentType } from '../types';
+import { getCachedOrFetch, deleteCache, DEFAULT_CACHE_TTL_MS } from '../packages/agenda-pacientes/src/lib/cache';
+import { apmService } from '../services/monitoring/apmService';
 
 interface UseAppointmentsResult {
   appointments: EnrichedAppointment[];
@@ -21,15 +23,16 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
   
   const { patients, therapists } = useData();
   
-  const clearCache = useCallback(() => {
-      if (!startDate || !endDate) return;
-      const cacheKey = `appointments_cache_${startDate.toISOString()}_${endDate.toISOString()}`;
-      try {
-          sessionStorage.removeItem(cacheKey);
-      } catch (e) {
-          console.error("Failed to clear appointment cache", e);
-      }
+  const makeCacheKey = useCallback(() => {
+    if (!startDate || !endDate) return '';
+    return `appointments:${startDate.toISOString()}:${endDate.toISOString()}`;
   }, [startDate, endDate]);
+
+  const clearCache = useCallback(() => {
+      const key = makeCacheKey();
+      if (!key) return;
+      deleteCache(key);
+  }, [makeCacheKey]);
 
   const fetchAppointments = useCallback(async () => {
       if (!startDate || !endDate) {
@@ -38,60 +41,43 @@ export const useAppointments = (startDate?: Date, endDate?: Date): UseAppointmen
           return;
       }
 
-      const cacheKey = `appointments_cache_${startDate.toISOString()}_${endDate.toISOString()}`;
-      
-      // Stale: Try loading from cache first to show something immediately.
-      try {
-          const cachedItem = sessionStorage.getItem(cacheKey);
-          if (cachedItem) {
-              const cachedAppointments = JSON.parse(cachedItem).map((app: any) => ({
-                  ...app,
-                  startTime: new Date(app.startTime),
-                  endTime: new Date(app.endTime),
-              }));
-              setAppointments(cachedAppointments);
-              setIsLoading(false); // We have data to show, so we're not in a hard loading state.
-          } else {
-              setIsLoading(true); // No cache, so we are truly loading from scratch.
-          }
-      } catch (e) {
-          console.error("Failed to read from appointment cache", e);
-          setIsLoading(true); // If cache fails, treat as a hard load.
-      }
+      const cacheKey = makeCacheKey();
 
-      // Revalidate: Always fetch fresh data from the network.
+      performance.mark('appointments:fetch:start');
       try {
-          console.log('🔄 useAppointments - Buscando agendamentos do serviço...');
-          console.log('   Período:', startDate, 'até', endDate);
-          const fetchedAppointments = await appointmentService.getAppointments(startDate, endDate);
-          console.log('📋 useAppointments - Agendamentos recebidos:', fetchedAppointments.length, 'agendamentos');
-          console.log('📋 useAppointments - Detalhes dos agendamentos:', fetchedAppointments);
-          setAppointments(fetchedAppointments); // Update state with the fresh data.
+          const fetchedAppointments = await getCachedOrFetch<Appointment[]>(
+            cacheKey,
+            async () => {
+              const t0 = performance.now();
+              const data = await appointmentService.getAppointments(startDate, endDate);
+              const t1 = performance.now();
+              apmService.trackMetric({
+                type: 'api_request',
+                name: 'appointments_fetch_time',
+                value: t1 - t0,
+                unit: 'ms',
+                tags: { page: window.location.pathname },
+              });
+              return data;
+            },
+            DEFAULT_CACHE_TTL_MS
+          );
+
+          setAppointments(fetchedAppointments);
           setError(null);
-          
-          // Update cache with the new fresh data.
-          try {
-              sessionStorage.setItem(cacheKey, JSON.stringify(fetchedAppointments));
-          } catch (e) {
-              console.error("Failed to write to appointment cache", e);
-          }
-
       } catch (err) {
           setError(err as Error);
-          // We only set loading to false here if there was no cache hit.
-          // If there was a cache hit, loading is already false and we just silently fail the background update.
-          if (!sessionStorage.getItem(cacheKey)) {
-              setIsLoading(false);
-          }
+      } finally {
+          setIsLoading(false);
+          performance.mark('appointments:fetch:end');
+          performance.measure('appointments:fetch', 'appointments:fetch:start', 'appointments:fetch:end');
       }
-  }, [startDate, endDate]);
+  }, [startDate, endDate, makeCacheKey]);
 
   useEffect(() => {
       fetchAppointments();
       
       const handleAppointmentsChanged = () => {
-          console.log('📢 useAppointments - Evento appointments:changed recebido!');
-          console.log('   Limpando cache e refazendo fetch...');
           clearCache();
           fetchAppointments();
       };

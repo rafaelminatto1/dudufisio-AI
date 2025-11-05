@@ -33,7 +33,7 @@ export function AppointmentsWidget({ appointments, maxItems = 5 }: AppointmentsW
 
   return (
     <ScrollArea className="h-[300px]">
-      <div className="space-y-3">
+      <div className="space-y-4">
         {upcomingAppointments.map((appointment) => (
           <div
             key={appointment.id}

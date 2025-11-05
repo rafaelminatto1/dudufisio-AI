@@ -15,9 +15,9 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
     const baseStyles = 'rounded-lg transition-all duration-200';
     
     const variants = {
-      default: 'bg-[--color-surface] border border-[--color-border] shadow-sm',
-      elevated: 'bg-[--color-surface] shadow-md hover:shadow-lg',
-      outlined: 'bg-transparent border-2 border-[--color-border]',
+      default: 'bg-white border border-gray-100 shadow-sm hover:shadow-md',
+      elevated: 'bg-white shadow-md hover:shadow-lg',
+      outlined: 'bg-transparent border-2 border-gray-200 hover:border-gray-300',
     };
 
     const paddings = {
@@ -55,7 +55,7 @@ export const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
     return (
       <div
         ref={ref}
-        className={cn('mb-4', className)}
+        className={cn('space-y-2', className)}
         {...props}
       >
         {children}
@@ -70,12 +70,16 @@ export interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement>
   children: React.ReactNode;
 }
 
+/**
+ * CardTitle - Título de Card
+ * Segue escala tipográfica H3: 18px, Semibold (600), Gray 900
+ */
 export const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
   ({ className, children, ...props }, ref) => {
     return (
       <h3
         ref={ref}
-        className={cn('text-lg font-semibold text-[--color-text]', className)}
+        className={cn('text-lg font-semibold text-gray-900', className)}
         {...props}
       >
         {children}
@@ -90,12 +94,16 @@ export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraph
   children: React.ReactNode;
 }
 
+/**
+ * CardDescription - Descrição de Card
+ * Segue escala tipográfica Small: 14px, Regular (400), Gray 600
+ */
 export const CardDescription = React.forwardRef<HTMLParagraphElement, CardDescriptionProps>(
   ({ className, children, ...props }, ref) => {
     return (
       <p
         ref={ref}
-        className={cn('text-sm text-[--color-text-secondary] mt-1', className)}
+        className={cn('text-sm text-gray-600 mt-1', className)}
         {...props}
       >
         {children}

@@ -38,7 +38,7 @@ export const mockPartners: Partner[] = [
 ];
 
 export const mockClinicInfo = {
-    name: 'FisioFlow Clínica de Fisioterapia',
+    name: 'MoocaFisio Clínica de Fisioterapia',
     address: 'Rua das Flores, 123 - São Paulo/SP',
     phone: '(11) 99999-9999',
     email: 'contato@fisioflow.com.br',
@@ -1294,7 +1294,7 @@ export const mockEventRegistrations: EventRegistration[] = [
 export const mockEvents: Event[] = [
   {
     id: 'event_1',
-    name: 'Corrida FisioFlow 5K - Etapa Ibirapuera',
+    name: 'Corrida MoocaFisio 5K - Etapa Ibirapuera',
     description: 'Participe da nossa corrida de rua com suporte fisioterapêutico completo, incluindo aquecimento, acompanhamento e recovery pós-prova.',
     eventType: EventType.Race,
     startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)), // Past event
@@ -1320,7 +1320,7 @@ export const mockEvents: Event[] = [
     eventType: EventType.Workshop,
     startDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Future event
     endDate: new Date(new Date().setDate(new Date().getDate() + 15)),
-    location: 'Clínica FisioFlow - Unidade Central',
+    location: 'Clínica MoocaFisio - Unidade Central',
     capacity: 30,
     isFree: true,
     status: EventStatus.Published,

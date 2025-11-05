@@ -203,7 +203,7 @@ class SupabaseAuthService {
     // Criar novo usuário mock padrão
     const mockUser: User = {
       id: 'mock-admin-1',
-      email: 'admin@dudufisio.com',
+      email: 'admin@moocafisio.com.br',
       name: 'Administrador',
       role: Role.Admin,
       avatarUrl: '',
@@ -228,16 +228,16 @@ class SupabaseAuthService {
   }
 
   private shouldUseMockAuth(credentials: LoginCredentials): boolean {
-    // ⚠️ ATUALIZAÇÃO: admin@dudufisio.com agora usa autenticação REAL no Supabase
+    // ⚠️ ATUALIZAÇÃO: admin@moocafisio.com.br agora usa autenticação REAL no Supabase
     // Removido admin@ da lista de mock credentials
     // Use mock auth apenas para outros usuários demo (se necessário)
     const demoCredentials = [
-      // 'admin@dudufisio.com', // ❌ REMOVIDO - agora usa auth real do Supabase
-      'therapist@dudufisio.com',
-      'terapeuta@dudufisio.com',
-      'patient@dudufisio.com',
-      'paciente@dudufisio.com',
-      'educator@dudufisio.com'
+      // 'admin@moocafisio.com.br', // ❌ REMOVIDO - agora usa auth real do Supabase
+      'therapist@moocafisio.com.br',
+      'terapeuta@moocafisio.com.br',
+      'patient@moocafisio.com.br',
+      'paciente@moocafisio.com.br',
+      'educator@moocafisio.com.br'
     ];
     return demoCredentials.includes(credentials.email) && credentials.password === 'demo123456';
   }
@@ -249,49 +249,49 @@ class SupabaseAuthService {
       email: credentials.email
     });
 
-    // ⚠️ IMPORTANTE: admin@dudufisio.com foi REMOVIDO daqui
+    // ⚠️ IMPORTANTE: admin@moocafisio.com.br foi REMOVIDO daqui
     // Agora usa autenticação REAL no Supabase
     const mockUsers: Record<string, User> = {
-      // 'admin@dudufisio.com': REMOVIDO - usa auth real ✅
-      'therapist@dudufisio.com': {
+      // 'admin@moocafisio.com.br': REMOVIDO - usa auth real ✅
+      'therapist@moocafisio.com.br': {
         id: 'mock-therapist-1',
-        email: 'therapist@dudufisio.com',
+        email: 'therapist@moocafisio.com.br',
         fullName: 'Dr. João Silva',
         role: Role.Therapist,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
       },
-      'terapeuta@dudufisio.com': {
+      'terapeuta@moocafisio.com.br': {
         id: 'mock-therapist-1',
-        email: 'terapeuta@dudufisio.com',
+        email: 'terapeuta@moocafisio.com.br',
         fullName: 'Dr. João Silva',
         role: Role.Therapist,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
       },
-      'patient@dudufisio.com': {
+      'patient@moocafisio.com.br': {
         id: 'mock-patient-1',
-        email: 'patient@dudufisio.com',
+        email: 'patient@moocafisio.com.br',
         fullName: 'Maria Santos',
         role: Role.Patient,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
       },
-      'paciente@dudufisio.com': {
+      'paciente@moocafisio.com.br': {
         id: 'mock-patient-1',
-        email: 'paciente@dudufisio.com',
+        email: 'paciente@moocafisio.com.br',
         fullName: 'Maria Santos',
         role: Role.Patient,
         avatarUrl: '',
         phone: undefined,
         createdAt: new Date().toISOString()
       },
-      'educator@dudufisio.com': {
+      'educator@moocafisio.com.br': {
         id: 'mock-educator-1',
-        email: 'educator@dudufisio.com',
+        email: 'educator@moocafisio.com.br',
         fullName: 'Educador Físico',
         role: Role.Educator,
         avatarUrl: '',
@@ -365,7 +365,7 @@ class SupabaseAuthService {
       }
 
       // ✅ AUTENTICAÇÃO REAL NO SUPABASE
-      // admin@dudufisio.com e outros usuários reais chegam aqui
+      // admin@moocafisio.com.br e outros usuários reais chegam aqui
       secureLogger.info('🔄 Tentando login REAL via Supabase', {
         component: 'supabaseAuthService',
         action: 'login',

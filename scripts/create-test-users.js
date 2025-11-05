@@ -45,7 +45,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 
 const users = [
   {
-    email: 'admin@dudufisio.com',
+    email: 'admin@moocafisio.com.br',
     password: 'DuduFisio2024!',
     user_metadata: {
       name: 'Administrador',
@@ -55,7 +55,7 @@ const users = [
     specialty: 'Gestão'
   },
   {
-    email: 'therapist@dudufisio.com',
+    email: 'therapist@moocafisio.com.br',
     password: 'demo123456',
     user_metadata: {
       name: 'Dr. Carlos Silva',
@@ -66,7 +66,7 @@ const users = [
     registration_number: 'CREFITO-3/123456'
   },
   {
-    email: 'patient@dudufisio.com',
+    email: 'patient@moocafisio.com.br',
     password: 'demo123456',
     user_metadata: {
       name: 'Maria Santos',
@@ -75,7 +75,7 @@ const users = [
     role: 'Patient'
   },
   {
-    email: 'educator@dudufisio.com',
+    email: 'educator@moocafisio.com.br',
     password: 'demo123456',
     user_metadata: {
       name: 'João Educador',

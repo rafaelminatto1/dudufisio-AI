@@ -1,5 +1,7 @@
 import { SessionEvolution } from '../types';
 import { shouldUseSupabase, shouldFallbackToMock, logDataSource } from '../config/supabaseTablesConfig';
+import { Conduct } from '../types/conducts';
+import { generatePlanText } from '../lib/evolution/conductsFormatter';
 
 /**
  * Service para gerenciamento de evoluções de sessão
@@ -42,8 +44,20 @@ export async function saveSessionEvolution(
   data: Omit<SessionEvolution, 'id' | 'createdAt' | 'updatedAt'>
 ): Promise<SessionEvolution> {
   try {
+    // Se houver conducts estruturadas, gerar texto do plano automaticamente
+    let planText = data.plan || '';
+    if (data.conducts && data.conducts.length > 0) {
+      planText = generatePlanText(
+        data.conducts as Conduct[], 
+        data.planGeneralNotes
+      );
+    }
+
     const newSession: SessionEvolution = {
       ...data,
+      plan: planText, // Texto gerado ou original
+      conducts: data.conducts, // Array de conducts estruturadas
+      planGeneralNotes: data.planGeneralNotes, // Observações gerais
       id: `session_evolution_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -71,9 +85,21 @@ export async function updateSessionEvolution(
       throw new Error(`Sessão ${sessionId} não encontrada`);
     }
 
+    // Se houver conducts estruturadas, gerar texto do plano automaticamente
+    let planText = data.plan;
+    if (data.conducts && data.conducts.length > 0) {
+      planText = generatePlanText(
+        data.conducts as Conduct[], 
+        data.planGeneralNotes
+      );
+    }
+
     const updatedSession: SessionEvolution = {
       ...mockSessionEvolutions[sessionIndex],
       ...data,
+      plan: planText || mockSessionEvolutions[sessionIndex].plan, // Texto gerado ou existente
+      conducts: data.conducts, // Array de conducts estruturadas
+      planGeneralNotes: data.planGeneralNotes, // Observações gerais
       updatedAt: new Date().toISOString(),
     };
 

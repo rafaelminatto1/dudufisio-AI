@@ -50,7 +50,7 @@ test.describe('Login e Dashboard - Validação de Correções', () => {
     console.log('📝 Preenchendo credenciais...');
 
     // 2. Preencher credenciais
-    await page.fill('input[name="email"]', 'admin@dudufisio.com');
+    await page.fill('input[name="email"]', 'admin@moocafisio.com.br');
     await page.fill('input[name="password"]', 'DuduFisio2024!');
 
     // 3. Aguardar um momento antes de clicar
@@ -161,7 +161,7 @@ test.describe('Login e Dashboard - Validação de Correções', () => {
 
     // 1. Login
     await page.goto('http://localhost:5173/login');
-    await page.fill('input[name="email"]', 'admin@dudufisio.com');
+    await page.fill('input[name="email"]', 'admin@moocafisio.com.br');
     await page.fill('input[name="password"]', 'DuduFisio2024!');
     await page.click('button[type="submit"]');
 

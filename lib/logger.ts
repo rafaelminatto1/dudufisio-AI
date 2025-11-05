@@ -135,6 +135,38 @@ export const logger = {
       context: id,
     });
   },
+  
+  /**
+   * Log estruturado para erros de carregamento
+   * Usado apenas em modo de desenvolvimento
+   */
+  loadingError(component: string, operation: string, error: any, context?: any) {
+    if (import.meta.env.DEV) {
+      console.group(`🔴 ${component} - Erro em ${operation}`);
+      console.error('Erro:', error);
+      console.error('Mensagem:', error?.message);
+      if (context) {
+        console.error('Contexto:', context);
+      }
+      console.groupEnd();
+    } else {
+      // Em produção, apenas log simples
+      logWithLevel('error', `Erro em ${operation}`, {
+        context: component,
+        data: { error, context },
+      });
+    }
+  },
+  
+  /**
+   * Log de sucesso em carregamento
+   * Usado apenas em modo de desenvolvimento
+   */
+  loadingSuccess(component: string, operation: string, data?: any) {
+    if (import.meta.env.DEV) {
+      console.log(`✅ ${component} - ${operation} concluído`, data);
+    }
+  },
 };
 
 export type Logger = typeof logger;

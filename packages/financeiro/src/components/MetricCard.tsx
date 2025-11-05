@@ -2,6 +2,7 @@
 import React from 'react';
 import { cn } from '../lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { H3, Small, Caption } from '@/components/ui/Typography';
 
 interface MetricCardProps {
   title: string;
@@ -36,7 +37,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         return {
           container: 'p-3 sm:p-4',
           title: 'text-xs sm:text-sm',
-          value: 'text-lg sm:text-xl',
+          value: 'text-2xl sm:text-3xl',
           subtitle: 'text-xs',
           icon: 'w-4 h-4 sm:w-5 sm:h-5'
         };
@@ -44,7 +45,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         return {
           container: 'p-6 sm:p-8',
           title: 'text-base sm:text-lg',
-          value: 'text-2xl sm:text-3xl lg:text-4xl',
+          value: 'text-4xl sm:text-5xl',
           subtitle: 'text-sm sm:text-base',
           icon: 'w-6 h-6 sm:w-8 sm:h-8'
         };
@@ -52,7 +53,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
         return {
           container: 'p-4 sm:p-5 lg:p-6',
           title: 'text-sm sm:text-base',
-          value: 'text-xl sm:text-2xl lg:text-3xl',
+          value: 'text-4xl',
           subtitle: 'text-xs sm:text-sm',
           icon: 'w-5 h-5 sm:w-6 sm:h-6'
         };
@@ -122,13 +123,13 @@ const MetricCard: React.FC<MetricCardProps> = ({
       variantClasses.container,
       className
     )}>
-      <div className="flex items-start justify-between mb-2">
-        <h3 className={cn(
-          'font-medium text-slate-600 truncate flex-1',
-          sizeClasses.title
+      <div className="flex items-start justify-between mb-4">
+        <Small className={cn(
+          'font-medium text-gray-600 truncate flex-1',
+          size === 'lg' && 'text-base'
         )}>
           {title}
-        </h3>
+        </Small>
         {icon && (
           <div className={cn(
             'text-slate-400 flex-shrink-0 ml-2',
@@ -140,7 +141,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </div>
       
       <p className={cn(
-        'font-bold truncate',
+        'font-bold text-gray-900 truncate',
         sizeClasses.value,
         variantClasses.value
       )}>
@@ -148,22 +149,22 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </p>
 
       {subtitle && (
-        <p className={cn(
-          'text-slate-500 truncate mt-1',
-          sizeClasses.subtitle
+        <Small className={cn(
+          'text-gray-500 truncate mt-1',
+          size === 'sm' && 'text-xs'
         )}>
           {subtitle}
-        </p>
+        </Small>
       )}
 
       {trend && (
-        <div className={cn(
-          'flex items-center mt-2 text-xs font-medium',
+        <Small className={cn(
+          'flex items-center mt-2 font-medium',
           variantClasses.trend,
-          trend.isPositive ? 'text-green-600' : 'text-orange-600'
+          trend.isPositive ? 'text-green-600' : 'text-red-600'
         )}>
           <span className="truncate">{trend.label}</span>
-        </div>
+        </Small>
       )}
     </div>
   );

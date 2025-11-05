@@ -618,9 +618,9 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
         <Separator className="my-0" />
         
         <div id="modal-description" className="p-6 overflow-y-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-6">
             {/* Coluna 1 */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               <Controller
                 name="patient"
                 control={form.control}
@@ -729,7 +729,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           </div>
           
             {/* Coluna 2 */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               <Controller
                 name="duration"
                 control={form.control}
@@ -863,7 +863,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
           </div>
         </div>
         
-        <div className="flex items-center justify-end gap-3 px-6 py-4 bg-muted/50 rounded-b-lg border-t">
+        <div className="flex items-center justify-end gap-4 px-6 py-4 bg-muted/50 rounded-b-lg border-t">
           <Button variant="outline" onClick={onClose} disabled={loadingState !== 'idle'}>
             Cancelar
           </Button>

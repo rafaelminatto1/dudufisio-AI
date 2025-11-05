@@ -26,8 +26,8 @@ const NavLinkComponent = withMemoization(({ to, icon: Icon, label, isCollapsed, 
       className={({ isActive }) =>
         `flex items-center p-1.5 rounded-lg transition-all duration-200 ${
           isActive
-            ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200 shadow-sm'
-            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            ? 'bg-primary/10 text-primary font-semibold border border-primary/20 shadow-sm'
+            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
         } ${isCollapsed ? 'justify-center' : ''}`
       }
       title={isCollapsed ? label : undefined}
@@ -81,7 +81,7 @@ const NavLinkComponent = withMemoization(({ to, icon: Icon, label, isCollapsed, 
 const NavGroup = withMemoization<{ title: string; isCollapsed: boolean; children: React.ReactNode }>(({ title, isCollapsed, children }) => (
     <div>
         {!isCollapsed && (
-            <h3 className="px-2 pt-3 pb-1 text-xs font-semibold uppercase text-slate-400 tracking-wider">
+            <h3 className="px-2 pt-3 pb-1 text-xs font-semibold uppercase text-gray-400 tracking-wider">
                 {title}
             </h3>
         )}
@@ -390,17 +390,17 @@ const Sidebar: React.FC = () => {
   return (
     <aside 
       id="sidebar-navigation"
-      className={`h-screen transition-all duration-300 ease-in-out bg-white border-r border-slate-200 flex flex-col ${isCollapsed ? 'w-14' : 'w-56'}`}
+      className={`h-screen transition-all duration-300 ease-in-out bg-white border-r border-gray-200 flex flex-col ${isCollapsed ? 'w-14' : 'w-56'}`}
       data-testid="sidebar"
       role="navigation"
       aria-label="Menu principal"
     >
-      <div className="flex items-center p-3 border-b border-slate-200 h-14 shrink-0">
-        {!isCollapsed && <Stethoscope className="w-6 h-6 text-sky-500" />}
-        {!isCollapsed && <span className="text-sm font-bold text-slate-800 ml-2">Fisio<span className="text-sky-500">Flow</span></span>}
+      <div className="flex items-center p-3 border-b border-gray-200 h-14 shrink-0">
+        {!isCollapsed && <Stethoscope className="w-6 h-6 text-primary" />}
+        {!isCollapsed && <span className="text-sm font-bold text-gray-800 ml-2">Mooca<span className="text-primary">Fisio</span></span>}
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)} 
-          className={`p-1.5 rounded-full text-slate-500 hover:bg-slate-100 transition-colors ${isCollapsed ? 'mx-auto' : 'ml-auto'}`}
+          className={`p-1.5 rounded-full text-gray-500 hover:bg-gray-100 transition-colors ${isCollapsed ? 'mx-auto' : 'ml-auto'}`}
           aria-label={isCollapsed ? "Expandir menu" : "Recolher menu"}
           title={isCollapsed ? "Expandir menu" : "Recolher menu"}
         >
@@ -421,9 +421,9 @@ const Sidebar: React.FC = () => {
         {/* 🔍 DEBUG: Mostrar estado de loading quando user não estiver carregado */}
         {!user ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-500 mb-4"></div>
-            <p className="text-sm text-slate-500">Carregando navegação...</p>
-            <p className="text-xs text-slate-400 mt-1">Aguardando dados do usuário</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+            <p className="text-sm text-gray-600">Carregando navegação...</p>
+            <p className="text-xs text-gray-400 mt-1">Aguardando dados do usuário</p>
           </div>
         ) : (
           <>
@@ -462,8 +462,8 @@ const Sidebar: React.FC = () => {
       </nav>
 
       {user && (
-         <div className="p-3 border-t border-slate-200 shrink-0">
-            <div className="p-2 rounded-lg bg-gradient-to-r from-slate-50 to-sky-50 border border-slate-200">
+         <div className="p-3 border-t border-gray-200 shrink-0">
+            <div className="p-2 rounded-lg bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200">
                 {/* User Profile Section */}
                 <Link to="/settings" title="Ver perfil e configurações" className="flex items-center w-full mb-2">
                     <div className="relative">
@@ -479,7 +479,7 @@ const Sidebar: React.FC = () => {
                     </div>
                     {!isCollapsed && (
                         <div className="ml-3 text-left flex-1 overflow-hidden min-w-0">
-                            <p className="text-sm font-semibold text-slate-700 truncate">{user.fullName}</p>
+                            <p className="text-sm font-semibold text-gray-700 truncate">{user.fullName}</p>
                             <div className="flex items-center gap-1">
                                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                                   user.role === Role.Admin ? 'bg-red-100 text-red-700' :
@@ -505,7 +505,7 @@ const Sidebar: React.FC = () => {
                 {!isCollapsed && (
                     <div className="flex items-center justify-between space-x-1">
                         <NotificationBell isCollapsed={isCollapsed} />
-                        <button onClick={handleLogout} title="Sair do sistema" className="p-2 rounded-full text-slate-500 hover:bg-red-100 hover:text-red-600 transition-colors">
+                        <button onClick={handleLogout} title="Sair do sistema" className="p-2 rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors">
                             <LogOut className="w-4 h-4" />
                         </button>
                     </div>
@@ -513,7 +513,7 @@ const Sidebar: React.FC = () => {
                 {isCollapsed && (
                     <div className="flex items-center justify-center space-x-1">
                         <NotificationBell isCollapsed={isCollapsed} />
-                        <button onClick={handleLogout} title="Sair do sistema" className="p-1.5 rounded-full text-slate-500 hover:bg-red-100 hover:text-red-600 transition-colors">
+                        <button onClick={handleLogout} title="Sair do sistema" className="p-1.5 rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors">
                             <LogOut className="w-4 h-4" />
                         </button>
                     </div>

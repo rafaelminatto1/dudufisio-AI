@@ -123,7 +123,7 @@ test.describe('Performance - Carregamento de Páginas', () => {
   test('Dashboard deve carregar em menos de 3 segundos', async ({ page }) => {
     // Login primeiro
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -140,7 +140,7 @@ test.describe('Performance - Carregamento de Páginas', () => {
 
   test('Lista de pacientes deve carregar em menos de 2 segundos', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -156,7 +156,7 @@ test.describe('Performance - Carregamento de Páginas', () => {
 
   test('Agenda deve carregar em menos de 2.5 segundos', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -175,7 +175,7 @@ test.describe('Performance - Queries e API', () => {
   
   test('Queries do Supabase devem retornar em < 500ms', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -206,7 +206,7 @@ test.describe('Performance - Queries e API', () => {
 
   test('Não deve haver N+1 queries', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -232,7 +232,7 @@ test.describe('Performance - Queries e API', () => {
 
   test('Cache deve reduzir tempo de carregamento em acessos subsequentes', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -317,7 +317,7 @@ test.describe('Performance - Lazy Loading', () => {
   
   test('Componentes fora da viewport devem usar lazy loading', async ({ page }) => {
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);

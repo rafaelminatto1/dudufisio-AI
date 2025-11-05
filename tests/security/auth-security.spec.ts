@@ -117,7 +117,7 @@ test.describe('Segurança - Autenticação e Autorização', () => {
   test('Sessão deve expirar após período de inatividade', async ({ page }) => {
     // Login
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -138,7 +138,7 @@ test.describe('Segurança - Autenticação e Autorização', () => {
   test('Logout deve limpar tokens e redirecionar', async ({ page }) => {
     // Login
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -174,7 +174,7 @@ test.describe('Segurança - Autenticação e Autorização', () => {
   test('Tokens JWT devem ter assinatura válida', async ({ page, context }) => {
     // Login
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -210,7 +210,7 @@ test.describe('Segurança - Row Level Security (RLS)', () => {
   test('Usuário só deve ver seus próprios dados', async ({ page }) => {
     // Login como usuário regular
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -231,7 +231,7 @@ test.describe('Segurança - Row Level Security (RLS)', () => {
   test('Não deve ser possível modificar dados de outros usuários via API', async ({ page }) => {
     // Login
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -266,7 +266,7 @@ test.describe('Segurança - CSRF Protection', () => {
   test('Requisições devem ter proteção CSRF', async ({ page }) => {
     // Login
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -303,7 +303,7 @@ test.describe('Segurança - Dados Sensíveis', () => {
     
     // Login
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForTimeout(2000);
@@ -319,7 +319,7 @@ test.describe('Segurança - Dados Sensíveis', () => {
   test('CPF deve ser mascarado em listagens', async ({ page }) => {
     // Login
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -344,7 +344,7 @@ test.describe('Segurança - Dados Sensíveis', () => {
   test('URLs não devem conter dados sensíveis', async ({ page }) => {
     // Login
     await page.goto('/login');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);

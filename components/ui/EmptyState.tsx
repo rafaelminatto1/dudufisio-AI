@@ -1,5 +1,5 @@
 /**
- * EmptyState Component - DuduFisio-AI
+ * EmptyState Component - MoocaFisio-AI
  * 
  * Componente reutilizável para estados vazios
  * quando não há dados para exibir.

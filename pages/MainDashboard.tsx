@@ -109,7 +109,11 @@ const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
             
             {/* Clínico - Básico */}
             <Route path="/patients" element={<PatientListPage />} />
-            <Route path="/patients/:id" element={<PatientDetailPage />} />
+            <Route path="/patients/:id" element={
+              <ErrorBoundary>
+                <PatientDetailPage />
+              </ErrorBoundary>
+            } />
             <Route path="/agenda" element={<AgendaPage />} />
             <Route path="/appointments" element={<AppointmentListPage />} />
             <Route path="/agenda-analytics" element={<AnalyticsDashboardPage />} />
@@ -121,7 +125,11 @@ const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
             <Route path="/protocols" element={<ProtocolsPage />} />
             
             {/* Clínico - Avançado */}
-            <Route path="/session-evolution" element={<SessionEvolutionPage />} />
+            <Route path="/session-evolution" element={
+              <ErrorBoundary>
+                <SessionEvolutionPage />
+              </ErrorBoundary>
+            } />
             <Route path="/teleconsulta" element={<TeleconsultaPage />} />
             <Route path="/exercise-library" element={<EnhancedExerciseLibraryPage />} />
             <Route path="/specialty-assessments" element={<SpecialtyAssessmentsPage />} />

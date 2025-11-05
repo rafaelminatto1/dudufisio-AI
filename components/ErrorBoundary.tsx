@@ -1,105 +1,68 @@
+/**
+ * ErrorBoundary Component
+ * 
+ * Componente de classe React para capturar erros não tratados na aplicação.
+ * Fornece uma UI amigável quando ocorre um erro inesperado.
+ */
+
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import ErrorPage from '../pages/ErrorPage';
-import * as Sentry from '@sentry/react';
+import { Button } from './ui/button';
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 interface State {
   hasError: boolean;
   error?: Error;
-  errorInfo?: ErrorInfo;
 }
 
-/**
- * Error Boundary Component
- * 
- * Captura erros em componentes filhos e exibe UI de fallback
- * 
- * @example
- * ```tsx
- * <ErrorBoundary>
- *   <MyComponent />
- * </ErrorBoundary>
- * ```
- */
-class ErrorBoundary extends Component<Props, State> {
+export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false };
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return {
-      hasError: true,
-      error
-    };
+    // Atualizar state para mostrar UI de fallback
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('💥 Error Boundary Caught:', error);
-    console.error('📍 Component Stack:', errorInfo.componentStack);
+    // Log do erro para monitoramento
+    console.error('🔴 ErrorBoundary capturou erro:', error, errorInfo);
     
-    // ✅ NEW: Report to Sentry with full context
-    Sentry.captureException(error, {
-      contexts: {
-        react: {
-          componentStack: errorInfo.componentStack,
-        },
-      },
-      tags: {
-        errorBoundary: true,
-        errorType: 'render-error',
-      },
-      level: 'error',
-      extra: {
-        errorInfo: {
-          componentStack: errorInfo.componentStack,
-        },
-      },
-    });
-    
-    // Call optional error callback
-    if (this.props.onError) {
-      this.props.onError(error, errorInfo);
+    // Aqui você pode enviar para serviço de monitoramento (Sentry, etc)
+    if (import.meta.env.PROD) {
+      // TODO: Enviar para serviço de monitoramento em produção
     }
-    
-    // Log to external service (Sentry, etc.) if configured
-    if (typeof window !== 'undefined') {
-      (window as any).__LAST_ERROR__ = {
-        error: error.message,
-        stack: error.stack,
-        componentStack: errorInfo.componentStack,
-        timestamp: new Date().toISOString()
-      };
-    }
-    
-    this.setState({
-      error,
-      errorInfo
-    });
   }
-
-  handleReset = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
-  };
 
   render() {
     if (this.state.hasError) {
-      // Use custom fallback if provided
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-      
-      // Otherwise use default ErrorPage
       return (
-        <ErrorPage 
-          error={this.state.error} 
-          resetError={this.handleReset}
-        />
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
+            <div className="text-red-500 text-5xl mb-4">⚠️</div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">
+              Ops! Algo deu errado
+            </h2>
+            <p className="text-slate-600 mb-4">
+              Ocorreu um erro inesperado. Por favor, recarregue a página.
+            </p>
+            {import.meta.env.DEV && this.state.error && (
+              <pre className="text-left text-xs bg-slate-100 p-3 rounded mb-4 overflow-auto max-h-40">
+                {this.state.error.message}
+              </pre>
+            )}
+            <Button
+              onClick={() => window.location.reload()}
+              className="w-full"
+            >
+              Recarregar Página
+            </Button>
+          </div>
+        </div>
       );
     }
 
@@ -107,6 +70,4 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Export both named and default for flexibility
-export { ErrorBoundary };
 export default ErrorBoundary;

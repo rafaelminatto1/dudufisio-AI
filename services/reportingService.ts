@@ -941,7 +941,7 @@ class ReportingService {
       // Add footer
       const pageHeight = doc.internal.pageSize.height;
       doc.setFontSize(8);
-      doc.text('Relatório gerado automaticamente pelo sistema DuduFisio-AI', 20, pageHeight - 20);
+      doc.text('Relatório gerado automaticamente pelo sistema MoocaFisio-AI', 20, pageHeight - 20);
       doc.text(`ID do Relatório: ${report.id}`, 20, pageHeight - 10);
       
       // Generate blob
@@ -965,7 +965,7 @@ ANÁLISES:
 ${report.data.analysis.map(a => `- ${a.title}: ${a.description}`).join('\n')}
 
 ID do Relatório: ${report.id}
-Gerado pelo sistema DuduFisio-AI
+Gerado pelo sistema MoocaFisio-AI
       `;
       
       return new Blob([fallbackContent], { type: 'text/plain' });

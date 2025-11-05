@@ -98,7 +98,7 @@ export const ImprovedLoadingScreen: React.FC<ImprovedLoadingScreenProps> = ({
       <div className="max-w-md w-full px-6">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-blue-600 mb-2">
-            DuduFisio-AI
+            MoocaFisio-AI
           </h1>
           <p className="text-slate-600">Carregando sistema...</p>
         </div>

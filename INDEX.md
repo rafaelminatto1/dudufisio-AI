@@ -89,12 +89,29 @@ Este arquivo serve como ponto de entrada para toda a documentação do projeto.
 
 ---
 
+## 🎨 Sistema de Design
+
+### Tipografia e UI - 5 Nov 2025
+
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [docs/TYPOGRAPHY_GUIDE.md](./docs/TYPOGRAPHY_GUIDE.md) | **📌 GUIA COMPLETO** - Sistema tipográfico hierárquico | 400+ |
+| [src/components/ui/Typography.README.md](./src/components/ui/Typography.README.md) | Quick start e referência rápida | 100+ |
+| [src/components/examples/TypographyExamples.tsx](./src/components/examples/TypographyExamples.tsx) | 7 exemplos práticos de implementação | 500+ |
+
+**Componentes**: H1, H2, H3, Body, Small, Caption, NumericValue, Label  
+**Acessibilidade**: WCAG AA/AAA validado  
+**Fonte**: Inter (Google Fonts)
+
+---
+
 ## 🛠️ Recursos Técnicos
 
 ### Código Implementado
 
 | Arquivo | Descrição | Linhas |
 |---------|-----------|--------|
+| [src/components/ui/Typography.tsx](./src/components/ui/Typography.tsx) | **NOVO** - 8 componentes tipográficos reutilizáveis | 150+ |
 | [lib/validators/index.ts](./lib/validators/index.ts) | Validadores centralizados + 12 schemas Zod | 500+ |
 | [lib/guards/AuthGuard.tsx](./lib/guards/AuthGuard.tsx) | Proteção de autenticação | 80+ |
 | [lib/guards/RoleGuard.tsx](./lib/guards/RoleGuard.tsx) | Proteção RBAC (4 roles, 65+ permissões) | 200+ |

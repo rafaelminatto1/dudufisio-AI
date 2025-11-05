@@ -302,7 +302,7 @@ export function exportToPDF(
   </table>
 
   <div class="footer">
-    Relatório gerado automaticamente pelo DuduFisio AI - Sistema de Gestão de Fisioterapia<br>
+    Relatório gerado automaticamente pelo MoocaFisio AI - Sistema de Gestão de Fisioterapia<br>
     © ${now.getFullYear()} - Todos os direitos reservados
   </div>
 </body>

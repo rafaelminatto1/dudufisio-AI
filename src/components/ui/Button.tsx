@@ -16,11 +16,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
     
     const variants = {
-      primary: `bg-[--color-primary] text-white hover:bg-[--color-primary]/90 focus:ring-[--color-primary]`,
-      secondary: `bg-[--color-secondary] text-white hover:bg-[--color-secondary]/90 focus:ring-[--color-secondary]`,
-      accent: `bg-[--color-accent] text-white hover:bg-[--color-accent]/90 focus:ring-[--color-accent]`,
-      outline: `border-2 border-[--color-primary] text-[--color-primary] hover:bg-[--color-primary] hover:text-white focus:ring-[--color-primary]`,
-      ghost: `text-[--color-text] hover:bg-[--color-surface] focus:ring-[--color-secondary]`,
+      primary: `bg-primary hover:bg-primary-dark text-white focus:ring-primary`,
+      secondary: `bg-white hover:bg-gray-50 text-primary border-2 border-primary focus:ring-primary`,
+      accent: `bg-success hover:bg-success/90 text-white focus:ring-success`,
+      outline: `border-2 border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-400`,
+      ghost: `text-gray-700 hover:bg-gray-100 focus:ring-gray-300`,
     };
 
     const sizes = {

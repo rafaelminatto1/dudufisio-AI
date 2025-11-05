@@ -122,7 +122,7 @@ class WhatsAppBusinessService {
     data: AppointmentReminderData
   ): Promise<any> {
     const text = `
-🏥 *Lembrete de Consulta - ${data.clinicName || 'DuduFisio'}*
+🏥 *Lembrete de Consulta - ${data.clinicName || 'MoocaFisio'}*
 
 Olá ${data.patientName}! 👋
 
@@ -174,7 +174,7 @@ Obrigado! 😊
    */
   async sendWelcomeMessage(to: string, patientName: string): Promise<any> {
     const text = `
-👋 Olá ${patientName}, bem-vindo(a) ao DuduFisio!
+👋 Olá ${patientName}, bem-vindo(a) ao MoocaFisio!
 
 Estamos felizes em tê-lo(a) conosco.
 

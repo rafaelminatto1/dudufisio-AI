@@ -63,7 +63,7 @@ const PatientListPage: React.FC = () => {
   // Mostrar estados de loading/erro
   if (isLoading && patients.length === 0) {
     return (
-      <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
+      <main className="min-h-screen bg-secondary-50 py-8" role="main">
         <ResponsiveContainer>
           <LoadingState 
             message="Carregando lista de pacientes..." 
@@ -76,7 +76,7 @@ const PatientListPage: React.FC = () => {
 
   if (error && patients.length === 0) {
     return (
-      <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
+      <main className="min-h-screen bg-secondary-50 py-8" role="main">
         <ResponsiveContainer>
           <ErrorState 
             error={error}
@@ -91,7 +91,7 @@ const PatientListPage: React.FC = () => {
 
   if (!isLoading && patients.length === 0) {
     return (
-      <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
+      <main className="min-h-screen bg-secondary-50 py-8" role="main">
         <ResponsiveContainer>
           <EmptyState 
             type="users"
@@ -121,7 +121,7 @@ const PatientListPage: React.FC = () => {
           {/* Botão agora fica na toolbar do PatientTable */}
         </header>
 
-        {/* Estatísticas com Gradientes Vibrantes - Paleta FisioFlow */}
+        {/* Estatísticas com Gradientes Vibrantes - Paleta MoocaFisio */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" data-testid="patient-stats">
           <Card className="bg-gradient-to-br from-fisio-primary-500 to-fisio-primary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200" data-testid="stat-total">
             <CardContent className="p-6">

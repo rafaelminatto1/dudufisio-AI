@@ -93,6 +93,18 @@ if (!rootElement) {
     );
     console.log('🎉 React application rendered successfully!');
 
+    // Register Service Worker for Push Notifications
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/firebase-messaging-sw.js')
+        .then((registration) => {
+          console.log('✅ [Push Notifications] Service Worker registered:', registration);
+        })
+        .catch((error) => {
+          console.error('❌ [Push Notifications] Service Worker registration failed:', error);
+        });
+    }
+
     // Performance mark - após render
     try {
       performance.mark('app_rendered');

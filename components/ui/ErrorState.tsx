@@ -1,5 +1,5 @@
 /**
- * ErrorState Component - DuduFisio-AI
+ * ErrorState Component - MoocaFisio-AI
  * 
  * Componente reutilizável para estados de erro
  * com mensagem amigável e ação de retry.

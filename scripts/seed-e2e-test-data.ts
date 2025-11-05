@@ -30,7 +30,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // --- Dados de Teste ---
 
 const TEST_USER = {
-  email: 'admin@dudufisio.com',
+  email: 'admin@moocafisio.com.br',
   password: 'DuduFisio2024!',
   fullName: 'Administrador Teste',
   role: 'admin'

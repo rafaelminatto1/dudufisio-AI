@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, X, User, Clock, FileText, Calendar, Activity } from 'lucide-react';
+import { ArrowLeft, Save, X, User, Clock, FileText, Calendar, Activity, History, Target } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
 import { useData } from '../contexts/AppContext';
+import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import * as appointmentService from '../services/appointmentService';
 import * as patientService from '../services/patientService';
 import * as soapNoteService from '../services/soapNoteService';
@@ -53,6 +54,7 @@ const SessionEvolutionPage: React.FC = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { therapists } = useData();
+  const { user } = useSupabaseAuth();
 
   // Data states
   const [appointment, setAppointment] = useState<EnrichedAppointment | null>(null);
@@ -84,15 +86,39 @@ const SessionEvolutionPage: React.FC = () => {
   }, [appointmentId]);
 
   const loadAllData = async () => {
+    // Timeout global para evitar loading infinito
+    const globalTimeoutId = setTimeout(() => {
+      setIsLoading(false);
+      showToast('Tempo limite excedido ao carregar dados', 'error');
+      navigate('/agenda');
+    }, 15000); // 15 segundos
+
     setIsLoading(true);
+    
     try {
       if (!appointmentId) throw new Error('ID do agendamento não fornecido');
 
-      // Buscar agendamento
-      const appointments = await appointmentService.getAppointments();
+      // Helper para adicionar timeout em promises
+      const withTimeout = <T,>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+        return Promise.race([
+          promise,
+          new Promise<T>((_, reject) =>
+            setTimeout(() => reject(new Error(`Timeout: ${label}`)), ms)
+          ),
+        ]);
+      };
+
+      // Buscar agendamento com timeout
+      const appointments = await withTimeout(
+        appointmentService.getAppointments(),
+        5000,
+        'getAppointments'
+      );
+      
       const foundAppointment = appointments.find(a => a.id === appointmentId);
 
       if (!foundAppointment) {
+        clearTimeout(globalTimeoutId);
         showToast('Agendamento não encontrado', 'error');
         navigate('/agenda');
         return;
@@ -100,16 +126,22 @@ const SessionEvolutionPage: React.FC = () => {
 
       setAppointment(foundAppointment as EnrichedAppointment);
 
-      // Buscar paciente
-      const patientData = await patientService.getPatientById(foundAppointment.patientId);
+      // Buscar paciente com timeout
+      const patientData = await withTimeout(
+        patientService.getPatientById(foundAppointment.patientId),
+        5000,
+        'getPatientById'
+      );
+      
       if (!patientData) {
+        clearTimeout(globalTimeoutId);
         showToast('Paciente não encontrado', 'error');
         navigate('/agenda');
         return;
       }
       setPatient(patientData);
 
-      // Carregar dados em paralelo
+      // Carregar dados em paralelo com timeout individual
       const [
         notesData,
         surgeriesData,
@@ -117,11 +149,11 @@ const SessionEvolutionPage: React.FC = () => {
         pathologiesData,
         bodyMapSessions,
       ] = await Promise.all([
-        soapNoteService.getNotesByPatientId(foundAppointment.patientId),
-        surgeryService.getSurgeriesByPatientId(foundAppointment.patientId),
-        patientGoalsService.getGoalsByPatientId(foundAppointment.patientId),
-        pathologyService.getPathologiesByPatientId(foundAppointment.patientId),
-        bodyMapService.getSessionsByPatient(foundAppointment.patientId),
+        withTimeout(soapNoteService.getNotesByPatientId(foundAppointment.patientId), 5000, 'getNotes'),
+        withTimeout(surgeryService.getSurgeriesByPatientId(foundAppointment.patientId), 5000, 'getSurgeries'),
+        withTimeout(patientGoalsService.getGoalsByPatientId(foundAppointment.patientId), 5000, 'getGoals'),
+        withTimeout(pathologyService.getPathologiesByPatientId(foundAppointment.patientId), 5000, 'getPathologies'),
+        withTimeout(bodyMapService.getSessionsByPatient(foundAppointment.patientId), 5000, 'getBodyMapSessions'),
       ]);
 
       setPatientNotes(notesData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
@@ -148,21 +180,50 @@ const SessionEvolutionPage: React.FC = () => {
       // Gerar alertas e insights
       const sessionNumber = notesData.length + 1;
       const [alerts, insights] = await Promise.all([
-        mandatoryTestAlertService.generateMandatoryTestAlerts(
-          foundAppointment.patientId,
-          sessionNumber
+        withTimeout(
+          mandatoryTestAlertService.generateMandatoryTestAlerts(
+            foundAppointment.patientId,
+            sessionNumber
+          ),
+          5000,
+          'generateMandatoryTestAlerts'
         ),
-        medicalReportSuggestionsService.generateMedicalInsights(foundAppointment.patientId),
+        withTimeout(
+          medicalReportSuggestionsService.generateMedicalInsights(foundAppointment.patientId),
+          5000,
+          'generateMedicalInsights'
+        ),
       ]);
 
       setMandatoryAlerts(alerts);
       setMedicalInsights(insights);
 
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      showToast('Erro ao carregar dados da sessão', 'error');
-      navigate('/agenda');
+      clearTimeout(globalTimeoutId);
+
+    } catch (error: any) {
+      clearTimeout(globalTimeoutId);
+      
+      // Log detalhado em desenvolvimento
+      if (import.meta.env.DEV) {
+        console.error('🔴 Erro detalhado em loadAllData:', {
+          appointmentId,
+          error,
+          message: error?.message,
+          stack: error?.stack,
+        });
+      }
+      
+      // Mensagem amigável baseada no erro
+      const errorMessage = error?.message?.includes('Timeout')
+        ? 'Tempo limite excedido. Verifique sua conexão.'
+        : 'Erro ao carregar dados da sessão';
+      
+      showToast(errorMessage, 'error');
+      
+      // Dar tempo para toast aparecer antes de navegar
+      setTimeout(() => navigate('/agenda'), 1000);
     } finally {
+      // SEMPRE desabilitar loading
       setIsLoading(false);
     }
   };
@@ -408,6 +469,21 @@ const SessionEvolutionPage: React.FC = () => {
           </div>
         </div>
 
+          {/* Card do Profissional */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
+                {user?.name?.charAt(0) || 'P'}
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">{user?.name || 'Profissional'}</p>
+                <p className="text-sm text-gray-600">
+                  CREFITO: {(user as any)?.crefito || 'Não informado'}
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Info cards */}
           <div className="flex items-center space-x-6 text-sm text-slate-600">
             <div className="flex items-center space-x-2">
@@ -492,7 +568,7 @@ const SessionEvolutionPage: React.FC = () => {
           {(showAll || activeTab === 'soap') && (
             <div className="overflow-y-auto border-r border-slate-200 bg-white">
               <div className="p-6">
-                <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center space-x-2">
+                <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
                   <FileText className="w-5 h-5 text-blue-600" />
                   <span>Formulário SOAP</span>
                 </h2>
@@ -514,7 +590,10 @@ const SessionEvolutionPage: React.FC = () => {
             <div className="overflow-y-auto border-r border-slate-200 bg-slate-50">
               <div className="p-6 space-y-6">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 mb-4">Histórico de Sessões</h2>
+                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
+                    <History className="w-5 h-5 text-green-600" />
+                    <span>Histórico de Sessões</span>
+                  </h2>
                   <SessionHistoryPanel
                     patientId={patient.id}
                     limit={10}
@@ -523,7 +602,10 @@ const SessionEvolutionPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 mb-4">Cirurgias</h2>
+                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
+                    <Activity className="w-5 h-5 text-purple-600" />
+                    <span>Cirurgias</span>
+                  </h2>
                   <SurgeryTimeline
                     patientId={patient.id}
                   />
@@ -552,7 +634,10 @@ const SessionEvolutionPage: React.FC = () => {
 
                 {/* Patologias */}
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 mb-4">Patologias</h2>
+                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
+                    <Activity className="w-5 h-5 text-orange-600" />
+                    <span>Patologias</span>
+                  </h2>
                   <PathologyManager
                     patientId={patient.id}
                   />
@@ -560,7 +645,10 @@ const SessionEvolutionPage: React.FC = () => {
 
                 {/* Evolução de Testes */}
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 mb-4">Evolução</h2>
+                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
+                    <Target className="w-5 h-5 text-teal-600" />
+                    <span>Evolução</span>
+                  </h2>
                   <TestEvolutionPanel
                     patientId={patient.id}
                     sessionNumber={sessionNumber}
@@ -569,8 +657,11 @@ const SessionEvolutionPage: React.FC = () => {
 
                 {/* Mapa de Dor */}
                 <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold text-slate-900">Mapa de Dor</h2>
+                  <div className="flex items-center justify-between mb-4 border-b pb-3 border-slate-200">
+                    <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-red-600" />
+                      <span>Mapa de Dor</span>
+                    </h2>
                     {previousSessionPainData.length > 0 && (
                       <button
                         onClick={() => setShowComparisonModal(true)}
@@ -644,7 +735,10 @@ const SessionEvolutionPage: React.FC = () => {
 
                 {/* Objetivos com Countdown */}
                       <div>
-                        <h2 className="text-lg font-bold text-slate-900 mb-4">Objetivos</h2>
+                        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
+                          <Target className="w-5 h-5 text-indigo-600" />
+                          <span>Objetivos</span>
+                        </h2>
                         <PatientGoalsPanel
                           patient={patient}
                         />

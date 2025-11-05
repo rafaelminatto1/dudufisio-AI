@@ -3774,6 +3774,77 @@ export interface CreateLeadInput {
 // SISTEMA DE EVOLUÇÃO DE SESSÃO - TIPOS
 // ============================================================================
 
+// Exercício prescrito (camada sobre biblioteca de exercícios)
+export interface PrescribedExercise {
+  id: string;
+  exerciseId: string;  // Referência ao exercício da biblioteca
+  exercise: Exercise;  // Dados completos do exercício
+  sets: number;
+  reps: number;
+  load?: string;      // Ex: "5kg", "banda verde"
+  duration?: string;  // Ex: "30seg", "2min"
+  notes?: string;     // Observações específicas da prescrição
+}
+
+// Foto de progresso do paciente
+export interface ProgressPhoto {
+  id: string;
+  url: string;
+  caption?: string;
+  uploaded_at: string;
+}
+
+// Timer de sessão
+export interface SessionTimer {
+  startTime: string;  // ISO date string
+  endTime?: string;   // ISO date string
+  duration: number;   // em minutos
+}
+
+// Template de evolução reutilizável
+export interface EvolutionTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  therapist_id: string;
+  subjective_template?: string;
+  objective_template?: string;
+  assessment_template?: string;
+  conducts: Array<{
+    id: string;
+    category: string;
+    name: string;
+    details?: string;
+    duration?: string;
+    equipment?: string;
+    notes?: string;
+  }>;
+  exercises: PrescribedExercise[];
+  usage_count: number;
+  last_used_at?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+// Dados para criar um template
+export interface CreateTemplateData {
+  name: string;
+  description?: string;
+  subjective_template?: string;
+  objective_template?: string;
+  assessment_template?: string;
+  conducts: Array<{
+    id: string;
+    category: string;
+    name: string;
+    details?: string;
+    duration?: string;
+    equipment?: string;
+    notes?: string;
+  }>;
+  exercises: PrescribedExercise[];
+}
+
 // Dados completos da evolução de uma sessão
 export interface SessionEvolution {
   id: string;
@@ -3788,7 +3859,19 @@ export interface SessionEvolution {
   subjective?: string;
   objective?: string;
   assessment?: string;
-  plan?: string;
+  plan?: string; // Texto formatado (gerado automaticamente de conducts ou inserido manualmente)
+  
+  // Condutas estruturadas (novo sistema)
+  conducts?: Array<{
+    id: string;
+    category: string;
+    name: string;
+    details?: string;
+    duration?: string;
+    equipment?: string;
+    notes?: string;
+  }>;
+  planGeneralNotes?: string; // Observações gerais do plano
   
   // Testes realizados na sessão
   testsPerformed: TestResult[];
@@ -3796,6 +3879,11 @@ export interface SessionEvolution {
   // Métricas rápidas
   painLevel?: number; // 0-10
   satisfactionLevel?: number; // 0-10
+  
+  // Funcionalidades avançadas
+  prescribedExercises?: PrescribedExercise[];  // Exercícios prescritos na sessão
+  progressPhotos?: ProgressPhoto[];            // Fotos de progresso
+  sessionTimer?: SessionTimer;                 // Dados do timer da sessão
   
   // Metadata
   duration?: number; // minutos
@@ -3806,6 +3894,47 @@ export interface SessionEvolution {
   updatedAt: string;
   createdBy?: string;
 }
+
+// ============================================================================
+// AI FEATURES - Tipos para funcionalidades de IA
+// ============================================================================
+
+// Dados SOAP estruturados pela IA
+export interface SOAPData {
+  subjective: string;
+  objective: string;
+  assessment: string;
+  plan: string;
+}
+
+// Exercício sugerido pela IA
+export interface SuggestedExercise {
+  name: string;
+  description: string;
+  sets: number;
+  reps: number;
+  rationale: string;  // Por que este exercício é indicado
+}
+
+// Input para sugestão de exercícios
+export interface ExerciseSuggestionInput {
+  diagnosis: string;
+  painLocation: string;
+  functionalLimitations: string;
+}
+
+// Status do processamento de áudio
+export interface AudioProcessingStatus {
+  isRecording: boolean;
+  isProcessing: boolean;
+  isTranscribing: boolean;
+  isStructuring: boolean;
+  error?: string;
+}
+
+// ============================================================================
+// END AI FEATURES
+// ============================================================================
 
 // Resultado de um teste/avaliação específico
 export interface TestResult {

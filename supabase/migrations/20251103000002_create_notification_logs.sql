@@ -4,46 +4,80 @@
 -- Purpose: Sistema de logging para notificações (Email, WhatsApp, Push)
 -- =====================================================================
 
--- 1. Criar tabela notification_logs
-CREATE TABLE IF NOT EXISTS public.notification_logs (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-
-  -- Canal de comunicação
-  channel TEXT NOT NULL CHECK (channel IN ('email', 'whatsapp', 'sms', 'push')),
-
-  -- Informações do destinatário
-  recipient_email TEXT,
-  recipient_name TEXT,
-  recipient_phone TEXT,
-
-  -- Informações da mensagem
-  subject TEXT,
-  template TEXT,
-  priority TEXT DEFAULT 'normal' CHECK (priority IN ('high', 'normal', 'low')),
-
-  -- Status e tracking
-  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'delivered', 'failed', 'bounced', 'opened', 'clicked')),
-  provider TEXT, -- 'resend', 'whatsapp', 'firebase', etc
-  provider_message_id TEXT,
-
-  -- Erro handling
-  error_message TEXT,
-  retry_count INTEGER DEFAULT 0,
-  max_retries INTEGER DEFAULT 3,
-
-  -- Scheduling
-  scheduled_for TIMESTAMPTZ,
-  sent_at TIMESTAMPTZ,
-  delivered_at TIMESTAMPTZ,
-  failed_at TIMESTAMPTZ,
-
-  -- Metadata
-  metadata JSONB DEFAULT '{}'::jsonb,
-
-  -- Timestamps
-  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
-);
+-- 1. Criar ou atualizar tabela notification_logs
+DO $$
+BEGIN
+  -- Criar tabela se não existir
+  IF NOT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'notification_logs') THEN
+    CREATE TABLE public.notification_logs (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      channel TEXT NOT NULL CHECK (channel IN ('email', 'whatsapp', 'sms', 'push')),
+      recipient_email TEXT,
+      recipient_name TEXT,
+      recipient_phone TEXT,
+      subject TEXT,
+      template TEXT,
+      priority TEXT DEFAULT 'normal' CHECK (priority IN ('high', 'normal', 'low')),
+      status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'delivered', 'failed', 'bounced', 'opened', 'clicked')),
+      provider TEXT,
+      provider_message_id TEXT,
+      error_message TEXT,
+      retry_count INTEGER DEFAULT 0,
+      max_retries INTEGER DEFAULT 3,
+      scheduled_for TIMESTAMPTZ,
+      sent_at TIMESTAMPTZ,
+      delivered_at TIMESTAMPTZ,
+      failed_at TIMESTAMPTZ,
+      metadata JSONB DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+      updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+    );
+  ELSE
+    -- Se a tabela existe, adicionar colunas faltantes
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='recipient_email') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN recipient_email TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='recipient_name') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN recipient_name TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='recipient_phone') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN recipient_phone TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='subject') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN subject TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='template') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN template TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='priority') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN priority TEXT DEFAULT 'normal';
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='provider_message_id') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN provider_message_id TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='error_message') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN error_message TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='retry_count') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN retry_count INTEGER DEFAULT 0;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='max_retries') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN max_retries INTEGER DEFAULT 3;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='scheduled_for') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN scheduled_for TIMESTAMPTZ;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='sent_at') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN sent_at TIMESTAMPTZ;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='delivered_at') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN delivered_at TIMESTAMPTZ;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='notification_logs' AND column_name='failed_at') THEN
+      ALTER TABLE public.notification_logs ADD COLUMN failed_at TIMESTAMPTZ;
+    END IF;
+  END IF;
+END $$;
 
 -- 2. Criar índices para performance
 CREATE INDEX IF NOT EXISTS idx_notification_logs_status

@@ -427,7 +427,11 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <Route path="/notifications" element={LazyElement(NotificationCenterPage, 'Notificações')} />
                 <Route path="/tasks" element={<PageErrorBoundary pageName="Tarefas"><KanbanPage /></PageErrorBoundary>} />
                 <Route path="/session-evolution" element={LazyElement(SessionEvolutionPage, 'Evolução de Sessão')} />
-                <Route path="/atendimento/:appointmentId/evolucao" element={LazyElement(SessionEvolutionPage, 'Evolução de Sessão')} />
+                <Route path="/atendimento/:appointmentId/evolucao" element={
+                  <PageErrorBoundary pageName="Evolução de Sessão">
+                    {LazyElement(SessionEvolutionPage, 'Evolução de Sessão')}
+                  </PageErrorBoundary>
+                } />
                 
                 {/* Sessions and Treatment */}
                 <Route path="/sessions/:appointmentId" element={<SessionRoute mode="view" />} />

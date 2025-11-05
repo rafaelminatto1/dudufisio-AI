@@ -8,6 +8,7 @@ import { useData, useApp } from '../contexts/AppContext';
 import { useToast } from '../contexts/ToastContext';
 import PageHeader from '../components/PageHeader';
 import { Skeleton } from '../components/ui/skeleton';
+import { H1, Body } from '@/components/ui/Typography';
 import * as acompanhamentoService from '../services/acompanhamentoService';
 import * as patientService from '../services/patientService';
 import * as bodyMapService from '../services/bodyMapService';
@@ -133,11 +134,11 @@ const AcompanhamentoPage: React.FC = () => {
     );
 
     return (
-        <div className="space-y-8">
-            <PageHeader
-                title="Acompanhamento de Pacientes"
-                subtitle="Monitore presença, evolução clínica e priorize ações para retenção."
-            />
+        <div className="space-y-8 p-8">
+            <header className="space-y-2">
+                <H1>Acompanhamento de Pacientes</H1>
+                <Body>Monitore presença, evolução clínica e priorize ações para retenção.</Body>
+            </header>
 
             {loading || !alerts || !metrics || !quickActions ? (
                 renderSkeletons()

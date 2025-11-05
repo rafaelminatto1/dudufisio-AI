@@ -395,7 +395,7 @@ class AgendaExportService {
   `).join('')}
 
   <div class="footer">
-    <p>FisioFlow - Sistema de Gestão em Fisioterapia</p>
+    <p>MoocaFisio - Sistema de Gestão em Fisioterapia</p>
     <p>Relatório gerado em ${format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</p>
   </div>
 </body>

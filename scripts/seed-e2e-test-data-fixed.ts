@@ -272,17 +272,17 @@ async function verifyTestUser() {
   console.log('\n👤 Verificando usuário de teste...');
   
   const { error } = await supabase.auth.signInWithPassword({
-    email: 'admin@dudufisio.com',
+    email: 'admin@moocafisio.com.br',
     password: 'DuduFisio2024!'
   });
 
   if (error) {
     console.log('  ⚠️  Usuário de teste não existe ou senha incorreta');
-    console.log('  📝 Crie o usuário admin@dudufisio.com no Supabase Dashboard');
+    console.log('  📝 Crie o usuário admin@moocafisio.com.br no Supabase Dashboard');
     return false;
   }
 
-  console.log('  ✅ Usuário admin@dudufisio.com verificado!');
+  console.log('  ✅ Usuário admin@moocafisio.com.br verificado!');
   return true;
 }
 

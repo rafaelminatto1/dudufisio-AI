@@ -40,42 +40,60 @@
 
 @layer base {
   :root {
-    /* Cores Primárias FisioFlow */
-    --fisio-primary: 0 123 255; /* #007BFF */
-    --fisio-secondary: 40 167 69; /* #28A745 */
+    /* ===== PALETA DE CORES MOOCAFISIO ===== */
     
-    /* Cores Neutras */
-    --fisio-neutral-50: 248 249 250; /* #F8F9FA */
-    --fisio-neutral-100: 243 244 246; /* #F3F4F6 */
-    --fisio-neutral-200: 233 236 239; /* #E9ECEF */
-    --fisio-neutral-500: 108 117 125; /* #6C757D */
-    --fisio-neutral-800: 51 51 51; /* #333333 */
+    /* Cor Primária (Azul/Roxo) */
+    --primary: #5B4FE8;
+    --primary-light: #7C73E6;
+    --primary-dark: #4A3FBB;
+    --primary-rgb: 91 79 232;
     
-    /* Cores de Feedback */
-    --fisio-error: 220 53 69; /* #DC3545 */
-    --fisio-warning: 255 193 7; /* #FFC107 */
-    --fisio-success: 40 167 69; /* #28A745 */
+    /* Cor Secundária (Cinza Neutro) */
+    --secondary: #6B7280;
+    --secondary-light: #9CA3AF;
+    --secondary-dark: #4B5563;
+    --secondary-rgb: 107 114 128;
     
-    /* Variáveis CSS necessárias para shadcn/ui */
+    /* Backgrounds */
+    --bg-light: #F9FAFB;
+    --bg-white: #FFFFFF;
+    --bg-dark: #1F2937;
+    
+    /* Estados de Status */
+    --status-success: #10B981;
+    --status-warning: #F59E0B;
+    --status-error: #EF4444;
+    --status-info: #3B82F6;
+    
+    /* Textos */
+    --text-primary: #111827;
+    --text-secondary: #6B7280;
+    --text-tertiary: #9CA3AF;
+    
+    /* Bordas */
+    --border-light: #E5E7EB;
+    --border-medium: #D1D5DB;
+    
+    /* ===== VARIÁVEIS SHADCN/UI (HSL) ===== */
     --background: 0 0% 100%;
-    --foreground: 0 0% 20%;
+    --foreground: 222 47% 11%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 20%;
+    --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 20%;
-    --primary: 211 100% 50%;
+    --popover-foreground: 222 47% 11%;
+    --primary-hsl: 246 80% 60%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 142 76% 36%;
+    --secondary-hsl: 220 9% 46%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 0 0% 20%;
-    --destructive: 0 84.2% 60.2%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 211 100% 50%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 246 80% 60%;
     --radius: 0.5rem;
     
     /* Variáveis de espaçamento */
@@ -119,7 +137,7 @@ body {
     'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply text-fisio-neutral-800 bg-fisio-neutral-50;
+  @apply text-secondary-800 bg-secondary-50;
 }
 
 /* Responsividade Mobile-First */
@@ -164,7 +182,7 @@ body {
   }
   
   .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-fisio-primary-500 focus:ring-offset-2;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
 }
 
@@ -175,15 +193,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-fisio-neutral-100;
+  @apply bg-secondary-100;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-fisio-neutral-400 rounded-lg;
+  @apply bg-secondary-400 rounded-lg;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-fisio-neutral-500;
+  @apply bg-secondary-500;
 }
 
 /* Animação shake para campos com erro */

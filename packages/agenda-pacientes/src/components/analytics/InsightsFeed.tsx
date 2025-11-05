@@ -101,7 +101,7 @@ const InsightsFeed: React.FC<InsightsFeedProps> = ({
 
       {/* Feed */}
       <ScrollArea className="h-[500px]">
-        <div className="space-y-3">
+        <div className="space-y-4">
           {filteredInsights.length === 0 ? (
             <Card className="p-12 text-center border-dashed">
               <Brain className="w-12 h-12 text-slate-300 mx-auto mb-3" />

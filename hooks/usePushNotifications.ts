@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/SupabaseAuthContext';
 import { pushNotificationService } from '../services/push/PushNotificationService';
 
 export interface UsePushNotificationsReturn {

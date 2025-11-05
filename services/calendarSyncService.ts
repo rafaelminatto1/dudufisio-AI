@@ -23,7 +23,7 @@ class CalendarSyncService {
       action: 'TEMPLATE',
       text: `${appointment.type} - ${appointment.patientName}`,
       details: this.buildEventDescription(appointment),
-      location: appointment.location || 'Clínica FisioFlow',
+      location: appointment.location || 'Clínica MoocaFisio',
       dates: `${format(appointment.startTime, "yyyyMMdd'T'HHmmss")}/${format(appointment.endTime, "yyyyMMdd'T'HHmmss")}`,
       ctz: 'America/Sao_Paulo'
     });
@@ -42,7 +42,7 @@ class CalendarSyncService {
       rru: 'addevent',
       subject: `${appointment.type} - ${appointment.patientName}`,
       body: this.buildEventDescription(appointment),
-      location: appointment.location || 'Clínica FisioFlow',
+      location: appointment.location || 'Clínica MoocaFisio',
       startdt: appointment.startTime.toISOString(),
       enddt: appointment.endTime.toISOString()
     });
@@ -82,7 +82,7 @@ class CalendarSyncService {
     return [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//FisioFlow//Agenda//PT',
+      'PRODID:-//MoocaFisio//Agenda//PT',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
       'BEGIN:VEVENT',
@@ -92,7 +92,7 @@ class CalendarSyncService {
       `DTEND:${formatDate(appointment.endTime)}`,
       `SUMMARY:${appointment.type} - ${appointment.patientName}`,
       `DESCRIPTION:${description}`,
-      `LOCATION:${appointment.location || 'Clínica FisioFlow'}`,
+      `LOCATION:${appointment.location || 'Clínica MoocaFisio'}`,
       `STATUS:${appointment.status === 'completed' ? 'CONFIRMED' : 'TENTATIVE'}`,
       'BEGIN:VALARM',
       'TRIGGER:-PT30M',
@@ -125,7 +125,7 @@ class CalendarSyncService {
       lines.push(``, `📝 Observações:`, appointment.notes);
     }
 
-    lines.push(``, `---`, `Gerado por FisioFlow`);
+    lines.push(``, `---`, `Gerado por MoocaFisio`);
 
     return lines.join('\n');
   }
@@ -187,7 +187,7 @@ class CalendarSyncService {
         `DTEND:${formatDate(appointment.endTime)}`,
         `SUMMARY:${appointment.type} - ${appointment.patientName}`,
         `DESCRIPTION:${description}`,
-        `LOCATION:${appointment.location || 'Clínica FisioFlow'}`,
+        `LOCATION:${appointment.location || 'Clínica MoocaFisio'}`,
         `STATUS:${appointment.status === 'completed' ? 'CONFIRMED' : 'TENTATIVE'}`,
         'BEGIN:VALARM',
         'TRIGGER:-PT30M',
@@ -201,7 +201,7 @@ class CalendarSyncService {
     const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
-      'PRODID:-//FisioFlow//Agenda//PT',
+      'PRODID:-//MoocaFisio//Agenda//PT',
       'CALSCALE:GREGORIAN',
       'METHOD:PUBLISH',
       ...events,

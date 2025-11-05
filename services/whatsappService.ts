@@ -84,7 +84,7 @@ export const sendAppointmentConfirmation = async (appointment: Appointment, pati
     const date = appointment.startTime.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
     const time = appointment.startTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
     
-    const content = `Olá, ${patient.name.split(' ')[0] || patient.name}! 👋 Sua consulta de ${appointment.type} foi confirmada para ${date} às ${time}. Mal podemos esperar para te ver! - Equipe FisioFlow`;
+    const content = `Olá, ${patient.name.split(' ')[0] || patient.name}! 👋 Sua consulta de ${appointment.type} foi confirmada para ${date} às ${time}. Mal podemos esperar para te ver! - Equipe MoocaFisio`;
     
     return await sendMessage(patient, content, 'confirmation');
 };
@@ -95,7 +95,7 @@ export const sendAppointmentConfirmation = async (appointment: Appointment, pati
 export const sendAppointmentReminder = async (appointment: Appointment, patient: Patient, _hoursBefore: number): Promise<SendMessageResult> => {
      const time = appointment.startTime.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-    const content = `Lembrete FisioFlow: Sua consulta é hoje às ${time}. Por favor, chegue com alguns minutos de antecedência. Até já!`;
+    const content = `Lembrete MoocaFisio: Sua consulta é hoje às ${time}. Por favor, chegue com alguns minutos de antecedência. Até já!`;
     
     return await sendMessage(patient, content, 'reminder');
 };

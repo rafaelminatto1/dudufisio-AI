@@ -6,17 +6,17 @@ import { Page } from '@playwright/test';
  */
 export const DEMO_ACCOUNTS = {
   admin: {
-    email: 'admin@dudufisio.com',
+    email: 'admin@moocafisio.com.br',
     password: 'DuduFisio2024!',
     role: 'Administrador'
   },
   therapist: {
-    email: 'therapist@dudufisio.com',
+    email: 'therapist@moocafisio.com.br',
     password: 'demo123456',
     role: 'Fisioterapeuta'
   },
   patient: {
-    email: 'patient@dudufisio.com',
+    email: 'patient@moocafisio.com.br',
     password: 'demo123456',
     role: 'Paciente'
   }

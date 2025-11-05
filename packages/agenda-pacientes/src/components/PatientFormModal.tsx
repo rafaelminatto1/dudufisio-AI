@@ -135,10 +135,10 @@ const PatientFormModal: React.FC<PatientFormModalProps> = ({ isOpen, onClose, on
           </button>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+        <main className="flex-1 overflow-y-auto p-6 space-y-8">
           <section>
             <h3 className="text-md font-semibold text-blue-700 border-b border-blue-200 pb-2 mb-4">Informações Pessoais</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
               <div>
                   <label className="text-sm font-medium text-slate-600">Nome Completo*</label>
                   <input type="text" name="name" value={formData.name} onChange={handleChange} className="mt-1 w-full p-2 border border-slate-300 rounded-lg"/>
@@ -164,7 +164,7 @@ const PatientFormModal: React.FC<PatientFormModalProps> = ({ isOpen, onClose, on
 
           <section>
              <h3 className="text-md font-semibold text-blue-700 border-b border-blue-200 pb-2 mt-4 mb-4">Informações de Saúde</h3>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                  <div>
                     <label className="text-sm font-medium text-slate-600">Alergias Conhecidas</label>
                     <textarea name="allergies" value={formData.allergies} onChange={handleChange} rows={2} className="mt-1 w-full p-2 border border-slate-300 rounded-lg" placeholder="Ex: Dipirona, látex..."></textarea>
@@ -178,7 +178,7 @@ const PatientFormModal: React.FC<PatientFormModalProps> = ({ isOpen, onClose, on
           
           <section>
             <h3 className="md:col-span-2 text-md font-semibold text-blue-700 border-b border-blue-200 pb-2 mt-4 mb-4">Endereço</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                 <div>
                     <label className="text-sm font-medium text-slate-600">Rua</label>
                     <input type="text" name="street" value={formData.address.street} onChange={e => handleNestedChange(e, 'address')} className="mt-1 w-full p-2 border border-slate-300 rounded-lg"/>
@@ -200,7 +200,7 @@ const PatientFormModal: React.FC<PatientFormModalProps> = ({ isOpen, onClose, on
 
           <section>
             <h3 className="md:col-span-2 text-md font-semibold text-sky-700 border-b pb-2 mt-4 mb-4">Contato de Emergência</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                 <div>
                     <label className="text-sm font-medium text-slate-600">Nome</label>
                     <input type="text" name="name" value={formData.emergencyContact.name} onChange={e => handleNestedChange(e, 'emergencyContact')} className="mt-1 w-full p-2 border border-slate-300 rounded-lg"/>
@@ -214,7 +214,7 @@ const PatientFormModal: React.FC<PatientFormModalProps> = ({ isOpen, onClose, on
             
           <section>
              <h3 className="md:col-span-2 text-md font-semibold text-sky-700 border-b pb-2 mt-4 mb-4">Conformidade e Status</h3>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                 <div>
                     <label className="text-sm font-medium text-slate-600">Status do Paciente</label>
                     <select name="status" value={formData.status} onChange={handleChange} className="mt-1 w-full p-2 border border-slate-300 rounded-lg bg-white">

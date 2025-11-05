@@ -157,7 +157,7 @@ Este material contém informações essenciais para a prática clínica baseada 
 - Consenso de especialistas
 
 ---
-*Material atualizado em 2024 - DuduFisio-AI*`;
+*Material atualizado em 2024 - MoocaFisio-AI*`;
     }
   } catch (error) {
     handleError(error, {
@@ -643,9 +643,286 @@ export async function fetchVideoFromUri(uri: string): Promise<Blob> {
   }
 }
 // ============================================================================
+// AI FEATURES - Funcionalidades de IA para Evolução de Pacientes
+// ============================================================================
+
+import type { SOAPData, SuggestedExercise, ExerciseSuggestionInput, SessionEvolution } from '../types';
+
+/**
+ * Verifica se a API Gemini está configurada
+ */
+export function isGeminiConfigured(): boolean {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  return !!apiKey && apiKey !== 'sua-gemini-api-key-aqui';
+}
+
+/**
+ * Transcreve áudio para texto usando Gemini
+ */
+export async function transcribeAudio(audioBlob: Blob): Promise<string> {
+  if (!isGeminiConfigured()) {
+    throw new AppError('API Gemini não configurada. Configure VITE_GEMINI_API_KEY no arquivo .env.local', 'GEMINI_NOT_CONFIGURED');
+  }
+
+  try {
+    // Converter blob para base64
+    const base64Audio = await blobToBase64(audioBlob);
+    
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const ai = new GoogleGenerativeAI(apiKey);
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    
+    const prompt = `Você é um assistente especializado em fisioterapia.
+
+Transcreva o seguinte áudio de uma sessão de fisioterapia. 
+O fisioterapeuta está narrando a evolução do paciente.
+
+IMPORTANTE:
+- Retorne APENAS a transcrição do áudio
+- NÃO adicione comentários, análises ou observações
+- Mantenha terminologia médica e técnica exatamente como falada
+- Se não conseguir entender alguma parte, coloque [inaudível]
+
+Transcrição:`;
+    
+    const result = await model.generateContent([
+      prompt,
+      {
+        inlineData: {
+          mimeType: audioBlob.type,
+          data: base64Audio,
+        },
+      },
+    ]);
+    
+    return result.response.text();
+  } catch (error) {
+    handleError(error, {
+      operation: 'transcribeAudio',
+      severity: 'high',
+      fallbackMessage: 'Falha ao transcrever áudio',
+      context: { audioSize: audioBlob.size, audioType: audioBlob.type }
+    });
+    throw error;
+  }
+}
+
+/**
+ * Converte Blob para base64
+ */
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result?.toString().split(',')[1];
+      resolve(base64 || '');
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+/**
+ * Estrutura texto livre em formato SOAP
+ */
+export async function structureToSOAP(transcription: string): Promise<SOAPData> {
+  if (!isGeminiConfigured()) {
+    throw new AppError('API Gemini não configurada', 'GEMINI_NOT_CONFIGURED');
+  }
+
+  try {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const ai = new GoogleGenerativeAI(apiKey);
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    
+    const prompt = `Você é um fisioterapeuta experiente especializado em documentação clínica.
+
+Analise a seguinte transcrição de uma sessão de fisioterapia e estruture no formato SOAP:
+
+TRANSCRIÇÃO:
+${transcription}
+
+Estruture o conteúdo no formato SOAP:
+
+- **S (Subjetivo)**: O que o paciente relatou (queixas, sintomas, como se sente, melhorias ou pioras)
+- **O (Objetivo)**: Dados mensuráveis e observáveis (ADM, força muscular, testes, escala de dor, inspeção, palpação)
+- **A (Avaliação/Assessment)**: Interpretação clínica, diagnóstico fisioterapêutico, análise do progresso
+- **P (Plano)**: Condutas realizadas, técnicas aplicadas, exercícios prescritos, orientações
+
+Retorne APENAS um JSON válido no seguinte formato (sem markdown, sem texto adicional):
+{
+  "subjective": "texto do subjetivo",
+  "objective": "texto do objetivo",
+  "assessment": "texto da avaliação",
+  "plan": "texto do plano"
+}`;
+
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    
+    // Extrair JSON da resposta (remover markdown se houver)
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('Resposta da IA não contém JSON válido');
+    }
+    
+    const soapData = JSON.parse(jsonMatch[0]) as SOAPData;
+    
+    // Validar que todos os campos existem
+    if (!soapData.subjective || !soapData.objective || !soapData.assessment || !soapData.plan) {
+      throw new Error('SOAP incompleto retornado pela IA');
+    }
+    
+    return soapData;
+  } catch (error) {
+    handleError(error, {
+      operation: 'structureToSOAP',
+      severity: 'high',
+      fallbackMessage: 'Falha ao estruturar evolução em SOAP',
+      context: { transcriptionLength: transcription.length }
+    });
+    throw error;
+  }
+}
+
+/**
+ * Sugere exercícios terapêuticos baseados no quadro clínico
+ */
+export async function suggestExercises(input: ExerciseSuggestionInput): Promise<SuggestedExercise[]> {
+  if (!isGeminiConfigured()) {
+    throw new AppError('API Gemini não configurada', 'GEMINI_NOT_CONFIGURED');
+  }
+
+  try {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const ai = new GoogleGenerativeAI(apiKey);
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    
+    const prompt = `Você é um fisioterapeuta especializado em prescrição de exercícios terapêuticos.
+
+Com base nos seguintes dados do paciente, sugira 5 exercícios terapêuticos apropriados:
+
+**Diagnóstico**: ${input.diagnosis}
+**Localização da dor**: ${input.painLocation}
+**Limitações funcionais**: ${input.functionalLimitations}
+
+Para cada exercício, forneça:
+- Nome do exercício
+- Descrição breve e clara
+- Número de séries recomendadas
+- Número de repetições por série
+- Justificativa clínica (por que este exercício é indicado para este caso)
+
+Retorne APENAS um JSON válido no seguinte formato (sem markdown, sem texto adicional):
+[
+  {
+    "name": "Nome do exercício",
+    "description": "Descrição breve do exercício",
+    "sets": 3,
+    "reps": 10,
+    "rationale": "Justificativa clínica detalhada"
+  }
+]
+
+IMPORTANTE: Retorne exatamente 5 exercícios baseados em evidências científicas.`;
+
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    
+    // Extrair JSON da resposta
+    const jsonMatch = responseText.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) {
+      throw new Error('Resposta da IA não contém JSON válido');
+    }
+    
+    const exercises = JSON.parse(jsonMatch[0]) as SuggestedExercise[];
+    
+    // Validar estrutura dos exercícios
+    if (!Array.isArray(exercises) || exercises.length === 0) {
+      throw new Error('Lista de exercícios inválida');
+    }
+    
+    return exercises;
+  } catch (error) {
+    handleError(error, {
+      operation: 'suggestExercises',
+      severity: 'medium',
+      fallbackMessage: 'Falha ao sugerir exercícios',
+      context: { 
+        diagnosis: input.diagnosis,
+        painLocation: input.painLocation
+      }
+    });
+    throw error;
+  }
+}
+
+/**
+ * Gera resumo de progresso do paciente ao longo de múltiplas sessões
+ */
+export async function generateProgressSummary(evolutions: SessionEvolution[]): Promise<string> {
+  if (!isGeminiConfigured()) {
+    throw new AppError('API Gemini não configurada', 'GEMINI_NOT_CONFIGURED');
+  }
+
+  try {
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    const ai = new GoogleGenerativeAI(apiKey);
+    const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    
+    // Preparar dados das evoluções para o prompt
+    const evolutionsText = evolutions.map((ev, index) => `
+SESSÃO ${ev.sessionNumber || index + 1} (${new Date(ev.sessionDate).toLocaleDateString('pt-BR')}):
+- Subjetivo: ${ev.subjective || 'Não registrado'}
+- Objetivo: ${ev.objective || 'Não registrado'}
+- Avaliação: ${ev.assessment || 'Não registrado'}
+- Plano: ${ev.plan || 'Não registrado'}
+${ev.painLevel !== undefined ? `- Nível de dor: ${ev.painLevel}/10` : ''}
+    `).join('\n---\n');
+    
+    const prompt = `Você é um fisioterapeuta experiente especializado em documentação clínica.
+
+Analise o histórico de evoluções abaixo e gere um resumo profissional do progresso do paciente.
+
+HISTÓRICO DE EVOLUÇÕES:
+${evolutionsText}
+
+Gere um resumo que inclua:
+
+1. **Condição inicial do paciente**: Como o paciente chegou à primeira sessão
+2. **Evolução ao longo do tratamento**: Principais mudanças e marcos importantes
+3. **Resultados alcançados**: Objetivos atingidos, melhorias observadas
+4. **Recomendações para continuidade**: Sugestões para manutenção dos resultados ou próximos passos
+
+REQUISITOS:
+- Tom profissional e técnico
+- Máximo de 300 palavras
+- Baseado em evidências observadas nas evoluções
+- Adequado para laudo de alta ou relatório para médico solicitante
+- NÃO use markdown, apenas texto corrido com parágrafos
+
+Resumo:`;
+
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  } catch (error) {
+    handleError(error, {
+      operation: 'generateProgressSummary',
+      severity: 'medium',
+      fallbackMessage: 'Falha ao gerar resumo de progresso',
+      context: { 
+        evolutionsCount: evolutions.length
+      }
+    });
+    throw error;
+  }
+}
+
+// ============================================================================
 // GEMINI SERVICE OBJECT - Para imports mais limpos
 // ============================================================================
 export const geminiService = {
+  // Funcionalidades existentes
   generateText,
   generateTreatmentProtocol,
   generateSoapNote,
@@ -665,4 +942,11 @@ export const geminiService = {
   generateInactivePatientEmail,
   generateClinicalMaterialContent,
   generatePatientClinicalSummary,
+  
+  // Novas funcionalidades de IA para evolução
+  isGeminiConfigured,
+  transcribeAudio,
+  structureToSOAP,
+  suggestExercises,
+  generateProgressSummary,
 };

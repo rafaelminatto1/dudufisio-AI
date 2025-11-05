@@ -344,7 +344,7 @@ export const getQuickActionsData = async (
         patientId: patient.id,
         patientName: patient.name,
         phone: patient.phone,
-        message: `Olá ${patient.name.split(' ')[0]}, aqui é da equipe DuduFisio. Notamos que você faltou recentemente e queremos ajudar a retomar seu tratamento. Podemos agendar um novo horário?`,
+        message: `Olá ${patient.name.split(' ')[0]}, aqui é da equipe MoocaFisio. Notamos que você faltou recentemente e queremos ajudar a retomar seu tratamento. Podemos agendar um novo horário?`,
     }));
 
     const rescheduleSuggestions = abandonmentAndRisk.map(patient => ({

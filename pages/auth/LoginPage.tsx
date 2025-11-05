@@ -78,10 +78,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
   }, []);
 
   const demoAccounts = [
-    { email: 'admin@dudufisio.com', role: 'Administrador', description: 'Acesso completo ao sistema' },
-    { email: 'therapist@dudufisio.com', role: 'Fisioterapeuta', description: 'Gestão de pacientes e consultas' },
-    { email: 'patient@dudufisio.com', role: 'Paciente', description: 'Portal do paciente' },
-    { email: 'educator@dudufisio.com', role: 'Educador Físico', description: 'Portal do parceiro' },
+    { email: 'admin@moocafisio.com.br', role: 'Administrador', description: 'Acesso completo ao sistema' },
+    { email: 'therapist@moocafisio.com.br', role: 'Fisioterapeuta', description: 'Gestão de pacientes e consultas' },
+    { email: 'patient@moocafisio.com.br', role: 'Paciente', description: 'Portal do paciente' },
+    { email: 'educator@moocafisio.com.br', role: 'Educador Físico', description: 'Portal do parceiro' },
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,7 +154,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
             </div>
           </div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Dudu<span className="text-indigo-600">Fisio</span>
+            Mooca<span className="text-indigo-600">Fisio</span>
           </h1>
           <p className="text-gray-600 mt-2">Sistema de Gestão em Fisioterapia</p>
         </div>

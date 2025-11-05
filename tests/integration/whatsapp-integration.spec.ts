@@ -5,7 +5,7 @@ test.describe('Integração com WhatsApp', () => {
     await page.goto('/');
     
     // Login
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     
@@ -297,7 +297,7 @@ test.describe('Integração com WhatsApp', () => {
 test.describe('WhatsApp - Casos de Erro', () => {
   test('Tratamento de erro ao enviar mensagem', async ({ page }) => {
     await page.goto('/');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);
@@ -336,7 +336,7 @@ test.describe('WhatsApp - Casos de Erro', () => {
 
   test('Número de WhatsApp inválido', async ({ page }) => {
     await page.goto('/');
-    await page.fill('[data-testid="input-login-email"]', 'admin@dudufisio.com');
+    await page.fill('[data-testid="input-login-email"]', 'admin@moocafisio.com.br');
     await page.fill('[data-testid="input-login-password"]', 'DuduFisio2024!');
     await page.click('[data-testid="btn-login-submit"]');
     await page.waitForURL(/\/dashboard|\/agenda/);

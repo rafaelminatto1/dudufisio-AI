@@ -127,7 +127,19 @@ export interface EvolutionFormData {
   painLevelBefore?: number;
   painLevelAfter?: number;
   objectiveFindings?: string;
-  techniquesApplied: string;
+  // Campos novos - sistema de condutas estruturadas
+  conducts?: Array<{
+    id: string;
+    category: string;
+    name: string;
+    details?: string;
+    duration?: string;
+    equipment?: string;
+    notes?: string;
+  }>;
+  planGeneralNotes?: string;
+  // Campos antigos - mantidos para compatibilidade
+  techniquesApplied?: string;
   patientResponse?: string;
   nextSessionPlan?: string;
   homeExercises?: string;

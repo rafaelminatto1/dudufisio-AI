@@ -3,7 +3,7 @@
  * Gerenciamento centralizado de IndexedDB para persistência robusta
  */
 
-const DB_NAME = 'FisioFlowDB';
+const DB_NAME = 'MoocaFisioDB';
 const DB_VERSION = 1;
 
 export interface DBSchema {

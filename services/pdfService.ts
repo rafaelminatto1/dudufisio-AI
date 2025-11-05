@@ -141,7 +141,7 @@ export class PDFService {
           content: report.data?.analysis?.map((a: any) => `${a.title}: ${a.description}`) || ['Análises não disponíveis']
         }
       ],
-      footer: `Relatório gerado pelo sistema DuduFisio-AI - ID: ${report.id}`
+      footer: `Relatório gerado pelo sistema MoocaFisio-AI - ID: ${report.id}`
     };
   }
 
@@ -185,7 +185,7 @@ export class PDFService {
     return {
       title: report.title || 'Relatório Clínico',
       sections,
-      footer: `Relatório gerado pelo sistema DuduFisio-AI - ID: ${report.id}`
+      footer: `Relatório gerado pelo sistema MoocaFisio-AI - ID: ${report.id}`
     };
   }
 }

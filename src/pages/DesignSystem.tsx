@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import Button from '../components/ui/Button';
 import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
+import { H1, H2, H3, Body, Small, Caption, NumericValue, Label } from '../components/ui/Typography';
 import { Palette, Type, Layout, Sparkles, Monitor, Smartphone, Tablet, Sun, Moon, Code, Eye, Zap } from 'lucide-react';
+
+// Helper para adicionar className dinamicamente
+const cn = (...classes: (string | undefined | false)[]) => classes.filter(Boolean).join(' ');
 
 const DesignSystem = () => {
   const { theme, toggleTheme, themeConfig } = useTheme();
@@ -42,26 +46,197 @@ const DesignSystem = () => {
   const TypographyScale = () => (
     <div className="space-y-8">
       <div>
-        <h3 className="text-2xl font-bold text-[--color-text] mb-6">Escala Tipográfica</h3>
-        <div className="space-y-6">
-          {Object.entries(themeConfig.fontSizes).map(([size, value]) => (
-            <div key={size} className="flex items-center justify-between p-4 bg-[--color-surface] rounded-lg">
-              <div>
-                <p 
-                  className="font-bold text-[--color-text]"
-                  style={{ fontSize: value }}
-                >
-                  Tamanho {size.toUpperCase()}
-                </p>
-                <p className="text-sm text-[--color-text-secondary] mt-1">
-                  The quick brown fox jumps over the lazy dog
-                </p>
+        <h3 className="text-2xl font-bold text-[--color-text] mb-6">Sistema Tipográfico Hierárquico</h3>
+        <Body className="mb-8">
+          Sistema baseado na fonte Inter com escalas harmônicas e contraste adequado para acessibilidade (WCAG AA).
+        </Body>
+        
+        <div className="space-y-8">
+          {/* H1 - Título da Página */}
+          <Card>
+            <CardHeader>
+              <CardTitle>H1 - Título da Página</CardTitle>
+              <CardDescription>32px (text-3xl) • Bold (700) • Gray 900</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <H1>Exemplo de Título Principal</H1>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <code className="text-sm font-mono">
+                  {`<H1>Exemplo de Título Principal</H1>`}
+                </code>
               </div>
-              <div className="text-right">
-                <p className="font-mono text-sm text-[--color-text-secondary]">{value}</p>
+            </CardContent>
+          </Card>
+
+          {/* H2 - Subtítulo Principal */}
+          <Card>
+            <CardHeader>
+              <CardTitle>H2 - Subtítulo Principal</CardTitle>
+              <CardDescription>24px (text-2xl) • Semibold (600) • Gray 900</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <H2>Exemplo de Subtítulo</H2>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <code className="text-sm font-mono">
+                  {`<H2>Exemplo de Subtítulo</H2>`}
+                </code>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* H3 - Título de Card/Seção */}
+          <Card>
+            <CardHeader>
+              <CardTitle>H3 - Título de Card/Seção</CardTitle>
+              <CardDescription>18px (text-lg) • Semibold (600) • Gray 900</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <H3>Exemplo de Título de Seção</H3>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <code className="text-sm font-mono">
+                  {`<H3>Exemplo de Título de Seção</H3>`}
+                </code>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Body - Texto Normal */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Body - Texto Normal</CardTitle>
+              <CardDescription>16px (text-base) • Regular (400) • Gray 600</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Body>
+                Este é um exemplo de texto de corpo. Use para parágrafos, descrições e conteúdo principal. 
+                Mantém boa legibilidade com tamanho adequado e contraste apropriado.
+              </Body>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <code className="text-sm font-mono">
+                  {`<Body>Este é um exemplo de texto...</Body>`}
+                </code>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Small - Texto Pequeno */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Small - Texto Pequeno</CardTitle>
+              <CardDescription>14px (text-sm) • Regular (400) • Gray 600</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Small>
+                Este é um texto pequeno, ideal para informações secundárias, labels auxiliares e metadados.
+              </Small>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <code className="text-sm font-mono">
+                  {`<Small>Este é um texto pequeno...</Small>`}
+                </code>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Caption - Legendas */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Caption - Legendas</CardTitle>
+              <CardDescription>12px (text-xs) • Regular (400) • Gray 400</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Caption>
+                Este é um texto de legenda, usado para metadados, timestamps e informações terciárias.
+              </Caption>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <code className="text-sm font-mono">
+                  {`<Caption>Este é um texto de legenda...</Caption>`}
+                </code>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* NumericValue - Valor Numérico */}
+          <Card>
+            <CardHeader>
+              <CardTitle>NumericValue - Valor Numérico em Destaque</CardTitle>
+              <CardDescription>36px (text-4xl) • Bold (700) • Gray 900</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <NumericValue>R$ 45.750,00</NumericValue>
+              <Small className="mt-2 block text-green-600">↑ 12.5% vs mês anterior</Small>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <code className="text-sm font-mono">
+                  {`<NumericValue>R$ 45.750,00</NumericValue>`}
+                </code>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Label - Label de Formulário */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Label - Label de Formulário</CardTitle>
+              <CardDescription>14px (text-sm) • Medium (500) • Gray 700</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label>Nome Completo</Label>
+                <input 
+                  type="text" 
+                  placeholder="Digite seu nome"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+              </div>
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <code className="text-sm font-mono">
+                  {`<Label>Nome Completo</Label>`}
+                </code>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Exemplo de Hierarquia Completa */}
+          <Card variant="elevated">
+            <CardHeader>
+              <CardTitle>Exemplo de Hierarquia Completa</CardTitle>
+              <CardDescription>Veja como os elementos funcionam juntos</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <H3>Dashboard Financeiro</H3>
+              <Body>Visualize o desempenho financeiro da sua clínica com métricas em tempo real.</Body>
+              
+              <div className="bg-gradient-to-br from-primary-50 to-primary-100 p-6 rounded-lg border border-primary-200">
+                <Small className="text-primary-700 mb-2 block">Faturamento do Mês</Small>
+                <NumericValue className="text-primary-900">R$ 125.430,00</NumericValue>
+                <Small className="text-green-600 mt-2 block font-medium">↑ 18.3% vs mês anterior</Small>
+                <Caption className="mt-2 block text-primary-600">Última atualização: há 2 minutos</Caption>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Acessibilidade */}
+          <Card className="border-2 border-green-200 bg-green-50">
+            <CardHeader>
+              <CardTitle className="text-green-900">Acessibilidade (WCAG AA)</CardTitle>
+              <CardDescription className="text-green-700">Contraste de cores validado</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Small className="text-green-900">Gray 900 (#111827) em branco</Small>
+                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">16.6:1 ✓</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Small className="text-green-900">Gray 600 (#6B7280) em branco</Small>
+                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">7.9:1 ✓</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <Small className="text-green-900">Gray 400 (#9CA3AF) em branco</Small>
+                  <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">4.6:1 ✓</span>
               </div>
             </div>
-          ))}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

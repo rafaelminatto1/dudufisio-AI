@@ -67,7 +67,7 @@ export function TasksWidget({ tasks = mockTasks, maxItems = 5 }: TasksWidgetProp
 
   return (
     <ScrollArea className="h-[300px]">
-      <div className="space-y-2">
+      <div className="space-y-4">
         {pendingTasks.map((task) => (
           <div
             key={task.id}

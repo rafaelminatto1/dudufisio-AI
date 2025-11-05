@@ -406,7 +406,7 @@ const FinancialDashboardPage: React.FC = () => {
 
   return (
     <PermissionGuard permission="financial:read">
-      <div className="p-6 max-w-7xl mx-auto space-y-6">
+      <div className="p-8 max-w-7xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <PageHeader
             title="Gestão Financeira"
@@ -443,12 +443,12 @@ const FinancialDashboardPage: React.FC = () => {
 
         {/* Financial Alerts */}
         {financialAlerts.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Bell className="w-5 h-5 text-sky-600" />
               Alertas Financeiros
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {financialAlerts.map((alert: any) => (
                 <div key={alert.id} className={`border rounded-lg p-3 ${getSeverityColor(alert.severity)}`}>
                   <div className="flex items-start gap-3">
@@ -474,7 +474,7 @@ const FinancialDashboardPage: React.FC = () => {
         <ResponsiveGrid 
           cols={{ base: 1, sm: 2, lg: 5 }}
           gap="lg"
-          className="space-responsive"
+          className="space-responsive mb-8"
         >
           <MetricCard
             title="Faturamento Bruto"
@@ -548,7 +548,7 @@ const FinancialDashboardPage: React.FC = () => {
         </ResponsiveGrid>
 
         {/* Main Content Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-responsive">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="tabs-responsive">
             <TabsList className="tabs-list-responsive">
               <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 sm:px-4">Visão Geral</TabsTrigger>
@@ -561,7 +561,7 @@ const FinancialDashboardPage: React.FC = () => {
           </div>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-responsive">
+          <TabsContent value="overview" className="space-y-8">
             {/* Novo Componente RevenueChart */}
             <div className="mb-8">
               <RevenueChart />
@@ -570,7 +570,7 @@ const FinancialDashboardPage: React.FC = () => {
             <ResponsiveGrid 
               cols={{ base: 1, lg: 3 }}
               gap="lg"
-              className="space-responsive"
+              className="mb-8"
             >
               {/* Cash Flow Chart */}
               <ResponsiveCard 
@@ -635,7 +635,7 @@ const FinancialDashboardPage: React.FC = () => {
           </TabsContent>
 
           {/* Payments Tab */}
-          <TabsContent value="payments" className="space-responsive">
+          <TabsContent value="payments" className="space-y-6">
             <ResponsiveGrid 
               cols={{ base: 1, lg: 2 }}
               gap="lg"
@@ -701,7 +701,7 @@ const FinancialDashboardPage: React.FC = () => {
           </TabsContent>
 
           {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-responsive">
+          <TabsContent value="analytics" className="space-y-6">
             <ResponsiveGrid 
               cols={{ base: 1, lg: 2 }}
               gap="lg"
@@ -730,8 +730,8 @@ const FinancialDashboardPage: React.FC = () => {
               </ResponsiveCard>
 
               {/* Payment Methods Distribution */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div className="p-6 border-b border-gray-100">
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                     <PieChartIcon className="w-5 h-5 text-purple-600" />
                     Distribuição por Método
@@ -754,8 +754,8 @@ const FinancialDashboardPage: React.FC = () => {
 
           {/* Goals Tab */}
           <TabsContent value="goals" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div className="p-6 border-b border-gray-100">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <Target className="w-5 h-5 text-green-600" />
                   Metas Financeiras
@@ -818,8 +818,8 @@ const FinancialDashboardPage: React.FC = () => {
 
           {/* Predictions Tab */}
           <TabsContent value="predictions" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div className="p-6 border-b border-gray-100">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-sky-600" />
                   Previsões de Fluxo de Caixa
@@ -869,8 +869,8 @@ const FinancialDashboardPage: React.FC = () => {
 
           {/* Reports Tab */}
           <TabsContent value="reports" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+              <div className="p-6 border-b border-gray-100">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <FileText className="w-5 h-5 text-purple-600" />
                   Relatórios Financeiros

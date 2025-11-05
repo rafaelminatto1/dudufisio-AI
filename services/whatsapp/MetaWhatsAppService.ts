@@ -1,6 +1,6 @@
 /**
  * Meta WhatsApp Service - Serviço de integração com Meta WhatsApp Business API
- * DuduFisio-AI
+ * MoocaFisio-AI
  */
 
 import axios, { AxiosInstance } from 'axios';

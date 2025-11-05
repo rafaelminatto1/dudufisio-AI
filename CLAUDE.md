@@ -57,7 +57,7 @@ Este arquivo fornece orientações para Claude Code (claude.ai/code) ao trabalha
 
 ### Key Application Modules
 
-**FisioFlow** is a comprehensive physiotherapy clinic management system with the following core modules:
+**MoocaFisio** is a comprehensive physiotherapy clinic management system with the following core modules:
 
 1. **Patient Management** (`pages/PatientListPage.tsx`, `pages/PatientDetailPage.tsx`)
    - Patient records, medical history, treatment tracking

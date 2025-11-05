@@ -63,18 +63,45 @@ const PatientDetailPage: React.FC = () => {
     if (!id) return;
     
     const loadPatient = async () => {
+      // Timeout para evitar loading infinito
+      const timeoutId = setTimeout(() => {
+        setPatientError('Tempo de carregamento excedido. Verifique sua conexão.');
+        setPatientLoading(false);
+      }, 10000); // 10 segundos
+
       try {
         setPatientLoading(true);
         setPatientError(null);
+        
         const data = await supabasePatientService.getPatientById(id);
+        clearTimeout(timeoutId);
+        
         if (!data) {
-          setPatientError('Paciente não encontrado');
+          setPatientError('Paciente não encontrado no banco de dados');
           return;
         }
         setPatient(data);
-      } catch (err) {
-        console.error('Erro ao carregar paciente:', err);
-        setPatientError('Erro ao carregar dados do paciente');
+      } catch (err: any) {
+        clearTimeout(timeoutId);
+        
+        // Log detalhado em DEV
+        if (import.meta.env.DEV) {
+          console.error('🔴 Erro detalhado ao carregar paciente:', {
+            patientId: id,
+            error: err,
+            message: err?.message,
+            code: err?.code,
+          });
+        }
+        
+        // Mensagem amigável baseada no erro
+        const errorMessage = err?.message?.includes('não encontrado')
+          ? 'Paciente não encontrado'
+          : err?.message?.includes('network')
+          ? 'Erro de conexão. Verifique sua internet.'
+          : 'Erro ao carregar dados do paciente. Tente novamente.';
+        
+        setPatientError(errorMessage);
       } finally {
         setPatientLoading(false);
       }
@@ -176,12 +203,24 @@ const PatientDetailPage: React.FC = () => {
               <div className="text-red-600 font-semibold mb-2">
                 ⚠️ {patientError}
               </div>
-              <Button 
-                onClick={() => navigate('/patients')}
-                variant="outline"
-              >
-                Voltar para Lista de Pacientes
-              </Button>
+              <div className="flex gap-3 justify-center">
+                <Button 
+                  onClick={() => {
+                    setPatientError(null);
+                    setPatientLoading(true);
+                    window.location.reload();
+                  }}
+                  variant="default"
+                >
+                  Tentar Novamente
+                </Button>
+                <Button 
+                  onClick={() => navigate('/patients')}
+                  variant="outline"
+                >
+                  Voltar para Lista de Pacientes
+                </Button>
+              </div>
             </div>
           </div>
         </div>

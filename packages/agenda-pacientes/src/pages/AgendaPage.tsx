@@ -63,6 +63,7 @@ import FloatingActionButton from '../components/agenda/FloatingActionButton';
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
 const START_HOUR = 6;
+
 export default function AgendaPage() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -71,7 +72,16 @@ export default function AgendaPage() {
     const [currentView, setCurrentView] = useState<AgendaViewType>('weekly');
     const [showSessionForm, setShowSessionForm] = useState(false);
     const [selectedAppointmentForSession, setSelectedAppointmentForSession] = useState<EnrichedAppointment | null>(null);
-    
+
+    // RUM: Marcador de montagem da página e primeira pintura
+    useEffect(() => {
+        performance.mark('agenda:mount:start');
+        requestAnimationFrame(() => {
+            performance.mark('agenda:mount:end');
+            performance.measure('agenda:mount', 'agenda:mount:start', 'agenda:mount:end');
+        });
+    }, []);
+
     // Session Evolution Mode
     const { mode: sessionEvolutionMode } = useSessionEvolutionMode();
     const [showEvolutionModal, setShowEvolutionModal] = useState(false);
@@ -109,6 +119,15 @@ export default function AgendaPage() {
         }
     }, [currentDate, currentView]);
 
+    // RUM: Mudança de visão (daily/weekly/monthly/list)
+    useEffect(() => {
+        performance.mark(`agenda:view_change:${currentView}:start`);
+        requestAnimationFrame(() => {
+            performance.mark(`agenda:view_change:${currentView}:end`);
+            performance.measure(`agenda:view_change:${currentView}`, `agenda:view_change:${currentView}:start`, `agenda:view_change:${currentView}:end`);
+        });
+    }, [currentView]);
+
     const { appointments, refetch } = useAppointments(startDate, endDate);
     const { therapists, refetch: refetchData } = useData();
     const { user } = useSupabaseAuth();
@@ -135,7 +154,25 @@ export default function AgendaPage() {
         paymentStatus: [],
         showConflicts: false
     });
-    
+
+    // RUM: Busca e filtros
+    useEffect(() => {
+        if (!debouncedSearchQuery) return;
+        performance.mark('agenda:search:start');
+        requestAnimationFrame(() => {
+            performance.mark('agenda:search:end');
+            performance.measure('agenda:search', 'agenda:search:start', 'agenda:search:end');
+        });
+    }, [debouncedSearchQuery]);
+
+    useEffect(() => {
+        performance.mark('agenda:filters_change:start');
+        requestAnimationFrame(() => {
+            performance.mark('agenda:filters_change:end');
+            performance.measure('agenda:filters_change', 'agenda:filters_change:start', 'agenda:filters_change:end');
+        });
+    }, [advancedFilters]);
+
     // Estados de loading/erro para operações específicas
     const [isLoadingAppointments, setIsLoadingAppointments] = useState(false);
     const [appointmentsError, setAppointmentsError] = useState<string | null>(null);
@@ -143,7 +180,7 @@ export default function AgendaPage() {
     const [patientsError, setPatientsError] = useState<string | null>(null);
     const [isSavingAppointment, setIsSavingAppointment] = useState(false);
     const [isDeletingAppointment, setIsDeletingAppointment] = useState(false);
-    
+
     const { showToast } = useToast();
 
     // Modal states
@@ -152,14 +189,14 @@ export default function AgendaPage() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [initialFormData, setInitialFormData] = useState<{ date: Date; therapistId: string } | undefined>();
     const [highlightedPatientId, setHighlightedPatientId] = useState<string | null>(null);
-    
+
     // Drag & Drop states
     const [draggedAppointmentId, setDraggedAppointmentId] = useState<string | null>(null);
 
     // Filter appointments based on user role, search and advanced filters
     const filteredAppointments = useMemo(() => {
         let scopedAppointments = appointments;
-
+        
         if (user) {
             switch (user.role) {
                 case Role.Patient:
@@ -252,6 +289,7 @@ export default function AgendaPage() {
 
     useEffect(() => {
         const fetchInitialData = async () => {
+            performance.mark('agenda:initial_data:start');
             setIsLoadingData(true);
             setIsLoadingPatients(true);
             setPatientsError(null);
@@ -268,12 +306,11 @@ export default function AgendaPage() {
             } catch (error) {
                 const errorMessage = 'Falha ao carregar dados de suporte da agenda';
                 setPatientsError(errorMessage);
-                
                 handleError(error, {
                     operation: 'fetchInitialData',
                     severity: 'medium',
                     fallbackMessage: errorMessage,
-                    context: { 
+                    context: {
                         component: 'AgendaPage',
                         dataTypes: ['patients', 'waitlist', 'blocks']
                     }
@@ -281,6 +318,8 @@ export default function AgendaPage() {
             } finally {
                 setIsLoadingData(false);
                 setIsLoadingPatients(false);
+                performance.mark('agenda:initial_data:end');
+                performance.measure('agenda:initial_data', 'agenda:initial_data:start', 'agenda:initial_data:end');
             }
         };
         fetchInitialData();
@@ -319,8 +358,9 @@ export default function AgendaPage() {
         setInitialFormData(undefined);
         setIsFormOpen(true);
     };
-    
+
     const handleSaveAppointment = async (appointmentData: Appointment): Promise<boolean> => {
+        performance.mark('agenda:appointment_save:start');
         setIsSavingAppointment(true);
         try {
             console.log('🔍 Salvando agendamento:', appointmentData);
@@ -356,6 +396,8 @@ export default function AgendaPage() {
             return false;
         } finally {
             setIsSavingAppointment(false);
+            performance.mark('agenda:appointment_save:end');
+            performance.measure('agenda:appointment_save', 'agenda:appointment_save:start', 'agenda:appointment_save:end');
         }
     };
     
@@ -454,7 +496,7 @@ export default function AgendaPage() {
         setShowSessionForm(false);
         setSelectedAppointmentForSession(null);
     }, []);
-    
+
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>, appointment: EnrichedAppointment) => {
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData("application/json", JSON.stringify(appointment));
@@ -463,7 +505,7 @@ export default function AgendaPage() {
 
     const handleDragEnd = () => setDraggedAppointmentId(null);
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault();
-    
+
     const handleDrop = (e: React.DragEvent<HTMLDivElement>, day: Date, therapistId: string) => {
         e.preventDefault();
         const appointmentData = JSON.parse(e.dataTransfer.getData("application/json")) as EnrichedAppointment;
@@ -931,6 +973,7 @@ export default function AgendaPage() {
             </header>
 
             {/* Main content area - professional styling */}
+            <div className="space-y-6">
             {/* Renderizar mobile view se for mobile */}
             {isMobile ? (
                 <MobileAgendaView
@@ -993,9 +1036,9 @@ export default function AgendaPage() {
                         />
                     </div>
                 ) : (
-                    <div className="h-full px-2 pr-6">
+                    <div className="h-full px-4 pr-6">
                         {/* Agenda Stats */}
-                        <div className="mb-6">
+                        <div className="mb-8">
                             <AgendaStats 
                                 appointments={filteredAppointments}
                                 therapists={therapists}
@@ -1004,7 +1047,7 @@ export default function AgendaPage() {
 
                         {/* Advanced Filters */}
                         {showFilters && (
-                            <div className="mb-4">
+                            <div className="mb-6">
                                 <AdvancedFilters
                                     therapists={therapists}
                                     patients={patients}
@@ -1150,6 +1193,7 @@ export default function AgendaPage() {
                     }}
                 />
             )}
+            </div>
         </main>
     );
 }

@@ -1,7 +1,7 @@
 /**
  * WhatsApp Automation Service
  * Sistema de automação para WhatsApp
- * DuduFisio-AI
+ * MoocaFisio-AI
  */
 
 import { getMetaWhatsAppService } from './MetaWhatsAppService';

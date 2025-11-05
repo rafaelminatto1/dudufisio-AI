@@ -1,4 +1,4 @@
-# DuduFisio-AI 🏥
+# MoocaFisio 🏥
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19-61dafb?logo=react)](https://react.dev/)
@@ -8,6 +8,8 @@
 [![Code Quality](https://img.shields.io/badge/Code%20Quality-A+-brightgreen)]()
 
 Sistema completo de gestão para clínicas de fisioterapia com inteligência artificial integrada.
+
+> **🏥 MARCA OFICIAL:** MoocaFisio (moocafisio.com.br) - Sistema de gestão inteligente para fisioterapeutas
 
 > **⚠️ POLÍTICA ANTI-CONVÊNIOS**: Este sistema trabalha EXCLUSIVAMENTE com pacientes particulares e NUNCA processará integrações com planos de saúde. Esta é uma regra fundamental do negócio que NÃO pode ser alterada.
 
@@ -49,7 +51,7 @@ npm run start
 
 ## 📋 Sobre o Projeto
 
-**DuduFisio-AI** é uma plataforma SaaS completa para gestão de clínicas de fisioterapia, combinando:
+**MoocaFisio** é uma plataforma SaaS completa para gestão de clínicas de fisioterapia, combinando:
 - ✅ Gestão de pacientes e prontuários eletrônicos (HL7 FHIR)
 - 📅 Agenda inteligente com múltiplos profissionais
 - 💰 Controle financeiro completo (apenas particulares)
@@ -94,7 +96,7 @@ npm run start
 ## 📁 Estrutura do Projeto
 
 ```
-dudufisio-AI/
+moocafisio/
 ├── pages/                    # Páginas da aplicação (lazy loaded)
 │   ├── AgendaPage.tsx       # Agenda semanal
 │   ├── PatientListPage.tsx  # Lista de pacientes
@@ -537,9 +539,9 @@ Este software é proprietário e confidencial. Uso, reprodução ou distribuiç�
 ## 📞 Suporte & Contato
 
 Para suporte técnico ou dúvidas:
-- 📧 Email: suporte@dudufisio.com.br
+- 📧 Email: suporte@moocafisio.com.br
 - 💬 WhatsApp Business: +55 (XX) XXXX-XXXX
-- 🌐 Site: https://dudufisio.com.br
+- 🌐 Site: https://moocafisio.com.br
 
 ---
 
