@@ -34,7 +34,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import { format, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '../lib/utils';

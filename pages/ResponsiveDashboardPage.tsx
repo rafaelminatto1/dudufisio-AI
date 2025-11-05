@@ -10,7 +10,7 @@ import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import { 
   AreaChart, Area, BarChart, Bar, PieChart as RePieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 

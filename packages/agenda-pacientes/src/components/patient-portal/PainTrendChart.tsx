@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from '@/components/charts/ChartsLazyOptimized';
 import { PainPoint } from '../../types';
 
 interface PainTrendChartProps {

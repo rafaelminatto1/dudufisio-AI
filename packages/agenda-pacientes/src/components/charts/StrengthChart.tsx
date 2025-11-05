@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dumbbell } from 'lucide-react';
 

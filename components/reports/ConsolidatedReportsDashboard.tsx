@@ -7,7 +7,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, AreaChart, Area, PieChart, Pie, Cell,
   ComposedChart, Scatter, ScatterChart
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import { 
   Download, Filter, Calendar, TrendingUp, Users, DollarSign, 
   Activity, FileText, BarChart3, PieChart as PieChartIcon,

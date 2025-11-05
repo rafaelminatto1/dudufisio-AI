@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 import { Appointment, AppointmentStatus } from '../../types';
 import { Activity } from 'lucide-react';
 

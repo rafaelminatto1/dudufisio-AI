@@ -4,7 +4,7 @@ import { ArrowLeft, Shield, CheckCircle, XCircle, AlertTriangle, FileText, Trend
 import { qualityAssuranceServiceSupabase } from '../services/quality/qualityAssuranceServiceSupabase';
 import { QualityMetric, AuditLogEntry } from '../types/qualityAssuranceTypes';
 import { toast } from 'react-toastify';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from '@/components/charts/ChartsLazyOptimized';
 
 export const QualityAssuranceDashboardPage: React.FC = () => {
   const navigate = useNavigate();

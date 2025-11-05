@@ -15,7 +15,7 @@ import {
   Legend,
   ResponsiveContainer,
   ComposedChart
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import type { EvolutionReportData, AssessmentStatistics } from '../../types';
 import { generateEvolutionReport } from '../../services/patientTrackingService';
 import { 

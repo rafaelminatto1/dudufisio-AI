@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from '@/components/charts/ChartsLazyOptimized';
 import { Appointment, Therapist, AppointmentStatus } from '../../types';
 
 interface TeamProductivityChartProps {

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from '@/components/charts/ChartsLazyOptimized';
 import { Calendar, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { BodyPoint } from '../types';
 

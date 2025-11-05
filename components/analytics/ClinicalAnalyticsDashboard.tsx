@@ -1,6 +1,6 @@
 // components/analytics/ClinicalAnalyticsDashboard.tsx
 import React from 'react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from '@/components/charts/ChartsLazyOptimized';
 import useClinicalAnalytics from '../../hooks/useClinicalAnalytics';
 import MetricCard from './MetricCard';
 import { HeartPulse, TrendingUp, Smile } from 'lucide-react';

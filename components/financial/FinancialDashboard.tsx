@@ -36,7 +36,7 @@ import {
   Cell,
   BarChart,
   Bar
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 
 interface DashboardMetric {
   name: string;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 import { TrendingUp, Eye, Edit, Share2, Users, Calendar, Award } from 'lucide-react';
 import materialAnalyticsService from '../../services/materialAnalyticsService';
 import materialTemplateService from '../../services/materialTemplateService';

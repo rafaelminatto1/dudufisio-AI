@@ -6,7 +6,7 @@ import {
   ResponsiveContainer,
   Legend,
   Tooltip,
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 
 interface DistributionData {
   name: string;

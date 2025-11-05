@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { ResponsiveContainer as RechartsResponsiveContainer } from 'recharts';
+import { ResponsiveContainer as RechartsResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 import { cn } from '../../lib/utils';
 import { Skeleton } from './skeleton';
 

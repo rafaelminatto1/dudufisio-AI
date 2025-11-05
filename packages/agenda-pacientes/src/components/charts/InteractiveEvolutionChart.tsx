@@ -24,7 +24,7 @@ import {
   ScatterChart,
   Scatter,
   ReferenceLine
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import { Download, TrendingUp, BarChart3, Activity, ScatterChart as ScatterIcon } from 'lucide-react';
 
 export interface ChartConfig {

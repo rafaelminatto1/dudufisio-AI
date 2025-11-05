@@ -20,7 +20,7 @@ import {
   Legend,
   ResponsiveContainer,
   Cell
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import {
   Calendar,
   TrendingUp,

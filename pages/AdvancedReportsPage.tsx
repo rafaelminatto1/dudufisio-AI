@@ -17,7 +17,7 @@ import {
   BookOpen, Award, Heart, Lightbulb, Star, ArrowUpRight, ArrowDownRight,
   Gauge, Layers, Database, Bot, Sparkles, Archive, ChevronRight
 } from 'lucide-react';
-import { AreaChart, Area, BarChart, Bar, LineChart as RechartsLineChart, Line, PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
+import { AreaChart, Area, BarChart, Bar, LineChart as RechartsLineChart, Line, PieChart as RechartsPieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from '@/components/charts/ChartsLazyOptimized';
 
 interface ReportGenerationModal {
   isOpen: boolean;

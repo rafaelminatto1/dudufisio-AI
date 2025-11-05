@@ -14,7 +14,7 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { TrendingUp, Calendar } from 'lucide-react';

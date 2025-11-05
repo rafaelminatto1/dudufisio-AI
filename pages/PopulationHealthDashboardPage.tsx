@@ -4,7 +4,7 @@ import { ArrowLeft, Users, TrendingUp, BarChart3, MapPin, Activity, AlertCircle 
 import { populationHealthServiceSupabase } from '../services/analytics/populationHealthServiceSupabase';
 import { PopulationDemographics, PopulationInsight } from '../types/populationHealthTypes';
 import { toast } from 'react-toastify';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 
 export const PopulationHealthDashboardPage: React.FC = () => {
   const navigate = useNavigate();

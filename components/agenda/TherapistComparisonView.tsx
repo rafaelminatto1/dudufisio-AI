@@ -20,7 +20,7 @@ import {
   Cell,
   LineChart,
   Line
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import {
   Calendar,
   DollarSign,

@@ -1,7 +1,7 @@
 
 // components/dashboard/PatientFlowChart.tsx
 import React, { useMemo } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 import { Patient } from '../../types';
 import { TrendingUp } from 'lucide-react';
 

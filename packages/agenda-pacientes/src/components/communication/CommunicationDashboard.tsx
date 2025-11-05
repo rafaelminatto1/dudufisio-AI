@@ -3,7 +3,7 @@ import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   AreaChart, Area
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import {
   MessageSquare, Mail, Smartphone, Bell, TrendingUp, TrendingDown,
   Users, Clock, AlertTriangle, CheckCircle, XCircle,

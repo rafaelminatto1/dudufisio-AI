@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 import { Patient } from '../../types';
 import StatCard from '../dashboard/StatCard';
 import { Users, UserPlus, UserCheck, UserX } from 'lucide-react';

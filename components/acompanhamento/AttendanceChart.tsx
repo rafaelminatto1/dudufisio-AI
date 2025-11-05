@@ -9,7 +9,7 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import { Patient } from '../../types';
 import { PatientAttendancePoint } from '../../services/acompanhamentoService';
 

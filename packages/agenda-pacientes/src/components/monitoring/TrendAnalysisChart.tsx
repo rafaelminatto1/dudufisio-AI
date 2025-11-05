@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from '@/components/charts/ChartsLazyOptimized';
 import { CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 

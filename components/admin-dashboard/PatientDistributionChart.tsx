@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   Legend
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 
 interface PatientDistributionData {
   name: string;

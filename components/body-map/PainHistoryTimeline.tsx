@@ -5,7 +5,7 @@
 
 import React, { useMemo } from 'react';
 import type { BodyMapSession } from '../../types';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from '@/components/charts/ChartsLazyOptimized';
 import { Calendar, TrendingDown, TrendingUp, Minus, CheckCircle2 } from 'lucide-react';
 import { getPainLevelColor } from '../../services/bodyMapService';
 

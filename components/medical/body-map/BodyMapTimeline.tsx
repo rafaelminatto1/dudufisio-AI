@@ -24,7 +24,7 @@ import {
   PieChart,
   Pie,
   Cell
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import {
   Calendar,
   TrendingUp,

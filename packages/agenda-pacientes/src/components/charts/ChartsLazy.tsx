@@ -166,5 +166,5 @@ export {
   Brush,
   ErrorBar,
   LabelList
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 

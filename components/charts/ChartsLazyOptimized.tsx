@@ -13,7 +13,7 @@
  *
  * USO:
  * Trocar:
- *   import { LineChart, Line, XAxis } from 'recharts';
+ *   import { LineChart, Line, XAxis } from '@/components/charts/ChartsLazyOptimized';
  * Por:
  *   import { LineChart, Line, XAxis } from '../components/charts/ChartsLazyOptimized';
  */
@@ -80,143 +80,126 @@ const ChartWrapper: React.FC<ChartWrapperProps> = ({
 );
 
 // ============================================================
-// COMPONENTES PRINCIPAIS (CHARTS)
+// COMPONENTES PRINCIPAIS (CHARTS) - LAZY LOADED
 // ============================================================
+
+// Criar os lazy components UMA VEZ (fora das funções de render)
+const LazyLineChart = lazy(() =>
+  import('recharts').then(m => ({ default: m.LineChart }))
+);
+
+const LazyBarChart = lazy(() =>
+  import('recharts').then(m => ({ default: m.BarChart }))
+);
+
+const LazyPieChart = lazy(() =>
+  import('recharts').then(m => ({ default: m.PieChart }))
+);
+
+const LazyAreaChart = lazy(() =>
+  import('recharts').then(m => ({ default: m.AreaChart }))
+);
+
+const LazyComposedChart = lazy(() =>
+  import('recharts').then(m => ({ default: m.ComposedChart }))
+);
+
+const LazyRadarChart = lazy(() =>
+  import('recharts').then(m => ({ default: m.RadarChart }))
+);
+
+const LazyScatterChart = lazy(() =>
+  import('recharts').then(m => ({ default: m.ScatterChart }))
+);
+
+const LazyFunnelChart = lazy(() =>
+  import('recharts').then(m => ({ default: m.FunnelChart }))
+);
+
+const LazyTreemap = lazy(() =>
+  import('recharts').then(m => ({ default: m.Treemap }))
+);
 
 /**
  * LineChart com lazy loading COMPLETO
  */
-export const LineChart = (props: any) => {
-  const LazyLineChart = lazy(() =>
-    import('recharts').then(m => ({ default: m.LineChart }))
-  );
-
-  return (
-    <ChartWrapper>
-      <LazyLineChart {...props} />
-    </ChartWrapper>
-  );
-};
+export const LineChart = (props: any) => (
+  <ChartWrapper>
+    <LazyLineChart {...props} />
+  </ChartWrapper>
+);
 
 /**
  * BarChart com lazy loading COMPLETO
  */
-export const BarChart = (props: any) => {
-  const LazyBarChart = lazy(() =>
-    import('recharts').then(m => ({ default: m.BarChart }))
-  );
-
-  return (
-    <ChartWrapper>
-      <LazyBarChart {...props} />
-    </ChartWrapper>
-  );
-};
+export const BarChart = (props: any) => (
+  <ChartWrapper>
+    <LazyBarChart {...props} />
+  </ChartWrapper>
+);
 
 /**
  * PieChart com lazy loading COMPLETO
  */
-export const PieChart = (props: any) => {
-  const LazyPieChart = lazy(() =>
-    import('recharts').then(m => ({ default: m.PieChart }))
-  );
-
-  return (
-    <ChartWrapper>
-      <LazyPieChart {...props} />
-    </ChartWrapper>
-  );
-};
+export const PieChart = (props: any) => (
+  <ChartWrapper>
+    <LazyPieChart {...props} />
+  </ChartWrapper>
+);
 
 /**
  * AreaChart com lazy loading COMPLETO
  */
-export const AreaChart = (props: any) => {
-  const LazyAreaChart = lazy(() =>
-    import('recharts').then(m => ({ default: m.AreaChart }))
-  );
-
-  return (
-    <ChartWrapper>
-      <LazyAreaChart {...props} />
-    </ChartWrapper>
-  );
-};
+export const AreaChart = (props: any) => (
+  <ChartWrapper>
+    <LazyAreaChart {...props} />
+  </ChartWrapper>
+);
 
 /**
  * ComposedChart com lazy loading COMPLETO
  */
-export const ComposedChart = (props: any) => {
-  const LazyComposedChart = lazy(() =>
-    import('recharts').then(m => ({ default: m.ComposedChart }))
-  );
-
-  return (
-    <ChartWrapper>
-      <LazyComposedChart {...props} />
-    </ChartWrapper>
-  );
-};
+export const ComposedChart = (props: any) => (
+  <ChartWrapper>
+    <LazyComposedChart {...props} />
+  </ChartWrapper>
+);
 
 /**
  * RadarChart com lazy loading COMPLETO
  */
-export const RadarChart = (props: any) => {
-  const LazyRadarChart = lazy(() =>
-    import('recharts').then(m => ({ default: m.RadarChart }))
-  );
-
-  return (
-    <ChartWrapper>
-      <LazyRadarChart {...props} />
-    </ChartWrapper>
-  );
-};
+export const RadarChart = (props: any) => (
+  <ChartWrapper>
+    <LazyRadarChart {...props} />
+  </ChartWrapper>
+);
 
 /**
  * ScatterChart com lazy loading COMPLETO
  */
-export const ScatterChart = (props: any) => {
-  const LazyScatterChart = lazy(() =>
-    import('recharts').then(m => ({ default: m.ScatterChart }))
-  );
-
-  return (
-    <ChartWrapper>
-      <LazyScatterChart {...props} />
-    </ChartWrapper>
-  );
-};
+export const ScatterChart = (props: any) => (
+  <ChartWrapper>
+    <LazyScatterChart {...props} />
+  </ChartWrapper>
+);
 
 /**
  * FunnelChart com lazy loading COMPLETO
  */
-export const FunnelChart = (props: any) => {
-  const LazyFunnelChart = lazy(() =>
-    import('recharts').then(m => ({ default: m.FunnelChart }))
-  );
-
-  return (
-    <ChartWrapper>
-      <LazyFunnelChart {...props} />
-    </ChartWrapper>
-  );
-};
+export const FunnelChart = (props: any) => (
+  <ChartWrapper>
+    <LazyFunnelChart {...props} />
+  </ChartWrapper>
+);
 
 /**
  * Treemap com lazy loading COMPLETO
  */
-export const Treemap = (props: any) => {
-  const LazyTreemap = lazy(() =>
-    import('recharts').then(m => ({ default: m.Treemap }))
-  );
-
-  return (
-    <ChartWrapper>
-      <LazyTreemap {...props} />
-    </ChartWrapper>
-  );
-};
+export const Treemap = (props: any) => (
+  <ChartWrapper>
+    <LazyTreemap {...props} />
+  </ChartWrapper>
+);
 
 // ============================================================
 // COMPONENTES AUXILIARES (LAZY WRAPPERS)

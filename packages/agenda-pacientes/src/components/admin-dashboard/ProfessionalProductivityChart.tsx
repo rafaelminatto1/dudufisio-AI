@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 
 interface ProfessionalData {
   name: string;

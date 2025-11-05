@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
   Line,
   ComposedChart
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 
 interface RevenueData {
   month: string;

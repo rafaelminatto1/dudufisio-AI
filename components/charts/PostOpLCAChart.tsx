@@ -18,7 +18,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
   ReferenceArea
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import { Activity, Target, TrendingUp, Download } from 'lucide-react';
 import differenceInDays from 'date-fns/differenceInDays';
 import format from 'date-fns/format';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from '@/components/charts/ChartsLazyOptimized';
 import { CardHeader, CardTitle, CardDescription, CardContent } from '../ui/card';
 
 export interface TherapistStats {

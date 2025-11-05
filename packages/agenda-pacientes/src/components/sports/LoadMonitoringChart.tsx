@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from '@/components/charts/ChartsLazyOptimized';
 import { LoadMonitoring } from '../../types/sportsRehabTypes';
 import { TrendingUp, AlertTriangle } from 'lucide-react';
 

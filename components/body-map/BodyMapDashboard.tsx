@@ -21,7 +21,7 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import { TrendingDown, TrendingUp, Minus, Activity, MapPin, CheckCircle2, AlertCircle } from 'lucide-react';
 import { getPainLevelColor } from '../../services/bodyMapService';
 

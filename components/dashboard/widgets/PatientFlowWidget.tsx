@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Patient } from '@/types';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from '@/components/charts/ChartsLazyOptimized';
 import { subDays, isAfter } from 'date-fns';
 
 interface PatientFlowWidgetProps {

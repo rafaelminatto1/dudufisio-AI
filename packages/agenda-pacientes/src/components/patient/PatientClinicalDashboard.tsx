@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from 'react';
 import { Patient, Appointment, SoapNote, TreatmentPlan, AppointmentStatus, PainPoint } from '../../types';
 import { TrendingDown, CalendarCheck, Clock, Activity, Loader, Sparkles, MapPin } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 import * as geminiService from '../../services/geminiService';
 import MarkdownRenderer from '../ui/MarkdownRenderer';
 import { useToast } from '../../contexts/ToastContext';

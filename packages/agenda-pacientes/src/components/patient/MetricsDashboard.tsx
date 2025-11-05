@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Activity, AlertCircle, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, ResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 import type { AssessmentStatistics, AssessmentChartData } from '../../types';
 import { 
   getAssessmentHistory,

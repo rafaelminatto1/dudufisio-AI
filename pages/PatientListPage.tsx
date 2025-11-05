@@ -118,7 +118,16 @@ const PatientListPage: React.FC = () => {
               Gerencie todos os pacientes da clínica
             </p>
           </div>
-          {/* Botão agora fica na toolbar do PatientTable */}
+          {/* 🔧 FIX: Botão de Novo Paciente estava faltando */}
+          <button
+            onClick={() => navigate('/patients/new')}
+            className="inline-flex items-center justify-center rounded-lg bg-fisio-primary-600 hover:bg-fisio-primary-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors"
+          >
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Novo Paciente
+          </button>
         </header>
 
         {/* Estatísticas com Gradientes Vibrantes - Paleta MoocaFisio */}

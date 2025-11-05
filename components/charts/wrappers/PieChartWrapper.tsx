@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from '@/components/charts/ChartsLazyOptimized';
 
 interface PieChartWrapperProps {
   data: Array<{

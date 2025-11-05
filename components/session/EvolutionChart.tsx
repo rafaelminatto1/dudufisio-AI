@@ -13,7 +13,7 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 import { TestEvolutionData, ChartType } from '../../types';
 
 /**

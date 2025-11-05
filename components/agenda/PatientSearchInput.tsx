@@ -57,16 +57,23 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
         
         setIsSearching(true);
         try {
-          const data = await patientService.searchPatients(debouncedSearchTerm);
+          // 🔧 FIX: Adicionar timeout manual de 5s para evitar travamento
+          const timeoutPromise = new Promise<never>((_, reject) => 
+            setTimeout(() => reject(new Error('Busca cancelada por timeout (5s)')), 5000)
+          );
+          
+          const searchPromise = patientService.searchPatients(debouncedSearchTerm);
+          const data = await Promise.race([searchPromise, timeoutPromise]);
+          
           setSearchResults(data || []);
           setShowDropdown(true);
           setShowQuickRegister(data.length === 0 && debouncedSearchTerm.length >= 3);
-        } catch (error) {
-          console.error('Erro na busca de pacientes:', error);
-          // Mostrar erro mas permitir cadastro rápido
+        } catch (error: any) {
+          console.warn('⚠️ Busca de pacientes falhou:', error?.message || error);
+          // Silenciar erro e apenas permitir cadastro rápido
           setSearchResults([]);
           setShowQuickRegister(debouncedSearchTerm.length >= 3);
-          showToast('Erro ao buscar pacientes. Você pode cadastrar um novo.', 'error');
+          // Não mostrar toast para não incomodar
         } finally {
           // Garantir que loading sempre para
           setIsSearching(false);
@@ -86,14 +93,21 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
 
   const handleQuickRegister = async (name: string, phone?: string) => {
     console.log('🔄 Iniciando cadastro rápido:', name, phone);
+    console.log('🔍 onSelectPatient callback disponível?', typeof onSelectPatient);
 
     try {
+      console.log('📞 Chamando patientService.quickAddPatient...');
       const newPatient = await patientService.quickAddPatient(name, phone);
-      console.log('✅ Paciente criado:', newPatient);
+      console.log('✅ Paciente criado com sucesso!');
+      console.log('   Paciente completo:', JSON.stringify(newPatient, null, 2));
+      console.log('   ID:', newPatient?.id);
+      console.log('   Nome:', newPatient?.name);
 
       // Garantir que o paciente é selecionado
-      console.log('🔄 Chamando onSelectPatient com:', newPatient);
+      console.log('🔄 Chamando onSelectPatient com paciente...');
       onSelectPatient(newPatient);
+      console.log('✅ onSelectPatient foi chamado!');
+      
       setSearchTerm(newPatient.name);
       setShowQuickRegister(false);
 
@@ -104,7 +118,10 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
         setTimeout(() => inputRef.current?.classList.remove('animate-pulse-green'), 1000);
       }
     } catch (error: any) {
-      console.error('❌ Erro ao cadastrar paciente:', error);
+      console.error('❌ ERRO CRÍTICO ao cadastrar paciente:', error);
+      console.error('   Tipo de erro:', error?.constructor?.name);
+      console.error('   Mensagem:', error?.message);
+      console.error('   Stack:', error?.stack);
       const errorMessage = error?.message || 'Erro ao cadastrar paciente. Tente novamente.';
       showToast(errorMessage, 'error');
       throw error; // Re-throw para o modal tratar

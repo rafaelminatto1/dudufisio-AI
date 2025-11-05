@@ -8,7 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
+} from '@/components/charts/ChartsLazyOptimized';
 
 interface TrendData {
   date: string;

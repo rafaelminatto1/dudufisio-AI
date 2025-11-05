@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AppContext";
 import { useToast } from '../../contexts/ToastContext';
 import StatCard from '../../components/dashboard/StatCard';
 import { DollarSign, BarChart2, Zap, Shield } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from '@/components/charts/ChartsLazyOptimized';
 import { Skeleton } from '../../components/ui/skeleton';
 
 const FinancialsPage: React.FC = () => {
