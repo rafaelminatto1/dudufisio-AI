@@ -174,7 +174,17 @@ class SportsRehabServiceSupabase {
   async savePerformanceMetric(
     metric: Omit<PerformanceMetric, 'id' | 'createdAt'>
   ): Promise<PerformanceMetric> {
-    const { data, error } = await supabase
+    // DESABILITADO: Tabela performance_metrics não existe
+    console.warn('[Sports] performance_metrics insert desabilitado - tabela não existe');
+    
+    // Retornar mock para evitar quebrar a aplicação
+    return {
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      ...metric,
+    };
+    
+    /* const { data, error } = await supabase
       .from('performance_metrics')
       .insert({
         athlete_id: metric.athleteId,
@@ -197,7 +207,7 @@ class SportsRehabServiceSupabase {
       throw error;
     }
 
-    return this.mapDatabaseToPerformanceMetric(data);
+    return this.mapDatabaseToPerformanceMetric(data); */
   }
 
   /**
@@ -207,7 +217,11 @@ class SportsRehabServiceSupabase {
     athleteId: string,
     metricType?: string
   ): Promise<PerformanceMetric[]> {
-    let query = supabase
+    // DESABILITADO: Tabela performance_metrics não existe
+    console.warn('[Sports] performance_metrics query desabilitado - tabela não existe');
+    return []; // Retornar array vazio
+    
+    /* let query = supabase
       .from('performance_metrics')
       .select('*')
       .eq('athlete_id', athleteId)
@@ -217,7 +231,7 @@ class SportsRehabServiceSupabase {
       query = query.eq('metric_type', metricType);
     }
 
-    const { data, error } = await query;
+    const { data, error } = await query; */
 
     if (error) {
       console.error('Erro ao buscar métricas:', error);

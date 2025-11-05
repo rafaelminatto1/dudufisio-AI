@@ -534,8 +534,9 @@ class APMService {
     // Store locally for batch sending
     this.customMetrics.set(fullMetric.name, fullMetric.value);
 
-    // Send to backend
-    await this.supabase.from('performance_metrics').insert(fullMetric);
+    // Send to backend - DESABILITADO: Tabela performance_metrics não existe
+    // await this.supabase.from('performance_metrics').insert(fullMetric);
+    console.warn('[APM] performance_metrics insert desabilitado - tabela não existe');
 
     // Check alerts
     this.checkAlerts(fullMetric);
@@ -1067,16 +1068,19 @@ class APMService {
 
     const startTime = new Date(Date.now() - timeRangeHours * 60 * 60 * 1000);
 
-    // Fetch data from Supabase
+    // Fetch data from Supabase - DESABILITANDO performance_metrics temporariamente
+    console.warn('[APM] performance_metrics query desabilitado - tabela não existe');
     const [sessions, metrics, errors, alerts] = await Promise.all([
       this.supabase
         .from('user_sessions')
         .select('*')
         .gte('startTime', startTime.toISOString()),
-      this.supabase
-        .from('performance_metrics')
-        .select('*')
-        .gte('timestamp', startTime.toISOString()),
+      // DESABILITADO: Tabela não existe
+      // this.supabase
+      //   .from('performance_metrics')
+      //   .select('*')
+      //   .gte('timestamp', startTime.toISOString()),
+      Promise.resolve({ data: [], error: null }), // Mock vazio
       this.supabase
         .from('error_events')
         .select('*')
