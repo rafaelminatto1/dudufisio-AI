@@ -8,10 +8,16 @@
   "executionArgs": {
     "projectName": "dudufisio-AI",
     "projectPath": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI",
-    "testIds": [],
-    "additionalInstruction": "Bug corrigido - executar todos os testes para validar",
+    "testIds": [
+      "TC005",
+      "TC006",
+      "TC007",
+      "TC008"
+    ],
+    "additionalInstruction": "Focar nos testes das funcionalidades de IA: transcrição de áudio, estruturação SOAP, sugestão de exercícios e resumo de progresso. Use as credenciais de login: admin@dudufisio.com / DuduFisio2024!",
     "envs": {
       "API_KEY": "sk-user-8bMuKGfFoUIqX4t6ssw0xomOk6IV_HwEsApfdFk6dKdt9VPWsfekx6ge2QgANJyDuJqx8YqFAdjprxq5X_3Q2zFH6fc-rKwMqPACaMgJCt_jXILdR2OZYzCuap6y0uLjI58"
     }
-  }
+  },
+  "proxy": "http://32b74546-a14a-4a15-98e8-422fd325b2d9:3VFAXKHLqxo2sJhstduDUd4rArfTzZcJ@tun.testsprite.com:8080"
 }
