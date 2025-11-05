@@ -1,10 +1,16 @@
 /**
  * Firebase Configuration for Push Notifications
  * MoocaFisio
+ *
+ * ✅ OTIMIZADO: Firebase agora usa lazy loading
+ * - Firebase (~400KB) só carrega quando necessário
+ * - Reduz bundle inicial
+ * - Carrega apenas ao solicitar permissão de notificação
  */
 
-import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getMessaging, Messaging, getToken, onMessage } from 'firebase/messaging';
+// Types importados separadamente (não aumentam bundle)
+type FirebaseApp = any;
+type Messaging = any;
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -20,20 +26,39 @@ let app: FirebaseApp | null = null;
 let messaging: Messaging | null = null;
 
 /**
- * Initialize Firebase App
+ * 🚀 Lazy load Firebase App module
  */
-export const initializeFirebase = (): FirebaseApp => {
+const loadFirebaseApp = async () => {
+  console.log('[Firebase] Lazy loading firebase/app...');
+  const { initializeApp } = await import('firebase/app');
+  return { initializeApp };
+};
+
+/**
+ * 🚀 Lazy load Firebase Messaging module
+ */
+const loadFirebaseMessaging = async () => {
+  console.log('[Firebase] Lazy loading firebase/messaging...');
+  const messaging = await import('firebase/messaging');
+  return messaging;
+};
+
+/**
+ * Initialize Firebase App (with lazy loading)
+ */
+export const initializeFirebase = async (): Promise<FirebaseApp> => {
   if (!app) {
+    const { initializeApp } = await loadFirebaseApp();
     app = initializeApp(firebaseConfig);
-    console.log('[Firebase] App initialized');
+    console.log('[Firebase] App initialized (lazy loaded)');
   }
   return app;
 };
 
 /**
- * Get Firebase Messaging instance
+ * Get Firebase Messaging instance (with lazy loading)
  */
-export const getMessagingInstance = (): Messaging | null => {
+export const getMessagingInstance = async (): Promise<Messaging | null> => {
   if (typeof window === 'undefined') {
     console.warn('[Firebase] Window is undefined, cannot initialize messaging');
     return null;
@@ -41,9 +66,10 @@ export const getMessagingInstance = (): Messaging | null => {
 
   if (!messaging) {
     try {
-      const firebaseApp = initializeFirebase();
+      const firebaseApp = await initializeFirebase();
+      const { getMessaging } = await loadFirebaseMessaging();
       messaging = getMessaging(firebaseApp);
-      console.log('[Firebase] Messaging initialized');
+      console.log('[Firebase] Messaging initialized (lazy loaded)');
     } catch (error) {
       console.error('[Firebase] Error initializing messaging:', error);
       return null;
@@ -90,11 +116,11 @@ export const requestNotificationPermission = async (): Promise<string | null> =>
 };
 
 /**
- * Get FCM token
+ * Get FCM token (with lazy loading)
  */
 export const getFCMToken = async (): Promise<string | null> => {
   try {
-    const messagingInstance = getMessagingInstance();
+    const messagingInstance = await getMessagingInstance();
     if (!messagingInstance) {
       console.error('[Firebase] Messaging instance not available');
       return null;
@@ -132,6 +158,9 @@ export const getFCMToken = async (): Promise<string | null> => {
       return null;
     }
 
+    // Lazy load getToken
+    const { getToken } = await loadFirebaseMessaging();
+
     console.log('[Firebase] Getting FCM token...');
     const token = await getToken(messagingInstance, { vapidKey });
 
@@ -149,14 +178,19 @@ export const getFCMToken = async (): Promise<string | null> => {
 };
 
 /**
- * Listen for foreground messages
+ * Listen for foreground messages (with lazy loading)
  */
-export const onForegroundMessage = (callback: (payload: any) => void): (() => void) => {
-  const messagingInstance = getMessagingInstance();
+export const onForegroundMessage = async (
+  callback: (payload: any) => void
+): Promise<(() => void)> => {
+  const messagingInstance = await getMessagingInstance();
   if (!messagingInstance) {
     console.warn('[Firebase] Cannot listen for messages, messaging not initialized');
     return () => {};
   }
+
+  // Lazy load onMessage
+  const { onMessage } = await loadFirebaseMessaging();
 
   console.log('[Firebase] Setting up foreground message listener');
   return onMessage(messagingInstance, (payload) => {
