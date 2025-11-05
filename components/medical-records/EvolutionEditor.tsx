@@ -104,6 +104,13 @@ import { downloadEvolutionPDF } from '@/services/pdf/evolutionReportService';
 import { useToast } from '@/contexts/ToastContext';
 import { useApp } from '@/contexts/AppContext';
 
+// Imports de IA
+import { AudioRecorder } from '../evolution/AudioRecorder';
+import { isGeminiConfigured } from '@/services/geminiService';
+import { structureToSOAP } from '@/services/ai/soapStructureService';
+import { suggestExercises } from '@/services/ai/exerciseSuggestionService';
+import { Sparkles } from 'lucide-react';
+
 // Schema de validação
 const evolutionSchema = z.object({
   // Dados básicos
@@ -201,6 +208,16 @@ export function EvolutionEditor({
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [showTemplateSaveDialog, setShowTemplateSaveDialog] = useState(false);
   const { timerData, handleTimeUpdate } = useSessionTimer();
+  
+  // Estados para IA
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [isAIEnabled, setIsAIEnabled] = useState(false);
+  const [isProcessingAI, setIsProcessingAI] = useState(false);
+  
+  // Verificar se IA está habilitada
+  useEffect(() => {
+    setIsAIEnabled(isGeminiConfigured());
+  }, []);
 
   const form = useForm<EvolutionFormData>({
     resolver: zodResolver(evolutionSchema),
@@ -347,6 +364,78 @@ export function EvolutionEditor({
     }
   };
 
+  // Handler para transcrição de áudio
+  const handleTranscription = async (transcription: string) => {
+    try {
+      setIsProcessingAI(true);
+      showToast('Estruturando evolução com IA...', 'info');
+      
+      // Estruturar em SOAP automaticamente
+      const soapData = await structureToSOAP(transcription);
+      
+      // Preencher campos do formulário
+      form.setValue('subjectiveAssessment', soapData.subjective);
+      form.setValue('objectiveFindings', soapData.objective);
+      // Note: assessment e plan podem ser mapeados para outros campos do form
+      // Aqui vou adicionar ao campo de resposta do paciente e observações gerais
+      if (soapData.assessment) {
+        form.setValue('patientResponse', soapData.assessment);
+      }
+      if (soapData.plan) {
+        form.setValue('planGeneralNotes', soapData.plan);
+      }
+      
+      showToast('✨ Evolução estruturada com IA!', 'success');
+    } catch (error: any) {
+      console.error('Erro ao processar transcrição:', error);
+      showToast(error.message || 'Erro ao processar transcrição', 'error');
+    } finally {
+      setIsProcessingAI(false);
+    }
+  };
+
+  // Handler para sugestão de exercícios com IA
+  const handleSuggestExercises = async () => {
+    const assessment = form.getValues('patientResponse');
+    const painLocation = 'Não especificado'; // Pode ser obtido de outro campo
+    
+    if (!assessment || assessment.length < 10) {
+      showToast('Preencha a resposta/avaliação do paciente primeiro', 'error');
+      return;
+    }
+
+    try {
+      setIsProcessingAI(true);
+      showToast('Gerando sugestões de exercícios...', 'info');
+      
+      const suggestions = await suggestExercises({
+        diagnosis: assessment,
+        painLocation: painLocation,
+        functionalLimitations: form.getValues('objectiveFindings') || '',
+      });
+      
+      // Converter sugestões para exercícios domiciliares
+      const homeExercises = suggestions.map(ex => ({
+        name: ex.name,
+        description: ex.description,
+        repetitions: ex.reps,
+        sets: ex.sets,
+        instructions: `${ex.description}\n\nJustificativa: ${ex.rationale}`,
+      }));
+      
+      // Adicionar aos exercícios domiciliares existentes
+      const currentExercises = form.getValues('homeExercises') || [];
+      form.setValue('homeExercises', [...currentExercises, ...homeExercises]);
+      
+      showToast(`✨ ${suggestions.length} exercícios sugeridos pela IA!`, 'success');
+    } catch (error: any) {
+      console.error('Erro ao sugerir exercícios:', error);
+      showToast(error.message || 'Erro ao sugerir exercícios', 'error');
+    } finally {
+      setIsProcessingAI(false);
+    }
+  };
+
   const handleAddConduct = (conduct: Conduct) => {
     setConducts([...conducts, conduct]);
     setShowConductForm(false);
@@ -461,6 +550,66 @@ export function EvolutionEditor({
           </div>
         </CardContent>
       </Card>
+
+      {/* Assistente de IA - Card Especial */}
+      {isAIEnabled && (
+        <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-600 rounded-lg">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                    Assistente de IA
+                    <Badge variant="default" className="bg-purple-600">Novo!</Badge>
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Grave a evolução e deixe a IA estruturar para você
+                  </p>
+                </div>
+              </div>
+              <Button
+                type="button"
+                onClick={() => setShowAIAssistant(!showAIAssistant)}
+                variant={showAIAssistant ? "secondary" : "outline"}
+                className="gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                {showAIAssistant ? 'Ocultar' : 'Usar IA'}
+              </Button>
+            </div>
+
+            {/* Mostrar AudioRecorder quando ativado */}
+            {showAIAssistant && (
+              <div className="mt-4">
+                <AudioRecorder 
+                  onTranscription={handleTranscription}
+                  onError={(error) => showToast(error, 'error')}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Mensagem quando IA não está configurada */}
+      {!isAIEnabled && (
+        <Card className="border-amber-200 bg-amber-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+              <div>
+                <h3 className="font-semibold text-amber-900">Assistente de IA Desabilitado</h3>
+                <p className="text-sm text-amber-700 mt-1">
+                  Configure VITE_GEMINI_API_KEY no arquivo .env.local para ativar funcionalidades de IA
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Pain Level Comparison */}
       {watchedValues.painLevelBefore > 0 && (
@@ -863,6 +1012,22 @@ export function EvolutionEditor({
                       </FormItem>
                     )}
                   />
+
+                  {/* Botão de sugestão de exercícios com IA */}
+                  {isAIEnabled && (
+                    <div className="flex justify-end">
+                      <Button
+                        type="button"
+                        onClick={handleSuggestExercises}
+                        variant="outline"
+                        className="gap-2 border-purple-200 hover:bg-purple-50"
+                        disabled={isProcessingAI}
+                      >
+                        <Sparkles className="w-4 h-4 text-purple-600" />
+                        {isProcessingAI ? 'Gerando...' : 'Sugerir Exercícios com IA'}
+                      </Button>
+                    </div>
+                  )}
 
                   <FormField
                     control={form.control}
