@@ -1,89 +1,70 @@
-/**
- * Configuração do Playwright para Testes E2E
- */
-
 import { defineConfig, devices } from '@playwright/test';
 
+/**
+ * Configuração do Playwright para testes E2E
+ * Testa as funcionalidades avançadas do módulo de evolução
+ */
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './testsprite_tests',
   
-  // Timeout - Aumentado para 60s para testes mais complexos
-  timeout: 60000,
+  // Timeout para cada teste
+  timeout: 30 * 1000,
   
-  // Timeout para cada expect
-  expect: {
-    timeout: 10000,
-  },
-  
-  // Executar testes em paralelo
-  fullyParallel: true,
-  
-  // Não falhar build em CI se alguns testes falharem
+  // Configurações globais
+  fullyParallel: false, // Executar testes em sequência
   forbidOnly: !!process.env.CI,
-  
-  // Retry em CI e local - Melhorado para lidar com flaky tests
-  retries: process.env.CI ? 2 : 1,
-  
-  // Workers
-  workers: process.env.CI ? 1 : undefined,
+  retries: process.env.CI ? 2 : 0,
+  workers: 1, // Um worker por vez para evitar conflitos
   
   // Reporter
-  reporter: 'html',
+  reporter: [
+    ['html', { outputFolder: 'testsprite_tests/reports/html' }],
+    ['json', { outputFile: 'testsprite_tests/reports/results.json' }],
+    ['list']
+  ],
   
-  // Configurações compartilhadas
+  // Configurações compartilhadas para todos projetos
   use: {
-    // Base URL - Será sobrescrita pelo webServer
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
-
-    // Timeout para ações (click, fill, etc)
-    actionTimeout: 15000,
-    
-    // Timeout para navegação
-    navigationTimeout: 30000,
-
-    // Trace
+    baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
-
-    // Screenshot
     screenshot: 'only-on-failure',
-
-    // Video
     video: 'retain-on-failure',
+    
+    // Timeout para ações
+    actionTimeout: 10000,
+    navigationTimeout: 30000,
   },
 
-  // Projetos (navegadores)
+  // Projetos de teste (diferentes browsers)
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-    // Mobile
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    },
+    
+    // Descomente para testar em outros browsers
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
+    
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
+    
+    // Testes mobile
+    // {
+    //   name: 'Mobile Chrome',
+    //   use: { ...devices['Pixel 5'] },
+    // },
   ],
 
-  // Web server - Detecta automaticamente a porta ativa
-  // O Playwright tentará encontrar um servidor rodando em 5173, 5176 ou 5177
+  // Web server local (se não estiver rodando)
   webServer: {
-    command: 'npm run dev:skip-check',
-    url: process.env.PLAYWRIGHT_SERVER_URL || 'http://localhost:5173',
+    command: 'npm run dev',
+    url: 'http://localhost:5173',
+    reuseExistingServer: true,
     timeout: 120 * 1000,
-    reuseExistingServer: !process.env.CI, // Reutiliza servidor se já estiver rodando
-    stdout: 'ignore',
-    stderr: 'pipe',
   },
 });

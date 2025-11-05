@@ -1,0 +1,14 @@
+{
+  "tokens": [
+    "dSAeDOVpJ11yvX2deZkx_u:APA91bEmcMhf2CrM_ECsjwG42GVxk6SDNyxrKXbVKXnjXikblEv6WDPtqWNlPyFWpueDMxiZylBVRxEByUav151c3WTnaCsslvaNpm2_d1cjWfLZZs6E5VE"
+  ],
+  "title": "🎉 MoocaFisio Push Notifications!",
+  "body": "Se você está vendo esta notificação, tudo está funcionando perfeitamente! 🚀",
+  "icon": "/logo.png",
+  "url": "/dashboard",
+  "data": {
+    "type": "test",
+    "timestamp": "2025-11-05T03:30:00Z",
+    "message": "Teste de Push Notification realizado com sucesso!"
+  }
+}

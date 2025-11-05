@@ -31,7 +31,10 @@
       "Bash(npm run bundle:analyze:size:*)",
       "Bash(nul)",
       "Bash(Select-Object -First 15)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(Get-Content package.json)",
+      "Bash(Select-String -Pattern '\"\"\"\"(react|chart|pdf|video|image|icon|lucide|framer|recharts|firebase|supabase|google)' -Context 0,0)",
+      "Bash(Select-Object -First 30)"
     ],
     "deny": [],
     "ask": []

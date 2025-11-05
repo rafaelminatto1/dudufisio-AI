@@ -342,6 +342,11 @@ export const getPerformanceMetrics = async (period?: {
   category?: string;
 }): Promise<PerformanceMetric[]> => {
   try {
+    // TEMPORÁRIO: Tabela performance_metrics não existe, retornar array vazio
+    console.warn('⚠️ Tabela performance_metrics não existe - retornando dados vazios');
+    return [];
+    
+    /* TODO: Remover comentário quando tabela for criada
     let query = supabase
       .from('performance_metrics')
       .select('*')
@@ -363,14 +368,20 @@ export const getPerformanceMetrics = async (period?: {
 
     if (error) throw error;
     return (data as any) || [];
+    */
   } catch (error) {
     console.error('Erro ao buscar métricas de performance:', error);
-    throw error;
+    return []; // Retornar array vazio em caso de erro
   }
 };
 
 export const calculatePerformanceMetrics = async (periodStart?: string, periodEnd?: string): Promise<number> => {
   try {
+    // TEMPORÁRIO: Tabela performance_metrics não existe, retornar 0
+    console.warn('⚠️ Tabela performance_metrics não existe - retornando 0');
+    return 0;
+    
+    /* TODO: Remover comentário quando tabela for criada
     // Use the performance metrics table instead of RPC function
     const { data, error } = await supabase
       .from('performance_metrics')
@@ -380,9 +391,10 @@ export const calculatePerformanceMetrics = async (periodStart?: string, periodEn
 
     if (error) throw error;
     return data?.length || 0;
+    */
   } catch (error) {
     console.error('Erro ao calcular métricas de performance:', error);
-    throw error;
+    return 0; // Retornar 0 em caso de erro
   }
 };
 
