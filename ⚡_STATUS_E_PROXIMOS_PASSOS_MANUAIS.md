@@ -40,7 +40,7 @@
 
 #### Passo a Passo:
 
-1. Acesse: https://supabase.com/dashboard/project/[seu-project-id]/sql
+1. Acesse: https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo/sql
 
 2. Copie e execute o SQL abaixo (contém APENAS nossas novas migrations):
 
@@ -111,7 +111,7 @@ FROM evolution_templates;
 
 **Via Supabase Dashboard:**
 
-1. Acesse: https://supabase.com/dashboard/project/[seu-project-id]/storage/buckets
+1. Acesse: https://supabase.com/dashboard/project/urfxniitfbbvsaskicfo/storage/buckets
 
 2. Clique em **"Create Bucket"**
 
