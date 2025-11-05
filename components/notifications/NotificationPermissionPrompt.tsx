@@ -3,7 +3,7 @@
  * MoocaFisio - Prompt para solicitar permissão de notificações
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, BellOff, X, CheckCircle, Loader2 } from 'lucide-react';
 import { usePushNotifications } from '../../hooks/usePushNotifications';
 
@@ -18,25 +18,52 @@ export const NotificationPermissionPrompt: React.FC<NotificationPermissionPrompt
   showTestButton = false,
   className = '',
 }) => {
-  const { 
-    isSupported, 
-    permission, 
+  const {
+    isSupported,
+    permission,
     isLoading,
+    hasActiveTokens,
     requestPermission,
     sendTestNotification,
   } = usePushNotifications();
 
   const [dismissed, setDismissed] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  if (!isSupported || dismissed) {
-    return null;
-  }
+  const [autoInitialized, setAutoInitialized] = useState(false);
 
   const handleDismiss = () => {
     setDismissed(true);
     onDismiss?.();
   };
+
+  // Auto-initialize if permission is granted but no tokens exist
+  useEffect(() => {
+    if (
+      !autoInitialized &&
+      permission === 'granted' &&
+      !hasActiveTokens &&
+      !isLoading &&
+      isSupported
+    ) {
+      console.log('[NotificationPrompt] Auto-initializing (permission granted but no tokens)');
+      setAutoInitialized(true);
+      requestPermission().then((success) => {
+        if (success) {
+          setShowSuccess(true);
+          setTimeout(() => {
+            setShowSuccess(false);
+            if (!showTestButton) {
+              handleDismiss();
+            }
+          }, 3000);
+        }
+      });
+    }
+  }, [permission, hasActiveTokens, isLoading, isSupported, autoInitialized, requestPermission, showTestButton]);
+
+  if (!isSupported || dismissed) {
+    return null;
+  }
 
   const handleRequestPermission = async () => {
     const success = await requestPermission();
@@ -134,47 +161,66 @@ export const NotificationPermissionPrompt: React.FC<NotificationPermissionPrompt
 
   // Permission granted state (already has permission)
   if (permission === 'granted') {
-    if (!showTestButton) {
-      return null;
+    // If no tokens yet and auto-initializing, show loading
+    if (!hasActiveTokens && isLoading) {
+      return (
+        <div className={`bg-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}>
+          <div className="flex items-start gap-3">
+            <Loader2 className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0 animate-spin" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-blue-900">Ativando Notificações...</h3>
+              <p className="text-sm text-blue-700 mt-1">
+                Configurando notificações push. Aguarde um momento...
+              </p>
+            </div>
+          </div>
+        </div>
+      );
     }
 
-    return (
-      <div className={`bg-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}>
-        <div className="flex items-start gap-3">
-          <Bell className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-          <div className="flex-1">
-            <h3 className="font-semibold text-blue-900">Notificações Ativas</h3>
-            <p className="text-sm text-blue-700 mt-1">
-              Você está recebendo notificações do MoocaFisio.
-            </p>
+    // If has tokens or showTestButton enabled
+    if (hasActiveTokens || showTestButton) {
+      return (
+        <div className={`bg-blue-50 border border-blue-200 rounded-lg p-4 ${className}`}>
+          <div className="flex items-start gap-3">
+            <Bell className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-blue-900">Notificações Ativas</h3>
+              <p className="text-sm text-blue-700 mt-1">
+                Você está recebendo notificações do MoocaFisio.
+              </p>
+              <button
+                onClick={handleTestNotification}
+                disabled={isLoading}
+                className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <Bell className="w-4 h-4" />
+                    Enviar Teste
+                  </>
+                )}
+              </button>
+            </div>
             <button
-              onClick={handleTestNotification}
-              disabled={isLoading}
-              className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              onClick={handleDismiss}
+              className="text-blue-600 hover:text-blue-700 transition-colors"
+              aria-label="Fechar"
             >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Enviando...
-                </>
-              ) : (
-                <>
-                  <Bell className="w-4 h-4" />
-                  Enviar Teste
-                </>
-              )}
+              <X className="w-5 h-5" />
             </button>
           </div>
-          <button
-            onClick={handleDismiss}
-            className="text-blue-600 hover:text-blue-700 transition-colors"
-            aria-label="Fechar"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
-      </div>
-    );
+      );
+    }
+
+    // Permission granted but no active tokens and not loading - hide
+    return null;
   }
 
   // Default state - request permission

@@ -20,16 +20,17 @@ CREATE TABLE IF NOT EXISTS public.whatsapp_messages_log (
 );
 
 -- Índices para performance
-CREATE INDEX idx_whatsapp_logs_patient ON public.whatsapp_messages_log(patient_id);
-CREATE INDEX idx_whatsapp_logs_phone ON public.whatsapp_messages_log(phone_number);
-CREATE INDEX idx_whatsapp_logs_status ON public.whatsapp_messages_log(status);
-CREATE INDEX idx_whatsapp_logs_created ON public.whatsapp_messages_log(created_at DESC);
-CREATE INDEX idx_whatsapp_logs_whatsapp_id ON public.whatsapp_messages_log(whatsapp_message_id) WHERE whatsapp_message_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_whatsapp_logs_patient ON public.whatsapp_messages_log(patient_id);
+CREATE INDEX IF NOT EXISTS idx_whatsapp_logs_phone ON public.whatsapp_messages_log(phone_number);
+CREATE INDEX IF NOT EXISTS idx_whatsapp_logs_status ON public.whatsapp_messages_log(status);
+CREATE INDEX IF NOT EXISTS idx_whatsapp_logs_created ON public.whatsapp_messages_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_whatsapp_logs_whatsapp_id ON public.whatsapp_messages_log(whatsapp_message_id) WHERE whatsapp_message_id IS NOT NULL;
 
 -- Habilitar RLS
 ALTER TABLE public.whatsapp_messages_log ENABLE ROW LEVEL SECURITY;
 
 -- Políticas RLS
+DROP POLICY IF EXISTS "Staff can view all logs" ON public.whatsapp_messages_log;
 CREATE POLICY "Staff can view all logs"
   ON public.whatsapp_messages_log
   FOR SELECT
@@ -41,6 +42,7 @@ CREATE POLICY "Staff can view all logs"
     )
   );
 
+DROP POLICY IF EXISTS "Staff can insert logs" ON public.whatsapp_messages_log;
 CREATE POLICY "Staff can insert logs"
   ON public.whatsapp_messages_log
   FOR INSERT
@@ -52,6 +54,7 @@ CREATE POLICY "Staff can insert logs"
     )
   );
 
+DROP POLICY IF EXISTS "System can update logs" ON public.whatsapp_messages_log;
 CREATE POLICY "System can update logs"
   ON public.whatsapp_messages_log
   FOR UPDATE

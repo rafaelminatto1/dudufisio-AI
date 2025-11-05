@@ -3,7 +3,7 @@
  * MoocaFisio - Gerenciamento de notificações push
  */
 
-import { supabase } from '../supabase/client';
+import { supabase } from '@/lib/supabaseClient';
 import {
   requestNotificationPermission,
   getFCMToken,

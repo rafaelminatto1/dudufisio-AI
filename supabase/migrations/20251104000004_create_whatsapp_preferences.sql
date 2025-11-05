@@ -21,14 +21,15 @@ CREATE TABLE IF NOT EXISTS public.whatsapp_preferences (
 );
 
 -- Índices para performance
-CREATE INDEX idx_whatsapp_prefs_patient ON public.whatsapp_preferences(patient_id);
-CREATE INDEX idx_whatsapp_prefs_phone ON public.whatsapp_preferences(phone_number);
-CREATE INDEX idx_whatsapp_prefs_opted_in ON public.whatsapp_preferences(opted_in) WHERE opted_in = true;
+CREATE INDEX IF NOT EXISTS idx_whatsapp_prefs_patient ON public.whatsapp_preferences(patient_id);
+CREATE INDEX IF NOT EXISTS idx_whatsapp_prefs_phone ON public.whatsapp_preferences(phone_number);
+CREATE INDEX IF NOT EXISTS idx_whatsapp_prefs_opted_in ON public.whatsapp_preferences(opted_in) WHERE opted_in = true;
 
 -- Habilitar RLS
 ALTER TABLE public.whatsapp_preferences ENABLE ROW LEVEL SECURITY;
 
 -- Políticas RLS
+DROP POLICY IF EXISTS "Staff can view all preferences" ON public.whatsapp_preferences;
 CREATE POLICY "Staff can view all preferences"
   ON public.whatsapp_preferences
   FOR SELECT
@@ -40,6 +41,7 @@ CREATE POLICY "Staff can view all preferences"
     )
   );
 
+DROP POLICY IF EXISTS "Staff can insert preferences" ON public.whatsapp_preferences;
 CREATE POLICY "Staff can insert preferences"
   ON public.whatsapp_preferences
   FOR INSERT
@@ -51,6 +53,7 @@ CREATE POLICY "Staff can insert preferences"
     )
   );
 
+DROP POLICY IF EXISTS "Staff can update preferences" ON public.whatsapp_preferences;
 CREATE POLICY "Staff can update preferences"
   ON public.whatsapp_preferences
   FOR UPDATE
@@ -75,6 +78,7 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS whatsapp_prefs_updated_at ON public.whatsapp_preferences;
 CREATE TRIGGER whatsapp_prefs_updated_at
   BEFORE UPDATE ON public.whatsapp_preferences
   FOR EACH ROW

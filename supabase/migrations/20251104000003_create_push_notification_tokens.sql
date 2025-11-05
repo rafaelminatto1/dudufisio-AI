@@ -44,24 +44,28 @@ CREATE INDEX IF NOT EXISTS idx_push_tokens_user_enabled
 ALTER TABLE public.push_notification_tokens ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Usuários podem visualizar seus próprios tokens
+DROP POLICY IF EXISTS "Users can view their own tokens" ON public.push_notification_tokens;
 CREATE POLICY "Users can view their own tokens"
   ON public.push_notification_tokens
   FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Policy: Usuários podem inserir seus próprios tokens
+DROP POLICY IF EXISTS "Users can insert their own tokens" ON public.push_notification_tokens;
 CREATE POLICY "Users can insert their own tokens"
   ON public.push_notification_tokens
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Policy: Usuários podem atualizar seus próprios tokens
+DROP POLICY IF EXISTS "Users can update their own tokens" ON public.push_notification_tokens;
 CREATE POLICY "Users can update their own tokens"
   ON public.push_notification_tokens
   FOR UPDATE
   USING (auth.uid() = user_id);
 
 -- Policy: Usuários podem deletar seus próprios tokens
+DROP POLICY IF EXISTS "Users can delete their own tokens" ON public.push_notification_tokens;
 CREATE POLICY "Users can delete their own tokens"
   ON public.push_notification_tokens
   FOR DELETE
@@ -79,6 +83,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS push_tokens_updated_at ON public.push_notification_tokens;
 CREATE TRIGGER push_tokens_updated_at
   BEFORE UPDATE ON public.push_notification_tokens
   FOR EACH ROW

@@ -106,15 +106,35 @@ export const getFCMToken = async (): Promise<string | null> => {
       return null;
     }
 
-    // Register service worker first
+    // Ensure service worker is registered and ready
     if ('serviceWorker' in navigator) {
-      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-      console.log('[Firebase] Service Worker registered:', registration);
+      try {
+        console.log('[Firebase] Checking service worker registration...');
+        const registration = await navigator.serviceWorker.getRegistration('/');
+
+        if (!registration) {
+          console.log('[Firebase] No service worker registered, registering now...');
+          await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+          // Wait for service worker to be ready
+          await navigator.serviceWorker.ready;
+          console.log('[Firebase] Service Worker registered and ready');
+        } else {
+          console.log('[Firebase] Service Worker already registered');
+          // Make sure it's ready
+          await navigator.serviceWorker.ready;
+        }
+      } catch (swError) {
+        console.error('[Firebase] Service Worker registration error:', swError);
+        return null;
+      }
+    } else {
+      console.error('[Firebase] Service Worker not supported');
+      return null;
     }
 
     console.log('[Firebase] Getting FCM token...');
     const token = await getToken(messagingInstance, { vapidKey });
-    
+
     if (token) {
       console.log('[Firebase] FCM token obtained:', token.substring(0, 20) + '...');
       return token;
