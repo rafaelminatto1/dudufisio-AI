@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { LazyLineChart, LazyAreaChart, LazyPieChart } from '../components/charts/LazyCharts';
-import { H1, Body, Small } from '../src/components/ui/Typography';
 import StatCard from '../components/dashboard/StatCard';
 
 interface AdminMetrics {
@@ -313,7 +312,7 @@ const AdminDashboardPage: React.FC = () => {
       <div className="min-h-screen bg-neutral-bgAlt flex items-center justify-center">
         <div className="text-center">
           <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-md" />
-          <Body className="text-neutral-textSecondary">Carregando dashboard administrativo...</Body>
+          <p className="text-neutral-textSecondary">Carregando dashboard administrativo...</p>
         </div>
       </div>
     );
@@ -326,10 +325,10 @@ const AdminDashboardPage: React.FC = () => {
         <div className="mb-3xl">
           <div className="flex items-center justify-between">
             <div>
-              <H1>Dashboard Administrativo</H1>
-              <Body className="text-neutral-textSecondary mt-sm">
+              <h1 className="text-3xl font-bold">Dashboard Administrativo</h1>
+              <p className="text-neutral-textSecondary mt-sm">
                 Visão geral do sistema e métricas de gestão
-              </Body>
+              </p>
             </div>
             <div className="flex items-center gap-md">
               <button className="flex items-center px-md py-sm bg-white border border-neutral-border rounded-lg hover:bg-neutral-bgAlt transition-colors">

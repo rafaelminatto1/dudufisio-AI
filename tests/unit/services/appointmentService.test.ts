@@ -361,6 +361,54 @@ describe('AppointmentService', () => {
       const remaining = await appointmentService.calculateSessionsRemaining('patient-sem-agendamentos');
       expect(remaining).toBeUndefined();
     });
+
+    it('deve retornar o valor manual de sessoes restantes se existir', async () => {
+      const appointments = [
+        createTestAppointment({ patientId: 'p1', startTime: new Date(2025, 0, 1), sessions_remaining: 5 }),
+        createTestAppointment({ patientId: 'p1', startTime: new Date(2025, 0, 8), sessions_remaining: 4 }),
+      ];
+      const { db } = await import('@/services/mockDb');
+      vi.spyOn(db, 'getAppointments').mockReturnValue(appointments);
+
+      const remaining = await appointmentService.calculateSessionsRemaining('p1');
+      expect(remaining).toBe(4);
+    });
+
+    it('deve calcular sessoes restantes baseado no total e nas sessoes completas', async () => {
+      const appointments = [
+        createTestAppointment({ patientId: 'p2', startTime: new Date(2025, 0, 1), sessions_total: 10, status: AppointmentStatus.Completed }),
+        createTestAppointment({ patientId: 'p2', startTime: new Date(2025, 0, 8), sessions_total: 10, status: AppointmentStatus.Completed }),
+        createTestAppointment({ patientId: 'p2', startTime: new Date(2025, 0, 15), sessions_total: 10, status: AppointmentStatus.Scheduled }),
+      ];
+      const { db } = await import('@/services/mockDb');
+      vi.spyOn(db, 'getAppointments').mockReturnValue(appointments);
+
+      const remaining = await appointmentService.calculateSessionsRemaining('p2');
+      expect(remaining).toBe(8);
+    });
+
+    it('deve retornar 0 se todas as sessoes foram completadas', async () => {
+      const appointments = [
+        createTestAppointment({ patientId: 'p3', startTime: new Date(2025, 0, 1), sessions_total: 2, status: AppointmentStatus.Completed }),
+        createTestAppointment({ patientId: 'p3', startTime: new Date(2025, 0, 8), sessions_total: 2, status: AppointmentStatus.Completed }),
+      ];
+      const { db } = await import('@/services/mockDb');
+      vi.spyOn(db, 'getAppointments').mockReturnValue(appointments);
+
+      const remaining = await appointmentService.calculateSessionsRemaining('p3');
+      expect(remaining).toBe(0);
+    });
+
+    it('deve retornar undefined se sessions_total nao estiver definido', async () => {
+      const appointments = [
+        createTestAppointment({ patientId: 'p4', startTime: new Date(2025, 0, 1) }),
+      ];
+      const { db } = await import('@/services/mockDb');
+      vi.spyOn(db, 'getAppointments').mockReturnValue(appointments);
+
+      const remaining = await appointmentService.calculateSessionsRemaining('p4');
+      expect(remaining).toBeUndefined();
+    });
   });
 });
 

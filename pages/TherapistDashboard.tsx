@@ -12,7 +12,6 @@ import * as patientService from '../services/patientService';
 import * as appointmentService from '../services/appointmentService';
 import { eventService } from '../services/eventService';
 import { auditService } from '../services/auditService';
-import { H2, H3, Body, Small } from '../src/components/ui/Typography';
 
 /**
  * 🩺 DASHBOARD DO FISIOTERAPEUTA

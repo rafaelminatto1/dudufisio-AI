@@ -292,7 +292,7 @@ BEGIN
   SELECT 
     (pac.is_active AND pac.expires_at > NOW())::BOOLEAN as is_valid,
     pac.patient_id,
-    p.name as patient_name,
+    COALESCE(p.full_name, p.name, 'Paciente') as patient_name,
     pac.id as code_id
   FROM patient_access_codes pac
   JOIN patients p ON p.id = pac.patient_id
@@ -638,6 +638,10 @@ COMMENT ON FUNCTION validate_access_code(TEXT) IS 'Valida código de acesso e re
 -- FIM DA MIGRATION - TUDO PRONTO! ✅
 -- =====================================================
 
+-- =====================================================
+-- VERIFICAÇÃO E DADOS DE TESTE
+-- =====================================================
+
 -- Verificar se tudo foi criado corretamente
 SELECT 
   'Tabelas criadas' as status,
@@ -653,4 +657,30 @@ WHERE table_schema = 'public'
     'patient_messages',
     'patient_access_logs'
   );
+
+-- Verificar se tabela patients existe
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'patients') THEN
+    RAISE NOTICE 'AVISO: Tabela patients não encontrada. Criando tabela básica...';
+    
+    CREATE TABLE patients (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      user_id UUID UNIQUE REFERENCES users(id) ON DELETE SET NULL,
+      full_name TEXT NOT NULL,
+      email TEXT,
+      phone TEXT,
+      cpf TEXT UNIQUE,
+      birth_date DATE,
+      gender TEXT CHECK (gender IN ('male', 'female', 'other', 'prefer_not_to_say')),
+      status TEXT DEFAULT 'Active',
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+    
+    RAISE NOTICE 'Tabela patients criada com sucesso!';
+  ELSE
+    RAISE NOTICE 'Tabela patients já existe. OK!';
+  END IF;
+END $$;
 

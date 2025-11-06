@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { H1, H4, Body, Small } from '../src/components/ui/Typography';
 import { clinicalContentService } from '../services/clinicalContentService';
 import type { ClinicalProtocol } from '../types/clinicalContent';
 import { supabasePatientService } from '../services/supabase/patientServiceSupabase';
@@ -188,7 +187,7 @@ const PatientDetailPage: React.FC = () => {
           <div className="flex items-center justify-center py-5xl">
             <div className="text-center space-y-md">
               <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-              <Body className="text-neutral-textSecondary">Carregando dados do paciente...</Body>
+              <p className="text-neutral-textSecondary">Carregando dados do paciente...</p>
             </div>
           </div>
         </div>
@@ -238,7 +237,7 @@ const PatientDetailPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl">
           <div className="flex items-center justify-center py-5xl">
             <div className="text-center space-y-md">
-              <Body className="text-neutral-textSecondary">Paciente não encontrado</Body>
+              <p className="text-neutral-textSecondary">Paciente não encontrado</p>
               <Button 
                 onClick={() => navigate('/patients')}
                 variant="outline"
@@ -262,13 +261,13 @@ const PatientDetailPage: React.FC = () => {
             Voltar
           </Button>
           <div className="flex-1">
-            <H1 className="mb-sm">
+            <h1 className="mb-sm text-3xl font-bold">
               {patient.name}
-            </H1>
+            </h1>
             <div className="flex items-center gap-md">
               <Badge variant="default">{patient.status}</Badge>
-              <Small className="text-neutral-textSecondary">{calculateAge(patient.birthDate)} anos</Small>
-              <Small className="text-neutral-textSecondary">ID: {patient.id.slice(0, 8)}...</Small>
+              <span className="text-sm text-neutral-textSecondary">{calculateAge(patient.birthDate)} anos</span>
+              <span className="text-sm text-neutral-textSecondary">ID: {patient.id.slice(0, 8)}...</span>
             </div>
           </div>
           <div className="flex gap-sm">
@@ -309,7 +308,7 @@ const PatientDetailPage: React.FC = () => {
                   <Mail className="w-4 h-4 text-neutral-textTertiary" />
                   <span className="font-medium text-neutral-text">Email:</span>
                 </div>
-                <Body className="text-neutral-textSecondary">{patient.email || 'Não informado'}</Body>
+                <p className="text-neutral-textSecondary">{patient.email || 'Não informado'}</p>
               </div>
 
               <div className="space-y-sm">
@@ -317,7 +316,7 @@ const PatientDetailPage: React.FC = () => {
                   <Phone className="w-4 h-4 text-neutral-textTertiary" />
                   <span className="font-medium text-neutral-text">Telefone:</span>
                 </div>
-                <Body className="text-neutral-textSecondary">{patient.phone || 'Não informado'}</Body>
+                <p className="text-neutral-textSecondary">{patient.phone || 'Não informado'}</p>
               </div>
               
               <div className="space-y-sm">
@@ -325,9 +324,9 @@ const PatientDetailPage: React.FC = () => {
                   <Calendar className="w-4 h-4 text-neutral-textTertiary" />
                   <span className="font-medium text-neutral-text">Data de Nascimento:</span>
                 </div>
-                <Body className="text-neutral-textSecondary">
+                <p className="text-neutral-textSecondary">
                   {patient.birthDate ? new Date(patient.birthDate).toLocaleDateString('pt-BR') : 'Não informado'}
-                </Body>
+                </p>
               </div>
             </div>
           </CardContent>
