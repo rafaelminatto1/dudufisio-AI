@@ -90,6 +90,8 @@ import { Conduct } from '../../types/conducts';
 import { ConductForm } from '../evolution/ConductForm';
 import { ConductList } from '../evolution/ConductList';
 import { generatePlanText } from '../../lib/evolution/conductsFormatter';
+import { EmojiRating } from '../feedback/EmojiRating';
+import { EmojiRatingValue } from '../../types';
 
 // Novos imports para funcionalidades avançadas
 import { SessionTimer, useSessionTimer } from '../evolution/SessionTimer';
@@ -142,6 +144,11 @@ const evolutionSchema = z.object({
   // Resposta do paciente
   patientResponse: z.string().min(10, 'Resposta do paciente deve ter pelo menos 10 caracteres'),
   adverseReactions: z.string().optional(),
+  
+  // Sistema de Feedback com Emojis
+  patient_rating: z.number().min(1).max(5).optional() as z.ZodType<EmojiRatingValue | undefined>,
+  professional_rating: z.number().min(1).max(5).optional() as z.ZodType<EmojiRatingValue | undefined>,
+  rating_comment: z.string().optional(),
   
   // Plano futuro
   nextSessionPlan: z.string().min(15, 'Plano para próxima sessão deve ter pelo menos 15 caracteres'),
@@ -233,6 +240,9 @@ export function EvolutionEditor({
       planGeneralNotes: '',
       patientResponse: '',
       adverseReactions: '',
+      patient_rating: undefined,
+      professional_rating: undefined,
+      rating_comment: '',
       nextSessionPlan: '',
       homeExercises: [],
       recommendations: '',
@@ -978,6 +988,105 @@ export function EvolutionEditor({
                       onPhotosChange={setProgressPhotos}
                     />
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Avaliação da Sessão com Emojis */}
+              <Card className="border-blue-100 bg-gradient-to-br from-blue-50 to-white">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2 text-blue-700">
+                    <MdAssessment className="h-5 w-5" />
+                    <span>Avaliação da Sessão</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Como você e o paciente avaliam esta sessão?
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Avaliação do Paciente */}
+                  <div className="bg-white rounded-lg border border-gray-200 p-4">
+                    <FormField
+                      control={form.control}
+                      name="patient_rating"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-semibold text-gray-900">
+                            Como o paciente avaliou a sessão?
+                          </FormLabel>
+                          <FormDescription className="text-sm text-gray-600 mb-3">
+                            Peça ao paciente que avalie sua satisfação com a sessão
+                          </FormDescription>
+                          <FormControl>
+                            <EmojiRating
+                              value={field.value}
+                              onChange={field.onChange}
+                              size="md"
+                              showLabel={true}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Avaliação do Profissional */}
+                  <div className="bg-white rounded-lg border border-gray-200 p-4">
+                    <FormField
+                      control={form.control}
+                      name="professional_rating"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-semibold text-gray-900">
+                            Como você avalia o progresso do paciente nesta sessão?
+                          </FormLabel>
+                          <FormDescription className="text-sm text-gray-600 mb-3">
+                            Avalie a evolução e resposta do paciente ao tratamento
+                          </FormDescription>
+                          <FormControl>
+                            <EmojiRating
+                              value={field.value}
+                              onChange={field.onChange}
+                              size="md"
+                              showLabel={true}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Comentário Opcional */}
+                  {(form.watch('patient_rating') || form.watch('professional_rating')) && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="bg-white rounded-lg border border-gray-200 p-4"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="rating_comment"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Comentário adicional (opcional)</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Adicione observações sobre a avaliação..."
+                                className="min-h-[80px]"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Contextualize as avaliações ou adicione observações importantes
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </motion.div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>

@@ -3845,6 +3845,9 @@ export interface CreateTemplateData {
   exercises: PrescribedExercise[];
 }
 
+// Sistema de Feedback com Emojis
+export type EmojiRatingValue = 1 | 2 | 3 | 4 | 5;
+
 // Dados completos da evolução de uma sessão
 export interface SessionEvolution {
   id: string;
@@ -3878,7 +3881,12 @@ export interface SessionEvolution {
   
   // Métricas rápidas
   painLevel?: number; // 0-10
-  satisfactionLevel?: number; // 0-10
+  satisfactionLevel?: number; // 0-10 (mantido por compatibilidade)
+  
+  // Sistema de Feedback com Emojis
+  patient_rating?: EmojiRatingValue; // Avaliação do paciente (1-5)
+  professional_rating?: EmojiRatingValue; // Avaliação do profissional (1-5)
+  rating_comment?: string; // Comentário opcional sobre as avaliações
   
   // Funcionalidades avançadas
   prescribedExercises?: PrescribedExercise[];  // Exercícios prescritos na sessão

@@ -425,3 +425,151 @@ export function clearMockData(): void {
   mockSessionEvolutions = [];
 }
 
+// ============================================================================
+// RATING FUNCTIONS - Sistema de Feedback com Emojis
+// ============================================================================
+
+/**
+ * Busca avaliações de um paciente
+ */
+export async function getRatingsByPatientId(patientId: string): Promise<SessionEvolution[]> {
+  try {
+    logDataSource('mock', `getRatingsByPatientId(${patientId})`);
+    const sessions = mockSessionEvolutions
+      .filter(s => s.patientId === patientId && (s.patient_rating || s.professional_rating))
+      .sort((a, b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime());
+    return sessions;
+  } catch (error) {
+    console.error('Erro ao buscar avaliações do paciente:', error);
+    return [];
+  }
+}
+
+/**
+ * Calcula médias de avaliações de um paciente
+ */
+export async function getAverageRatings(patientId: string): Promise<{
+  patient: number;
+  professional: number;
+  total: number;
+}> {
+  try {
+    const ratings = await getRatingsByPatientId(patientId);
+    
+    const patientRatings = ratings
+      .map(r => r.patient_rating)
+      .filter((r): r is number => r !== undefined && r !== null);
+    
+    const professionalRatings = ratings
+      .map(r => r.professional_rating)
+      .filter((r): r is number => r !== undefined && r !== null);
+    
+    return {
+      patient: patientRatings.length > 0
+        ? patientRatings.reduce((a, b) => a + b, 0) / patientRatings.length
+        : 0,
+      professional: professionalRatings.length > 0
+        ? professionalRatings.reduce((a, b) => a + b, 0) / professionalRatings.length
+        : 0,
+      total: ratings.length,
+    };
+  } catch (error) {
+    console.error('Erro ao calcular médias de avaliações:', error);
+    return { patient: 0, professional: 0, total: 0 };
+  }
+}
+
+/**
+ * Busca últimas N avaliações do sistema (todas)
+ */
+export async function getRecentRatings(limit: number = 10): Promise<SessionEvolution[]> {
+  try {
+    logDataSource('mock', `getRecentRatings(${limit})`);
+    const sessions = mockSessionEvolutions
+      .filter(s => s.patient_rating || s.professional_rating)
+      .sort((a, b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime())
+      .slice(0, limit);
+    return sessions;
+  } catch (error) {
+    console.error('Erro ao buscar avaliações recentes:', error);
+    return [];
+  }
+}
+
+/**
+ * Busca avaliações em um período específico
+ */
+export async function getRatingsByPeriod(
+  patientId: string,
+  startDate: Date,
+  endDate: Date
+): Promise<SessionEvolution[]> {
+  try {
+    logDataSource('mock', `getRatingsByPeriod(${patientId}, ${startDate}, ${endDate})`);
+    const sessions = mockSessionEvolutions
+      .filter(s => {
+        if (s.patientId !== patientId) return false;
+        if (!s.patient_rating && !s.professional_rating) return false;
+        
+        const sessionDate = new Date(s.sessionDate);
+        return sessionDate >= startDate && sessionDate <= endDate;
+      })
+      .sort((a, b) => new Date(a.sessionDate).getTime() - new Date(b.sessionDate).getTime());
+    
+    return sessions;
+  } catch (error) {
+    console.error('Erro ao buscar avaliações por período:', error);
+    return [];
+  }
+}
+
+/**
+ * Calcula estatísticas de satisfação
+ */
+export async function getRatingStats(patientId: string): Promise<{
+  totalSessions: number;
+  avgPatientRating: number;
+  avgProfessionalRating: number;
+  positiveSessions: number;
+  negativeSessions: number;
+  excellentSessions: number;
+  poorSessions: number;
+}> {
+  try {
+    const ratings = await getRatingsByPatientId(patientId);
+    
+    const patientRatings = ratings
+      .map(r => r.patient_rating)
+      .filter((r): r is number => r !== undefined && r !== null);
+    
+    const professionalRatings = ratings
+      .map(r => r.professional_rating)
+      .filter((r): r is number => r !== undefined && r !== null);
+    
+    return {
+      totalSessions: ratings.length,
+      avgPatientRating: patientRatings.length > 0
+        ? patientRatings.reduce((a, b) => a + b, 0) / patientRatings.length
+        : 0,
+      avgProfessionalRating: professionalRatings.length > 0
+        ? professionalRatings.reduce((a, b) => a + b, 0) / professionalRatings.length
+        : 0,
+      positiveSessions: patientRatings.filter(r => r >= 4).length,
+      negativeSessions: patientRatings.filter(r => r <= 2).length,
+      excellentSessions: patientRatings.filter(r => r === 5).length,
+      poorSessions: patientRatings.filter(r => r === 1).length,
+    };
+  } catch (error) {
+    console.error('Erro ao calcular estatísticas de avaliações:', error);
+    return {
+      totalSessions: 0,
+      avgPatientRating: 0,
+      avgProfessionalRating: 0,
+      positiveSessions: 0,
+      negativeSessions: 0,
+      excellentSessions: 0,
+      poorSessions: 0,
+    };
+  }
+}
+

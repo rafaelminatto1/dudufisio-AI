@@ -6,6 +6,7 @@ const RevenueChart = React.lazy(() => import('../components/financial/RevenueCha
 const PatientFlowChart = React.lazy(() => import('../components/dashboard/PatientFlowChart'));
 const TeamProductivityChart = React.lazy(() => import('../components/dashboard/TeamProductivityChart'));
 const AppointmentHeatmap = React.lazy(() => import('../components/dashboard/AppointmentHeatmap'));
+const RatingSummaryWidget = React.lazy(() => import('../components/dashboard/RatingSummaryWidget').then(m => ({ default: m.RatingSummaryWidget })));
 import { Activity, Users, Calendar, DollarSign, TrendingUp, Users as UsersIcon, Clock } from 'lucide-react';
 import { useData } from "../contexts/AppContext";
 import TodaysAppointments from '../components/dashboard/glance/TodaysAppointments';
@@ -243,6 +244,13 @@ const DashboardPage: React.FC = () => {
                 <ScrollReveal animation="fadeInUp" className="mb-8">
                     <Suspense fallback={<OptimizedLoader />}>
                         <KPICards stats={stats} isLoading={isLoading} />
+                    </Suspense>
+                </ScrollReveal>
+
+                {/* Satisfação dos Pacientes */}
+                <ScrollReveal animation="fadeInUp" className="mb-8">
+                    <Suspense fallback={<OptimizedLoader />}>
+                        <RatingSummaryWidget limit={10} showActions={true} />
                     </Suspense>
                 </ScrollReveal>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, memo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit, Calendar, Phone, Mail, User, FileText, Clock, Target, MessageCircle, Activity, BarChart, MapPin } from 'lucide-react';
+import { ArrowLeft, Edit, Calendar, Phone, Mail, User, FileText, Clock, Target, MessageCircle, Activity, BarChart, MapPin, Smile } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -41,6 +41,8 @@ import { YBalanceChart } from '../components/charts/YBalanceChart';
 import { FunctionalityChart } from '../components/charts/FunctionalityChart';
 // Componente de relatórios
 import { ReportGeneratorDialog } from '../components/reports/ReportGeneratorDialog';
+// Componente de feedback/satisfação
+import { RatingHistory } from '../components/patient/RatingHistory';
 
 const PatientDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -468,6 +470,10 @@ const PatientDetailPage: React.FC = () => {
               <MapPin className="w-4 h-4" />
               Mapa de Dor
             </TabsTrigger>
+            <TabsTrigger value="satisfaction" className="flex items-center gap-2">
+              <Smile className="w-4 h-4" />
+              Satisfação
+            </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <BarChart className="w-4 h-4" />
               Relatórios
@@ -686,6 +692,21 @@ const PatientDetailPage: React.FC = () => {
                 )}
               </>
             )}
+          </TabsContent>
+
+          {/* Tab: Satisfação */}
+          <TabsContent value="satisfaction" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Smile className="w-5 h-5" />
+                  Histórico de Avaliações
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RatingHistory patientId={patient.id} maxRecentSessions={10} />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Tab: Relatórios */}
