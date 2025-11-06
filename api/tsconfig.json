@@ -41,7 +41,13 @@
   "exclude": [
     "node_modules",
     ".vercel",
-    "**/*.js"
+    "**/*.js",
+    "../lib/**",
+    "../shared/**",
+    "../components/**",
+    "../pages/**",
+    "../hooks/**",
+    "../contexts/**"
   ]
 }
 

@@ -104,6 +104,8 @@
     "components/auth/UserMenu.tsx",
     "lib/actions/**/*",
     "lib/auth.ts",
+    "shared/services/auth.ts",
+    "services/appointmentService.ts",
     "middleware.ts.disabled",
     "next.config.js",
     "next.config.mjs",
