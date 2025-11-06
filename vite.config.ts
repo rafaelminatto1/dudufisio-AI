@@ -21,18 +21,18 @@ export default defineConfig({
       gzipSize: true,
       brotliSize: true,
     }),
-    // Sentry plugin - APENAS UMA instância, condicional para evitar erros sem token
-    process.env.SENTRY_AUTH_TOKEN && sentryVitePlugin({
-      org: process.env.SENTRY_ORG || "activity-fisioterapia",
-      project: process.env.SENTRY_PROJECT || "dudu-aiok",
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      sourcemaps: {
-        assets: './dist/assets/**',
-        filesToDeleteAfterUpload: './dist/assets/**/*.map'
-      },
-      telemetry: false,
-      silent: !process.env.CI, // Verbose em CI, silencioso localmente
-    }),
+    // Sentry plugin DESABILITADO - Causava erro em deploy Vercel
+    // process.env.SENTRY_AUTH_TOKEN && sentryVitePlugin({
+    //   org: process.env.SENTRY_ORG || "activity-fisioterapia",
+    //   project: process.env.SENTRY_PROJECT || "dudu-aiok",
+    //   authToken: process.env.SENTRY_AUTH_TOKEN,
+    //   sourcemaps: {
+    //     assets: './dist/assets/**',
+    //     filesToDeleteAfterUpload: './dist/assets/**/*.map'
+    //   },
+    //   telemetry: false,
+    //   silent: !process.env.CI, // Verbose em CI, silencioso localmente
+    // }),
   ].filter(Boolean), // Remove plugins undefined
   esbuild: {
     // Mantém console logs para debugging
