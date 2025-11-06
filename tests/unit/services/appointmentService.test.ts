@@ -7,18 +7,31 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as appointmentService from '@/services/appointmentService';
 import { createTestAppointment, createTestAppointments, clearStorage } from './__helpers__/testFixtures';
 import { AppointmentStatus } from '@/types';
+import { prisma } from '@/lib/prisma';
 
-// Mock do db
-vi.mock('@/services/mockDb', () => ({
-  db: {
-    getAppointments: vi.fn(() => createTestAppointments(5)),
-    saveAppointment: vi.fn((appointment) => appointment),
-    deleteAppointment: vi.fn(),
-    deleteAppointmentSeries: vi.fn(),
-    getRecurrenceTemplates: vi.fn(() => []),
-    getScheduleBlocks: vi.fn(() => []),
-    getWaitlistEntries: vi.fn(() => []),
-    getSchedulingAlerts: vi.fn(() => []),
+// Mock do prisma
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
+    appointments: {
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      deleteMany: vi.fn(),
+    },
+    recurrenceTemplates: {
+      findMany: vi.fn(),
+    },
+    scheduleBlocks: {
+      findMany: vi.fn(),
+    },
+    waitlist: {
+      findMany: vi.fn(),
+    },
+    schedulingAlerts: {
+      findMany: vi.fn(),
+    },
   },
 }));
 
@@ -40,38 +53,70 @@ describe('AppointmentService', () => {
   });
 
   describe('getAppointments', () => {
+    beforeEach(() => {
+      // Reset the mock before each test in this describe block
+      prisma.appointments.findMany.mockReset();
+    });
+
     it('deve retornar lista de agendamentos', async () => {
+      const mockAppointments = createTestAppointments(5);
+      prisma.appointments.findMany.mockResolvedValue(mockAppointments);
+
       const appointments = await appointmentService.getAppointments();
       
       expect(appointments).toBeInstanceOf(Array);
-      expect(appointments.length).toBeGreaterThan(0);
+      expect(appointments.length).toBe(5);
+      expect(prisma.appointments.findMany).toHaveBeenCalledWith({
+        orderBy: {
+          startTime: 'asc',
+        },
+        where: {},
+      });
     });
 
     it('deve filtrar agendamentos por data de início', async () => {
       const startDate = new Date(2025, 0, 15);
       const endDate = new Date(2025, 0, 20);
+      const mockAppointments = createTestAppointments(2, {
+        startTime: new Date(2025, 0, 16),
+        endTime: new Date(2025, 0, 16, 1),
+      });
+      prisma.appointments.findMany.mockResolvedValue(mockAppointments);
       
       const appointments = await appointmentService.getAppointments(startDate, endDate);
       
-      appointments.forEach(app => {
-        const appDate = new Date(app.startTime);
-        expect(appDate.getTime()).toBeGreaterThanOrEqual(startDate.getTime());
-        expect(appDate.getTime()).toBeLessThanOrEqual(endDate.getTime());
+      expect(appointments.length).toBe(2);
+      expect(prisma.appointments.findMany).toHaveBeenCalledWith({
+        orderBy: {
+          startTime: 'asc',
+        },
+        where: {
+          startTime: { gte: startDate },
+          endTime: { lte: endDate },
+        },
       });
     });
 
     it('deve retornar todos os agendamentos se não passar datas', async () => {
+      const mockAppointments = createTestAppointments(10);
+      prisma.appointments.findMany.mockResolvedValue(mockAppointments);
+
       const allAppointments = await appointmentService.getAppointments();
-      const filteredAppointments = await appointmentService.getAppointments(
-        new Date(2020, 0, 1),
-        new Date(2030, 0, 1)
-      );
       
       expect(allAppointments).toBeInstanceOf(Array);
-      expect(filteredAppointments).toBeInstanceOf(Array);
+      expect(allAppointments.length).toBe(10);
+      expect(prisma.appointments.findMany).toHaveBeenCalledWith({
+        orderBy: {
+          startTime: 'asc',
+        },
+        where: {},
+      });
     });
 
     it('cada agendamento deve ter propriedades obrigatórias', async () => {
+      const mockAppointments = createTestAppointments(1);
+      prisma.appointments.findMany.mockResolvedValue(mockAppointments);
+
       const appointments = await appointmentService.getAppointments();
       const requiredProps = [
         'id', 'patientId', 'patientName', 'therapistId', 
@@ -87,108 +132,178 @@ describe('AppointmentService', () => {
   });
 
   describe('getAppointmentById', () => {
+    beforeEach(() => {
+      prisma.appointments.findUnique.mockReset();
+    });
+
     it('deve retornar agendamento pelo ID', async () => {
       const testAppointment = createTestAppointment();
+      prisma.appointments.findUnique.mockResolvedValue(testAppointment);
+
       const appointment = await appointmentService.getAppointmentById(testAppointment.id);
       
-      if (appointment) {
-        expect(appointment).toHaveProperty('id');
-      }
+      expect(appointment).toEqual(testAppointment);
+      expect(prisma.appointments.findUnique).toHaveBeenCalledWith({
+        where: { id: testAppointment.id },
+      });
     });
 
     it('deve retornar undefined para ID inexistente', async () => {
+      prisma.appointments.findUnique.mockResolvedValue(null);
+
       const appointment = await appointmentService.getAppointmentById('id-nao-existe');
       expect(appointment).toBeUndefined();
+      expect(prisma.appointments.findUnique).toHaveBeenCalledWith({
+        where: { id: 'id-nao-existe' },
+      });
     });
   });
 
   describe('getAppointmentsByPatientId', () => {
+    beforeEach(() => {
+      prisma.appointments.findMany.mockReset();
+    });
+
     it('deve retornar agendamentos de um paciente específico', async () => {
       const patientId = 'test-patient-1';
+      const mockAppointments = createTestAppointments(3, { patientId });
+      prisma.appointments.findMany.mockResolvedValue(mockAppointments);
+
       const appointments = await appointmentService.getAppointmentsByPatientId(patientId);
       
-      expect(appointments).toBeInstanceOf(Array);
-      appointments.forEach(app => {
-        expect(app.patientId).toBe(patientId);
+      expect(appointments).toEqual(mockAppointments);
+      expect(prisma.appointments.findMany).toHaveBeenCalledWith({
+        where: { patientId },
+        orderBy: {
+          startTime: 'desc',
+        },
       });
     });
 
     it('deve retornar agendamentos ordenados por data (mais recente primeiro)', async () => {
       const patientId = 'test-patient-1';
+      const mockAppointments = [
+        createTestAppointment({ patientId, startTime: new Date(2025, 0, 20) }),
+        createTestAppointment({ patientId, startTime: new Date(2025, 0, 15) }),
+        createTestAppointment({ patientId, startTime: new Date(2025, 0, 10) }),
+      ];
+      prisma.appointments.findMany.mockResolvedValue(mockAppointments);
+
       const appointments = await appointmentService.getAppointmentsByPatientId(patientId);
       
-      for (let i = 0; i < appointments.length - 1; i++) {
-        const current = appointments[i].startTime.getTime();
-        const next = appointments[i + 1].startTime.getTime();
-        expect(current).toBeGreaterThanOrEqual(next);
-      }
+      expect(appointments[0].startTime.getTime()).toBeGreaterThan(appointments[1].startTime.getTime());
+      expect(appointments[1].startTime.getTime()).toBeGreaterThan(appointments[2].startTime.getTime());
+      expect(prisma.appointments.findMany).toHaveBeenCalledWith({
+        where: { patientId },
+        orderBy: {
+          startTime: 'desc',
+        },
+      });
     });
 
     it('deve retornar array vazio para paciente sem agendamentos', async () => {
-      const appointments = await appointmentService.getAppointmentsByPatientId('paciente-sem-agendamentos');
-      expect(appointments).toBeInstanceOf(Array);
-      expect(appointments).toHaveLength(0);
+      const patientId = 'paciente-sem-agendamentos';
+      prisma.appointments.findMany.mockResolvedValue([]);
+
+      const appointments = await appointmentService.getAppointmentsByPatientId(patientId);
+      expect(appointments).toEqual([]);
+      expect(prisma.appointments.findMany).toHaveBeenCalledWith({
+        where: { patientId },
+        orderBy: {
+          startTime: 'desc',
+        },
+      });
     });
   });
 
   describe('saveAppointment', () => {
+    beforeEach(() => {
+      prisma.appointments.create.mockReset();
+      prisma.appointments.update.mockReset();
+      eventService.emit.mockReset();
+    });
+
     it('deve criar novo agendamento', async () => {
       const newAppointment = createTestAppointment({
-        id: 'new-appointment',
+        id: undefined, // Simulate new appointment without ID
       });
+      const createdAppointment = { ...newAppointment, id: 'new-prisma-id' };
+      prisma.appointments.create.mockResolvedValue(createdAppointment);
 
       const saved = await appointmentService.saveAppointment(newAppointment);
       
-      expect(saved).toHaveProperty('id');
-      expect(saved.patientId).toBe(newAppointment.patientId);
-      expect(saved.therapistId).toBe(newAppointment.therapistId);
-    });
-
-    it('deve incluir avatar do paciente', async () => {
-      const appointment = createTestAppointment();
-      const saved = await appointmentService.saveAppointment(appointment);
-      
-      expect(saved).toHaveProperty('patientAvatarUrl');
-    });
-
-    it('deve emitir evento appointments:changed', async () => {
-      const { eventService } = await import('@/services/eventService');
-      const appointment = createTestAppointment();
-      
-      await appointmentService.saveAppointment(appointment);
-      
+      expect(saved).toEqual(createdAppointment);
+      expect(prisma.appointments.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          patientId: newAppointment.patientId,
+          therapistId: newAppointment.therapistId,
+        }),
+      });
       expect(eventService.emit).toHaveBeenCalledWith('appointments:changed');
     });
 
-    it('deve preservar todos os dados do agendamento', async () => {
-      const appointment = createTestAppointment({
-        notes: 'Notas importantes',
-        value: 200,
-        isPaid: true,
+    it('deve atualizar agendamento existente', async () => {
+      const existingAppointment = createTestAppointment({
+        id: 'existing-id',
+        notes: 'Old notes',
       });
+      const updatedAppointmentData = { ...existingAppointment, notes: 'New notes' };
+      prisma.appointments.update.mockResolvedValue(updatedAppointmentData);
 
-      const saved = await appointmentService.saveAppointment(appointment);
+      const saved = await appointmentService.saveAppointment(updatedAppointmentData);
       
-      expect(saved.notes).toBe('Notas importantes');
-      expect(saved.value).toBe(200);
-      expect(saved.isPaid).toBe(true);
+      expect(saved).toEqual(updatedAppointmentData);
+      expect(prisma.appointments.update).toHaveBeenCalledWith({
+        where: { id: existingAppointment.id },
+        data: expect.objectContaining({
+          notes: 'New notes',
+        }),
+      });
+      expect(eventService.emit).toHaveBeenCalledWith('appointments:changed');
+    });
+
+    it('deve lidar com therapistId inválido convertendo para null', async () => {
+      const newAppointment = createTestAppointment({
+        id: undefined,
+        therapistId: 'therapist_mock_id', // Invalid UUID
+      });
+      const createdAppointment = { ...newAppointment, id: 'new-prisma-id', therapistId: null };
+      prisma.appointments.create.mockResolvedValue(createdAppointment);
+
+      const saved = await appointmentService.saveAppointment(newAppointment);
+      
+      expect(saved.therapistId).toBeNull();
+      expect(prisma.appointments.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          therapistId: null,
+        }),
+      });
     });
   });
 
   describe('deleteAppointment', () => {
+    beforeEach(() => {
+      prisma.appointments.delete.mockReset();
+      eventService.emit.mockReset();
+    });
+
     it('deve remover agendamento pelo ID', async () => {
-      const appointment = createTestAppointment();
+      const appointmentId = 'test-appointment-id';
+      prisma.appointments.delete.mockResolvedValue({ id: appointmentId }); // Mock successful deletion
+
+      await appointmentService.deleteAppointment(appointmentId);
       
-      await appointmentService.deleteAppointment(appointment.id);
-      
-      const found = await appointmentService.getAppointmentById(appointment.id);
-      expect(found).toBeUndefined();
+      expect(prisma.appointments.delete).toHaveBeenCalledWith({
+        where: { id: appointmentId },
+      });
+      expect(eventService.emit).toHaveBeenCalledWith('appointments:changed');
     });
 
     it('deve emitir evento após deleção', async () => {
-      const { eventService } = await import('@/services/eventService');
-      
-      await appointmentService.deleteAppointment('test-id');
+      const appointmentId = 'test-id';
+      prisma.appointments.delete.mockResolvedValue({ id: appointmentId }); // Mock successful deletion
+
+      await appointmentService.deleteAppointment(appointmentId);
       
       expect(eventService.emit).toHaveBeenCalledWith('appointments:changed');
     });
