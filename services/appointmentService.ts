@@ -3,7 +3,7 @@ import { eventService } from './eventService';
 import { RecurrenceTemplate, ScheduleBlock, WaitlistStatus, WaitlistEntry, SchedulingAlert } from '../types';
 import { secureLogger } from '../lib/secureLogger';
 import { withSupabaseQuery, withSupabaseMutation } from '../lib/supabase/errorHandler';
-import { prisma } from '../lib/prisma';
+// import { prisma } from '../lib/prisma'; // DESABILITADO: Prisma não mais usado, migrado para Supabase
 
 export const getAppointments = withSupabaseQuery(
     async (startDate?: Date, endDate?: Date): Promise<Appointment[]> => {
