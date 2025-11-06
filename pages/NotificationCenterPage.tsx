@@ -27,7 +27,7 @@ const getNotificationIcon = (type: Notification['type']) => {
         case 'announcement': return <Megaphone className="w-5 h-5 text-amber-500" />;
         case 'appointment_reminder': return <CalendarClock className="w-5 h-5 text-sky-500" />;
         case 'exercise_reminder': return <Dumbbell className="w-5 h-5 text-teal-500" />;
-        default: return <Bell className="w-5 h-5 text-slate-500" />;
+        default: return <Bell className="w-5 h-5 text-neutral-textSecondary" />;
     }
 }
 
@@ -35,17 +35,17 @@ const NotificationItem: React.FC<{ notification: Notification; onMarkAsRead: (id
     return (
         <div
             onClick={() => !notification.isRead && onMarkAsRead(notification.id)}
-            className={`flex items-start p-4 border-b border-slate-200 transition-colors duration-200 ${!notification.isRead ? 'bg-sky-50/50 hover:bg-sky-100 cursor-pointer' : 'bg-white'}`}
+            className={`flex items-start p-md border-b border-neutral-border transition-colors duration-200 ${!notification.isRead ? 'bg-primary-light/50 hover:bg-primary-light cursor-pointer' : 'bg-white'}`}
         >
             <div className="flex-shrink-0 relative">
-                {!notification.isRead && <span className="absolute -left-1 top-2 h-2 w-2 rounded-full bg-sky-500"></span>}
-                <div className="p-2 bg-slate-100 rounded-full ml-2">
+                {!notification.isRead && <span className="absolute -left-1 top-sm h-2 w-2 rounded-full bg-primary"></span>}
+                <div className="p-sm bg-neutral-bgDark rounded-full ml-sm">
                     {getNotificationIcon(notification.type)}
                 </div>
             </div>
             <div className="ml-4 flex-grow">
-                <p className="text-sm text-slate-700">{notification.message}</p>
-                <p className="text-xs text-slate-500 mt-1">{timeAgo(notification.createdAt)}</p>
+                <p className="text-sm text-neutral-text">{notification.message}</p>
+                <p className="text-xs text-neutral-textSecondary mt-xs">{timeAgo(notification.createdAt)}</p>
             </div>
         </div>
     );
@@ -77,9 +77,9 @@ const BroadcastForm: React.FC<{ onSent: () => void }> = ({ onSent }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-lg space-y-md">
             <div>
-                <label htmlFor="broadcast-message" className="block text-sm font-medium text-slate-700">Mensagem</label>
+                <label htmlFor="broadcast-message" className="block text-sm font-medium text-neutral-text">Mensagem</label>
                 <TiptapEditorLazy
                     value={message}
                     onChange={setMessage}
@@ -88,12 +88,12 @@ const BroadcastForm: React.FC<{ onSent: () => void }> = ({ onSent }) => {
                 />
             </div>
             <div>
-                <label htmlFor="target-group" className="block text-sm font-medium text-slate-700">Destinatários</label>
+                <label htmlFor="target-group" className="block text-sm font-medium text-neutral-text">Destinatários</label>
                 <select
                     id="target-group"
                     value={targetGroup}
                     onChange={(e) => setTargetGroup(e.target.value as Role)}
-                    className="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-teal-500 focus:ring-teal-500"
+                    className="mt-xs block w-full rounded-md border-neutral-border shadow-card focus:border-teal-500 focus:ring-teal-500"
                 >
                     <option value={Role.Therapist}>Todos os Fisioterapeutas</option>
                     <option value={Role.Patient}>Todos os Pacientes</option>
@@ -104,9 +104,9 @@ const BroadcastForm: React.FC<{ onSent: () => void }> = ({ onSent }) => {
                 <button
                     type="submit"
                     disabled={isSending}
-                    className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-600 disabled:bg-teal-300"
+                    className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-md py-sm text-sm font-medium text-white shadow-card hover:bg-teal-600 disabled:bg-teal-300"
                 >
-                    {isSending ? <Loader className="w-5 h-5 mr-2 animate-spin" /> : <Send className="w-5 h-5 mr-2" />}
+                    {isSending ? <Loader className="w-5 h-5 mr-sm animate-spin" /> : <Send className="w-5 h-5 mr-sm" />}
                     {isSending ? 'Enviando...' : 'Enviar Comunicado'}
                 </button>
             </div>
@@ -126,16 +126,16 @@ const NotificationCenterPage: React.FC = () => {
                 title="Centro de Notificações"
                 subtitle="Acompanhe suas mensagens e envie comunicados para a equipe."
             />
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <div className="border-b border-slate-200">
-                    <nav className="flex space-x-4 px-6" aria-label="Tabs">
-                        <button onClick={() => setActiveTab('my')} className={`flex items-center whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'my' ? 'border-teal-500 text-teal-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>
-                            <Bell className="w-5 h-5 mr-2" />
-                            Minhas Notificações {unreadCount > 0 && <span className="ml-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{unreadCount}</span>}
+            <div className="bg-white rounded-cardLarge shadow-card overflow-hidden">
+                <div className="border-b border-neutral-border">
+                    <nav className="flex space-x-4 px-lg" aria-label="Tabs">
+                        <button onClick={() => setActiveTab('my')} className={`flex items-center whitespace-nowrap py-md px-1 border-b-2 font-medium text-sm ${activeTab === 'my' ? 'border-teal-500 text-teal-600' : 'border-transparent text-neutral-textSecondary hover:text-neutral-text'}`}>
+                            <Bell className="w-5 h-5 mr-sm" />
+                            Minhas Notificações {unreadCount > 0 && <span className="ml-sm bg-error-light0 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{unreadCount}</span>}
                         </button>
                         {user?.role === Role.Admin && (
-                            <button onClick={() => setActiveTab('broadcast')} className={`flex items-center whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'broadcast' ? 'border-teal-500 text-teal-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>
-                                <MessageSquare className="w-5 h-5 mr-2" />
+                            <button onClick={() => setActiveTab('broadcast')} className={`flex items-center whitespace-nowrap py-md px-1 border-b-2 font-medium text-sm ${activeTab === 'broadcast' ? 'border-teal-500 text-teal-600' : 'border-transparent text-neutral-textSecondary hover:text-neutral-text'}`}>
+                                <MessageSquare className="w-5 h-5 mr-sm" />
                                 Enviar Comunicado
                             </button>
                         )}
@@ -144,9 +144,9 @@ const NotificationCenterPage: React.FC = () => {
                 
                 {activeTab === 'my' && (
                     <div>
-                        <div className="p-4 flex justify-end border-b border-slate-200">
-                            <button onClick={markAllAsRead} disabled={unreadCount === 0} className="inline-flex items-center text-sm font-medium text-teal-600 hover:text-teal-800 disabled:text-slate-400 disabled:cursor-not-allowed">
-                                <CheckCheck className="w-5 h-5 mr-2" />
+                        <div className="p-md flex justify-end border-b border-neutral-border">
+                            <button onClick={markAllAsRead} disabled={unreadCount === 0} className="inline-flex items-center text-sm font-medium text-teal-600 hover:text-teal-800 disabled:text-neutral-textTertiary disabled:cursor-not-allowed">
+                                <CheckCheck className="w-5 h-5 mr-sm" />
                                 Marcar todas como lidas
                             </button>
                         </div>
@@ -158,9 +158,9 @@ const NotificationCenterPage: React.FC = () => {
                             </div>
                         ) : (
                             <div className="text-center p-12">
-                                <Inbox className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-                                <h3 className="text-lg font-semibold text-slate-700">Caixa de entrada vazia</h3>
-                                <p className="text-slate-500 mt-1">Você não tem nenhuma notificação no momento.</p>
+                                <Inbox className="w-16 h-16 mx-auto text-slate-300 mb-md" />
+                                <h3 className="text-lg font-semibold text-neutral-text">Caixa de entrada vazia</h3>
+                                <p className="text-neutral-textSecondary mt-xs">Você não tem nenhuma notificação no momento.</p>
                             </div>
                         )}
                     </div>

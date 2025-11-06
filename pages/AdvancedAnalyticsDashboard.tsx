@@ -132,30 +132,30 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
 
   if (loading || loadingAnalytics) {
     return (
-      <div className="p-8 space-y-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-12 bg-slate-200 rounded w-1/3" />
-          <div className="grid grid-cols-4 gap-4">
+      <div className="p-xl space-y-xl">
+        <div className="animate-pulse space-y-md">
+          <div className="h-12 bg-neutral-bgDark rounded w-1/3" />
+          <div className="grid grid-cols-4 gap-md">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-32 bg-slate-200 rounded" />
+              <div key={i} className="h-32 bg-neutral-bgDark rounded" />
             ))}
           </div>
-          <div className="h-96 bg-slate-200 rounded" />
+          <div className="h-96 bg-neutral-bgDark rounded" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-lg space-y-xl max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-3xl font-bold flex items-center gap-sm">
             <Brain className="w-8 h-8 text-purple-600" />
             Analytics Avançado com IA
           </h1>
-          <p className="text-muted-foreground">Previsões, recomendações e insights inteligentes</p>
+          <p className="text-neutral-textSecondary">Previsões, recomendações e insights inteligentes</p>
         </div>
 
         <Button onClick={loadAnalytics} disabled={loadingAnalytics}>
@@ -164,73 +164,73 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Calendar className="w-5 h-5 text-blue-600" />
+          <Card className="p-md">
+            <div className="flex items-center justify-between mb-sm">
+              <Calendar className="w-5 h-5 text-primary" />
               <Badge variant="secondary">Total</Badge>
             </div>
             <p className="text-2xl font-bold">{kpis.total}</p>
-            <p className="text-xs text-muted-foreground">Consultas</p>
+            <p className="text-xs text-neutral-textSecondary">Consultas</p>
           </Card>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <DollarSign className="w-5 h-5 text-green-600" />
+          <Card className="p-md">
+            <div className="flex items-center justify-between mb-sm">
+              <DollarSign className="w-5 h-5 text-success" />
               <Badge variant="secondary">Receita</Badge>
             </div>
-            <p className="text-2xl font-bold text-green-600">R$ {kpis.revenue.toLocaleString('pt-BR')}</p>
-            <p className="text-xs text-muted-foreground">Total</p>
+            <p className="text-2xl font-bold text-success">R$ {kpis.revenue.toLocaleString('pt-BR')}</p>
+            <p className="text-xs text-neutral-textSecondary">Total</p>
           </Card>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-2">
+          <Card className="p-md">
+            <div className="flex items-center justify-between mb-sm">
               <Users className="w-5 h-5 text-purple-600" />
               <Badge variant="secondary">Pacientes</Badge>
             </div>
             <p className="text-2xl font-bold">{kpis.uniquePatients}</p>
-            <p className="text-xs text-muted-foreground">Únicos</p>
+            <p className="text-xs text-neutral-textSecondary">Únicos</p>
           </Card>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <BarChart3 className="w-5 h-5 text-orange-600" />
+          <Card className="p-md">
+            <div className="flex items-center justify-between mb-sm">
+              <BarChart3 className="w-5 h-5 text-warning" />
               <Badge variant="secondary">Ticket Médio</Badge>
             </div>
             <p className="text-2xl font-bold">R$ {kpis.avgValue.toFixed(2)}</p>
-            <p className="text-xs text-muted-foreground">Por consulta</p>
+            <p className="text-xs text-neutral-textSecondary">Por consulta</p>
           </Card>
         </motion.div>
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="predictions" className="space-y-4">
+      <Tabs defaultValue="predictions" className="space-y-md">
         <TabsList>
-          <TabsTrigger value="predictions" className="gap-2">
+          <TabsTrigger value="predictions" className="gap-sm">
             <TrendingUp className="w-4 h-4" />
             Previsões
           </TabsTrigger>
-          <TabsTrigger value="recommendations" className="gap-2">
+          <TabsTrigger value="recommendations" className="gap-sm">
             <Lightbulb className="w-4 h-4" />
             Recomendações
           </TabsTrigger>
-          <TabsTrigger value="insights" className="gap-2">
+          <TabsTrigger value="insights" className="gap-sm">
             <Brain className="w-4 h-4" />
             Insights
           </TabsTrigger>
         </TabsList>
 
         {/* Predictions Tab */}
-        <TabsContent value="predictions" className="space-y-4">
-          <Card className="p-6">
-            <h3 className="font-semibold text-lg mb-4">Previsão de Demanda (Próximos 14 dias)</h3>
+        <TabsContent value="predictions" className="space-y-md">
+          <Card className="p-lg">
+            <h3 className="font-semibold text-lg mb-md">Previsão de Demanda (Próximos 14 dias)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart data={forecastChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -257,11 +257,11 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
         </TabsContent>
 
         {/* Recommendations Tab */}
-        <TabsContent value="recommendations" className="space-y-3">
+        <TabsContent value="recommendations" className="space-y-sm">
           {recommendations.length === 0 ? (
             <Card className="p-12 text-center">
-              <Lightbulb className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-muted-foreground">Nenhuma recomendação no momento</p>
+              <Lightbulb className="w-12 h-12 text-slate-300 mx-auto mb-md" />
+              <p className="text-neutral-textSecondary">Nenhuma recomendação no momento</p>
             </Card>
           ) : (
             recommendations.map((rec, index) => (
@@ -271,30 +271,30 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="p-6">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-start gap-3">
+                <Card className="p-lg">
+                  <div className="flex items-start justify-between mb-md">
+                    <div className="flex items-start gap-md">
                       <div className={cn(
-                        "p-2 rounded-lg",
-                        rec.priority === 'critical' && "bg-red-100 text-red-600",
-                        rec.priority === 'high' && "bg-orange-100 text-orange-600",
-                        rec.priority === 'medium' && "bg-yellow-100 text-yellow-600",
-                        rec.priority === 'low' && "bg-blue-100 text-blue-600"
+                        "p-sm rounded-lg",
+                        rec.priority === 'critical' && "bg-error-light text-error",
+                        rec.priority === 'high' && "bg-warning-light text-warning",
+                        rec.priority === 'medium' && "bg-warning-light text-warning",
+                        rec.priority === 'low' && "bg-primary-light text-primary"
                       )}>
                         <Lightbulb className="w-5 h-5" />
                       </div>
 
                       <div className="flex-1">
                         <h3 className="font-semibold mb-1">{rec.title}</h3>
-                        <p className="text-sm text-muted-foreground mb-3">{rec.description}</p>
+                        <p className="text-sm text-neutral-textSecondary mb-md">{rec.description}</p>
 
-                        <div className="flex items-center gap-4 text-sm">
+                        <div className="flex items-center gap-md text-sm">
                           <div className="flex items-center gap-1">
-                            <TrendingUp className="w-4 h-4 text-green-600" />
+                            <TrendingUp className="w-4 h-4 text-success" />
                             <span>+{rec.impact.estimatedChange}% {rec.impact.metric}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <CheckCircle className="w-4 h-4 text-blue-600" />
+                            <CheckCircle className="w-4 h-4 text-primary" />
                             <span>{rec.impact.confidence}% confiança</span>
                           </div>
                         </div>
@@ -305,9 +305,9 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
                   </div>
 
                   {rec.actions.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-sm">
                       {rec.actions.map(action => (
-                        <Button key={action.id} size="sm" variant="outline" className="gap-2">
+                        <Button key={action.id} size="sm" variant="outline" className="gap-sm">
                           {action.label}
                           <ArrowRight className="w-3 h-3" />
                         </Button>
@@ -321,11 +321,11 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
         </TabsContent>
 
         {/* Insights Tab */}
-        <TabsContent value="insights" className="space-y-3">
+        <TabsContent value="insights" className="space-y-sm">
           {insights.length === 0 ? (
             <Card className="p-12 text-center">
-              <Brain className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-muted-foreground">Coletando dados para gerar insights...</p>
+              <Brain className="w-12 h-12 text-slate-300 mx-auto mb-md" />
+              <p className="text-neutral-textSecondary">Coletando dados para gerar insights...</p>
             </Card>
           ) : (
             insights.map((insight, index) => (
@@ -336,19 +336,19 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className={cn(
-                  "p-6 border-l-4",
-                  insight.severity === 'critical' && "border-l-red-500 bg-red-50/50 dark:bg-red-950/20",
-                  insight.severity === 'warning' && "border-l-yellow-500 bg-yellow-50/50 dark:bg-yellow-950/20",
-                  insight.severity === 'success' && "border-l-green-500 bg-green-50/50 dark:bg-green-950/20",
-                  insight.severity === 'info' && "border-l-blue-500 bg-blue-50/50 dark:bg-blue-950/20"
+                  "p-lg border-l-4",
+                  insight.severity === 'critical' && "border-l-red-500 bg-error-light/50 dark:bg-red-950/20",
+                  insight.severity === 'warning' && "border-l-yellow-500 bg-warning-light/50 dark:bg-yellow-950/20",
+                  insight.severity === 'success' && "border-l-green-500 bg-success-light/50 dark:bg-green-950/20",
+                  insight.severity === 'info' && "border-l-blue-500 bg-primary-light/50 dark:bg-blue-950/20"
                 )}>
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-md">
                     <div className={cn(
-                      "p-2 rounded-lg",
-                      insight.severity === 'critical' && "bg-red-100 text-red-600",
-                      insight.severity === 'warning' && "bg-yellow-100 text-yellow-600",
-                      insight.severity === 'success' && "bg-green-100 text-green-600",
-                      insight.severity === 'info' && "bg-blue-100 text-blue-600"
+                      "p-sm rounded-lg",
+                      insight.severity === 'critical' && "bg-error-light text-error",
+                      insight.severity === 'warning' && "bg-warning-light text-warning",
+                      insight.severity === 'success' && "bg-success-light text-success",
+                      insight.severity === 'info' && "bg-primary-light text-primary"
                     )}>
                       {insight.severity === 'warning' || insight.severity === 'critical' ? (
                         <AlertTriangle className="w-5 h-5" />
@@ -360,18 +360,18 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
                     </div>
 
                     <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-start justify-between mb-sm">
                         <h3 className="font-semibold">{insight.title}</h3>
                         <Badge variant="outline" className="capitalize">{insight.category}</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">{insight.description}</p>
+                      <p className="text-sm text-neutral-textSecondary">{insight.description}</p>
                       
                       {insight.data.changePercent !== undefined && (
-                        <div className="mt-2">
+                        <div className="mt-sm">
                           <Badge variant="secondary" className={cn(
                             "gap-1",
-                            insight.data.changePercent > 0 && "bg-green-100 text-green-800",
-                            insight.data.changePercent < 0 && "bg-red-100 text-red-800"
+                            insight.data.changePercent > 0 && "bg-success-light text-success",
+                            insight.data.changePercent < 0 && "bg-error-light text-error"
                           )}>
                             {insight.data.changePercent > 0 ? '+' : ''}
                             {insight.data.changePercent.toFixed(1)}%

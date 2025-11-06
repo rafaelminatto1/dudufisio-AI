@@ -36,12 +36,12 @@ const GamificationDashboard: React.FC = () => {
 
   if (loading || !stats) {
     return (
-      <div className="p-8 space-y-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-12 bg-slate-200 rounded w-1/3" />
-          <div className="grid grid-cols-4 gap-4">
+      <div className="p-xl space-y-xl">
+        <div className="animate-pulse space-y-md">
+          <div className="h-12 bg-neutral-bgDark rounded w-1/3" />
+          <div className="grid grid-cols-4 gap-md">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-32 bg-slate-200 rounded" />
+              <div key={i} className="h-32 bg-neutral-bgDark rounded" />
             ))}
           </div>
         </div>
@@ -60,7 +60,7 @@ const GamificationDashboard: React.FC = () => {
   ].filter(Boolean);
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-lg space-y-xl max-w-7xl mx-auto">
       {/* Achievement Unlock Notification */}
       <AchievementUnlocked
         achievement={newAchievement}
@@ -70,61 +70,61 @@ const GamificationDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-3xl font-bold flex items-center gap-sm">
             <Trophy className="w-8 h-8 text-yellow-500" />
             Gamificação
           </h1>
-          <p className="text-muted-foreground">Conquistas, ranking e progresso</p>
+          <p className="text-neutral-textSecondary">Conquistas, ranking e progresso</p>
         </div>
 
         <ProgressTracker totalPoints={stats.totalPoints} showDetails={false} />
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Trophy className="w-5 h-5 text-yellow-600" />
+          <Card className="p-md">
+            <div className="flex items-center justify-between mb-sm">
+              <Trophy className="w-5 h-5 text-warning" />
               <Badge variant="secondary">Pontos</Badge>
             </div>
             <p className="text-2xl font-bold">{stats.totalPoints.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground">Total acumulado</p>
+            <p className="text-xs text-neutral-textSecondary">Total acumulado</p>
           </Card>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Target className="w-5 h-5 text-blue-600" />
+          <Card className="p-md">
+            <div className="flex items-center justify-between mb-sm">
+              <Target className="w-5 h-5 text-primary" />
               <Badge variant="secondary">Conquistas</Badge>
             </div>
             <p className="text-2xl font-bold">{stats.achievements.length}/{achievements.length}</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-textSecondary">
               {Math.round((stats.achievements.length / achievements.length) * 100)}% completo
             </p>
           </Card>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Flame className="w-5 h-5 text-orange-600" />
+          <Card className="p-md">
+            <div className="flex items-center justify-between mb-sm">
+              <Flame className="w-5 h-5 text-warning" />
               <Badge variant="secondary">Streak</Badge>
             </div>
-            <p className="text-2xl font-bold text-orange-600">{longestStreak}</p>
-            <p className="text-xs text-muted-foreground">Sequência máxima</p>
+            <p className="text-2xl font-bold text-warning">{longestStreak}</p>
+            <p className="text-xs text-neutral-textSecondary">Sequência máxima</p>
           </Card>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <Card className="p-4">
-            <div className="flex items-center justify-between mb-2">
-              <TrendingUp className="w-5 h-5 text-green-600" />
+          <Card className="p-md">
+            <div className="flex items-center justify-between mb-sm">
+              <TrendingUp className="w-5 h-5 text-success" />
               <Badge variant="secondary">Rank</Badge>
             </div>
             <p className="text-2xl font-bold">{stats.rank}</p>
-            <p className="text-xs text-muted-foreground">Nível {stats.level}</p>
+            <p className="text-xs text-neutral-textSecondary">Nível {stats.level}</p>
           </Card>
         </motion.div>
       </div>
@@ -134,12 +134,12 @@ const GamificationDashboard: React.FC = () => {
 
       {/* Active Streaks */}
       {currentStreaks.length > 0 && (
-        <Card className="p-6">
-          <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+        <Card className="p-lg">
+          <h3 className="font-semibold text-lg mb-md flex items-center gap-sm">
             <Flame className="w-5 h-5 text-orange-500" />
             Sequências Ativas
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
             {currentStreaks.map((streak, index) => (
               <motion.div
                 key={streak.type}
@@ -147,19 +147,19 @@ const GamificationDashboard: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950 border-orange-200">
+                <Card className="p-md bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950 border-warning">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-semibold capitalize">
                         {streak.type.replace(/-/g, ' ')}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-neutral-textSecondary">
                         Máximo: {streak.longest} {streak.longest === 1 ? 'dia' : 'dias'}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-3xl font-bold text-orange-600">{streak.current}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-3xl font-bold text-warning">{streak.current}</p>
+                      <p className="text-xs text-neutral-textSecondary">
                         {streak.current === 1 ? 'dia' : 'dias'}
                       </p>
                     </div>
@@ -172,7 +172,7 @@ const GamificationDashboard: React.FC = () => {
       )}
 
       {/* Tabs */}
-      <Tabs defaultValue="achievements" className="space-y-4">
+      <Tabs defaultValue="achievements" className="space-y-md">
         <TabsList>
           <TabsTrigger value="achievements">Conquistas</TabsTrigger>
           <TabsTrigger value="leaderboard">Ranking</TabsTrigger>

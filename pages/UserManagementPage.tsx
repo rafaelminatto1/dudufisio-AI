@@ -9,6 +9,7 @@ import PermissionGuard from '../components/auth/PermissionGuard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 const UserManagementPage: React.FC = () => {
   const {
@@ -93,11 +94,11 @@ const UserManagementPage: React.FC = () => {
 
   // 🚀 Componente UserCard memoizado
   const UserCard = memo<{ user: UserProfile }>(({ user }) => (
-    <div className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-card shadow-card border p-lg hover:shadow-cardHover transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-4">
           <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-            user.is_active ? 'bg-teal-100 text-teal-600' : 'bg-gray-100 text-gray-400'
+            user.is_active ? 'bg-teal-100 text-teal-600' : 'bg-neutral-bgDark text-neutral-textTertiary'
           }`}>
             {(user.profile_settings as any)?.avatar_url ? (
               <img
@@ -113,19 +114,19 @@ const UserManagementPage: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900">{user.full_name || 'Nome não informado'}</h3>
-            <p className="text-sm text-gray-600">{user.email}</p>
-            <div className="flex items-center space-x-2 mt-1">
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+            <h3 className="font-semibold text-neutral-text">{user.full_name || 'Nome não informado'}</h3>
+            <p className="text-sm text-neutral-textSecondary">{user.email}</p>
+            <div className="flex items-center space-x-2 mt-xs">
+              <span className={`px-sm py-1 rounded-full text-xs font-medium ${
                 user.role === 'admin' ? 'bg-purple-100 text-purple-700' :
                 user.role === 'therapist' ? 'bg-teal-100 text-teal-700' :
-                user.role === 'manager' ? 'bg-blue-100 text-blue-700' :
-                'bg-gray-100 text-gray-700'
+                user.role === 'manager' ? 'bg-primary-light text-primary' :
+                'bg-neutral-bgDark text-gray-700'
               }`}>
                 {roleLabels[user.role]}
               </span>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                user.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+              <span className={`px-sm py-1 rounded-full text-xs font-medium ${
+                user.is_active ? 'bg-success-light text-success' : 'bg-error-light text-error'
               }`}>
                 {user.is_active ? 'Ativo' : 'Inativo'}
               </span>
@@ -138,7 +139,7 @@ const UserManagementPage: React.FC = () => {
             variant="ghost"
             size="sm"
             onClick={() => setViewingUser(user)}
-            className="p-2"
+            className="p-sm"
           >
             <Eye className="h-4 w-4" />
           </Button>
@@ -148,7 +149,7 @@ const UserManagementPage: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={() => setEditingUser(user)}
-              className="p-2"
+              className="p-sm"
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -157,7 +158,7 @@ const UserManagementPage: React.FC = () => {
               variant="ghost"
               size="sm"
               onClick={() => handleToggleStatus(user)}
-              className={`p-2 ${user.is_active ? 'text-red-600 hover:text-red-700' : 'text-green-600 hover:text-green-700'}`}
+              className={`p-sm ${user.is_active ? 'text-error hover:text-error' : 'text-success hover:text-success'}`}
             >
               {user.is_active ? <PowerOff className="h-4 w-4" /> : <Power className="h-4 w-4" />}
             </Button>
@@ -167,10 +168,10 @@ const UserManagementPage: React.FC = () => {
 
         {(user.profile_settings as any)?.specialties && (user.profile_settings as any).specialties.length > 0 && (
         <div className="mt-3">
-          <p className="text-sm text-gray-600">Especialidades:</p>
-          <div className="flex flex-wrap gap-1 mt-1">
+          <p className="text-sm text-neutral-textSecondary">Especialidades:</p>
+          <div className="flex flex-wrap gap-1 mt-xs">
             {((user.profile_settings as any).specialties || []).map((specialty: any, index: number) => (
-              <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+              <span key={index} className="px-sm py-1 bg-neutral-bgDark text-gray-700 rounded text-xs">
                 {specialty}
               </span>
             ))}
@@ -188,7 +189,7 @@ const UserManagementPage: React.FC = () => {
   UserCard.displayName = 'UserCard';
 
   const UsersList: React.FC<{ users: UserProfile[] }> = ({ users }) => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
       {users.map(user => (
         <UserCard key={user.id} user={user} />
       ))}
@@ -197,11 +198,11 @@ const UserManagementPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+      <div className="min-h-screen bg-neutral-bgAlt p-lg">
+        <div className="max-w-7xl mx-auto space-y-xl">
           {/* Header Skeleton */}
           <div className="flex justify-between items-center">
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <div className="h-8 w-64 bg-gray-200 rounded animate-pulse"></div>
               <div className="h-4 w-96 bg-gray-200 rounded animate-pulse"></div>
             </div>
@@ -209,8 +210,8 @@ const UserManagementPage: React.FC = () => {
           </div>
 
           {/* Filters Skeleton */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
-            <div className="flex gap-4">
+          <div className="bg-white rounded-card shadow-card border p-lg">
+            <div className="flex gap-md">
               <div className="flex-1 h-10 bg-gray-200 rounded animate-pulse"></div>
               <div className="h-10 w-32 bg-gray-200 rounded animate-pulse"></div>
               <div className="h-10 w-32 bg-gray-200 rounded animate-pulse"></div>
@@ -218,18 +219,18 @@ const UserManagementPage: React.FC = () => {
           </div>
 
           {/* User Cards Skeleton */}
-          <div className="grid gap-4">
+          <div className="grid gap-md">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white rounded-xl shadow-sm border p-6">
+              <div key={i} className="bg-white rounded-card shadow-card border p-lg">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
-                    <div className="space-y-2">
+                    <div className="space-y-sm">
                       <div className="h-5 w-40 bg-gray-200 rounded animate-pulse"></div>
                       <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-sm">
                     <div className="h-9 w-24 bg-gray-200 rounded animate-pulse"></div>
                     <div className="h-9 w-9 bg-gray-200 rounded animate-pulse"></div>
                     <div className="h-9 w-9 bg-gray-200 rounded animate-pulse"></div>
@@ -244,14 +245,14 @@ const UserManagementPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-neutral-bgAlt">
+      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl py-3xl">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-mdxl">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">Gerenciamento de Usuários</h1>
-              <p className="text-slate-600 mt-2">
+              <h1 className="text-3xl font-bold text-neutral-text">Gerenciamento de Usuários</h1>
+              <p className="text-neutral-textSecondary mt-sm">
                 Gerencie usuários, permissões e perfis do sistema
               </p>
             </div>
@@ -259,9 +260,9 @@ const UserManagementPage: React.FC = () => {
             <PermissionGuard permissions={['manage_users']}>
               <Button
                 onClick={() => setShowCreateModal(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all"
+                className="bg-primary hover:bg-primary-hover text-white shadow-cardHover hover:shadow-cardActive transition-all"
               >
-                <UserPlus className="h-5 w-5 mr-2" />
+                <UserPlus className="h-5 w-5 mr-sm" />
                 Novo Usuário
               </Button>
             </PermissionGuard>
@@ -270,13 +271,13 @@ const UserManagementPage: React.FC = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-800">{error}</p>
+          <div className="bg-error-light border border-error rounded-lg p-md mb-xl">
+            <p className="text-error">{error}</p>
             <Button
               variant="ghost"
               size="sm"
               onClick={clearError}
-              className="mt-2 text-red-600 hover:text-red-700"
+              className="mt-sm text-error hover:text-error"
             >
               Fechar
             </Button>
@@ -284,10 +285,10 @@ const UserManagementPage: React.FC = () => {
         )}
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-card shadow-card border p-lg mb-xl">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-textTertiary h-5 w-5" />
               <Input
                 placeholder="Buscar por nome ou email..."
                 value={searchTerm}
@@ -299,7 +300,7 @@ const UserManagementPage: React.FC = () => {
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="rounded-lg border border-gray-300 px-md py-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             >
               <option value="all">Todas as funções</option>
               {Object.entries(roleLabels).map(([value, label]) => (
@@ -310,21 +311,21 @@ const UserManagementPage: React.FC = () => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              className="rounded-lg border border-gray-300 px-md py-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             >
               <option value="all">Todos os status</option>
               <option value="active">Ativos</option>
               <option value="inactive">Inativos</option>
             </select>
 
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <div className="flex items-center space-x-2 text-sm text-neutral-textSecondary">
               <span>{filteredUsers.length} usuários encontrados</span>
             </div>
           </div>
         </div>
 
         {/* Users by Role Tabs */}
-        <Tabs defaultValue="all" className="space-y-6">
+        <Tabs defaultValue="all" className="space-y-xl">
           <TabsList className="grid grid-cols-7 w-full">
             <TabsTrigger value="all">Todos ({users.length})</TabsTrigger>
             <TabsTrigger value="admin">Admins ({getUsersByRole('admin').length})</TabsTrigger>

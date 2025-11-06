@@ -147,52 +147,52 @@ const AppointmentListPage: React.FC = () => {
   }, [filteredAppointments]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Agendamentos</h1>
-          <p className="text-muted-foreground">
+          <p className="text-neutral-textSecondary">
             Gerencie todos os agendamentos da clínica
           </p>
         </div>
         <Button onClick={() => navigate('/agenda')}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-sm h-4 w-4" />
           Novo Agendamento
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-md md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Total</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Total</p>
             <p className="text-2xl font-bold">{stats.total}</p>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Agendados</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.scheduled}</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Agendados</p>
+            <p className="text-2xl font-bold text-primary">{stats.scheduled}</p>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Confirmados</p>
-            <p className="text-2xl font-bold text-green-600">{stats.confirmed}</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Confirmados</p>
+            <p className="text-2xl font-bold text-success">{stats.confirmed}</p>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Realizados</p>
-            <p className="text-2xl font-bold text-gray-600">{stats.completed}</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Realizados</p>
+            <p className="text-2xl font-bold text-neutral-textSecondary">{stats.completed}</p>
           </div>
         </Card>
       </div>
 
       {/* Filters and Actions */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 gap-2">
+      <div className="flex flex-col gap-md sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 gap-sm">
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
@@ -207,9 +207,9 @@ const AppointmentListPage: React.FC = () => {
             activeFiltersCount={activeFiltersCount}
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="mr-sm h-4 w-4" />
             Exportar
           </Button>
         </div>

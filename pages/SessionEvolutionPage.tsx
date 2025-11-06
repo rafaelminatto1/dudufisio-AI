@@ -42,6 +42,7 @@ import { MedicalReportSuggestions } from '../components/session/MedicalReportSug
 import { SaveBlockingDialog } from '../components/session/SaveBlockingDialog';
 import { ConductReplicationDialog } from '../components/session/ConductReplicationDialog';
 import { BodyMapProfessional, BodyMapComparisonModal, type PainData, type PainModalData, BODY_REGIONS_FRONT, BODY_REGIONS_BACK } from '../components/body-map-pro';
+import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 /**
  * OPÇÃO 1: Página Nova para Evolução de Sessão
@@ -402,10 +403,10 @@ const SessionEvolutionPage: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="text-center">
-          <p className="text-slate-600 mb-4">Dados da sessão não encontrados</p>
+          <p className="text-neutral-textSecondary mb-md">Dados da sessão não encontrados</p>
           <button
             onClick={() => navigate('/agenda')}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-md py-sm bg-primary text-white rounded-lg hover:bg-primary-hover"
           >
             Voltar para Agenda
           </button>
@@ -418,24 +419,24 @@ const SessionEvolutionPage: React.FC = () => {
   const showAll = activeTab === 'all';
 
   return (
-    <div className="flex flex-col h-screen bg-slate-50">
+    <div className="flex flex-col h-screen bg-neutral-bgAlt">
       {/* Header */}
-      <header className="flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200 shadow-sm">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between mb-3">
+      <header className="flex-shrink-0 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-neutral-border shadow-card">
+        <div className="px-lg py-md">
+          <div className="flex items-center justify-between mb-md">
           <div className="flex items-center space-x-4">
               <button
                 onClick={() => navigate('/agenda')}
-                className="p-2 rounded-full hover:bg-white/50 transition-colors"
+                className="p-sm rounded-full hover:bg-white/50 transition-colors"
                 title="Voltar para Agenda"
               >
-                <ArrowLeft className="w-5 h-5 text-slate-600" />
+                <ArrowLeft className="w-5 h-5 text-neutral-textSecondary" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">
+                <h1 className="text-2xl font-bold text-neutral-text">
                   Evolução de Sessão - {patient.name}
               </h1>
-                <p className="text-sm text-slate-600 mt-1">
+                <p className="text-sm text-neutral-textSecondary mt-xs">
                   Sessão #{sessionNumber} • {new Date().toLocaleDateString('pt-BR')}
               </p>
             </div>
@@ -444,7 +445,7 @@ const SessionEvolutionPage: React.FC = () => {
           <div className="flex items-center space-x-3">
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 text-slate-600 hover:text-slate-800 hover:bg-white/50 rounded-lg transition-colors flex items-center space-x-2"
+                className="px-md py-sm text-neutral-textSecondary hover:text-neutral-text hover:bg-white/50 rounded-lg transition-colors flex items-center space-x-2"
             >
               <X className="w-4 h-4" />
                 <span>Cancelar</span>
@@ -452,7 +453,7 @@ const SessionEvolutionPage: React.FC = () => {
               <button
                 onClick={() => {/* Salvar será chamado pelo SOAPFormPanel */}}
                 disabled={isSaving}
-                className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-sm transition-colors flex items-center space-x-2 disabled:bg-green-300 disabled:cursor-not-allowed"
+                className="px-lg py-sm bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-card transition-colors flex items-center space-x-2 disabled:bg-green-300 disabled:cursor-not-allowed"
               >
                 {isSaving ? (
                   <>
@@ -470,14 +471,14 @@ const SessionEvolutionPage: React.FC = () => {
         </div>
 
           {/* Card do Profissional */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
+          <div className="bg-primary-light border border-primary rounded-lg p-md mb-md">
+            <div className="flex items-center gap-md">
+              <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold">
                 {user?.name?.charAt(0) || 'P'}
               </div>
               <div>
-                <p className="font-medium text-gray-900">{user?.name || 'Profissional'}</p>
-                <p className="text-sm text-gray-600">
+                <p className="font-medium text-neutral-text">{user?.name || 'Profissional'}</p>
+                <p className="text-sm text-neutral-textSecondary">
                   CREFITO: {(user as any)?.crefito || 'Não informado'}
                 </p>
               </div>
@@ -485,7 +486,7 @@ const SessionEvolutionPage: React.FC = () => {
           </div>
 
           {/* Info cards */}
-          <div className="flex items-center space-x-6 text-sm text-slate-600">
+          <div className="flex items-center space-x-6 text-sm text-neutral-textSecondary">
             <div className="flex items-center space-x-2">
               <User className="w-4 h-4" />
               <span>{patient.name}</span>
@@ -511,7 +512,7 @@ const SessionEvolutionPage: React.FC = () => {
           </div>
 
           {/* Navigation Tabs (Mobile/Tablet) */}
-          <div className="mt-4 flex space-x-2 lg:hidden overflow-x-auto">
+          <div className="mt-md flex space-x-2 lg:hidden overflow-x-auto">
             <TabButton
               active={activeTab === 'all'}
               onClick={() => setActiveTab('all')}
@@ -543,16 +544,16 @@ const SessionEvolutionPage: React.FC = () => {
 
       {/* Alertas Críticos Globais */}
       {mandatoryAlerts.filter(a => a.severity === 'critical').length > 0 && (
-        <div className="flex-shrink-0 bg-red-50 border-b border-red-200 px-6 py-3">
+        <div className="flex-shrink-0 bg-error-light border-b border-error px-lg py-3">
           <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-              <span className="text-red-600 font-bold text-sm">!</span>
+            <div className="flex-shrink-0 w-6 h-6 bg-error-light rounded-full flex items-center justify-center">
+              <span className="text-error font-bold text-sm">!</span>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-red-800">
+              <p className="text-sm font-semibold text-error">
                 {mandatoryAlerts.filter(a => a.severity === 'critical').length} teste(s) obrigatório(s) pendente(s)
               </p>
-              <p className="text-xs text-red-600 mt-1">
+              <p className="text-xs text-error mt-xs">
                 Realize as medições obrigatórias antes de finalizar a sessão
               </p>
             </div>
@@ -566,10 +567,10 @@ const SessionEvolutionPage: React.FC = () => {
           
           {/* Coluna 1: Formulário SOAP (30%) */}
           {(showAll || activeTab === 'soap') && (
-            <div className="overflow-y-auto border-r border-slate-200 bg-white">
-              <div className="p-6">
-                <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
-                  <FileText className="w-5 h-5 text-blue-600" />
+            <div className="overflow-y-auto border-r border-neutral-border bg-white">
+              <div className="p-lg">
+                <h2 className="text-lg font-bold text-neutral-text mb-md flex items-center gap-sm border-b pb-3 border-neutral-border">
+                  <FileText className="w-5 h-5 text-primary" />
                   <span>Formulário SOAP</span>
                 </h2>
                 
@@ -587,11 +588,11 @@ const SessionEvolutionPage: React.FC = () => {
 
           {/* Coluna 2: Histórico & Cirurgias (25%) */}
           {(showAll || activeTab === 'history') && (
-            <div className="overflow-y-auto border-r border-slate-200 bg-slate-50">
-              <div className="p-6 space-y-6">
+            <div className="overflow-y-auto border-r border-neutral-border bg-neutral-bgAlt">
+              <div className="p-lg space-y-xl">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
-                    <History className="w-5 h-5 text-green-600" />
+                  <h2 className="text-lg font-bold text-neutral-text mb-md flex items-center gap-sm border-b pb-3 border-neutral-border">
+                    <History className="w-5 h-5 text-success" />
                     <span>Histórico de Sessões</span>
                   </h2>
                   <SessionHistoryPanel
@@ -602,7 +603,7 @@ const SessionEvolutionPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
+                  <h2 className="text-lg font-bold text-neutral-text mb-md flex items-center gap-sm border-b pb-3 border-neutral-border">
                     <Activity className="w-5 h-5 text-purple-600" />
                     <span>Cirurgias</span>
                   </h2>
@@ -620,12 +621,12 @@ const SessionEvolutionPage: React.FC = () => {
 
           {/* Coluna 3: Testes & Evolução (25%) */}
           {(showAll || activeTab === 'tests') && (
-            <div className="overflow-y-auto border-r border-slate-200 bg-white">
-              <div className="p-6 space-y-6">
+            <div className="overflow-y-auto border-r border-neutral-border bg-white">
+              <div className="p-lg space-y-xl">
                       {/* Alertas de Testes Obrigatórios */}
                       {mandatoryAlerts.length > 0 && (
                         <div>
-                          <h2 className="text-lg font-bold text-slate-900 mb-4">Alertas</h2>
+                          <h2 className="text-lg font-bold text-neutral-text mb-md">Alertas</h2>
                           <MandatoryTestAlertComponent
                             alerts={mandatoryAlerts}
                           />
@@ -634,8 +635,8 @@ const SessionEvolutionPage: React.FC = () => {
 
                 {/* Patologias */}
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
-                    <Activity className="w-5 h-5 text-orange-600" />
+                  <h2 className="text-lg font-bold text-neutral-text mb-md flex items-center gap-sm border-b pb-3 border-neutral-border">
+                    <Activity className="w-5 h-5 text-warning" />
                     <span>Patologias</span>
                   </h2>
                   <PathologyManager
@@ -645,7 +646,7 @@ const SessionEvolutionPage: React.FC = () => {
 
                 {/* Evolução de Testes */}
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
+                  <h2 className="text-lg font-bold text-neutral-text mb-md flex items-center gap-sm border-b pb-3 border-neutral-border">
                     <Target className="w-5 h-5 text-teal-600" />
                     <span>Evolução</span>
                   </h2>
@@ -657,15 +658,15 @@ const SessionEvolutionPage: React.FC = () => {
 
                 {/* Mapa de Dor */}
                 <div>
-                  <div className="flex items-center justify-between mb-4 border-b pb-3 border-slate-200">
-                    <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                      <Activity className="w-5 h-5 text-red-600" />
+                  <div className="flex items-center justify-between mb-md border-b pb-3 border-neutral-border">
+                    <h2 className="text-lg font-bold text-neutral-text flex items-center gap-sm">
+                      <Activity className="w-5 h-5 text-error" />
                       <span>Mapa de Dor</span>
                     </h2>
                     {previousSessionPainData.length > 0 && (
                       <button
                         onClick={() => setShowComparisonModal(true)}
-                        className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center space-x-1"
+                        className="px-md py-1.5 text-sm bg-primary hover:bg-primary-hover text-white font-medium rounded-lg transition-colors flex items-center space-x-1"
                       >
                         <span>📊 Comparar</span>
                       </button>
@@ -677,30 +678,30 @@ const SessionEvolutionPage: React.FC = () => {
                     const { hasWorsening, alerts } = detectPainWorsening();
                     if (hasWorsening) {
                       return (
-                        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div className="mb-md bg-error-light border border-error rounded-lg p-md">
                           <div className="flex items-start space-x-3">
-                            <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                              <span className="text-red-600 font-bold text-sm">!</span>
+                            <div className="flex-shrink-0 w-6 h-6 bg-error-light rounded-full flex items-center justify-center">
+                              <span className="text-error font-bold text-sm">!</span>
                             </div>
                             <div className="flex-1">
-                              <h3 className="text-sm font-semibold text-red-900 mb-2">
+                              <h3 className="text-sm font-semibold text-red-900 mb-sm">
                                 ⚠️ Piora Detectada em {alerts.length} Região{alerts.length > 1 ? 'ões' : ''}
                               </h3>
-                              <ul className="text-xs text-red-800 space-y-1">
+                              <ul className="text-xs text-error space-y-1">
                                 {alerts.slice(0, 3).map((alert, idx) => (
                                   <li key={idx}>
                                     • <strong>{alert.region}</strong>: {alert.previous === 0 ? 'Nova região' : `${alert.previous} → ${alert.current}`} (+{alert.change} pontos)
                                   </li>
                                 ))}
                                 {alerts.length > 3 && (
-                                  <li className="text-red-700 font-medium">
+                                  <li className="text-error font-medium">
                                     ... e mais {alerts.length - 3} região{alerts.length - 3 > 1 ? 'ões' : ''}
                                   </li>
                                 )}
                               </ul>
                               <button
                                 onClick={() => setShowComparisonModal(true)}
-                                className="mt-2 text-xs text-red-700 hover:text-red-900 font-medium underline"
+                                className="mt-sm text-xs text-error hover:text-red-900 font-medium underline"
                               >
                                 Ver comparação detalhada →
                               </button>
@@ -728,14 +729,14 @@ const SessionEvolutionPage: React.FC = () => {
 
           {/* Coluna 4: Resumo & Objetivos (20%) */}
           {(showAll || activeTab === 'summary') && (
-            <div className="overflow-y-auto bg-slate-50">
-              <div className="p-6 space-y-6">
+            <div className="overflow-y-auto bg-neutral-bgAlt">
+              <div className="p-lg space-y-xl">
                 {/* Visão Geral do Paciente */}
                 <PatientOverview patient={patient} />
 
                 {/* Objetivos com Countdown */}
                       <div>
-                        <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 border-b pb-3 border-slate-200">
+                        <h2 className="text-lg font-bold text-neutral-text mb-md flex items-center gap-sm border-b pb-3 border-neutral-border">
                           <Target className="w-5 h-5 text-indigo-600" />
                           <span>Objetivos</span>
                         </h2>
@@ -752,7 +753,7 @@ const SessionEvolutionPage: React.FC = () => {
 
                 {/* Insights para Laudo */}
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 mb-4">Insights para Laudo</h2>
+                  <h2 className="text-lg font-bold text-neutral-text mb-md">Insights para Laudo</h2>
                   <MedicalReportSuggestions
                     patientId={patient.id}
                     isCollapsible={true}
@@ -811,10 +812,10 @@ const TabButton: React.FC<{
   <button
     onClick={onClick}
     className={`
-      px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap
+      px-md py-sm rounded-lg text-sm font-medium transition-colors whitespace-nowrap
       ${active 
-        ? 'bg-white text-blue-600 shadow-sm' 
-        : 'text-slate-600 hover:bg-white/50'
+        ? 'bg-white text-primary shadow-card' 
+        : 'text-neutral-textSecondary hover:bg-white/50'
       }
     `}
   >

@@ -45,15 +45,15 @@ const CheckInPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-neutral-bgAlt">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 p-4">
-        <div className="container mx-auto flex items-center gap-4">
+      <div className="bg-white border-b border-neutral-border p-md">
+        <div className="container mx-auto flex items-center gap-md">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate('/agenda')}
-            className="gap-2"
+            className="gap-sm"
           >
             <ArrowLeft className="w-4 h-4" />
             Voltar para Agenda
@@ -62,7 +62,7 @@ const CheckInPage: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto p-6">
+      <div className="container mx-auto p-lg">
         <CheckInPanel
           appointments={appointments}
           onCheckIn={handleCheckIn}

@@ -102,29 +102,29 @@ const AnalyticsDashboardPage: React.FC = () => {
   }, [appointments, therapists]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-neutral-bgAlt">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 p-6">
+      <div className="bg-white border-b border-neutral-border p-lg">
         <div className="container mx-auto">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-md">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/agenda')}
-                className="gap-2"
+                className="gap-sm"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Voltar
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Dashboard de Analytics</h1>
-                <p className="text-sm text-slate-600">
+                <h1 className="text-2xl font-bold text-neutral-text">Dashboard de Analytics</h1>
+                <p className="text-sm text-neutral-textSecondary">
                   Análises detalhadas do mês de {format(new Date(), 'MMMM yyyy', { locale: ptBR })}
                 </p>
               </div>
             </div>
-            <Button className="gap-2">
+            <Button className="gap-sm">
               <Download className="w-4 h-4" />
               Exportar Relatório
             </Button>
@@ -133,40 +133,40 @@ const AnalyticsDashboardPage: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto p-6 space-y-6">
+      <div className="container mx-auto p-lg space-y-xl">
         {/* KPIs */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-50">
-                <Calendar className="w-5 h-5 text-blue-600" />
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-md">
+          <Card className="p-md">
+            <div className="flex items-center gap-md">
+              <div className="p-sm rounded-lg bg-primary-light">
+                <Calendar className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <div className="text-xs text-slate-600">Total</div>
+                <div className="text-xs text-neutral-textSecondary">Total</div>
                 <div className="text-2xl font-bold">{metrics.total}</div>
               </div>
             </div>
           </Card>
 
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-green-50">
-                <Award className="w-5 h-5 text-green-600" />
+          <Card className="p-md">
+            <div className="flex items-center gap-md">
+              <div className="p-sm rounded-lg bg-success-light">
+                <Award className="w-5 h-5 text-success" />
               </div>
               <div>
-                <div className="text-xs text-slate-600">Concluídos</div>
-                <div className="text-2xl font-bold text-green-600">{metrics.completed}</div>
+                <div className="text-xs text-neutral-textSecondary">Concluídos</div>
+                <div className="text-2xl font-bold text-success">{metrics.completed}</div>
               </div>
             </div>
           </Card>
 
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-50">
+          <Card className="p-md">
+            <div className="flex items-center gap-md">
+              <div className="p-sm rounded-lg bg-emerald-50">
                 <DollarSign className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <div className="text-xs text-slate-600">Receita</div>
+                <div className="text-xs text-neutral-textSecondary">Receita</div>
                 <div className="text-xl font-bold text-emerald-600">
                   {formatCurrencyBR(metrics.revenue)}
                 </div>
@@ -174,26 +174,26 @@ const AnalyticsDashboardPage: React.FC = () => {
             </div>
           </Card>
 
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-purple-50">
+          <Card className="p-md">
+            <div className="flex items-center gap-md">
+              <div className="p-sm rounded-lg bg-purple-50">
                 <Users className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <div className="text-xs text-slate-600">Pacientes</div>
+                <div className="text-xs text-neutral-textSecondary">Pacientes</div>
                 <div className="text-2xl font-bold text-purple-600">{metrics.uniquePatients}</div>
               </div>
             </div>
           </Card>
 
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-orange-50">
-                <TrendingUp className="w-5 h-5 text-orange-600" />
+          <Card className="p-md">
+            <div className="flex items-center gap-md">
+              <div className="p-sm rounded-lg bg-warning-light">
+                <TrendingUp className="w-5 h-5 text-warning" />
               </div>
               <div>
-                <div className="text-xs text-slate-600">Ticket Médio</div>
-                <div className="text-xl font-bold text-orange-600">
+                <div className="text-xs text-neutral-textSecondary">Ticket Médio</div>
+                <div className="text-xl font-bold text-warning">
                   {formatCurrencyBR(metrics.revenue / metrics.total || 0)}
                 </div>
               </div>
@@ -209,9 +209,9 @@ const AnalyticsDashboardPage: React.FC = () => {
             <TabsTrigger value="therapists">Por Terapeuta</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="trend" className="space-y-4">
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Últimos 30 Dias</h3>
+          <TabsContent value="trend" className="space-y-md">
+            <Card className="p-lg">
+              <h3 className="font-semibold mb-md">Últimos 30 Dias</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={chartData.last30Days}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -244,8 +244,8 @@ const AnalyticsDashboardPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="types">
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Distribuição por Tipo</h3>
+            <Card className="p-lg">
+              <h3 className="font-semibold mb-md">Distribuição por Tipo</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -269,8 +269,8 @@ const AnalyticsDashboardPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="therapists">
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Performance por Terapeuta</h3>
+            <Card className="p-lg">
+              <h3 className="font-semibold mb-md">Performance por Terapeuta</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={chartData.byTherapist}>
                   <CartesianGrid strokeDasharray="3 3" />

@@ -178,18 +178,18 @@ interface SectionCardProps {
 const SectionCard: React.FC<SectionCardProps> = React.memo(({ id, icon, title, description, children }) => (
   <section
     id={id}
-    className="rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
+    className="rounded-cardLarge border border-neutral-border bg-white shadow-card transition hover:shadow-cardHover"
   >
-    <div className="flex items-center gap-4 border-b border-slate-100 px-6 py-5">
-      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
+    <div className="flex items-center gap-md border-b border-slate-100 px-lg py-5">
+      <div className="flex h-12 w-12 items-center justify-center rounded-card bg-primary-light text-primary">
         {icon}
       </div>
       <div>
-        <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-        <p className="text-sm text-slate-500">{description}</p>
+        <h2 className="text-lg font-semibold text-neutral-text">{title}</h2>
+        <p className="text-sm text-neutral-textSecondary">{description}</p>
       </div>
     </div>
-    <div className="space-y-6 px-6 py-6">{children}</div>
+    <div className="space-y-xl px-lg py-xl">{children}</div>
   </section>
 ));
 
@@ -205,8 +205,8 @@ const WorkingDayToggle: React.FC<WorkingDayToggleProps> = React.memo(({ label, a
     onClick={onToggle}
     className={`flex h-9 items-center justify-center rounded-full border text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 ${
       active
-        ? 'border-sky-500 bg-sky-50 text-sky-700'
-        : 'border-slate-200 text-slate-500 hover:border-sky-200 hover:text-sky-600'
+        ? 'border-sky-500 bg-primary-light text-primary'
+        : 'border-neutral-border text-neutral-textSecondary hover:border-sky-200 hover:text-primary'
     }`}
   >
     {label}
@@ -222,12 +222,12 @@ interface BooleanFieldProps {
 }
 
 const BooleanField: React.FC<BooleanFieldProps> = React.memo(({ id, label, description, value, onChange }) => (
-  <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/70 px-4 py-3">
+  <div className="flex items-center justify-between rounded-lg border border-neutral-border bg-neutral-bgAlt/70 px-md py-3">
     <div className="max-w-[75%]">
-      <Label htmlFor={id} className="text-sm font-medium text-slate-700">
+      <Label htmlFor={id} className="text-sm font-medium text-neutral-text">
         {label}
       </Label>
-      {description && <p className="text-xs text-slate-500">{description}</p>}
+      {description && <p className="text-xs text-neutral-textSecondary">{description}</p>}
     </div>
     <Switch id={id} checked={value} onCheckedChange={onChange} />
   </div>
@@ -914,11 +914,11 @@ const SettingsPage: React.FC = () => {
 
   return (
     <ErrorBoundary fallback={<div className="flex h-64 items-center justify-center text-red-500">Erro ao carregar configurações. Tente recarregar a página.</div>}>
-      <div className="min-h-screen bg-slate-50">
-        <div className="border-b border-slate-200 bg-white">
-          <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-            <div className="flex items-start gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
+      <div className="min-h-screen bg-neutral-bgAlt">
+        <div className="border-b border-neutral-border bg-white">
+          <div className="mx-auto max-w-6xl px-md py-3xl sm:px-lg lg:px-xl">
+            <div className="flex items-start gap-md">
+              <div className="flex h-14 w-14 items-center justify-center rounded-card bg-primary-light text-primary">
                 <SettingsIcon className="h-6 w-6" />
               </div>
               <div className="flex-1">
@@ -931,7 +931,7 @@ const SettingsPage: React.FC = () => {
           </div>
         </div>
 
-        <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <main className="mx-auto max-w-6xl px-md py-10 sm:px-lg lg:px-xl">
         {loading ? (
           <div className="flex h-64 items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
@@ -943,13 +943,13 @@ const SettingsPage: React.FC = () => {
             </AlertDescription>
           </Alert>
         ) : (
-          <div className="grid gap-8 lg:grid-cols-[250px_1fr]">
-            <aside className="h-fit space-y-6 rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="grid gap-xl lg:grid-cols-[250px_1fr]">
+            <aside className="h-fit space-y-xl rounded-cardLarge border border-neutral-border bg-white p-lg">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-neutral-textTertiary">
                   Navegacao
                 </p>
-                <div className="mt-4 flex flex-col gap-1">
+                <div className="mt-md flex flex-col gap-1">
                   {NAVIGATION_SECTIONS.map(section => {
                     const Icon = section.icon;
                     const isActive = activeSection === section.id;
@@ -958,10 +958,10 @@ const SettingsPage: React.FC = () => {
                         key={section.id}
                         type="button"
                         onClick={() => handleNavigate(section.id)}
-                        className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 ${
+                        className={`flex items-center gap-md rounded-lg px-md py-sm text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 ${
                           isActive
-                            ? 'bg-sky-100 text-sky-700'
-                            : 'text-slate-600 hover:bg-slate-50'
+                            ? 'bg-primary-light text-primary'
+                            : 'text-neutral-textSecondary hover:bg-neutral-bgAlt'
                         }`}
                       >
                         <Icon className="h-4 w-4" />
@@ -980,7 +980,7 @@ const SettingsPage: React.FC = () => {
                 </Alert>
               )}
 
-              <div className="flex flex-wrap gap-2 lg:hidden">
+              <div className="flex flex-wrap gap-sm lg:hidden">
                 {NAVIGATION_SECTIONS.map(section => {
                   const Icon = section.icon;
                   const isActive = activeSection === section.id;
@@ -989,10 +989,10 @@ const SettingsPage: React.FC = () => {
                       key={section.id}
                       type="button"
                       onClick={() => handleNavigate(section.id)}
-                      className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                      className={`flex items-center gap-sm rounded-full border px-md py-1.5 text-xs font-medium transition ${
                         isActive
-                          ? 'border-sky-500 bg-sky-50 text-sky-700'
-                          : 'border-slate-200 text-slate-500 hover:border-sky-300 hover:text-sky-600'
+                          ? 'border-sky-500 bg-primary-light text-primary'
+                          : 'border-neutral-border text-neutral-textSecondary hover:border-sky-300 hover:text-primary'
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5" />
@@ -1008,7 +1008,7 @@ const SettingsPage: React.FC = () => {
                 title="Perfil profissional"
                 description="Atualize suas informacoes pessoais, contato e disponibilidade."
               >
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-md sm:grid-cols-2">
                   <div className="space-y-1.5">
                     <Label htmlFor="fullName">Nome completo</Label>
                     <Input
@@ -1082,17 +1082,17 @@ const SettingsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="rounded-cardLarge border border-neutral-border bg-neutral-bgAlt/60 p-md">
+                  <div className="flex flex-col gap-md sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-800">
+                      <h3 className="text-sm font-semibold text-neutral-text">
                         Janela de atendimento
                       </h3>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-neutral-textSecondary">
                         Defina o horario padrao usado para sugestoes de agenda.
                       </p>
                     </div>
-                    <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="grid gap-md sm:grid-cols-2">
                       <div className="space-y-1">
                         <Label htmlFor="workingStart">Inicio</Label>
                         <Input
@@ -1123,9 +1123,9 @@ const SettingsPage: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-4">
-                    <p className="text-sm font-medium text-slate-700">Dias de atendimento</p>
-                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-7">
+                  <div className="mt-md">
+                    <p className="text-sm font-medium text-neutral-text">Dias de atendimento</p>
+                    <div className="mt-3 grid grid-cols-2 gap-sm sm:grid-cols-7">
                       {WORKING_DAYS.map(day => (
                         <WorkingDayToggle
                           key={day.value}
@@ -1157,7 +1157,7 @@ const SettingsPage: React.FC = () => {
                 title="Seguranca"
                 description="Atualize a senha e mantenha sua conta protegida."
               >
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-md sm:grid-cols-2">
                   <div className="space-y-1.5">
                     <Label htmlFor="newPassword">Nova senha</Label>
                     <Input
@@ -1202,11 +1202,11 @@ const SettingsPage: React.FC = () => {
                 title="Notificacoes"
                 description="Controle canais, frequencia e janelas silenciosas."
               >
-                <div className="rounded-2xl border border-slate-200">
+                <div className="rounded-cardLarge border border-neutral-border">
                   {profileData ? (
                     <NotificationSettings userId={profileData.id} />
                   ) : (
-                    <div className="flex items-center justify-center p-8 text-sm text-slate-500">
+                    <div className="flex items-center justify-center p-xl text-sm text-neutral-textSecondary">
                       Carregando preferencias de notificacao...
                     </div>
                   )}
@@ -1219,7 +1219,7 @@ const SettingsPage: React.FC = () => {
                 title="Agenda inteligente"
                 description="Defina como a agenda se comporta para novos agendamentos."
               >
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-md sm:grid-cols-2">
                   <div className="space-y-1.5">
                     <Label htmlFor="defaultView">Visao padrao</Label>
                     <select
@@ -1231,7 +1231,7 @@ const SettingsPage: React.FC = () => {
                           defaultView: event.target.value as AgendaView,
                         }))
                       }
-                      className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                      className="h-10 w-full rounded-md border border-neutral-border bg-white px-md text-sm shadow-card focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
                     >
                       <option value="day">Dia</option>
                       <option value="week">Semana</option>
@@ -1250,7 +1250,7 @@ const SettingsPage: React.FC = () => {
                           appointmentView: event.target.value as AppointmentView,
                         }))
                       }
-                      className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                      className="h-10 w-full rounded-md border border-neutral-border bg-white px-md text-sm shadow-card focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
                     >
                       <option value="detailed">Detalhada</option>
                       <option value="compact">Compacta</option>
@@ -1276,7 +1276,7 @@ const SettingsPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="grid gap-md md:grid-cols-2">
                   <BooleanField
                     id="showSunday"
                     label="Exibir domingo"
@@ -1325,7 +1325,7 @@ const SettingsPage: React.FC = () => {
                 title="CRM e funil"
                 description="Configure regras para leads, funil e lembretes de follow-up."
               >
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-md sm:grid-cols-2">
                   <div className="space-y-1.5">
                     <Label htmlFor="defaultPipelineStage">Estagio inicial</Label>
                     <Input
@@ -1368,7 +1368,7 @@ const SettingsPage: React.FC = () => {
                     />
                   </div>
                 </div>
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="grid gap-md md:grid-cols-2">
                   <BooleanField
                     id="autoAssignLeads"
                     label="Distribuir leads automaticamente"
@@ -1416,15 +1416,15 @@ const SettingsPage: React.FC = () => {
                 title="Ajustes por perfil"
                 description="Aplique configuracoes especificas para pacientes, educadores e administradores."
               >
-                <div className="grid gap-6 lg:grid-cols-2">
-                  <div className="space-y-4 rounded-2xl border border-slate-200 p-4">
+                <div className="grid gap-lg lg:grid-cols-2">
+                  <div className="space-y-md rounded-cardLarge border border-neutral-border p-md">
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-800">Portal do paciente</h3>
-                      <p className="text-xs text-slate-500">
+                      <h3 className="text-sm font-semibold text-neutral-text">Portal do paciente</h3>
+                      <p className="text-xs text-neutral-textSecondary">
                         Experiencia aplicada ao acesso do paciente na plataforma.
                       </p>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-md">
                       <div className="space-y-1.5">
                         <Label htmlFor="preferredLanguage">Idioma preferencial</Label>
                         <select
@@ -1436,7 +1436,7 @@ const SettingsPage: React.FC = () => {
                               preferredLanguage: event.target.value,
                             }))
                           }
-                          className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                          className="h-10 w-full rounded-md border border-neutral-border bg-white px-md text-sm shadow-card focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
                         >
                           <option value="pt-BR">Portugues (Brasil)</option>
                           <option value="en-US">Ingles</option>
@@ -1454,7 +1454,7 @@ const SettingsPage: React.FC = () => {
                               reminderChannel: event.target.value as ReminderChannel,
                             }))
                           }
-                          className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                          className="h-10 w-full rounded-md border border-neutral-border bg-white px-md text-sm shadow-card focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
                         >
                           <option value="email">E-mail</option>
                           <option value="sms">SMS</option>
@@ -1484,14 +1484,14 @@ const SettingsPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-4 rounded-2xl border border-slate-200 p-4">
+                  <div className="space-y-md rounded-cardLarge border border-neutral-border p-md">
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-800">Educador</h3>
-                      <p className="text-xs text-slate-500">
+                      <h3 className="text-sm font-semibold text-neutral-text">Educador</h3>
+                      <p className="text-xs text-neutral-textSecondary">
                         Ajustes voltados ao perfil de conteudo e workshops.
                       </p>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-md">
                       <BooleanField
                         id="availableForWorkshops"
                         label="Disponivel para workshops"
@@ -1521,7 +1521,7 @@ const SettingsPage: React.FC = () => {
                               preferredContentFormat: event.target.value as EducatorFormat,
                             }))
                           }
-                          className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                          className="h-10 w-full rounded-md border border-neutral-border bg-white px-md text-sm shadow-card focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
                         >
                           <option value="video">Video</option>
                           <option value="pdf">PDF</option>
@@ -1557,14 +1557,14 @@ const SettingsPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="lg:col-span-2 space-y-4 rounded-2xl border border-slate-200 p-4">
+                  <div className="lg:col-span-2 space-y-md rounded-cardLarge border border-neutral-border p-md">
                     <div>
-                      <h3 className="text-sm font-semibold text-slate-800">Administrativo</h3>
-                      <p className="text-xs text-slate-500">
+                      <h3 className="text-sm font-semibold text-neutral-text">Administrativo</h3>
+                      <p className="text-xs text-neutral-textSecondary">
                         Configuracoes aplicadas aos perfis de administracao da clinica.
                       </p>
                     </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-md sm:grid-cols-2">
                       <div className="space-y-1.5">
                         <Label htmlFor="clinicName">Nome da clinica</Label>
                         <Input
@@ -1587,7 +1587,7 @@ const SettingsPage: React.FC = () => {
                               defaultExportFormat: event.target.value as ExportFormat,
                             }))
                           }
-                          className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm shadow-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
+                          className="h-10 w-full rounded-md border border-neutral-border bg-white px-md text-sm shadow-card focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200"
                         >
                           <option value="csv">CSV</option>
                           <option value="pdf">PDF</option>
@@ -1609,7 +1609,7 @@ const SettingsPage: React.FC = () => {
                         />
                       </div>
                     </div>
-                    <div className="grid gap-3 md:grid-cols-2">
+                    <div className="grid gap-md md:grid-cols-2">
                       <BooleanField
                         id="enableAuditEmails"
                         label="Enviar relatorios de auditoria"

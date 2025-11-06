@@ -118,22 +118,22 @@ const AcompanhamentoPage: React.FC = () => {
     };
 
     const renderSkeletons = () => (
-        <div className="space-y-6">
-            <Skeleton className="h-24 w-full rounded-xl" />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Skeleton className="h-80 rounded-xl" />
-                <Skeleton className="h-80 rounded-xl" />
+        <div className="space-y-xl">
+            <Skeleton className="h-24 w-full rounded-card" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+                <Skeleton className="h-80 rounded-card" />
+                <Skeleton className="h-80 rounded-card" />
             </div>
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                <Skeleton className="h-96 rounded-xl" />
-                <Skeleton className="h-96 rounded-xl" />
-                <Skeleton className="h-96 rounded-xl" />
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-lg">
+                <Skeleton className="h-96 rounded-card" />
+                <Skeleton className="h-96 rounded-card" />
+                <Skeleton className="h-96 rounded-card" />
             </div>
         </div>
     );
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-smxl">
             <PageHeader
                 title="Acompanhamento de Pacientes"
                 subtitle="Monitore presença, evolução clínica e priorize ações para retenção."
@@ -142,9 +142,9 @@ const AcompanhamentoPage: React.FC = () => {
             {loading || !alerts || !metrics || !quickActions ? (
                 renderSkeletons()
             ) : (
-                <div className="space-y-8">
-                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                        <div className="xl:col-span-2 space-y-6">
+                <div className="space-y-smxl">
+                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-lg">
+                        <div className="xl:col-span-2 space-y-xl">
                             <AlertsOverview alerts={alerts} metrics={metrics} />
                             <AttendanceChart attendanceSeries={attendanceSeries} patients={activePatients} />
                         </div>
