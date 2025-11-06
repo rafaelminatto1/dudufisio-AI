@@ -104,6 +104,7 @@
     "components/auth/UserMenu.tsx",
     "lib/actions/**/*",
     "lib/auth.ts",
+    "lib/logger.ts",
     "shared/services/auth.ts",
     "services/appointmentService.ts",
     "middleware.ts.disabled",
