@@ -1,7 +1,15 @@
 // middleware.ts
 import { withAuth, NextRequestWithAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
-import { Role } from '@prisma/client';
+
+// Enum de roles (anteriormente de Prisma, agora local)
+enum Role {
+  ADMIN = 'ADMIN',
+  FISIOTERAPEUTA = 'FISIOTERAPEUTA',
+  ESTAGIARIO = 'ESTAGIARIO',
+  PACIENTE = 'PACIENTE',
+  PARCEIRO = 'PARCEIRO'
+}
 
 // Feature flag to enable/disable middleware behavior safely
 const EDGE_MIDDLEWARE_ENABLED = process.env.ENABLE_EDGE_MIDDLEWARE === 'true';

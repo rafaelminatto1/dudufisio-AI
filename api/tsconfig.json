@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020"],
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    
+    /* Type Checking - Mais permissivo para APIs existentes */
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "noImplicitAny": false,
+    
+    /* Path Mapping - Alinhado com tsconfig principal */
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["../*"],
+      "@/services/*": ["../services/*"],
+      "@/types/*": ["../types/*"],
+      "@/lib/*": ["../lib/*"]
+    },
+    
+    "types": ["node"],
+    "allowJs": false,
+    "checkJs": false,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".vercel",
+    "**/*.js"
+  ]
+}
+

@@ -1,7 +1,17 @@
 {
-  "buildCommand": "vite build",
+  "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist",
   "framework": null,
+  "functions": {
+    "api/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 10
+    },
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
   "headers": [
     {
       "source": "/manifest.json",
