@@ -57,7 +57,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
       return link;
     };
 
-    let created: HTMLLinkElement[] = [];
+    const created: HTMLLinkElement[] = [];
     runWhenIdle(() => {
       try {
         const targets: string[] = [

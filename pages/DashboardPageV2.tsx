@@ -58,7 +58,7 @@ const DashboardPageV2: React.FC = () => {
     const safePatients = Array.isArray(patients) ? patients : [];
     
     let filteredAppointments = safeAppointments;
-    let filteredPatients = safePatients;
+    const filteredPatients = safePatients;
 
     if (filters.dateRange?.from && filters.dateRange?.to) {
       filteredAppointments = safeAppointments.filter((app) => {

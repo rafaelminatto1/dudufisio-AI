@@ -301,7 +301,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({ isOpen, onC
     console.log('   appointmentType:', appointmentType);
     console.log('   duration:', duration);
 
-    if (!patient || !patient.id) {
+    if (!patient?.id) {
       console.error('❌ Nenhum paciente selecionado - patient:', patient);
       console.error('   formData.patient:', formData?.patient);
       console.error('   form.getValues:', form.getValues('patient'));

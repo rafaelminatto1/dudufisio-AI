@@ -64,7 +64,7 @@ export const EvolutionChart: React.FC<EvolutionChartProps> = ({
 
   // Custom tooltip
   const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
+    if (active && payload?.length) {
       const data = payload[0].payload;
       return (
         <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">

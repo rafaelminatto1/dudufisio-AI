@@ -37,7 +37,7 @@ export const useEvolutionKeyboardShortcuts = () => {
       if (event.shiftKey && event.key === 'E') {
         event.preventDefault();
         const evolutionCards = (window as any).__evolutionCards;
-        if (evolutionCards && evolutionCards.expandAll) {
+        if (evolutionCards?.expandAll) {
           evolutionCards.expandAll();
         }
         return;
@@ -47,7 +47,7 @@ export const useEvolutionKeyboardShortcuts = () => {
       if (event.shiftKey && event.key === 'C') {
         event.preventDefault();
         const evolutionCards = (window as any).__evolutionCards;
-        if (evolutionCards && evolutionCards.collapseAll) {
+        if (evolutionCards?.collapseAll) {
           evolutionCards.collapseAll();
         }
         return;
@@ -59,7 +59,7 @@ export const useEvolutionKeyboardShortcuts = () => {
         event.preventDefault();
         const cardId = cardIds[number - 1];
         const evolutionCards = (window as any).__evolutionCards;
-        if (evolutionCards && evolutionCards.toggleCard) {
+        if (evolutionCards?.toggleCard) {
           evolutionCards.toggleCard(cardId);
         }
         return;

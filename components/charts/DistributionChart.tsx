@@ -53,7 +53,7 @@ export function DistributionChart({
         </Pie>
         <Tooltip
           content={({ active, payload }) => {
-            if (active && payload && payload.length) {
+            if (active && payload?.length) {
               const percentage = ((payload[0].value as number) / total) * 100;
               return (
                 <div className="rounded-lg border bg-background p-3 shadow-lg">

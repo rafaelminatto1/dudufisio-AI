@@ -67,7 +67,7 @@ export const TrendAnalysisChart: React.FC<TrendAnalysisChartProps> = ({
   };
 
   const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
+    if (active && payload?.length) {
       const data = payload[0].payload;
       return (
         <div className="bg-white p-3 rounded-lg shadow-lg border border-slate-200">

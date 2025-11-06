@@ -65,7 +65,7 @@ async function generateAlertsFromTestConfigs(
 ): Promise<MandatoryTestAlert[]> {
   try {
     const patient = await patientService.getPatientById(patientId);
-    if (!patient || !patient.testConfigs) return [];
+    if (!patient?.testConfigs) return [];
 
     const alerts: MandatoryTestAlert[] = [];
 

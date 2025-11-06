@@ -23,7 +23,7 @@ class AchievementService {
   async initializeAchievements(): Promise<void> {
     const stored = await indexedDB.get('settings', this.ACHIEVEMENTS_KEY);
     
-    if (!stored || !stored.value) {
+    if (!stored?.value) {
       const achievements: Achievement[] = ACHIEVEMENT_TEMPLATES.map((template, index) => ({
         ...template,
         id: `ach-${index + 1}`,
@@ -43,7 +43,7 @@ class AchievementService {
    */
   async getAllAchievements(): Promise<Achievement[]> {
     const stored = await indexedDB.get('settings', this.ACHIEVEMENTS_KEY);
-    if (!stored || !stored.value) {
+    if (!stored?.value) {
       await this.initializeAchievements();
       return this.getAllAchievements();
     }
@@ -60,7 +60,7 @@ class AchievementService {
   async getUserStats(userId: string): Promise<UserStats> {
     const stored = await indexedDB.get('settings', `${this.USER_STATS_KEY}-${userId}`);
 
-    if (!stored || !stored.value) {
+    if (!stored?.value) {
       // Create default stats
       const defaultStats: UserStats = {
         userId,

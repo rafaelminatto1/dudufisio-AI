@@ -125,7 +125,7 @@ class LeaderboardService {
     period: Leaderboard['period']
   ): Promise<Leaderboard | null> {
     const stored = await indexedDB.get('settings', this.LEADERBOARDS_KEY);
-    if (!stored || !stored.value) return null;
+    if (!stored?.value) return null;
 
     const leaderboards: Leaderboard[] = stored.value;
     

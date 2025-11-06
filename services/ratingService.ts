@@ -197,7 +197,7 @@ export async function getRatingTrend(patientId: string): Promise<RatingTrend | n
     
     const getPatientTrend = (): RatingTrend['patientTrend'] => {
       if (!lastRating.patient_rating) return 'new';
-      if (!prevRating || !prevRating.patient_rating) return 'new';
+      if (!prevRating?.patient_rating) return 'new';
       if (lastRating.patient_rating > prevRating.patient_rating) return 'improving';
       if (lastRating.patient_rating < prevRating.patient_rating) return 'declining';
       return 'stable';
@@ -205,7 +205,7 @@ export async function getRatingTrend(patientId: string): Promise<RatingTrend | n
     
     const getProfessionalTrend = (): RatingTrend['professionalTrend'] => {
       if (!lastRating.professional_rating) return 'new';
-      if (!prevRating || !prevRating.professional_rating) return 'new';
+      if (!prevRating?.professional_rating) return 'new';
       if (lastRating.professional_rating > prevRating.professional_rating) return 'improving';
       if (lastRating.professional_rating < prevRating.professional_rating) return 'declining';
       return 'stable';

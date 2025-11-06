@@ -236,7 +236,7 @@ class MaterialWebhookService {
     if (!delivery) return false;
 
     const webhook = await this.getWebhook(delivery.webhookId);
-    if (!webhook || !webhook.isActive) return false;
+    if (!webhook?.isActive) return false;
 
     delivery.status = 'pending';
     delivery.attempts = 0;

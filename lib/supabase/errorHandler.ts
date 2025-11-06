@@ -144,7 +144,7 @@ export function withSupabaseErrorHandling<T>(
     } = options;
 
     let lastError: any;
-    let retryConfig: RetryConfig = {
+    const retryConfig: RetryConfig = {
       attempts: 0,
       maxRetries: retryable ? maxRetries : 0,
       delay: retryDelay

@@ -50,7 +50,7 @@ class AISchedulingService {
 
         // Horários de trabalho: 8h às 18h
         for (let hour = 8; hour < 18; hour++) {
-          for (let minute of [0, 30]) {
+          for (const minute of [0, 30]) {
             const slotStart = new Date(targetDate);
             slotStart.setHours(hour, minute, 0, 0);
             const slotEnd = addMinutes(slotStart, preferredDuration);

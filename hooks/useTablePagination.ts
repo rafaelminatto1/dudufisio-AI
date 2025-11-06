@@ -95,7 +95,7 @@ export function useTablePagination<T = any>(config: PaginationConfig = {}) {
       const halfVisible = Math.floor(visiblePages / 2);
       
       let startPage = Math.max(0, pageIndex - halfVisible);
-      let endPage = Math.min(pageCount - 1, startPage + visiblePages - 1);
+      const endPage = Math.min(pageCount - 1, startPage + visiblePages - 1);
       
       if (endPage - startPage < visiblePages - 1) {
         startPage = Math.max(0, endPage - visiblePages + 1);

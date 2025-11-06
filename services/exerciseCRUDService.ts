@@ -21,7 +21,7 @@ export class ExerciseCRUDService {
       query = query.eq('category', filters.category);
     }
 
-    if (filters?.difficulty && filters.difficulty.length === 2) {
+    if (filters?.difficulty?.length === 2) {
       const [min, max] = filters.difficulty;
       query = query.gte('difficulty', min).lte('difficulty', max);
     }

@@ -193,7 +193,7 @@ class ResourceOptimizationService {
   }> {
     const resource = await resourceService.getResource(resourceId);
     
-    if (!resource || !resource.usageCount) {
+    if (!resource?.usageCount) {
       return {
         roi: 0,
         totalRevenue: 0,

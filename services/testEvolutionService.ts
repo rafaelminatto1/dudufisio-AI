@@ -139,7 +139,7 @@ export async function getMandatoryTests(
 ): Promise<AssessmentTestConfig[]> {
   try {
     const patient = await patientService.getPatientById(patientId);
-    if (!patient || !patient.testConfigs) {
+    if (!patient?.testConfigs) {
       return [];
     }
 
@@ -380,7 +380,7 @@ export async function getTestsWithSignificantImprovement(
 export async function suggestTestsForPatient(patientId: string): Promise<string[]> {
   try {
     const patient = await patientService.getPatientById(patientId);
-    if (!patient || !patient.pathologies) {
+    if (!patient?.pathologies) {
       return [];
     }
 

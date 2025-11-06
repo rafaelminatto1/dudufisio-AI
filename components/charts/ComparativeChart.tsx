@@ -61,7 +61,7 @@ export function ComparativeChart({
         )}
         <Tooltip
           content={({ active, payload }) => {
-            if (active && payload && payload.length) {
+            if (active && payload?.length) {
               return (
                 <div className="rounded-lg border bg-background p-3 shadow-lg">
                   <div className="text-sm font-medium mb-2">

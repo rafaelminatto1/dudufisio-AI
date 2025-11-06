@@ -36,7 +36,7 @@ class ScheduledExportService {
   async getScheduledExports(): Promise<ScheduledExport[]> {
     try {
       const stored = await indexedDB.get('settings', this.STORAGE_KEY);
-      if (!stored || !stored.value) return [];
+      if (!stored?.value) return [];
       
       return stored.value.map((exp: any) => ({
         ...exp,

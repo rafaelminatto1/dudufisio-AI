@@ -32,7 +32,7 @@ export async function predictPatientAbandonment(
     // Tentar usar IA se configurado
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     
-    if (!apiKey || !apiKey.startsWith('AI')) {
+    if (!apiKey?.startsWith('AI')) {
       // Sem chave válida: usar regras
       return predictWithRules(patient);
     }

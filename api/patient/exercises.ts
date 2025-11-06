@@ -23,7 +23,7 @@ async function handler(req: AuthenticatedRequest, res: VercelResponse) {
     const filter = (req.query.filter as string) || 'all';
     
     // Buscar exercícios prescritos para o paciente
-    let query = supabaseAdmin
+    const query = supabaseAdmin
       .from('patient_exercises')
       .select(`
         id,

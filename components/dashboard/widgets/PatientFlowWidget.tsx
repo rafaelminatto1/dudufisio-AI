@@ -64,7 +64,7 @@ export function PatientFlowWidget({ patients, days = 30 }: PatientFlowWidgetProp
           </Pie>
           <Tooltip
             content={({ active, payload }) => {
-              if (active && payload && payload.length) {
+              if (active && payload?.length) {
                 return (
                   <div className="rounded-lg border bg-background p-2 shadow-sm">
                     <div className="text-sm font-medium">{payload[0].name}</div>
