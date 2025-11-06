@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -29,13 +34,16 @@ dist-ssr
 
 # Sentry Config File
 .env.sentry-build-plugin
-.env.vercel
-.env.vercel
+.env.vercel
+
+.env.vercel
+
 
 # Vercel env files
 .env.vercel
 .env.vercel.*
-nul
+nul
+
 lighthouse-reports/
 
 # Monitoring reports

@@ -38,11 +38,11 @@ O roadmap está dividido em fases para priorizar o impacto e organizar o desenvo
 ## ✅ Plano de Ação Detalhado (To-Do List)
 
 ### **1. Estrutura de Dados e CRUD**
-- [ ] **Tarefa 1.1:** Consolidar o `prisma/schema.prisma` como fonte única da verdade para o esquema.
-  - [ ] Sub-tarefa: Executar `npx prisma db pull` para popular o schema a partir do banco de dados existente.
-  - [ ] Sub-tarefa: Refatorar o código de acesso a dados para utilizar o Prisma Client.
+- [x] **Tarefa 1.1:** Consolidar o `prisma/schema.prisma` como fonte única da verdade para o esquema.
+  - [x] Sub-tarefa: Executar `npx prisma db pull` para popular o esquema.
+  - [x] Sub-tarefa: Refatorar `appointmentService.ts` para usar Prisma Client e atualizar seus testes unitários.
 - [ ] **Tarefa 1.2:** Substituir o campo `JSONB` de exercícios por uma tabela de junção `protocol_exercises`.
-  - [ ] Sub-tarefa: Criar a nova tabela no banco de dados.
+  - [ ] Sub-tarefa: Criar a nova tabela no banco de dados. (Bloqueado: Problemas de conectividade com o banco de dados Supabase)
   - [ ] Sub-tarefa: Migrar os dados existentes do JSONB para a nova tabela.
   - [ ] Sub-tarefa: Refatorar a funcionalidade de prescrição de exercícios para usar a nova estrutura.
 - [ ] **Tarefa 1.3:** Padronizar a nomenclatura em todo o banco de dados (colunas e enums).

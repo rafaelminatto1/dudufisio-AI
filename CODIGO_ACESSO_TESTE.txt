@@ -1,0 +1,7 @@
+CÓDIGO DE ACESSO PARA TESTE
+
+Paciente: João da Silva
+Código: EYNFFQ
+Expira em: 06/12/2025
+
+Use este código em: http://localhost:5173/patient/login

@@ -9,7 +9,14 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('❌ Erro: Variáveis de ambiente não encontradas!');
+  console.error('VITE_SUPABASE_URL:', supabaseUrl ? '✅' : '❌');
+  console.error('VITE_SUPABASE_SERVICE_ROLE_KEY:', supabaseServiceKey ? '✅' : '❌');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -22,20 +29,19 @@ async function seedDemoData() {
     
     let { data: testPatient } = await supabase
       .from('patients')
-      .select('id, name')
+      .select('id, full_name')
       .eq('email', 'paciente.teste@moocafisio.com.br')
       .single();
     
     if (!testPatient) {
       console.log('   Criando paciente de teste...');
-      const { data: newPatient, error: patientError } = await supabase
+      const { data: newPatient, error: patientError} = await supabase
         .from('patients')
         .insert({
-          name: 'João da Silva',
+          full_name: 'João da Silva',
           email: 'paciente.teste@moocafisio.com.br',
           phone: '(11) 99999-9999',
-          date_of_birth: '1985-05-15',
-          status: 'Active',
+          birth_date: '1985-05-15',
         })
         .select()
         .single();
@@ -44,7 +50,7 @@ async function seedDemoData() {
       testPatient = newPatient;
     }
     
-    console.log(`   ✅ Paciente: ${testPatient.name} (${testPatient.id})\n`);
+    console.log(`   ✅ Paciente: ${testPatient.full_name} (${testPatient.id})\n`);
     
     // 2. Criar vídeos de exercícios de exemplo
     console.log('2. Criando vídeos de exercícios...');
@@ -164,7 +170,7 @@ async function seedDemoData() {
       const fs = await import('fs/promises');
       await fs.writeFile(
         'CODIGO_ACESSO_TESTE.txt',
-        `CÓDIGO DE ACESSO PARA TESTE\n\nPaciente: ${testPatient.name}\nCódigo: ${code}\nExpira em: ${new Date(codeResult[0].expires_at).toLocaleDateString('pt-BR')}\n\nUse este código em: http://localhost:5173/patient/login\n`
+        `CÓDIGO DE ACESSO PARA TESTE\n\nPaciente: ${testPatient.full_name}\nCódigo: ${code}\nExpira em: ${new Date(codeResult[0].expires_at).toLocaleDateString('pt-BR')}\n\nUse este código em: http://localhost:5173/patient/login\n`
       );
       console.log('   📄 Código salvo em: CODIGO_ACESSO_TESTE.txt\n');
     }

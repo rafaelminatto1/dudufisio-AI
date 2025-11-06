@@ -1,41 +1,49 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import React from 'react';
+import { cn } from '@/lib/utils';
 
-import { cn } from "@/lib/utils"
-
-const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
-        // Health variants - cores pastel
-        success: "border-green-200 bg-green-50 text-green-700 hover:bg-green-100",
-        warning: "border-yellow-200 bg-yellow-50 text-yellow-700 hover:bg-yellow-100",
-        info: "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100",
-        danger: "border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
-
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
-
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
-  )
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  /** Variante de cor do badge */
+  variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'outline';
+  /** Tamanho do badge */
+  size?: 'sm' | 'md' | 'lg';
+  /** Ícone opcional */
+  icon?: React.ReactNode;
 }
 
-export { Badge, badgeVariants }
+const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ className, variant = 'default', size = 'md', icon, children, ...props }, ref) => {
+    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-md transition-colors';
+    
+    const variantStyles = {
+      default: 'bg-primary-light text-primary border border-primary',
+      success: 'bg-success-light text-success border border-success',
+      warning: 'bg-warning-light text-warning border border-warning',
+      error: 'bg-error-light text-error border border-error',
+      info: 'bg-info-light text-info border border-info',
+      outline: 'bg-transparent text-neutral-text border-2 border-neutral-border',
+    };
+
+    const sizeStyles = {
+      sm: 'px-sm py-xs text-xs gap-xs',
+      md: 'px-md py-xs text-small gap-xs',
+      lg: 'px-md py-sm text-body gap-sm',
+    };
+
+    return (
+      <span
+        ref={ref}
+        className={cn(baseStyles, variantStyles[variant], sizeStyles[size], className)}
+        {...props}
+      >
+        {icon && <span className="inline-flex">{icon}</span>}
+        {children}
+      </span>
+    );
+  }
+);
+
+Badge.displayName = 'Badge';
+
+export { Badge };
+export default Badge;
+

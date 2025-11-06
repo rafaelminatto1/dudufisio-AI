@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-11-06T18:00:08.971Z",
+  "summary": {
+    "totalPages": 144,
+    "initialBatch": 19,
+    "lote1": 30,
+    "lote2": 45,
+    "lote3": 48,
+    "additionalPages": 2
+  },
+  "totalChanges": 701,
+  "changesByType": {
+    "Cores": 298,
+    "Espaçamento": 354,
+    "Shadows": 27,
+    "Border Radius": 22
+  },
+  "batches": {
+    "initial": {
+      "pages": 19,
+      "changes": 701,
+      "breakdown": {
+        "Cores": 298,
+        "Espaçamento": 354,
+        "Shadows": 27,
+        "Border Radius": 22
+      }
+    },
+    "lote1": {
+      "pages": 30,
+      "changes": 0,
+      "breakdown": {}
+    },
+    "lote2": {
+      "pages": 45,
+      "changes": 0,
+      "breakdown": {}
+    },
+    "lote3": {
+      "pages": 48,
+      "changes": 0,
+      "breakdown": {}
+    }
+  }
+}
