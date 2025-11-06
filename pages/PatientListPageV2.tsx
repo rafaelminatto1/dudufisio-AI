@@ -10,7 +10,6 @@ import { PatientCard } from '@/components/patients/PatientCard';
 import { PatientFilters } from '@/components/patients/PatientFilters';
 import { PatientBulkActions } from '@/components/patients/PatientBulkActions';
 import { SearchBar } from '@/components/common/SearchBar';
-import { H1, Body, Small } from '../src/components/ui/Typography';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -229,10 +228,10 @@ const PatientListPageV2Inner: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <H1>Pacientes</H1>
-          <Body className="text-neutral-textSecondary mt-sm">
+          <h1 className="text-3xl font-bold">Pacientes</h1>
+          <p className="text-neutral-textSecondary mt-sm">
             Gerencie seus pacientes e visualize informações detalhadas
-          </Body>
+          </p>
         </div>
         <Button onClick={() => toast.info('Criação de paciente em desenvolvimento')}>
           <Plus className="mr-sm h-4 w-4" />
