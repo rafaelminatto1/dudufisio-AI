@@ -107,13 +107,13 @@ async function handler(req: AuthenticatedRequest, res: VercelResponse) {
         completed: todayCompleted,
         completionDates: completionDates,
         totalCompletions: completionDates.length,
-        video: exercise.exercise_videos ? {
-          id: exercise.exercise_videos.id,
-          title: exercise.exercise_videos.title,
-          url: exercise.exercise_videos.video_url,
-          thumbnailUrl: exercise.exercise_videos.thumbnail_url,
-          type: exercise.exercise_videos.video_type,
-          duration: exercise.exercise_videos.duration,
+        video: (exercise.exercise_videos && Array.isArray(exercise.exercise_videos) && exercise.exercise_videos.length > 0) ? {
+          id: exercise.exercise_videos[0].id,
+          title: exercise.exercise_videos[0].title,
+          url: exercise.exercise_videos[0].video_url,
+          thumbnailUrl: exercise.exercise_videos[0].thumbnail_url,
+          type: exercise.exercise_videos[0].video_type,
+          duration: exercise.exercise_videos[0].duration,
         } : null,
       };
     }) || [];

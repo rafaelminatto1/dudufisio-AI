@@ -159,9 +159,9 @@ async function handler(req: AuthenticatedRequest, res: VercelResponse) {
         time: nextAppointment.start_time,
         endTime: nextAppointment.end_time,
         type: nextAppointment.type,
-        therapist: nextAppointment.users ? {
-          id: nextAppointment.users.id,
-          name: nextAppointment.users.name,
+        therapist: (nextAppointment.users && Array.isArray(nextAppointment.users) && nextAppointment.users.length > 0) ? {
+          id: nextAppointment.users[0].id,
+          name: nextAppointment.users[0].name,
         } : null,
       } : null,
     });
