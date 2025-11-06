@@ -264,11 +264,7 @@ export default defineConfig({
         return false;
       },
       
-      // ✅ Otimizações experimentais
-      experimentalMinChunkSize: 1000, // Chunks menores que 1KB são mesclados
       output: {
-        // ✅ Garantir ordem de carregamento dos chunks
-        experimentalMinChunkSize: 20000,
         // 🚀 Nomes de arquivo otimizados
         entryFileNames: 'assets/[name]-[hash:8].js',
         chunkFileNames: 'assets/[name]-[hash:8].js',
