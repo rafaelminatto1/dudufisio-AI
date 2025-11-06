@@ -35,9 +35,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://urfxniitfbbvsaskicfo.supabase.co">
 
-    <!-- Carrega a fonte principal de forma assíncrona para não bloquear a renderização -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    <!--
+      ✅ OTIMIZADO: Fontes com display=swap para evitar FOIT (Flash of Invisible Text)
+      - Preload apenas dos pesos mais usados (400, 600)
+      - Outros pesos carregam sob demanda
+      - font-display: swap para mostrar fallback imediatamente
+    -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"></noscript>
+
+    <!-- Fontes adicionais carregam lazy (500, 700, 800) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap" rel="stylesheet"></noscript>
 
     <!-- Import map removido - Vite gerencia as dependências -->
 </head>

@@ -233,3 +233,92 @@ export const listActiveAlerts = async (): Promise<SchedulingAlert[]> => {
   await delay(100);
   return db.getSchedulingAlerts().filter(alert => !alert.resolved);
 };
+
+/**
+ * Calcula o número de sessões restantes para um paciente
+ * Prioriza o valor manual (sessions_remaining) se existir,
+ * caso contrário, calcula automaticamente baseado em sessions_total
+ */
+export const calculateSessionsRemaining = async (
+  patientId: string,
+  appointmentType?: string
+): Promise<number | undefined> => {
+  try {
+    // Buscar todos os agendamentos do paciente
+    const appointments = await getAppointmentsByPatientId(patientId);
+    
+    if (!appointments || appointments.length === 0) {
+      return undefined;
+    }
+
+    // Se houver valor manual em algum agendamento, usar o mais recente
+    const appointmentsWithManualSessions = appointments
+      .filter(apt => apt.sessions_remaining !== undefined && apt.sessions_remaining !== null)
+      .sort((a, b) => b.startTime.getTime() - a.startTime.getTime());
+    
+    if (appointmentsWithManualSessions.length > 0) {
+      return appointmentsWithManualSessions[0].sessions_remaining;
+    }
+
+    // Calcular automaticamente baseado em sessions_total
+    const appointmentsWithTotal = appointments
+      .filter(apt => apt.sessions_total !== undefined && apt.sessions_total !== null);
+    
+    if (appointmentsWithTotal.length === 0) {
+      return undefined;
+    }
+
+    // Pegar o sessions_total mais recente
+    const latestWithTotal = appointmentsWithTotal
+      .sort((a, b) => b.startTime.getTime() - a.startTime.getTime())[0];
+    
+    const totalSessions = latestWithTotal.sessions_total || 0;
+
+    // Contar sessões realizadas (completed) do mesmo tipo
+    const completedSessions = appointments.filter(apt => {
+      const isCompleted = apt.status === 'completed';
+      const isSameType = appointmentType ? apt.type === appointmentType : true;
+      return isCompleted && isSameType;
+    }).length;
+
+    const remaining = Math.max(totalSessions - completedSessions, 0);
+    return remaining;
+  } catch (error) {
+    secureLogger.error('Erro ao calcular sessões restantes', error, {
+      component: 'appointmentService',
+      action: 'calculateSessionsRemaining',
+      patientId
+    });
+    return undefined;
+  }
+};
+
+/**
+ * Atualiza o número de sessões restantes em um agendamento específico
+ */
+export const updateSessionsRemaining = withSupabaseMutation(
+  async (appointmentId: string, sessionsRemaining: number): Promise<void> => {
+    if (isSupabaseEnabled()) {
+      // Atualizar no Supabase
+      const { error } = await supabase!
+        .from('appointments')
+        .update({ sessions_remaining: sessionsRemaining })
+        .eq('id', appointmentId);
+      
+      if (error) {
+        throw error;
+      }
+    } else {
+      // Atualizar no mock
+      const appointment = db.getAppointments().find(a => a.id === appointmentId);
+      if (appointment) {
+        appointment.sessions_remaining = sessionsRemaining;
+        eventService.emit('appointments:changed');
+      }
+    }
+  },
+  {
+    operation: 'updateSessionsRemaining',
+    fallbackMessage: 'Erro ao atualizar sessões restantes'
+  }
+);

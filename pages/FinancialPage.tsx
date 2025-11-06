@@ -34,7 +34,8 @@ import ChartContainer from '../components/ui/ChartContainer';
 import ResponsiveGrid from '../components/ui/ResponsiveGrid';
 import ResponsiveCard from '../components/ui/ResponsiveCard';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF', '#FF4560', '#775DD0'];
+// Monday.com inspired colors para gráficos
+const COLORS = ['#5034FF', '#00CA72', '#FDAB3D', '#FF6AC2', '#579BFC', '#A25DDC', '#E44258'];
 
 interface PaymentMethod {
   id: string;
@@ -317,30 +318,30 @@ const FinancialDashboardPage: React.FC = () => {
 
   const getSeverityColor = (severity: string): string => {
     switch (severity) {
-      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'critical': return 'bg-error-light text-error border-error';
+      case 'high': return 'bg-warning-light text-warning border-warning';
+      case 'medium': return 'bg-warning-light text-warning border-warning';
+      case 'low': return 'bg-success-light text-success border-success';
+      default: return 'bg-neutral-bgDark text-neutral-text border-neutral-border';
     }
   };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
-      case 'warning': return <AlertTriangle className="w-5 h-5 text-orange-500" />;
-      case 'error': return <AlertTriangle className="w-5 h-5 text-red-500" />;
-      case 'success': return <CheckCircle className="w-5 h-5 text-green-500" />;
-      case 'info': return <Bell className="w-5 h-5 text-blue-500" />;
-      default: return <Bell className="w-5 h-5 text-gray-500" />;
+      case 'warning': return <AlertTriangle className="w-5 h-5 text-warning" />;
+      case 'error': return <AlertTriangle className="w-5 h-5 text-error" />;
+      case 'success': return <CheckCircle className="w-5 h-5 text-success" />;
+      case 'info': return <Bell className="w-5 h-5 text-info" />;
+      default: return <Bell className="w-5 h-5 text-neutral-textSecondary" />;
     }
   };
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active': return 'bg-success-light text-success';
+      case 'pending': return 'bg-warning-light text-warning';
+      case 'cancelled': return 'bg-error-light text-error';
+      default: return 'bg-neutral-bgDark text-neutral-text';
     }
   };
 
@@ -406,18 +407,18 @@ const FinancialDashboardPage: React.FC = () => {
 
   return (
     <PermissionGuard permission="financial:read">
-      <div className="p-6 max-w-7xl mx-auto space-y-6">
+      <div className="p-lg max-w-7xl mx-auto space-y-xl">
         <div className="flex items-center justify-between">
           <PageHeader
             title="Gestão Financeira"
             subtitle="Dashboard financeiro completo com análises avançadas e gestão de pagamentos"
           />
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-md">
             <select
               value={period}
               onChange={(e) => setPeriod(e.target.value as TimePeriod)}
-              className="rounded-lg border-gray-300 bg-white shadow-sm focus:ring-sky-500 focus:border-sky-500"
+              className="rounded-lg border-neutral-border bg-white shadow-sm focus:ring-primary focus:border-primary h-12 px-md"
             >
               <option value="this_month">Este Mês</option>
               <option value="last_3_months">Últimos 3 Meses</option>
@@ -425,9 +426,9 @@ const FinancialDashboardPage: React.FC = () => {
             </select>
             <button
               onClick={() => handleOpenModal()}
-              className="flex items-center bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors"
+              className="flex items-center bg-primary hover:bg-primary-hover text-white font-medium py-md px-lg rounded-lg shadow-sm transition-colors"
             >
-              <PlusCircle className="w-4 h-4 mr-2" />
+              <PlusCircle className="w-4 h-4 mr-sm" />
               Nova Transação
             </button>
           </div>
@@ -443,24 +444,24 @@ const FinancialDashboardPage: React.FC = () => {
 
         {/* Financial Alerts */}
         {financialAlerts.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-sky-600" />
+          <div className="bg-white rounded-card shadow-card border border-neutral-border p-md">
+            <h3 className="text-body font-semibold text-neutral-text mb-md flex items-center gap-sm">
+              <Bell className="w-5 h-5 text-primary" />
               Alertas Financeiros
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-md">
               {financialAlerts.map((alert: any) => (
-                <div key={alert.id} className={`border rounded-lg p-3 ${getSeverityColor(alert.severity)}`}>
-                  <div className="flex items-start gap-3">
+                <div key={alert.id} className={`border rounded-lg p-md ${getSeverityColor(alert.severity)}`}>
+                  <div className="flex items-start gap-md">
                     {getAlertIcon(alert.type)}
                     <div className="flex-1">
-                      <h4 className="font-medium">{alert.title}</h4>
-                      <p className="text-sm mt-1">{alert.message}</p>
+                      <h4 className="font-medium text-small">{alert.title}</h4>
+                      <p className="text-small mt-xs">{alert.message}</p>
                       {alert.actionable && alert.action && (
-                        <p className="text-xs mt-2 font-medium">💡 {alert.action}</p>
+                        <p className="text-xs mt-sm font-medium">💡 {alert.action}</p>
                       )}
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-neutral-textTertiary">
                       {new Date(alert.timestamp).toLocaleDateString('pt-BR')}
                     </span>
                   </div>

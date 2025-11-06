@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { H1, Body } from '../src/components/ui/Typography';
 import { toast } from 'sonner';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { NotificationPermissionPrompt } from '@/components/notifications/NotificationPermissionPrompt';
@@ -138,31 +139,31 @@ const DashboardPageV2: React.FC = () => {
   if (!user) {
     return (
       <div className="flex h-96 items-center justify-center">
-        <p className="text-muted-foreground">Carregando...</p>
+        <Body className="text-neutral-textSecondary">Carregando...</Body>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {/* Push Notifications Prompt */}
       <NotificationPermissionPrompt />
 
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-md sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">
+          <H1>Dashboard</H1>
+          <Body className="text-neutral-textSecondary mt-sm">
             Visão geral da sua clínica de fisioterapia
-          </p>
+          </Body>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           {/* Layout Management */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                <Edit className="mr-2 h-4 w-4" />
+                <Edit className="mr-sm h-4 w-4" />
                 Layout
               </Button>
             </DropdownMenuTrigger>
@@ -173,11 +174,11 @@ const DashboardPageV2: React.FC = () => {
                 {layout.isEditMode ? 'Sair do Modo Edição' : 'Modo Edição'}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleSaveLayout}>
-                <Save className="mr-2 h-4 w-4" />
+                <Save className="mr-sm h-4 w-4" />
                 Salvar Layout
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleResetLayout}>
-                <RotateCcw className="mr-2 h-4 w-4" />
+                <RotateCcw className="mr-sm h-4 w-4" />
                 Restaurar Padrão
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -205,7 +206,7 @@ const DashboardPageV2: React.FC = () => {
               size="sm"
               onClick={() => toast.info('Adicionar widget em desenvolvimento')}
             >
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-sm h-4 w-4" />
               Adicionar Widget
             </Button>
           )}
@@ -214,9 +215,9 @@ const DashboardPageV2: React.FC = () => {
 
       {/* Edit Mode Indicator */}
       {layout.isEditMode && (
-        <Card className="border-primary bg-primary/5">
-          <div className="p-4">
-            <p className="text-sm font-medium">
+        <Card className="border-primary bg-primary-light shadow-card">
+          <div className="p-md">
+            <p className="text-small font-medium text-neutral-text">
               🎨 Modo de Edição Ativo - Arraste os widgets para reorganizar
             </p>
           </div>

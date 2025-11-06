@@ -373,6 +373,9 @@ export interface RecurrenceTemplate {
 
 export type ScheduleBlockType = 'ausencia' | 'reuniao' | 'personalizado';
 
+// Modo de visualização de cores na agenda
+export type ColorDisplayMode = 'therapist' | 'status' | 'hybrid';
+
 export interface Appointment {
   // === IDs ===
   id: string;
@@ -443,6 +446,10 @@ export interface Appointment {
   recurrenceTemplateId?: string;
   parent_appointment_id?: string; // FK para agendamento pai
   is_recurring?: boolean; // Flag de recorrência
+  
+  // === Sessões (Pacotes/Planos) ===
+  sessions_remaining?: number; // Sessões restantes no pacote
+  sessions_total?: number; // Total de sessões no pacote
   
   // === Procedimentos ===
   procedures_performed?: string[]; // NOVO

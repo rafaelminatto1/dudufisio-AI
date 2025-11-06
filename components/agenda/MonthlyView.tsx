@@ -23,6 +23,7 @@ interface MonthlyViewProps {
   onPrevMonth?: () => void;
   onNextMonth?: () => void;
   onAppointmentClick?: (appointment: EnrichedAppointment) => void;
+  colorMode?: import('../../types').ColorDisplayMode;
 }
 
 const MonthlyView: React.FC<MonthlyViewProps> = ({

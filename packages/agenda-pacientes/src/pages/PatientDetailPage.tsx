@@ -41,6 +41,8 @@ import { YBalanceChart } from '../components/charts/YBalanceChart';
 import { FunctionalityChart } from '../components/charts/FunctionalityChart';
 // Componente de relatórios
 import { ReportGeneratorDialog } from '../components/reports/ReportGeneratorDialog';
+// Componente de acesso do paciente
+import GeneratePatientAccessCode from '../components/GeneratePatientAccessCode';
 
 const PatientDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -452,6 +454,12 @@ const PatientDetailPage: React.FC = () => {
 
             {/* Histórico de Sessões */}
             <SessionHistory patientId={patient.id} />
+
+            {/* Código de Acesso do Paciente */}
+            <GeneratePatientAccessCode 
+              patientId={patient.id} 
+              patientName={patient.name}
+            />
 
             {/* Seção de Exercícios Atribuídos */}
             <ExerciseAssignmentSection patientId={patient.id} />

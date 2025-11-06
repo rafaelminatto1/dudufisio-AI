@@ -10,9 +10,7 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {
-      "actualWorkers": 1
-    },
+    "metadata": {},
     "preserveOutput": "always",
     "reporter": [
       [
@@ -42,9 +40,7 @@
         "outputDir": "C:/Users/rafal/cursor/dudufisio-ai/dudufisio-AI/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "chromium",
         "name": "chromium",
         "testDir": "C:/Users/rafal/cursor/dudufisio-ai/dudufisio-AI/testsprite_tests",
@@ -83,7 +79,7 @@
           "specs": [
             {
               "title": "TC005: Verificar presença do Card \"Assistente de IA\"",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -92,80 +88,18 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 34239,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8",
-                        "location": {
-                          "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                          "column": 8,
-                          "line": 23
-                        },
-                        "snippet": "  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 8,
-                            "line": 23
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 16,
-                            "line": 27
-                          },
-                          "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n  25 |     \n  26 |     // Aguardar página carregar\n> 27 |     await page.waitForLoadState('networkidle');\n     |                ^\n  28 |     \n  29 |     // Fazer login\n  30 |     await page.fill('input[type=\"email\"]', TEST_USER.email);\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:27:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-11-05T17:18:27.286Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-0e974-a-do-Card-Assistente-de-IA--chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-0e974-a-do-Card-Assistente-de-IA--chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-0e974-a-do-Card-Assistente-de-IA--chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                        "column": 8,
-                        "line": 23
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "28a6903c16d2a979b1d9-d76bb2986db76481e1e8",
               "file": "ai-features.spec.ts",
-              "line": 56,
+              "line": 75,
               "column": 3
             },
             {
               "title": "TC006: Verificar botões de IA no card",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -174,80 +108,18 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 1,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 30942,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8",
-                        "location": {
-                          "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                          "column": 8,
-                          "line": 23
-                        },
-                        "snippet": "  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 8,
-                            "line": 23
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 16,
-                            "line": 27
-                          },
-                          "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n  25 |     \n  26 |     // Aguardar página carregar\n> 27 |     await page.waitForLoadState('networkidle');\n     |                ^\n  28 |     \n  29 |     // Fazer login\n  30 |     await page.fill('input[type=\"email\"]', TEST_USER.email);\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:27:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-11-05T17:19:06.051Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-24c20-ificar-botões-de-IA-no-card-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-24c20-ificar-botões-de-IA-no-card-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-24c20-ificar-botões-de-IA-no-card-chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                        "column": 8,
-                        "line": 23
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "28a6903c16d2a979b1d9-81f02901f04584d1a77f",
               "file": "ai-features.spec.ts",
-              "line": 64,
+              "line": 83,
               "column": 3
             },
             {
               "title": "TC007: Testar fluxo de Estruturação SOAP",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -256,80 +128,18 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 2,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 33161,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8",
-                        "location": {
-                          "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                          "column": 8,
-                          "line": 23
-                        },
-                        "snippet": "  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 8,
-                            "line": 23
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 16,
-                            "line": 27
-                          },
-                          "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n  25 |     \n  26 |     // Aguardar página carregar\n> 27 |     await page.waitForLoadState('networkidle');\n     |                ^\n  28 |     \n  29 |     // Fazer login\n  30 |     await page.fill('input[type=\"email\"]', TEST_USER.email);\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:27:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-11-05T17:19:41.037Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-3c6a9--fluxo-de-Estruturação-SOAP-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-3c6a9--fluxo-de-Estruturação-SOAP-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-3c6a9--fluxo-de-Estruturação-SOAP-chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                        "column": 8,
-                        "line": 23
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "28a6903c16d2a979b1d9-51657ac8e8570a9b1eb9",
               "file": "ai-features.spec.ts",
-              "line": 86,
+              "line": 105,
               "column": 3
             },
             {
               "title": "TC008: Testar abertura do diálogo de Sugestão de Exercícios",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -338,80 +148,18 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 35074,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8",
-                        "location": {
-                          "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                          "column": 8,
-                          "line": 23
-                        },
-                        "snippet": "  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 8,
-                            "line": 23
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 16,
-                            "line": 27
-                          },
-                          "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n  25 |     \n  26 |     // Aguardar página carregar\n> 27 |     await page.waitForLoadState('networkidle');\n     |                ^\n  28 |     \n  29 |     // Fazer login\n  30 |     await page.fill('input[type=\"email\"]', TEST_USER.email);\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:27:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-11-05T17:20:19.024Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-898e7-o-de-Sugestão-de-Exercícios-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-898e7-o-de-Sugestão-de-Exercícios-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-898e7-o-de-Sugestão-de-Exercícios-chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                        "column": 8,
-                        "line": 23
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "28a6903c16d2a979b1d9-cd61aaa145b580c8b2a0",
               "file": "ai-features.spec.ts",
-              "line": 131,
+              "line": 150,
               "column": 3
             },
             {
               "title": "TC009: Verificar presença de elementos de gravação de áudio",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -420,80 +168,18 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 34097,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8",
-                        "location": {
-                          "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                          "column": 8,
-                          "line": 23
-                        },
-                        "snippet": "  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 8,
-                            "line": 23
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 16,
-                            "line": 27
-                          },
-                          "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n  25 |     \n  26 |     // Aguardar página carregar\n> 27 |     await page.waitForLoadState('networkidle');\n     |                ^\n  28 |     \n  29 |     // Fazer login\n  30 |     await page.fill('input[type=\"email\"]', TEST_USER.email);\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:27:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-11-05T17:20:58.097Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-eead0-mentos-de-gravação-de-áudio-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-eead0-mentos-de-gravação-de-áudio-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-eead0-mentos-de-gravação-de-áudio-chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                        "column": 8,
-                        "line": 23
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "28a6903c16d2a979b1d9-bcb7e2b5ad2eed552a67",
               "file": "ai-features.spec.ts",
-              "line": 163,
+              "line": 182,
               "column": 3
             },
             {
               "title": "TC010: Verificar configuração da API Key do Gemini",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -502,75 +188,13 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 5,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 31736,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8",
-                        "location": {
-                          "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                          "column": 8,
-                          "line": 23
-                        },
-                        "snippet": "  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 8,
-                            "line": 23
-                          },
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n  21 |   \n  22 |   // Antes de cada teste: fazer login e navegar para o editor de evolução\n> 23 |   test.beforeEach(async ({ page }) => {\n     |        ^\n  24 |     await page.goto(BASE_URL);\n  25 |     \n  26 |     // Aguardar página carregar\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:23:8"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 16,
-                            "line": 27
-                          },
-                          "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n  25 |     \n  26 |     // Aguardar página carregar\n> 27 |     await page.waitForLoadState('networkidle');\n     |                ^\n  28 |     \n  29 |     // Fazer login\n  30 |     await page.fill('input[type=\"email\"]', TEST_USER.email);\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:27:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-11-05T17:21:38.612Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-e9199-uração-da-API-Key-do-Gemini-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-e9199-uração-da-API-Key-do-Gemini-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Funcionalidade-e9199-uração-da-API-Key-do-Gemini-chromium\\error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                        "column": 8,
-                        "line": 23
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "28a6903c16d2a979b1d9-11f7852d33e4ad6182a4",
               "file": "ai-features.spec.ts",
-              "line": 187,
+              "line": 206,
               "column": 3
             }
           ]
@@ -578,12 +202,12 @@
         {
           "title": "Resumo de Progresso com IA",
           "file": "ai-features.spec.ts",
-          "line": 216,
+          "line": 235,
           "column": 6,
           "specs": [
             {
               "title": "TC011: Navegar para página de Resumo de Progresso",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -592,59 +216,13 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 6,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 31171,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                      },
-                      "errors": [
-                        {
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts",
-                            "column": 16,
-                            "line": 220
-                          },
-                          "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n  218 |   test('TC011: Navegar para página de Resumo de Progresso', async ({ page }) => {\n  219 |     await page.goto(BASE_URL);\n> 220 |     await page.waitForLoadState('networkidle');\n      |                ^\n  221 |     \n  222 |     // Login\n  223 |     await page.fill('input[type=\"email\"]', TEST_USER.email);\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\ai-features.spec.ts:220:16"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-11-05T17:22:12.087Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Resumo-de-Prog-ba343-gina-de-Resumo-de-Progresso-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Resumo-de-Prog-ba343-gina-de-Resumo-de-Progresso-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\ai-features-Resumo-de-Prog-ba343-gina-de-Resumo-de-Progresso-chromium\\error-context.md"
-                        }
-                      ]
-                    }
-                  ],
-                  "status": "unexpected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "28a6903c16d2a979b1d9-85d9ef2579c2f3c56d4e",
               "file": "ai-features.spec.ts",
-              "line": 218,
+              "line": 237,
               "column": 3
             }
           ]
@@ -652,7 +230,7 @@
         {
           "title": "Relatório de Testes de IA",
           "file": "ai-features.spec.ts",
-          "line": 264,
+          "line": 288,
           "column": 6,
           "specs": [
             {
@@ -666,64 +244,258 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 7,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 617,
-                      "errors": [],
-                      "stdout": [
-                        {
-                          "text": "\n========================================\n"
-                        },
-                        {
-                          "text": "📊 RELATÓRIO FINAL - TESTES DE IA\n"
-                        },
-                        {
-                          "text": "========================================\n\n"
-                        },
-                        {
-                          "text": "Funcionalidades testadas:\n"
-                        },
-                        {
-                          "text": "1. ✅ Card \"Assistente de IA\"\n"
-                        },
-                        {
-                          "text": "2. ✅ Botões de IA (Áudio, SOAP, Exercícios)\n"
-                        },
-                        {
-                          "text": "3. ✅ Estruturação SOAP\n"
-                        },
-                        {
-                          "text": "4. ✅ Diálogo de Sugestão de Exercícios\n"
-                        },
-                        {
-                          "text": "5. ✅ Componente de Gravação de Áudio\n"
-                        },
-                        {
-                          "text": "6. ✅ Configuração da API Key\n"
-                        },
-                        {
-                          "text": "7. ⚠️  Página de Resumo de Progresso (rota pode variar)\n"
-                        },
-                        {
-                          "text": "\n========================================\n\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-11-05T17:22:46.590Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "28a6903c16d2a979b1d9-df9b8e33c4719779054f",
               "file": "ai-features.spec.ts",
-              "line": 266,
+              "line": 290,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "evolution-advanced-features.spec.ts",
+      "file": "evolution-advanced-features.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Funcionalidades Avançadas de Evolução",
+          "file": "evolution-advanced-features.spec.ts",
+          "line": 22,
+          "column": 6,
+          "specs": [
+            {
+              "title": "1. Timer de Sessão - Deve iniciar automaticamente",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-aa9dcd3522ee7f1a2236",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 52,
+              "column": 3
+            },
+            {
+              "title": "2. Sessão Anterior - Deve exibir dados da última sessão",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-eddde3f81e465eee1f88",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 68,
+              "column": 3
+            },
+            {
+              "title": "3. Exercícios - Tab deve existir e permitir adicionar exercícios",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-5ba9302888b60b44ac9b",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 88,
+              "column": 3
+            },
+            {
+              "title": "4. Upload de Fotos - Deve permitir upload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-0ba0625af8cfc9ecb4af",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 116,
+              "column": 3
+            },
+            {
+              "title": "5. Templates - Botão deve abrir modal de templates",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-2c8000d472a1ee20ed99",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 138,
+              "column": 3
+            },
+            {
+              "title": "6. Salvar como Template - Deve permitir salvar evolução atual como template",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-692dca88315b237569fd",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 176,
+              "column": 3
+            },
+            {
+              "title": "7. Exportar PDF - Botão deve existir",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-436c73ebd090cabe4c71",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 217,
+              "column": 3
+            },
+            {
+              "title": "8. Integração Completa - Todos componentes carregados sem erros",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-e5d29620b05d3d074939",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 243,
+              "column": 3
+            },
+            {
+              "title": "9. Layout Responsivo - Sidebar deve estar visível",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-bb34be876fa605899c4e",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 271,
+              "column": 3
+            },
+            {
+              "title": "10. Formulário SOAP - Todos campos principais devem existir",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-930267b6a83bf68ad193",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 286,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Testes de Performance",
+          "file": "evolution-advanced-features.spec.ts",
+          "line": 309,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Página de evolução deve carregar em menos de 5 segundos",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5874c7d9e4d951ae1345-0ee3b3278e7b1e625c50",
+              "file": "evolution-advanced-features.spec.ts",
+              "line": 310,
               "column": 3
             }
           ]
@@ -733,11 +505,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-11-05T17:18:18.389Z",
-    "duration": 269923.713,
-    "expected": 1,
-    "skipped": 0,
-    "unexpected": 7,
+    "startTime": "2025-11-06T03:25:37.926Z",
+    "duration": 448.92499999999995,
+    "expected": 0,
+    "skipped": 19,
+    "unexpected": 0,
     "flaky": 0
   }
 }

@@ -35,7 +35,10 @@
       "Bash(Get-Content package.json)",
       "Bash(Select-String -Pattern '\"\"\"\"(react|chart|pdf|video|image|icon|lucide|framer|recharts|firebase|supabase|google)' -Context 0,0)",
       "Bash(Select-Object -First 30)",
-      "Bash(timeout 180 npm run build:*)"
+      "Bash(timeout 180 npm run build:*)",
+      "Bash(find:*)",
+      "Bash(npm run preview:*)",
+      "Bash(npm run start)"
     ],
     "deny": [],
     "ask": []

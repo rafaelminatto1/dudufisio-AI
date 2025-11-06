@@ -1,7 +1,8 @@
-import { EnrichedAppointment, Therapist } from '../types';
+import { EnrichedAppointment, Therapist, AppointmentStatus } from '../types';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { formatCurrencyBR } from '../lib/format';
+import * as XLSX from 'xlsx';
 
 export interface ExportProgress {
   progress: number;
@@ -179,6 +180,91 @@ class AgendaExportService {
       filename || `agenda_excel_${format(new Date(), 'yyyy-MM-dd')}.csv`,
       'text/csv;charset=utf-8;'
     );
+  }
+
+  /**
+   * Exporta agenda para Excel nativo (.xlsx) usando biblioteca xlsx
+   */
+  exportToExcelXLSX(
+    appointments: EnrichedAppointment[],
+    therapists: Therapist[],
+    filename?: string
+  ): void {
+    // Mapeamento de labels de status
+    const statusLabels: Record<AppointmentStatus, string> = {
+      [AppointmentStatus.Scheduled]: 'Agendado',
+      [AppointmentStatus.Confirmed]: 'Confirmado',
+      [AppointmentStatus.Completed]: 'Realizado',
+      [AppointmentStatus.Canceled]: 'Cancelado',
+      [AppointmentStatus.NoShow]: 'Faltou',
+      [AppointmentStatus.InProgress]: 'Em Andamento',
+      [AppointmentStatus.Rescheduled]: 'Reagendado'
+    };
+
+    // Preparar dados para exportação
+    const data = appointments.map(apt => {
+      const therapist = therapists.find(t => t.id === apt.therapistId);
+      const duration = Math.round((apt.endTime.getTime() - apt.startTime.getTime()) / 60000);
+      
+      return {
+        'Data': format(apt.startTime, 'dd/MM/yyyy'),
+        'Dia da Semana': format(apt.startTime, 'EEEE', { locale: ptBR }),
+        'Horário Início': format(apt.startTime, 'HH:mm'),
+        'Horário Fim': format(apt.endTime, 'HH:mm'),
+        'Duração (min)': duration,
+        'Paciente': apt.patientName,
+        'Telefone': apt.patientPhone || '-',
+        'Terapeuta': apt.therapistName || '-',
+        'Especialização': therapist?.specialization || '-',
+        'Tipo de Consulta': apt.type,
+        'Status': statusLabels[apt.status] || apt.status,
+        'Valor': formatCurrencyBR(apt.value || 0),
+        'Status Pagamento': apt.paymentStatus === 'paid' ? 'Pago' : 'Pendente',
+        'Sessão': apt.sessionNumber && apt.totalSessions ? `${apt.sessionNumber}/${apt.totalSessions}` : '-',
+        'Sessões Restantes': apt.sessions_remaining !== undefined ? apt.sessions_remaining : '-',
+        'Observações': apt.notes || apt.observations || '-'
+      };
+    });
+
+    // Criar worksheet
+    const ws = XLSX.utils.json_to_sheet(data);
+    
+    // Configurar largura das colunas para melhor visualização
+    const colWidths = [
+      { wch: 12 },  // Data
+      { wch: 15 },  // Dia da Semana
+      { wch: 12 },  // Horário Início
+      { wch: 12 },  // Horário Fim
+      { wch: 12 },  // Duração
+      { wch: 30 },  // Paciente
+      { wch: 15 },  // Telefone
+      { wch: 25 },  // Terapeuta
+      { wch: 20 },  // Especialização
+      { wch: 20 },  // Tipo
+      { wch: 12 },  // Status
+      { wch: 12 },  // Valor
+      { wch: 15 },  // Pagamento
+      { wch: 10 },  // Sessão
+      { wch: 12 },  // Sessões Restantes
+      { wch: 40 }   // Observações
+    ];
+    ws['!cols'] = colWidths;
+
+    // Criar workbook e adicionar worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Agenda');
+
+    // Adicionar metadados ao workbook
+    wb.Props = {
+      Title: 'Agenda MoocaFisio',
+      Subject: 'Exportação de Agendamentos',
+      Author: 'MoocaFisio',
+      CreatedDate: new Date()
+    };
+
+    // Fazer download do arquivo
+    const fileName = filename || `agenda_${format(new Date(), 'yyyy-MM-dd')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
   }
 
   /**

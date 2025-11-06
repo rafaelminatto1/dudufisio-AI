@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { H1, H4, Body, Small } from '../src/components/ui/Typography';
 import { clinicalContentService } from '../services/clinicalContentService';
 import type { ClinicalProtocol } from '../types/clinicalContent';
 import { supabasePatientService } from '../services/supabase/patientServiceSupabase';
@@ -182,12 +183,12 @@ const PatientDetailPage: React.FC = () => {
   // Loading state
   if (patientLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-              <p className="text-slate-600">Carregando dados do paciente...</p>
+      <div className="min-h-screen bg-neutral-bgAlt py-4xl">
+        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl">
+          <div className="flex items-center justify-center py-5xl">
+            <div className="text-center space-y-md">
+              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <Body className="text-neutral-textSecondary">Carregando dados do paciente...</Body>
             </div>
           </div>
         </div>
@@ -198,14 +199,14 @@ const PatientDetailPage: React.FC = () => {
   // Error state
   if (patientError) {
     return (
-      <div className="min-h-screen bg-slate-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center space-y-4">
-              <div className="text-red-600 font-semibold mb-2">
+      <div className="min-h-screen bg-neutral-bgAlt py-4xl">
+        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl">
+          <div className="flex items-center justify-center py-5xl">
+            <div className="text-center space-y-md">
+              <div className="text-error font-semibold mb-sm">
                 ⚠️ {patientError}
               </div>
-              <div className="flex gap-3 justify-center">
+              <div className="flex gap-md justify-center">
                 <Button 
                   onClick={() => {
                     setPatientError(null);
@@ -233,11 +234,11 @@ const PatientDetailPage: React.FC = () => {
   // No patient data
   if (!patient) {
     return (
-      <div className="min-h-screen bg-slate-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center space-y-4">
-              <p className="text-slate-600">Paciente não encontrado</p>
+      <div className="min-h-screen bg-neutral-bgAlt py-4xl">
+        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl">
+          <div className="flex items-center justify-center py-5xl">
+            <div className="text-center space-y-md">
+              <Body className="text-neutral-textSecondary">Paciente não encontrado</Body>
               <Button 
                 onClick={() => navigate('/patients')}
                 variant="outline"
@@ -252,31 +253,31 @@ const PatientDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-neutral-bgAlt py-4xl">
+      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-md mb-3xl">
           <Button variant="outline" size="sm" onClick={() => navigate('/patients')}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4 mr-sm" />
             Voltar
           </Button>
           <div className="flex-1">
-            <h1 className="text-4xl font-bold text-slate-900 mb-2">
+            <H1 className="mb-sm">
               {patient.name}
-            </h1>
-            <div className="flex items-center gap-4">
+            </H1>
+            <div className="flex items-center gap-md">
               <Badge variant="default">{patient.status}</Badge>
-              <span className="text-slate-600">{calculateAge(patient.birthDate)} anos</span>
-              <span className="text-slate-600">ID: {patient.id.slice(0, 8)}...</span>
+              <Small className="text-neutral-textSecondary">{calculateAge(patient.birthDate)} anos</Small>
+              <Small className="text-neutral-textSecondary">ID: {patient.id.slice(0, 8)}...</Small>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-sm">
             <Button variant="outline">
-              <Calendar className="w-4 h-4 mr-2" />
+              <Calendar className="w-4 h-4 mr-sm" />
               Nova Consulta
             </Button>
             <Button onClick={() => setShowEditModal(true)}>
-              <Edit className="w-4 h-4 mr-2" />
+              <Edit className="w-4 h-4 mr-sm" />
               Editar
             </Button>
             <Button variant="destructive" onClick={() => setShowDeleteModal(true)}>
@@ -286,47 +287,47 @@ const PatientDetailPage: React.FC = () => {
         </div>
 
         {/* Alertas do Paciente */}
-        <div className="mb-6">
+        <div className="mb-xl">
           <PatientAlerts 
             patientId={patient.id}
             currentSessionNumber={patient.totalSessions}
           />
-                        </div>
+        </div>
 
         {/* Informações Básicas */}
-        <Card className="mb-6">
+        <Card className="mb-xl">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-sm">
               <User className="w-5 h-5" />
               Informações Pessoais
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Mail className="w-4 h-4 text-slate-400" />
-                  <span className="font-medium">Email:</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-xl">
+              <div className="space-y-sm">
+                <div className="flex items-center gap-sm text-small">
+                  <Mail className="w-4 h-4 text-neutral-textTertiary" />
+                  <span className="font-medium text-neutral-text">Email:</span>
                 </div>
-                <p className="text-slate-600">{patient.email || 'Não informado'}</p>
+                <Body className="text-neutral-textSecondary">{patient.email || 'Não informado'}</Body>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="w-4 h-4 text-slate-400" />
-                  <span className="font-medium">Telefone:</span>
+              <div className="space-y-sm">
+                <div className="flex items-center gap-sm text-small">
+                  <Phone className="w-4 h-4 text-neutral-textTertiary" />
+                  <span className="font-medium text-neutral-text">Telefone:</span>
                 </div>
-                <p className="text-slate-600">{patient.phone || 'Não informado'}</p>
+                <Body className="text-neutral-textSecondary">{patient.phone || 'Não informado'}</Body>
               </div>
               
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="w-4 h-4 text-slate-400" />
-                  <span className="font-medium">Data de Nascimento:</span>
+              <div className="space-y-sm">
+                <div className="flex items-center gap-sm text-small">
+                  <Calendar className="w-4 h-4 text-neutral-textTertiary" />
+                  <span className="font-medium text-neutral-text">Data de Nascimento:</span>
                 </div>
-                <p className="text-slate-600">
+                <Body className="text-neutral-textSecondary">
                   {patient.birthDate ? new Date(patient.birthDate).toLocaleDateString('pt-BR') : 'Não informado'}
-                </p>
+                </Body>
               </div>
             </div>
           </CardContent>

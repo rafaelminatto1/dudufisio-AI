@@ -14,8 +14,8 @@ import {
 } from '../ui/dropdown-menu';
 import Tooltip from '../ui/tooltip';
 import { cn } from '../../lib/utils';
-import { EnrichedAppointment, AppointmentStatus } from '../../types';
-import { Clock, AlertCircle, User, Edit, Check, MoreVertical, Trash, Copy } from 'lucide-react';
+import { EnrichedAppointment, AppointmentStatus, ColorDisplayMode } from '../../types';
+import { Clock, AlertCircle, User, Edit, Check, MoreVertical, Trash, Copy, CheckCircle, XCircle, Ban } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import EditingIndicator from './EditingIndicator';
 
@@ -36,6 +36,7 @@ interface OptimizedAppointmentCardProps {
   onDuplicate?: (appointment: EnrichedAppointment) => void;
   editingUser?: { id: string; name: string; avatar?: string };
   allAppointments?: EnrichedAppointment[]; // Para calcular espaço disponível
+  colorMode?: ColorDisplayMode; // Modo de visualização de cores
 }
 
 // Cores sólidas e opacas para os terapeutas
@@ -57,6 +58,80 @@ const THERAPIST_COLORS = {
   }
 };
 
+// Cores por status (para modo híbrido e status)
+const STATUS_COLORS = {
+  [AppointmentStatus.Scheduled]: {
+    bg: '#EFF6FF', // blue-50
+    text: '#1E40AF', // blue-800
+    border: '#3B82F6', // blue-500
+    icon: Clock,
+    label: 'Agendado'
+  },
+  [AppointmentStatus.Confirmed]: {
+    bg: '#DCFCE7', // green-100
+    text: '#166534', // green-800
+    border: '#22C55E', // green-500
+    icon: CheckCircle,
+    label: 'Confirmado'
+  },
+  [AppointmentStatus.Completed]: {
+    bg: '#F3F4F6', // gray-100
+    text: '#374151', // gray-700
+    border: '#9CA3AF', // gray-400
+    icon: CheckCircle,
+    label: 'Realizado'
+  },
+  [AppointmentStatus.Canceled]: {
+    bg: '#FEE2E2', // red-100
+    text: '#991B1B', // red-800
+    border: '#EF4444', // red-500
+    icon: XCircle,
+    label: 'Cancelado'
+  },
+  [AppointmentStatus.NoShow]: {
+    bg: '#FFF7ED', // orange-50
+    text: '#9A3412', // orange-800
+    border: '#F97316', // orange-500
+    icon: Ban,
+    label: 'Faltou'
+  }
+};
+
+// Função para obter cores baseadas no modo de visualização
+const getCardColors = (
+  status: AppointmentStatus,
+  therapistIndex: number,
+  mode: ColorDisplayMode = 'hybrid'
+) => {
+  const therapistColor = THERAPIST_COLORS[`therapist-${(therapistIndex % 3) + 1}` as keyof typeof THERAPIST_COLORS];
+  const statusColor = STATUS_COLORS[status] || STATUS_COLORS[AppointmentStatus.Scheduled];
+  
+  switch (mode) {
+    case 'therapist':
+      // Apenas cores do terapeuta
+      return {
+        bg: therapistColor.light,
+        border: therapistColor.border,
+        text: '#1F2937' // gray-800
+      };
+    case 'status':
+      // Apenas cores do status
+      return {
+        bg: statusColor.bg,
+        border: statusColor.border,
+        text: statusColor.text
+      };
+    case 'hybrid':
+    default:
+      // Híbrido: borda do terapeuta + fundo do status
+      return {
+        bg: statusColor.bg,
+        border: therapistColor.border,
+        text: statusColor.text
+      };
+  }
+};
+
 export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> = ({
   appointment,
   startHour,
@@ -74,6 +149,7 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
   onDuplicate,
   editingUser,
   allAppointments = [],
+  colorMode = 'hybrid',
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const top = ((appointment.startTime.getHours() - startHour) * 60 + appointment.startTime.getMinutes()) * pixelsPerMinute;
@@ -105,8 +181,10 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
   // Usar o menor valor entre altura ideal e altura máxima (mínimo 24px)
   const height = Math.max(Math.min(idealHeight, maxHeight), 24);
 
-  // Cores sólidas baseadas no terapeuta
-  const therapistColor = THERAPIST_COLORS[`therapist-${(therapistIndex % 3) + 1}` as keyof typeof THERAPIST_COLORS];
+  // Obter cores baseadas no modo de visualização
+  const cardColors = getCardColors(appointment.status, therapistIndex, colorMode);
+  const statusInfo = STATUS_COLORS[appointment.status] || STATUS_COLORS[AppointmentStatus.Scheduled];
+  const StatusIcon = statusInfo.icon;
   
   // Verificar se é primeira consulta ou retorno
   const isFirstAppointment = allAppointments.filter(app => 
@@ -183,11 +261,10 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
           zIndex: isHovered ? 20 : 10,
           minWidth: '90px',
           maxHeight: `${height}px`,
-          borderLeftColor: therapistColor.border,
+          borderLeftColor: cardColors.border,
           borderLeftWidth: '4px',
-          backgroundColor: appointment.status === AppointmentStatus.Completed ? '#F0FDF4' : 
-                          appointment.status === AppointmentStatus.Canceled ? '#F9FAFB' :
-                          appointment.status === AppointmentStatus.NoShow ? '#FFF7ED' : '#FFFFFF',
+          backgroundColor: cardColors.bg,
+          color: cardColors.text,
           opacity: isBeingDragged ? 0.5 : 1,
           padding: '2px 4px', // Mais padding horizontal
           boxSizing: 'border-box'
@@ -333,6 +410,17 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
               </div>
             </Tooltip>
             <div className="flex items-center gap-1 flex-shrink-0 flex-wrap">
+              {/* Badge de Sessões Restantes */}
+              {appointment.sessions_remaining !== undefined && appointment.sessions_remaining !== null && (
+                <Tooltip content={`${appointment.sessions_remaining} sessão(ões) restante(s) no pacote`}>
+                  <Badge 
+                    className="bg-white/90 text-slate-700 text-[9px] px-1.5 py-0 h-4 leading-none font-bold border border-slate-300 shadow-sm"
+                    style={{ minWidth: '16px' }}
+                  >
+                    {appointment.sessions_remaining}
+                  </Badge>
+                </Tooltip>
+              )}
               {/* Badge de Novo apenas para primeira consulta */}
               {isFirstAppointment && height > 35 && (
                 <Badge className="bg-blue-500 text-white text-[8px] px-1 py-0 h-4 leading-none">

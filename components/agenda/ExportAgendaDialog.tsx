@@ -75,6 +75,15 @@ const ExportAgendaDialog: React.FC<ExportAgendaDialogProps> = ({
     }
   };
 
+  const handleExportExcelXLSX = () => {
+    setExporting(true);
+    try {
+      agendaExportService.exportToExcelXLSX(appointments, therapists);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const handleExportJSON = () => {
     setExporting(true);
     try {
@@ -97,6 +106,14 @@ const ExportAgendaDialog: React.FC<ExportAgendaDialogProps> = ({
   };
 
   const exportOptions = [
+    {
+      title: 'Excel (.xlsx)',
+      description: 'Planilha Excel nativa com formatação completa',
+      icon: FileSpreadsheet,
+      color: 'text-emerald-600 bg-emerald-50',
+      action: handleExportExcelXLSX,
+      format: '.xlsx'
+    },
     {
       title: 'Excel (CSV)',
       description: 'Arquivo compatível com Excel e Google Sheets',

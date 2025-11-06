@@ -12,6 +12,7 @@ export default defineConfig({
         agendaPacientes: 'http://localhost:5174/assets/remoteEntry.js',
         tratamentos: 'http://localhost:5175/assets/remoteEntry.js',
         financeiro: 'http://localhost:5176/assets/remoteEntry.js',
+        patientPortal: 'http://localhost:5177/assets/remoteEntry.js',
       },
       shared: {
         react: {

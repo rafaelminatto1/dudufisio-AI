@@ -10,6 +10,7 @@ import { PatientCard } from '@/components/patients/PatientCard';
 import { PatientFilters } from '@/components/patients/PatientFilters';
 import { PatientBulkActions } from '@/components/patients/PatientBulkActions';
 import { SearchBar } from '@/components/common/SearchBar';
+import { H1, Body, Small } from '../src/components/ui/Typography';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -224,59 +225,59 @@ const PatientListPageV2Inner: React.FC = () => {
   }, [filteredPatients]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Pacientes</h1>
-          <p className="text-muted-foreground">
+          <H1>Pacientes</H1>
+          <Body className="text-neutral-textSecondary mt-sm">
             Gerencie seus pacientes e visualize informações detalhadas
-          </p>
+          </Body>
         </div>
         <Button onClick={() => toast.info('Criação de paciente em desenvolvimento')}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-sm h-4 w-4" />
           Novo Paciente
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-md md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <div className="p-6">
+          <div className="p-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total</p>
-                <p className="text-2xl font-bold">{stats.total}</p>
+                <Small className="text-neutral-textSecondary font-medium">Total</Small>
+                <p className="text-h2 font-bold text-neutral-text mt-sm">{stats.total}</p>
               </div>
             </div>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
+          <div className="p-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Ativos</p>
-                <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                <Small className="text-neutral-textSecondary font-medium">Ativos</Small>
+                <p className="text-h2 font-bold text-success mt-sm">{stats.active}</p>
               </div>
             </div>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
+          <div className="p-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Inativos</p>
-                <p className="text-2xl font-bold text-gray-600">{stats.inactive}</p>
+                <Small className="text-neutral-textSecondary font-medium">Inativos</Small>
+                <p className="text-h2 font-bold text-neutral-textSecondary mt-sm">{stats.inactive}</p>
               </div>
             </div>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
+          <div className="p-lg">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Com Alertas</p>
-                <p className="text-2xl font-bold text-red-600">{stats.alerts}</p>
+                <Small className="text-neutral-textSecondary font-medium">Com Alertas</Small>
+                <p className="text-h2 font-bold text-error mt-sm">{stats.alerts}</p>
               </div>
             </div>
           </div>
@@ -284,8 +285,8 @@ const PatientListPageV2Inner: React.FC = () => {
       </div>
 
       {/* Filters and Actions */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 gap-2">
+      <div className="flex flex-col gap-md sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 gap-sm">
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
@@ -299,19 +300,19 @@ const PatientListPageV2Inner: React.FC = () => {
             activeFiltersCount={activeFiltersCount}
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="mr-sm h-4 w-4" />
             Exportar
           </Button>
           <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="table">
-                <List className="mr-2 h-4 w-4" />
+                <List className="mr-sm h-4 w-4" />
                 Tabela
               </TabsTrigger>
               <TabsTrigger value="grid">
-                <Grid3x3 className="mr-2 h-4 w-4" />
+                <Grid3x3 className="mr-sm h-4 w-4" />
                 Grid
               </TabsTrigger>
             </TabsList>
@@ -343,7 +344,7 @@ const PatientListPageV2Inner: React.FC = () => {
           onSchedule={handleScheduleAppointment}
         />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-md sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredPatients.map((patient) => (
             <PatientCard
               key={patient.id}

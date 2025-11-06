@@ -13,6 +13,8 @@ import {
 } from '../ui/dropdown-menu';
 import { cn } from '../../lib/utils';
 import ThemeSwitcher from '../ui/ThemeSwitcher';
+import ColorModeToggle from './ColorModeToggle';
+import { ColorDisplayMode } from '../../types';
 
 interface AgendaToolbarProps {
   onNewAppointment?: () => void;
@@ -28,6 +30,8 @@ interface AgendaToolbarProps {
   className?: string;
   onExport?: () => void;
   onCompareTherapists?: () => void;
+  colorMode?: ColorDisplayMode;
+  onColorModeChange?: (mode: ColorDisplayMode) => void;
 }
 
 const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
@@ -43,7 +47,9 @@ const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
   showFilters = false,
   className,
   onExport,
-  onCompareTherapists
+  onCompareTherapists,
+  colorMode,
+  onColorModeChange
 }) => {
   return (
     <div className={cn("bg-white border-b border-fisio-neutral-200 p-4 space-y-3 shadow-sm", className)}>
@@ -113,6 +119,13 @@ const AgendaToolbar: React.FC<AgendaToolbarProps> = ({
               <Filter className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Filtros</span>
             </Button>
+
+            {onColorModeChange && (
+              <ColorModeToggle 
+                value={colorMode}
+                onChange={onColorModeChange}
+              />
+            )}
 
             {onManageBlocks && (
               <Button

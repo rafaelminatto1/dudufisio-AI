@@ -26,6 +26,7 @@ interface DailyViewProps {
   onDrop: (e: React.DragEvent<HTMLDivElement>, date: Date, therapistId: string) => void;
   draggedAppointmentId: string | null;
   onRightClick?: (appointment: EnrichedAppointment, e: React.MouseEvent) => void;
+  colorMode?: import('../../types').ColorDisplayMode;
 }
 
 const START_HOUR = 7;
@@ -83,7 +84,8 @@ const DailyView: React.FC<DailyViewProps> = ({
   onDragOver,
   onDrop,
   draggedAppointmentId,
-  onRightClick
+  onRightClick,
+  colorMode = 'hybrid'
 }) => {
   const dayAppointments = appointments.filter(app => isSameDay(app.startTime, selectedDate));
   
@@ -225,6 +227,7 @@ const DailyView: React.FC<DailyViewProps> = ({
                         therapistIndex={0}
                         totalTherapists={1}
                         allAppointments={therapistAppointments}
+                        colorMode={colorMode}
                       />
                     ))}
 

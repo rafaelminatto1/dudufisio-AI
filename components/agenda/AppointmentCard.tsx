@@ -49,27 +49,27 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800 border-green-300';
+        return 'bg-success-light text-success border-success';
       case 'cancelled':
-        return 'bg-red-100 text-red-800 border-red-300';
+        return 'bg-error-light text-error border-error';
       case 'no-show':
-        return 'bg-orange-100 text-orange-800 border-orange-300';
+        return 'bg-warning-light text-warning border-warning';
       default:
-        return 'bg-blue-100 text-blue-800 border-blue-300';
+        return 'bg-primary-light text-primary border-primary';
     }
   };
 
   const getPaymentBadge = () => {
     if (appointment.paymentStatus === 'paid') {
       return (
-        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-300">
+        <Badge variant="outline" className="bg-success-light text-success border-success">
           <CheckCircle2 className="w-3 h-3 mr-1" />
           Pago
         </Badge>
       );
     }
     return (
-      <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">
+      <Badge variant="outline" className="bg-warning-light text-warning border-warning">
         <Circle className="w-3 h-3 mr-1" />
         Pendente
       </Badge>
@@ -92,11 +92,11 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           <TooltipTrigger asChild>
             <Card
               className={cn(
-                'p-3 border-2 transition-all duration-200',
-                'bg-white dark:bg-slate-900',
-                'hover:shadow-lg hover:scale-[1.02]',
-                appointment.hasConflict && 'border-red-500 border-opacity-75 animate-pulse',
-                !appointment.hasConflict && 'border-slate-200 dark:border-slate-700'
+                'p-md border-2 transition-all duration-200',
+                'bg-white shadow-card hover:shadow-cardHover',
+                'hover:scale-[1.02]',
+                appointment.hasConflict && 'border-error border-opacity-75 animate-pulse',
+                !appointment.hasConflict && 'border-neutral-border'
               )}
               style={{
                 borderLeftColor: appointment.hasConflict ? undefined : therapistColor,
@@ -112,11 +112,11 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-slate-900 dark:text-slate-100 truncate">
+                    <p className="font-semibold text-small text-neutral-text truncate">
                       {appointment.patientName ? (appointment.patientName.split(' ')[0] || appointment.patientName) : 'Sem nome'}
                     </p>
                     {!compact && (
-                      <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
+                      <p className="text-xs text-neutral-textSecondary truncate">
                         {appointment.therapistName || 'Sem terapeuta'}
                       </p>
                     )}
@@ -138,7 +138,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
               {/* Time and type */}
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
+                <div className="flex items-center gap-1 text-xs text-neutral-textSecondary">
                   <Clock className="w-3 h-3" />
                   <span className="font-mono font-semibold">
                     {format(appointment.startTime, 'HH:mm', { locale: ptBR })}
@@ -160,8 +160,8 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
 
               {/* Price (if not compact) */}
               {!compact && appointment.price !== undefined && appointment.price > 0 && (
-                <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                  <p className="text-xs font-semibold text-slate-900 dark:text-slate-100">
+                <div className="mt-sm pt-sm border-t border-neutral-border">
+                  <p className="text-xs font-semibold text-neutral-text">
                     R$ {appointment.price.toFixed(2)}
                   </p>
                 </div>

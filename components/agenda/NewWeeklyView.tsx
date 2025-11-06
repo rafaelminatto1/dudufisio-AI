@@ -35,6 +35,7 @@ interface NewWeeklyViewProps {
   onDelete?: (appointmentId: string) => void;
   onStatusChange?: (appointment: EnrichedAppointment, status: AppointmentStatus) => void;
   onPaymentStatusChange?: (appointment: EnrichedAppointment, status: 'paid' | 'pending') => void;
+  colorMode?: import('../../types').ColorDisplayMode;
 }
 
 const START_HOUR = 7;
@@ -112,7 +113,8 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
   onEdit,
   onDelete,
   onStatusChange,
-  onPaymentStatusChange
+  onPaymentStatusChange,
+  colorMode = 'hybrid'
 }) => {
   const weekStart = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 1 }), [currentDate]);
   const weekDays = useMemo(() => Array.from({ length: 6 }, (_, i) => addDays(weekStart, i)), [weekStart]);
@@ -440,6 +442,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                         therapistIndex={therapistIndex >= 0 ? therapistIndex : 0}
                         totalTherapists={therapists.length}
                         allAppointments={dayAppointments}
+                        colorMode={colorMode}
                       />
                     );
                   })}

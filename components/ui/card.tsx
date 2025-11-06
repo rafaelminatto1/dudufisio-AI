@@ -83,3 +83,6 @@ const CardFooter = ({ className, ref, ...props }: CardFooterProps) => (
 CardFooter.displayName = "CardFooter"
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+
+// Export default para compatibilidade com imports antigos
+export default Card

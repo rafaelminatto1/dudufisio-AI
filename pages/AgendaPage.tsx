@@ -59,6 +59,7 @@ import useSessionEvolutionMode from '../hooks/useSessionEvolutionMode';
 import SessionEvolutionModal from '../components/session/SessionEvolutionModal';
 import RescheduleConfirmModal from '../components/agenda/RescheduleConfirmModal';
 import FloatingActionButton from '../components/agenda/FloatingActionButton';
+import { useColorMode } from '../components/agenda/ColorModeToggle';
 
 // Constants for calendar
 const PIXELS_PER_MINUTE = 2;
@@ -126,6 +127,7 @@ export default function AgendaPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
     const isMobile = useIsMobile();
+    const [colorMode, setColorMode] = useColorMode();
     const [showFilters, setShowFilters] = useState(false);
     const [advancedFilters, setAdvancedFilters] = useState<FilterState>({
         status: [],
@@ -757,6 +759,7 @@ export default function AgendaPage() {
                         onSlotClick={handleSlotClick}
                         onDrop={handleDrop}
                         onRightClick={handleRightClick}
+                        colorMode={colorMode}
                     />
                 );
             case 'weekly':
@@ -771,6 +774,7 @@ export default function AgendaPage() {
                         onDelete={(id) => handleDeleteAppointment(id)}
                         onStatusChange={handleStatusChange}
                         onPaymentStatusChange={handlePaymentStatusChange}
+                        colorMode={colorMode}
                     />
                 );
             case 'monthly':
@@ -782,6 +786,7 @@ export default function AgendaPage() {
                         onDateClick={handleDateClick}
                         onPrevMonth={() => setCurrentDate(subMonths(currentDate, 1))}
                         onNextMonth={() => setCurrentDate(addMonths(currentDate, 1))}
+                        colorMode={colorMode}
                     />
                 );
             case 'list':
@@ -798,32 +803,32 @@ export default function AgendaPage() {
     };
 
     return (
-        <main className="flex flex-col h-full bg-slate-50/50" data-testid="agenda-page" role="main">
+        <main className="flex flex-col h-full bg-neutral-bgAlt" data-testid="agenda-page" role="main">
             {/* Compact Professional Header */}
-            <header className="bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
-                <ResponsiveContainer className="py-3">
-                    <div className="flex flex-col space-y-3">
+            <header className="bg-white/95 backdrop-blur-sm border-b border-neutral-border shadow-sm">
+                <ResponsiveContainer className="py-md">
+                    <div className="flex flex-col space-y-md">
                         {/* Top Row: Title and Navigation */}
                         <div className="flex items-center justify-between">
-                            <div className="flex-1 flex flex-col gap-2 min-w-0">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex items-center gap-2">
-                                        <CalendarIcon className="w-4 h-4 text-blue-600" />
-                                        <h1 className="text-base sm:text-lg font-semibold text-slate-900">Agenda</h1>
+                            <div className="flex-1 flex flex-col gap-sm min-w-0">
+                                <div className="flex items-center gap-md">
+                                    <div className="flex items-center gap-sm">
+                                        <CalendarIcon className="w-4 h-4 text-primary" />
+                                        <h1 className="text-base sm:text-lg font-semibold text-neutral-text">Agenda</h1>
                                     </div>
-                                    <div className="text-sm text-slate-600 font-medium truncate hidden sm:block">
+                                    <div className="text-small text-neutral-textSecondary font-medium truncate hidden sm:block">
                                         {getViewTitle()}
                                     </div>
                                 </div>
                             {highlightedPatient && (
-                                <div className="flex items-center justify-between rounded-md border border-sky-100 bg-sky-50 px-3 py-2 text-sm text-sky-700">
+                                <div className="flex items-center justify-between rounded-lg border border-primary bg-primary-light px-md py-sm text-small text-primary">
                                     <span>
                                         Mostrando agendamentos de <strong>{highlightedPatient.name}</strong>.
                                     </span>
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="h-7 px-2 text-xs text-sky-700 hover:bg-sky-100"
+                                        className="h-7 px-sm text-xs text-primary hover:bg-primary-light"
                                         onClick={() => setHighlightedPatientId(null)}
                                     >
                                         Ver todos
@@ -856,38 +861,40 @@ export default function AgendaPage() {
                                 conflictsCount={conflictsCount}
                                 waitlistCount={waitlistEntries.length}
                                 showFilters={showFilters}
+                                colorMode={colorMode}
+                                onColorModeChange={setColorMode}
                             />
                         </div>
 
                             {/* Navigation Controls */}
-                            <div className="flex items-center gap-2">
-                                <div className="flex items-center rounded-md border border-slate-200 bg-white">
+                            <div className="flex items-center gap-sm">
+                                <div className="flex items-center rounded-lg border border-neutral-border bg-white">
                                     <Button
                                         data-testid="btn-prev-period"
                                         variant="ghost"
                                         size="sm"
                                         onClick={handlePrevious}
-                                        className="touch-target p-0 hover:bg-slate-50"
+                                        className="touch-target p-0 hover:bg-neutral-bgAlt"
                                     >
                                         <ChevronLeft className="w-3.5 h-3.5" />
                                     </Button>
-                                    <div className="h-4 w-px bg-slate-200" />
+                                    <div className="h-4 w-px bg-neutral-border" />
                                     <Button
                                         data-testid="btn-today"
                                         variant="ghost"
                                         size="sm"
                                         onClick={handleToday}
-                                        className="touch-target px-2 text-xs font-medium hover:bg-slate-50 hidden sm:block"
+                                        className="touch-target px-sm text-xs font-medium hover:bg-neutral-bgAlt hidden sm:block"
                                     >
                                         Hoje
                                     </Button>
-                                    <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+                                    <div className="h-4 w-px bg-neutral-border hidden sm:block" />
                                     <Button
                                         data-testid="btn-next-period"
                                         variant="ghost"
                                         size="sm"
                                         onClick={handleNext}
-                                        className="touch-target p-0 hover:bg-slate-50"
+                                        className="touch-target p-0 hover:bg-neutral-bgAlt"
                                     >
                                         <ChevronRight className="w-3.5 h-3.5" />
                                     </Button>
@@ -902,9 +909,9 @@ export default function AgendaPage() {
                                             setIsFormOpen(true);
                                         }}
                                         size="sm"
-                                        className="btn-responsive bg-blue-600 hover:bg-blue-700 text-white"
+                                        className="btn-responsive bg-primary hover:bg-primary-hover text-white"
                                     >
-                                        <Plus className="w-3.5 h-3.5 mr-1" />
+                                        <Plus className="w-3.5 h-3.5 mr-xs" />
                                         <span className="hidden sm:inline">Agendar</span>
                                         <span className="sm:hidden">Novo</span>
                                     </Button>
@@ -913,7 +920,7 @@ export default function AgendaPage() {
                         </div>
 
                         {/* Bottom Row: View Selector and Mobile Date */}
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-slate-200/60">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-md pt-md border-t border-neutral-border">
                             <AgendaViewSelector
                                 currentView={currentView}
                                 onViewChange={setCurrentView}
@@ -923,7 +930,7 @@ export default function AgendaPage() {
                             <div className="sm:hidden flex justify-center w-full">
                                 <button
                                     onClick={handleToday}
-                                    className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors touch-target"
+                                    className="px-md py-sm text-small font-medium text-neutral-text bg-neutral-bgDark hover:bg-neutral-border rounded-lg transition-colors touch-target"
                                 >
                                     {format(currentDate, 'dd/MM/yyyy', { locale: ptBR })}
                                 </button>
@@ -977,17 +984,17 @@ export default function AgendaPage() {
                 <div className="flex-1 overflow-auto bg-white">
                 {showSessionForm && selectedAppointmentForSession ? (
                     <div className="h-full">
-                        <div className="flex items-center justify-between p-4 border-b bg-slate-50">
+                        <div className="flex items-center justify-between p-md border-b border-neutral-border bg-neutral-bgAlt">
                             <Button
                                 onClick={handleBackToAgenda}
                                 variant="outline"
                                 size="sm"
-                                className="flex items-center gap-2"
+                                className="flex items-center gap-sm"
                             >
                                 <ArrowLeft className="w-4 h-4" />
                                 Voltar para Agenda
                             </Button>
-                            <h2 className="text-lg font-semibold text-slate-800">
+                            <h2 className="text-body font-semibold text-neutral-text">
                                 Formulário de Sessão - {selectedAppointmentForSession.patientName}
                             </h2>
                         </div>
@@ -997,9 +1004,9 @@ export default function AgendaPage() {
                         />
                     </div>
                 ) : (
-                    <div className="h-full px-2 pr-6">
+                    <div className="h-full px-sm pr-lg">
                         {/* Agenda Stats */}
-                        <div className="mb-6">
+                        <div className="mb-xl">
                             <AgendaStats 
                                 appointments={filteredAppointments}
                                 therapists={therapists}
@@ -1008,7 +1015,7 @@ export default function AgendaPage() {
 
                         {/* Advanced Filters */}
                         {showFilters && (
-                            <div className="mb-4">
+                            <div className="mb-md">
                                 <AdvancedFilters
                                     therapists={therapists}
                                     patients={patients}

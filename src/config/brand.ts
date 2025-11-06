@@ -30,11 +30,11 @@ export const BRAND = {
     whatsapp: '+55 (11) 99999-9999', // Atualizar com número real
   },
   
-  /** Cores da marca */
+  /** Cores da marca - Monday.com Inspired */
   colors: {
-    primary: '#3b82f6',      // Azul principal
-    secondary: '#818cf8',    // Azul claro
-    accent: '#06b6d4',       // Ciano
+    primary: '#5034FF',      // Roxo/Azul vibrante (Monday.com)
+    secondary: '#00CA72',    // Verde sucesso (Monday.com)
+    accent: '#579BFC',       // Azul claro informativo (Monday.com)
   },
   
   /** Meta informações para SEO */

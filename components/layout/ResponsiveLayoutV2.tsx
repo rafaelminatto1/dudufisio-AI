@@ -96,7 +96,7 @@ const ResponsiveLayoutV2: React.FC<ResponsiveLayoutV2Props> = ({
 
   return (
     <LayoutContext.Provider value={contextValue}>
-      <div className="flex h-screen overflow-hidden bg-background">
+      <div className="flex h-screen overflow-hidden bg-neutral-bg">
         {/* Desktop Sidebar */}
         {isDesktop && <SidebarV2 />}
 
@@ -113,7 +113,7 @@ const ResponsiveLayoutV2: React.FC<ResponsiveLayoutV2Props> = ({
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* Mobile Header */}
           {isMobile && (
-            <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-4">
+            <header className="sticky top-0 z-40 flex h-16 items-center gap-md border-b border-neutral-border bg-white px-md shadow-sm">
               <Button
                 variant="ghost"
                 size="icon"
@@ -125,7 +125,7 @@ const ResponsiveLayoutV2: React.FC<ResponsiveLayoutV2Props> = ({
               </Button>
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold">
-                  Fisio<span className="text-primary">Flow</span>
+                  Mooca<span className="text-primary">Fisio</span>
                 </span>
               </div>
             </header>
