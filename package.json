@@ -24,7 +24,7 @@
     "build:optimized": "node scripts/measure-build.cjs",
     "build:optimized:core": "npm run clean:cache && vite build --mode production && npm run post-build:optimize",
     "build:incremental": "vite build --mode production --incremental",
-    "vercel-build": "npm run build:optimized",
+    "vercel-build": "npm run build:fast",
     "build:analyze": "vite build && start dist/stats.html",
     "build:check": "node scripts/check-bundle-size.cjs",
     "validate": "tsx scripts/validate-build.ts",

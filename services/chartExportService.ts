@@ -1,10 +1,12 @@
 /**
  * Chart Export Service - Serviço para exportar gráficos em diferentes formatos
  * Suporta PNG, PDF e SVG
+ *
+ * ✅ OTIMIZADO: Usa lazy loading para bibliotecas pesadas
+ * - html2canvas (~100KB) carrega apenas ao exportar
+ * - jsPDF (~200KB) carrega apenas ao gerar PDF
+ * - Reduz bundle inicial em ~300KB
  */
-
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 export interface ExportOptions {
   format: 'png' | 'pdf' | 'svg';
@@ -16,7 +18,7 @@ export interface ExportOptions {
 }
 
 /**
- * Exportar elemento HTML como PNG
+ * Exportar elemento HTML como PNG (com lazy loading)
  */
 export async function exportAsPNG(
   element: HTMLElement,
@@ -29,6 +31,10 @@ export async function exportAsPNG(
   } = options;
 
   try {
+    // Lazy load html2canvas
+    console.log('[ChartExport] Lazy loading html2canvas...');
+    const { default: html2canvas } = await import('html2canvas');
+
     const canvas = await html2canvas(element, {
       scale: quality * 2, // Aumentar qualidade
       backgroundColor,
@@ -41,6 +47,8 @@ export async function exportAsPNG(
     link.download = filename;
     link.href = canvas.toDataURL('image/png');
     link.click();
+
+    console.log('[ChartExport] PNG exported successfully');
   } catch (error) {
     console.error('Erro ao exportar como PNG:', error);
     throw new Error('Falha ao exportar gráfico como PNG');
@@ -48,7 +56,7 @@ export async function exportAsPNG(
 }
 
 /**
- * Exportar elemento HTML como PDF
+ * Exportar elemento HTML como PDF (com lazy loading)
  */
 export async function exportAsPDF(
   element: HTMLElement,
@@ -62,6 +70,14 @@ export async function exportAsPDF(
   } = options;
 
   try {
+    // Lazy load html2canvas
+    console.log('[ChartExport] Lazy loading html2canvas...');
+    const { default: html2canvas } = await import('html2canvas');
+
+    // Lazy load jsPDF
+    console.log('[ChartExport] Lazy loading jsPDF...');
+    const { default: jsPDF } = await import('jspdf');
+
     // Criar canvas do elemento
     const canvas = await html2canvas(element, {
       scale: 2,
@@ -71,7 +87,7 @@ export async function exportAsPDF(
     });
 
     const imgData = canvas.toDataURL('image/png');
-    
+
     // Criar PDF
     const pdf = new jsPDF({
       orientation: width > height ? 'landscape' : 'portrait',
@@ -81,9 +97,11 @@ export async function exportAsPDF(
 
     // Adicionar imagem ao PDF
     pdf.addImage(imgData, 'PNG', 0, 0, width, height);
-    
+
     // Salvar PDF
     pdf.save(filename);
+
+    console.log('[ChartExport] PDF exported successfully');
   } catch (error) {
     console.error('Erro ao exportar como PDF:', error);
     throw new Error('Falha ao exportar gráfico como PDF');
@@ -161,7 +179,7 @@ export async function exportChart(
 }
 
 /**
- * Exportar múltiplos gráficos em um único PDF
+ * Exportar múltiplos gráficos em um único PDF (com lazy loading)
  */
 export async function exportMultipleChartsAsPDF(
   elements: HTMLElement[],
@@ -178,6 +196,14 @@ export async function exportMultipleChartsAsPDF(
   } = options;
 
   try {
+    // Lazy load html2canvas
+    console.log('[ChartExport] Lazy loading html2canvas...');
+    const { default: html2canvas } = await import('html2canvas');
+
+    // Lazy load jsPDF
+    console.log('[ChartExport] Lazy loading jsPDF...');
+    const { default: jsPDF } = await import('jspdf');
+
     const pdf = new jsPDF({
       orientation: 'landscape',
       unit: 'mm',
@@ -202,19 +228,19 @@ export async function exportMultipleChartsAsPDF(
       });
 
       const imgData = canvas.toDataURL('image/png');
-      
+
       // Calcular dimensões para caber na página
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const margin = 20;
-      
+
       const imgWidth = pageWidth - 2 * margin;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
+
       // Se a imagem for muito alta, redimensionar
       let finalHeight = imgHeight;
       let finalWidth = imgWidth;
-      
+
       if (imgHeight > pageHeight - 2 * margin - 20) {
         finalHeight = pageHeight - 2 * margin - 20;
         finalWidth = (canvas.width * finalHeight) / canvas.height;
@@ -231,6 +257,8 @@ export async function exportMultipleChartsAsPDF(
     }
 
     pdf.save(filename);
+
+    console.log('[ChartExport] Multiple charts PDF exported successfully');
   } catch (error) {
     console.error('Erro ao exportar múltiplos gráficos:', error);
     throw new Error('Falha ao exportar relatório de gráficos');

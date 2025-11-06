@@ -67,7 +67,7 @@ class PushNotificationService {
       await this.saveToken(userId, token);
 
       // Setup foreground message listener
-      this.setupForegroundListener();
+      await this.setupForegroundListener();
 
       // Store current user ID
       this.currentUserId = userId;
@@ -225,12 +225,13 @@ class PushNotificationService {
   /**
    * Setup listener for foreground messages
    */
-  private setupForegroundListener(): void {
+  private async setupForegroundListener(): Promise<void> {
     if (this.unsubscribeForeground) {
       this.unsubscribeForeground();
     }
 
-    this.unsubscribeForeground = onForegroundMessage((payload) => {
+    // onForegroundMessage now returns a Promise
+    this.unsubscribeForeground = await onForegroundMessage((payload) => {
       console.log('[PushService] Foreground message received:', payload);
 
       // Show notification

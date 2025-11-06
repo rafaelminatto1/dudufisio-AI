@@ -7,6 +7,8 @@ import AuthRoutes from './pages/auth/AuthRoutes';
 const AgendaPage = lazy(() => import('agendaPacientes/AgendaPage'));
 const PatientListPage = lazy(() => import('agendaPacientes/PatientListPage'));
 const PatientDetailPage = lazy(() => import('agendaPacientes/PatientDetailPage'));
+// Materiais Clínicos - Import local (temporário, Module Federation com problemas em dev)
+const ClinicalMaterialsPage = lazy(() => import('./pages/ClinicalMaterialsPage'));
 const AcompanhamentoPage = lazy(() => import('tratamentos/AcompanhamentoPage'));
 const FinancialDashboardPage = lazy(() => import('financeiro/FinancialDashboardPage'));
 
@@ -43,6 +45,7 @@ function App() {
           <Route path="/agenda" element={<AgendaPage />} />
           <Route path="/patients" element={<PatientListPage />} />
           <Route path="/patients/:id" element={<PatientDetailPage />} />
+          <Route path="/materials" element={<ClinicalMaterialsPage />} />
           
           {/* Tratamentos (Remote 2) */}
           <Route path="/acompanhamento" element={<AcompanhamentoPage />} />

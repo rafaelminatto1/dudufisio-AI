@@ -403,43 +403,44 @@ export async function calculateAssessmentStatistics(
   }));
 
   // Tentar calcular via Web Worker (fallback para cálculo inline se indisponível)
-  try {
-    if (typeof Worker !== 'undefined') {
-      const worker = new Worker(new URL('../workers/metricsCalculator.worker.ts', import.meta.url), { type: 'module' });
-      const result = await new Promise<AssessmentStatistics>((resolve, reject) => {
-        const handleMessage = (event: MessageEvent) => {
-          const { type, payload } = event.data || {};
-          if (type === 'ASSESSMENT_STATS_READY' && payload?.fieldName === fieldName) {
-            worker.removeEventListener('message', handleMessage);
-            worker.terminate();
-            resolve({
-              fieldName: payload.fieldName,
-              unit: payload.unit,
-              count: payload.count,
-              min: payload.min,
-              max: payload.max,
-              average: payload.average,
-              latest: payload.latest,
-              percentChange: payload.percentChange,
-              trend: payload.trend,
-            });
-          } else if (type === 'ERROR') {
-            worker.removeEventListener('message', handleMessage);
-            worker.terminate();
-            reject(new Error(payload?.message || 'Worker error'));
-          }
-        };
-        worker.addEventListener('message', handleMessage);
-        worker.postMessage({
-          type: 'CALCULATE_ASSESSMENT_STATS',
-          payload: { fieldName, data: points },
-        });
-      });
-      return result;
-    }
-  } catch (e) {
-    console.warn('Worker indisponível, calculando inline:', e);
-  }
+  // DESABILITADO: Worker não disponível no build
+  // try {
+  //   if (typeof Worker !== 'undefined') {
+  //     const worker = new Worker(new URL('../workers/metricsCalculator.worker.ts', import.meta.url), { type: 'module' });
+  //     const result = await new Promise<AssessmentStatistics>((resolve, reject) => {
+  //       const handleMessage = (event: MessageEvent) => {
+  //         const { type, payload } = event.data || {};
+  //         if (type === 'ASSESSMENT_STATS_READY' && payload?.fieldName === fieldName) {
+  //           worker.removeEventListener('message', handleMessage);
+  //           worker.terminate();
+  //           resolve({
+  //             fieldName: payload.fieldName,
+  //             unit: payload.unit,
+  //             count: payload.count,
+  //             min: payload.min,
+  //             max: payload.max,
+  //             average: payload.average,
+  //             latest: payload.latest,
+  //             percentChange: payload.percentChange,
+  //             trend: payload.trend,
+  //           });
+  //         } else if (type === 'ERROR') {
+  //           worker.removeEventListener('message', handleMessage);
+  //           worker.terminate();
+  //           reject(new Error(payload?.message || 'Worker error'));
+  //         }
+  //       };
+  //       worker.addEventListener('message', handleMessage);
+  //       worker.postMessage({
+  //         type: 'CALCULATE_ASSESSMENT_STATS',
+  //         payload: { fieldName, data: points },
+  //       });
+  //     });
+  //     return result;
+  //   }
+  // } catch (e) {
+  //   console.warn('Worker indisponível, calculando inline:', e);
+  // }
 
   // Fallback: cálculo inline
   const values = points.map(p => p.value);

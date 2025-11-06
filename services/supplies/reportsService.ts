@@ -1,15 +1,22 @@
 // services/supplies/reportsService.ts
+/**
+ * ✅ OTIMIZADO: jsPDF com lazy loading
+ * - jsPDF (~200KB) + autotable (~100KB) carregam apenas ao exportar PDF
+ * - Reduz bundle inicial em ~300KB
+ */
+
 import { supabase } from '../../lib/supabaseClient';
-import { 
-  Supply, 
-  StockMovement, 
+import {
+  Supply,
+  StockMovement,
   SupplyConsumptionReport,
   StockValuationReport,
   SupplyCategory,
   TaskCostSummary
 } from '../../types';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+
+// Types apenas (não aumentam bundle)
+type jsPDF = any;
 
 // Extend jsPDF type
 declare module 'jspdf' {
@@ -556,9 +563,17 @@ class SupplyReportsService {
   }
 
   /**
-   * Exportar relatório para PDF
+   * Exportar relatório para PDF (com lazy loading)
    */
   async exportToPDF(data: any, reportType: string, title: string): Promise<Blob> {
+    // Lazy load jsPDF
+    console.log('[ReportsService] Lazy loading jsPDF...');
+    const { default: jsPDF } = await import('jspdf');
+
+    // Lazy load jsPDF AutoTable
+    console.log('[ReportsService] Lazy loading jspdf-autotable...');
+    await import('jspdf-autotable');
+
     const pdf = new jsPDF();
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
@@ -586,6 +601,7 @@ class SupplyReportsService {
     }
 
     // Gerar PDF
+    console.log('[ReportsService] PDF generated successfully');
     return pdf.output('blob');
   }
 

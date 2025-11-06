@@ -173,40 +173,61 @@ const ResponsiveSidebar: React.FC<ResponsiveSidebarProps> = ({
     <aside className={sidebarClasses}>
       {/* Header da Sidebar */}
       <div className="flex items-center justify-between p-4 border-b border-fisio-neutral-200 h-16">
-        <div className={`flex items-center ${isCollapsed && !isMobile ? 'justify-center w-full' : ''}`}>
-          <Stethoscope className="w-7 h-7 text-fisio-primary-DEFAULT shrink-0" />
-          {!isCollapsed && (
-            <span className="ml-3 text-xl font-bold">
-              <span className="text-fisio-neutral-800">Fisio</span>
-              <span className="text-fisio-primary-DEFAULT">Flow</span>
-            </span>
-          )}
-        </div>
-        
         {isMobile ? (
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg hover:bg-fisio-neutral-100 transition-colors"
-            aria-label="Fechar menu"
-          >
-            <X className="w-5 h-5 text-fisio-neutral-500" />
-          </button>
-        ) : isDesktop && (
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className={`p-2 rounded-lg hover:bg-fisio-neutral-100 transition-colors ${
-              isCollapsed ? 'mx-auto' : ''
-            }`}
-            aria-label={isCollapsed ? 'Expandir menu' : 'Recolher menu'}
-          >
-            {isCollapsed ? (
-              <ChevronRight className="w-5 h-5 text-fisio-neutral-500" />
-            ) : (
-              <ChevronLeft className="w-5 h-5 text-fisio-neutral-500" />
+          <>
+            <div className="flex items-center">
+              <Stethoscope className="w-7 h-7 text-fisio-primary-DEFAULT shrink-0" />
+              <span className="ml-3 text-xl font-bold">
+                <span className="text-fisio-neutral-800">Mooca</span>
+                <span className="text-fisio-primary-DEFAULT">Fisio</span>
+              </span>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg hover:bg-fisio-neutral-100 transition-colors"
+              aria-label="Fechar menu"
+            >
+              <X className="w-5 h-5 text-fisio-neutral-500" />
+            </button>
+          </>
+        ) : isCollapsed ? (
+          <div className="flex flex-col items-center w-full">
+            <Stethoscope className="w-7 h-7 text-fisio-primary-DEFAULT" />
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center">
+              <Stethoscope className="w-7 h-7 text-fisio-primary-DEFAULT shrink-0" />
+              <span className="ml-3 text-xl font-bold">
+                <span className="text-fisio-neutral-800">Mooca</span>
+                <span className="text-fisio-primary-DEFAULT">Fisio</span>
+              </span>
+            </div>
+            {isDesktop && (
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="p-2 rounded-lg hover:bg-fisio-neutral-100 transition-colors"
+                aria-label="Recolher menu"
+              >
+                <ChevronLeft className="w-5 h-5 text-fisio-neutral-500" />
+              </button>
             )}
-          </button>
+          </>
         )}
       </div>
+
+      {/* Botão de expansão quando minimizado */}
+      {isCollapsed && !isMobile && (
+        <div className="flex items-center justify-center p-2 border-b border-fisio-neutral-200">
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="p-2 rounded-lg hover:bg-fisio-neutral-100 transition-colors"
+            aria-label="Expandir menu"
+          >
+            <ChevronRight className="w-5 h-5 text-fisio-neutral-500" />
+          </button>
+        </div>
+      )}
 
       {/* Conteúdo da Sidebar */}
       <nav className="flex-1 overflow-y-auto p-4">
@@ -226,20 +247,19 @@ const ResponsiveSidebar: React.FC<ResponsiveSidebarProps> = ({
                   className={({ isActive }) => {
                     const active = isActive || isPathActive(item.path);
                     return `
-                      flex items-center px-3 py-2.5 rounded-lg transition-all duration-200
+                      flex items-center ${isCollapsed && !isMobile ? 'px-2 py-2.5 justify-center' : 'px-3 py-2.5'} rounded-lg transition-all duration-200
                       ${active
                         ? 'bg-fisio-primary-50 text-fisio-primary-700 font-medium'
                         : 'text-fisio-neutral-600 hover:bg-fisio-neutral-100 hover:text-fisio-neutral-900'
                       }
-                      ${isCollapsed && !isMobile ? 'justify-center' : ''}
                     `;
                   }}
-                  title={isCollapsed ? item.label : undefined}
+                  title={isCollapsed && !isMobile ? item.label : undefined}
                 >
                   <item.icon className={`w-5 h-5 shrink-0 ${isCollapsed && !isMobile ? '' : 'mr-3'}`} />
-                  {!isCollapsed && (
+                  {(!isCollapsed || isMobile) && (
                     <>
-                      <span className="flex-1">{item.label}</span>
+                      <span className="flex-1 overflow-hidden whitespace-nowrap text-ellipsis">{item.label}</span>
                       {item.badge && item.badge > 0 && (
                         <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-fisio-error-DEFAULT text-xs font-medium text-white">
                           {item.badge > 9 ? '9+' : item.badge}
@@ -248,7 +268,7 @@ const ResponsiveSidebar: React.FC<ResponsiveSidebarProps> = ({
                     </>
                   )}
                   {isCollapsed && !isMobile && item.badge && item.badge > 0 && (
-                    <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-fisio-error-DEFAULT" />
+                    <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-fisio-error-DEFAULT ring-2 ring-white" />
                   )}
                 </NavLink>
               ))}
@@ -258,23 +278,36 @@ const ResponsiveSidebar: React.FC<ResponsiveSidebarProps> = ({
       </nav>
 
       {/* Footer da Sidebar com informações do usuário */}
-      {user && !isCollapsed && (
-        <div className="border-t border-fisio-neutral-200 p-4">
-          <div className="flex items-center">
-            <img
-              src={user.avatarUrl || `https://i.pravatar.cc/150?u=${user.id}`}
-              alt={user.name}
-              className="w-10 h-10 rounded-full border-2 border-fisio-neutral-200"
-            />
-            <div className="ml-3 flex-1 min-w-0">
-              <p className="text-sm font-medium text-fisio-neutral-800 truncate">
-                {user.name}
-              </p>
-              <p className="text-xs text-fisio-neutral-500 truncate">
-                {user.email}
-              </p>
+      {user && (
+        <div className={`border-t border-fisio-neutral-200 ${isCollapsed && !isMobile ? 'p-2' : 'p-4'}`}>
+          {isCollapsed && !isMobile ? (
+            /* Versão Minimizada - Apenas Avatar */
+            <div className="flex flex-col items-center">
+              <img
+                src={user.avatarUrl || `https://i.pravatar.cc/150?u=${user.id}`}
+                alt={user.name}
+                className="w-10 h-10 rounded-full border-2 border-fisio-neutral-200 hover:border-fisio-primary-DEFAULT transition-colors cursor-pointer"
+                title={`${user.name}\n${user.email}`}
+              />
             </div>
-          </div>
+          ) : (
+            /* Versão Expandida - Layout Completo */
+            <div className="flex items-center">
+              <img
+                src={user.avatarUrl || `https://i.pravatar.cc/150?u=${user.id}`}
+                alt={user.name}
+                className="w-10 h-10 rounded-full border-2 border-fisio-neutral-200"
+              />
+              <div className="ml-3 flex-1 min-w-0">
+                <p className="text-sm font-medium text-fisio-neutral-800 truncate">
+                  {user.name}
+                </p>
+                <p className="text-xs text-fisio-neutral-500 truncate">
+                  {user.email}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </aside>

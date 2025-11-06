@@ -13,6 +13,7 @@ export default defineConfig({
         './AgendaPage': './src/pages/AgendaPage',
         './PatientListPage': './src/pages/PatientListPage',
         './PatientDetailPage': './src/pages/PatientDetailPage',
+        './ClinicalMaterialsPage': './src/pages/ClinicalMaterialsPage',
       },
       shared: {
         react: {
@@ -32,6 +33,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      '@': path.resolve(__dirname, './src'),
       '@moocafisio/shared': path.resolve(__dirname, '../../shared'),
     },
   },
