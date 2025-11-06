@@ -14,7 +14,7 @@ export interface AuthenticatedRequest extends VercelRequest {
  * Middleware que verifica autenticação do paciente
  */
 export function requirePatientAuth(
-  handler: (req: AuthenticatedRequest, res: VercelResponse) => Promise<void>
+  handler: (req: AuthenticatedRequest, res: VercelResponse) => Promise<VercelResponse | void>
 ) {
   return async (req: AuthenticatedRequest, res: VercelResponse) => {
     try {
@@ -49,7 +49,7 @@ export function requirePatientAuth(
  * Middleware que verifica se é terapeuta autenticado
  */
 export function requireTherapistAuth(
-  handler: (req: VercelRequest, res: VercelResponse) => Promise<void>
+  handler: (req: VercelRequest, res: VercelResponse) => Promise<VercelResponse | void>
 ) {
   return async (req: VercelRequest, res: VercelResponse) => {
     try {
