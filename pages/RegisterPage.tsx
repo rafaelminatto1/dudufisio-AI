@@ -66,9 +66,9 @@ const RegisterPage: React.FC = () => {
     if (/[0-9]/.test(password)) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
 
-    if (score <= 2) return { score, label: 'Fraca', color: 'bg-red-500' };
-    if (score <= 4) return { score, label: 'Média', color: 'bg-yellow-500' };
-    return { score, label: 'Forte', color: 'bg-green-500' };
+    if (score <= 2) return { score, label: 'Fraca', color: 'bg-error-light0' };
+    if (score <= 4) return { score, label: 'Média', color: 'bg-warning-light0' };
+    return { score, label: 'Forte', color: 'bg-success-light0' };
   };
 
   const passwordStrength = password ? getPasswordStrength(password) : null;
@@ -105,27 +105,27 @@ const RegisterPage: React.FC = () => {
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-md">
         <div className="w-full max-w-md">
-          <div className="rounded-2xl border border-green-200 bg-white p-8 shadow-xl">
-            <div className="mb-6 flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                <Shield className="h-8 w-8 text-green-600" />
+          <div className="rounded-cardLarge border border-success bg-white p-xl shadow-xl">
+            <div className="mb-xl flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success-light">
+                <Shield className="h-8 w-8 text-success" />
               </div>
             </div>
 
-            <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
+            <h1 className="mb-sm text-center text-2xl font-bold text-neutral-text">
               Conta Criada com Sucesso!
             </h1>
-            <p className="mb-6 text-center text-gray-600">
+            <p className="mb-xl text-center text-neutral-textSecondary">
               Enviamos um email de verificação para <strong>{watch('email')}</strong>.
               Por favor, verifique sua caixa de entrada e clique no link para ativar sua conta.
             </p>
 
-            <div className="space-y-3">
-              <div className="rounded-lg bg-sky-50 p-4">
-                <h3 className="mb-2 font-semibold text-sky-900">Próximos Passos:</h3>
-                <ol className="list-decimal list-inside space-y-1 text-sm text-sky-700">
+            <div className="space-y-sm">
+              <div className="rounded-lg bg-primary-light p-md">
+                <h3 className="mb-sm font-semibold text-sky-900">Próximos Passos:</h3>
+                <ol className="list-decimal list-inside space-y-1 text-sm text-primary">
                   <li>Abra seu email</li>
                   <li>Clique no link de verificação</li>
                   <li>Faça login com suas credenciais</li>
@@ -146,39 +146,39 @@ const RegisterPage: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-md">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-600 shadow-lg">
+        <div className="mb-mdxl text-center">
+          <div className="mb-md flex justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-hover shadow-cardActive">
               <UserPlus className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+          <h1 className="mb-sm text-3xl font-bold text-neutral-text">
             Criar Conta
           </h1>
-          <p className="text-gray-600">
+          <p className="text-neutral-textSecondary">
             Preencha os dados abaixo para começar
           </p>
         </div>
 
         {/* Form */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
+        <div className="rounded-cardLarge border border-neutral-border bg-white p-xl shadow-xl">
           {error && (
-            <Alert variant="destructive" className="mb-6">
+            <Alert variant="destructive" className="mb-xl">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Full Name */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label htmlFor="fullName" className="text-sm font-medium">
                 Nome Completo
               </Label>
               <div className="relative">
-                <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <User className="absolute left-3 top-md h-5 w-5 text-neutral-textTertiary" />
                 <Input
                   id="fullName"
                   {...register('fullName')}
@@ -188,17 +188,17 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
               {errors.fullName && (
-                <p className="text-xs text-red-600">{errors.fullName.message}</p>
+                <p className="text-xs text-error">{errors.fullName.message}</p>
               )}
             </div>
 
             {/* Email */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label htmlFor="email" className="text-sm font-medium">
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Mail className="absolute left-3 top-md h-5 w-5 text-neutral-textTertiary" />
                 <Input
                   id="email"
                   type="email"
@@ -209,17 +209,17 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
               {errors.email && (
-                <p className="text-xs text-red-600">{errors.email.message}</p>
+                <p className="text-xs text-error">{errors.email.message}</p>
               )}
             </div>
 
             {/* Phone (Optional) */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label htmlFor="phone" className="text-sm font-medium">
-                Telefone <span className="text-gray-400">(opcional)</span>
+                Telefone <span className="text-neutral-textTertiary">(opcional)</span>
               </Label>
               <div className="relative">
-                <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Phone className="absolute left-3 top-md h-5 w-5 text-neutral-textTertiary" />
                 <Input
                   id="phone"
                   type="tel"
@@ -230,17 +230,17 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
               {errors.phone && (
-                <p className="text-xs text-red-600">{errors.phone.message}</p>
+                <p className="text-xs text-error">{errors.phone.message}</p>
               )}
             </div>
 
             {/* Password */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label htmlFor="password" className="text-sm font-medium">
                 Senha
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Lock className="absolute left-3 top-md h-5 w-5 text-neutral-textTertiary" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -252,24 +252,24 @@ const RegisterPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-md text-neutral-textTertiary hover:text-neutral-textSecondary"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-red-600">{errors.password.message}</p>
+                <p className="text-xs text-error">{errors.password.message}</p>
               )}
 
               {/* Password Strength Indicator */}
               {passwordStrength && (
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-600">Força da senha:</span>
+                    <span className="text-neutral-textSecondary">Força da senha:</span>
                     <span className={`font-medium ${
-                      passwordStrength.score <= 2 ? 'text-red-600' :
-                      passwordStrength.score <= 4 ? 'text-yellow-600' :
-                      'text-green-600'
+                      passwordStrength.score <= 2 ? 'text-error' :
+                      passwordStrength.score <= 4 ? 'text-warning' :
+                      'text-success'
                     }`}>
                       {passwordStrength.label}
                     </span>
@@ -285,12 +285,12 @@ const RegisterPage: React.FC = () => {
             </div>
 
             {/* Confirm Password */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label htmlFor="confirmPassword" className="text-sm font-medium">
                 Confirmar Senha
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Lock className="absolute left-3 top-md h-5 w-5 text-neutral-textTertiary" />
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
@@ -302,13 +302,13 @@ const RegisterPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-md text-neutral-textTertiary hover:text-neutral-textSecondary"
                 >
                   {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-xs text-red-600">{errors.confirmPassword.message}</p>
+                <p className="text-xs text-error">{errors.confirmPassword.message}</p>
               )}
             </div>
 
@@ -318,22 +318,22 @@ const RegisterPage: React.FC = () => {
                 id="acceptTerms"
                 type="checkbox"
                 {...register('acceptTerms')}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500"
+                className="mt-xs h-4 w-4 rounded border-gray-300 text-primary focus:ring-sky-500"
                 disabled={isLoading}
               />
-              <Label htmlFor="acceptTerms" className="text-sm text-gray-600">
+              <Label htmlFor="acceptTerms" className="text-sm text-neutral-textSecondary">
                 Eu aceito os{' '}
-                <Link to="/terms" className="text-sky-600 hover:underline">
+                <Link to="/terms" className="text-primary hover:underline">
                   Termos de Uso
                 </Link>{' '}
                 e a{' '}
-                <Link to="/privacy" className="text-sky-600 hover:underline">
+                <Link to="/privacy" className="text-primary hover:underline">
                   Política de Privacidade
                 </Link>
               </Label>
             </div>
             {errors.acceptTerms && (
-              <p className="text-xs text-red-600">{errors.acceptTerms.message}</p>
+              <p className="text-xs text-error">{errors.acceptTerms.message}</p>
             )}
 
             {/* Submit Button */}
@@ -344,12 +344,12 @@ const RegisterPage: React.FC = () => {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-sm h-4 w-4 animate-spin" />
                   Criando conta...
                 </>
               ) : (
                 <>
-                  <UserPlus className="mr-2 h-4 w-4" />
+                  <UserPlus className="mr-sm h-4 w-4" />
                   Criar Conta
                 </>
               )}
@@ -357,12 +357,12 @@ const RegisterPage: React.FC = () => {
           </form>
 
           {/* Footer */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+          <div className="mt-xl text-center">
+            <p className="text-sm text-neutral-textSecondary">
               Já tem uma conta?{' '}
               <Link
                 to="/login"
-                className="font-medium text-sky-600 hover:text-sky-700 hover:underline"
+                className="font-medium text-primary hover:text-primary hover:underline"
               >
                 Faça login
               </Link>
@@ -371,7 +371,7 @@ const RegisterPage: React.FC = () => {
         </div>
 
         {/* Additional Info */}
-        <div className="mt-6 text-center text-xs text-gray-500">
+        <div className="mt-xl text-center text-xs text-gray-500">
           <p>
             Ao criar uma conta, você concorda em receber comunicações do DuduFisio-AI.
             <br />

@@ -186,13 +186,13 @@ const EnhancedAssessmentsPage: React.FC = () => {
   const getSpecialtyColor = (specialty: string) => {
     switch (specialty) {
       case 'esportiva':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-primary-light text-blue-800';
       case 'pos-operatoria':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-light text-success';
       case 'geriatrica':
         return 'bg-purple-100 text-purple-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-neutral-bgDark text-gray-800';
     }
   };
 
@@ -200,32 +200,32 @@ const EnhancedAssessmentsPage: React.FC = () => {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'normal':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-light text-success';
       case 'mild':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning-light text-yellow-800';
       case 'moderate':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-warning-light text-warning';
       case 'severe':
-        return 'bg-red-100 text-red-800';
+        return 'bg-error-light text-error';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-neutral-bgDark text-gray-800';
     }
   };
 
   // Render methods
   const renderAssessments = () => (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {/* Stats Cards */}
       {assessmentStats && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total de Avaliações</CardTitle>
-              <ClipboardCheck className="h-4 w-4 text-muted-foreground" />
+              <ClipboardCheck className="h-4 w-4 text-neutral-textSecondary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{assessmentStats.totalAssessments}</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-neutral-textSecondary">
                 {assessmentStats.totalResults} resultados registrados
               </p>
             </CardContent>
@@ -234,33 +234,33 @@ const EnhancedAssessmentsPage: React.FC = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Esportiva</CardTitle>
-              <Dumbbell className="h-4 w-4 text-muted-foreground" />
+              <Dumbbell className="h-4 w-4 text-neutral-textSecondary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{assessmentStats.bySpecialty.esportiva || 0}</div>
-              <p className="text-xs text-muted-foreground">avaliações especializadas</p>
+              <p className="text-xs text-neutral-textSecondary">avaliações especializadas</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Pós-Operatória</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+              <Activity className="h-4 w-4 text-neutral-textSecondary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{assessmentStats.bySpecialty['pos-operatoria'] || 0}</div>
-              <p className="text-xs text-muted-foreground">avaliações especializadas</p>
+              <p className="text-xs text-neutral-textSecondary">avaliações especializadas</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Média de Recomendações</CardTitle>
-              <Sparkles className="h-4 w-4 text-muted-foreground" />
+              <Sparkles className="h-4 w-4 text-neutral-textSecondary" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{assessmentStats.averageRecommendations}</div>
-              <p className="text-xs text-muted-foreground">protocolos por avaliação</p>
+              <p className="text-xs text-neutral-textSecondary">protocolos por avaliação</p>
             </CardContent>
           </Card>
         </div>
@@ -269,13 +269,13 @@ const EnhancedAssessmentsPage: React.FC = () => {
       {/* Filters */}
       <Card>
         <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
             <div>
               <Label htmlFor="specialty-filter">Especialidade</Label>
               <select
                 id="specialty-filter"
                 title="Filtrar por especialidade"
-                className="w-full mt-1 p-2 border rounded-md"
+                className="w-full mt-xs p-sm border rounded-md"
                 value={specialtyFilter}
                 onChange={e => setSpecialtyFilter(e.target.value)}
               >
@@ -288,8 +288,8 @@ const EnhancedAssessmentsPage: React.FC = () => {
 
             <div className="md:col-span-2">
               <Label htmlFor="search-assessment">Buscar</Label>
-              <div className="relative mt-1">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <div className="relative mt-xs">
+                <Search className="absolute left-3 top-sm.5 h-4 w-4 text-neutral-textSecondary" />
                 <Input
                   id="search-assessment"
                   type="text"
@@ -305,31 +305,31 @@ const EnhancedAssessmentsPage: React.FC = () => {
       </Card>
 
       {/* Assessments Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
         {filteredAssessments.map(assessment => {
           const IconComponent = getSpecialtyIcon(assessment.specialty);
 
           return (
-            <Card key={assessment.id} className="cursor-pointer hover:shadow-md transition-shadow">
+            <Card key={assessment.id} className="cursor-pointer hover:shadow-cardHover transition-shadow">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <IconComponent className="w-5 h-5 text-blue-600" />
+                    <IconComponent className="w-5 h-5 text-primary" />
                     <Badge className={getSpecialtyColor(assessment.specialty)}>
                       {assessment.specialty}
                     </Badge>
                   </div>
-                  <Clock className="w-4 h-4 text-muted-foreground" />
+                  <Clock className="w-4 h-4 text-neutral-textSecondary" />
                 </div>
                 <CardTitle className="text-lg">{assessment.title}</CardTitle>
                 <CardDescription>{assessment.description}</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  <div className="text-sm text-muted-foreground">
+                <div className="space-y-sm">
+                  <div className="text-sm text-neutral-textSecondary">
                     <strong>Duração:</strong> {assessment.duration}
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-neutral-textSecondary">
                     <strong>População:</strong> {assessment.targetPopulation}
                   </div>
 
@@ -347,11 +347,11 @@ const EnhancedAssessmentsPage: React.FC = () => {
                       size="sm"
                       onClick={() => handleAssessmentClick(assessment)}
                     >
-                      <Eye className="w-4 h-4 mr-1" />
+                      <Eye className="w-4 h-4 mr-xs" />
                       Ver Detalhes
                     </Button>
                     <Button size="sm" onClick={() => handleAssessmentClick(assessment)}>
-                      <Zap className="w-4 h-4 mr-1" />
+                      <Zap className="w-4 h-4 mr-xs" />
                       Avaliar
                     </Button>
                   </div>
@@ -365,22 +365,22 @@ const EnhancedAssessmentsPage: React.FC = () => {
   );
 
   const renderResults = () => (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       <div>
         <h2 className="text-2xl font-bold">Resultados de Avaliações</h2>
-        <p className="text-muted-foreground">Histórico de avaliações realizadas</p>
+        <p className="text-neutral-textSecondary">Histórico de avaliações realizadas</p>
       </div>
 
       {assessmentResults.length === 0 ? (
         <Card>
-          <CardContent className="pt-6 text-center text-muted-foreground">
-            <ClipboardCheck className="w-12 h-12 mx-auto mb-4 opacity-50" />
+          <CardContent className="pt-6 text-center text-neutral-textSecondary">
+            <ClipboardCheck className="w-12 h-12 mx-auto mb-md opacity-50" />
             <p>Nenhuma avaliação realizada ainda.</p>
-            <p className="text-sm mt-2">Realize uma avaliação para ver os resultados aqui.</p>
+            <p className="text-sm mt-sm">Realize uma avaliação para ver os resultados aqui.</p>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
           {assessmentResults.map((result, index) => {
             const assessment = assessments.find(a => a.id === result.assessmentId);
 
@@ -391,7 +391,7 @@ const EnhancedAssessmentsPage: React.FC = () => {
                     <Badge className={getSeverityColor(result.severity)}>
                       {result.severity}
                     </Badge>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-neutral-textSecondary">
                       {new Date(result.assessedAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -399,7 +399,7 @@ const EnhancedAssessmentsPage: React.FC = () => {
                   <CardDescription>{result.interpretation}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-sm">
                     <div>
                       <div className="flex justify-between text-sm mb-1">
                         <span>Pontuação Total</span>
@@ -410,16 +410,16 @@ const EnhancedAssessmentsPage: React.FC = () => {
 
                     {result.recommendedProtocols.length > 0 && (
                       <div>
-                        <div className="text-sm font-medium mb-2 flex items-center">
-                          <Lightbulb className="w-4 h-4 mr-1 text-yellow-500" />
+                        <div className="text-sm font-medium mb-sm flex items-center">
+                          <Lightbulb className="w-4 h-4 mr-xs text-yellow-500" />
                           Protocolos Recomendados ({result.recommendedProtocols.length})
                         </div>
                         <div className="space-y-1">
                           {result.recommendedProtocols.slice(0, 2).map((protocolId, idx) => {
                             const protocol = recommendedProtocols.find(p => p.id === protocolId);
                             return (
-                              <div key={idx} className="text-xs text-muted-foreground flex items-center">
-                                <CheckCircle className="w-3 h-3 mr-1 text-green-500" />
+                              <div key={idx} className="text-xs text-neutral-textSecondary flex items-center">
+                                <CheckCircle className="w-3 h-3 mr-xs text-green-500" />
                                 {protocol?.name || protocolId}
                               </div>
                             );
@@ -434,7 +434,7 @@ const EnhancedAssessmentsPage: React.FC = () => {
                       className="w-full"
                       onClick={() => setSelectedResult(result)}
                     >
-                      <FileText className="w-4 h-4 mr-1" />
+                      <FileText className="w-4 h-4 mr-xs" />
                       Ver Relatório Completo
                     </Button>
                   </div>
@@ -449,7 +449,7 @@ const EnhancedAssessmentsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-xl">
         <PageHeader title="Avaliações Especializadas" subtitle="Carregando..." />
         <Skeleton className="h-96 w-full" />
       </div>
@@ -457,7 +457,7 @@ const EnhancedAssessmentsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       <PageHeader
         title="Avaliações Especializadas Integradas"
         subtitle="Sistema inteligente de avaliação com recomendação automática de protocolos"
@@ -469,20 +469,20 @@ const EnhancedAssessmentsPage: React.FC = () => {
           <TabsTrigger value="results">Resultados</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="assessments" className="mt-6">
+        <TabsContent value="assessments" className="mt-xl">
           {renderAssessments()}
         </TabsContent>
 
-        <TabsContent value="results" className="mt-6">
+        <TabsContent value="results" className="mt-xl">
           {renderResults()}
         </TabsContent>
       </Tabs>
 
       {/* Assessment Modal */}
       {selectedAssessment && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between p-6 border-b">
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-md">
+          <div className="bg-white rounded-cardLarge shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between p-lg border-b">
               <div>
                 <h2 className="text-xl font-bold">{selectedAssessment.title}</h2>
                 <Badge className={getSpecialtyColor(selectedAssessment.specialty)}>
@@ -493,27 +493,27 @@ const EnhancedAssessmentsPage: React.FC = () => {
                 <X className="w-5 h-5" />
               </Button>
             </div>
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="space-y-6">
+            <div className="flex-1 overflow-y-auto p-lg">
+              <div className="space-y-xl">
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Descrição</h3>
-                  <p className="text-muted-foreground">{selectedAssessment.description}</p>
+                  <h3 className="text-lg font-semibold mb-sm">Descrição</h3>
+                  <p className="text-neutral-textSecondary">{selectedAssessment.description}</p>
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Objetivo</h3>
-                  <p className="text-muted-foreground">{selectedAssessment.purpose}</p>
+                  <h3 className="text-lg font-semibold mb-sm">Objetivo</h3>
+                  <p className="text-neutral-textSecondary">{selectedAssessment.purpose}</p>
                 </div>
 
                 {demoScores.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-4">Pontuação</h3>
-                    <div className="space-y-4">
+                    <h3 className="text-lg font-semibold mb-md">Pontuação</h3>
+                    <div className="space-y-md">
                       {demoScores.map((score, index) => (
-                        <div key={index} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-center mb-2">
+                        <div key={index} className="border rounded-lg p-md">
+                          <div className="flex justify-between items-center mb-sm">
                             <span className="font-medium">{score.criteriaName}</span>
-                            <span className="text-sm text-muted-foreground">
+                            <span className="text-sm text-neutral-textSecondary">
                               {score.score}/{score.maxScore}
                             </span>
                           </div>
@@ -533,16 +533,16 @@ const EnhancedAssessmentsPage: React.FC = () => {
 
                 {recommendedProtocols.length > 0 && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-4 flex items-center">
-                      <Lightbulb className="w-5 h-5 mr-2 text-yellow-500" />
+                    <h3 className="text-lg font-semibold mb-md flex items-center">
+                      <Lightbulb className="w-5 h-5 mr-sm text-yellow-500" />
                       Protocolos Recomendados
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
                       {recommendedProtocols.map(protocol => (
-                        <div key={protocol.id} className="border rounded-lg p-3">
+                        <div key={protocol.id} className="border rounded-lg p-md">
                           <h4 className="font-medium">{protocol.name}</h4>
-                          <p className="text-sm text-muted-foreground mt-1">{protocol.description}</p>
-                          <div className="flex items-center mt-2">
+                          <p className="text-sm text-neutral-textSecondary mt-xs">{protocol.description}</p>
+                          <div className="flex items-center mt-sm">
                             <Badge variant="secondary" className="text-xs">
                               {protocol.category}
                             </Badge>
@@ -554,12 +554,12 @@ const EnhancedAssessmentsPage: React.FC = () => {
                 )}
               </div>
             </div>
-            <div className="border-t p-6 flex justify-end space-x-3">
+            <div className="border-t p-lg flex justify-end space-x-3">
               <Button variant="outline" onClick={() => setSelectedAssessment(null)}>
                 Cancelar
               </Button>
               <Button onClick={handleSubmitAssessment}>
-                <CheckCircle className="w-4 h-4 mr-2" />
+                <CheckCircle className="w-4 h-4 mr-sm" />
                 Submeter Avaliação
               </Button>
             </div>

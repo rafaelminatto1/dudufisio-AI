@@ -194,18 +194,18 @@ const MentoriaPage: React.FC = () => {
 
     // Render methods
     const renderDashboard = () => (
-        <div className="space-y-6">
+        <div className="space-y-xl">
             {/* Main Statistics */}
             {metrics && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Estagiários Ativos</CardTitle>
-                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <Users className="h-4 w-4 text-neutral-textSecondary" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{metrics.activeInterns}</div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-neutral-textSecondary">
                                 {metrics.totalInterns} total
                             </p>
                         </CardContent>
@@ -214,22 +214,22 @@ const MentoriaPage: React.FC = () => {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Progresso Médio</CardTitle>
-                            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                            <TrendingUp className="h-4 w-4 text-neutral-textSecondary" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{metrics.averageCompetencyProgress.toFixed(1)}%</div>
-                            <Progress value={metrics.averageCompetencyProgress} className="mt-2" />
+                            <Progress value={metrics.averageCompetencyProgress} className="mt-sm" />
                         </CardContent>
                     </Card>
 
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Casos Clínicos</CardTitle>
-                            <BookOpen className="h-4 w-4 text-muted-foreground" />
+                            <BookOpen className="h-4 w-4 text-neutral-textSecondary" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{metrics.totalCases}</div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-neutral-textSecondary">
                                 Avaliação média: {metrics.averageCaseRating.toFixed(1)}/5
                             </p>
                         </CardContent>
@@ -238,11 +238,11 @@ const MentoriaPage: React.FC = () => {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Recursos Educacionais</CardTitle>
-                            <Award className="h-4 w-4 text-muted-foreground" />
+                            <Award className="h-4 w-4 text-neutral-textSecondary" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{metrics.totalResources}</div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-neutral-textSecondary">
                                 {metrics.totalLearningPaths} trilhas de aprendizagem
                             </p>
                         </CardContent>
@@ -251,7 +251,7 @@ const MentoriaPage: React.FC = () => {
             )}
 
             {/* Progress Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
                 <Card>
                     <CardHeader>
                         <CardTitle>Progresso Mensal</CardTitle>
@@ -259,13 +259,13 @@ const MentoriaPage: React.FC = () => {
                     </CardHeader>
                     <CardContent>
                         {metrics && (
-                            <div className="space-y-4">
+                            <div className="space-y-md">
                                 {metrics.monthlyProgress.map((month, index) => (
                                     <div key={index} className="flex items-center justify-between">
                                         <span className="text-sm font-medium">{month.month}</span>
                                         <div className="flex space-x-4 text-sm">
-                                            <span className="text-green-600">+{month.newInterns} estagiários</span>
-                                            <span className="text-blue-600">{month.completedCases} casos</span>
+                                            <span className="text-success">+{month.newInterns} estagiários</span>
+                                            <span className="text-primary">{month.completedCases} casos</span>
                                         </div>
                                     </div>
                                 ))}
@@ -281,12 +281,12 @@ const MentoriaPage: React.FC = () => {
                     </CardHeader>
                     <CardContent>
                         {metrics && (
-                            <div className="space-y-4">
+                            <div className="space-y-md">
                                 {Object.entries(metrics.competencyDistribution).map(([category, levels]) => (
-                                    <div key={category} className="space-y-2">
+                                    <div key={category} className="space-y-sm">
                                         <div className="flex justify-between items-center">
                                             <span className="text-sm font-medium">{category}</span>
-                                            <span className="text-xs text-muted-foreground">
+                                            <span className="text-xs text-neutral-textSecondary">
                                                 {Object.values(levels).reduce((a, b) => a + b, 0)} avaliações
                                             </span>
                                         </div>
@@ -294,7 +294,7 @@ const MentoriaPage: React.FC = () => {
                                             {Object.entries(levels).map(([level, count]) => (
                                                 <div key={level} className="text-center">
                                                     <div className="text-xs font-medium">{count}</div>
-                                                    <div className="text-xs text-muted-foreground">{level}</div>
+                                                    <div className="text-xs text-neutral-textSecondary">{level}</div>
                                                 </div>
                                             ))}
                                         </div>
@@ -313,7 +313,7 @@ const MentoriaPage: React.FC = () => {
                     <CardDescription>Últimas atividades de mentoria e ensino</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="space-y-4">
+                    <div className="space-y-md">
                         {interns.slice(0, 5).map((intern: any) => (
                             <div key={intern.id} className="flex items-center space-x-4">
                                 <img 
@@ -323,7 +323,7 @@ const MentoriaPage: React.FC = () => {
                                 />
                                 <div className="flex-1">
                                     <p className="text-sm font-medium">{intern.name}</p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-neutral-textSecondary">
                                         {intern.completedHours}h de {intern.totalHours}h completadas
                                     </p>
                                 </div>
@@ -339,15 +339,15 @@ const MentoriaPage: React.FC = () => {
     );
 
     const renderInterns = () => (
-        <div className="space-y-6">
+        <div className="space-y-xl">
             {/* Header with actions */}
             <div className="flex justify-between items-center">
                 <div>
                     <h2 className="text-2xl font-bold">Gestão de Estagiários</h2>
-                    <p className="text-muted-foreground">Gerencie estagiários, competências e cronogramas</p>
+                    <p className="text-neutral-textSecondary">Gerencie estagiários, competências e cronogramas</p>
                 </div>
                 <Button onClick={handleAddIntern}>
-                    <UserPlus className="w-4 h-4 mr-2" />
+                    <UserPlus className="w-4 h-4 mr-sm" />
                     Novo Estagiário
                 </Button>
             </div>
@@ -355,11 +355,11 @@ const MentoriaPage: React.FC = () => {
             {/* Filters */}
             <Card>
                 <CardContent className="pt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
                         <div>
                             <label className="text-sm font-medium">Status</label>
                             <select 
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-xs p-sm border rounded-md"
                                 value={internFilter.status || ''}
                                 onChange={(e) => setInternFilter(prev => ({ 
                                     ...prev, 
@@ -375,7 +375,7 @@ const MentoriaPage: React.FC = () => {
                         <div>
                             <label className="text-sm font-medium">Supervisor</label>
                             <select 
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-xs p-sm border rounded-md"
                                 value={internFilter.supervisor || ''}
                                 onChange={(e) => setInternFilter(prev => ({ 
                                     ...prev, 
@@ -390,12 +390,12 @@ const MentoriaPage: React.FC = () => {
                         </div>
                         <div className="md:col-span-2">
                             <label className="text-sm font-medium">Buscar</label>
-                            <div className="relative mt-1">
-                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <div className="relative mt-xs">
+                                <Search className="absolute left-3 top-sm.5 h-4 w-4 text-neutral-textSecondary" />
                                 <input
                                     type="text"
                                     placeholder="Buscar por nome ou instituição..."
-                                    className="w-full pl-10 pr-4 py-2 border rounded-md"
+                                    className="w-full pl-10 pr-4 py-sm border rounded-md"
                                     value={internFilter.search || ''}
                                     onChange={(e) => setInternFilter(prev => ({ 
                                         ...prev, 
@@ -429,7 +429,7 @@ const MentoriaPage: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="space-y-6">
+            <div className="space-y-xl">
                 <PageHeader
                     title="Módulo de Mentoria e Ensino"
                     subtitle="Carregando dados de mentoria..."
@@ -440,7 +440,7 @@ const MentoriaPage: React.FC = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-xl">
             <PageHeader
                 title="Módulo de Mentoria e Ensino"
                 subtitle="Centro completo de educação continuada e desenvolvimento profissional"
@@ -476,51 +476,51 @@ const MentoriaPage: React.FC = () => {
                     <TabsTrigger value="analytics">Analytics</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="dashboard" className="mt-6">
+                <TabsContent value="dashboard" className="mt-xl">
                     {renderDashboard()}
                 </TabsContent>
 
-                <TabsContent value="interns" className="mt-6">
+                <TabsContent value="interns" className="mt-xl">
                     {renderInterns()}
                 </TabsContent>
 
-                <TabsContent value="cases" className="mt-6">
+                <TabsContent value="cases" className="mt-xl">
                     <div className="text-center py-12">
-                        <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">Casos Clínicos</h3>
-                        <p className="text-muted-foreground">Funcionalidade em desenvolvimento</p>
+                        <BookOpen className="w-12 h-12 text-neutral-textSecondary mx-auto mb-md" />
+                        <h3 className="text-lg font-semibold mb-sm">Casos Clínicos</h3>
+                        <p className="text-neutral-textSecondary">Funcionalidade em desenvolvimento</p>
                     </div>
                 </TabsContent>
 
-                <TabsContent value="resources" className="mt-6">
+                <TabsContent value="resources" className="mt-xl">
                     <div className="text-center py-12">
-                        <Award className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">Recursos Educacionais</h3>
-                        <p className="text-muted-foreground">Funcionalidade em desenvolvimento</p>
+                        <Award className="w-12 h-12 text-neutral-textSecondary mx-auto mb-md" />
+                        <h3 className="text-lg font-semibold mb-sm">Recursos Educacionais</h3>
+                        <p className="text-neutral-textSecondary">Funcionalidade em desenvolvimento</p>
                     </div>
                 </TabsContent>
 
-                <TabsContent value="paths" className="mt-6">
+                <TabsContent value="paths" className="mt-xl">
                     <div className="text-center py-12">
-                        <GraduationCap className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">Trilhas de Aprendizagem</h3>
-                        <p className="text-muted-foreground">Funcionalidade em desenvolvimento</p>
+                        <GraduationCap className="w-12 h-12 text-neutral-textSecondary mx-auto mb-md" />
+                        <h3 className="text-lg font-semibold mb-sm">Trilhas de Aprendizagem</h3>
+                        <p className="text-neutral-textSecondary">Funcionalidade em desenvolvimento</p>
                     </div>
                 </TabsContent>
 
-                <TabsContent value="certifications" className="mt-6">
+                <TabsContent value="certifications" className="mt-xl">
                     <div className="text-center py-12">
-                        <Award className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">Certificações</h3>
-                        <p className="text-muted-foreground">Funcionalidade em desenvolvimento</p>
+                        <Award className="w-12 h-12 text-neutral-textSecondary mx-auto mb-md" />
+                        <h3 className="text-lg font-semibold mb-sm">Certificações</h3>
+                        <p className="text-neutral-textSecondary">Funcionalidade em desenvolvimento</p>
                     </div>
                 </TabsContent>
 
-                <TabsContent value="analytics" className="mt-6">
+                <TabsContent value="analytics" className="mt-xl">
                     <div className="text-center py-12">
-                        <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">Analytics de Mentoria</h3>
-                        <p className="text-muted-foreground">Funcionalidade em desenvolvimento</p>
+                        <BarChart3 className="w-12 h-12 text-neutral-textSecondary mx-auto mb-md" />
+                        <h3 className="text-lg font-semibold mb-sm">Analytics de Mentoria</h3>
+                        <p className="text-neutral-textSecondary">Funcionalidade em desenvolvimento</p>
                     </div>
                 </TabsContent>
             </Tabs>

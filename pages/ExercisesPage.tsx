@@ -139,67 +139,67 @@ const ExercisesPage: React.FC = () => {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
+    <div className="p-md sm:p-lg space-y-xl">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-md">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-fisio-neutral-800">Exercícios</h1>
-          <p className="text-fisio-neutral-600 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Exercícios</h1>
+          <p className="text-fisio-neutral-600 mt-xs">
             Gerencie sua biblioteca de exercícios fisioterapêuticos
           </p>
         </div>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-sm flex-wrap">
           <Button variant="outline" size="sm">
-            <Upload className="h-4 w-4 mr-2" />
+            <Upload className="h-4 w-4 mr-sm" />
             <span className="hidden sm:inline">Importar</span>
           </Button>
           <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="h-4 w-4 mr-sm" />
             <span className="hidden sm:inline">Exportar</span>
           </Button>
           <Button onClick={handleCreateExercise} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-4 w-4 mr-sm" />
             Novo Exercício
           </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-fisio-neutral-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md">
+        <Card className="border-neutral-border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-fisio-neutral-800">Total de Exercícios</CardTitle>
+            <CardTitle className="text-sm font-medium text-neutral-text">Total de Exercícios</CardTitle>
             <Dumbbell className="h-4 w-4 text-fisio-primary-DEFAULT" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-fisio-neutral-800">{stats.total}</div>
+            <div className="text-2xl font-bold text-neutral-text">{stats.total}</div>
             <p className="text-xs text-fisio-neutral-500">
               {stats.active} ativos
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-fisio-neutral-200">
+        <Card className="border-neutral-border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-fisio-neutral-800">Categorias</CardTitle>
+            <CardTitle className="text-sm font-medium text-neutral-text">Categorias</CardTitle>
             <Activity className="h-4 w-4 text-fisio-secondary-DEFAULT" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-fisio-neutral-800">{categories.length}</div>
+            <div className="text-2xl font-bold text-neutral-text">{categories.length}</div>
             <p className="text-xs text-fisio-neutral-500">
               Diferentes categorias
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-fisio-neutral-200">
+        <Card className="border-neutral-border">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-fisio-neutral-800">Iniciantes</CardTitle>
+            <CardTitle className="text-sm font-medium text-neutral-text">Iniciantes</CardTitle>
             <TrendingUp className="h-4 w-4 text-fisio-warning-DEFAULT" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.beginner}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-textSecondary">
               Nível iniciante
             </p>
           </CardContent>
@@ -208,11 +208,11 @@ const ExercisesPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avançados</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.advanced}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-textSecondary">
               Nível avançado/expert
             </p>
           </CardContent>
@@ -228,11 +228,11 @@ const ExercisesPage: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col md:flex-row gap-md">
             {/* Search */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-textTertiary" />
                 <Input
                   placeholder="Buscar exercícios..."
                   value={searchQuery}
@@ -348,23 +348,23 @@ const ExercisesPage: React.FC = () => {
 // Skeleton Loading
 const ExercisesPageSkeleton: React.FC = () => {
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-lg space-y-xl">
       <div className="flex items-center justify-between">
         <div>
-          <Skeleton className="h-8 w-48 mb-2" />
+          <Skeleton className="h-8 w-48 mb-sm" />
           <Skeleton className="h-4 w-64" />
         </div>
         <Skeleton className="h-10 w-32" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
         {[1, 2, 3, 4].map((i) => (
           <Card key={i}>
             <CardHeader>
               <Skeleton className="h-4 w-32" />
             </CardHeader>
             <CardContent>
-              <Skeleton className="h-8 w-16 mb-2" />
+              <Skeleton className="h-8 w-16 mb-sm" />
               <Skeleton className="h-3 w-24" />
             </CardContent>
           </Card>

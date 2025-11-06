@@ -84,54 +84,54 @@ const PerformanceMetricsDashboard: React.FC = () => {
   const selectedReport = selectedComponent ? reports.get(selectedComponent) : null;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-lg space-y-xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Performance Metrics</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-neutral-text">Performance Metrics</h1>
+          <p className="text-neutral-textSecondary mt-xs">
             Monitoramento em tempo real de performance dos componentes
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           <Button onClick={refreshMetrics} variant="outline" size="sm">
-            <RefreshCw className="w-4 h-4 mr-2" />
+            <RefreshCw className="w-4 h-4 mr-sm" />
             Atualizar
           </Button>
           <Button onClick={exportPerformanceMetrics} variant="outline" size="sm">
-            <Download className="w-4 h-4 mr-2" />
+            <Download className="w-4 h-4 mr-sm" />
             Exportar
           </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-lg">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">FPS Atual</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-sm font-medium text-neutral-textSecondary">FPS Atual</p>
+                <p className="text-2xl font-bold text-neutral-text mt-xs">
                   {currentFPS}
                 </p>
               </div>
               <div
-                className={`p-3 rounded-lg ${
+                className={`p-md rounded-lg ${
                   currentFPS >= 50
-                    ? 'bg-green-100'
+                    ? 'bg-success-light'
                     : currentFPS >= 30
-                    ? 'bg-yellow-100'
-                    : 'bg-red-100'
+                    ? 'bg-warning-light'
+                    : 'bg-error-light'
                 }`}
               >
                 <Activity
                   className={`w-6 h-6 ${
                     currentFPS >= 50
-                      ? 'text-green-600'
+                      ? 'text-success'
                       : currentFPS >= 30
-                      ? 'text-yellow-600'
-                      : 'text-red-600'
+                      ? 'text-warning'
+                      : 'text-error'
                   }`}
                 />
               </div>
@@ -143,13 +143,13 @@ const PerformanceMetricsDashboard: React.FC = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Render Médio</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-sm font-medium text-neutral-textSecondary">Render Médio</p>
+                <p className="text-2xl font-bold text-neutral-text mt-xs">
                   {stats.avgRenderTime.toFixed(2)}ms
                 </p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Clock className="w-6 h-6 text-blue-600" />
+              <div className="p-md bg-primary-light rounded-lg">
+                <Clock className="w-6 h-6 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -159,13 +159,13 @@ const PerformanceMetricsDashboard: React.FC = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Componentes Lentos</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-sm font-medium text-neutral-textSecondary">Componentes Lentos</p>
+                <p className="text-2xl font-bold text-neutral-text mt-xs">
                   {stats.slowComponents}
                 </p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <AlertTriangle className="w-6 h-6 text-orange-600" />
+              <div className="p-md bg-warning-light rounded-lg">
+                <AlertTriangle className="w-6 h-6 text-warning" />
               </div>
             </div>
           </CardContent>
@@ -175,12 +175,12 @@ const PerformanceMetricsDashboard: React.FC = () => {
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Renders</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
+                <p className="text-sm font-medium text-neutral-textSecondary">Total Renders</p>
+                <p className="text-2xl font-bold text-neutral-text mt-xs">
                   {stats.totalRenders}
                 </p>
               </div>
-              <div className="p-3 bg-purple-100 rounded-lg">
+              <div className="p-md bg-purple-100 rounded-lg">
                 <BarChart3 className="w-6 h-6 text-purple-600" />
               </div>
             </div>
@@ -194,16 +194,16 @@ const PerformanceMetricsDashboard: React.FC = () => {
           <CardTitle>Componentes por Performance</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-sm">
             {sortedComponents.map(([name, report]) => (
               <div
                 key={name}
                 onClick={() => setSelectedComponent(name)}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg hover:bg-neutral-bgDark cursor-pointer transition-colors"
               >
                 <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-semibold text-gray-900">{name}</h3>
+                  <div className="flex items-center gap-md">
+                    <h3 className="font-semibold text-neutral-text">{name}</h3>
                     {report.averageRenderTime > 16 && (
                       <Badge variant="destructive" className="text-xs">
                         Lento
@@ -215,7 +215,7 @@ const PerformanceMetricsDashboard: React.FC = () => {
                       </Badge>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+                  <div className="flex items-center gap-md mt-sm text-sm text-neutral-textSecondary">
                     <span>Avg: {report.averageRenderTime.toFixed(2)}ms</span>
                     <span>Renders: {report.totalRenders}</span>
                     <span>
@@ -224,12 +224,12 @@ const PerformanceMetricsDashboard: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <Eye className="w-5 h-5 text-gray-400" />
+                <Eye className="w-5 h-5 text-neutral-textTertiary" />
               </div>
             ))}
 
             {sortedComponents.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-3xl text-gray-500">
                 Nenhuma métrica disponível ainda
               </div>
             )}
@@ -253,51 +253,51 @@ const PerformanceMetricsDashboard: React.FC = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-md">
               <div>
-                <p className="text-sm text-gray-600">Render Médio</p>
-                <p className="text-xl font-bold text-gray-900 mt-1">
+                <p className="text-sm text-neutral-textSecondary">Render Médio</p>
+                <p className="text-xl font-bold text-neutral-text mt-xs">
                   {selectedReport.averageRenderTime.toFixed(2)}ms
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Mais Rápido</p>
-                <p className="text-xl font-bold text-green-600 mt-1">
+                <p className="text-sm text-neutral-textSecondary">Mais Rápido</p>
+                <p className="text-xl font-bold text-success mt-xs">
                   {selectedReport.fastestRender.toFixed(2)}ms
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Mais Lento</p>
-                <p className="text-xl font-bold text-red-600 mt-1">
+                <p className="text-sm text-neutral-textSecondary">Mais Lento</p>
+                <p className="text-xl font-bold text-error mt-xs">
                   {selectedReport.slowestRender.toFixed(2)}ms
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Total Renders</p>
-                <p className="text-xl font-bold text-gray-900 mt-1">
+                <p className="text-sm text-neutral-textSecondary">Total Renders</p>
+                <p className="text-xl font-bold text-neutral-text mt-xs">
                   {selectedReport.totalRenders}
                 </p>
               </div>
             </div>
 
             {selectedReport.memoryUsage && (
-              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-gray-600">Uso de Memória</p>
-                <p className="text-lg font-semibold text-blue-900 mt-1">
+              <div className="mt-md p-md bg-primary-light rounded-lg">
+                <p className="text-sm text-neutral-textSecondary">Uso de Memória</p>
+                <p className="text-lg font-semibold text-blue-900 mt-xs">
                   {(selectedReport.memoryUsage / 1024 / 1024).toFixed(2)} MB
                 </p>
               </div>
             )}
 
             {selectedReport.averageRenderTime > 16 && (
-              <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5" />
+              <div className="mt-md p-md bg-warning-light border border-warning rounded-lg">
+                <div className="flex items-start gap-sm">
+                  <AlertTriangle className="w-5 h-5 text-warning mt-0.5" />
                   <div>
                     <p className="font-semibold text-orange-900">
                       Performance abaixo do ideal
                     </p>
-                    <p className="text-sm text-orange-800 mt-1">
+                    <p className="text-sm text-warning mt-xs">
                       Este componente está renderizando mais lento que 16ms (60fps). Considere
                       aplicar otimizações adicionais.
                     </p>

@@ -157,10 +157,10 @@ export const RiskStratificationPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-bgAlt flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Analisando perfil de risco...</p>
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-md"></div>
+          <p className="text-neutral-textSecondary">Analisando perfil de risco...</p>
         </div>
       </div>
     );
@@ -168,18 +168,18 @@ export const RiskStratificationPage: React.FC = () => {
 
   if (!riskProfile || !patient) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-bgAlt flex items-center justify-center">
         <div className="text-center">
-          <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-md" />
+          <h2 className="text-2xl font-bold text-neutral-text mb-sm">
             Erro ao Carregar Perfil
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-neutral-textSecondary mb-xl">
             Não foi possível carregar o perfil de risco do paciente.
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="px-lg py-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition"
           >
             Voltar
           </button>
@@ -189,41 +189,41 @@ export const RiskStratificationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-bgAlt">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-white shadow-card border-b">
+        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl py-xl">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-md">
               <button
                 onClick={() => navigate(-1)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-sm hover:bg-neutral-bgDark rounded-lg transition"
                 aria-label="Voltar"
                 title="Voltar"
               >
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
+                <ArrowLeft className="w-5 h-5 text-neutral-textSecondary" />
               </button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-3xl font-bold text-neutral-text">
                   Estratificação de Risco
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-neutral-textSecondary mt-xs">
                   Análise completa de fatores de risco para {patient.name}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-md">
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition disabled:opacity-50"
+                className="flex items-center gap-sm px-md py-sm bg-neutral-bgDark text-gray-700 rounded-lg hover:bg-gray-200 transition disabled:opacity-50"
               >
                 <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                 <span className="font-medium">Atualizar</span>
               </button>
               <button
                 onClick={handleExportReport}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="flex items-center gap-sm px-md py-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition"
               >
                 <Download className="w-4 h-4" />
                 <span className="font-medium">Exportar Relatório</span>
@@ -234,7 +234,7 @@ export const RiskStratificationPage: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl py-3xl">
         <RiskAssessmentDashboard
           riskProfile={riskProfile}
           onViewDetails={handleViewDetails}
@@ -242,15 +242,15 @@ export const RiskStratificationPage: React.FC = () => {
         />
 
         {/* Quick Stats */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Activity className="w-6 h-6 text-blue-600" />
+        <div className="mt-3xl grid grid-cols-1 md:grid-cols-3 gap-lg">
+          <div className="bg-white rounded-lg shadow-cardHover p-lg">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-primary-light rounded-lg">
+                <Activity className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Média de Score</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-neutral-textSecondary">Média de Score</p>
+                <p className="text-2xl font-bold text-neutral-text">
                   {(riskProfile.assessments.reduce((sum, a) => sum + a.score, 0) / 
                     riskProfile.assessments.length).toFixed(0)}
                 </p>
@@ -258,14 +258,14 @@ export const RiskStratificationPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-purple-100 rounded-lg">
+          <div className="bg-white rounded-lg shadow-cardHover p-lg">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-purple-100 rounded-lg">
                 <Shield className="w-6 h-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Fatores Modificáveis</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-neutral-textSecondary">Fatores Modificáveis</p>
+                <p className="text-2xl font-bold text-neutral-text">
                   {riskProfile.assessments.reduce((sum, a) => 
                     sum + a.factors.filter(f => f.isModifiable).length, 0
                   )}
@@ -274,14 +274,14 @@ export const RiskStratificationPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+          <div className="bg-white rounded-lg shadow-cardHover p-lg">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-success-light rounded-lg">
+                <TrendingUp className="w-6 h-6 text-success" />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Recomendações Ativas</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-neutral-textSecondary">Recomendações Ativas</p>
+                <p className="text-2xl font-bold text-neutral-text">
                   {riskProfile.assessments.reduce((sum, a) => 
                     sum + a.recommendations.filter(r => !r.completed).length, 0
                   )}
@@ -292,22 +292,22 @@ export const RiskStratificationPage: React.FC = () => {
         </div>
 
         {/* Info Banner */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div className="flex items-start gap-4">
-            <div className="p-2 bg-blue-100 rounded-lg flex-shrink-0">
-              <Activity className="w-6 h-6 text-blue-600" />
+        <div className="mt-3xl bg-primary-light border border-primary rounded-lg p-lg">
+          <div className="flex items-start gap-md">
+            <div className="p-sm bg-primary-light rounded-lg flex-shrink-0">
+              <Activity className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">
+              <h3 className="text-lg font-semibold text-blue-900 mb-sm">
                 Sobre a Estratificação de Risco
               </h3>
-              <p className="text-blue-800 text-sm mb-4">
+              <p className="text-blue-800 text-sm mb-md">
                 A estratificação de risco é uma ferramenta baseada em evidências que analisa múltiplos
                 fatores para identificar pacientes que necessitam de intervenções específicas. Os scores
                 são calculados usando algoritmos validados cientificamente e devem ser interpretados
                 em conjunto com a avaliação clínica profissional.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-md text-sm">
                 <div>
                   <h4 className="font-semibold text-blue-900 mb-1">Frequência de Avaliação:</h4>
                   <p className="text-blue-800">

@@ -39,18 +39,18 @@ const initialFormData: EvaluationFormData = {
 
 // 🚀 Componente de seção colapsável memoizado
 const AccordionSection = memo<{ title: string; isOpen: boolean; onToggle: () => void; children: React.ReactNode }>(({ title, isOpen, onToggle, children }) => (
-    <Card className="mb-4">
+    <Card className="mb-md">
         <CardHeader
-            className="cursor-pointer hover:bg-slate-50 transition-colors"
+            className="cursor-pointer hover:bg-neutral-bgAlt transition-colors"
             onClick={onToggle}
         >
             <div className="flex justify-between items-center">
-                <CardTitle className="text-lg text-sky-700">{title}</CardTitle>
-                <ChevronDown className={`w-5 h-5 text-sky-600 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                <CardTitle className="text-lg text-primary">{title}</CardTitle>
+                <ChevronDown className={`w-5 h-5 text-primary transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
             </div>
         </CardHeader>
         {isOpen && (
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-md">
                 {children}
             </CardContent>
         )}
@@ -154,23 +154,23 @@ Paciente orientado sobre o quadro clínico e importância da adesão ao tratamen
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-neutral-bgAlt py-3xl">
+            <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-slate-900 mb-4">
+                <div className="text-center mb-mdxl">
+                    <h1 className="text-4xl font-bold text-neutral-text mb-md">
                         Gerador de Laudo de Avaliação
                     </h1>
-                    <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+                    <p className="text-xl text-neutral-textSecondary max-w-2xl mx-auto">
                         Preencha os dados da avaliação para gerar um laudo completo.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-xl items-start">
                     {/* Form Column */}
-                    <div className="space-y-6">
+                    <div className="space-y-xl">
                         <AccordionSection title="Dados e Anamnese" isOpen={openSections.anamnese} onToggle={() => handleToggleSection('anamnese')}>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-md">
                                 <div>
                                     <Label htmlFor="nome_paciente">Nome do Paciente</Label>
                                     <Input
@@ -259,7 +259,7 @@ Paciente orientado sobre o quadro clínico e importância da adesão ao tratamen
                         </AccordionSection>
                         
                         <AccordionSection title="Exame Físico" isOpen={openSections.exameFisico} onToggle={() => handleToggleSection('exameFisico')}>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-md">
                                 <div className="sm:col-span-2">
                                     <Label htmlFor="inspecao_palpacao">Inspeção e Palpação</Label>
                                     <Textarea
@@ -334,18 +334,18 @@ Paciente orientado sobre o quadro clínico e importância da adesão ao tratamen
                                     size="sm"
                                 >
                                     {copied ? (
-                                        <Check className="w-4 h-4 mr-2 text-green-500" />
+                                        <Check className="w-4 h-4 mr-sm text-green-500" />
                                     ) : (
-                                        <Clipboard className="w-4 h-4 mr-2" />
+                                        <Clipboard className="w-4 h-4 mr-sm" />
                                     )}
                                     {copied ? 'Copiado!' : 'Copiar'}
                                 </Button>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="bg-slate-50 p-4 rounded-lg min-h-[600px] overflow-y-auto border border-slate-200">
+                            <div className="bg-neutral-bgAlt p-md rounded-lg min-h-[600px] overflow-y-auto border border-neutral-border">
                                 {isLoading && (
-                                    <div className="space-y-4 animate-pulse p-2">
+                                    <div className="space-y-md animate-pulse p-sm">
                                         <div className="h-6 w-1/2 bg-slate-300 rounded" />
                                         <div className="h-4 w-1/3 bg-slate-300 rounded" />
                                         <div className="h-4 w-1/4 bg-slate-300 rounded" />
@@ -358,14 +358,14 @@ Paciente orientado sobre o quadro clínico e importância da adesão ao tratamen
                                     </div>
                                 )}
                                 {!isLoading && !report && (
-                                    <div className="text-center text-slate-500 flex flex-col justify-center items-center h-full">
-                                        <Sparkles className="w-16 h-16 text-slate-300 mb-4" />
+                                    <div className="text-center text-neutral-textSecondary flex flex-col justify-center items-center h-full">
+                                        <Sparkles className="w-16 h-16 text-slate-300 mb-md" />
                                         <p className="font-semibold">O laudo gerado aparecerá aqui.</p>
-                                        <p className="text-xs mt-1">Preencha o formulário e clique em "Gerar Laudo".</p>
+                                        <p className="text-xs mt-xs">Preencha o formulário e clique em "Gerar Laudo".</p>
                                     </div>
                                 )}
                                 {report && (
-                                    <pre className="whitespace-pre-wrap text-sm text-slate-700 font-mono">
+                                    <pre className="whitespace-pre-wrap text-sm text-neutral-text font-mono">
                                         {report}
                                     </pre>
                                 )}

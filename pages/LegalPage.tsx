@@ -2,10 +2,11 @@
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
+import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-    <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center">
+    <div className="mb-mdxl">
+        <h2 className="text-2xl font-bold text-neutral-text mb-md flex items-center">
             <ShieldCheck className="w-6 h-6 mr-3 text-sky-500" /> {title}
         </h2>
         <div className="prose prose-slate max-w-none">
@@ -22,7 +23,7 @@ const LegalPage: React.FC = () => {
                 subtitle="Nossa política de privacidade e termos de uso do FisioFlow."
             />
 
-            <div className="bg-white p-8 rounded-2xl shadow-sm">
+            <div className="bg-white p-xl rounded-cardLarge shadow-card">
                 <Section title="Política de Privacidade">
                     <p><strong>Última atualização:</strong> {new Date().toLocaleDateString('pt-BR')}</p>
                     <h4>1. INFORMAÇÕES QUE COLETAMOS</h4>

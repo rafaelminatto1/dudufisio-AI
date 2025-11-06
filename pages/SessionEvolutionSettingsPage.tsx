@@ -80,7 +80,7 @@ const SessionEvolutionSettingsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {/* Header */}
       <PageHeader
         title="Configurações de Atendimento"
@@ -89,16 +89,16 @@ const SessionEvolutionSettingsPage: React.FC = () => {
       />
 
       {/* Current Mode Indicator */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-primary rounded-lg p-md">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-slate-600 mb-1">Modo Atual</p>
-            <p className="text-lg font-bold text-slate-900">
+            <p className="text-sm text-neutral-textSecondary mb-1">Modo Atual</p>
+            <p className="text-lg font-bold text-neutral-text">
               {getModeLabel(mode)}
             </p>
           </div>
           {hasChanges && (
-            <div className="px-3 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">
+            <div className="px-md py-1 bg-warning-light text-warning text-xs font-medium rounded-full">
               Alterações não salvas
             </div>
           )}
@@ -106,7 +106,7 @@ const SessionEvolutionSettingsPage: React.FC = () => {
       </div>
 
       {/* Mode Selector */}
-      <div className="bg-white border border-slate-200 rounded-xl p-6">
+      <div className="bg-white border border-neutral-border rounded-card p-lg">
         <SessionEvolutionModeSelector
           currentMode={tempMode}
           onModeChange={handleModeChange}
@@ -115,8 +115,8 @@ const SessionEvolutionSettingsPage: React.FC = () => {
       </div>
 
       {/* Save/Reset Buttons */}
-      <div className="flex items-center justify-between bg-white border border-slate-200 rounded-lg p-4">
-        <p className="text-sm text-slate-600">
+      <div className="flex items-center justify-between bg-white border border-neutral-border rounded-lg p-md">
+        <p className="text-sm text-neutral-textSecondary">
           {hasChanges
             ? 'Você tem alterações não salvas. Clique em "Salvar Configuração" para aplicar.'
             : 'Suas configurações estão salvas e sincronizadas.'}
@@ -139,7 +139,7 @@ const SessionEvolutionSettingsPage: React.FC = () => {
             size="sm"
             onClick={handleSave}
             disabled={!hasChanges}
-            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
+            className="flex items-center space-x-2 bg-primary hover:bg-primary-hover"
           >
             <Save className="w-4 h-4" />
             <span>Salvar Configuração</span>
@@ -148,11 +148,11 @@ const SessionEvolutionSettingsPage: React.FC = () => {
       </div>
 
       {/* Additional Info */}
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-3">
-        <h4 className="font-semibold text-slate-900 text-sm">
+      <div className="bg-neutral-bgAlt border border-neutral-border rounded-lg p-md space-y-sm">
+        <h4 className="font-semibold text-neutral-text text-sm">
           ℹ️ Informações Adicionais
         </h4>
-        <div className="space-y-2 text-sm text-slate-700">
+        <div className="space-y-sm text-sm text-neutral-text">
           <p>
             • <strong>Sistema Existente:</strong> Continua usando a interface atual que já está funcionando.
           </p>

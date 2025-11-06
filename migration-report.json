@@ -1,25 +1,9 @@
 [
   {
-    "file": "pages/ExerciseLibraryPage.tsx",
-    "success": true,
-    "changesCount": 76,
-    "changes": [
-      {
-        "type": "Cores",
-        "count": 25
-      },
-      {
-        "type": "Espaçamento",
-        "count": 37
-      },
-      {
-        "type": "Shadows",
-        "count": 7
-      },
-      {
-        "type": "Border Radius",
-        "count": 7
-      }
-    ]
+    "file": "pages/AuthRoutes.tsx",
+    "success": false,
+    "changesCount": 0,
+    "changes": [],
+    "error": "Arquivo não encontrado"
   }
 ]

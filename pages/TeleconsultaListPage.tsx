@@ -74,7 +74,7 @@ const TeleconsultaListPage: React.FC = () => {
     today.setHours(0, 0, 0, 0);
 
     if (aptDate.getTime() === today.getTime()) {
-      return <Badge className="bg-green-500">Hoje</Badge>;
+      return <Badge className="bg-success-light0">Hoje</Badge>;
     } else if (aptDate.getTime() > today.getTime()) {
       return <Badge variant="outline">Próximo</Badge>;
     } else {
@@ -83,7 +83,7 @@ const TeleconsultaListPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-lg space-y-xl">
       <PageHeader
         title="Teleconsultas"
         subtitle="Selecione um agendamento para iniciar a teleconsulta"
@@ -93,10 +93,10 @@ const TeleconsultaListPage: React.FC = () => {
       {/* Filtros e Busca */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col md:flex-row gap-md">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-textTertiary w-4 h-4" />
                 <Input
                   placeholder="Buscar paciente..."
                   value={searchTerm}
@@ -105,7 +105,7 @@ const TeleconsultaListPage: React.FC = () => {
                 />
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-sm">
               <Button
                 variant={filterStatus === 'all' ? 'default' : 'outline'}
                 onClick={() => setFilterStatus('all')}
@@ -137,9 +137,9 @@ const TeleconsultaListPage: React.FC = () => {
         <Card>
           <CardContent className="py-12">
             <div className="text-center text-gray-500">
-              <Video className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+              <Video className="w-16 h-16 mx-auto mb-md text-gray-300" />
               <p className="text-lg font-medium">Nenhum agendamento encontrado</p>
-              <p className="text-sm mt-2">
+              <p className="text-sm mt-sm">
                 {searchTerm
                   ? 'Tente ajustar sua busca'
                   : 'Não há agendamentos disponíveis no momento'}
@@ -148,22 +148,22 @@ const TeleconsultaListPage: React.FC = () => {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-md">
           {filteredAppointments.map((appointment) => (
-            <Card key={appointment.id} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center gap-3">
-                      <User className="w-5 h-5 text-gray-400" />
+            <Card key={appointment.id} className="hover:shadow-cardActive transition-shadow">
+              <CardContent className="p-lg">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-md">
+                  <div className="flex-1 space-y-sm">
+                    <div className="flex items-center gap-md">
+                      <User className="w-5 h-5 text-neutral-textTertiary" />
                       <h3 className="text-lg font-semibold">
                         {getPatientName(appointment.patientId)}
                       </h3>
                       {getStatusBadge(appointment.date)}
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap gap-md text-sm text-neutral-textSecondary">
+                      <div className="flex items-center gap-sm">
                         <Calendar className="w-4 h-4" />
                         <span>
                           {(() => {
@@ -177,23 +177,23 @@ const TeleconsultaListPage: React.FC = () => {
                           })()}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-sm">
                         <Clock className="w-4 h-4" />
                         <span>{appointment.time}</span>
                       </div>
                     </div>
 
                     {appointment.notes && (
-                      <p className="text-sm text-gray-500 line-clamp-2">
+                      <p className="text-sm text-gray-500 line-clamp-sm">
                         {appointment.notes}
                       </p>
                     )}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-sm">
                     <Button
                       onClick={() => startTeleconsulta(appointment.id)}
-                      className="gap-2"
+                      className="gap-sm"
                     >
                       <Video className="w-4 h-4" />
                       Iniciar Teleconsulta
@@ -207,17 +207,17 @@ const TeleconsultaListPage: React.FC = () => {
       )}
 
       {/* Informações */}
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-primary bg-primary-light">
         <CardContent className="pt-6">
-          <div className="flex gap-3">
+          <div className="flex gap-md">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <Video className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 rounded-full bg-primary-light flex items-center justify-center">
+                <Video className="w-5 h-5 text-primary" />
               </div>
             </div>
             <div className="space-y-1">
               <h4 className="font-semibold text-blue-900">Como funciona</h4>
-              <p className="text-sm text-blue-700">
+              <p className="text-sm text-primary">
                 Selecione um agendamento da lista acima para iniciar uma sessão de
                 teleconsulta. Você poderá compartilhar exercícios, mapas de dor e fazer
                 anotações em tempo real.

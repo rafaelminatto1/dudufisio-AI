@@ -165,11 +165,11 @@ const EnhancedProtocolsPage: React.FC = () => {
     const getEvidenceLevelColor = (level: EvidenceLevel) => {
         switch (level) {
             case EvidenceLevel.IA:
-                return 'bg-green-500';
+                return 'bg-success-light0';
             case EvidenceLevel.IB:
                 return 'bg-green-400';
             case EvidenceLevel.IIA:
-                return 'bg-yellow-500';
+                return 'bg-warning-light0';
             case EvidenceLevel.IIB:
                 return 'bg-yellow-400';
             default:
@@ -180,30 +180,30 @@ const EnhancedProtocolsPage: React.FC = () => {
     const getSpecialtyColor = (specialty: string) => {
         switch (specialty) {
             case 'esportiva':
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-primary-light text-blue-800';
             case 'pos-operatoria':
-                return 'bg-green-100 text-green-800';
+                return 'bg-success-light text-success';
             case 'geriatrica':
                 return 'bg-purple-100 text-purple-800';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-neutral-bgDark text-gray-800';
         }
     };
 
     // Render methods
     const renderLibrary = () => (
-        <div className="space-y-6">
+        <div className="space-y-xl">
             {/* Header with integrated stats */}
             {integratedStats && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Total de Protocolos</CardTitle>
-                            <BookOpen className="h-4 w-4 text-muted-foreground" />
+                            <BookOpen className="h-4 w-4 text-neutral-textSecondary" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{integratedStats.totalProtocols}</div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-neutral-textSecondary">
                                 {integratedStats.clinicalProtocols} clínicos + {integratedStats.systemProtocols} sistema
                             </p>
                         </CardContent>
@@ -212,11 +212,11 @@ const EnhancedProtocolsPage: React.FC = () => {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Com Exercícios</CardTitle>
-                            <Link className="h-4 w-4 text-muted-foreground" />
+                            <Link className="h-4 w-4 text-neutral-textSecondary" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{integratedStats.protocolsWithExercises}</div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-neutral-textSecondary">
                                 protocolos vinculados
                             </p>
                         </CardContent>
@@ -225,11 +225,11 @@ const EnhancedProtocolsPage: React.FC = () => {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Especialidades</CardTitle>
-                            <Sparkles className="h-4 w-4 text-muted-foreground" />
+                            <Sparkles className="h-4 w-4 text-neutral-textSecondary" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{Object.keys(integratedStats.specialties).length}</div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-neutral-textSecondary">
                                 áreas especializadas
                             </p>
                         </CardContent>
@@ -238,11 +238,11 @@ const EnhancedProtocolsPage: React.FC = () => {
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Nível 1A</CardTitle>
-                            <Award className="h-4 w-4 text-muted-foreground" />
+                            <Award className="h-4 w-4 text-neutral-textSecondary" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">{integratedStats.evidenceLevels['IA'] || 0}</div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-neutral-textSecondary">
                                 alta evidência científica
                             </p>
                         </CardContent>
@@ -253,13 +253,13 @@ const EnhancedProtocolsPage: React.FC = () => {
             {/* Enhanced Filters */}
             <Card>
                 <CardContent className="pt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-md">
                         <div>
                             <Label htmlFor="category">Categoria</Label>
                             <select 
                                 id="category"
                                 title="Filtrar por categoria de protocolo"
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-xs p-sm border rounded-md"
                                 value={protocolFilters.category || ''}
                                 onChange={(e) => setProtocolFilters(prev => ({ 
                                     ...prev, 
@@ -278,7 +278,7 @@ const EnhancedProtocolsPage: React.FC = () => {
                             <select 
                                 id="specialty"
                                 title="Filtrar por especialidade"
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-xs p-sm border rounded-md"
                                 value={protocolFilters.specialty || ''}
                                 onChange={(e) => setProtocolFilters(prev => ({ 
                                     ...prev, 
@@ -297,7 +297,7 @@ const EnhancedProtocolsPage: React.FC = () => {
                             <select 
                                 id="evidence"
                                 title="Filtrar por nível de evidência"
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-xs p-sm border rounded-md"
                                 value={protocolFilters.evidenceLevel || ''}
                                 onChange={(e) => setProtocolFilters(prev => ({ 
                                     ...prev, 
@@ -316,7 +316,7 @@ const EnhancedProtocolsPage: React.FC = () => {
                             <select 
                                 id="status"
                                 title="Filtrar por status"
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-xs p-sm border rounded-md"
                                 value={protocolFilters.isActive?.toString() || ''}
                                 onChange={(e) => setProtocolFilters(prev => ({ 
                                     ...prev, 
@@ -331,8 +331,8 @@ const EnhancedProtocolsPage: React.FC = () => {
 
                         <div className="md:col-span-2">
                             <Label htmlFor="search">Buscar</Label>
-                            <div className="relative mt-1">
-                                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <div className="relative mt-xs">
+                                <Search className="absolute left-3 top-sm.5 h-4 w-4 text-neutral-textSecondary" />
                                 <Input
                                     id="search"
                                     type="text"
@@ -349,7 +349,7 @@ const EnhancedProtocolsPage: React.FC = () => {
                     </div>
 
                     {/* Source filters */}
-                    <div className="mt-4 flex gap-4">
+                    <div className="mt-md flex gap-md">
                         <div className="flex items-center">
                             <input
                                 id="include-clinical"
@@ -359,9 +359,9 @@ const EnhancedProtocolsPage: React.FC = () => {
                                     ...prev, 
                                     includeClinical: e.target.checked 
                                 }))}
-                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-blue-500"
                             />
-                            <label htmlFor="include-clinical" className="ml-2 text-sm text-gray-700">
+                            <label htmlFor="include-clinical" className="ml-sm text-sm text-gray-700">
                                 Incluir Protocolos Clínicos
                             </label>
                         </div>
@@ -374,9 +374,9 @@ const EnhancedProtocolsPage: React.FC = () => {
                                     ...prev, 
                                     includeSystem: e.target.checked 
                                 }))}
-                                className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                                className="h-4 w-4 rounded border-gray-300 text-success focus:ring-green-500"
                             />
-                            <label htmlFor="include-system" className="ml-2 text-sm text-gray-700">
+                            <label htmlFor="include-system" className="ml-sm text-sm text-gray-700">
                                 Incluir Protocolos do Sistema
                             </label>
                         </div>
@@ -385,17 +385,17 @@ const EnhancedProtocolsPage: React.FC = () => {
             </Card>
 
             {/* Enhanced Protocols Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
                 {protocols.map((protocol: any) => {
                     const IconComponent = getCategoryIcon(protocol.category);
                     const isClinical = protocol.id.startsWith('clinical-');
                     
                     return (
-                        <Card key={protocol.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                        <Card key={protocol.id} className="cursor-pointer hover:shadow-cardHover transition-shadow">
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-2">
-                                        <IconComponent className="w-5 h-5 text-blue-600" />
+                                        <IconComponent className="w-5 h-5 text-primary" />
                                         <Badge variant="outline">{protocol.category}</Badge>
                                         {isClinical && (
                                             <Badge className={getSpecialtyColor(protocol.specialty)}>
@@ -412,29 +412,29 @@ const EnhancedProtocolsPage: React.FC = () => {
                                 <CardDescription>{protocol.description}</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="space-y-3">
+                                <div className="space-y-sm">
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="flex items-center">
-                                            <Users className="w-4 h-4 mr-1" />
+                                            <Users className="w-4 h-4 mr-xs" />
                                             {protocol.timesUsed} usos
                                         </span>
                                         {protocol.successRate && (
-                                            <span className="flex items-center text-green-600">
-                                                <TrendingUp className="w-4 h-4 mr-1" />
+                                            <span className="flex items-center text-success">
+                                                <TrendingUp className="w-4 h-4 mr-xs" />
                                                 {protocol.successRate}% sucesso
                                             </span>
                                         )}
                                     </div>
 
-                                    <div className="flex items-center text-sm text-muted-foreground">
-                                        <Clock className="w-4 h-4 mr-1" />
+                                    <div className="flex items-center text-sm text-neutral-textSecondary">
+                                        <Clock className="w-4 h-4 mr-xs" />
                                         {protocol.estimatedDuration.min}-{protocol.estimatedDuration.max} {protocol.estimatedDuration.unit}
                                     </div>
 
                                     {/* Show linked exercises for clinical protocols */}
                                     {isClinical && protocol.linkedExercises && protocol.linkedExercises.length > 0 && (
-                                        <div className="flex items-center text-sm text-blue-600">
-                                            <Link className="w-4 h-4 mr-1" />
+                                        <div className="flex items-center text-sm text-primary">
+                                            <Link className="w-4 h-4 mr-xs" />
                                             {protocol.linkedExercises.length} exercícios vinculados
                                         </div>
                                     )}
@@ -453,14 +453,14 @@ const EnhancedProtocolsPage: React.FC = () => {
                                             size="sm"
                                             onClick={() => handleProtocolClick(protocol)}
                                         >
-                                            <Eye className="w-4 h-4 mr-1" />
+                                            <Eye className="w-4 h-4 mr-xs" />
                                             Ver Detalhes
                                         </Button>
                                         <Button 
                                             size="sm"
                                             onClick={() => handlePrescribeProtocol(protocol.id, 'patient-id')}
                                         >
-                                            <Zap className="w-4 h-4 mr-1" />
+                                            <Zap className="w-4 h-4 mr-xs" />
                                             Prescrever
                                         </Button>
                                     </div>
@@ -475,15 +475,15 @@ const EnhancedProtocolsPage: React.FC = () => {
 
     // Keep existing render methods for other tabs
     const renderPrescriptions = () => (
-        <div className="space-y-6">
+        <div className="space-y-xl">
             <div className="flex justify-between items-center">
                 <div>
                     <h2 className="text-2xl font-bold">Prescrições de Protocolos</h2>
-                    <p className="text-muted-foreground">Gerencie protocolos prescritos para pacientes</p>
+                    <p className="text-neutral-textSecondary">Gerencie protocolos prescritos para pacientes</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
                 {prescriptions.map((prescription: any) => {
                     const protocol = protocols.find(p => p.id === prescription.protocolId);
                     if (!protocol) return null;
@@ -495,7 +495,7 @@ const EnhancedProtocolsPage: React.FC = () => {
                                     <Badge variant={prescription.status === 'active' ? 'default' : 'secondary'}>
                                         {prescription.status}
                                     </Badge>
-                                    <span className="text-sm text-muted-foreground">
+                                    <span className="text-sm text-neutral-textSecondary">
                                         Fase: {prescription.currentPhase}
                                     </span>
                                 </div>
@@ -505,27 +505,27 @@ const EnhancedProtocolsPage: React.FC = () => {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div className="space-y-3">
+                                <div className="space-y-sm">
                                     <div className="flex items-center justify-between text-sm">
                                         <span>Aderência</span>
                                         <span className="font-medium">{prescription.adherenceRate}%</span>
                                     </div>
                                     <Progress value={prescription.adherenceRate} />
 
-                                    <div className="text-sm text-muted-foreground">
+                                    <div className="text-sm text-neutral-textSecondary">
                                         <strong>Próxima avaliação:</strong> Em 2 semanas
                                     </div>
 
                                     {prescription.outcomes.length > 0 && (
                                         <div className="text-sm">
                                             <strong>Resultados:</strong>
-                                            <ul className="mt-1 space-y-1">
+                                            <ul className="mt-xs space-y-1">
                                                 {prescription.outcomes.slice(0, 2).map((outcome: any, index: number) => (
                                                     <li key={index} className="flex items-center">
                                                         {outcome.clinicallySignificant ? (
-                                                            <CheckCircle className="w-3 h-3 text-green-500 mr-1" />
+                                                            <CheckCircle className="w-3 h-3 text-green-500 mr-xs" />
                                                         ) : (
-                                                            <AlertCircle className="w-3 h-3 text-yellow-500 mr-1" />
+                                                            <AlertCircle className="w-3 h-3 text-yellow-500 mr-xs" />
                                                         )}
                                                         <span className="text-xs">
                                                             {outcome.metricName}: {outcome.percentChange.toFixed(1)}%
@@ -538,11 +538,11 @@ const EnhancedProtocolsPage: React.FC = () => {
 
                                     <div className="flex justify-between items-center pt-2">
                                         <Button variant="outline" size="sm">
-                                            <FileText className="w-4 h-4 mr-1" />
+                                            <FileText className="w-4 h-4 mr-xs" />
                                             Relatório
                                         </Button>
                                         <Button size="sm">
-                                            <Edit className="w-4 h-4 mr-1" />
+                                            <Edit className="w-4 h-4 mr-xs" />
                                             Modificar
                                         </Button>
                                     </div>
@@ -556,14 +556,14 @@ const EnhancedProtocolsPage: React.FC = () => {
     );
 
     const renderAnalytics = () => (
-        <div className="space-y-6">
+        <div className="space-y-xl">
             <div>
                 <h2 className="text-2xl font-bold">Analytics de Protocolos</h2>
-                <p className="text-muted-foreground">Métricas de desempenho e eficácia dos protocolos</p>
+                <p className="text-neutral-textSecondary">Métricas de desempenho e eficácia dos protocolos</p>
             </div>
 
             {analytics.length > 0 && (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
                     {analytics.map((analytic: any) => {
                         const protocol = protocols.find(p => p.id === analytic.protocolId);
                         if (!protocol) return null;
@@ -572,7 +572,7 @@ const EnhancedProtocolsPage: React.FC = () => {
                             <Card key={analytic.protocolId}>
                                 <CardHeader>
                                     <CardTitle className="flex items-center">
-                                        <BarChart3 className="w-5 h-5 mr-2" />
+                                        <BarChart3 className="w-5 h-5 mr-sm" />
                                         {analytic.protocolName}
                                     </CardTitle>
                                     <CardDescription>
@@ -580,28 +580,28 @@ const EnhancedProtocolsPage: React.FC = () => {
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="space-y-4">
-                                        <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-md">
+                                        <div className="grid grid-cols-2 gap-md">
                                             <div className="text-center">
-                                                <div className="text-2xl font-bold text-green-600">
+                                                <div className="text-2xl font-bold text-success">
                                                     {analytic.successRate.toFixed(1)}%
                                                 </div>
-                                                <div className="text-xs text-muted-foreground">Taxa de Sucesso</div>
+                                                <div className="text-xs text-neutral-textSecondary">Taxa de Sucesso</div>
                                             </div>
                                             <div className="text-center">
-                                                <div className="text-2xl font-bold text-blue-600">
+                                                <div className="text-2xl font-bold text-primary">
                                                     {analytic.adherenceRate.toFixed(1)}%
                                                 </div>
-                                                <div className="text-xs text-muted-foreground">Aderência Média</div>
+                                                <div className="text-xs text-neutral-textSecondary">Aderência Média</div>
                                             </div>
                                         </div>
 
                                         <div>
-                                            <div className="text-sm font-medium mb-2">Resultados por Métrica:</div>
+                                            <div className="text-sm font-medium mb-sm">Resultados por Métrica:</div>
                                             {Object.entries(analytic.outcomeMetrics).map(([metric, data]) => (
                                                 <div key={metric} className="flex justify-between items-center text-sm mb-1">
                                                     <span>{metric}</span>
-                                                    <span className="text-green-600">
+                                                    <span className="text-success">
                                                         +{(data as any).averageImprovement.toFixed(1)}%
                                                     </span>
                                                 </div>
@@ -609,13 +609,13 @@ const EnhancedProtocolsPage: React.FC = () => {
                                         </div>
 
                                         <div>
-                                            <div className="text-sm font-medium mb-2">Tendência Mensal:</div>
+                                            <div className="text-sm font-medium mb-sm">Tendência Mensal:</div>
                                             <div className="space-y-1">
                                                 {analytic.monthlyTrends.slice(-3).map((trend: any) => (
                                                     <div key={trend.month} className="flex justify-between text-xs">
                                                         <span>{trend.month}</span>
                                                         <span>{trend.prescriptions} prescrições</span>
-                                                        <span className="text-green-600">{trend.successRate.toFixed(1)}%</span>
+                                                        <span className="text-success">{trend.successRate.toFixed(1)}%</span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -631,20 +631,20 @@ const EnhancedProtocolsPage: React.FC = () => {
     );
 
     const renderEvidence = () => (
-        <div className="space-y-6">
+        <div className="space-y-xl">
             <div>
                 <h2 className="text-2xl font-bold">Base de Evidências</h2>
-                <p className="text-muted-foreground">Referências científicas e atualizações dos protocolos</p>
+                <p className="text-neutral-textSecondary">Referências científicas e atualizações dos protocolos</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
                 <Card>
                     <CardHeader>
                         <CardTitle>Distribuição por Nível de Evidência</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {integratedStats && (
-                            <div className="space-y-3">
+                            <div className="space-y-sm">
                                 {Object.entries(integratedStats.evidenceLevels).map(([level, count]) => {
                                     const percentage = (count as number / integratedStats.totalProtocols) * 100;
                                     return (
@@ -654,11 +654,11 @@ const EnhancedProtocolsPage: React.FC = () => {
                                                 <span className="text-sm font-medium">Nível {level}</span>
                                             </div>
                                             <div className="flex items-center space-x-2">
-                                                <span className="text-sm text-muted-foreground">{count}</span>
+                                                <span className="text-sm text-neutral-textSecondary">{count}</span>
                                                 <div className="w-20">
                                                     <Progress value={percentage} />
                                                 </div>
-                                                <span className="text-sm text-muted-foreground w-10 text-right">
+                                                <span className="text-sm text-neutral-textSecondary w-10 text-right">
                                                     {percentage.toFixed(0)}%
                                                 </span>
                                             </div>
@@ -676,14 +676,14 @@ const EnhancedProtocolsPage: React.FC = () => {
                     </CardHeader>
                     <CardContent>
                         {integratedStats && (
-                            <div className="space-y-3">
+                            <div className="space-y-sm">
                                 {Object.entries(integratedStats.specialties).map(([specialty, count]) => (
                                     <div key={specialty} className="flex items-center justify-between">
                                         <div className="flex items-center space-x-2">
                                             <div className={`w-3 h-3 rounded-full ${getSpecialtyColor(specialty).replace('text-', 'bg-').replace('100', '500')}`} />
                                             <span className="text-sm font-medium">{specialty}</span>
                                         </div>
-                                        <span className="text-sm text-muted-foreground">{count}</span>
+                                        <span className="text-sm text-neutral-textSecondary">{count}</span>
                                     </div>
                                 ))}
                             </div>
@@ -698,15 +698,15 @@ const EnhancedProtocolsPage: React.FC = () => {
                     <CardDescription>Instrumentos validados para avaliação clínica</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
                         {assessmentTools.map((tool: any) => (
-                            <div key={tool.id} className="border rounded-lg p-4">
-                                <div className="flex items-center justify-between mb-2">
+                            <div key={tool.id} className="border rounded-lg p-md">
+                                <div className="flex items-center justify-between mb-sm">
                                     <h4 className="font-medium">{tool.name}</h4>
                                     <Badge variant="outline">{tool.type}</Badge>
                                 </div>
-                                <p className="text-sm text-muted-foreground mb-2">{tool.description}</p>
-                                <div className="flex justify-between text-xs text-muted-foreground">
+                                <p className="text-sm text-neutral-textSecondary mb-sm">{tool.description}</p>
+                                <div className="flex justify-between text-xs text-neutral-textSecondary">
                                     {tool.reliability && <span>Confiabilidade: {tool.reliability}</span>}
                                     {tool.validity && <span>Validade: {tool.validity}</span>}
                                 </div>
@@ -720,7 +720,7 @@ const EnhancedProtocolsPage: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="space-y-6">
+            <div className="space-y-xl">
                 <PageHeader
                     title="Protocolos Clínicos Integrados"
                     subtitle="Carregando protocolos..."
@@ -731,7 +731,7 @@ const EnhancedProtocolsPage: React.FC = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-xl">
             <PageHeader
                 title="Protocolos Clínicos Integrados"
                 subtitle="Biblioteca completa de protocolos baseados em evidências + conteúdo clínico especializado"
@@ -746,31 +746,31 @@ const EnhancedProtocolsPage: React.FC = () => {
                     <TabsTrigger value="evidence">Evidências</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="library" className="mt-6">
+                <TabsContent value="library" className="mt-xl">
                     {renderLibrary()}
                 </TabsContent>
 
-                <TabsContent value="prescriptions" className="mt-6">
+                <TabsContent value="prescriptions" className="mt-xl">
                     {renderPrescriptions()}
                 </TabsContent>
 
-                <TabsContent value="analytics" className="mt-6">
+                <TabsContent value="analytics" className="mt-xl">
                     {renderAnalytics()}
                 </TabsContent>
 
-                <TabsContent value="evidence" className="mt-6">
+                <TabsContent value="evidence" className="mt-xl">
                     {renderEvidence()}
                 </TabsContent>
             </Tabs>
 
             {/* Protocol Detail Modal */}
             {selectedProtocol && (
-                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
-                        <div className="flex items-center justify-between p-6 border-b">
+                <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-md">
+                    <div className="bg-white rounded-cardLarge shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+                        <div className="flex items-center justify-between p-lg border-b">
                             <div>
                                 <h2 className="text-xl font-bold">{selectedProtocol.name}</h2>
-                                <div className="flex items-center space-x-2 mt-1">
+                                <div className="flex items-center space-x-2 mt-xs">
                                     <Badge variant="outline">{selectedProtocol.category}</Badge>
                                     {(selectedProtocol as any).specialty && (
                                         <Badge className={getSpecialtyColor((selectedProtocol as any).specialty)}>
@@ -783,15 +783,15 @@ const EnhancedProtocolsPage: React.FC = () => {
                                 <X className="w-5 h-5" />
                             </Button>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-6">
-                            <div className="space-y-6">
+                        <div className="flex-1 overflow-y-auto p-lg">
+                            <div className="space-y-xl">
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-2">Descrição</h3>
-                                    <p className="text-muted-foreground">{selectedProtocol.description}</p>
+                                    <h3 className="text-lg font-semibold mb-sm">Descrição</h3>
+                                    <p className="text-neutral-textSecondary">{selectedProtocol.description}</p>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-2">Critérios de Inclusão</h3>
+                                    <h3 className="text-lg font-semibold mb-sm">Critérios de Inclusão</h3>
                                     <ul className="list-disc list-inside space-y-1">
                                         {selectedProtocol.inclusionCriteria.map((criteria, index) => (
                                             <li key={index} className="text-sm">{criteria}</li>
@@ -800,15 +800,15 @@ const EnhancedProtocolsPage: React.FC = () => {
                                 </div>
 
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-2">Fases do Tratamento</h3>
-                                    <div className="space-y-4">
+                                    <h3 className="text-lg font-semibold mb-sm">Fases do Tratamento</h3>
+                                    <div className="space-y-md">
                                         {selectedProtocol.treatmentPlan.map((phase, index) => (
-                                            <div key={index} className="border rounded-lg p-4">
+                                            <div key={index} className="border rounded-lg p-md">
                                                 <h4 className="font-medium">{phase.name}</h4>
-                                                <p className="text-sm text-muted-foreground mb-2">{phase.description}</p>
+                                                <p className="text-sm text-neutral-textSecondary mb-sm">{phase.description}</p>
                                                 <div className="text-sm">
                                                     <strong>Objetivos:</strong>
-                                                    <ul className="list-disc list-inside mt-1">
+                                                    <ul className="list-disc list-inside mt-xs">
                                                         {phase.objectives.map((objective, objIndex) => (
                                                             <li key={objIndex}>{objective}</li>
                                                         ))}
@@ -822,17 +822,17 @@ const EnhancedProtocolsPage: React.FC = () => {
                                 {/* Show linked exercises for clinical protocols */}
                                 {(selectedProtocol as any).linkedExercises && (selectedProtocol as any).linkedExercises.length > 0 && (
                                     <div>
-                                        <h3 className="text-lg font-semibold mb-2">Exercícios Vinculados</h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <h3 className="text-lg font-semibold mb-sm">Exercícios Vinculados</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
                                             {(selectedProtocol as any).linkedExercises.map((exercise: any, index: number) => (
-                                                <div key={index} className="border rounded-lg p-3">
+                                                <div key={index} className="border rounded-lg p-md">
                                                     <h4 className="font-medium">{exercise.name}</h4>
-                                                    <p className="text-sm text-muted-foreground">{exercise.description}</p>
-                                                    <div className="flex items-center mt-2">
+                                                    <p className="text-sm text-neutral-textSecondary">{exercise.description}</p>
+                                                    <div className="flex items-center mt-sm">
                                                         <Badge variant="secondary" className="text-xs">
                                                             {exercise.difficulty}
                                                         </Badge>
-                                                        <span className="text-xs text-muted-foreground ml-2">
+                                                        <span className="text-xs text-neutral-textSecondary ml-sm">
                                                             {exercise.targetMuscles?.join(', ')}
                                                         </span>
                                                     </div>
@@ -843,7 +843,7 @@ const EnhancedProtocolsPage: React.FC = () => {
                                 )}
 
                                 <div>
-                                    <h3 className="text-lg font-semibold mb-2">Critérios de Alta</h3>
+                                    <h3 className="text-lg font-semibold mb-sm">Critérios de Alta</h3>
                                     <ul className="list-disc list-inside space-y-1">
                                         {selectedProtocol.dischargeCriteria.map((criteria, index) => (
                                             <li key={index} className="text-sm">{criteria}</li>
@@ -852,12 +852,12 @@ const EnhancedProtocolsPage: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="border-t p-6 flex justify-end space-x-3">
+                        <div className="border-t p-lg flex justify-end space-x-3">
                             <Button variant="outline" onClick={() => setSelectedProtocol(null)}>
                                 Fechar
                             </Button>
                             <Button onClick={() => handlePrescribeProtocol(selectedProtocol.id, 'patient-id')}>
-                                <Zap className="w-4 h-4 mr-2" />
+                                <Zap className="w-4 h-4 mr-sm" />
                                 Prescrever Protocolo
                             </Button>
                         </div>

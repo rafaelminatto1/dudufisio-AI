@@ -42,24 +42,24 @@ interface TabsProps {
 
 const ResponsiveTabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
   return (
-    <div className="bg-white border-b border-fisio-neutral-200">
+    <div className="bg-white border-b border-neutral-border">
       <div className="flex overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
             className={`
-              flex items-center px-4 py-3 whitespace-nowrap border-b-2 transition-all
+              flex items-center px-md py-3 whitespace-nowrap border-b-2 transition-all
               ${activeTab === tab.id 
                 ? 'border-fisio-primary-DEFAULT text-fisio-primary-700 bg-fisio-primary-50' 
-                : 'border-transparent text-fisio-neutral-600 hover:text-fisio-neutral-800 hover:bg-fisio-neutral-50'}
+                : 'border-transparent text-fisio-neutral-600 hover:text-neutral-text hover:bg-neutral-bgAlt'}
             `}
           >
-            {tab.icon && <tab.icon className="w-4 h-4 mr-2" />}
+            {tab.icon && <tab.icon className="w-4 h-4 mr-sm" />}
             <span className="text-sm font-medium">{tab.label}</span>
             {tab.count && tab.count > 0 && (
               <span className={`
-                ml-2 px-2 py-0.5 text-xs rounded-full
+                ml-sm px-sm py-0.5 text-xs rounded-full
                 ${activeTab === tab.id 
                   ? 'bg-fisio-primary-200 text-fisio-primary-800' 
                   : 'bg-fisio-neutral-200 text-fisio-neutral-700'}
@@ -81,7 +81,7 @@ const ConversationCard: React.FC<{
   onClick: () => void;
 }> = ({ lead, isActive, onClick }) => {
   const statusColors = {
-    new: 'bg-fisio-primary-500',
+    new: 'bg-primary',
     contacted: 'bg-fisio-warning-500',
     qualified: 'bg-fisio-secondary-500',
     negotiation: 'bg-fisio-primary-400',
@@ -95,10 +95,10 @@ const ConversationCard: React.FC<{
       animate={{ opacity: 1, x: 0 }}
       onClick={onClick}
       className={`
-        p-4 border-b border-fisio-neutral-100 cursor-pointer transition-all
+        p-md border-b border-fisio-neutral-100 cursor-pointer transition-all
         ${isActive 
           ? 'bg-fisio-primary-50 border-l-4 border-l-fisio-primary-DEFAULT' 
-          : 'hover:bg-fisio-neutral-50'}
+          : 'hover:bg-neutral-bgAlt'}
       `}
     >
       <div className="flex items-start space-x-3">
@@ -108,11 +108,11 @@ const ConversationCard: React.FC<{
             <img 
               src={lead.avatar} 
               alt={lead.name}
-              className="w-12 h-12 rounded-full border-2 border-white shadow-sm"
+              className="w-12 h-12 rounded-full border-2 border-white shadow-card"
             />
           ) : (
             <div className="w-12 h-12 rounded-full bg-fisio-primary-100 flex items-center justify-center">
-              <User className="w-6 h-6 text-fisio-primary-600" />
+              <User className="w-6 h-6 text-primary" />
             </div>
           )}
           <span className={`
@@ -125,21 +125,21 @@ const ConversationCard: React.FC<{
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h4 className="text-sm font-semibold text-fisio-neutral-800 truncate">
+              <h4 className="text-sm font-semibold text-neutral-text truncate">
                 {lead.name}
               </h4>
               <p className="text-xs text-fisio-neutral-500">
                 {lead.phone}
               </p>
             </div>
-            <div className="text-right ml-2">
+            <div className="text-right ml-sm">
               {lead.lastMessageTime && (
                 <p className="text-xs text-fisio-neutral-400">
                   {format(lead.lastMessageTime, 'HH:mm')}
                 </p>
               )}
               {lead.unreadCount && lead.unreadCount > 0 && (
-                <span className="inline-flex items-center justify-center w-5 h-5 bg-fisio-error-500 text-white text-xs rounded-full mt-1">
+                <span className="inline-flex items-center justify-center w-5 h-5 bg-fisio-error-500 text-white text-xs rounded-full mt-xs">
                   {lead.unreadCount}
                 </span>
               )}
@@ -147,19 +147,19 @@ const ConversationCard: React.FC<{
           </div>
 
           {lead.lastMessage && (
-            <p className="text-sm text-fisio-neutral-600 mt-1 line-clamp-1">
+            <p className="text-sm text-fisio-neutral-600 mt-xs line-clamp-1">
               {lead.lastMessage}
             </p>
           )}
 
           {lead.tags && lead.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
+            <div className="flex flex-wrap gap-1 mt-sm">
               {lead.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-fisio-neutral-100 text-fisio-neutral-600"
+                  className="inline-flex items-center px-sm py-0.5 rounded-full text-xs bg-fisio-neutral-100 text-fisio-neutral-600"
                 >
-                  <Tag className="w-3 h-3 mr-1" />
+                  <Tag className="w-3 h-3 mr-xs" />
                   {tag}
                 </span>
               ))}
@@ -181,9 +181,9 @@ const ChatWindow: React.FC<{
 
   if (!lead) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-fisio-neutral-50">
+      <div className="flex-1 flex items-center justify-center bg-neutral-bgAlt">
         <div className="text-center">
-          <MessageSquare className="w-12 h-12 text-fisio-neutral-300 mx-auto mb-4" />
+          <MessageSquare className="w-12 h-12 text-fisio-neutral-300 mx-auto mb-md" />
           <p className="text-fisio-neutral-500">Selecione uma conversa para começar</p>
         </div>
       </div>
@@ -213,7 +213,7 @@ const ChatWindow: React.FC<{
   return (
     <div className="flex-1 flex flex-col bg-white">
       {/* Header do Chat */}
-      <div className="bg-white border-b border-fisio-neutral-200 p-4">
+      <div className="bg-white border-b border-neutral-border p-md">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             {lead.avatar ? (
@@ -224,19 +224,19 @@ const ChatWindow: React.FC<{
               />
             ) : (
               <div className="w-10 h-10 rounded-full bg-fisio-primary-100 flex items-center justify-center">
-                <User className="w-5 h-5 text-fisio-primary-600" />
+                <User className="w-5 h-5 text-primary" />
               </div>
             )}
             <div>
-              <h3 className="font-semibold text-fisio-neutral-800">{lead.name}</h3>
+              <h3 className="font-semibold text-neutral-text">{lead.name}</h3>
               <p className="text-xs text-fisio-neutral-500">{lead.phone}</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <button className="p-2 hover:bg-fisio-neutral-100 rounded-lg transition-colors">
+            <button className="p-sm hover:bg-fisio-neutral-100 rounded-lg transition-colors">
               <Phone className="w-5 h-5 text-fisio-neutral-600" />
             </button>
-            <button className="p-2 hover:bg-fisio-neutral-100 rounded-lg transition-colors">
+            <button className="p-sm hover:bg-fisio-neutral-100 rounded-lg transition-colors">
               <MoreVertical className="w-5 h-5 text-fisio-neutral-600" />
             </button>
           </div>
@@ -244,7 +244,7 @@ const ChatWindow: React.FC<{
       </div>
 
       {/* Área de Mensagens */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-fisio-neutral-50">
+      <div className="flex-1 overflow-y-auto p-md space-y-md bg-neutral-bgAlt">
         {messages.map((message) => (
           <motion.div
             key={message.id}
@@ -253,14 +253,14 @@ const ChatWindow: React.FC<{
             className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div className={`
-              max-w-[70%] px-4 py-2 rounded-2xl
+              max-w-[70%] px-md py-sm rounded-cardLarge
               ${message.sender === 'user' 
-                ? 'bg-fisio-primary-500 text-white rounded-br-none' 
-                : 'bg-white text-fisio-neutral-800 rounded-bl-none shadow-sm'}
+                ? 'bg-primary text-white rounded-br-none' 
+                : 'bg-white text-neutral-text rounded-bl-none shadow-card'}
             `}>
               <p className="text-sm">{message.content}</p>
               <div className={`
-                flex items-center justify-end mt-1 space-x-1
+                flex items-center justify-end mt-xs space-x-1
                 ${message.sender === 'user' ? 'text-fisio-primary-100' : 'text-fisio-neutral-400'}
               `}>
                 <span className="text-xs">
@@ -274,12 +274,12 @@ const ChatWindow: React.FC<{
       </div>
 
       {/* Input de Mensagem */}
-      <div className="bg-white border-t border-fisio-neutral-200 p-4">
+      <div className="bg-white border-t border-neutral-border p-md">
         <div className="flex items-end space-x-2">
-          <button className="p-2 hover:bg-fisio-neutral-100 rounded-lg transition-colors">
+          <button className="p-sm hover:bg-fisio-neutral-100 rounded-lg transition-colors">
             <Paperclip className="w-5 h-5 text-fisio-neutral-600" />
           </button>
-          <div className="flex-1 bg-fisio-neutral-50 rounded-lg px-4 py-2">
+          <div className="flex-1 bg-neutral-bgAlt rounded-lg px-md py-sm">
             <input
               type="text"
               value={inputMessage}
@@ -289,12 +289,12 @@ const ChatWindow: React.FC<{
               className="w-full bg-transparent text-sm text-fisio-neutral-700 placeholder-fisio-neutral-400 focus:outline-none"
             />
           </div>
-          <button className="p-2 hover:bg-fisio-neutral-100 rounded-lg transition-colors">
+          <button className="p-sm hover:bg-fisio-neutral-100 rounded-lg transition-colors">
             <Smile className="w-5 h-5 text-fisio-neutral-600" />
           </button>
           <button
             onClick={handleSend}
-            className="p-2 bg-fisio-primary-DEFAULT hover:bg-fisio-primary-600 rounded-lg transition-colors"
+            className="p-sm bg-fisio-primary-DEFAULT hover:bg-primary rounded-lg transition-colors"
           >
             <Send className="w-5 h-5 text-white" />
           </button>
@@ -420,7 +420,7 @@ export default function ResponsiveCrmWhatsappPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-fisio-neutral-50">
+    <div className="flex flex-col h-full bg-neutral-bgAlt">
       {/* Tabs */}
       <ResponsiveTabs 
         tabs={tabs}
@@ -433,11 +433,11 @@ export default function ResponsiveCrmWhatsappPage() {
         {/* Lista de Conversas - Oculta em mobile quando chat está aberto */}
         <div className={`
           ${isMobileView && showChat ? 'hidden' : 'flex flex-col'}
-          ${isMobileView ? 'w-full' : 'w-full md:w-96 border-r border-fisio-neutral-200'}
+          ${isMobileView ? 'w-full' : 'w-full md:w-96 border-r border-neutral-border'}
           bg-white
         `}>
           {/* Barra de Busca */}
-          <div className="p-4 border-b border-fisio-neutral-100">
+          <div className="p-md border-b border-fisio-neutral-100">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-fisio-neutral-400" />
               <input
@@ -445,7 +445,7 @@ export default function ResponsiveCrmWhatsappPage() {
                 placeholder="Buscar conversas..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-2 bg-fisio-neutral-50 border border-fisio-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-fisio-primary-500"
+                className="w-full pl-10 pr-10 py-sm bg-neutral-bgAlt border border-neutral-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-fisio-primary-500"
               />
               <button className="absolute right-3 top-1/2 transform -translate-y-1/2">
                 <Filter className="w-4 h-4 text-fisio-neutral-400" />
@@ -464,7 +464,7 @@ export default function ResponsiveCrmWhatsappPage() {
               />
             ))}
             {filteredLeads.length === 0 && (
-              <div className="text-center py-8">
+              <div className="text-center py-3xl">
                 <p className="text-fisio-neutral-500">Nenhuma conversa encontrada</p>
               </div>
             )}
@@ -475,12 +475,12 @@ export default function ResponsiveCrmWhatsappPage() {
         {(!isMobileView || showChat) && (
           <div className="flex-1 flex flex-col">
             {isMobileView && (
-              <div className="bg-white border-b border-fisio-neutral-200 p-2">
+              <div className="bg-white border-b border-neutral-border p-sm">
                 <button
                   onClick={() => setShowChat(false)}
-                  className="flex items-center text-sm text-fisio-primary-600 hover:text-fisio-primary-700"
+                  className="flex items-center text-sm text-primary hover:text-fisio-primary-700"
                 >
-                  <ChevronRight className="w-4 h-4 mr-1 rotate-180" />
+                  <ChevronRight className="w-4 h-4 mr-xs rotate-180" />
                   Voltar às conversas
                 </button>
               </div>

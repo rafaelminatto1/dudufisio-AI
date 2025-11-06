@@ -119,10 +119,10 @@ const TemplateEditPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl mx-auto">
+    <div className="p-lg space-y-xl max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-md">
           <Button
             variant="ghost"
             size="icon"
@@ -131,28 +131,28 @@ const TemplateEditPage: React.FC = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-neutral-text">
               {isNewTemplate ? 'Novo Template' : 'Editar Template'}
             </h1>
-            <p className="text-gray-500 mt-1">
+            <p className="text-gray-500 mt-xs">
               Crie templates reutilizáveis de exercícios
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           <Button variant="outline" onClick={() => navigate('/templates')}>
-            <X className="h-4 w-4 mr-2" />
+            <X className="h-4 w-4 mr-sm" />
             Cancelar
           </Button>
           <Button onClick={form.handleSubmit(onSubmit)}>
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-4 w-4 mr-sm" />
             Salvar Template
           </Button>
         </div>
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-xl">
           {/* Informações Básicas */}
           <Card>
             <CardHeader>
@@ -161,7 +161,7 @@ const TemplateEditPage: React.FC = () => {
                 Dados fundamentais do template
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-md">
               <FormField
                 control={form.control}
                 name="name"
@@ -194,7 +194,7 @@ const TemplateEditPage: React.FC = () => {
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-md">
                 <FormField
                   control={form.control}
                   name="category"
@@ -260,7 +260,7 @@ const TemplateEditPage: React.FC = () => {
                 render={() => (
                   <FormItem>
                     <FormLabel>Público-Alvo</FormLabel>
-                    <div className="flex gap-2">
+                    <div className="flex gap-sm">
                       <Input
                         placeholder="Ex: Pós-operatório, Idosos"
                         value={newAudience}
@@ -276,14 +276,14 @@ const TemplateEditPage: React.FC = () => {
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
+                    <div className="flex flex-wrap gap-sm mt-sm">
                       {form.watch('targetAudience').map((audience, index) => (
                         <Badge key={index} className="gap-1">
                           {audience}
                           <button
                             type="button"
                             onClick={() => removeAudience(index)}
-                            className="ml-1 hover:text-red-600"
+                            className="ml-xs hover:text-error"
                             aria-label="Remover público"
                           >
                             <X className="h-3 w-3" />
@@ -330,25 +330,25 @@ const TemplateEditPage: React.FC = () => {
                   type="button"
                   onClick={() => setShowExerciseSelector(true)}
                 >
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4 mr-sm" />
                   Adicionar
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
               {templateExercises.length > 0 ? (
-                <div className="space-y-2">
+                <div className="space-y-sm">
                   {templateExercises.map((ex, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg"
                     >
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-sm">
                           <span className="font-bold text-primary">#{ex.order}</span>
                           <span className="font-medium">{ex.exercise.name}</span>
                         </div>
-                        <div className="flex gap-3 text-sm text-gray-600 mt-1">
+                        <div className="flex gap-md text-sm text-neutral-textSecondary mt-xs">
                           <span>{ex.sets} séries</span>
                           <span>{ex.reps} reps</span>
                           {ex.weight && <span>{ex.weight}kg</span>}
@@ -359,7 +359,7 @@ const TemplateEditPage: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => removeExercise(index)}
-                        className="text-red-600"
+                        className="text-error"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -367,14 +367,14 @@ const TemplateEditPage: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <p className="mb-2">Nenhum exercício adicionado</p>
+                <div className="text-center py-3xl text-gray-500">
+                  <p className="mb-sm">Nenhum exercício adicionado</p>
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setShowExerciseSelector(true)}
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-4 w-4 mr-sm" />
                     Adicionar Exercícios
                   </Button>
                 </div>

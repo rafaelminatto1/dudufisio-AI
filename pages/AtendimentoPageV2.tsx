@@ -250,10 +250,10 @@ const AtendimentoPageV2: React.FC = () => {
         {/* Sistema de Tabs com Radix UI */}
         <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
           {/* Tab List */}
-          <Tabs.List className="flex gap-2 border-b border-slate-200 mb-6">
+          <Tabs.List className="flex gap-sm border-b border-neutral-border mb-xl">
             <Tabs.Trigger
               value="soap"
-              className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-t-lg transition-colors data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              className="flex items-center gap-sm px-md py-3 text-sm font-medium text-neutral-textSecondary hover:text-neutral-text hover:bg-neutral-bgAlt rounded-t-lg transition-colors data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
             >
               <FileText className="w-4 h-4" />
               <span>SOAP</span>
@@ -261,7 +261,7 @@ const AtendimentoPageV2: React.FC = () => {
 
             <Tabs.Trigger
               value="metrics"
-              className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-t-lg transition-colors data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              className="flex items-center gap-sm px-md py-3 text-sm font-medium text-neutral-textSecondary hover:text-neutral-text hover:bg-neutral-bgAlt rounded-t-lg transition-colors data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
             >
               <BarChart3 className="w-4 h-4" />
               <span>Métricas</span>
@@ -269,7 +269,7 @@ const AtendimentoPageV2: React.FC = () => {
 
             <Tabs.Trigger
               value="ai"
-              className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-t-lg transition-colors data-[state=active]:text-purple-600 data-[state=active]:border-b-2 data-[state=active]:border-purple-600"
+              className="flex items-center gap-sm px-md py-3 text-sm font-medium text-neutral-textSecondary hover:text-neutral-text hover:bg-neutral-bgAlt rounded-t-lg transition-colors data-[state=active]:text-purple-600 data-[state=active]:border-b-2 data-[state=active]:border-purple-600"
             >
               <BrainCircuit className="w-4 h-4" />
               <span>IA</span>
@@ -277,7 +277,7 @@ const AtendimentoPageV2: React.FC = () => {
 
             <Tabs.Trigger
               value="attachments"
-              className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-t-lg transition-colors data-[state=active]:text-blue-600 data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
+              className="flex items-center gap-sm px-md py-3 text-sm font-medium text-neutral-textSecondary hover:text-neutral-text hover:bg-neutral-bgAlt rounded-t-lg transition-colors data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-blue-600"
             >
               <Paperclip className="w-4 h-4" />
               <span>Anexos</span>

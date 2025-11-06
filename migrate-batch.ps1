@@ -31,7 +31,7 @@ $totalChanges = 0
 $successCount = 0
 $errorCount = 0
 
-Write-Host "`n🚀 Migrando Lote 1 (Alta Prioridade) - 25 páginas restantes`n" -ForegroundColor Cyan
+Write-Host "`nMigrando Lote 1 (Alta Prioridade) - 25 paginas restantes`n" -ForegroundColor Cyan
 
 foreach ($page in $pages) {
     Write-Host "Migrando: $page" -ForegroundColor Yellow
@@ -41,24 +41,24 @@ foreach ($page in $pages) {
     if ($LASTEXITCODE -eq 0) {
         $successCount++
         # Extrair número de mudanças do output
-        if ($result -match "Total de mudanças: (\d+)") {
+        if ($result -match "Total de mudancas: (\d+)") {
             $changes = [int]$matches[1]
             $totalChanges += $changes
-            Write-Host "  ✅ $changes mudanças aplicadas" -ForegroundColor Green
+            Write-Host "  OK $changes mudancas aplicadas" -ForegroundColor Green
         }
     } else {
         $errorCount++
-        Write-Host "  ❌ Erro na migração" -ForegroundColor Red
+        Write-Host "  ERRO na migracao" -ForegroundColor Red
     }
 }
 
 Write-Host "`n" -NoNewline
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "📊 RESUMO FINAL DO LOTE 1" -ForegroundColor Cyan
+Write-Host "RESUMO FINAL DO LOTE 1" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host "Total de páginas processadas: $($pages.Count)"
 Write-Host "Sucesso: $successCount" -ForegroundColor Green
 Write-Host "Erros: $errorCount" -ForegroundColor $(if ($errorCount -gt 0) { "Red" } else { "Green" })
 Write-Host "Total de mudanças: $totalChanges" -ForegroundColor Cyan
-Write-Host "`n✅ Lote 1 completo!" -ForegroundColor Green
+Write-Host "`nLote 1 completo!" -ForegroundColor Green
 

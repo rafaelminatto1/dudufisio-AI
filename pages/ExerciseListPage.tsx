@@ -124,52 +124,52 @@ const ExerciseListPage: React.FC = () => {
   }, [filteredExercises]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Biblioteca de Exercícios</h1>
-          <p className="text-muted-foreground">
+          <p className="text-neutral-textSecondary">
             Explore e gerencie exercícios terapêuticos
           </p>
         </div>
         <Button onClick={() => toast.info('Criação de exercício em desenvolvimento')}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-sm h-4 w-4" />
           Novo Exercício
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-md md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Total</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Total</p>
             <p className="text-2xl font-bold">{stats.total}</p>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Fortalecimento</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Fortalecimento</p>
             <p className="text-2xl font-bold">{stats.byCategory.strength || 0}</p>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Flexibilidade</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Flexibilidade</p>
             <p className="text-2xl font-bold">{stats.byCategory.flexibility || 0}</p>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Equilíbrio</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Equilíbrio</p>
             <p className="text-2xl font-bold">{stats.byCategory.balance || 0}</p>
           </div>
         </Card>
       </div>
 
       {/* Filters and Actions */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-1 gap-2">
+      <div className="flex flex-col gap-md sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-1 gap-sm">
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
@@ -183,9 +183,9 @@ const ExerciseListPage: React.FC = () => {
             activeFiltersCount={activeFiltersCount}
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="mr-sm h-4 w-4" />
             Exportar
           </Button>
         </div>
@@ -193,13 +193,13 @@ const ExerciseListPage: React.FC = () => {
 
       {/* Exercise Grid */}
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-md sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <Card key={i} className="aspect-[3/4] animate-pulse bg-muted" />
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-md sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredExercises.map((exercise) => (
             <ExerciseCard
               key={exercise.id}
@@ -219,7 +219,7 @@ const ExerciseListPage: React.FC = () => {
         <Card>
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-lg font-medium">Nenhum exercício encontrado</p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-neutral-textSecondary">
               Ajuste os filtros ou adicione novos exercícios
             </p>
           </div>

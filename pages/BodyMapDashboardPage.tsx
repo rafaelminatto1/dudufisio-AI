@@ -130,8 +130,8 @@ const BodyMapDashboardPage: React.FC = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Carregando dashboard...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-md"></div>
+          <p className="text-neutral-textSecondary">Carregando dashboard...</p>
         </div>
       </div>
     );
@@ -139,10 +139,10 @@ const BodyMapDashboardPage: React.FC = () => {
 
   if (!analytics) {
     return (
-      <div className="container mx-auto p-6">
+      <div className="container mx-auto p-lg">
         <div className="text-center py-12">
-          <p className="text-slate-600">Erro ao carregar dados do dashboard</p>
-          <Button onClick={() => navigate(-1)} className="mt-4">
+          <p className="text-neutral-textSecondary">Erro ao carregar dados do dashboard</p>
+          <Button onClick={() => navigate(-1)} className="mt-md">
             Voltar
           </Button>
         </div>
@@ -151,27 +151,27 @@ const BodyMapDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="container mx-auto p-6 max-w-7xl">
+    <div className="min-h-screen bg-neutral-bgAlt">
+      <div className="container mx-auto p-lg max-w-7xl">
         {/* Header */}
-        <div className="mb-6">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+        <div className="mb-xl">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-md">
+            <ArrowLeft className="w-4 h-4 mr-sm" />
             Voltar
           </Button>
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-md">
             <div>
-              <h1 className="text-3xl font-bold text-slate-800">Dashboard de Mapa Corporal</h1>
-              <p className="text-slate-600 mt-1">Análise completa da evolução de dor do paciente</p>
+              <h1 className="text-3xl font-bold text-neutral-text">Dashboard de Mapa Corporal</h1>
+              <p className="text-neutral-textSecondary mt-xs">Análise completa da evolução de dor do paciente</p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-sm">
               {/* Filtro de Período */}
               <select
                 value={dateRange}
                 onChange={(e) => setDateRange(e.target.value as any)}
-                className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="px-md py-sm border border-neutral-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="7d">Últimos 7 dias</option>
                 <option value="30d">Últimos 30 dias</option>
@@ -180,7 +180,7 @@ const BodyMapDashboardPage: React.FC = () => {
               </select>
 
               {/* Botão Exportar PDF */}
-              <Button onClick={handleExportPDF} className="flex items-center gap-2">
+              <Button onClick={handleExportPDF} className="flex items-center gap-sm">
                 <Download className="w-4 h-4" />
                 Exportar PDF
               </Button>
@@ -190,7 +190,7 @@ const BodyMapDashboardPage: React.FC = () => {
 
         {/* Tabs de Navegação */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-3 mb-xl">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="timeline">Linha do Tempo</TabsTrigger>
             <TabsTrigger value="comparison">Comparação</TabsTrigger>
@@ -207,9 +207,9 @@ const BodyMapDashboardPage: React.FC = () => {
               <PainHistoryTimeline sessions={sessions} showTrend={true} />
             ) : (
               <div className="bg-white rounded-lg shadow p-12 text-center">
-                <Calendar className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-                <h3 className="text-xl font-semibold text-slate-700 mb-2">Sem Histórico</h3>
-                <p className="text-slate-500">Nenhuma sessão registrada no período selecionado</p>
+                <Calendar className="w-16 h-16 mx-auto mb-md text-slate-300" />
+                <h3 className="text-xl font-semibold text-neutral-text mb-sm">Sem Histórico</h3>
+                <p className="text-neutral-textSecondary">Nenhuma sessão registrada no período selecionado</p>
               </div>
             )}
           </TabsContent>
@@ -220,41 +220,41 @@ const BodyMapDashboardPage: React.FC = () => {
               <ComparisonView comparison={comparison} />
             ) : (
               <div className="bg-white rounded-lg shadow p-12 text-center">
-                <Filter className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-                <h3 className="text-xl font-semibold text-slate-700 mb-2">Comparação Indisponível</h3>
-                <p className="text-slate-500">São necessárias pelo menos 2 sessões para comparação</p>
+                <Filter className="w-16 h-16 mx-auto mb-md text-slate-300" />
+                <h3 className="text-xl font-semibold text-neutral-text mb-sm">Comparação Indisponível</h3>
+                <p className="text-neutral-textSecondary">São necessárias pelo menos 2 sessões para comparação</p>
               </div>
             )}
           </TabsContent>
         </Tabs>
 
         {/* Informações Adicionais */}
-        <div className="mt-8 bg-white rounded-lg shadow p-6">
-          <h3 className="font-bold text-slate-800 mb-4">Sobre este Dashboard</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
+        <div className="mt-3xl bg-white rounded-lg shadow p-lg">
+          <h3 className="font-bold text-neutral-text mb-md">Sobre este Dashboard</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-md text-sm text-neutral-textSecondary">
             <div>
-              <p className="font-semibold text-slate-700 mb-1">Dashboard</p>
+              <p className="font-semibold text-neutral-text mb-1">Dashboard</p>
               <p>
                 Visão geral com métricas principais, gráficos de evolução, frequência por região e
                 distribuição de tipos de dor.
               </p>
             </div>
             <div>
-              <p className="font-semibold text-slate-700 mb-1">Linha do Tempo</p>
+              <p className="font-semibold text-neutral-text mb-1">Linha do Tempo</p>
               <p>
                 Histórico cronológico de todas as sessões com gráficos de tendência e estatísticas
                 detalhadas.
               </p>
             </div>
             <div>
-              <p className="font-semibold text-slate-700 mb-1">Comparação</p>
+              <p className="font-semibold text-neutral-text mb-1">Comparação</p>
               <p>
                 Análise comparativa entre primeira e última sessão, mostrando melhorias, pioras e mudanças
                 nas regiões de dor.
               </p>
             </div>
             <div>
-              <p className="font-semibold text-slate-700 mb-1">Exportação</p>
+              <p className="font-semibold text-neutral-text mb-1">Exportação</p>
               <p>
                 Gere relatórios em PDF profissionais com todos os dados e gráficos para compartilhar com
                 médicos e pacientes.

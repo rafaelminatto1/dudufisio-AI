@@ -31,10 +31,10 @@ const KanbanColumn: React.FC<ColumnProps> = ({ title, tasks, therapists, onTaskC
         onDrop={onDrop}
         onDragEnter={onDragEnter}
         onDragLeave={onDragLeave}
-        className={`w-80 flex-shrink-0 rounded-xl p-3 transition-colors duration-200 ${isDraggedOver ? 'bg-teal-50' : 'bg-slate-100'}`}
+        className={`w-80 flex-shrink-0 rounded-card p-md transition-colors duration-200 ${isDraggedOver ? 'bg-teal-50' : 'bg-neutral-bgDark'}`}
     >
-        <h3 className="font-semibold text-slate-700 mb-3 px-1">{title} ({tasks.length})</h3>
-        <div className="space-y-3 h-full overflow-y-auto">
+        <h3 className="font-semibold text-neutral-text mb-md px-1">{title} ({tasks.length})</h3>
+        <div className="space-y-sm h-full overflow-y-auto">
             {tasks.map(task => (
                 <TaskCard
                     key={task.id}
@@ -170,19 +170,19 @@ const KanbanPage: React.FC = () => {
                 title={selectedProject?.title || 'Quadro de Projetos'}
                 subtitle={selectedProject?.description || 'Selecione um projeto para visualizar suas tarefas.'}
             >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-sm">
                     <select
                         value={selectedProjectId}
                         onChange={(e) => setSelectedProjectId(e.target.value)}
-                        className="w-full sm:w-56 p-2 border border-slate-300 rounded-lg bg-white"
+                        className="w-full sm:w-56 p-sm border border-neutral-border rounded-lg bg-white"
                     >
                         {projects.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
                     </select>
                     <button
                         onClick={handleOpenNewTaskModal}
-                        className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-600"
+                        className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-md py-sm text-sm font-medium text-white shadow-card hover:bg-teal-600"
                     >
-                        <Plus className="-ml-1 mr-2 h-5 w-5" />
+                        <Plus className="-ml-xs mr-sm h-5 w-5" />
                         Nova Tarefa
                     </button>
                 </div>
@@ -197,12 +197,12 @@ const KanbanPage: React.FC = () => {
                 projectId={selectedProjectId}
             />
 
-            <div className="flex-1 flex gap-4 overflow-x-auto pb-4">
+            <div className="flex-1 flex gap-md overflow-x-auto pb-4">
                 {isPageLoading ? (
                     Array.from({ length: 3 }).map((_, i) => (
-                         <div key={i} className="w-80 flex-shrink-0 bg-slate-100 rounded-xl p-3">
-                            <Skeleton className="h-6 w-1/2 mb-4" />
-                            <Skeleton className="h-24 w-full mb-3" />
+                         <div key={i} className="w-80 flex-shrink-0 bg-neutral-bgDark rounded-card p-md">
+                            <Skeleton className="h-6 w-1/2 mb-md" />
+                            <Skeleton className="h-24 w-full mb-md" />
                             <Skeleton className="h-24 w-full" />
                          </div>
                     ))

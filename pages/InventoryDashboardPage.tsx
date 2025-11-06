@@ -13,12 +13,12 @@ import ItemFormModal from '../components/inventory/ItemFormModal';
 // 🚀 Componente memoizado para StatCard
 const StatCard = memo<{ title: string; value: string | number; icon: React.ReactNode }>(
   ({ title, value, icon }) => (
-    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-slate-200">
+    <div className="bg-white p-lg rounded-lg shadow-cardHover hover:shadow-cardActive transition-all duration-200 border border-neutral-border">
         <div className="flex items-center">
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mr-4 border-2 border-blue-200">{icon}</div>
+            <div className="w-12 h-12 bg-primary-light text-primary rounded-lg flex items-center justify-center mr-4 border-2 border-primary">{icon}</div>
             <div>
-                <p className="text-3xl font-bold text-slate-900">{value}</p>
-                <p className="text-sm font-medium text-slate-600">{title}</p>
+                <p className="text-3xl font-bold text-neutral-text">{value}</p>
+                <p className="text-sm font-medium text-neutral-textSecondary">{title}</p>
             </div>
         </div>
     </div>
@@ -106,8 +106,8 @@ const InventoryDashboardPage: React.FC = () => {
     return (
         <>
             <PageHeader title="Painel de Insumos" subtitle="Controle o estoque e receba alertas sobre seus suprimentos.">
-                 <button onClick={() => setItemFormModal({ isOpen: true })} className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-600">
-                    <PackagePlus className="w-5 h-5 mr-2" />
+                 <button onClick={() => setItemFormModal({ isOpen: true })} className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-md py-sm text-sm font-medium text-white shadow-card hover:bg-teal-600">
+                    <PackagePlus className="w-5 h-5 mr-sm" />
                     Novo Item
                 </button>
             </PageHeader>
@@ -129,9 +129,9 @@ const InventoryDashboardPage: React.FC = () => {
                 categories={categories}
             />
 
-            <div className="space-y-8">
+            <div className="space-y-smxl">
                 {/* KPIs */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
                     <StatCard title="Valor Total do Estoque" value={`R$ ${metrics?.totalValue.toFixed(2)}`} icon={<DollarSign />} />
                     <StatCard title="Itens no Inventário" value={metrics?.totalItems || 0} icon={<Package />} />
                     <StatCard title="Itens em Nível Baixo" value={metrics?.lowStockItems || 0} icon={<AlertTriangle />} />
@@ -141,8 +141,8 @@ const InventoryDashboardPage: React.FC = () => {
                 {/* Critical Alerts */}
                 {criticalItems.length > 0 && (
                     <div>
-                        <h2 className="text-xl font-bold text-red-600 mb-4">Alertas Críticos</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <h2 className="text-xl font-bold text-error mb-md">Alertas Críticos</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-lg">
                             {criticalItems.map(item => (
                                 <ItemCard 
                                     key={item.id}
@@ -160,8 +160,8 @@ const InventoryDashboardPage: React.FC = () => {
                 
                 {/* All Items */}
                 <div>
-                    <h2 className="text-xl font-bold text-slate-800 mb-4">Todos os Itens</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <h2 className="text-xl font-bold text-neutral-text mb-md">Todos os Itens</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-lg">
                         {otherItems.map(item => (
                              <ItemCard 
                                 key={item.id}

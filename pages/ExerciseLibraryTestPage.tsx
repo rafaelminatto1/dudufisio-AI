@@ -92,52 +92,52 @@ const ExerciseLibraryTestPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-bgAlt flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Executando testes...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-md"></div>
+          <p className="text-neutral-textSecondary">Executando testes...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+    <div className="min-h-screen bg-neutral-bgAlt py-3xl">
+      <div className="max-w-6xl mx-auto px-md">
+        <div className="bg-white rounded-lg shadow-card p-lg mb-xl">
+          <h1 className="text-2xl font-bold text-neutral-text mb-md">
             🧪 Testes da Biblioteca de Exercícios Integrada
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-neutral-textSecondary mb-xl">
             Resultados dos testes de funcionamento do sistema integrado de exercícios e protocolos.
           </p>
           
           <button
             onClick={runTests}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-primary text-white px-md py-sm rounded-lg hover:bg-primary-hover"
           >
             🔄 Executar Testes Novamente
           </button>
         </div>
 
         {testResults.error ? (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-red-800 mb-2">❌ Erro nos Testes</h2>
-            <p className="text-red-600">{testResults.error}</p>
+          <div className="bg-error-light border border-error rounded-lg p-lg">
+            <h2 className="text-lg font-semibold text-error mb-sm">❌ Erro nos Testes</h2>
+            <p className="text-error">{testResults.error}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
             {/* Exercícios */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">📊 Exercícios</h2>
-              <div className="space-y-2">
+            <div className="bg-white rounded-lg shadow-card p-lg">
+              <h2 className="text-lg font-semibold text-neutral-text mb-md">📊 Exercícios</h2>
+              <div className="space-y-sm">
                 <p><span className="font-medium">Total:</span> {testResults.exercises?.total || 0}</p>
                 <p><span className="font-medium">Sistema:</span> {testResults.exercises?.system || 0}</p>
                 <p><span className="font-medium">Clínicos:</span> {testResults.exercises?.clinical || 0}</p>
               </div>
-              <div className="mt-4">
-                <h3 className="font-medium text-gray-700 mb-2">Amostra:</h3>
-                <ul className="text-sm text-gray-600 space-y-1">
+              <div className="mt-md">
+                <h3 className="font-medium text-gray-700 mb-sm">Amostra:</h3>
+                <ul className="text-sm text-neutral-textSecondary space-y-1">
                   {testResults.exercises?.sample?.map((e: any, i: number) => (
                     <li key={i}>• {e.name} ({e.category}) - {e.specialty}</li>
                   ))}
@@ -146,10 +146,10 @@ const ExerciseLibraryTestPage: React.FC = () => {
             </div>
 
             {/* Categorias */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">📂 Categorias</h2>
-              <p className="font-medium mb-2">Total: {testResults.categories?.length || 0}</p>
-              <ul className="text-sm text-gray-600 space-y-1">
+            <div className="bg-white rounded-lg shadow-card p-lg">
+              <h2 className="text-lg font-semibold text-neutral-text mb-md">📂 Categorias</h2>
+              <p className="font-medium mb-sm">Total: {testResults.categories?.length || 0}</p>
+              <ul className="text-sm text-neutral-textSecondary space-y-1">
                 {testResults.categories?.map((cat: string, i: number) => (
                   <li key={i}>• {cat}</li>
                 ))}
@@ -157,12 +157,12 @@ const ExerciseLibraryTestPage: React.FC = () => {
             </div>
 
             {/* Partes do Corpo */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">🏃 Partes do Corpo</h2>
-              <p className="font-medium mb-2">Total: {testResults.bodyParts?.length || 0}</p>
-              <div className="flex flex-wrap gap-2">
+            <div className="bg-white rounded-lg shadow-card p-lg">
+              <h2 className="text-lg font-semibold text-neutral-text mb-md">🏃 Partes do Corpo</h2>
+              <p className="font-medium mb-sm">Total: {testResults.bodyParts?.length || 0}</p>
+              <div className="flex flex-wrap gap-sm">
                 {testResults.bodyParts?.slice(0, 8).map((part: string, i: number) => (
-                  <span key={i} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                  <span key={i} className="bg-primary-light text-blue-800 text-xs px-sm py-1 rounded">
                     {part}
                   </span>
                 ))}
@@ -175,12 +175,12 @@ const ExerciseLibraryTestPage: React.FC = () => {
             </div>
 
             {/* Equipamentos */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">🏋️ Equipamentos</h2>
-              <p className="font-medium mb-2">Total: {testResults.equipment?.length || 0}</p>
-              <div className="flex flex-wrap gap-2">
+            <div className="bg-white rounded-lg shadow-card p-lg">
+              <h2 className="text-lg font-semibold text-neutral-text mb-md">🏋️ Equipamentos</h2>
+              <p className="font-medium mb-sm">Total: {testResults.equipment?.length || 0}</p>
+              <div className="flex flex-wrap gap-sm">
                 {testResults.equipment?.map((equip: string, i: number) => (
-                  <span key={i} className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                  <span key={i} className="bg-success-light text-success text-xs px-sm py-1 rounded">
                     {equip}
                   </span>
                 ))}
@@ -188,15 +188,15 @@ const ExerciseLibraryTestPage: React.FC = () => {
             </div>
 
             {/* Busca */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">🔍 Busca</h2>
-              <p className="font-medium mb-2">
+            <div className="bg-white rounded-lg shadow-card p-lg">
+              <h2 className="text-lg font-semibold text-neutral-text mb-md">🔍 Busca</h2>
+              <p className="font-medium mb-sm">
                 Query: "{testResults.searchResults?.query}"
               </p>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-neutral-textSecondary mb-sm">
                 Resultados: {testResults.searchResults?.count || 0}
               </p>
-              <ul className="text-sm text-gray-600 space-y-1">
+              <ul className="text-sm text-neutral-textSecondary space-y-1">
                 {testResults.searchResults?.results?.map((result: string, i: number) => (
                   <li key={i}>• {result}</li>
                 ))}
@@ -204,15 +204,15 @@ const ExerciseLibraryTestPage: React.FC = () => {
             </div>
 
             {/* Filtros */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">🎯 Filtros</h2>
-              <p className="font-medium mb-2">
+            <div className="bg-white rounded-lg shadow-card p-lg">
+              <h2 className="text-lg font-semibold text-neutral-text mb-md">🎯 Filtros</h2>
+              <p className="font-medium mb-sm">
                 Especialidade: {testResults.filteredResults?.specialty}
               </p>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-neutral-textSecondary mb-sm">
                 Resultados: {testResults.filteredResults?.count || 0}
               </p>
-              <ul className="text-sm text-gray-600 space-y-1">
+              <ul className="text-sm text-neutral-textSecondary space-y-1">
                 {testResults.filteredResults?.results?.map((result: string, i: number) => (
                   <li key={i}>• {result}</li>
                 ))}
@@ -220,9 +220,9 @@ const ExerciseLibraryTestPage: React.FC = () => {
             </div>
 
             {/* Links de Protocolos */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">🔗 Links de Protocolos</h2>
-              <div className="space-y-2">
+            <div className="bg-white rounded-lg shadow-card p-lg">
+              <h2 className="text-lg font-semibold text-neutral-text mb-md">🔗 Links de Protocolos</h2>
+              <div className="space-y-sm">
                 <p><span className="font-medium">Total de Links:</span> {testResults.protocolLinks?.totalLinks || 0}</p>
                 <p><span className="font-medium">Protocolos com Exercícios:</span> {testResults.protocolLinks?.protocolsWithExercises || 0}</p>
                 <p><span className="font-medium">Exercícios com Protocolos:</span> {testResults.protocolLinks?.exercisesWithProtocols || 0}</p>
@@ -231,17 +231,17 @@ const ExerciseLibraryTestPage: React.FC = () => {
             </div>
 
             {/* Recomendações */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">💡 Recomendações</h2>
-              <p className="font-medium mb-2">
+            <div className="bg-white rounded-lg shadow-card p-lg">
+              <h2 className="text-lg font-semibold text-neutral-text mb-md">💡 Recomendações</h2>
+              <p className="font-medium mb-sm">
                 Total: {testResults.recommendations?.count || 0}
               </p>
-              <div className="space-y-3">
+              <div className="space-y-sm">
                 {testResults.recommendations?.sample?.map((rec: any, i: number) => (
-                  <div key={i} className="bg-yellow-50 p-3 rounded border">
+                  <div key={i} className="bg-warning-light p-md rounded border">
                     <p className="font-medium text-sm">{rec.exercise} → {rec.protocol}</p>
-                    <p className="text-xs text-gray-600">{rec.reason}</p>
-                    <p className="text-xs text-blue-600">Confiança: {(rec.confidence * 100).toFixed(0)}%</p>
+                    <p className="text-xs text-neutral-textSecondary">{rec.reason}</p>
+                    <p className="text-xs text-primary">Confiança: {(rec.confidence * 100).toFixed(0)}%</p>
                   </div>
                 ))}
               </div>
@@ -249,32 +249,32 @@ const ExerciseLibraryTestPage: React.FC = () => {
           </div>
         )}
 
-        <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">✅ Status dos Testes</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="mt-3xl bg-white rounded-lg shadow-card p-lg">
+          <h2 className="text-lg font-semibold text-neutral-text mb-md">✅ Status dos Testes</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-md">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-success">
                 {testResults.exercises?.total > 0 ? '✅' : '❌'}
               </div>
-              <p className="text-sm text-gray-600">Exercícios</p>
+              <p className="text-sm text-neutral-textSecondary">Exercícios</p>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-success">
                 {testResults.categories?.length > 0 ? '✅' : '❌'}
               </div>
-              <p className="text-sm text-gray-600">Categorias</p>
+              <p className="text-sm text-neutral-textSecondary">Categorias</p>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-success">
                 {testResults.protocolLinks?.totalLinks > 0 ? '✅' : '❌'}
               </div>
-              <p className="text-sm text-gray-600">Links</p>
+              <p className="text-sm text-neutral-textSecondary">Links</p>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-success">
                 {testResults.recommendations?.count > 0 ? '✅' : '❌'}
               </div>
-              <p className="text-sm text-gray-600">Recomendações</p>
+              <p className="text-sm text-neutral-textSecondary">Recomendações</p>
             </div>
           </div>
         </div>

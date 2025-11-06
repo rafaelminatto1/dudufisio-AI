@@ -360,40 +360,40 @@ const FreeVideoGeneratorReal: React.FC = () => {
   }, [generatedVideoUrl]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       <PageHeader
         title="Gerador de Vídeos Gemini Veo 2.0"
         subtitle="Geração real de vídeos usando Google Gemini Veo 2.0 - API oficial"
       />
 
       {/* Progress Indicator */}
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-primary">
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">
-            <div className={`flex items-center space-x-2 ${currentStep === 'config' ? 'text-blue-600' : 'text-muted-foreground'}`}>
-              <div className={`rounded-full p-2 ${currentStep === 'config' ? 'bg-blue-100' : 'bg-slate-100'}`}>
+            <div className={`flex items-center space-x-2 ${currentStep === 'config' ? 'text-primary' : 'text-neutral-textSecondary'}`}>
+              <div className={`rounded-full p-sm ${currentStep === 'config' ? 'bg-primary-light' : 'bg-neutral-bgDark'}`}>
                 <Wand2 className="w-4 h-4" />
               </div>
               <span className="text-sm font-medium">1. Configurar</span>
             </div>
 
-            <div className="flex-1 mx-4 h-1 bg-slate-200 rounded">
-              <div className={`h-full bg-blue-500 rounded transition-all ${currentStep !== 'config' ? 'w-full' : 'w-0'}`} />
+            <div className="flex-1 mx-4 h-1 bg-neutral-bgDark rounded">
+              <div className={`h-full bg-primary rounded transition-all ${currentStep !== 'config' ? 'w-full' : 'w-0'}`} />
             </div>
 
-            <div className={`flex items-center space-x-2 ${currentStep === 'generating' ? 'text-purple-600' : currentStep === 'video_ready' || currentStep === 'success' ? 'text-blue-600' : 'text-muted-foreground'}`}>
-              <div className={`rounded-full p-2 ${currentStep === 'generating' ? 'bg-purple-100' : currentStep === 'video_ready' || currentStep === 'success' ? 'bg-blue-100' : 'bg-slate-100'}`}>
+            <div className={`flex items-center space-x-2 ${currentStep === 'generating' ? 'text-purple-600' : currentStep === 'video_ready' || currentStep === 'success' ? 'text-primary' : 'text-neutral-textSecondary'}`}>
+              <div className={`rounded-full p-sm ${currentStep === 'generating' ? 'bg-purple-100' : currentStep === 'video_ready' || currentStep === 'success' ? 'bg-primary-light' : 'bg-neutral-bgDark'}`}>
                 <Brain className="w-4 h-4" />
               </div>
               <span className="text-sm font-medium">2. IA Gerando</span>
             </div>
 
-            <div className="flex-1 mx-4 h-1 bg-slate-200 rounded">
-              <div className={`h-full bg-blue-500 rounded transition-all ${currentStep === 'video_ready' || currentStep === 'success' ? 'w-full' : 'w-0'}`} />
+            <div className="flex-1 mx-4 h-1 bg-neutral-bgDark rounded">
+              <div className={`h-full bg-primary rounded transition-all ${currentStep === 'video_ready' || currentStep === 'success' ? 'w-full' : 'w-0'}`} />
             </div>
 
-            <div className={`flex items-center space-x-2 ${currentStep === 'video_ready' ? 'text-purple-600' : currentStep === 'success' ? 'text-blue-600' : 'text-muted-foreground'}`}>
-              <div className={`rounded-full p-2 ${currentStep === 'video_ready' ? 'bg-purple-100' : currentStep === 'success' ? 'bg-blue-100' : 'bg-slate-100'}`}>
+            <div className={`flex items-center space-x-2 ${currentStep === 'video_ready' ? 'text-purple-600' : currentStep === 'success' ? 'text-primary' : 'text-neutral-textSecondary'}`}>
+              <div className={`rounded-full p-sm ${currentStep === 'video_ready' ? 'bg-purple-100' : currentStep === 'success' ? 'bg-primary-light' : 'bg-neutral-bgDark'}`}>
                 <Video className="w-4 h-4" />
               </div>
               <span className="text-sm font-medium">3. Vídeo Pronto</span>
@@ -407,7 +407,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Wand2 className="w-5 h-5 mr-2" />
+              <Wand2 className="w-5 h-5 mr-sm" />
               Passo 1: Configurar Exercício
             </CardTitle>
             <CardDescription>Descreva o exercício que você quer ver em vídeo</CardDescription>
@@ -415,7 +415,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
           <CardContent>
             {/* Mostrar erro se houver */}
             {generationError && (
-              <Alert variant="destructive" className="mb-4">
+              <Alert variant="destructive" className="mb-md">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Erro na Geração</AlertTitle>
                 <AlertDescription>
@@ -425,7 +425,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
             )}
 
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-md">
                 <FormField
                   control={form.control}
                   name="exerciseName"
@@ -465,7 +465,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
                   )}
                 />
 
-                <div className="space-y-4">
+                <div className="space-y-md">
                   <FormField
                     control={form.control}
                     name="modality"
@@ -492,50 +492,50 @@ const FreeVideoGeneratorReal: React.FC = () => {
 
                   <FormItem>
                     <FormLabel>Motor de IA</FormLabel>
-                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md border">
+                    <div className="p-md bg-primary-light dark:bg-blue-900/20 rounded-md border">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                          <span className="font-medium text-blue-700 dark:text-blue-300">
+                          <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                          <span className="font-medium text-primary dark:text-blue-300">
                             {toolInfo.name}
                           </span>
-                          <span className="text-sm text-blue-600 dark:text-blue-400">
+                          <span className="text-sm text-primary dark:text-blue-400">
                             ({toolInfo.quality})
                           </span>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                          <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+                          <div className="w-1.5 h-1.5 bg-success-light0 rounded-full"></div>
+                          <span className="text-xs text-success dark:text-green-400 font-medium">
                             API Configurada
                           </span>
                         </div>
                       </div>
-                      <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                      <p className="text-xs text-primary dark:text-blue-400 mt-xs">
                         {toolInfo.description}
                       </p>
-                      <p className="text-xs text-blue-500 dark:text-blue-300 mt-1 font-mono">
+                      <p className="text-xs text-blue-500 dark:text-blue-300 mt-xs font-mono">
                         🔑 Key: AIzaSy...GmuLtM
                       </p>
                     </div>
                   </FormItem>
                 </div>
 
-                <Alert className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+                <Alert className="bg-gradient-to-r from-blue-50 to-purple-50 border-primary">
                   <Brain className="h-4 w-4" />
                   <AlertTitle>Como funciona a IA</AlertTitle>
                   <AlertDescription>
-                    <div className="space-y-2">
+                    <div className="space-y-sm">
                       <p>
                         O Google Gemini Veo 2.0 vai analisar seu exercício e modalidade para gerar um vídeo específico e personalizado. 
                         Cada combinação gera um vídeo único baseado no que você escreveu.
                       </p>
                       <div className="flex items-center space-x-2 text-xs">
                         <div className="flex items-center space-x-1">
-                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                          <span className="text-green-700 font-semibold">API Key Configurada</span>
+                          <div className="w-1.5 h-1.5 bg-success-light0 rounded-full"></div>
+                          <span className="text-success font-semibold">API Key Configurada</span>
                         </div>
-                        <span className="text-blue-600">•</span>
-                        <span className="text-blue-700">Tentará usar API real quando disponível</span>
+                        <span className="text-primary">•</span>
+                        <span className="text-primary">Tentará usar API real quando disponível</span>
                       </div>
                     </div>
                   </AlertDescription>
@@ -549,12 +549,12 @@ const FreeVideoGeneratorReal: React.FC = () => {
                 >
                   {isGenerating ? (
                     <>
-                      <Brain className="w-4 h-4 mr-2 animate-pulse" />
+                      <Brain className="w-4 h-4 mr-sm animate-pulse" />
                       IA Processando...
                     </>
                   ) : (
                     <>
-                      <Brain className="w-4 h-4 mr-2" />
+                      <Brain className="w-4 h-4 mr-sm" />
                       Gerar Vídeo com Gemini Veo 2.0
                     </>
                   )}
@@ -570,16 +570,16 @@ const FreeVideoGeneratorReal: React.FC = () => {
         <Card className="border-2 border-purple-500">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Brain className="w-5 h-5 mr-2 text-purple-600 animate-pulse" />
+              <Brain className="w-5 h-5 mr-sm text-purple-600 animate-pulse" />
               IA Analisando seu Exercício...
             </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
+            <CardDescription className="text-sm text-neutral-textSecondary">
               Google Gemini Veo 2.0 está criando um vídeo personalizado baseado no seu prompt
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-md">
             <div className="flex items-center justify-center py-12">
-              <div className="text-center space-y-4">
+              <div className="text-center space-y-md">
                 <div className="relative">
                   <div className="w-24 h-24 mx-auto">
                     <svg className="animate-spin" viewBox="0 0 100 100">
@@ -602,8 +602,8 @@ const FreeVideoGeneratorReal: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-800">IA Processando seu Exercício...</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <h3 className="text-lg font-semibold text-neutral-text">IA Processando seu Exercício...</h3>
+                  <p className="text-sm text-neutral-textSecondary mt-xs">
                     Analisando: "{pendingFormData?.exerciseName}" em {MODALITIES[pendingFormData?.modality as keyof typeof MODALITIES]}
                   </p>
                 </div>
@@ -615,7 +615,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
                   {loadingMessage}
                 </div>
                 
-                <div className="text-xs text-muted-foreground space-y-1">
+                <div className="text-xs text-neutral-textSecondary space-y-1">
                   <p>⏱️ Tempo estimado: 2-5 minutos</p>
                   <p>🎬 Gemini Veo 2.0 está criando seu vídeo personalizado...</p>
                 </div>
@@ -627,8 +627,8 @@ const FreeVideoGeneratorReal: React.FC = () => {
               <Sparkles className="h-4 w-4" />
               <AlertTitle>Prompt Personalizado Gerado</AlertTitle>
               <AlertDescription>
-                <div className="mt-2">
-                  <pre className="text-xs bg-purple-50 p-3 rounded border whitespace-pre-wrap">
+                <div className="mt-sm">
+                  <pre className="text-xs bg-purple-50 p-md rounded border whitespace-pre-wrap">
                     {generatedPrompt}
                   </pre>
                 </div>
@@ -643,7 +643,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
         <Card className="border-2 border-green-500">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
+              <CheckCircle className="w-5 h-5 mr-sm text-success" />
               Vídeo Personalizado Gerado!
             </CardTitle>
             <CardDescription>
@@ -651,17 +651,17 @@ const FreeVideoGeneratorReal: React.FC = () => {
                 Sua IA criou um vídeo único e específico baseado no seu exercício: "{selectedVideoInfo?.title || pendingFormData?.exerciseName}"
               </span>
               {selectedVideoInfo?.description && (
-                <span className="block mt-2 text-sm text-muted-foreground">
+                <span className="block mt-sm text-sm text-neutral-textSecondary">
                   {selectedVideoInfo.description}
                 </span>
               )}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-xl">
             {/* Video Player */}
-            <div className="space-y-4">
+            <div className="space-y-md">
               <h4 className="font-semibold flex items-center">
-                <Video className="w-4 h-4 mr-2" />
+                <Video className="w-4 h-4 mr-sm" />
                 Seu Vídeo Personalizado
               </h4>
               
@@ -676,13 +676,13 @@ const FreeVideoGeneratorReal: React.FC = () => {
                   Seu navegador não suporta vídeos.
                 </video>
                 
-                <div className="absolute top-4 right-4 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                <div className="absolute top-md right-4 bg-black/70 text-white px-sm py-1 rounded text-xs">
                   {selectedTool?.quality} | {videoDuration}
                 </div>
               </div>
               
               <div className="flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-neutral-textSecondary">
                   <p><strong>Exercício:</strong> {selectedVideoInfo?.title || pendingFormData?.exerciseName}</p>
                   <p><strong>Modalidade:</strong> {selectedVideoInfo?.modality || MODALITIES[pendingFormData?.modality as keyof typeof MODALITIES]}</p>
                   <p><strong>Motor IA:</strong> {toolInfo.name}</p>
@@ -697,11 +697,11 @@ const FreeVideoGeneratorReal: React.FC = () => {
                 
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm">
-                    <Download className="w-4 h-4 mr-1" />
+                    <Download className="w-4 h-4 mr-xs" />
                     Baixar
                   </Button>
                   <Button variant="outline" size="sm">
-                    <Share2 className="w-4 h-4 mr-1" />
+                    <Share2 className="w-4 h-4 mr-xs" />
                     Compartilhar
                   </Button>
                 </div>
@@ -709,11 +709,11 @@ const FreeVideoGeneratorReal: React.FC = () => {
             </div>
 
             {/* Success Info */}
-            <Alert className="bg-green-50 border-green-300">
-              <CheckCircle className="h-4 w-4 text-green-600" />
+            <Alert className="bg-success-light border-success">
+              <CheckCircle className="h-4 w-4 text-success" />
               <AlertTitle>Vídeo Personalizado Criado!</AlertTitle>
               <AlertDescription>
-                <div className="mt-2 space-y-1 text-sm">
+                <div className="mt-sm space-y-1 text-sm">
                   <p>✅ IA analisou seu exercício específico</p>
                   <p>✅ Vídeo único gerado baseado no seu prompt</p>
                   <p>✅ Duração personalizada: {videoDuration}</p>
@@ -729,12 +729,12 @@ const FreeVideoGeneratorReal: React.FC = () => {
             </Alert>
 
             {/* Action Buttons */}
-            <div className="space-y-4">
+            <div className="space-y-md">
               {/* Botão principal: Salvar e Anexar */}
               <Button
                 size="lg"
                 onClick={() => setShowAttachModal(true)}
-                className="w-full h-20 bg-sky-600 hover:bg-sky-700 flex-col space-y-2"
+                className="w-full h-20 bg-primary-hover hover:bg-primary-hover flex-col space-y-sm"
               >
                 <Plus className="w-6 h-6" />
                 <div className="text-center">
@@ -743,18 +743,18 @@ const FreeVideoGeneratorReal: React.FC = () => {
                 </div>
               </Button>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-md">
                 <Button
                   variant="outline"
                   size="lg"
                   onClick={handleRegenerateVideo}
                   disabled={isGenerating}
-                  className="h-16 flex-col space-y-2"
+                  className="h-16 flex-col space-y-sm"
                 >
                   <RotateCcw className="w-5 h-5" />
                   <div className="text-center">
                     <div className="text-sm font-semibold">Gerar Novo</div>
-                    <div className="text-xs text-muted-foreground">Mesmo exercício</div>
+                    <div className="text-xs text-neutral-textSecondary">Mesmo exercício</div>
                   </div>
                 </Button>
 
@@ -762,12 +762,12 @@ const FreeVideoGeneratorReal: React.FC = () => {
                   variant="outline"
                   size="lg"
                   onClick={handleAcceptVideo}
-                  className="h-16 flex-col space-y-2"
+                  className="h-16 flex-col space-y-sm"
                 >
                   <CheckCheck className="w-5 h-5" />
                   <div className="text-center">
                     <div className="text-sm font-semibold">Continuar</div>
-                    <div className="text-xs text-muted-foreground">Sem salvar</div>
+                    <div className="text-xs text-neutral-textSecondary">Sem salvar</div>
                   </div>
                 </Button>
               </div>
@@ -780,15 +780,15 @@ const FreeVideoGeneratorReal: React.FC = () => {
       {currentStep === 'success' && (
         <Card className="border-2 border-green-500 bg-gradient-to-br from-green-50 to-emerald-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-green-700">
-              <CheckCircle className="w-6 h-6 mr-2" />
+            <CardTitle className="flex items-center text-success">
+              <CheckCircle className="w-6 h-6 mr-sm" />
               ✅ Vídeo Personalizado Salvo!
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-xl">
             {/* Video Preview */}
             {generatedVideoUrl && (
-              <div className="space-y-4">
+              <div className="space-y-md">
                 <h4 className="font-semibold">Seu Vídeo Final:</h4>
                 <div className="relative bg-black rounded-lg overflow-hidden">
                   <video
@@ -803,11 +803,11 @@ const FreeVideoGeneratorReal: React.FC = () => {
             )}
 
             {/* Success Info */}
-            <Alert className="bg-white border-green-300">
-              <CheckCircle className="h-4 w-4 text-green-600" />
+            <Alert className="bg-white border-success">
+              <CheckCircle className="h-4 w-4 text-success" />
               <AlertTitle>Tudo Pronto!</AlertTitle>
               <AlertDescription>
-                <div className="mt-2 space-y-2 text-sm">
+                <div className="mt-sm space-y-sm text-sm">
                   <p>
                     ✅ Exercício <strong>"{pendingFormData?.exerciseName}"</strong> com vídeo personalizado
                   </p>
@@ -820,7 +820,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
             </Alert>
 
             {/* Actions */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-md">
               <Button variant="outline" onClick={handleStartNew} size="lg" className="h-16">
                 <div className="text-center">
                   <Plus className="w-5 h-5 mx-auto mb-1" />
@@ -849,7 +849,7 @@ const FreeVideoGeneratorReal: React.FC = () => {
           <CardHeader>
             <CardTitle className="text-sm">🤖 Google Gemini Veo 2.0</CardTitle>
           </CardHeader>
-          <CardContent className="text-xs space-y-2">
+          <CardContent className="text-xs space-y-sm">
             {currentStep === 'config' && (
               <>
                 <p>📝 Descreva exatamente o exercício</p>

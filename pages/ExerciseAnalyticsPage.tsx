@@ -96,12 +96,12 @@ const ExerciseAnalyticsPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-lg space-y-xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Analytics de Exercícios</h1>
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-3xl font-bold text-neutral-text">Analytics de Exercícios</h1>
+          <p className="text-gray-500 mt-xs">
             Métricas e insights sobre uso de exercícios
           </p>
         </div>
@@ -119,11 +119,11 @@ const ExerciseAnalyticsPage: React.FC = () => {
       </div>
 
       {/* Overview Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total de Exercícios</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <Activity className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalExercises}</div>
@@ -133,7 +133,7 @@ const ExerciseAnalyticsPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Atribuições Ativas</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.activeAssignments}</div>
@@ -143,7 +143,7 @@ const ExerciseAnalyticsPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Uso Médio</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+            <Target className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.avgUsage}x</div>
@@ -153,13 +153,13 @@ const ExerciseAnalyticsPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Melhor Avaliado</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
+            <Award className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-sm font-medium truncate">
               {stats.topRated?.name || 'N/A'}
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-neutral-textSecondary">
               {stats.topRated?.averageRating?.toFixed(1)}/10
             </div>
           </CardContent>
@@ -167,7 +167,7 @@ const ExerciseAnalyticsPage: React.FC = () => {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
         {/* Top 10 Exercícios */}
         <Card>
           <CardHeader>
@@ -252,16 +252,16 @@ const ExerciseAnalyticsPage: React.FC = () => {
       </div>
 
       {/* Insights */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
         <Card className="border-l-4 border-l-green-500">
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-600" />
+            <div className="flex items-center gap-sm">
+              <TrendingUp className="h-5 w-5 text-success" />
               <CardTitle className="text-lg">Tendência Positiva</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-neutral-textSecondary">
               Exercícios de fortalecimento aumentaram 25% no último mês
             </p>
           </CardContent>
@@ -269,13 +269,13 @@ const ExerciseAnalyticsPage: React.FC = () => {
 
         <Card className="border-l-4 border-l-blue-500">
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-blue-600" />
+            <div className="flex items-center gap-sm">
+              <Target className="h-5 w-5 text-primary" />
               <CardTitle className="text-lg">Recomendação</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-neutral-textSecondary">
               Considere adicionar mais exercícios de equilíbrio para idosos
             </p>
           </CardContent>
@@ -283,13 +283,13 @@ const ExerciseAnalyticsPage: React.FC = () => {
 
         <Card className="border-l-4 border-l-purple-500">
           <CardHeader>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-sm">
               <Zap className="h-5 w-5 text-purple-600" />
               <CardTitle className="text-lg">Destaque</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-neutral-textSecondary">
               Protocolos estão sendo 3x mais usados que exercícios individuais
             </p>
           </CardContent>

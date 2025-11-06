@@ -54,32 +54,32 @@ const BusinessMetricCard: React.FC<{
   action?: { label: string; onClick: () => void };
   highlight?: boolean;
 }> = ({ title, value, subtitle, icon: Icon, trend, action, highlight }) => (
-  <div className={`bg-white rounded-xl shadow-sm border p-6 transition-all hover:shadow-md ${highlight ? 'border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50' : 'border-slate-200'}`}>
+  <div className={`bg-white rounded-card shadow-card border p-lg transition-all hover:shadow-cardHover ${highlight ? 'border-purple-200 bg-gradient-to-br from-purple-50 to-blue-50' : 'border-neutral-border'}`}>
     <div className="flex items-center justify-between">
       <div className="flex-1">
-        <div className="flex items-center gap-3">
-          <div className={`p-3 rounded-lg ${highlight ? 'bg-purple-100' : 'bg-blue-100'}`}>
-            <Icon className={`w-5 h-5 ${highlight ? 'text-purple-600' : 'text-blue-600'}`} />
+        <div className="flex items-center gap-md">
+          <div className={`p-md rounded-lg ${highlight ? 'bg-purple-100' : 'bg-primary-light'}`}>
+            <Icon className={`w-5 h-5 ${highlight ? 'text-purple-600' : 'text-primary'}`} />
           </div>
           <div>
-            <p className={`text-sm font-medium ${highlight ? 'text-purple-800' : 'text-slate-600'}`}>{title}</p>
-            <p className={`text-2xl font-bold ${highlight ? 'text-purple-900' : 'text-slate-900'}`}>{value}</p>
+            <p className={`text-sm font-medium ${highlight ? 'text-purple-800' : 'text-neutral-textSecondary'}`}>{title}</p>
+            <p className={`text-2xl font-bold ${highlight ? 'text-purple-900' : 'text-neutral-text'}`}>{value}</p>
             {subtitle && (
-              <p className={`text-xs ${highlight ? 'text-purple-600' : 'text-slate-500'}`}>{subtitle}</p>
+              <p className={`text-xs ${highlight ? 'text-purple-600' : 'text-neutral-textSecondary'}`}>{subtitle}</p>
             )}
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-end gap-2">
+      <div className="flex flex-col items-end gap-sm">
         {trend && (
-          <div className={`text-sm font-medium ${trend.positive ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`text-sm font-medium ${trend.positive ? 'text-success' : 'text-error'}`}>
             {trend.positive ? '+' : ''}{trend.value}%
           </div>
         )}
         {action && (
           <button
             onClick={action.onClick}
-            className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            className="text-xs text-primary hover:text-blue-800 flex items-center gap-1"
           >
             {action.label}
             <ArrowUpRight className="w-3 h-3" />
@@ -96,42 +96,42 @@ const ReferralCard: React.FC<{
   onViewDetails: (referral: PartnerReferral) => void;
 }> = ({ referral, onViewDetails }) => {
   const statusConfig = {
-    'pending': { color: 'text-yellow-600', bg: 'bg-yellow-100', label: 'Pendente' },
-    'active': { color: 'text-blue-600', bg: 'bg-blue-100', label: 'Em Tratamento' },
-    'completed': { color: 'text-green-600', bg: 'bg-green-100', label: 'Concluído' },
-    'cancelled': { color: 'text-red-600', bg: 'bg-red-100', label: 'Cancelado' }
+    'pending': { color: 'text-warning', bg: 'bg-warning-light', label: 'Pendente' },
+    'active': { color: 'text-primary', bg: 'bg-primary-light', label: 'Em Tratamento' },
+    'completed': { color: 'text-success', bg: 'bg-success-light', label: 'Concluído' },
+    'cancelled': { color: 'text-error', bg: 'bg-error-light', label: 'Cancelado' }
   };
 
   const priorityConfig = {
-    'high': { color: 'text-red-600', icon: '🔴' },
-    'medium': { color: 'text-yellow-600', icon: '🟡' },
-    'low': { color: 'text-green-600', icon: '🟢' }
+    'high': { color: 'text-error', icon: '🔴' },
+    'medium': { color: 'text-warning', icon: '🟡' },
+    'low': { color: 'text-success', icon: '🟢' }
   };
 
   const config = statusConfig[referral.status];
   const priority = priorityConfig[referral.priority];
 
   return (
-    <div className="bg-white rounded-lg border border-slate-200 p-4 hover:shadow-sm transition-shadow">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
+    <div className="bg-white rounded-lg border border-neutral-border p-md hover:shadow-card transition-shadow">
+      <div className="flex items-center justify-between mb-md">
+        <div className="flex items-center gap-md">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
-            <Users className="w-5 h-5 text-blue-600" />
+            <Users className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <p className="font-medium text-slate-900">{referral.patientName}</p>
-            <p className="text-sm text-slate-500 flex items-center gap-1">
+            <p className="font-medium text-neutral-text">{referral.patientName}</p>
+            <p className="text-sm text-neutral-textSecondary flex items-center gap-1">
               {priority.icon} {referral.condition}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${config.bg} ${config.color}`}>
+        <div className="flex items-center gap-sm">
+          <span className={`px-md py-1 rounded-full text-xs font-medium ${config.bg} ${config.color}`}>
             {config.label}
           </span>
           <button
             onClick={() => onViewDetails(referral)}
-            className="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
+            className="p-sm text-neutral-textTertiary hover:text-neutral-textSecondary rounded-full hover:bg-neutral-bgDark"
           >
             <Eye className="w-4 h-4" />
           </button>
@@ -139,12 +139,12 @@ const ReferralCard: React.FC<{
       </div>
 
       {referral.status === 'active' && (
-        <div className="mb-3">
+        <div className="mb-md">
           <div className="flex justify-between text-sm mb-1">
-            <span className="text-slate-600">Progresso</span>
+            <span className="text-neutral-textSecondary">Progresso</span>
             <span className="font-medium">{referral.progress}%</span>
           </div>
-          <div className="w-full bg-slate-200 rounded-full h-2">
+          <div className="w-full bg-neutral-bgDark rounded-full h-2">
             <div
               className="h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all"
               style={{ width: `${referral.progress}%` }}
@@ -154,10 +154,10 @@ const ReferralCard: React.FC<{
       )}
 
       <div className="flex items-center justify-between text-sm">
-        <span className="text-slate-500">
+        <span className="text-neutral-textSecondary">
           Referenciado em: {new Date(referral.referralDate).toLocaleDateString('pt-BR')}
         </span>
-        <span className="font-medium text-green-600">
+        <span className="font-medium text-success">
           R$ {referral.estimatedValue.toLocaleString('pt-BR')}
         </span>
       </div>
@@ -256,14 +256,14 @@ const PartnerDashboard: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-smxl">
       <PageHeader
         title="Dashboard de Parceiro"
         subtitle="Gerencie suas referências e acompanhe o crescimento da sua rede de colaboração."
       />
 
       {/* Métricas Principais de Parceria */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
         <BusinessMetricCard
           title="Total de Referências"
           value={partnerMetrics.totalReferrals}
@@ -298,7 +298,7 @@ const PartnerDashboard: React.FC = () => {
       </div>
 
       {/* Métricas Secundárias */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-lg">
         <BusinessMetricCard
           title="Tempo Médio Tratamento"
           value={`${partnerMetrics.avgTreatmentTime} semanas`}
@@ -324,12 +324,12 @@ const PartnerDashboard: React.FC = () => {
       </div>
 
       {/* Conteúdo Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-xl">
         {/* Coluna Esquerda - Referências Recentes */}
-        <div className="lg:col-span-2 space-y-8">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+        <div className="lg:col-span-2 space-y-smxl">
+          <div className="bg-white rounded-card shadow-card border border-neutral-border p-lg">
+            <div className="flex items-center justify-between mb-xl">
+              <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
                 <Users className="w-5 h-5 text-purple-600" />
                 Referências Recentes
               </h3>
@@ -337,7 +337,7 @@ const PartnerDashboard: React.FC = () => {
                 Ver todas
               </button>
             </div>
-            <div className="grid gap-4">
+            <div className="grid gap-md">
               {mockReferrals.map((referral: any) => (
                 <ReferralCard
                   key={referral.id}
@@ -349,53 +349,53 @@ const PartnerDashboard: React.FC = () => {
           </div>
 
           {/* Performance Mensal */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
+          <div className="bg-white rounded-card shadow-card border border-neutral-border p-lg">
+            <h3 className="text-lg font-semibold text-neutral-text mb-md flex items-center gap-sm">
+              <TrendingUp className="w-5 h-5 text-primary" />
               Performance Mensal
             </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg">
-                <p className="text-2xl font-bold text-blue-600">12</p>
-                <p className="text-sm text-slate-600">Novas Referências</p>
+            <div className="grid grid-cols-2 gap-md">
+              <div className="text-center p-md bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg">
+                <p className="text-2xl font-bold text-primary">12</p>
+                <p className="text-sm text-neutral-textSecondary">Novas Referências</p>
               </div>
-              <div className="text-center p-4 bg-gradient-to-br from-green-50 to-blue-50 rounded-lg">
-                <p className="text-2xl font-bold text-green-600">8</p>
-                <p className="text-sm text-slate-600">Tratamentos Finalizados</p>
+              <div className="text-center p-md bg-gradient-to-br from-green-50 to-blue-50 rounded-lg">
+                <p className="text-2xl font-bold text-success">8</p>
+                <p className="text-sm text-neutral-textSecondary">Tratamentos Finalizados</p>
               </div>
-              <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg">
+              <div className="text-center p-md bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg">
                 <p className="text-2xl font-bold text-purple-600">R$ 15.6k</p>
-                <p className="text-sm text-slate-600">Receita Gerada</p>
+                <p className="text-sm text-neutral-textSecondary">Receita Gerada</p>
               </div>
-              <div className="text-center p-4 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg">
-                <p className="text-2xl font-bold text-orange-600">9.2/10</p>
-                <p className="text-sm text-slate-600">Satisfação Média</p>
+              <div className="text-center p-md bg-gradient-to-br from-orange-50 to-red-50 rounded-lg">
+                <p className="text-2xl font-bold text-warning">9.2/10</p>
+                <p className="text-sm text-neutral-textSecondary">Satisfação Média</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Coluna Direita - Ações e Contato */}
-        <div className="space-y-8">
+        <div className="space-y-smxl">
           {/* Central de Contato */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Central de Contato</h3>
-            <div className="space-y-3">
+          <div className="bg-white rounded-card shadow-card border border-neutral-border p-lg">
+            <h3 className="text-lg font-semibold text-neutral-text mb-md">Central de Contato</h3>
+            <div className="space-y-sm">
               <button
                 onClick={handleContactClinic}
-                className="w-full p-3 bg-blue-50 text-blue-700 rounded-lg text-left hover:bg-blue-100 transition-colors flex items-center gap-2"
+                className="w-full p-md bg-primary-light text-primary rounded-lg text-left hover:bg-primary-light transition-colors flex items-center gap-sm"
               >
                 <Phone className="w-4 h-4" />
                 Ligar para Clínica
               </button>
               <button
                 onClick={handleContactClinic}
-                className="w-full p-3 bg-purple-50 text-purple-700 rounded-lg text-left hover:bg-purple-100 transition-colors flex items-center gap-2"
+                className="w-full p-md bg-purple-50 text-purple-700 rounded-lg text-left hover:bg-purple-100 transition-colors flex items-center gap-sm"
               >
                 <Mail className="w-4 h-4" />
                 Enviar E-mail
               </button>
-              <button className="w-full p-3 bg-green-50 text-green-700 rounded-lg text-left hover:bg-green-100 transition-colors flex items-center gap-2">
+              <button className="w-full p-md bg-success-light text-success rounded-lg text-left hover:bg-success-light transition-colors flex items-center gap-sm">
                 <Calendar className="w-4 h-4" />
                 Agendar Reunião
               </button>
@@ -403,47 +403,47 @@ const PartnerDashboard: React.FC = () => {
           </div>
 
           {/* Ações Rápidas */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Ações Rápidas</h3>
-            <div className="space-y-3">
-              <button className="w-full p-3 bg-sky-50 text-sky-700 rounded-lg text-left hover:bg-sky-100 transition-colors">
+          <div className="bg-white rounded-card shadow-card border border-neutral-border p-lg">
+            <h3 className="text-lg font-semibold text-neutral-text mb-md">Ações Rápidas</h3>
+            <div className="space-y-sm">
+              <button className="w-full p-md bg-primary-light text-primary rounded-lg text-left hover:bg-primary-light transition-colors">
                 ➕ Nova Referência
               </button>
-              <button className="w-full p-3 bg-indigo-50 text-indigo-700 rounded-lg text-left hover:bg-indigo-100 transition-colors">
+              <button className="w-full p-md bg-indigo-50 text-indigo-700 rounded-lg text-left hover:bg-indigo-100 transition-colors">
                 📊 Relatório Mensal
               </button>
-              <button className="w-full p-3 bg-emerald-50 text-emerald-700 rounded-lg text-left hover:bg-emerald-100 transition-colors">
+              <button className="w-full p-md bg-emerald-50 text-emerald-700 rounded-lg text-left hover:bg-emerald-100 transition-colors">
                 💰 Extrato Financeiro
               </button>
-              <button className="w-full p-3 bg-amber-50 text-amber-700 rounded-lg text-left hover:bg-amber-100 transition-colors">
+              <button className="w-full p-md bg-amber-50 text-amber-700 rounded-lg text-left hover:bg-amber-100 transition-colors">
                 🎯 Metas e Objetivos
               </button>
             </div>
           </div>
 
           {/* Próximos Eventos */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Próximos Eventos</h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-2 rounded">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          <div className="bg-white rounded-card shadow-card border border-neutral-border p-lg">
+            <h3 className="text-lg font-semibold text-neutral-text mb-md">Próximos Eventos</h3>
+            <div className="space-y-sm">
+              <div className="flex items-center gap-md p-sm rounded">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-slate-900">Reunião Mensal</p>
-                  <p className="text-xs text-slate-500">Amanhã, 14:00</p>
+                  <p className="text-sm font-medium text-neutral-text">Reunião Mensal</p>
+                  <p className="text-xs text-neutral-textSecondary">Amanhã, 14:00</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-2 rounded">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="flex items-center gap-md p-sm rounded">
+                <div className="w-2 h-2 bg-success-light0 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-slate-900">Workshop de Capacitação</p>
-                  <p className="text-xs text-slate-500">Sexta, 09:00</p>
+                  <p className="text-sm font-medium text-neutral-text">Workshop de Capacitação</p>
+                  <p className="text-xs text-neutral-textSecondary">Sexta, 09:00</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-2 rounded">
+              <div className="flex items-center gap-md p-sm rounded">
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-slate-900">Conferência de Resultados</p>
-                  <p className="text-xs text-slate-500">Próxima semana</p>
+                  <p className="text-sm font-medium text-neutral-text">Conferência de Resultados</p>
+                  <p className="text-xs text-neutral-textSecondary">Próxima semana</p>
                 </div>
               </div>
             </div>

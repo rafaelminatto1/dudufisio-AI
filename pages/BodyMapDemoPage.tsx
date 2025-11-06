@@ -110,33 +110,33 @@ const BodyMapDemoPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-lg">
+      <div className="max-w-7xl mx-auto space-y-xl">
         {/* Header */}
         <div className="flex items-center justify-between">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-slate-100 rounded-lg shadow-sm transition-colors"
+            className="flex items-center gap-sm px-md py-sm bg-white hover:bg-neutral-bgDark rounded-lg shadow-card transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="font-medium">Voltar</span>
           </button>
 
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-slate-800">
+            <h1 className="text-3xl font-bold text-neutral-text">
               🎨 Novo Body Map Profissional
             </h1>
-            <p className="text-slate-600 mt-1">
+            <p className="text-neutral-textSecondary mt-xs">
               Página de Demonstração e Teste
             </p>
           </div>
 
           <button
             onClick={() => setShowComparison(!showComparison)}
-            className={`px-4 py-2 rounded-lg shadow-sm transition-colors font-medium ${
+            className={`px-md py-sm rounded-lg shadow-card transition-colors font-medium ${
               showComparison
                 ? 'bg-purple-600 text-white hover:bg-purple-700'
-                : 'bg-white hover:bg-slate-100 text-slate-700'
+                : 'bg-white hover:bg-neutral-bgDark text-neutral-text'
             }`}
           >
             {showComparison ? '📍 Ver Mapa Atual' : '🔄 Ver Comparação'}
@@ -144,8 +144,8 @@ const BodyMapDemoPage: React.FC = () => {
         </div>
 
         {/* Info Banner */}
-        <div className="bg-blue-500 text-white rounded-xl px-6 py-4">
-          <h2 className="font-bold text-lg mb-2">👋 Bem-vindo ao Novo Body Map!</h2>
+        <div className="bg-primary text-white rounded-card px-lg py-md">
+          <h2 className="font-bold text-lg mb-sm">👋 Bem-vindo ao Novo Body Map!</h2>
           <ul className="text-sm space-y-1 text-blue-100">
             <li>✅ Clique nas regiões do corpo para registrar dor</li>
             <li>✅ Use o slider com emojis para definir intensidade (0-10)</li>
@@ -173,30 +173,30 @@ const BodyMapDemoPage: React.FC = () => {
             />
 
             {/* Informações Técnicas */}
-            <div className="bg-white border border-slate-200 rounded-xl p-6">
-              <h3 className="font-bold text-slate-800 mb-3">
+            <div className="bg-white border border-neutral-border rounded-card p-lg">
+              <h3 className="font-bold text-neutral-text mb-md">
                 🔧 Informações Técnicas
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
                 <div>
-                  <h4 className="font-semibold text-slate-700 mb-2">
+                  <h4 className="font-semibold text-neutral-text mb-sm">
                     Componentes Criados:
                   </h4>
-                  <ul className="text-sm text-slate-600 space-y-1 list-disc list-inside">
-                    <li><code className="bg-slate-100 px-1 rounded">BodyMapProfessional.tsx</code> - Componente principal</li>
-                    <li><code className="bg-slate-100 px-1 rounded">BodyMapSVG.tsx</code> - SVG anatômico</li>
-                    <li><code className="bg-slate-100 px-1 rounded">BodyRegionPolygon.tsx</code> - Região clicável</li>
-                    <li><code className="bg-slate-100 px-1 rounded">PainIntensityModal.tsx</code> - Modal de registro</li>
-                    <li><code className="bg-slate-100 px-1 rounded">PainIntensitySlider.tsx</code> - Slider com emojis</li>
-                    <li><code className="bg-slate-100 px-1 rounded">BodyMapComparison.tsx</code> - Comparação</li>
-                    <li><code className="bg-slate-100 px-1 rounded">body-regions-data.ts</code> - 50+ regiões SVG</li>
+                  <ul className="text-sm text-neutral-textSecondary space-y-1 list-disc list-inside">
+                    <li><code className="bg-neutral-bgDark px-1 rounded">BodyMapProfessional.tsx</code> - Componente principal</li>
+                    <li><code className="bg-neutral-bgDark px-1 rounded">BodyMapSVG.tsx</code> - SVG anatômico</li>
+                    <li><code className="bg-neutral-bgDark px-1 rounded">BodyRegionPolygon.tsx</code> - Região clicável</li>
+                    <li><code className="bg-neutral-bgDark px-1 rounded">PainIntensityModal.tsx</code> - Modal de registro</li>
+                    <li><code className="bg-neutral-bgDark px-1 rounded">PainIntensitySlider.tsx</code> - Slider com emojis</li>
+                    <li><code className="bg-neutral-bgDark px-1 rounded">BodyMapComparison.tsx</code> - Comparação</li>
+                    <li><code className="bg-neutral-bgDark px-1 rounded">body-regions-data.ts</code> - 50+ regiões SVG</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-slate-700 mb-2">
+                  <h4 className="font-semibold text-neutral-text mb-sm">
                     Features Implementadas:
                   </h4>
-                  <ul className="text-sm text-slate-600 space-y-1 list-disc list-inside">
+                  <ul className="text-sm text-neutral-textSecondary space-y-1 list-disc list-inside">
                     <li>✅ SVG anatômico com 50+ regiões</li>
                     <li>✅ Polígonos grandes e clicáveis</li>
                     <li>✅ Hover effects e animações (Framer Motion)</li>
@@ -213,11 +213,11 @@ const BodyMapDemoPage: React.FC = () => {
             </div>
 
             {/* Dados Atuais (Debug) */}
-            <details className="bg-slate-100 border border-slate-300 rounded-lg p-4">
-              <summary className="font-semibold text-slate-700 cursor-pointer">
+            <details className="bg-neutral-bgDark border border-neutral-border rounded-lg p-md">
+              <summary className="font-semibold text-neutral-text cursor-pointer">
                 🔍 Ver Dados Brutos (JSON)
               </summary>
-              <pre className="mt-3 text-xs bg-white p-4 rounded-lg overflow-auto border border-slate-200">
+              <pre className="mt-3 text-xs bg-white p-md rounded-lg overflow-auto border border-neutral-border">
                 {JSON.stringify(painData, null, 2)}
               </pre>
             </details>

@@ -133,26 +133,26 @@ const MaterialTasksPage: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-light text-success';
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-primary-light text-blue-800';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning-light text-yellow-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-neutral-bgDark text-gray-800';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-red-100 text-red-800';
+        return 'bg-error-light text-error';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning-light text-yellow-800';
       case 'low':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-light text-success';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-neutral-bgDark text-gray-800';
     }
   };
 
@@ -191,8 +191,8 @@ const MaterialTasksPage: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando tarefas...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-md"></div>
+          <p className="text-neutral-textSecondary">Carregando tarefas...</p>
         </div>
       </div>
     );
@@ -206,11 +206,11 @@ const MaterialTasksPage: React.FC = () => {
       />
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-lg mb-xl">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <FileText className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -223,7 +223,7 @@ const MaterialTasksPage: React.FC = () => {
             <AlertCircle className="h-4 w-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-2xl font-bold text-warning">{stats.pending}</div>
           </CardContent>
         </Card>
 
@@ -233,7 +233,7 @@ const MaterialTasksPage: React.FC = () => {
             <Clock className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats.inProgress}</div>
+            <div className="text-2xl font-bold text-primary">{stats.inProgress}</div>
           </CardContent>
         </Card>
 
@@ -243,7 +243,7 @@ const MaterialTasksPage: React.FC = () => {
             <CheckCircle className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.completed}</div>
+            <div className="text-2xl font-bold text-success">{stats.completed}</div>
           </CardContent>
         </Card>
 
@@ -253,17 +253,17 @@ const MaterialTasksPage: React.FC = () => {
             <Flag className="h-4 w-4 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.overdue}</div>
+            <div className="text-2xl font-bold text-error">{stats.overdue}</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="bg-white p-lg rounded-card shadow-card mb-xl">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
           <div className="md:col-span-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-textTertiary w-5 h-5" />
               <Input
                 type="text"
                 placeholder="Buscar por conteúdo ou usuário..."
@@ -299,21 +299,21 @@ const MaterialTasksPage: React.FC = () => {
           </Select>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
-          <span className="text-sm text-gray-600">
+        <div className="mt-md flex items-center justify-between">
+          <span className="text-sm text-neutral-textSecondary">
             {filteredTasks.length} tarefa(s) encontrada(s)
           </span>
         </div>
       </div>
 
       {/* Tasks List */}
-      <div className="space-y-4">
+      <div className="space-y-md">
         {filteredTasks.map((task) => (
-          <Card key={task.id} className={`${isOverdue(task.dueDate, task.status) ? 'border-red-200 bg-red-50' : ''}`}>
-            <CardContent className="p-6">
+          <Card key={task.id} className={`${isOverdue(task.dueDate, task.status) ? 'border-error bg-error-light' : ''}`}>
+            <CardContent className="p-lg">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
+                  <div className="flex items-center space-x-3 mb-sm">
                     {getStatusIcon(task.status)}
                     <div className="flex items-center space-x-2">
                       <Badge className={getStatusColor(task.status)}>
@@ -323,18 +323,18 @@ const MaterialTasksPage: React.FC = () => {
                         {getPriorityText(task.priority)}
                       </Badge>
                       {isOverdue(task.dueDate, task.status) && (
-                        <Badge className="bg-red-100 text-red-800">
+                        <Badge className="bg-error-light text-error">
                           Atrasada
                         </Badge>
                       )}
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  <h3 className="text-lg font-semibold text-neutral-text mb-sm">
                     {task.content}
                   </h3>
 
-                  <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                  <div className="flex items-center space-x-4 text-sm text-neutral-textSecondary mb-md">
                     <div className="flex items-center space-x-1">
                       <User className="w-4 h-4" />
                       <span>Atribuída por: {task.mentionedUserName}</span>
@@ -356,7 +356,7 @@ const MaterialTasksPage: React.FC = () => {
                   </div>
 
                   {task.notes && (
-                    <div className="bg-gray-50 p-3 rounded-lg mb-3">
+                    <div className="bg-neutral-bgAlt p-md rounded-lg mb-md">
                       <div className="flex items-start space-x-2">
                         <MessageSquare className="w-4 h-4 text-gray-500 mt-0.5" />
                         <p className="text-sm text-gray-700">{task.notes}</p>
@@ -382,7 +382,7 @@ const MaterialTasksPage: React.FC = () => {
                     <Button
                       size="sm"
                       onClick={() => handleUpdateTaskStatus(task.id, 'in_progress')}
-                      className="bg-blue-600 hover:bg-blue-700"
+                      className="bg-primary hover:bg-primary-hover"
                     >
                       Iniciar
                     </Button>
@@ -407,21 +407,21 @@ const MaterialTasksPage: React.FC = () => {
                     <DropdownMenuContent align="end">
                       {task.status !== 'completed' && (
                         <DropdownMenuItem onClick={() => handleUpdateTaskStatus(task.id, 'completed')}>
-                          <CheckCircle className="mr-2 h-4 w-4" />
+                          <CheckCircle className="mr-sm h-4 w-4" />
                           Marcar como Concluída
                         </DropdownMenuItem>
                       )}
                       {task.status === 'completed' && (
                         <DropdownMenuItem onClick={() => handleUpdateTaskStatus(task.id, 'pending')}>
-                          <Clock className="mr-2 h-4 w-4" />
+                          <Clock className="mr-sm h-4 w-4" />
                           Reabrir Tarefa
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem 
                         onClick={() => handleDeleteTask(task.id)}
-                        className="text-red-600"
+                        className="text-error"
                       >
-                        <AlertCircle className="mr-2 h-4 w-4" />
+                        <AlertCircle className="mr-sm h-4 w-4" />
                         Excluir
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -435,11 +435,11 @@ const MaterialTasksPage: React.FC = () => {
         {filteredTasks.length === 0 && !isLoading && (
           <Card>
             <CardContent className="p-12 text-center">
-              <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <FileText className="w-16 h-16 text-gray-300 mx-auto mb-md" />
+              <h3 className="text-lg font-medium text-neutral-text mb-sm">
                 Nenhuma tarefa encontrada
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-neutral-textSecondary mb-md">
                 {searchTerm || statusFilter !== 'all' || priorityFilter !== 'all'
                   ? 'Tente ajustar os filtros para encontrar suas tarefas.'
                   : 'Você não possui tarefas atribuídas no momento.'}
@@ -448,7 +448,7 @@ const MaterialTasksPage: React.FC = () => {
                 onClick={() => navigate('/materials')}
                 variant="outline"
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4 mr-sm" />
                 Explorar Materiais
               </Button>
             </CardContent>

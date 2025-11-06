@@ -9,7 +9,6 @@ import PermissionGuard from '../components/auth/PermissionGuard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 const UserManagementPage: React.FC = () => {
   const {

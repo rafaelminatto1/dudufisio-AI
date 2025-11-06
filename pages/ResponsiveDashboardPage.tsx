@@ -60,8 +60,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
       whileHover={{ scale: onClick ? 1.02 : 1 }}
       onClick={onClick}
       className={`
-        bg-white rounded-xl shadow-sm border p-4 sm:p-6
-        ${onClick ? 'cursor-pointer hover:shadow-md' : ''}
+        bg-white rounded-card shadow-card border p-md sm:p-lg
+        ${onClick ? 'cursor-pointer hover:shadow-cardHover' : ''}
         transition-all duration-200
       `}
     >
@@ -70,16 +70,16 @@ const MetricCard: React.FC<MetricCardProps> = ({
           <p className="text-sm font-medium text-fisio-neutral-600 mb-1">
             {title}
           </p>
-          <p className="text-2xl sm:text-3xl font-bold text-fisio-neutral-800">
+          <p className="text-2xl sm:text-3xl font-bold text-neutral-text">
             {value}
           </p>
           {subtitle && (
-            <p className="text-xs sm:text-sm text-fisio-neutral-500 mt-1">
+            <p className="text-xs sm:text-sm text-fisio-neutral-500 mt-xs">
               {subtitle}
             </p>
           )}
           {trend && (
-            <div className="flex items-center mt-2">
+            <div className="flex items-center mt-sm">
               {trend.isPositive ? (
                 <ChevronUp className="w-4 h-4 text-fisio-secondary-600" />
               ) : (
@@ -90,14 +90,14 @@ const MetricCard: React.FC<MetricCardProps> = ({
               }`}>
                 {Math.abs(trend.value)}%
               </span>
-              <span className="text-xs text-fisio-neutral-500 ml-1">
+              <span className="text-xs text-fisio-neutral-500 ml-xs">
                 vs. mês anterior
               </span>
             </div>
           )}
         </div>
         <div className={`
-          p-3 rounded-lg ${iconBgClasses[color]}
+          p-md rounded-lg ${iconBgClasses[color]}
         `}>
           <Icon className={`w-6 h-6 ${colorClasses[color].split(' ')[1]}`} />
         </div>
@@ -137,9 +137,9 @@ const RecentActivityList: React.FC<{ activities: ActivityItem[] }> = ({ activiti
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border">
-      <div className="p-4 sm:p-6 border-b border-fisio-neutral-200">
-        <h3 className="text-lg font-semibold text-fisio-neutral-800">
+    <div className="bg-white rounded-card shadow-card border">
+      <div className="p-md sm:p-lg border-b border-neutral-border">
+        <h3 className="text-lg font-semibold text-neutral-text">
           Atividades Recentes
         </h3>
       </div>
@@ -149,17 +149,17 @@ const RecentActivityList: React.FC<{ activities: ActivityItem[] }> = ({ activiti
             key={activity.id}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="p-4 hover:bg-fisio-neutral-50 transition-colors"
+            className="p-md hover:bg-neutral-bgAlt transition-colors"
           >
             <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0 mt-1">
+              <div className="flex-shrink-0 mt-xs">
                 {getIcon(activity.type, activity.status)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-fisio-neutral-800 truncate">
+                <p className="text-sm font-medium text-neutral-text truncate">
                   {activity.title}
                 </p>
-                <p className="text-xs text-fisio-neutral-500 mt-1">
+                <p className="text-xs text-fisio-neutral-500 mt-xs">
                   {activity.description}
                 </p>
               </div>
@@ -170,10 +170,10 @@ const RecentActivityList: React.FC<{ activities: ActivityItem[] }> = ({ activiti
           </motion.div>
         ))}
       </div>
-      <div className="p-4 border-t border-fisio-neutral-100">
-        <button className="text-sm text-fisio-primary-600 hover:text-fisio-primary-700 font-medium flex items-center">
+      <div className="p-md border-t border-fisio-neutral-100">
+        <button className="text-sm text-primary hover:text-fisio-primary-700 font-medium flex items-center">
           Ver todas as atividades
-          <ArrowRight className="w-4 h-4 ml-1" />
+          <ArrowRight className="w-4 h-4 ml-xs" />
         </button>
       </div>
     </div>
@@ -291,8 +291,8 @@ const ResponsiveChart: React.FC<{
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6">
-      <h3 className="text-lg font-semibold text-fisio-neutral-800 mb-4">
+    <div className="bg-white rounded-card shadow-card border p-md sm:p-lg">
+      <h3 className="text-lg font-semibold text-neutral-text mb-md">
         {title}
       </h3>
       {renderChart()}
@@ -430,23 +430,23 @@ export default function ResponsiveDashboardPage() {
   }
 
   return (
-    <div className="space-y-6 pb-20 lg:pb-6">
+    <div className="space-y-xl pb-20 lg:pb-6">
       {/* Header do Dashboard */}
-      <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6">
+      <div className="bg-white rounded-card shadow-card border p-md sm:p-lg">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-fisio-neutral-800">
+            <h1 className="text-2xl font-bold text-neutral-text">
               Olá, {user?.name?.split(' ')[0] || 'Doutor'}! 👋
             </h1>
-            <p className="text-fisio-neutral-600 mt-1">
+            <p className="text-fisio-neutral-600 mt-xs">
               {format(new Date(), "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
             </p>
           </div>
-          <div className="mt-4 sm:mt-0">
+          <div className="mt-md sm:mt-0">
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="px-4 py-2 bg-fisio-neutral-50 border border-fisio-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-fisio-primary-500"
+              className="px-md py-sm bg-neutral-bgAlt border border-neutral-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-fisio-primary-500"
             >
               <option value="day">Hoje</option>
               <option value="week">Esta Semana</option>
@@ -458,14 +458,14 @@ export default function ResponsiveDashboardPage() {
       </div>
 
       {/* Cards de Métricas - Grid Responsivo */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md">
         {metrics.map((metric, index) => (
           <MetricCard key={index} {...metric} />
         ))}
       </div>
 
       {/* Gráficos - Layout Responsivo */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
         <ResponsiveChart
           title="Receita e Sessões"
           type="area"
@@ -481,7 +481,7 @@ export default function ResponsiveDashboardPage() {
       </div>
 
       {/* Atividades e Distribuição - Layout Responsivo */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
         <div className="lg:col-span-2">
           <RecentActivityList activities={recentActivities} />
         </div>
@@ -496,33 +496,33 @@ export default function ResponsiveDashboardPage() {
       </div>
 
       {/* Cards de Ação Rápida */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-md">
         <button
           onClick={() => navigate('/agenda')}
-          className="p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-all text-center group"
+          className="p-md bg-white rounded-card shadow-card border hover:shadow-cardHover transition-all text-center group"
         >
-          <Calendar className="w-8 h-8 text-fisio-primary-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+          <Calendar className="w-8 h-8 text-fisio-primary-500 mx-auto mb-sm group-hover:scale-110 transition-transform" />
           <p className="text-sm font-medium text-fisio-neutral-700">Nova Consulta</p>
         </button>
         <button
           onClick={() => navigate('/patients/new')}
-          className="p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-all text-center group"
+          className="p-md bg-white rounded-card shadow-card border hover:shadow-cardHover transition-all text-center group"
         >
-          <Users className="w-8 h-8 text-fisio-secondary-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+          <Users className="w-8 h-8 text-fisio-secondary-500 mx-auto mb-sm group-hover:scale-110 transition-transform" />
           <p className="text-sm font-medium text-fisio-neutral-700">Novo Paciente</p>
         </button>
         <button
           onClick={() => navigate('/exercises')}
-          className="p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-all text-center group"
+          className="p-md bg-white rounded-card shadow-card border hover:shadow-cardHover transition-all text-center group"
         >
-          <Activity className="w-8 h-8 text-fisio-warning-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+          <Activity className="w-8 h-8 text-fisio-warning-500 mx-auto mb-sm group-hover:scale-110 transition-transform" />
           <p className="text-sm font-medium text-fisio-neutral-700">Exercícios</p>
         </button>
         <button
           onClick={() => navigate('/reports')}
-          className="p-4 bg-white rounded-xl shadow-sm border hover:shadow-md transition-all text-center group"
+          className="p-md bg-white rounded-card shadow-card border hover:shadow-cardHover transition-all text-center group"
         >
-          <BarChart3 className="w-8 h-8 text-fisio-error-500 mx-auto mb-2 group-hover:scale-110 transition-transform" />
+          <BarChart3 className="w-8 h-8 text-fisio-error-500 mx-auto mb-sm group-hover:scale-110 transition-transform" />
           <p className="text-sm font-medium text-fisio-neutral-700">Relatórios</p>
         </button>
       </div>

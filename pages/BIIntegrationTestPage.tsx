@@ -342,18 +342,18 @@ export default function BIIntegrationTestPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-lg">
+      <div className="max-w-7xl mx-auto space-y-xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        <div className="text-center mb-mdxl">
+          <h1 className="text-4xl font-bold text-neutral-text mb-sm">
             Sistema de Business Intelligence
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-neutral-textSecondary">
             Teste de Integração Completo com Supabase
           </p>
           {config.demoMode && (
-            <Badge variant="outline" className="mt-2">
+            <Badge variant="outline" className="mt-sm">
               MODO DEMONSTRAÇÃO
             </Badge>
           )}
@@ -369,16 +369,16 @@ export default function BIIntegrationTestPage() {
           </TabsList>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="overview" className="space-y-xl">
             {/* Status Cards */}
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-lg">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Status do Sistema</CardTitle>
-                  <Database className="h-4 w-4 text-muted-foreground" />
+                  <Database className="h-4 w-4 text-neutral-textSecondary" />
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
+                  <div className="space-y-sm">
                     {getStatusBadge(status.initialized || config.demoMode, "Inicializado", "Não Inicializado")}
                     {getStatusBadge(status.hasCredentials || config.demoMode, "Credenciais OK", "Sem Credenciais")}
                     {getStatusBadge(status.systemReady || config.demoMode, "Sistema Pronto", "Configuração Necessária")}
@@ -389,19 +389,19 @@ export default function BIIntegrationTestPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Configuração</CardTitle>
-                  <Settings className="h-4 w-4 text-muted-foreground" />
+                  <Settings className="h-4 w-4 text-neutral-textSecondary" />
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
+                  <div className="space-y-sm">
                     <div className="text-sm">
                       <strong>Supabase URL:</strong>
-                      <span className="block text-muted-foreground text-xs">
+                      <span className="block text-neutral-textSecondary text-xs">
                         {config.demoMode ? 'Modo Demo' : (import.meta.env.VITE_SUPABASE_URL || 'Não configurado')}
                       </span>
                     </div>
                     <div className="text-sm">
                       <strong>Supabase Key:</strong>
-                      <span className="block text-muted-foreground text-xs">
+                      <span className="block text-neutral-textSecondary text-xs">
                         {config.demoMode ? 'Modo Demo' : (import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Configurado' : 'Não configurado')}
                       </span>
                     </div>
@@ -412,7 +412,7 @@ export default function BIIntegrationTestPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Testes</CardTitle>
-                  <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                  <BarChart3 className="h-4 w-4 text-neutral-textSecondary" />
                 </CardHeader>
                 <CardContent>
                   {verificationResults ? (
@@ -428,7 +428,7 @@ export default function BIIntegrationTestPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">Execute a verificação para ver os resultados</p>
+                    <p className="text-sm text-neutral-textSecondary">Execute a verificação para ver os resultados</p>
                   )}
                 </CardContent>
               </Card>
@@ -443,11 +443,11 @@ export default function BIIntegrationTestPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-md">
                   <Button
                     onClick={runInitialization}
                     disabled={isLoading}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-sm"
                   >
                     <Play className="h-4 w-4" />
                     Inicializar Sistema BI
@@ -457,7 +457,7 @@ export default function BIIntegrationTestPage() {
                     onClick={runVerification}
                     disabled={isLoading}
                     variant="secondary"
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-sm"
                   >
                     <CheckCircle className="h-4 w-4" />
                     Executar Verificação
@@ -467,7 +467,7 @@ export default function BIIntegrationTestPage() {
                     onClick={runCompleteDemo}
                     disabled={isLoading}
                     variant="outline"
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-sm"
                   >
                     <BarChart3 className="h-4 w-4" />
                     Demo Completa
@@ -477,7 +477,7 @@ export default function BIIntegrationTestPage() {
                     onClick={downloadLogs}
                     disabled={logs.length === 0}
                     variant="outline"
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-sm"
                   >
                     <Download className="h-4 w-4" />
                     Baixar Logs
@@ -487,7 +487,7 @@ export default function BIIntegrationTestPage() {
                     onClick={downloadTestReport}
                     disabled={testHistory.length === 0}
                     variant="outline"
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-sm"
                   >
                     <FileText className="h-4 w-4" />
                     Relatório
@@ -496,7 +496,7 @@ export default function BIIntegrationTestPage() {
                   <Button
                     onClick={clearAllData}
                     variant="destructive"
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-sm"
                   >
                     <Trash2 className="h-4 w-4" />
                     Limpar
@@ -506,7 +506,7 @@ export default function BIIntegrationTestPage() {
             </Card>
 
             {/* Visualizations */}
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-lg">
               {chartData.length > 0 && (
                 <BIMetricsChart
                   title="Tendência de Receita (30 dias)"
@@ -540,7 +540,7 @@ export default function BIIntegrationTestPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-900 text-gray-100 p-4 rounded-lg h-64 overflow-y-auto font-mono text-sm">
+                <div className="bg-gray-900 text-gray-100 p-md rounded-lg h-64 overflow-y-auto font-mono text-sm">
                   {logs.length > 0 ? (
                     logs.map((log, index) => (
                       <div key={index} className="mb-1">
@@ -548,7 +548,7 @@ export default function BIIntegrationTestPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="text-gray-400">
+                    <div className="text-neutral-textTertiary">
                       Nenhum log disponível. Execute um teste para ver os logs.
                     </div>
                   )}
@@ -558,7 +558,7 @@ export default function BIIntegrationTestPage() {
           </TabsContent>
 
           {/* Tests Tab */}
-          <TabsContent value="tests" className="space-y-6">
+          <TabsContent value="tests" className="space-y-xl">
             <BITestDashboard
               tests={transformTestHistoryForDashboard()}
               summary={calculateTestSummary()}
@@ -572,7 +572,7 @@ export default function BIIntegrationTestPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-md">
                   {['ETL', 'Data Warehouse', 'ML Models', 'Charts', 'Export', 'Performance', 'Data Quality'].map((testType) => (
                     <Button
                       key={testType}
@@ -597,20 +597,20 @@ export default function BIIntegrationTestPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-sm max-h-96 overflow-y-auto">
                   {testHistory.map((test) => (
                     <div
                       key={test.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border"
+                      className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg border"
                     >
                       <div className="flex-1">
                         <div className="font-medium">{test.testName}</div>
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-xs text-neutral-textSecondary">
                           {new Date(test.timestamp).toLocaleString('pt-BR')}
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-muted-foreground">
+                      <div className="flex items-center gap-md">
+                        <span className="text-xs text-neutral-textSecondary">
                           {test.duration.toFixed(0)}ms
                         </span>
                         <Badge variant={test.success ? 'default' : 'destructive'}>
@@ -620,7 +620,7 @@ export default function BIIntegrationTestPage() {
                     </div>
                   ))}
                   {testHistory.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
+                    <div className="text-center py-3xl text-neutral-textSecondary">
                       Nenhum teste executado ainda
                     </div>
                   )}
@@ -630,7 +630,7 @@ export default function BIIntegrationTestPage() {
           </TabsContent>
 
           {/* Performance Tab */}
-          <TabsContent value="performance" className="space-y-6">
+          <TabsContent value="performance" className="space-y-xl">
             <BIPerformanceMonitor
               performanceData={performanceData}
               realTime={config.autoRefresh}
@@ -658,7 +658,7 @@ export default function BIIntegrationTestPage() {
           </TabsContent>
 
           {/* Data Tab */}
-          <TabsContent value="data" className="space-y-6">
+          <TabsContent value="data" className="space-y-xl">
             <BIDataPreview
               tables={config.demoMode || !status.hasCredentials ? mockTables : []}
               onTableSelect={(tableName) => {
@@ -668,7 +668,7 @@ export default function BIIntegrationTestPage() {
           </TabsContent>
 
           {/* Config Tab */}
-          <TabsContent value="config" className="space-y-6">
+          <TabsContent value="config" className="space-y-xl">
             <Card>
               <CardHeader>
                 <CardTitle>Configurações do Sistema</CardTitle>
@@ -676,11 +676,11 @@ export default function BIIntegrationTestPage() {
                   Configure o comportamento do sistema de testes
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <CardContent className="space-y-md">
+                <div className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg">
                   <div>
                     <div className="font-medium">Modo Demonstração</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-neutral-textSecondary">
                       Usar dados simulados em vez de Supabase real
                     </div>
                   </div>
@@ -695,14 +695,14 @@ export default function BIIntegrationTestPage() {
                       className="sr-only peer"
                       aria-label="Modo Demonstração"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg">
                   <div>
                     <div className="font-medium">Logs Detalhados</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-neutral-textSecondary">
                       Mostrar informações detalhadas nos logs
                     </div>
                   </div>
@@ -714,14 +714,14 @@ export default function BIIntegrationTestPage() {
                       className="sr-only peer"
                       aria-label="Logs Detalhados"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg">
                   <div>
                     <div className="font-medium">Atualização Automática</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-neutral-textSecondary">
                       Atualizar métricas de performance automaticamente
                     </div>
                   </div>
@@ -733,7 +733,7 @@ export default function BIIntegrationTestPage() {
                       className="sr-only peer"
                       aria-label="Atualização Automática"
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
                 </div>
               </CardContent>
@@ -748,9 +748,9 @@ export default function BIIntegrationTestPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium mb-2">Para usar com Supabase:</h4>
+                <div className="space-y-md">
+                  <div className="p-md bg-primary-light rounded-lg">
+                    <h4 className="font-medium mb-sm">Para usar com Supabase:</h4>
                     <ol className="list-decimal list-inside space-y-1 text-sm">
                       <li>Configure <code>VITE_SUPABASE_URL</code> no arquivo <code>.env.local</code></li>
                       <li>Configure <code>VITE_SUPABASE_ANON_KEY</code> no arquivo <code>.env.local</code></li>
@@ -758,8 +758,8 @@ export default function BIIntegrationTestPage() {
                       <li>Execute os testes nesta página</li>
                     </ol>
                   </div>
-                  <div className="p-4 bg-yellow-50 rounded-lg">
-                    <h4 className="font-medium mb-2">Modo Demo:</h4>
+                  <div className="p-md bg-warning-light rounded-lg">
+                    <h4 className="font-medium mb-sm">Modo Demo:</h4>
                     <p className="text-sm">
                       Sem credenciais válidas, o sistema funciona em modo demo com dados simulados.
                       Todas as funcionalidades podem ser testadas com dados fictícios realistas.

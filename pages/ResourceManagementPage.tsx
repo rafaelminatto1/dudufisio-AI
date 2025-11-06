@@ -5,26 +5,26 @@ import { Calendar, BarChart3, Settings } from 'lucide-react';
 
 const ResourceManagementPage: React.FC = () => {
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-lg space-y-xl max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold flex items-center gap-2">
-          <Settings className="w-8 h-8 text-blue-600" />
+        <h1 className="text-3xl font-bold flex items-center gap-sm">
+          <Settings className="w-8 h-8 text-primary" />
           Gestão de Recursos
         </h1>
-        <p className="text-muted-foreground">Gerencie salas, equipamentos e materiais da clínica</p>
+        <p className="text-neutral-textSecondary">Gerencie salas, equipamentos e materiais da clínica</p>
       </div>
 
-      <Tabs defaultValue="management" className="space-y-4">
+      <Tabs defaultValue="management" className="space-y-md">
         <TabsList>
-          <TabsTrigger value="management" className="gap-2">
+          <TabsTrigger value="management" className="gap-sm">
             <Settings className="w-4 h-4" />
             Gerenciamento
           </TabsTrigger>
-          <TabsTrigger value="calendar" className="gap-2">
+          <TabsTrigger value="calendar" className="gap-sm">
             <Calendar className="w-4 h-4" />
             Calendário
           </TabsTrigger>
-          <TabsTrigger value="reports" className="gap-2">
+          <TabsTrigger value="reports" className="gap-sm">
             <BarChart3 className="w-4 h-4" />
             Relatórios
           </TabsTrigger>
@@ -35,13 +35,13 @@ const ResourceManagementPage: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="calendar">
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="text-center py-12 text-neutral-textSecondary">
             Calendário de recursos em desenvolvimento...
           </div>
         </TabsContent>
 
         <TabsContent value="reports">
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="text-center py-12 text-neutral-textSecondary">
             Relatórios de utilização em desenvolvimento...
           </div>
         </TabsContent>

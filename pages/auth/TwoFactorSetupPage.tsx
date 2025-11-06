@@ -14,6 +14,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Alert, AlertDescription } from '../../components/ui/alert';
+import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 interface TwoFactorSetupPageProps {
   onComplete?: () => void;
@@ -89,19 +90,19 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-md">
+      <div className="w-full max-w-md space-y-xl">
         {/* Header */}
         <div className="text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-white p-3 rounded-full shadow-lg">
+          <div className="flex items-center justify-center mb-md">
+            <div className="bg-white p-md rounded-full shadow-cardActive">
               <Shield className="w-8 h-8 text-indigo-600" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-neutral-text">
             Configurar Autenticação de Dois Fatores
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-neutral-textSecondary mt-sm">
             Adicione uma camada extra de segurança à sua conta
           </p>
         </div>
@@ -119,17 +120,17 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
           <Card className="shadow-xl border-0">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Smartphone className="w-5 h-5 mr-2" />
+                <Smartphone className="w-5 h-5 mr-sm" />
                 Configurar 2FA
               </CardTitle>
               <CardDescription>
                 Use um aplicativo autenticador para gerar códigos de segurança
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-4">
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <h3 className="font-medium text-blue-900 mb-2">
+            <CardContent className="space-y-md">
+              <div className="space-y-md">
+                <div className="p-md bg-primary-light rounded-lg">
+                  <h3 className="font-medium text-blue-900 mb-sm">
                     Aplicativos Recomendados:
                   </h3>
                   <ul className="text-sm text-blue-800 space-y-1">
@@ -140,11 +141,11 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
                   </ul>
                 </div>
 
-                <div className="space-y-2">
-                  <h3 className="font-medium text-gray-900">
+                <div className="space-y-sm">
+                  <h3 className="font-medium text-neutral-text">
                     Como configurar:
                   </h3>
-                  <ol className="text-sm text-gray-600 space-y-1 pl-4">
+                  <ol className="text-sm text-neutral-textSecondary space-y-1 pl-4">
                     <li>1. Instale um aplicativo autenticador</li>
                     <li>2. Clique em "Configurar" abaixo</li>
                     <li>3. Escaneie o código QR com o app</li>
@@ -173,18 +174,18 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
                 Escaneie o código QR e digite o código de verificação
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-md">
               {/* QR Code */}
               {qrCode && (
                 <div className="text-center">
-                  <div className="bg-white p-4 rounded-lg border-2 border-gray-200 inline-block">
+                  <div className="bg-white p-md rounded-lg border-2 border-neutral-border inline-block">
                     <img src={qrCode} alt="QR Code para 2FA" className="w-48 h-48" />
                   </div>
                 </div>
               )}
 
               {/* Manual Entry */}
-              <div className="space-y-2">
+              <div className="space-y-sm">
                 <label className="text-sm font-medium text-gray-700">
                   Ou digite manualmente:
                 </label>
@@ -201,7 +202,7 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
                     onClick={copySecret}
                   >
                     {copied ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-4 w-4 text-success" />
                     ) : (
                       <Copy className="h-4 w-4" />
                     )}
@@ -210,7 +211,7 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
               </div>
 
               {/* Verification Input */}
-              <div className="space-y-2">
+              <div className="space-y-sm">
                 <label htmlFor="verification-code" className="text-sm font-medium text-gray-700">
                   Código de Verificação
                 </label>
@@ -232,7 +233,7 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
                   onClick={() => setStep('setup')}
                   className="flex-1"
                 >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <ArrowLeft className="w-4 h-4 mr-sm" />
                   Voltar
                 </Button>
                 <Button
@@ -251,20 +252,20 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
         {step === 'complete' && (
           <Card className="shadow-xl border-0">
             <CardHeader>
-              <CardTitle className="flex items-center text-green-600">
-                <CheckCircle className="w-5 h-5 mr-2" />
+              <CardTitle className="flex items-center text-success">
+                <CheckCircle className="w-5 h-5 mr-sm" />
                 2FA Configurado com Sucesso!
               </CardTitle>
               <CardDescription>
                 Sua conta agora está protegida com autenticação de dois fatores
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-md">
               {/* Backup Codes */}
               {backupCodes.length > 0 && (
-                <div className="space-y-3">
+                <div className="space-y-sm">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium text-gray-900">
+                    <h3 className="font-medium text-neutral-text">
                       Códigos de Backup
                     </h3>
                     <Button
@@ -273,7 +274,7 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
                       size="sm"
                       onClick={downloadBackupCodes}
                     >
-                      <Download className="w-4 h-4 mr-2" />
+                      <Download className="w-4 h-4 mr-sm" />
                       Baixar
                     </Button>
                   </div>
@@ -285,10 +286,10 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
                     </AlertDescription>
                   </Alert>
 
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <div className="grid grid-cols-2 gap-2 text-sm font-mono">
+                  <div className="bg-neutral-bgAlt p-md rounded-lg">
+                    <div className="grid grid-cols-2 gap-sm text-sm font-mono">
                       {backupCodes.map((code, index) => (
-                        <div key={index} className="p-2 bg-white rounded border">
+                        <div key={index} className="p-sm bg-white rounded border">
                           {code}
                         </div>
                       ))}
@@ -297,7 +298,7 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
                 </div>
               )}
 
-              <div className="space-y-3">
+              <div className="space-y-sm">
                 <Alert variant="success">
                   <CheckCircle className="h-4 w-4" />
                   <AlertDescription>
@@ -321,7 +322,7 @@ const TwoFactorSetupPage: React.FC<TwoFactorSetupPageProps> = ({ onComplete, onB
             onClick={onBack}
             className="w-full"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4 mr-sm" />
             Voltar para Login
           </Button>
         )}

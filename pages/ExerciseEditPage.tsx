@@ -212,10 +212,10 @@ const ExerciseEditPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-lg space-y-xl max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-md">
           <Button
             variant="ghost"
             size="icon"
@@ -224,23 +224,23 @@ const ExerciseEditPage: React.FC = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-neutral-text">
               {isNewExercise ? 'Novo Exercício' : currentExercise?.name}
             </h1>
-            <p className="text-gray-500 mt-1">
+            <p className="text-gray-500 mt-xs">
               {isNewExercise
                 ? 'Crie um novo exercício fisioterapêutico'
                 : 'Edite as informações do exercício'}
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           <Button variant="outline" onClick={() => navigate('/exercises')}>
-            <X className="h-4 w-4 mr-2" />
+            <X className="h-4 w-4 mr-sm" />
             Cancelar
           </Button>
           <Button onClick={form.handleSubmit(onSubmit)} disabled={isLoading}>
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-4 w-4 mr-sm" />
             {isLoading ? 'Salvando...' : 'Salvar Exercício'}
           </Button>
         </div>
@@ -248,7 +248,7 @@ const ExerciseEditPage: React.FC = () => {
 
       {/* Form */}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-xl">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="basic">Básico</TabsTrigger>
@@ -259,7 +259,7 @@ const ExerciseEditPage: React.FC = () => {
             </TabsList>
 
             {/* Tab: Básico */}
-            <TabsContent value="basic" className="space-y-6">
+            <TabsContent value="basic" className="space-y-xl">
               <Card>
                 <CardHeader>
                   <CardTitle>Informações Básicas</CardTitle>
@@ -267,7 +267,7 @@ const ExerciseEditPage: React.FC = () => {
                     Dados fundamentais do exercício
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-md">
                   {/* Nome */}
                   <FormField
                     control={form.control}
@@ -390,7 +390,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Equipamentos *</FormLabel>
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-3 gap-sm">
                           {([
                             { value: 'none', label: 'Nenhum' },
                             { value: 'dumbbell', label: 'Halteres' },
@@ -405,10 +405,10 @@ const ExerciseEditPage: React.FC = () => {
                             <div
                               key={value}
                               className={`
-                                p-3 border rounded-lg cursor-pointer transition-colors
+                                p-md border rounded-lg cursor-pointer transition-colors
                                 ${form.watch('equipment').includes(value)
                                   ? 'border-primary bg-primary/10'
-                                  : 'border-gray-200 hover:border-gray-300'
+                                  : 'border-neutral-border hover:border-gray-300'
                                 }
                               `}
                               onClick={() => toggleEquipment(value)}
@@ -429,7 +429,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Músculos Alvo *</FormLabel>
-                        <div className="flex gap-2">
+                        <div className="flex gap-sm">
                           <Input
                             placeholder="Ex: Quadríceps"
                             value={newMuscle}
@@ -449,14 +449,14 @@ const ExerciseEditPage: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="flex flex-wrap gap-sm mt-sm">
                           {form.watch('targetMuscles').map((muscle, index) => (
                             <Badge key={index} variant="secondary" className="gap-1">
                               {muscle}
                               <button
                                 type="button"
                                 onClick={() => removeArrayItem('targetMuscles', index)}
-                                className="ml-1 hover:text-red-600"
+                                className="ml-xs hover:text-error"
                                 aria-label="Remover músculo alvo"
                               >
                                 <X className="h-3 w-3" />
@@ -476,7 +476,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Músculos Secundários</FormLabel>
-                        <div className="flex gap-2">
+                        <div className="flex gap-sm">
                           <Input
                             placeholder="Ex: Isquiotibiais"
                             value={newSecondaryMuscle}
@@ -496,14 +496,14 @@ const ExerciseEditPage: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="flex flex-wrap gap-sm mt-sm">
                           {form.watch('secondaryMuscles').map((muscle, index) => (
                             <Badge key={index} variant="outline" className="gap-1">
                               {muscle}
                               <button
                                 type="button"
                                 onClick={() => removeArrayItem('secondaryMuscles', index)}
-                                className="ml-1 hover:text-red-600"
+                                className="ml-xs hover:text-error"
                                 aria-label="Remover músculo secundário"
                               >
                                 <X className="h-3 w-3" />
@@ -520,7 +520,7 @@ const ExerciseEditPage: React.FC = () => {
             </TabsContent>
 
             {/* Tab: Instruções */}
-            <TabsContent value="instructions" className="space-y-6">
+            <TabsContent value="instructions" className="space-y-xl">
               <Card>
                 <CardHeader>
                   <CardTitle>Instruções e Orientações</CardTitle>
@@ -528,7 +528,7 @@ const ExerciseEditPage: React.FC = () => {
                     Como executar o exercício corretamente
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-xl">
                   {/* Instruções */}
                   <FormField
                     control={form.control}
@@ -536,7 +536,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Instruções Passo a Passo *</FormLabel>
-                        <div className="flex gap-2">
+                        <div className="flex gap-sm">
                           <Textarea
                             placeholder="Ex: Fique em pé com os pés na largura dos ombros..."
                             value={newInstruction}
@@ -551,9 +551,9 @@ const ExerciseEditPage: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="space-y-2 mt-4">
+                        <div className="space-y-sm mt-md">
                           {form.watch('instructions').map((instruction, index) => (
-                            <div key={index} className="flex gap-2 items-start p-3 bg-gray-50 rounded-lg">
+                            <div key={index} className="flex gap-sm items-start p-md bg-neutral-bgAlt rounded-lg">
                               <span className="font-bold text-primary">{index + 1}.</span>
                               <p className="flex-1 text-sm">{instruction}</p>
                               <Button
@@ -562,7 +562,7 @@ const ExerciseEditPage: React.FC = () => {
                                 size="sm"
                                 onClick={() => removeArrayItem('instructions', index)}
                               >
-                                <Trash2 className="h-4 w-4 text-red-600" />
+                                <Trash2 className="h-4 w-4 text-error" />
                               </Button>
                             </div>
                           ))}
@@ -579,7 +579,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Dicas Importantes</FormLabel>
-                        <div className="flex gap-2">
+                        <div className="flex gap-sm">
                           <Input
                             placeholder="Ex: Mantenha os joelhos alinhados com os pés"
                             value={newTip}
@@ -599,10 +599,10 @@ const ExerciseEditPage: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="space-y-2 mt-2">
+                        <div className="space-y-sm mt-sm">
                           {form.watch('tips').map((tip, index) => (
-                            <div key={index} className="flex gap-2 items-start p-2 bg-blue-50 rounded">
-                              <Info className="h-4 w-4 text-blue-600 mt-0.5" />
+                            <div key={index} className="flex gap-sm items-start p-sm bg-primary-light rounded">
+                              <Info className="h-4 w-4 text-primary mt-0.5" />
                               <p className="flex-1 text-sm">{tip}</p>
                               <Button
                                 type="button"
@@ -627,7 +627,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Variações do Exercício</FormLabel>
-                        <div className="flex gap-2">
+                        <div className="flex gap-sm">
                           <Input
                             placeholder="Ex: Agachamento com peso"
                             value={newVariation}
@@ -647,14 +647,14 @@ const ExerciseEditPage: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="flex flex-wrap gap-sm mt-sm">
                           {form.watch('variations').map((variation, index) => (
                             <Badge key={index} variant="secondary" className="gap-1">
                               {variation}
                               <button
                                 type="button"
                                 onClick={() => removeArrayItem('variations', index)}
-                                className="ml-1 hover:text-red-600"
+                                className="ml-xs hover:text-error"
                                 aria-label="Remover variação"
                               >
                                 <X className="h-3 w-3" />
@@ -674,7 +674,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Contraindicações</FormLabel>
-                        <div className="flex gap-2">
+                        <div className="flex gap-sm">
                           <Input
                             placeholder="Ex: Lesão aguda no joelho"
                             value={newContraindication}
@@ -694,10 +694,10 @@ const ExerciseEditPage: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="space-y-2 mt-2">
+                        <div className="space-y-sm mt-sm">
                           {form.watch('contraindications').map((contraindication, index) => (
-                            <div key={index} className="flex gap-2 items-start p-2 bg-red-50 rounded">
-                              <AlertCircle className="h-4 w-4 text-red-600 mt-0.5" />
+                            <div key={index} className="flex gap-sm items-start p-sm bg-error-light rounded">
+                              <AlertCircle className="h-4 w-4 text-error mt-0.5" />
                               <p className="flex-1 text-sm">{contraindication}</p>
                               <Button
                                 type="button"
@@ -719,7 +719,7 @@ const ExerciseEditPage: React.FC = () => {
             </TabsContent>
 
             {/* Tab: Parâmetros */}
-            <TabsContent value="parameters" className="space-y-6">
+            <TabsContent value="parameters" className="space-y-xl">
               <Card>
                 <CardHeader>
                   <CardTitle>Parâmetros de Execução</CardTitle>
@@ -728,7 +728,7 @@ const ExerciseEditPage: React.FC = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-md">
                     {/* Duração */}
                     <FormField
                       control={form.control}
@@ -855,7 +855,7 @@ const ExerciseEditPage: React.FC = () => {
             </TabsContent>
 
             {/* Tab: Mídia */}
-            <TabsContent value="media" className="space-y-6">
+            <TabsContent value="media" className="space-y-xl">
               <Card>
                 <CardHeader>
                   <CardTitle>Mídia e Recursos Visuais</CardTitle>
@@ -863,7 +863,7 @@ const ExerciseEditPage: React.FC = () => {
                     Adicione imagens e vídeos do exercício
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-md">
                   {/* Imagem */}
                   <FormField
                     control={form.control}
@@ -872,7 +872,7 @@ const ExerciseEditPage: React.FC = () => {
                       <FormItem>
                         <FormLabel>URL da Imagem</FormLabel>
                         <FormControl>
-                          <div className="flex gap-2">
+                          <div className="flex gap-sm">
                             <Input
                               placeholder="https://exemplo.com/imagem.jpg"
                               {...field}
@@ -895,7 +895,7 @@ const ExerciseEditPage: React.FC = () => {
                       <FormItem>
                         <FormLabel>URL do Vídeo</FormLabel>
                         <FormControl>
-                          <div className="flex gap-2">
+                          <div className="flex gap-sm">
                             <Input
                               placeholder="https://youtube.com/watch?v=..."
                               {...field}
@@ -932,7 +932,7 @@ const ExerciseEditPage: React.FC = () => {
             </TabsContent>
 
             {/* Tab: Avançado */}
-            <TabsContent value="advanced" className="space-y-6">
+            <TabsContent value="advanced" className="space-y-xl">
               <Card>
                 <CardHeader>
                   <CardTitle>Configurações Avançadas</CardTitle>
@@ -940,7 +940,7 @@ const ExerciseEditPage: React.FC = () => {
                     Tags, classificação e configurações adicionais
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-xl">
                   {/* Tags */}
                   <FormField
                     control={form.control}
@@ -948,7 +948,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Tags</FormLabel>
-                        <div className="flex gap-2">
+                        <div className="flex gap-sm">
                           <Input
                             placeholder="Ex: membros inferiores"
                             value={newTag}
@@ -968,14 +968,14 @@ const ExerciseEditPage: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="flex flex-wrap gap-sm mt-sm">
                           {form.watch('tags').map((tag, index) => (
                             <Badge key={index} className="gap-1">
                               #{tag}
                               <button
                                 type="button"
                                 onClick={() => removeArrayItem('tags', index)}
-                                className="ml-1 hover:text-red-600"
+                                className="ml-xs hover:text-error"
                                 aria-label="Remover tag"
                               >
                                 <X className="h-3 w-3" />
@@ -995,7 +995,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Palavras-chave (SEO)</FormLabel>
-                        <div className="flex gap-2">
+                        <div className="flex gap-sm">
                           <Input
                             placeholder="Ex: squat, legs"
                             value={newKeyword}
@@ -1015,14 +1015,14 @@ const ExerciseEditPage: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="flex flex-wrap gap-sm mt-sm">
                           {form.watch('keywords').map((keyword, index) => (
                             <Badge key={index} variant="outline" className="gap-1">
                               {keyword}
                               <button
                                 type="button"
                                 onClick={() => removeArrayItem('keywords', index)}
-                                className="ml-1 hover:text-red-600"
+                                className="ml-xs hover:text-error"
                                 aria-label="Remover palavra-chave"
                               >
                                 <X className="h-3 w-3" />
@@ -1042,7 +1042,7 @@ const ExerciseEditPage: React.FC = () => {
                     render={() => (
                       <FormItem>
                         <FormLabel>Partes do Corpo</FormLabel>
-                        <div className="flex gap-2">
+                        <div className="flex gap-sm">
                           <Input
                             placeholder="Ex: Pernas"
                             value={newBodyPart}
@@ -1062,14 +1062,14 @@ const ExerciseEditPage: React.FC = () => {
                             <Plus className="h-4 w-4" />
                           </Button>
                         </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
+                        <div className="flex flex-wrap gap-sm mt-sm">
                           {form.watch('bodyParts').map((part, index) => (
                             <Badge key={index} variant="secondary" className="gap-1">
                               {part}
                               <button
                                 type="button"
                                 onClick={() => removeArrayItem('bodyParts', index)}
-                                className="ml-1 hover:text-red-600"
+                                className="ml-xs hover:text-error"
                                 aria-label="Remover parte do corpo"
                               >
                                 <X className="h-3 w-3" />
@@ -1112,7 +1112,7 @@ const ExerciseEditPage: React.FC = () => {
                   />
 
                   {/* Switches */}
-                  <div className="space-y-4 pt-4 border-t">
+                  <div className="space-y-md pt-4 border-t">
                     <FormField
                       control={form.control}
                       name="isPublic"
@@ -1161,18 +1161,18 @@ const ExerciseEditPage: React.FC = () => {
           </Tabs>
 
           {/* Action Buttons - Fixed at bottom */}
-          <div className="sticky bottom-0 bg-white border-t pt-4 flex justify-end gap-2">
+          <div className="sticky bottom-0 bg-white border-t pt-4 flex justify-end gap-sm">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate('/exercises')}
               disabled={isLoading}
             >
-              <X className="h-4 w-4 mr-2" />
+              <X className="h-4 w-4 mr-sm" />
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-sm" />
               {isLoading ? 'Salvando...' : 'Salvar Exercício'}
             </Button>
           </div>
@@ -1185,16 +1185,16 @@ const ExerciseEditPage: React.FC = () => {
 // Skeleton Loading
 const ExerciseEditPageSkeleton: React.FC = () => {
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-lg space-y-xl max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-md">
           <Skeleton className="h-10 w-10" />
           <div>
-            <Skeleton className="h-8 w-64 mb-2" />
+            <Skeleton className="h-8 w-64 mb-sm" />
             <Skeleton className="h-4 w-96" />
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           <Skeleton className="h-10 w-24" />
           <Skeleton className="h-10 w-32" />
         </div>
@@ -1204,9 +1204,9 @@ const ExerciseEditPageSkeleton: React.FC = () => {
         <CardHeader>
           <Skeleton className="h-6 w-48" />
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-md">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="space-y-2">
+            <div key={i} className="space-y-sm">
               <Skeleton className="h-4 w-32" />
               <Skeleton className="h-10 w-full" />
             </div>

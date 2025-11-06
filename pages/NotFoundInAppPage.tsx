@@ -17,10 +17,10 @@ const NotFoundInAppPage: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <div className="container mx-auto px-md py-3xl max-w-5xl">
       {/* Header com 404 */}
       <div className="text-center mb-12">
-        <div className="relative inline-block mb-6">
+        <div className="relative inline-block mb-xl">
           <h1 className="text-8xl md:text-9xl font-bold text-slate-200 select-none">
             404
           </h1>
@@ -29,24 +29,24 @@ const NotFoundInAppPage: React.FC = () => {
           </div>
         </div>
         
-        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-neutral-text mb-md">
           Página Não Encontrada
         </h2>
-        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+        <p className="text-lg text-neutral-textSecondary max-w-2xl mx-auto">
           Oops! A página que você está procurando não existe ou foi movida. 
           Use os links abaixo para navegar pelo sistema.
         </p>
       </div>
 
       {/* Actions principais */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-md mb-12">
         <Button
           onClick={() => navigate(-1)}
           variant="outline"
           size="lg"
           className="w-full sm:w-auto"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4 mr-sm" />
           Voltar
         </Button>
         
@@ -55,29 +55,29 @@ const NotFoundInAppPage: React.FC = () => {
           size="lg"
           className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700"
         >
-          <Home className="w-4 h-4 mr-2" />
+          <Home className="w-4 h-4 mr-sm" />
           Ir para Dashboard
         </Button>
       </div>
 
       {/* Quick Links Grid */}
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold text-slate-900 mb-6 text-center">
+      <div className="mb-mdxl">
+        <h3 className="text-xl font-semibold text-neutral-text mb-xl text-center">
           Páginas Mais Acessadas
         </h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
           {quickLinks.map((link, index) => {
             const Icon = link.icon;
             return (
               <Card 
                 key={index}
-                className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105 border-2 hover:border-indigo-300"
+                className="cursor-pointer hover:shadow-cardActive transition-all duration-200 hover:scale-105 border-2 hover:border-indigo-300"
                 onClick={() => navigate(link.path)}
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-indigo-100 rounded-lg">
+                    <div className="p-sm bg-indigo-100 rounded-lg">
                       <Icon className="w-5 h-5 text-indigo-600" />
                     </div>
                     <CardTitle className="text-lg">{link.label}</CardTitle>
@@ -96,29 +96,29 @@ const NotFoundInAppPage: React.FC = () => {
       <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-indigo-200">
         <CardHeader>
           <CardTitle className="flex items-center text-indigo-900">
-            <Search className="w-5 h-5 mr-2" />
+            <Search className="w-5 h-5 mr-sm" />
             Precisa de Ajuda?
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-slate-700">
+        <CardContent className="space-y-sm">
+          <p className="text-neutral-text">
             Se você estava tentando acessar uma página específica e recebeu este erro:
           </p>
-          <ul className="space-y-2 text-sm text-slate-600">
+          <ul className="space-y-sm text-sm text-neutral-textSecondary">
             <li className="flex items-start">
-              <span className="mr-2">•</span>
+              <span className="mr-sm">•</span>
               <span>Verifique se o endereço da URL está correto</span>
             </li>
             <li className="flex items-start">
-              <span className="mr-2">•</span>
+              <span className="mr-sm">•</span>
               <span>Use a barra de navegação lateral para encontrar a página</span>
             </li>
             <li className="flex items-start">
-              <span className="mr-2">•</span>
+              <span className="mr-sm">•</span>
               <span>Tente pesquisar no menu ou use os atalhos acima</span>
             </li>
             <li className="flex items-start">
-              <span className="mr-2">•</span>
+              <span className="mr-sm">•</span>
               <span>
                 Entre em contato com o suporte: {' '}
                 <a 

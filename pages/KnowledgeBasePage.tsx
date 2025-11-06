@@ -8,10 +8,10 @@ import KnowledgeContributionModal from '../components/KnowledgeContributionModal
 
 const KnowledgeRow: React.FC<{ entry: KnowledgeBaseEntry, onEdit: (entry: KnowledgeBaseEntry) => void }> = ({ entry, onEdit }) => {
     const typeInfo = {
-        protocol: { icon: Workflow, color: 'bg-blue-100 text-blue-800', label: 'Protocolo' },
-        exercise: { icon: TestTube2, color: 'bg-green-100 text-green-800', label: 'Exercício' },
+        protocol: { icon: Workflow, color: 'bg-primary-light text-blue-800', label: 'Protocolo' },
+        exercise: { icon: TestTube2, color: 'bg-success-light text-success', label: 'Exercício' },
         technique: { icon: BrainCircuit, color: 'bg-purple-100 text-purple-800', label: 'Técnica' },
-        case: { icon: BookCopy, color: 'bg-yellow-100 text-yellow-800', label: 'Caso Clínico' },
+        case: { icon: BookCopy, color: 'bg-warning-light text-yellow-800', label: 'Caso Clínico' },
     };
     
     // Validação de segurança: usa 'technique' como fallback se o tipo não existir
@@ -21,23 +21,23 @@ const KnowledgeRow: React.FC<{ entry: KnowledgeBaseEntry, onEdit: (entry: Knowle
     const typeColor = typeInfo[safeType].color;
 
     return (
-        <tr className="border-b border-slate-200 hover:bg-slate-50 cursor-pointer" onClick={() => onEdit(entry)}>
-            <td className="p-4 whitespace-nowrap">
+        <tr className="border-b border-neutral-border hover:bg-neutral-bgAlt cursor-pointer" onClick={() => onEdit(entry)}>
+            <td className="p-md whitespace-nowrap">
                 <div className="flex items-center">
-                    <div className={`p-2 rounded-full mr-4 ${typeColor}`}>
+                    <div className={`p-sm rounded-full mr-4 ${typeColor}`}>
                         <Icon className="w-5 h-5" />
                     </div>
                     <div>
-                        <div className="text-sm font-medium text-slate-900">{entry.title}</div>
-                        <div className="text-sm text-slate-500">{typeLabel}</div>
+                        <div className="text-sm font-medium text-neutral-text">{entry.title}</div>
+                        <div className="text-sm text-neutral-textSecondary">{typeLabel}</div>
                     </div>
                 </div>
             </td>
-            <td className="p-4 text-sm text-slate-600 max-w-md truncate" title={entry.content}>{entry.content}</td>
-            <td className="p-4 whitespace-nowrap">
+            <td className="p-md text-sm text-neutral-textSecondary max-w-md truncate" title={entry.content}>{entry.content}</td>
+            <td className="p-md whitespace-nowrap">
                 <div className="flex flex-wrap gap-1">
                     {entry.tags.map(tag => (
-                        <span key={tag} className="px-2 py-0.5 text-xs bg-slate-200 text-slate-700 rounded-full">{tag}</span>
+                        <span key={tag} className="px-sm py-0.5 text-xs bg-neutral-bgDark text-neutral-text rounded-full">{tag}</span>
                     ))}
                 </div>
             </td>
@@ -88,8 +88,8 @@ const KnowledgeBasePage: React.FC = () => {
             >
                 <button
                     onClick={() => handleOpenModal()}
-                    className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
-                    <Plus className="-ml-1 mr-2 h-5 w-5" />
+                    className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-md py-sm text-sm font-medium text-white shadow-card hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2">
+                    <Plus className="-ml-xs mr-sm h-5 w-5" />
                     Adicionar Conhecimento
                 </button>
             </PageHeader>
@@ -101,27 +101,27 @@ const KnowledgeBasePage: React.FC = () => {
                 entryToEdit={entryToEdit}
             />
 
-            <div className="bg-white p-6 rounded-2xl shadow-sm">
-                <div className="flex items-center justify-between mb-4">
+            <div className="bg-white p-lg rounded-cardLarge shadow-card">
+                <div className="flex items-center justify-between mb-md">
                     <div className="relative w-full max-w-xs">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-textTertiary" />
                         <input
                             type="text"
                             placeholder="Buscar por título, conteúdo ou tag..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                            className="w-full pl-10 pr-4 py-sm border border-neutral-border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                         />
                     </div>
                 </div>
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-slate-200">
-                        <thead className="bg-slate-50">
+                        <thead className="bg-neutral-bgAlt">
                             <tr>
-                                <th scope="col" className="p-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Título</th>
-                                <th scope="col" className="p-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Conteúdo (Prévia)</th>
-                                <th scope="col" className="p-4 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Tags</th>
+                                <th scope="col" className="p-md text-left text-xs font-medium text-neutral-textSecondary uppercase tracking-wider">Título</th>
+                                <th scope="col" className="p-md text-left text-xs font-medium text-neutral-textSecondary uppercase tracking-wider">Conteúdo (Prévia)</th>
+                                <th scope="col" className="p-md text-left text-xs font-medium text-neutral-textSecondary uppercase tracking-wider">Tags</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-slate-200">
@@ -133,8 +133,8 @@ const KnowledgeBasePage: React.FC = () => {
                      {filteredEntries.length === 0 && (
                         <div className="text-center p-10">
                             <Library className="mx-auto h-12 w-12 text-slate-300" />
-                            <h3 className="mt-2 text-sm font-medium text-slate-900">Nenhum conhecimento encontrado</h3>
-                            <p className="mt-1 text-sm text-slate-500">Tente ajustar sua busca ou adicione um novo conhecimento.</p>
+                            <h3 className="mt-sm text-sm font-medium text-neutral-text">Nenhum conhecimento encontrado</h3>
+                            <p className="mt-xs text-sm text-neutral-textSecondary">Tente ajustar sua busca ou adicione um novo conhecimento.</p>
                         </div>
                     )}
                 </div>

@@ -84,8 +84,8 @@ const SessionViewPage: React.FC = () => {
       <Layout>
         <div className="flex justify-center items-center h-full">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-slate-600">Carregando sessão...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-md"></div>
+            <p className="text-neutral-textSecondary">Carregando sessão...</p>
           </div>
         </div>
       </Layout>
@@ -95,11 +95,11 @@ const SessionViewPage: React.FC = () => {
   if (error || !session) {
     return (
       <Layout>
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-red-600">Erro</h1>
+        <div className="p-lg">
+          <h1 className="text-2xl font-bold text-error">Erro</h1>
           <p className="text-red-500">{error || 'Sessão não encontrada'}</p>
-          <Button onClick={() => navigate('/agenda')} className="mt-4">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Voltar para Agenda
+          <Button onClick={() => navigate('/agenda')} className="mt-md">
+            <ArrowLeft className="w-4 h-4 mr-sm" /> Voltar para Agenda
           </Button>
         </div>
       </Layout>
@@ -108,66 +108,66 @@ const SessionViewPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
+      <div className="p-lg max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-xl">
           <Button onClick={() => navigate('/agenda')} variant="outline">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
+            <ArrowLeft className="w-4 h-4 mr-sm" /> Voltar
           </Button>
-          <h1 className="text-3xl font-bold text-slate-800">Detalhes da Sessão #{session.sessionNumber || 'N/A'}</h1>
+          <h1 className="text-3xl font-bold text-neutral-text">Detalhes da Sessão #{session.sessionNumber || 'N/A'}</h1>
         </div>
 
-        <Card className="mb-6 shadow-sm">
+        <Card className="mb-xl shadow-card">
           <CardHeader>
             <CardTitle className="flex items-center text-xl">
-              <FileText className="w-5 h-5 mr-2 text-blue-600" />
+              <FileText className="w-5 h-5 mr-sm text-primary" />
               Informações Gerais
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-700">
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-md text-neutral-text">
             <p className="flex items-center">
-              <Calendar className="w-4 h-4 mr-2 text-slate-500" /> 
+              <Calendar className="w-4 h-4 mr-sm text-neutral-textSecondary" /> 
               Data: {formatDate(session.date)}
             </p>
             <p className="flex items-center">
-              <User className="w-4 h-4 mr-2 text-slate-500" /> 
+              <User className="w-4 h-4 mr-sm text-neutral-textSecondary" /> 
               Paciente: {patient?.name || 'N/A'}
             </p>
             <p className="flex items-center">
-              <FileText className="w-4 h-4 mr-2 text-slate-500" /> 
+              <FileText className="w-4 h-4 mr-sm text-neutral-textSecondary" /> 
               Terapeuta: {session.therapist || 'N/A'}
             </p>
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <Card className="shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg mb-xl">
+          <Card className="shadow-card">
             <CardHeader>
-              <CardTitle className="text-lg text-blue-600">S (Subjetivo)</CardTitle>
+              <CardTitle className="text-lg text-primary">S (Subjetivo)</CardTitle>
             </CardHeader>
             <CardContent>
               <MarkdownRenderer content={session.subjective} />
             </CardContent>
           </Card>
 
-          <Card className="shadow-sm">
+          <Card className="shadow-card">
             <CardHeader>
-              <CardTitle className="text-lg text-green-600">O (Objetivo)</CardTitle>
+              <CardTitle className="text-lg text-success">O (Objetivo)</CardTitle>
             </CardHeader>
             <CardContent>
               <MarkdownRenderer content={session.objective} />
             </CardContent>
           </Card>
 
-          <Card className="shadow-sm">
+          <Card className="shadow-card">
             <CardHeader>
-              <CardTitle className="text-lg text-orange-600">A (Avaliação)</CardTitle>
+              <CardTitle className="text-lg text-warning">A (Avaliação)</CardTitle>
             </CardHeader>
             <CardContent>
               <MarkdownRenderer content={session.assessment} />
             </CardContent>
           </Card>
 
-          <Card className="shadow-sm">
+          <Card className="shadow-card">
             <CardHeader>
               <CardTitle className="text-lg text-purple-600">P (Plano)</CardTitle>
             </CardHeader>
@@ -178,7 +178,7 @@ const SessionViewPage: React.FC = () => {
         </div>
 
         <div className="flex justify-center">
-          <Button onClick={() => navigate('/agenda')} className="px-6 py-2">
+          <Button onClick={() => navigate('/agenda')} className="px-lg py-sm">
             Voltar para Agenda
           </Button>
         </div>

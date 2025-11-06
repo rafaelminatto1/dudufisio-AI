@@ -151,58 +151,58 @@ const MedicalReportPage: React.FC = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-xl">
             <PageHeader title={pageTitle} subtitle={`Geração de relatório médico com assistente de IA.`}>
-                <ReactRouterDOM.Link to={backLink} className="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50">
-                    <ChevronLeft className="-ml-1 mr-2 h-5 w-5" /> Voltar
+                <ReactRouterDOM.Link to={backLink} className="inline-flex items-center rounded-lg border border-neutral-border bg-white px-md py-sm text-sm font-medium text-neutral-text shadow-card hover:bg-neutral-bgAlt">
+                    <ChevronLeft className="-ml-xs mr-sm h-5 w-5" /> Voltar
                 </ReactRouterDOM.Link>
             </PageHeader>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                <div className="lg:col-span-1 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg items-start">
+                <div className="lg:col-span-1 space-y-xl">
                     <InfoCard title="Informações do Relatório" icon={<User />}>
-                        <div className="space-y-4">
+                        <div className="space-y-md">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700">Paciente</label>
+                                <label className="block text-sm font-medium text-neutral-text">Paciente</label>
                                 <p className="font-semibold">{patient.name}</p>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700">Médico Destinatário (opcional)</label>
-                                <input type="text" value={recipientDoctor} onChange={e => setRecipientDoctor(e.target.value)} placeholder="Nome do médico destinatário" className="mt-1 w-full p-2 border border-slate-300 rounded-lg" />
+                                <label className="block text-sm font-medium text-neutral-text">Médico Destinatário (opcional)</label>
+                                <input type="text" value={recipientDoctor} onChange={e => setRecipientDoctor(e.target.value)} placeholder="Nome do médico destinatário" className="mt-xs w-full p-sm border border-neutral-border rounded-lg" />
                             </div>
                              <div>
-                                <label className="block text-sm font-medium text-slate-700">CRM do Destinatário (opcional)</label>
-                                <input type="text" value={recipientCrm} onChange={e => setRecipientCrm(e.target.value)} placeholder="CRM do médico destinatário" className="mt-1 w-full p-2 border border-slate-300 rounded-lg" />
+                                <label className="block text-sm font-medium text-neutral-text">CRM do Destinatário (opcional)</label>
+                                <input type="text" value={recipientCrm} onChange={e => setRecipientCrm(e.target.value)} placeholder="CRM do médico destinatário" className="mt-xs w-full p-sm border border-neutral-border rounded-lg" />
                             </div>
                         </div>
                     </InfoCard>
                     
                     {!report && (
-                         <button onClick={handleGenerate} disabled={isGenerating} className="w-full inline-flex items-center justify-center bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg shadow-sm transition-colors disabled:bg-teal-300">
-                             {isGenerating ? <Loader className="w-5 h-5 mr-2 animate-spin" /> : <Sparkles className="w-5 h-5 mr-2" />}
+                         <button onClick={handleGenerate} disabled={isGenerating} className="w-full inline-flex items-center justify-center bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-md rounded-lg shadow-card transition-colors disabled:bg-teal-300">
+                             {isGenerating ? <Loader className="w-5 h-5 mr-sm animate-spin" /> : <Sparkles className="w-5 h-5 mr-sm" />}
                              {isGenerating ? 'Gerando...' : 'Gerar Relatório com IA'}
                          </button>
                     )}
 
                     {report && (
-                        <div className="space-y-3">
-                            <button onClick={() => handleSave(false)} disabled={isSaving || report.status === 'finalized'} className="w-full inline-flex items-center justify-center bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-lg shadow-sm transition-colors disabled:bg-sky-300 disabled:cursor-not-allowed">
-                                {isSaving ? <Loader className="w-5 h-5 mr-2 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
+                        <div className="space-y-sm">
+                            <button onClick={() => handleSave(false)} disabled={isSaving || report.status === 'finalized'} className="w-full inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-white font-bold py-3 px-md rounded-lg shadow-card transition-colors disabled:bg-sky-300 disabled:cursor-not-allowed">
+                                {isSaving ? <Loader className="w-5 h-5 mr-sm animate-spin" /> : <Save className="w-5 h-5 mr-sm" />}
                                 Salvar Rascunho
                             </button>
-                             <button onClick={() => handleSave(true)} disabled={isSaving || report.status === 'finalized'} className="w-full inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg shadow-sm transition-colors disabled:bg-green-300 disabled:cursor-not-allowed">
-                                 <FileCheck className="w-5 h-5 mr-2" />
+                             <button onClick={() => handleSave(true)} disabled={isSaving || report.status === 'finalized'} className="w-full inline-flex items-center justify-center bg-success-light0 hover:bg-green-600 text-white font-bold py-3 px-md rounded-lg shadow-card transition-colors disabled:bg-green-300 disabled:cursor-not-allowed">
+                                 <FileCheck className="w-5 h-5 mr-sm" />
                                  {report.status === 'finalized' ? 'Relatório Finalizado' : 'Finalizar e Gerar PDF'}
                             </button>
                         </div>
                     )}
                 </div>
                 
-                <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm min-h-[600px] flex flex-col">
+                <div className="lg:col-span-2 bg-white p-lg rounded-cardLarge shadow-card min-h-[600px] flex flex-col">
                     {isGenerating ? (
                         <div className="flex flex-col items-center justify-center h-full">
                             <Loader className="w-12 h-12 text-teal-500 animate-spin"/>
-                            <p className="mt-4 text-slate-600">A IA está analisando os dados do paciente e gerando o relatório...</p>
+                            <p className="mt-md text-neutral-textSecondary">A IA está analisando os dados do paciente e gerando o relatório...</p>
                         </div>
                            ) : report ? (
                                <TiptapEditorLazy 
@@ -212,10 +212,10 @@ const MedicalReportPage: React.FC = () => {
                                    placeholder="O relatório gerado pela IA aparecerá aqui. Você pode editá-lo conforme necessário."
                                />
                            ) : (
-                        <div className="flex flex-col items-center justify-center h-full text-center text-slate-500">
-                             <FileText className="w-16 h-16 text-slate-300 mb-4" />
+                        <div className="flex flex-col items-center justify-center h-full text-center text-neutral-textSecondary">
+                             <FileText className="w-16 h-16 text-slate-300 mb-md" />
                              <p className="font-semibold">O relatório gerado pela IA aparecerá aqui.</p>
-                             <p className="text-sm mt-1">Clique em "Gerar Relatório com IA" para criar o laudo. Os dados do médico destinatário são opcionais.</p>
+                             <p className="text-sm mt-xs">Clique em "Gerar Relatório com IA" para criar o laudo. Os dados do médico destinatário são opcionais.</p>
                         </div>
                     )}
                 </div>

@@ -75,30 +75,30 @@ const AiSettingsPage: React.FC = () => {
 
   return (
     <PermissionGuard permission="admin:settings">
-      <div className="space-y-6">
+      <div className="space-y-xl">
         <PageHeader
           title="Configurações de IA"
           subtitle="Configure as funcionalidades de inteligência artificial do sistema"
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
           {/* Configurações Principais */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-xl">
             {/* API Configuration */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-              <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 bg-blue-100 text-blue-600 rounded-lg p-3">
+            <div className="bg-white rounded-cardLarge shadow-card border border-neutral-border p-lg">
+              <div className="flex items-center mb-md">
+                <div className="flex-shrink-0 bg-primary-light text-primary rounded-lg p-md">
                   <Brain className="w-6 h-6" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-bold text-slate-900">Configuração da API</h3>
-                  <p className="text-sm text-slate-500">Configurações da API do Google Gemini</p>
+                  <h3 className="text-lg font-bold text-neutral-text">Configuração da API</h3>
+                  <p className="text-sm text-neutral-textSecondary">Configurações da API do Google Gemini</p>
                 </div>
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-md">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-neutral-text mb-sm">
                     Chave da API Gemini
                   </label>
                   <input
@@ -107,16 +107,16 @@ const AiSettingsPage: React.FC = () => {
                     onChange={(e) => handleInputChange('geminiApiKey', e.target.value)}
                     placeholder="Insira sua chave da API"
                     aria-label="Chave da API Gemini"
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-md py-sm border border-neutral-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-neutral-textSecondary mt-xs">
                     Sua chave da API será criptografada e armazenada com segurança
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-neutral-text mb-sm">
                       Limite de Tokens por Requisição
                     </label>
                     <input
@@ -124,12 +124,12 @@ const AiSettingsPage: React.FC = () => {
                       value={settings.maxTokensPerRequest}
                       onChange={(e) => handleInputChange('maxTokensPerRequest', parseInt(e.target.value))}
                       aria-label="Limite de tokens por requisição"
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-md py-sm border border-neutral-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-neutral-text mb-sm">
                       Limiar de Confiança (%)
                     </label>
                     <input
@@ -139,7 +139,7 @@ const AiSettingsPage: React.FC = () => {
                       value={settings.confidenceThreshold}
                       onChange={(e) => handleInputChange('confidenceThreshold', parseInt(e.target.value))}
                       aria-label="Limiar de confiança em porcentagem"
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-md py-sm border border-neutral-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                 </div>
@@ -147,28 +147,28 @@ const AiSettingsPage: React.FC = () => {
             </div>
 
             {/* Feature Toggles */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-              <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 bg-green-100 text-green-600 rounded-lg p-3">
+            <div className="bg-white rounded-cardLarge shadow-card border border-neutral-border p-lg">
+              <div className="flex items-center mb-md">
+                <div className="flex-shrink-0 bg-success-light text-success rounded-lg p-md">
                   <Zap className="w-6 h-6" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-bold text-slate-900">Funcionalidades de IA</h3>
-                  <p className="text-sm text-slate-500">Ative ou desative funcionalidades específicas</p>
+                  <h3 className="text-lg font-bold text-neutral-text">Funcionalidades de IA</h3>
+                  <p className="text-sm text-neutral-textSecondary">Ative ou desative funcionalidades específicas</p>
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-md">
                 {[
                   { key: 'enablePredictiveAnalytics', label: 'Analytics Preditivos', description: 'Análises preditivas para tendências clínicas' },
                   { key: 'enableAutoReports', label: 'Relatórios Automáticos', description: 'Geração automática de relatórios com IA' },
                   { key: 'enableRiskAnalysis', label: 'Análise de Risco', description: 'Identificação automática de riscos clínicos' },
                   { key: 'enableSmartScheduling', label: 'Agendamento Inteligente', description: 'Otimização automática de horários' }
                 ].map((feature) => (
-                  <div key={feature.key} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                  <div key={feature.key} className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg">
                     <div>
-                      <h4 className="font-medium text-slate-900">{feature.label}</h4>
-                      <p className="text-sm text-slate-500">{feature.description}</p>
+                      <h4 className="font-medium text-neutral-text">{feature.label}</h4>
+                      <p className="text-sm text-neutral-textSecondary">{feature.description}</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -178,7 +178,7 @@ const AiSettingsPage: React.FC = () => {
                         aria-label={`Ativar ${feature.label}`}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                      <div className="w-11 h-6 bg-neutral-bgDark peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                     </label>
                   </div>
                 ))}
@@ -186,26 +186,26 @@ const AiSettingsPage: React.FC = () => {
             </div>
 
             {/* Privacy & Security */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-              <div className="flex items-center mb-4">
-                <div className="flex-shrink-0 bg-red-100 text-red-600 rounded-lg p-3">
+            <div className="bg-white rounded-cardLarge shadow-card border border-neutral-border p-lg">
+              <div className="flex items-center mb-md">
+                <div className="flex-shrink-0 bg-error-light text-error rounded-lg p-md">
                   <Shield className="w-6 h-6" />
                 </div>
                 <div className="ml-4">
-                  <h3 className="text-lg font-bold text-slate-900">Privacidade e Segurança</h3>
-                  <p className="text-sm text-slate-500">Configurações de proteção de dados</p>
+                  <h3 className="text-lg font-bold text-neutral-text">Privacidade e Segurança</h3>
+                  <p className="text-sm text-neutral-textSecondary">Configurações de proteção de dados</p>
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-md">
                 {[
                   { key: 'enableDataPrivacy', label: 'Proteção de Dados', description: 'Criptografia e anonimização de dados sensíveis' },
                   { key: 'enableAuditLog', label: 'Log de Auditoria', description: 'Registro de todas as operações de IA' }
                 ].map((feature) => (
-                  <div key={feature.key} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                  <div key={feature.key} className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg">
                     <div>
-                      <h4 className="font-medium text-slate-900">{feature.label}</h4>
-                      <p className="text-sm text-slate-500">{feature.description}</p>
+                      <h4 className="font-medium text-neutral-text">{feature.label}</h4>
+                      <p className="text-sm text-neutral-textSecondary">{feature.description}</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -215,7 +215,7 @@ const AiSettingsPage: React.FC = () => {
                         aria-label={`Ativar ${feature.label}`}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                      <div className="w-11 h-6 bg-neutral-bgDark peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
                     </label>
                   </div>
                 ))}
@@ -224,79 +224,79 @@ const AiSettingsPage: React.FC = () => {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-xl">
             {/* Status */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">Status da IA</h3>
-              <div className="space-y-3">
+            <div className="bg-white rounded-cardLarge shadow-card border border-neutral-border p-lg">
+              <h3 className="text-lg font-bold text-neutral-text mb-md">Status da IA</h3>
+              <div className="space-y-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">API Conectada</span>
-                  <div className="flex items-center text-green-600">
-                    <CheckCircle className="w-4 h-4 mr-1" />
+                  <span className="text-sm text-neutral-textSecondary">API Conectada</span>
+                  <div className="flex items-center text-success">
+                    <CheckCircle className="w-4 h-4 mr-xs" />
                     <span className="text-sm font-medium">Ativa</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Última Atualização</span>
-                  <span className="text-sm text-slate-500">Há 2 horas</span>
+                  <span className="text-sm text-neutral-textSecondary">Última Atualização</span>
+                  <span className="text-sm text-neutral-textSecondary">Há 2 horas</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-600">Requisições Hoje</span>
-                  <span className="text-sm text-slate-500">1,247</span>
+                  <span className="text-sm text-neutral-textSecondary">Requisições Hoje</span>
+                  <span className="text-sm text-neutral-textSecondary">1,247</span>
                 </div>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-bold text-slate-900 mb-4">Ações Rápidas</h3>
-              <div className="space-y-3">
-                <button className="w-full flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  <RefreshCw className="w-4 h-4 mr-2" />
+            <div className="bg-white rounded-cardLarge shadow-card border border-neutral-border p-lg">
+              <h3 className="text-lg font-bold text-neutral-text mb-md">Ações Rápidas</h3>
+              <div className="space-y-sm">
+                <button className="w-full flex items-center justify-center px-md py-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors">
+                  <RefreshCw className="w-4 h-4 mr-sm" />
                   Testar Conexão
                 </button>
-                <button className="w-full flex items-center justify-center px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
-                  <FileText className="w-4 h-4 mr-2" />
+                <button className="w-full flex items-center justify-center px-md py-sm bg-neutral-bgDark text-neutral-text rounded-lg hover:bg-neutral-bgDark transition-colors">
+                  <FileText className="w-4 h-4 mr-sm" />
                   Ver Logs
                 </button>
-                <button className="w-full flex items-center justify-center px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
-                  <BarChart3 className="w-4 h-4 mr-2" />
+                <button className="w-full flex items-center justify-center px-md py-sm bg-neutral-bgDark text-neutral-text rounded-lg hover:bg-neutral-bgDark transition-colors">
+                  <BarChart3 className="w-4 h-4 mr-sm" />
                   Estatísticas
                 </button>
               </div>
             </div>
 
             {/* Save Button */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div className="bg-white rounded-cardLarge shadow-card border border-neutral-border p-lg">
               <button
                 onClick={handleSave}
                 disabled={isLoading}
-                className={`w-full flex items-center justify-center px-4 py-3 rounded-lg font-medium transition-colors ${
+                className={`w-full flex items-center justify-center px-md py-3 rounded-lg font-medium transition-colors ${
                   saveStatus === 'success'
                     ? 'bg-green-600 text-white'
                     : saveStatus === 'error'
                     ? 'bg-red-600 text-white'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-primary text-white hover:bg-primary-hover'
                 } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isLoading ? (
                   <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    <RefreshCw className="w-4 h-4 mr-sm animate-spin" />
                     Salvando...
                   </>
                 ) : saveStatus === 'success' ? (
                   <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
+                    <CheckCircle className="w-4 h-4 mr-sm" />
                     Salvo com Sucesso!
                   </>
                 ) : saveStatus === 'error' ? (
                   <>
-                    <AlertCircle className="w-4 h-4 mr-2" />
+                    <AlertCircle className="w-4 h-4 mr-sm" />
                     Erro ao Salvar
                   </>
                 ) : (
                   <>
-                    <Save className="w-4 h-4 mr-2" />
+                    <Save className="w-4 h-4 mr-sm" />
                     Salvar Configurações
                   </>
                 )}

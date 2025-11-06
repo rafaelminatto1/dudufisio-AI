@@ -79,16 +79,16 @@ const ProgressDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-lg space-y-xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard de Progresso</h1>
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-3xl font-bold text-neutral-text">Dashboard de Progresso</h1>
+          <p className="text-gray-500 mt-xs">
             Visualize a evolução dos pacientes
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           <Select value={selectedPatient} onValueChange={setSelectedPatient}>
             <SelectTrigger className="w-64">
               <SelectValue placeholder="Todos os Pacientes" />
@@ -117,15 +117,15 @@ const ProgressDashboardPage: React.FC = () => {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total de Sessões</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <Activity className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalSessions}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-textSecondary">
               Últimos {selectedPeriod} dias
             </p>
           </CardContent>
@@ -134,12 +134,12 @@ const ProgressDashboardPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Taxa de Conclusão</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+            <Target className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.avgCompletionRate}%</div>
-            <div className="flex items-center text-xs text-green-600">
-              <TrendingUp className="h-3 w-3 mr-1" />
+            <div className="flex items-center text-xs text-success">
+              <TrendingUp className="h-3 w-3 mr-xs" />
               +5% vs período anterior
             </div>
           </CardContent>
@@ -148,12 +148,12 @@ const ProgressDashboardPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Nível de Dor Médio</CardTitle>
-            <Award className="h-4 w-4 text-muted-foreground" />
+            <Award className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.avgPainLevel}/10</div>
-            <div className="flex items-center text-xs text-green-600">
-              <TrendingDown className="h-3 w-3 mr-1" />
+            <div className="flex items-center text-xs text-success">
+              <TrendingDown className="h-3 w-3 mr-xs" />
               -0.8 vs período anterior
             </div>
           </CardContent>
@@ -162,11 +162,11 @@ const ProgressDashboardPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Melhoria</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <TrendingUp className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+{stats.improvement}%</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-textSecondary">
               Evolução geral
             </p>
           </CardContent>
@@ -174,7 +174,7 @@ const ProgressDashboardPage: React.FC = () => {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
         {/* Evolução de Volume */}
         <Card>
           <CardHeader>

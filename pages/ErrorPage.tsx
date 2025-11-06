@@ -50,39 +50,39 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error: propError, resetError }) =
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 flex items-center justify-center p-md">
       <div className="max-w-2xl w-full">
         {/* Error Icon */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full shadow-lg mb-6">
+        <div className="text-center mb-mdxl">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full shadow-cardActive mb-xl">
             <AlertTriangle className="w-12 h-12 text-red-500" />
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-neutral-text mb-md">
             Algo deu errado
           </h1>
           
-          <p className="text-lg text-slate-600 max-w-md mx-auto">
+          <p className="text-lg text-neutral-textSecondary max-w-md mx-auto">
             Desculpe, encontramos um problema ao carregar esta página.
           </p>
         </div>
 
         {/* Error Details */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-          <div className="space-y-4">
+        <div className="bg-white rounded-cardLarge shadow-xl p-lg mb-xl">
+          <div className="space-y-md">
             <div>
-              <h3 className="font-semibold text-slate-900 mb-2">Erro:</h3>
-              <p className="text-sm text-red-600 bg-red-50 p-3 rounded-lg font-mono">
+              <h3 className="font-semibold text-neutral-text mb-sm">Erro:</h3>
+              <p className="text-sm text-error bg-error-light p-md rounded-lg font-mono">
                 {errorMessage}
               </p>
             </div>
             
             {errorStack && (
               <details className="text-left">
-                <summary className="cursor-pointer font-semibold text-slate-700 hover:text-slate-900 text-sm">
+                <summary className="cursor-pointer font-semibold text-neutral-text hover:text-neutral-text text-sm">
                   Detalhes técnicos (clique para expandir)
                 </summary>
-                <pre className="mt-3 text-xs text-slate-600 bg-slate-50 p-4 rounded-lg overflow-auto max-h-48">
+                <pre className="mt-3 text-xs text-neutral-textSecondary bg-neutral-bgAlt p-md rounded-lg overflow-auto max-h-48">
                   {errorStack}
                 </pre>
               </details>
@@ -91,15 +91,15 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error: propError, resetError }) =
         </div>
 
         {/* Actions */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-          <h3 className="font-semibold text-slate-900 mb-4">O que você pode fazer:</h3>
+        <div className="bg-white rounded-cardLarge shadow-xl p-lg mb-xl">
+          <h3 className="font-semibold text-neutral-text mb-md">O que você pode fazer:</h3>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-md">
             <Button
               onClick={handleReload}
               className="w-full bg-indigo-600 hover:bg-indigo-700"
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-sm" />
               Recarregar Página
             </Button>
             
@@ -108,7 +108,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error: propError, resetError }) =
               variant="outline"
               className="w-full"
             >
-              <Home className="w-4 h-4 mr-2" />
+              <Home className="w-4 h-4 mr-sm" />
               Ir para Dashboard
             </Button>
             
@@ -117,16 +117,16 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error: propError, resetError }) =
               variant="outline"
               className="w-full"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-sm" />
               Voltar
             </Button>
             
             <Button
               onClick={handleClearCache}
               variant="outline"
-              className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="w-full text-error hover:text-error hover:bg-error-light"
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-sm" />
               Limpar Cache
             </Button>
           </div>
@@ -134,7 +134,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error: propError, resetError }) =
 
         {/* Support */}
         <div className="text-center">
-          <p className="text-sm text-slate-600 mb-4">
+          <p className="text-sm text-neutral-textSecondary mb-md">
             Se o problema persistir, entre em contato com nossa equipe
           </p>
           <Button
@@ -142,16 +142,16 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ error: propError, resetError }) =
             className="text-indigo-600 hover:text-indigo-700"
             onClick={() => window.location.href = 'mailto:suporte@dudufisio.com?subject=Erro%20na%20Aplicação'}
           >
-            <Mail className="w-4 h-4 mr-2" />
+            <Mail className="w-4 h-4 mr-sm" />
             suporte@dudufisio.com
           </Button>
         </div>
 
         {/* Additional Info */}
-        <div className="mt-8 text-center text-xs text-slate-400">
+        <div className="mt-3xl text-center text-xs text-neutral-textTertiary">
           <p>ID do Erro: {Date.now().toString(36)}</p>
           <p>Timestamp: {new Date().toLocaleString('pt-BR')}</p>
-          <p className="mt-2 text-slate-500">Este erro foi reportado automaticamente à nossa equipe de desenvolvimento.</p>
+          <p className="mt-sm text-neutral-textSecondary">Este erro foi reportado automaticamente à nossa equipe de desenvolvimento.</p>
         </div>
       </div>
     </div>

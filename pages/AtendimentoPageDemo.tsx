@@ -47,6 +47,7 @@ import SurgeryManager from '../components/atendimento/SurgeryManager';
 import PatientGoalsManager from '../components/atendimento/PatientGoalsManager';
 import BodyMapPain from '../components/atendimento/BodyMapPain';
 import { Surgery, PatientGoal, PainPoint } from '../types';
+import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 const AtendimentoPageDemo: React.FC = () => {
     // Mock data
@@ -323,8 +324,8 @@ const AtendimentoPageDemo: React.FC = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
             {/* Header */}
-            <div className="bg-white border-b border-slate-200 sticky top-0 z-40">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white border-b border-neutral-border sticky top-0 z-40">
+                <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center space-x-4">
                             <Button
@@ -339,8 +340,8 @@ const AtendimentoPageDemo: React.FC = () => {
                             <Separator orientation="vertical" className="h-6" />
                             <div className="flex items-center space-x-3">
                                 <div className="flex items-center space-x-2">
-                                    <Stethoscope className="h-5 w-5 text-blue-600" />
-                                    <h1 className="text-xl font-semibold text-slate-900">
+                                    <Stethoscope className="h-5 w-5 text-primary" />
+                                    <h1 className="text-xl font-semibold text-neutral-text">
                                         Nova Sessão de Atendimento
                                     </h1>
                                 </div>
@@ -351,17 +352,17 @@ const AtendimentoPageDemo: React.FC = () => {
                             {/* Session Status */}
                             <div className="flex items-center space-x-2">
                                 {isSessionActive ? (
-                                    <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
-                                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                    <Badge variant="default" className="bg-success-light text-success border-success">
+                                        <div className="w-2 h-2 bg-success-light0 rounded-full mr-sm animate-pulse"></div>
                                         Sessão Ativa
                                     </Badge>
                                 ) : (
                                     <Badge variant="secondary">
-                                        <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full mr-sm"></div>
                                         Sessão Pausada
                                     </Badge>
                                 )}
-                                <span className="text-sm font-mono text-slate-600">
+                                <span className="text-sm font-mono text-neutral-textSecondary">
                                     {formatDuration(sessionDuration)}
                                 </span>
                             </div>
@@ -375,13 +376,13 @@ const AtendimentoPageDemo: React.FC = () => {
                                     </div>
                                 )}
                                 {saveStatus === 'saved' && (
-                                    <div className="flex items-center space-x-2 text-green-600">
+                                    <div className="flex items-center space-x-2 text-success">
                                         <CheckCircle2 className="h-4 w-4" />
                                         <span className="text-sm">Salvo</span>
                                     </div>
                                 )}
                                 {saveStatus === 'unsaved' && (
-                                    <div className="flex items-center space-x-2 text-red-600">
+                                    <div className="flex items-center space-x-2 text-error">
                                         <XCircle className="h-4 w-4" />
                                         <span className="text-sm">Não salvo</span>
                                     </div>
@@ -392,24 +393,24 @@ const AtendimentoPageDemo: React.FC = () => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl py-3xl">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-xl">
                     {/* Main Content - 3 columns */}
-                    <div className="lg:col-span-3 space-y-6">
+                    <div className="lg:col-span-3 space-y-xl">
                         {/* Patient Info Header */}
-                        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+                        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-primary">
                             <CardHeader className="pb-4">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-4">
                                         <div className="flex items-center space-x-3">
-                                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                                <User className="h-6 w-6 text-blue-600" />
+                                            <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center">
+                                                <User className="h-6 w-6 text-primary" />
                                             </div>
                                             <div>
-                                                <h2 className="text-xl font-semibold text-slate-900">
+                                                <h2 className="text-xl font-semibold text-neutral-text">
                                                     {mockPatient.name}
                                                 </h2>
-                                                <div className="flex items-center space-x-4 text-sm text-slate-600 mt-1">
+                                                <div className="flex items-center space-x-4 text-sm text-neutral-textSecondary mt-xs">
                                                     <div className="flex items-center space-x-1">
                                                         <Calendar className="h-4 w-4" />
                                                         <span>{new Date(mockAppointment.startTime).toLocaleDateString('pt-BR')}</span>
@@ -431,25 +432,25 @@ const AtendimentoPageDemo: React.FC = () => {
                                     <div className="flex items-center space-x-2">
                                         {!isSessionActive && !sessionStartTime && (
                                             <Button onClick={handleStartSession} className="bg-green-600 hover:bg-green-700">
-                                                <Play className="h-4 w-4 mr-2" />
+                                                <Play className="h-4 w-4 mr-sm" />
                                                 Iniciar Sessão
                                             </Button>
                                         )}
                                         {isSessionActive && (
                                             <div className="flex items-center space-x-2">
                                                 <Button variant="outline" onClick={handlePauseSession}>
-                                                    <Pause className="h-4 w-4 mr-2" />
+                                                    <Pause className="h-4 w-4 mr-sm" />
                                                     Pausar
                                                 </Button>
                                                 <Button variant="destructive" onClick={handleStopSession}>
-                                                    <Square className="h-4 w-4 mr-2" />
+                                                    <Square className="h-4 w-4 mr-sm" />
                                                     Finalizar
                                                 </Button>
                                             </div>
                                         )}
                                         {!isSessionActive && sessionStartTime && (
                                             <Button onClick={handleResumeSession} variant="outline">
-                                                <Play className="h-4 w-4 mr-2" />
+                                                <Play className="h-4 w-4 mr-sm" />
                                                 Retomar
                                             </Button>
                                         )}
@@ -462,17 +463,17 @@ const AtendimentoPageDemo: React.FC = () => {
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center space-x-2">
-                                    <FileText className="h-5 w-5 text-blue-600" />
+                                    <FileText className="h-5 w-5 text-primary" />
                                     <span>Registro da Sessão #{mockAppointment.id.slice(-4)}</span>
                                 </CardTitle>
                                 <CardDescription>
                                     {mockPatient.name} - {new Date().toLocaleDateString('pt-BR')}
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent className="space-y-6">
+                            <CardContent className="space-y-xl">
                                 {/* Pain Scale */}
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-medium text-slate-700 flex items-center space-x-2">
+                                <div className="space-y-sm">
+                                    <h3 className="text-sm font-medium text-neutral-text flex items-center space-x-2">
                                         <Activity className="h-4 w-4" />
                                         <span>Escala de Dor (0-10)</span>
                                     </h3>
@@ -484,15 +485,15 @@ const AtendimentoPageDemo: React.FC = () => {
                                                     onClick={() => setPainScale(i)}
                                                     className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-sm font-medium transition-all ${
                                                         painScale === i
-                                                            ? 'border-red-500 bg-red-50 text-red-700'
-                                                            : 'border-slate-300 hover:border-red-300 hover:bg-red-25'
+                                                            ? 'border-error bg-error-light text-error'
+                                                            : 'border-neutral-border hover:border-error hover:bg-red-25'
                                                     }`}
                                                 >
                                                     {i}
                                                 </button>
                                             ))}
                                         </div>
-                                        <div className="text-sm text-slate-600">
+                                        <div className="text-sm text-neutral-textSecondary">
                                             {painScale === 0 && 'Sem dor'}
                                             {painScale === 10 && 'Dor máxima'}
                                             {painScale && painScale > 0 && painScale < 10 && `Dor moderada`}
@@ -501,65 +502,65 @@ const AtendimentoPageDemo: React.FC = () => {
                                 </div>
 
                                 {/* Treatment Summary */}
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                    <div className="bg-blue-50 p-4 rounded-lg">
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
+                                    <div className="bg-primary-light p-md rounded-lg">
                                         <div className="flex items-center space-x-2">
-                                            <Users className="h-4 w-4 text-blue-600" />
+                                            <Users className="h-4 w-4 text-primary" />
                                             <span className="text-sm font-medium text-blue-800">Sessões Realizadas</span>
                                         </div>
-                                        <div className="text-2xl font-bold text-blue-900 mt-1">1</div>
+                                        <div className="text-2xl font-bold text-blue-900 mt-xs">1</div>
                                     </div>
-                                    <div className="bg-green-50 p-4 rounded-lg">
+                                    <div className="bg-success-light p-md rounded-lg">
                                         <div className="flex items-center space-x-2">
-                                            <Calendar className="h-4 w-4 text-green-600" />
-                                            <span className="text-sm font-medium text-green-800">Dias de Tratamento</span>
+                                            <Calendar className="h-4 w-4 text-success" />
+                                            <span className="text-sm font-medium text-success">Dias de Tratamento</span>
                                         </div>
-                                        <div className="text-2xl font-bold text-green-900 mt-1">0</div>
+                                        <div className="text-2xl font-bold text-green-900 mt-xs">0</div>
                                     </div>
-                                    <div className="bg-purple-50 p-4 rounded-lg">
+                                    <div className="bg-purple-50 p-md rounded-lg">
                                         <div className="flex items-center space-x-2">
                                             <History className="h-4 w-4 text-purple-600" />
                                             <span className="text-sm font-medium text-purple-800">Última Sessão</span>
                                         </div>
-                                        <div className="text-sm font-bold text-purple-900 mt-1">07/01/2024</div>
+                                        <div className="text-sm font-bold text-purple-900 mt-xs">07/01/2024</div>
                                     </div>
-                                    <div className="bg-orange-50 p-4 rounded-lg">
+                                    <div className="bg-warning-light p-md rounded-lg">
                                         <div className="flex items-center space-x-2">
-                                            <TrendingUp className="h-4 w-4 text-orange-600" />
-                                            <span className="text-sm font-medium text-orange-800">Primeira Sessão</span>
+                                            <TrendingUp className="h-4 w-4 text-warning" />
+                                            <span className="text-sm font-medium text-warning">Primeira Sessão</span>
                                         </div>
-                                        <div className="text-sm font-bold text-orange-900 mt-1">07/01/2024</div>
+                                        <div className="text-sm font-bold text-orange-900 mt-xs">07/01/2024</div>
                                     </div>
                                 </div>
 
                                 {/* Session History */}
-                                <div className="space-y-3">
-                                    <h3 className="text-sm font-medium text-slate-700 flex items-center space-x-2">
+                                <div className="space-y-sm">
+                                    <h3 className="text-sm font-medium text-neutral-text flex items-center space-x-2">
                                         <History className="h-4 w-4" />
                                         <span>Histórico de Sessões (1)</span>
                                     </h3>
-                                    <div className="bg-slate-50 p-4 rounded-lg">
+                                    <div className="bg-neutral-bgAlt p-md rounded-lg">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center space-x-3">
                                                 <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                                                     <span className="text-sm font-bold text-purple-700">3</span>
                                                 </div>
                                                 <div>
-                                                    <div className="font-medium text-slate-900">Sessão #3 Última</div>
-                                                    <div className="text-sm text-slate-600">07/01/2024 - Dr. Roberto</div>
+                                                    <div className="font-medium text-neutral-text">Sessão #3 Última</div>
+                                                    <div className="text-sm text-neutral-textSecondary">07/01/2024 - Dr. Roberto</div>
                                                 </div>
                                             </div>
                                             <div className="flex items-center space-x-2">
                                                 <Button 
                                                     variant="outline" 
                                                     size="sm" 
-                                                    className="text-green-600 border-green-200 hover:bg-green-50"
+                                                    className="text-success border-success hover:bg-success-light"
                                                     onClick={() => {
                                                         
                                                         // Here you would duplicate the session
                                                     }}
                                                 >
-                                                    <Repeat className="h-4 w-4 mr-1" />
+                                                    <Repeat className="h-4 w-4 mr-xs" />
                                                     Repetir
                                                 </Button>
                                                 <Button 
@@ -571,7 +572,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                                         // Here you would open session details
                                                     }}
                                                 >
-                                                    <Eye className="h-4 w-4 mr-1" />
+                                                    <Eye className="h-4 w-4 mr-xs" />
                                                     Ver
                                                 </Button>
                                             </div>
@@ -610,7 +611,7 @@ const AtendimentoPageDemo: React.FC = () => {
                             <CardHeader>
                                 <CardTitle className="flex items-center justify-between">
                                     <div className="flex items-center space-x-2">
-                                        <ClipboardList className="h-5 w-5 text-blue-600" />
+                                        <ClipboardList className="h-5 w-5 text-primary" />
                                         <span>Registro SOAP</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
@@ -621,73 +622,73 @@ const AtendimentoPageDemo: React.FC = () => {
                                             disabled={isAiLoading}
                                         >
                                             {isAiLoading ? (
-                                                <Loader className="h-4 w-4 mr-2 animate-spin" />
+                                                <Loader className="h-4 w-4 mr-sm animate-spin" />
                                             ) : (
-                                                <BrainCircuit className="h-4 w-4 mr-2" />
+                                                <BrainCircuit className="h-4 w-4 mr-sm" />
                                             )}
                                             Assistência IA
                                         </Button>
                                         <Button onClick={handleSaveNote} disabled={saveStatus === 'saving'}>
                                             {saveStatus === 'saving' ? (
-                                                <Loader className="h-4 w-4 mr-2 animate-spin" />
+                                                <Loader className="h-4 w-4 mr-sm animate-spin" />
                                             ) : (
-                                                <Save className="h-4 w-4 mr-2" />
+                                                <Save className="h-4 w-4 mr-sm" />
                                             )}
                                             Salvar Nota
                                         </Button>
                                     </div>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-6">
+                            <CardContent className="space-y-xl">
                                 {/* Subjective */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-700">
+                                <div className="space-y-sm">
+                                    <label className="text-sm font-medium text-neutral-text">
                                         Subjetivo (S)
                                     </label>
                                     <textarea
                                         value={subjective}
                                         onChange={(e) => setSubjective(e.target.value)}
                                         placeholder="Como o paciente se sente? Quais são as queixas principais?"
-                                        className="w-full p-3 border border-slate-300 rounded-lg min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full p-md border border-neutral-border rounded-lg min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     />
                                 </div>
 
                                 {/* Objective */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-700">
+                                <div className="space-y-sm">
+                                    <label className="text-sm font-medium text-neutral-text">
                                         Objetivo (O)
                                     </label>
                                     <textarea
                                         value={objective}
                                         onChange={(e) => setObjective(e.target.value)}
                                         placeholder="Achados objetivos, testes realizados, observações clínicas..."
-                                        className="w-full p-3 border border-slate-300 rounded-lg min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full p-md border border-neutral-border rounded-lg min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     />
                                 </div>
 
                                 {/* Assessment */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-700">
+                                <div className="space-y-sm">
+                                    <label className="text-sm font-medium text-neutral-text">
                                         Avaliação (A)
                                     </label>
                                     <textarea
                                         value={assessment}
                                         onChange={(e) => setAssessment(e.target.value)}
                                         placeholder="Diagnóstico clínico, análise dos achados..."
-                                        className="w-full p-3 border border-slate-300 rounded-lg min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full p-md border border-neutral-border rounded-lg min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     />
                                 </div>
 
                                 {/* Plan */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-700">
+                                <div className="space-y-sm">
+                                    <label className="text-sm font-medium text-neutral-text">
                                         Plano (P)
                                     </label>
                                     <textarea
                                         value={plan}
                                         onChange={(e) => setPlanState(e.target.value)}
                                         placeholder="Plano de tratamento, próximos passos, exercícios prescritos..."
-                                        className="w-full p-3 border border-slate-300 rounded-lg min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                        className="w-full p-md border border-neutral-border rounded-lg min-h-[100px] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     />
                                 </div>
                             </CardContent>
@@ -695,39 +696,39 @@ const AtendimentoPageDemo: React.FC = () => {
                     </div>
 
                     {/* Sidebar - 1 column */}
-                    <div className="lg:col-span-1 space-y-6">
+                    <div className="lg:col-span-1 space-y-xl">
                         {/* Patient Info */}
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center space-x-2">
-                                    <User className="h-5 w-5 text-blue-600" />
+                                    <User className="h-5 w-5 text-primary" />
                                     <span>Informações Pessoais</span>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4">
+                            <CardContent className="space-y-md">
                                 <div className="flex items-center space-x-3 text-sm">
-                                    <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
-                                        <Users className="h-4 w-4 text-slate-600" />
+                                    <div className="w-8 h-8 bg-neutral-bgDark rounded-full flex items-center justify-center">
+                                        <Users className="h-4 w-4 text-neutral-textSecondary" />
                                     </div>
-                                    <span className="text-slate-600">Rio de Janeiro, RJ</span>
+                                    <span className="text-neutral-textSecondary">Rio de Janeiro, RJ</span>
                                 </div>
                                 <div className="flex items-center space-x-3 text-sm">
-                                    <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
-                                        <MessageSquare className="h-4 w-4 text-slate-600" />
+                                    <div className="w-8 h-8 bg-neutral-bgDark rounded-full flex items-center justify-center">
+                                        <MessageSquare className="h-4 w-4 text-neutral-textSecondary" />
                                     </div>
-                                    <span className="text-slate-600">{mockPatient.email}</span>
+                                    <span className="text-neutral-textSecondary">{mockPatient.email}</span>
                                 </div>
                                 <div className="flex items-center space-x-3 text-sm">
-                                    <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
-                                        <Activity className="h-4 w-4 text-slate-600" />
+                                    <div className="w-8 h-8 bg-neutral-bgDark rounded-full flex items-center justify-center">
+                                        <Activity className="h-4 w-4 text-neutral-textSecondary" />
                                     </div>
-                                    <span className="text-slate-600">{mockPatient.phone}</span>
+                                    <span className="text-neutral-textSecondary">{mockPatient.phone}</span>
                                 </div>
                                 <div className="flex items-center space-x-3 text-sm">
-                                    <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
-                                        <Calendar className="h-4 w-4 text-slate-600" />
+                                    <div className="w-8 h-8 bg-neutral-bgDark rounded-full flex items-center justify-center">
+                                        <Calendar className="h-4 w-4 text-neutral-textSecondary" />
                                     </div>
-                                    <span className="text-slate-600">{mockPatient.age} anos</span>
+                                    <span className="text-neutral-textSecondary">{mockPatient.age} anos</span>
                                 </div>
                             </CardContent>
                         </Card>
@@ -736,11 +737,11 @@ const AtendimentoPageDemo: React.FC = () => {
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center space-x-2">
-                                    <Zap className="h-5 w-5 text-yellow-600" />
+                                    <Zap className="h-5 w-5 text-warning" />
                                     <span>Ações Rápidas</span>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-3">
+                            <CardContent className="space-y-sm">
                                 <Button 
                                     variant="outline" 
                                     className="w-full justify-start"
@@ -758,7 +759,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                         input.click();
                                     }}
                                 >
-                                    <Camera className="h-4 w-4 mr-2" />
+                                    <Camera className="h-4 w-4 mr-sm" />
                                     Adicionar Foto
                                 </Button>
                                 <Button 
@@ -778,7 +779,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                         input.click();
                                     }}
                                 >
-                                    <FileText className="h-4 w-4 mr-2" />
+                                    <FileText className="h-4 w-4 mr-sm" />
                                     Anexar Documento
                                 </Button>
                                 <Button 
@@ -789,7 +790,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                         // Here you would navigate to reports page
                                     }}
                                 >
-                                    <BarChart3 className="h-4 w-4 mr-2" />
+                                    <BarChart3 className="h-4 w-4 mr-sm" />
                                     Ver Relatórios
                                 </Button>
                                 <Button 
@@ -800,7 +801,7 @@ const AtendimentoPageDemo: React.FC = () => {
                                         // Here you would navigate to patient history
                                     }}
                                 >
-                                    <BookOpen className="h-4 w-4 mr-2" />
+                                    <BookOpen className="h-4 w-4 mr-sm" />
                                     Histórico Completo
                                 </Button>
                             </CardContent>
@@ -810,24 +811,24 @@ const AtendimentoPageDemo: React.FC = () => {
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center space-x-2">
-                                    <Target className="h-5 w-5 text-green-600" />
+                                    <Target className="h-5 w-5 text-success" />
                                     <span>Resumo da Sessão</span>
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
+                            <CardContent className="space-y-md">
+                                <div className="space-y-sm">
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-600">Duração</span>
+                                        <span className="text-neutral-textSecondary">Duração</span>
                                         <span className="font-medium">{formatDuration(sessionDuration)}</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-600">Status</span>
+                                        <span className="text-neutral-textSecondary">Status</span>
                                         <Badge variant={isSessionActive ? "default" : "secondary"}>
                                             {isSessionActive ? 'Ativa' : 'Pausada'}
                                         </Badge>
                                     </div>
                                     <div className="flex justify-between text-sm">
-                                        <span className="text-slate-600">Nota Salva</span>
+                                        <span className="text-neutral-textSecondary">Nota Salva</span>
                                         <Badge variant={saveStatus === 'saved' ? "default" : "destructive"}>
                                             {saveStatus === 'saved' ? 'Sim' : 'Não'}
                                         </Badge>
@@ -842,9 +843,9 @@ const AtendimentoPageDemo: React.FC = () => {
                                     className="w-full bg-green-600 hover:bg-green-700"
                                 >
                                     {isFinishing ? (
-                                        <Loader className="h-4 w-4 mr-2 animate-spin" />
+                                        <Loader className="h-4 w-4 mr-sm animate-spin" />
                                     ) : (
-                                        <CheckCircle className="h-4 w-4 mr-2" />
+                                        <CheckCircle className="h-4 w-4 mr-sm" />
                                     )}
                                     Finalizar Sessão
                                 </Button>

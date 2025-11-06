@@ -208,8 +208,8 @@ const MaterialEditorPage: React.FC = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-md"></div>
+          <p className="text-neutral-textSecondary">Carregando...</p>
         </div>
       </div>
     );
@@ -262,18 +262,18 @@ const MaterialEditorPage: React.FC = () => {
         </div>
       </PageHeader>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-lg">
         {/* Main Editor */}
         <div className="lg:col-span-3">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            <div className="p-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Conteúdo do Material</h3>
-              <p className="text-sm text-gray-600 mt-1">
+          <div className="bg-white rounded-card shadow-card border border-neutral-border">
+            <div className="p-md border-b border-neutral-border">
+              <h3 className="text-lg font-semibold text-neutral-text">Conteúdo do Material</h3>
+              <p className="text-sm text-neutral-textSecondary mt-xs">
                 Use o editor rico para criar conteúdo com formatação, links, imagens e mais.
               </p>
             </div>
             
-            <div className="p-4">
+            <div className="p-md">
               <AdvancedMaterialEditor
                 value={content}
                 onChange={setContent}
@@ -290,25 +290,25 @@ const MaterialEditorPage: React.FC = () => {
 
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <div className="space-y-6">
+          <div className="space-y-xl">
             {/* Basic Information */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <FileText className="w-5 h-5 mr-2" />
+            <div className="bg-white rounded-card shadow-card border border-neutral-border p-md">
+              <h3 className="text-lg font-semibold text-neutral-text mb-md flex items-center">
+                <FileText className="w-5 h-5 mr-sm" />
                 Informações Básicas
               </h3>
 
-              <form onSubmit={handleSubmit(handleSave)} className="space-y-4">
+              <form onSubmit={handleSubmit(handleSave)} className="space-y-md">
                 <div>
                   <Label htmlFor="name">Nome do Material *</Label>
                   <Input
                     id="name"
                     {...register('name')}
-                    className={errors.name ? 'border-red-500' : ''}
+                    className={errors.name ? 'border-error' : ''}
                     placeholder="Ex: Protocolo de Fisioterapia Respiratória"
                   />
                   {errors.name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                    <p className="text-red-500 text-sm mt-xs">{errors.name.message}</p>
                   )}
                 </div>
 
@@ -318,7 +318,7 @@ const MaterialEditorPage: React.FC = () => {
                     id="description"
                     {...register('description')}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full px-md py-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                     placeholder="Breve descrição do material..."
                   />
                 </div>
@@ -329,7 +329,7 @@ const MaterialEditorPage: React.FC = () => {
                     value={watch('type')}
                     onValueChange={(value) => setValue('type', value)}
                   >
-                    <SelectTrigger className={errors.type ? 'border-red-500' : ''}>
+                    <SelectTrigger className={errors.type ? 'border-error' : ''}>
                       <SelectValue placeholder="Selecione o tipo" />
                     </SelectTrigger>
                     <SelectContent>
@@ -341,7 +341,7 @@ const MaterialEditorPage: React.FC = () => {
                     </SelectContent>
                   </Select>
                   {errors.type && (
-                    <p className="text-red-500 text-sm mt-1">{errors.type.message}</p>
+                    <p className="text-red-500 text-sm mt-xs">{errors.type.message}</p>
                   )}
                 </div>
 
@@ -351,7 +351,7 @@ const MaterialEditorPage: React.FC = () => {
                     value={watch('categoryId')}
                     onValueChange={(value) => setValue('categoryId', value)}
                   >
-                    <SelectTrigger className={errors.categoryId ? 'border-red-500' : ''}>
+                    <SelectTrigger className={errors.categoryId ? 'border-error' : ''}>
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
                     <SelectContent>
@@ -363,7 +363,7 @@ const MaterialEditorPage: React.FC = () => {
                     </SelectContent>
                   </Select>
                   {errors.categoryId && (
-                    <p className="text-red-500 text-sm mt-1">{errors.categoryId.message}</p>
+                    <p className="text-red-500 text-sm mt-xs">{errors.categoryId.message}</p>
                   )}
                 </div>
 
@@ -387,9 +387,9 @@ const MaterialEditorPage: React.FC = () => {
             </div>
 
             {/* Tags */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Tag className="w-5 h-5 mr-2" />
+            <div className="bg-white rounded-card shadow-card border border-neutral-border p-md">
+              <h3 className="text-lg font-semibold text-neutral-text mb-md flex items-center">
+                <Tag className="w-5 h-5 mr-sm" />
                 Tags
               </h3>
               
@@ -405,9 +405,9 @@ const MaterialEditorPage: React.FC = () => {
             </div>
 
             {/* Wiki Links */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <LinkIcon className="w-5 h-5 mr-2" />
+            <div className="bg-white rounded-card shadow-card border border-neutral-border p-md">
+              <h3 className="text-lg font-semibold text-neutral-text mb-md flex items-center">
+                <LinkIcon className="w-5 h-5 mr-sm" />
                 Links Wiki
               </h3>
               
@@ -419,9 +419,9 @@ const MaterialEditorPage: React.FC = () => {
             </div>
 
             {/* Media Upload */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Upload className="w-5 h-5 mr-2" />
+            <div className="bg-white rounded-card shadow-card border border-neutral-border p-md">
+              <h3 className="text-lg font-semibold text-neutral-text mb-md flex items-center">
+                <Upload className="w-5 h-5 mr-sm" />
                 Mídia e Arquivos
               </h3>
               
@@ -433,26 +433,26 @@ const MaterialEditorPage: React.FC = () => {
 
             {/* Material Info */}
             {material && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <Calendar className="w-5 h-5 mr-2" />
+              <div className="bg-white rounded-card shadow-card border border-neutral-border p-md">
+                <h3 className="text-lg font-semibold text-neutral-text mb-md flex items-center">
+                  <Calendar className="w-5 h-5 mr-sm" />
                   Informações
                 </h3>
 
-                <div className="space-y-3 text-sm">
+                <div className="space-y-sm text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Versão:</span>
+                    <span className="text-neutral-textSecondary">Versão:</span>
                     <span className="font-medium">{material.version || 1}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Criado em:</span>
+                    <span className="text-neutral-textSecondary">Criado em:</span>
                     <span className="font-medium">
                       {new Date(material.updatedAt).toLocaleDateString('pt-BR')}
                     </span>
                   </div>
                   {material.lastEditedAt && (
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Última edição:</span>
+                      <span className="text-neutral-textSecondary">Última edição:</span>
                       <span className="font-medium">
                         {new Date(material.lastEditedAt).toLocaleDateString('pt-BR')}
                       </span>
@@ -460,7 +460,7 @@ const MaterialEditorPage: React.FC = () => {
                   )}
                   {material.editCount && (
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-600">Edições:</span>
+                      <span className="text-neutral-textSecondary">Edições:</span>
                       <span className="font-medium">{material.editCount}</span>
                     </div>
                   )}
@@ -470,12 +470,12 @@ const MaterialEditorPage: React.FC = () => {
 
             {/* Status Alert */}
             {watchedStatus === 'draft' && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+              <div className="bg-warning-light border border-yellow-200 rounded-card p-md">
                 <div className="flex items-start">
-                  <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 mr-2" />
+                  <AlertCircle className="w-5 h-5 text-warning mt-0.5 mr-sm" />
                   <div>
                     <h4 className="text-sm font-medium text-yellow-800">Rascunho</h4>
-                    <p className="text-sm text-yellow-700 mt-1">
+                    <p className="text-sm text-yellow-700 mt-xs">
                       Este material ainda não foi publicado e não está visível para outros usuários.
                     </p>
                   </div>

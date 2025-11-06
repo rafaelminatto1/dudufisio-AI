@@ -136,10 +136,10 @@ const SessionTrackingPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl mx-auto">
+    <div className="p-lg space-y-xl max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-md">
           <Button
             variant="ghost"
             size="icon"
@@ -148,14 +148,14 @@ const SessionTrackingPage: React.FC = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Registrar Sessão</h1>
-            <p className="text-gray-500 mt-1">
+            <h1 className="text-3xl font-bold text-neutral-text">Registrar Sessão</h1>
+            <p className="text-gray-500 mt-xs">
               Registre o progresso do paciente nos exercícios
             </p>
           </div>
         </div>
         <Button onClick={handleSave}>
-          <Save className="h-4 w-4 mr-2" />
+          <Save className="h-4 w-4 mr-sm" />
           Salvar Sessão
         </Button>
       </div>
@@ -168,10 +168,10 @@ const SessionTrackingPage: React.FC = () => {
             Dados gerais do atendimento
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <CardContent className="space-y-md">
+          <div className="grid grid-cols-2 gap-md">
             {/* Paciente */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label>Paciente *</Label>
               <Select value={selectedPatient} onValueChange={setSelectedPatient}>
                 <SelectTrigger>
@@ -188,7 +188,7 @@ const SessionTrackingPage: React.FC = () => {
             </div>
 
             {/* Data */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label>Data da Sessão *</Label>
               <Input
                 type="date"
@@ -199,9 +199,9 @@ const SessionTrackingPage: React.FC = () => {
           </div>
 
           {/* Avaliação Geral */}
-          <div className="space-y-2">
+          <div className="space-y-sm">
             <Label>Avaliação Geral da Sessão (1-10)</Label>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-md">
               <Input
                 type="range"
                 min={1}
@@ -244,23 +244,23 @@ const SessionTrackingPage: React.FC = () => {
             )}
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-md">
           {sessionExercises.map((exercise, index) => (
-            <Card key={index} className="p-4">
-              <div className="space-y-4">
+            <Card key={index} className="p-md">
+              <div className="space-y-md">
                 <div className="flex items-center justify-between">
                   <h4 className="font-medium">{exercise.exerciseName}</h4>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => removeExercise(index)}
-                    className="text-red-600"
+                    className="text-error"
                   >
                     Remover
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-md">
                   <div>
                     <Label className="text-xs">Séries</Label>
                     <Input
@@ -268,7 +268,7 @@ const SessionTrackingPage: React.FC = () => {
                       min={0}
                       value={exercise.sets}
                       onChange={(e) => updateExerciseData(index, 'sets', parseInt(e.target.value))}
-                      className="mt-1"
+                      className="mt-xs"
                     />
                   </div>
                   <div>
@@ -278,7 +278,7 @@ const SessionTrackingPage: React.FC = () => {
                       min={0}
                       value={exercise.reps}
                       onChange={(e) => updateExerciseData(index, 'reps', parseInt(e.target.value))}
-                      className="mt-1"
+                      className="mt-xs"
                     />
                   </div>
                   <div>
@@ -289,12 +289,12 @@ const SessionTrackingPage: React.FC = () => {
                       step={0.5}
                       value={exercise.weight || ''}
                       onChange={(e) => updateExerciseData(index, 'weight', e.target.value ? parseFloat(e.target.value) : undefined)}
-                      className="mt-1"
+                      className="mt-xs"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-md">
                   <div>
                     <Label className="text-xs">Dificuldade (1-10)</Label>
                     <Input
@@ -303,7 +303,7 @@ const SessionTrackingPage: React.FC = () => {
                       max={10}
                       value={exercise.difficulty}
                       onChange={(e) => updateExerciseData(index, 'difficulty', parseInt(e.target.value))}
-                      className="mt-1"
+                      className="mt-xs"
                     />
                   </div>
                   <div>
@@ -314,7 +314,7 @@ const SessionTrackingPage: React.FC = () => {
                       max={10}
                       value={exercise.painLevel}
                       onChange={(e) => updateExerciseData(index, 'painLevel', parseInt(e.target.value))}
-                      className="mt-1"
+                      className="mt-xs"
                     />
                   </div>
                   <div>
@@ -325,7 +325,7 @@ const SessionTrackingPage: React.FC = () => {
                       max={100}
                       value={exercise.completionRate}
                       onChange={(e) => updateExerciseData(index, 'completionRate', parseInt(e.target.value))}
-                      className="mt-1"
+                      className="mt-xs"
                     />
                   </div>
                 </div>
@@ -337,7 +337,7 @@ const SessionTrackingPage: React.FC = () => {
                     onChange={(e) => updateExerciseData(index, 'notes', e.target.value)}
                     placeholder="Notas sobre a execução..."
                     rows={2}
-                    className="mt-1"
+                    className="mt-xs"
                   />
                 </div>
               </div>
@@ -345,8 +345,8 @@ const SessionTrackingPage: React.FC = () => {
           ))}
 
           {sessionExercises.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              <p className="mb-2">Nenhum exercício adicionado</p>
+            <div className="text-center py-3xl text-gray-500">
+              <p className="mb-sm">Nenhum exercício adicionado</p>
               {selectedPatient && patientAssignments.length > 0 ? (
                 <p className="text-sm">Use o dropdown acima para adicionar exercícios atribuídos</p>
               ) : (
@@ -373,12 +373,12 @@ const SessionTrackingPage: React.FC = () => {
       </Card>
 
       {/* Action Buttons */}
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-sm">
         <Button variant="outline" onClick={() => navigate('/assignments')}>
           Cancelar
         </Button>
         <Button onClick={handleSave}>
-          <Save className="h-4 w-4 mr-2" />
+          <Save className="h-4 w-4 mr-sm" />
           Salvar Sessão
         </Button>
       </div>

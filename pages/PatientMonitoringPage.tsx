@@ -562,7 +562,7 @@ const PatientMonitoringPage: React.FC = () => {
   // Estado de erro
   if (hasError) {
     return (
-      <div className="space-y-6 p-6">
+      <div className="space-y-xl p-lg">
         <PageHeader
           title="Acompanhamento de Pacientes"
           subtitle="Monitore presença, evolução clínica e priorize ações para retenção"
@@ -605,7 +605,7 @@ const PatientMonitoringPage: React.FC = () => {
   );
 
   return (
-    <main role="main" aria-label="Acompanhamento de Pacientes" className="space-y-6 p-6">
+    <main role="main" aria-label="Acompanhamento de Pacientes" className="space-y-xl p-lg">
       <SkipToContent />
       
       {/* Header com 3 botões: Alertas, Filtros Salvos, Exportação */}
@@ -615,7 +615,7 @@ const PatientMonitoringPage: React.FC = () => {
           subtitle="Monitore presença, evolução clínica e priorize ações para retenção"
         />
         {!isLoading && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-sm">
             {/* Central de Alertas */}
             <AlertCenter
               alerts={alerts}
@@ -677,7 +677,7 @@ const PatientMonitoringPage: React.FC = () => {
 
       {/* Seção 2: Gráficos Expandidos (6 gráficos) */}
       <motion.div 
-        className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6"
+        className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-lg"
         variants={stagger}
         initial="initial"
         animate="animate"

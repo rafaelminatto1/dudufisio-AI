@@ -486,34 +486,34 @@ const PatientEditPage: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     const colors = {
-      Active: 'bg-green-100 text-green-800',
-      Inactive: 'bg-yellow-100 text-yellow-800',
-      Discharged: 'bg-slate-100 text-slate-800',
-      Suspended: 'bg-red-100 text-red-800',
+      Active: 'bg-success-light text-success',
+      Inactive: 'bg-warning-light text-yellow-800',
+      Discharged: 'bg-neutral-bgDark text-neutral-text',
+      Suspended: 'bg-error-light text-error',
     };
-    return colors[status as keyof typeof colors] || 'bg-slate-100 text-slate-800';
+    return colors[status as keyof typeof colors] || 'bg-neutral-bgDark text-neutral-text';
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-neutral-bgAlt py-3xl">
+      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-mdxl">
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/patients')}
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-sm" />
               Voltar
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">
+              <h1 className="text-3xl font-bold text-neutral-text">
                 {isNewPatient ? 'Novo Paciente' : (currentPatient?.name || 'Carregando...')}
               </h1>
               {!isNewPatient && (
-                <p className="text-slate-600 mt-1">
+                <p className="text-neutral-textSecondary mt-xs">
                   Código: {currentPatient?.id || 'N/A'} • Cadastrado em{' '}
                   {currentPatient?.registrationDate || 'N/A'}
                 </p>
@@ -527,7 +527,7 @@ const PatientEditPage: React.FC = () => {
               </Badge>
             )}
             <Button onClick={form.handleSubmit(onSubmit)} disabled={isLoading}>
-              <Save className="w-4 h-4 mr-2" />
+              <Save className="w-4 h-4 mr-sm" />
               {isLoading ? 'Salvando...' : 'Salvar'}
             </Button>
           </div>
@@ -535,11 +535,11 @@ const PatientEditPage: React.FC = () => {
 
         {/* Progress Cards - Only show if not new */}
         {!isNewPatient && currentPatient && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-md mb-xl">
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium flex items-center">
-                  <Activity className="w-4 h-4 mr-2 text-sky-500" />
+                  <Activity className="w-4 h-4 mr-sm text-sky-500" />
                   Sessões
                 </CardTitle>
               </CardHeader>
@@ -551,9 +551,9 @@ const PatientEditPage: React.FC = () => {
                   value={currentPatient.sessionTracking?.totalSessions ? 
                     ((currentPatient.sessionTracking.completedSessions || 0) / currentPatient.sessionTracking.totalSessions) * 100 : 0
                   } 
-                  className="mt-2"
+                  className="mt-sm"
                 />
-                <p className="text-xs text-slate-600 mt-2">
+                <p className="text-xs text-neutral-textSecondary mt-sm">
                   {Math.floor(((currentPatient.sessionTracking?.completedSessions || 0) / 3))} semanas de tratamento
                 </p>
               </CardContent>
@@ -562,20 +562,20 @@ const PatientEditPage: React.FC = () => {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium flex items-center">
-                  <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
+                  <TrendingUp className="w-4 h-4 mr-sm text-green-500" />
                   Dor
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-baseline space-x-2">
                   <span className="text-2xl font-bold">{mockPatient.treatmentMetrics.painLevel.current}</span>
-                  <span className="text-sm text-slate-600">/10</span>
+                  <span className="text-sm text-neutral-textSecondary">/10</span>
                 </div>
-                <div className="flex items-center mt-2">
-                  <span className="text-sm text-green-600 font-medium">
+                <div className="flex items-center mt-sm">
+                  <span className="text-sm text-success font-medium">
                     -{mockPatient.treatmentMetrics.painLevel.improvement}%
                   </span>
-                  <span className="text-xs text-slate-600 ml-2">desde o início</span>
+                  <span className="text-xs text-neutral-textSecondary ml-sm">desde o início</span>
                 </div>
               </CardContent>
             </Card>
@@ -583,7 +583,7 @@ const PatientEditPage: React.FC = () => {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium flex items-center">
-                  <CheckCircle2 className="w-4 h-4 mr-2 text-purple-500" />
+                  <CheckCircle2 className="w-4 h-4 mr-sm text-purple-500" />
                   Aderência
                 </CardTitle>
               </CardHeader>
@@ -591,8 +591,8 @@ const PatientEditPage: React.FC = () => {
                 <div className="text-2xl font-bold">
                   {mockPatient.sessionProgress.adherenceRate}%
                 </div>
-                <Progress value={mockPatient.sessionProgress.adherenceRate} className="mt-2" />
-                <p className="text-xs text-slate-600 mt-2">
+                <Progress value={mockPatient.sessionProgress.adherenceRate} className="mt-sm" />
+                <p className="text-xs text-neutral-textSecondary mt-sm">
                   {mockPatient.sessionProgress.completedSessions} sessões realizadas
                 </p>
               </CardContent>
@@ -601,7 +601,7 @@ const PatientEditPage: React.FC = () => {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium flex items-center">
-                  <DollarSign className="w-4 h-4 mr-2 text-orange-500" />
+                  <DollarSign className="w-4 h-4 mr-sm text-orange-500" />
                   Financeiro
                 </CardTitle>
               </CardHeader>
@@ -610,9 +610,9 @@ const PatientEditPage: React.FC = () => {
                   R$ {mockPatient.financialInfo.totalPaid.toFixed(2)}
                 </div>
                 {mockPatient.financialInfo.hasOutstandingBalance && (
-                  <div className="flex items-center mt-2">
-                    <AlertCircle className="w-3 h-3 text-orange-500 mr-1" />
-                    <span className="text-xs text-orange-600">
+                  <div className="flex items-center mt-sm">
+                    <AlertCircle className="w-3 h-3 text-orange-500 mr-xs" />
+                    <span className="text-xs text-warning">
                       Pendente: R$ {mockPatient.financialInfo.outstandingBalance}
                     </span>
                   </div>
@@ -628,52 +628,52 @@ const PatientEditPage: React.FC = () => {
             <Tabs defaultValue="personal" className="w-full">
               <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="personal">
-                  <User className="w-4 h-4 mr-2" />
+                  <User className="w-4 h-4 mr-sm" />
                   Pessoal
                 </TabsTrigger>
                 <TabsTrigger value="address">
-                  <MapPin className="w-4 h-4 mr-2" />
+                  <MapPin className="w-4 h-4 mr-sm" />
                   Endereço
                 </TabsTrigger>
                 <TabsTrigger value="emergency">
-                  <Phone className="w-4 h-4 mr-2" />
+                  <Phone className="w-4 h-4 mr-sm" />
                   Emergência
                 </TabsTrigger>
                 <TabsTrigger value="medical">
-                  <Heart className="w-4 h-4 mr-2" />
+                  <Heart className="w-4 h-4 mr-sm" />
                   Saúde
                 </TabsTrigger>
                 <TabsTrigger value="treatment">
-                  <Activity className="w-4 h-4 mr-2" />
+                  <Activity className="w-4 h-4 mr-sm" />
                   Tratamento
                 </TabsTrigger>
                 <TabsTrigger value="notes">
-                  <FileText className="w-4 h-4 mr-2" />
+                  <FileText className="w-4 h-4 mr-sm" />
                   Observações
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="personal" className="space-y-6">
+              <TabsContent value="personal" className="space-y-xl">
                 <PersonalDataForm form={form} />
               </TabsContent>
 
-              <TabsContent value="address" className="space-y-6">
+              <TabsContent value="address" className="space-y-xl">
                 <AddressForm form={form} />
               </TabsContent>
 
-              <TabsContent value="emergency" className="space-y-6">
+              <TabsContent value="emergency" className="space-y-xl">
                 <EmergencyContactForm form={form} />
               </TabsContent>
 
-              <TabsContent value="health" className="space-y-6">
+              <TabsContent value="health" className="space-y-xl">
                 <HealthForm form={form} />
               </TabsContent>
 
-              <TabsContent value="treatment" className="space-y-6">
+              <TabsContent value="treatment" className="space-y-xl">
                 <TreatmentForm form={form} />
               </TabsContent>
 
-              <TabsContent value="notes" className="space-y-6">
+              <TabsContent value="notes" className="space-y-xl">
                 <ObservationsForm form={form} />
               </TabsContent>
             </Tabs>

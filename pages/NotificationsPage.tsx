@@ -148,69 +148,69 @@ export const NotificationsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+    <div className="min-h-screen bg-neutral-bgAlt dark:bg-gray-900 p-lg">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <div className="mb-xl">
+          <h1 className="text-3xl font-bold text-neutral-text dark:text-white mb-sm">
             Notificações
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-neutral-textSecondary dark:text-neutral-textTertiary">
             {unreadCount > 0 ? `${unreadCount} não lida${unreadCount > 1 ? 's' : ''}` : 'Todas lidas'}
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card p-md mb-md">
+          <div className="flex flex-col md:flex-row gap-md">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-textTertiary" />
               <input
                 type="text"
                 placeholder="Pesquisar notificações..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full pl-10 pr-4 py-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2"
                 >
-                  <X className="w-4 h-4 text-gray-400" />
+                  <X className="w-4 h-4 text-neutral-textTertiary" />
                 </button>
               )}
             </div>
 
             {/* Filter Buttons */}
-            <div className="flex gap-2">
+            <div className="flex gap-sm">
               <button
                 onClick={() => setFilter('all')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-md py-sm rounded-lg font-medium transition-colors ${
                   filter === 'all'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-primary text-white'
+                    : 'bg-neutral-bgDark dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 Todas
               </button>
               <button
                 onClick={() => setFilter('unread')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-md py-sm rounded-lg font-medium transition-colors ${
                   filter === 'unread'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-primary text-white'
+                    : 'bg-neutral-bgDark dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 Não lidas {unreadCount > 0 && `(${unreadCount})`}
               </button>
               <button
                 onClick={() => setFilter('read')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`px-md py-sm rounded-lg font-medium transition-colors ${
                   filter === 'read'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-primary text-white'
+                    : 'bg-neutral-bgDark dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                 }`}
               >
                 Lidas
@@ -219,12 +219,12 @@ export const NotificationsPage: React.FC = () => {
           </div>
 
           {/* Type Filter */}
-          <div className="mt-4 flex items-center gap-2 overflow-x-auto">
+          <div className="mt-md flex items-center gap-sm overflow-x-auto">
             <Filter className="w-5 h-5 text-gray-500 flex-shrink-0" />
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as NotificationType)}
-              className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
+              className="px-md py-1 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white"
             >
               <option value="all">Todos os tipos</option>
               <option value="appointment_confirmation">Confirmações</option>
@@ -240,29 +240,29 @@ export const NotificationsPage: React.FC = () => {
 
         {/* Bulk Actions */}
         {selectedIds.size > 0 && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4 flex items-center justify-between">
+          <div className="bg-primary-light dark:bg-blue-900/20 border border-primary dark:border-blue-800 rounded-lg p-md mb-md flex items-center justify-between">
             <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
               {selectedIds.size} notificação{selectedIds.size > 1 ? 'ões' : ''} selecionada
               {selectedIds.size > 1 ? 's' : ''}
             </span>
-            <div className="flex gap-2">
+            <div className="flex gap-sm">
               <button
                 onClick={handleBulkMarkAsRead}
-                className="px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-1 text-sm"
+                className="px-md py-1.5 bg-primary text-white rounded-lg hover:bg-primary transition-colors flex items-center gap-1 text-sm"
               >
                 <CheckCheck className="w-4 h-4" />
                 Marcar como lidas
               </button>
               <button
                 onClick={handleBulkDelete}
-                className="px-3 py-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-1 text-sm"
+                className="px-md py-1.5 bg-error-light0 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center gap-1 text-sm"
               >
                 <Trash2 className="w-4 h-4" />
                 Deletar
               </button>
               <button
                 onClick={() => setSelectedIds(new Set())}
-                className="px-3 py-1.5 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
+                className="px-md py-1.5 bg-neutral-bgAlt0 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm"
               >
                 Cancelar
               </button>
@@ -271,11 +271,11 @@ export const NotificationsPage: React.FC = () => {
         )}
 
         {/* Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-4">
-          <div className="flex flex-wrap gap-2">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card p-md mb-md">
+          <div className="flex flex-wrap gap-sm">
             <button
               onClick={handleSelectAll}
-              className="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="px-md py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-neutral-bgDark dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
               {selectedIds.size === displayNotifications.length
                 ? 'Desmarcar todas'
@@ -284,7 +284,7 @@ export const NotificationsPage: React.FC = () => {
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="px-3 py-1.5 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors flex items-center gap-1"
+                className="px-md py-1.5 text-sm text-primary dark:text-blue-400 hover:bg-primary-light dark:hover:bg-blue-900/20 rounded-lg transition-colors flex items-center gap-1"
               >
                 <CheckCheck className="w-4 h-4" />
                 Marcar todas como lidas
@@ -292,14 +292,14 @@ export const NotificationsPage: React.FC = () => {
             )}
             <button
               onClick={deleteAllRead}
-              className="px-3 py-1.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-1"
+              className="px-md py-1.5 text-sm text-error dark:text-red-400 hover:bg-error-light dark:hover:bg-red-900/20 rounded-lg transition-colors flex items-center gap-1"
             >
               <Trash2 className="w-4 h-4" />
               Deletar todas lidas
             </button>
             <button
               onClick={refresh}
-              className="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ml-auto"
+              className="px-md py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-neutral-bgDark dark:hover:bg-gray-700 rounded-lg transition-colors ml-auto"
             >
               Atualizar
             </button>
@@ -307,16 +307,16 @@ export const NotificationsPage: React.FC = () => {
         </div>
 
         {/* Notifications List */}
-        <div className="space-y-2">
+        <div className="space-y-sm">
           {loading && displayNotifications.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-12 text-center">
-              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-gray-400" />
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card p-12 text-center">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-md text-neutral-textTertiary" />
               <p className="text-gray-500">Carregando notificações...</p>
             </div>
           ) : displayNotifications.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-12 text-center">
-              <Bell className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-card p-12 text-center">
+              <Bell className="w-16 h-16 mx-auto mb-md text-gray-300" />
+              <h3 className="text-lg font-semibold text-neutral-text dark:text-white mb-sm">
                 Nenhuma notificação
               </h3>
               <p className="text-gray-500">
@@ -330,45 +330,45 @@ export const NotificationsPage: React.FC = () => {
               {displayNotifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 transition-all hover:shadow-md ${
+                  className={`bg-white dark:bg-gray-800 rounded-lg shadow-card p-md transition-all hover:shadow-cardHover ${
                     !notification.read
-                      ? 'border-l-4 border-blue-500 bg-blue-50/50 dark:bg-blue-900/10'
+                      ? 'border-l-4 border-blue-500 bg-primary-light/50 dark:bg-blue-900/10'
                       : ''
                   }`}
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-md">
                     {/* Checkbox */}
                     <input
                       type="checkbox"
                       checked={selectedIds.has(notification.id)}
                       onChange={() => handleSelectOne(notification.id)}
-                      className="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                      className="mt-xs w-4 h-4 text-primary rounded focus:ring-blue-500"
                     />
 
                     {/* Icon */}
-                    <div className="flex-shrink-0 mt-1">
+                    <div className="flex-shrink-0 mt-xs">
                       {getNotificationIcon(notification.type)}
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                      <div className="flex items-start justify-between gap-sm mb-1">
+                        <h3 className="font-semibold text-neutral-text dark:text-white">
                           {notification.title}
                         </h3>
                         <span className="text-xs text-gray-500 whitespace-nowrap">
                           {formatDateTime(notification.createdAt)}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                      <p className="text-sm text-neutral-textSecondary dark:text-gray-300 mb-sm">
                         {notification.body}
                       </p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
+                      <div className="flex items-center gap-sm">
+                        <span className="text-xs px-sm py-1 bg-neutral-bgDark dark:bg-gray-700 text-neutral-textSecondary dark:text-neutral-textTertiary rounded">
                           {getTypeLabel(notification.type)}
                         </span>
                         {notification.priority === 'urgent' && (
-                          <span className="text-xs px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded font-medium">
+                          <span className="text-xs px-sm py-1 bg-error-light dark:bg-red-900/30 text-error dark:text-red-400 rounded font-medium">
                             Urgente
                           </span>
                         )}
@@ -376,30 +376,30 @@ export const NotificationsPage: React.FC = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-sm">
                       {!notification.read ? (
                         <button
                           onClick={() => markAsRead(notification.id)}
-                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          className="p-sm hover:bg-neutral-bgDark dark:hover:bg-gray-700 rounded-lg transition-colors"
                           title="Marcar como lida"
                         >
-                          <CheckCheck className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          <CheckCheck className="w-4 h-4 text-neutral-textSecondary dark:text-neutral-textTertiary" />
                         </button>
                       ) : (
                         <button
                           onClick={() => markAsUnread(notification.id)}
-                          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          className="p-sm hover:bg-neutral-bgDark dark:hover:bg-gray-700 rounded-lg transition-colors"
                           title="Marcar como não lida"
                         >
-                          <Bell className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          <Bell className="w-4 h-4 text-neutral-textSecondary dark:text-neutral-textTertiary" />
                         </button>
                       )}
                       <button
                         onClick={() => deleteNotification(notification.id)}
-                        className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        className="p-sm hover:bg-error-light dark:hover:bg-red-900/20 rounded-lg transition-colors"
                         title="Deletar"
                       >
-                        <Trash2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                        <Trash2 className="w-4 h-4 text-error dark:text-red-400" />
                       </button>
                     </div>
                   </div>
@@ -408,11 +408,11 @@ export const NotificationsPage: React.FC = () => {
 
               {/* Load More */}
               {hasMore && (
-                <div className="text-center py-4">
+                <div className="text-center py-md">
                   <button
                     onClick={loadMore}
                     disabled={loading}
-                    className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
+                    className="px-lg py-sm bg-primary text-white rounded-lg hover:bg-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-sm mx-auto"
                   >
                     {loading ? (
                       <>

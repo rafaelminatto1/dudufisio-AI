@@ -19,12 +19,12 @@ const SpecialtyAssessmentsPage: React.FC = memo(() => {
     const renderContent = () => {
         if (isLoadingPatients) {
             return (
-                <div className="space-y-6">
+                <div className="space-y-xl">
                     <Skeleton className="h-12 w-full" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
                         {[1, 2, 3, 4, 5, 6].map((i) => (
-                            <div key={i} className="space-y-3">
-                                <Skeleton className="h-48 w-full rounded-xl" />
+                            <div key={i} className="space-y-sm">
+                                <Skeleton className="h-48 w-full rounded-card" />
                                 <Skeleton className="h-6 w-3/4" />
                                 <Skeleton className="h-4 w-full" />
                             </div>
@@ -36,9 +36,9 @@ const SpecialtyAssessmentsPage: React.FC = memo(() => {
 
         if (!selectedPatientId) {
             return (
-                <div className="text-center p-10 bg-white rounded-2xl shadow-sm">
-                    <h3 className="text-lg font-semibold text-slate-700">Primeiro Passo</h3>
-                    <p className="text-slate-500 mt-1">Por favor, selecione um paciente para iniciar uma nova avaliação.</p>
+                <div className="text-center p-10 bg-white rounded-cardLarge shadow-card">
+                    <h3 className="text-lg font-semibold text-neutral-text">Primeiro Passo</h3>
+                    <p className="text-neutral-textSecondary mt-xs">Por favor, selecione um paciente para iniciar uma nova avaliação.</p>
                 </div>
             );
         }
@@ -50,9 +50,9 @@ const SpecialtyAssessmentsPage: React.FC = memo(() => {
                     return <SportsAssessmentForm patientId={selectedPatientId} onBack={handleBack} />;
                 default:
                     return (
-                        <div className="text-center p-10 bg-white rounded-2xl shadow-sm">
-                             <h3 className="text-lg font-semibold text-slate-700">Em Desenvolvimento</h3>
-                             <p className="text-slate-500 mt-1">O formulário de avaliação para "{selectedSpecialty.name}" ainda não está disponível.</p>
+                        <div className="text-center p-10 bg-white rounded-cardLarge shadow-card">
+                             <h3 className="text-lg font-semibold text-neutral-text">Em Desenvolvimento</h3>
+                             <p className="text-neutral-textSecondary mt-xs">O formulário de avaliação para "{selectedSpecialty.name}" ainda não está disponível.</p>
                         </div>
                     );
             }
@@ -72,21 +72,21 @@ const SpecialtyAssessmentsPage: React.FC = memo(() => {
         <>
             <PageHeader title={pageTitle} subtitle={pageSubtitle}>
                 {selectedSpecialty && (
-                     <button onClick={handleBack} className="inline-flex items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 mr-3">
-                        <ChevronLeft className="-ml-1 mr-2 h-5 w-5" />
+                     <button onClick={handleBack} className="inline-flex items-center rounded-lg border border-neutral-border bg-white px-md py-sm text-sm font-medium text-neutral-text shadow-card hover:bg-neutral-bgAlt mr-3">
+                        <ChevronLeft className="-ml-xs mr-sm h-5 w-5" />
                         Voltar para Galeria
                     </button>
                 )}
             </PageHeader>
             
             {!selectedSpecialty && (
-                <div className="mb-6 bg-white p-4 rounded-2xl shadow-sm">
-                    <label htmlFor="patient-select" className="block text-sm font-medium text-slate-700 mb-1">Paciente</label>
+                <div className="mb-xl bg-white p-md rounded-cardLarge shadow-card">
+                    <label htmlFor="patient-select" className="block text-sm font-medium text-neutral-text mb-1">Paciente</label>
                     <select
                         id="patient-select"
                         value={selectedPatientId}
                         onChange={(e) => setSelectedPatientId(e.target.value)}
-                        className="w-full max-w-sm p-2 border border-slate-300 rounded-lg bg-white"
+                        className="w-full max-w-sm p-sm border border-neutral-border rounded-lg bg-white"
                         disabled={isLoadingPatients}
                     >
                         <option value="">Selecione um paciente...</option>

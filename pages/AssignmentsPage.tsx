@@ -87,11 +87,11 @@ const AssignmentsPage: React.FC = () => {
   };
 
   const statusColors: Record<string, string> = {
-    assigned: 'bg-blue-100 text-blue-800',
-    in_progress: 'bg-yellow-100 text-yellow-800',
-    completed: 'bg-green-100 text-green-800',
-    paused: 'bg-gray-100 text-gray-800',
-    cancelled: 'bg-red-100 text-red-800',
+    assigned: 'bg-primary-light text-blue-800',
+    in_progress: 'bg-warning-light text-yellow-800',
+    completed: 'bg-success-light text-success',
+    paused: 'bg-neutral-bgDark text-gray-800',
+    cancelled: 'bg-error-light text-error',
   };
 
   const statusLabels: Record<string, string> = {
@@ -107,27 +107,27 @@ const AssignmentsPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-lg space-y-xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Atribuições de Exercícios</h1>
-          <p className="text-gray-500 mt-1">
+          <h1 className="text-3xl font-bold text-neutral-text">Atribuições de Exercícios</h1>
+          <p className="text-gray-500 mt-xs">
             Gerencie exercícios atribuídos aos pacientes
           </p>
         </div>
         <Button onClick={() => setShowAssignModal(true)}>
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="h-4 w-4 mr-sm" />
           Nova Atribuição
         </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-md">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <Activity className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -137,7 +137,7 @@ const AssignmentsPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Atribuídos</CardTitle>
-            <Clock className="h-4 w-4 text-blue-600" />
+            <Clock className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.assigned}</div>
@@ -147,7 +147,7 @@ const AssignmentsPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Em Progresso</CardTitle>
-            <Activity className="h-4 w-4 text-yellow-600" />
+            <Activity className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.inProgress}</div>
@@ -157,7 +157,7 @@ const AssignmentsPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Concluídos</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
+            <CheckCircle className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.completed}</div>
@@ -167,7 +167,7 @@ const AssignmentsPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pausados</CardTitle>
-            <Pause className="h-4 w-4 text-gray-600" />
+            <Pause className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.paused}</div>
@@ -184,11 +184,11 @@ const AssignmentsPage: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex flex-col md:flex-row gap-md">
             {/* Search */}
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-textTertiary" />
                 <Input
                   placeholder="Buscar atribuições..."
                   value={searchQuery}
@@ -250,7 +250,7 @@ const AssignmentsPage: React.FC = () => {
       </Card>
 
       {/* Assignments List */}
-      <div className="space-y-3">
+      <div className="space-y-sm">
         {filteredAssignments.map((assignment) => (
           <AssignmentCard key={assignment.id} assignment={assignment} />
         ))}
@@ -258,9 +258,9 @@ const AssignmentsPage: React.FC = () => {
         {filteredAssignments.length === 0 && (
           <Card>
             <CardContent className="py-12 text-center text-gray-500">
-              <p className="mb-2">Nenhuma atribuição encontrada</p>
+              <p className="mb-sm">Nenhuma atribuição encontrada</p>
               <Button variant="outline" onClick={() => setShowAssignModal(true)}>
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4 mr-sm" />
                 Criar Primeira Atribuição
               </Button>
             </CardContent>
@@ -280,16 +280,16 @@ const AssignmentsPage: React.FC = () => {
 // Skeleton Loading
 const AssignmentsPageSkeleton: React.FC = () => {
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-lg space-y-xl">
       <div className="flex items-center justify-between">
         <div>
-          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-8 w-64 mb-sm" />
           <Skeleton className="h-4 w-96" />
         </div>
         <Skeleton className="h-10 w-40" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-md">
         {[1, 2, 3, 4, 5].map((i) => (
           <Card key={i}>
             <CardHeader>
@@ -311,7 +311,7 @@ const AssignmentsPageSkeleton: React.FC = () => {
         </CardContent>
       </Card>
 
-      <div className="space-y-3">
+      <div className="space-y-sm">
         {[1, 2, 3].map((i) => (
           <Skeleton key={i} className="h-32 w-full" />
         ))}

@@ -117,10 +117,10 @@ export const SportsRehabilitationPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-bgAlt flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando dados do atleta...</p>
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-md"></div>
+          <p className="text-neutral-textSecondary">Carregando dados do atleta...</p>
         </div>
       </div>
     );
@@ -128,26 +128,26 @@ export const SportsRehabilitationPage: React.FC = () => {
 
   if (!athleteProfile) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4 py-16">
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <Activity className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="min-h-screen bg-neutral-bgAlt">
+        <div className="max-w-4xl mx-auto px-md py-16">
+          <div className="bg-white rounded-lg shadow-cardActive p-xl text-center">
+            <Activity className="w-16 h-16 text-blue-500 mx-auto mb-md" />
+            <h2 className="text-2xl font-bold text-neutral-text mb-sm">
               Perfil de Atleta Não Encontrado
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-neutral-textSecondary mb-xl">
               Este paciente ainda não possui um perfil de reabilitação esportiva.
             </p>
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-md justify-center">
               <button
                 onClick={() => navigate(-1)}
-                className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                className="px-lg py-sm bg-neutral-bgDark text-gray-700 rounded-lg hover:bg-gray-200 transition"
               >
                 Voltar
               </button>
               <button
                 onClick={handleCreateProfile}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                className="px-lg py-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition"
               >
                 Criar Perfil de Atleta
               </button>
@@ -188,14 +188,14 @@ export const SportsRehabilitationPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-bgAlt">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-4">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-cardActive">
+        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl py-3xl">
+          <div className="flex items-center gap-md">
             <button
               onClick={() => navigate(-1)}
-              className="p-2 hover:bg-white/10 rounded-lg transition"
+              className="p-sm hover:bg-white/10 rounded-lg transition"
               aria-label="Voltar"
               title="Voltar"
             >
@@ -215,35 +215,35 @@ export const SportsRehabilitationPage: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl py-3xl">
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Target className="w-5 h-5 text-blue-600" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-lg mb-mdxl">
+          <div className="bg-white rounded-lg shadow-cardHover p-lg">
+            <div className="flex items-center gap-md mb-sm">
+              <div className="p-sm bg-primary-light rounded-lg">
+                <Target className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="text-sm font-medium text-gray-600">Fase Atual</h3>
+              <h3 className="text-sm font-medium text-neutral-textSecondary">Fase Atual</h3>
             </div>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-2xl font-bold text-neutral-text">
               {getPhaseLabel(athleteProfile.currentPhase).split(':')[0]}
             </p>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-neutral-textSecondary mt-xs">
               {getPhaseLabel(athleteProfile.currentPhase).split(':')[1]}
             </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-green-600" />
+          <div className="bg-white rounded-lg shadow-cardHover p-lg">
+            <div className="flex items-center gap-md mb-sm">
+              <div className="p-sm bg-success-light rounded-lg">
+                <TrendingUp className="w-5 h-5 text-success" />
               </div>
-              <h3 className="text-sm font-medium text-gray-600">Progresso</h3>
+              <h3 className="text-sm font-medium text-neutral-textSecondary">Progresso</h3>
             </div>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-2xl font-bold text-neutral-text">
               {progression?.overallProgress || 0}%
             </p>
-            <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+            <div className="w-full bg-gray-200 rounded-full h-2 mt-sm">
               <div
                 className="bg-green-600 h-2 rounded-full transition-all"
                 style={{ width: `${progression?.overallProgress || 0}%` }}
@@ -251,77 +251,77 @@ export const SportsRehabilitationPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-purple-100 rounded-lg">
+          <div className="bg-white rounded-lg shadow-cardHover p-lg">
+            <div className="flex items-center gap-md mb-sm">
+              <div className="p-sm bg-purple-100 rounded-lg">
                 <Activity className="w-5 h-5 text-purple-600" />
               </div>
-              <h3 className="text-sm font-medium text-gray-600">Sessões</h3>
+              <h3 className="text-sm font-medium text-neutral-textSecondary">Sessões</h3>
             </div>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-2xl font-bold text-neutral-text">
               {sessions.length}
             </p>
-            <p className="text-sm text-gray-600 mt-1">Últimas 10 sessões</p>
+            <p className="text-sm text-neutral-textSecondary mt-xs">Últimas 10 sessões</p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Zap className="w-5 h-5 text-orange-600" />
+          <div className="bg-white rounded-lg shadow-cardHover p-lg">
+            <div className="flex items-center gap-md mb-sm">
+              <div className="p-sm bg-warning-light rounded-lg">
+                <Zap className="w-5 h-5 text-warning" />
               </div>
-              <h3 className="text-sm font-medium text-gray-600">Carga Semanal</h3>
+              <h3 className="text-sm font-medium text-neutral-textSecondary">Carga Semanal</h3>
             </div>
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-2xl font-bold text-neutral-text">
               {loadData[0]?.acwr.toFixed(2) || '0.00'}
             </p>
-            <p className="text-sm text-gray-600 mt-1">ACWR</p>
+            <p className="text-sm text-neutral-textSecondary mt-xs">ACWR</p>
           </div>
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
           {/* Perfil do Atleta */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-600" />
+          <div className="bg-white rounded-lg shadow-cardHover p-lg">
+            <h2 className="text-xl font-bold text-neutral-text mb-md flex items-center gap-sm">
+              <Activity className="w-5 h-5 text-primary" />
               Perfil do Atleta
             </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Esporte</span>
-                <span className="font-semibold text-gray-900">
+            <div className="space-y-sm">
+              <div className="flex justify-between py-sm border-b">
+                <span className="text-neutral-textSecondary">Esporte</span>
+                <span className="font-semibold text-neutral-text">
                   {getSportLabel(athleteProfile.sportType)}
                 </span>
               </div>
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Nível</span>
-                <span className="font-semibold text-gray-900">
+              <div className="flex justify-between py-sm border-b">
+                <span className="text-neutral-textSecondary">Nível</span>
+                <span className="font-semibold text-neutral-text">
                   {athleteProfile.competitionLevel}
                 </span>
               </div>
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Anos Praticando</span>
-                <span className="font-semibold text-gray-900">
+              <div className="flex justify-between py-sm border-b">
+                <span className="text-neutral-textSecondary">Anos Praticando</span>
+                <span className="font-semibold text-neutral-text">
                   {athleteProfile.yearsPracticing} anos
                 </span>
               </div>
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Horas/Semana</span>
-                <span className="font-semibold text-gray-900">
+              <div className="flex justify-between py-sm border-b">
+                <span className="text-neutral-textSecondary">Horas/Semana</span>
+                <span className="font-semibold text-neutral-text">
                   {athleteProfile.hoursPerWeek}h
                 </span>
               </div>
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Lado Dominante</span>
-                <span className="font-semibold text-gray-900">
+              <div className="flex justify-between py-sm border-b">
+                <span className="text-neutral-textSecondary">Lado Dominante</span>
+                <span className="font-semibold text-neutral-text">
                   {athleteProfile.dominantSide === 'right' ? 'Direito' : 
                    athleteProfile.dominantSide === 'left' ? 'Esquerdo' : 'Ambos'}
                 </span>
               </div>
               {athleteProfile.targetReturnDate && (
-                <div className="flex justify-between py-2">
-                  <span className="text-gray-600">Data Alvo de Retorno</span>
-                  <span className="font-semibold text-blue-600">
+                <div className="flex justify-between py-sm">
+                  <span className="text-neutral-textSecondary">Data Alvo de Retorno</span>
+                  <span className="font-semibold text-primary">
                     {new Date(athleteProfile.targetReturnDate).toLocaleDateString('pt-BR')}
                   </span>
                 </div>
@@ -330,24 +330,24 @@ export const SportsRehabilitationPage: React.FC = () => {
           </div>
 
           {/* Métricas de Desempenho */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-green-600" />
+          <div className="bg-white rounded-lg shadow-cardHover p-lg">
+            <h2 className="text-xl font-bold text-neutral-text mb-md flex items-center gap-sm">
+              <BarChart3 className="w-5 h-5 text-success" />
               Métricas Recentes
             </h2>
             {metrics.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-sm">
                 {metrics.slice(0, 5).map((metric) => (
                   <div key={metric.id} className="border-b pb-3 last:border-0">
                     <div className="flex justify-between items-start mb-1">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-neutral-text">
                         {metric.metricName}
                       </span>
-                      <span className="text-lg font-bold text-blue-600">
+                      <span className="text-lg font-bold text-primary">
                         {metric.value} {metric.unit}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-600">
+                    <div className="flex items-center gap-sm text-xs text-neutral-textSecondary">
                       <span>{metric.metricType}</span>
                       <span>•</span>
                       <span>{new Date(metric.metricDate).toLocaleDateString('pt-BR')}</span>
@@ -355,9 +355,9 @@ export const SportsRehabilitationPage: React.FC = () => {
                         <>
                           <span>•</span>
                           <span className={
-                            metric.trend === 'improving' ? 'text-green-600' :
-                            metric.trend === 'declining' ? 'text-red-600' :
-                            'text-gray-600'
+                            metric.trend === 'improving' ? 'text-success' :
+                            metric.trend === 'declining' ? 'text-error' :
+                            'text-neutral-textSecondary'
                           }>
                             {metric.trend === 'improving' ? '↗ Melhorando' :
                              metric.trend === 'declining' ? '↘ Declinando' :
@@ -370,8 +370,8 @@ export const SportsRehabilitationPage: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
-                <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-30" />
+              <div className="text-center py-3xl text-gray-500">
+                <BarChart3 className="w-12 h-12 mx-auto mb-sm opacity-30" />
                 <p>Nenhuma métrica registrada</p>
               </div>
             )}
@@ -379,8 +379,8 @@ export const SportsRehabilitationPage: React.FC = () => {
         </div>
 
         {/* Últimas Sessões */}
-        <div className="mt-6 bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="mt-xl bg-white rounded-lg shadow-cardHover p-lg">
+          <h2 className="text-xl font-bold text-neutral-text mb-md flex items-center gap-sm">
             <Calendar className="w-5 h-5 text-purple-600" />
             Últimas Sessões de Treinamento
           </h2>
@@ -388,7 +388,7 @@ export const SportsRehabilitationPage: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b text-left text-sm text-gray-600">
+                  <tr className="border-b text-left text-sm text-neutral-textSecondary">
                     <th className="pb-3 font-medium">Data</th>
                     <th className="pb-3 font-medium">Tipo</th>
                     <th className="pb-3 font-medium">Duração</th>
@@ -400,31 +400,31 @@ export const SportsRehabilitationPage: React.FC = () => {
                 <tbody>
                   {sessions.slice(0, 5).map((session) => (
                     <tr key={session.id} className="border-b last:border-0">
-                      <td className="py-3 text-sm text-gray-900">
+                      <td className="py-3 text-sm text-neutral-text">
                         {new Date(session.sessionDate).toLocaleDateString('pt-BR')}
                       </td>
-                      <td className="py-3 text-sm text-gray-900">
+                      <td className="py-3 text-sm text-neutral-text">
                         {session.sessionType}
                       </td>
-                      <td className="py-3 text-sm text-gray-900">
+                      <td className="py-3 text-sm text-neutral-text">
                         {session.duration} min
                       </td>
                       <td className="py-3">
-                        <span className="text-sm font-medium text-orange-600">
+                        <span className="text-sm font-medium text-warning">
                           {session.perceivedExertion || '-'}/10
                         </span>
                       </td>
                       <td className="py-3">
                         <span className={`text-sm font-medium ${
-                          (session.painLevel || 0) > 5 ? 'text-red-600' :
-                          (session.painLevel || 0) > 3 ? 'text-orange-600' :
-                          'text-green-600'
+                          (session.painLevel || 0) > 5 ? 'text-error' :
+                          (session.painLevel || 0) > 3 ? 'text-warning' :
+                          'text-success'
                         }`}>
                           {session.painLevel || 0}/10
                         </span>
                       </td>
                       <td className="py-3">
-                        <span className="text-sm font-medium text-blue-600">
+                        <span className="text-sm font-medium text-primary">
                           {session.performanceRating || '-'}/10
                         </span>
                       </td>
@@ -434,19 +434,19 @@ export const SportsRehabilitationPage: React.FC = () => {
               </table>
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">
-              <Calendar className="w-12 h-12 mx-auto mb-2 opacity-30" />
+            <div className="text-center py-3xl text-gray-500">
+              <Calendar className="w-12 h-12 mx-auto mb-sm opacity-30" />
               <p>Nenhuma sessão registrada</p>
             </div>
           )}
         </div>
 
         {/* Info Banner */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <div className="flex items-start gap-4">
-            <Activity className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+        <div className="mt-xl bg-primary-light border border-primary rounded-lg p-lg">
+          <div className="flex items-start gap-md">
+            <Activity className="w-6 h-6 text-primary flex-shrink-0 mt-xs" />
             <div>
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">
+              <h3 className="text-lg font-semibold text-blue-900 mb-sm">
                 Sobre a Reabilitação Esportiva
               </h3>
               <p className="text-blue-800 text-sm">

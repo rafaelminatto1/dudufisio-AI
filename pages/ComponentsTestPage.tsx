@@ -3,7 +3,6 @@ import Input from '../src/components/ui/Input';
 import Badge from '../src/components/ui/Badge';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../src/components/ui/Table';
 import Modal from '../src/components/ui/Modal';
-import { H1, H2, H3, Body } from '../src/components/ui/Typography';
 import Card from '../src/components/ui/Card';
 import Button from '../src/components/ui/Button';
 import { Search, Mail, User, Check, AlertTriangle, Info } from 'lucide-react';

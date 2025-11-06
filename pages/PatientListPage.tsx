@@ -8,7 +8,6 @@ import LoadingState from '@/components/ui/LoadingState';
 import ErrorState from '@/components/ui/ErrorState';
 import EmptyState from '@/components/ui/EmptyState';
 import { handleError } from '@/lib/middleware/errorHandler';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 const PatientListPage: React.FC = () => {
   const navigate = useNavigate();

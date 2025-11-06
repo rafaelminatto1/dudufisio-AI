@@ -32,24 +32,24 @@ export const WhatsAppManagementPage: React.FC = () => {
   );
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-lg space-y-xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">WhatsApp Business</h1>
-          <p className="text-muted-foreground">
+          <p className="text-neutral-textSecondary">
             Gerencie mensagens, automações e configurações do WhatsApp
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-sm">
           {isConfigured ? (
-            <Badge className="bg-green-100 text-green-800">
-              <CheckCircle2 className="h-3 w-3 mr-1" />
+            <Badge className="bg-success-light text-success">
+              <CheckCircle2 className="h-3 w-3 mr-xs" />
               Configurado
             </Badge>
           ) : (
-            <Badge className="bg-red-100 text-red-800">
-              <XCircle className="h-3 w-3 mr-1" />
+            <Badge className="bg-error-light text-error">
+              <XCircle className="h-3 w-3 mr-xs" />
               Não Configurado
             </Badge>
           )}
@@ -58,10 +58,10 @@ export const WhatsAppManagementPage: React.FC = () => {
 
       {/* Status Card */}
       {!isConfigured && (
-        <Card className="border-yellow-200 bg-yellow-50">
+        <Card className="border-yellow-200 bg-warning-light">
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-yellow-600" />
+            <div className="flex items-center gap-sm">
+              <AlertCircle className="h-5 w-5 text-warning" />
               <CardTitle className="text-yellow-900">Configuração Necessária</CardTitle>
             </div>
             <CardDescription className="text-yellow-700">
@@ -77,15 +77,15 @@ export const WhatsAppManagementPage: React.FC = () => {
       )}
 
       {/* Quick Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-md md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Mensagens Hoje</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            <MessageSquare className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">248</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-textSecondary">
               +20% em relação a ontem
             </p>
           </CardContent>
@@ -94,11 +94,11 @@ export const WhatsAppManagementPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Taxa de Resposta</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <BarChart3 className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">94%</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-textSecondary">
               Tempo médio: 2.5 min
             </p>
           </CardContent>
@@ -107,11 +107,11 @@ export const WhatsAppManagementPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Automações Ativas</CardTitle>
-            <Zap className="h-4 w-4 text-muted-foreground" />
+            <Zap className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-textSecondary">
               8 executadas hoje
             </p>
           </CardContent>
@@ -120,11 +120,11 @@ export const WhatsAppManagementPage: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Novos Leads</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+            <CheckCircle2 className="h-4 w-4 text-neutral-textSecondary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">18</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-textSecondary">
               Via WhatsApp
             </p>
           </CardContent>
@@ -135,32 +135,32 @@ export const WhatsAppManagementPage: React.FC = () => {
       <Tabs defaultValue="messages" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="messages">
-            <MessageSquare className="h-4 w-4 mr-2" />
+            <MessageSquare className="h-4 w-4 mr-sm" />
             Mensagens
           </TabsTrigger>
           <TabsTrigger value="automations">
-            <Zap className="h-4 w-4 mr-2" />
+            <Zap className="h-4 w-4 mr-sm" />
             Automações
           </TabsTrigger>
           <TabsTrigger value="analytics">
-            <BarChart3 className="h-4 w-4 mr-2" />
+            <BarChart3 className="h-4 w-4 mr-sm" />
             Analytics
           </TabsTrigger>
           <TabsTrigger value="settings">
-            <Settings className="h-4 w-4 mr-2" />
+            <Settings className="h-4 w-4 mr-sm" />
             Configurações
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="messages" className="space-y-4">
+        <TabsContent value="messages" className="space-y-md">
           <WhatsAppMessagesPanel clinicId={clinicId} />
         </TabsContent>
 
-        <TabsContent value="automations" className="space-y-4">
+        <TabsContent value="automations" className="space-y-md">
           <WhatsAppAutomationDashboard clinicId={clinicId} />
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-4">
+        <TabsContent value="analytics" className="space-y-md">
           <Card>
             <CardHeader>
               <CardTitle>Analytics WhatsApp</CardTitle>
@@ -169,15 +169,15 @@ export const WhatsAppManagementPage: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
+              <div className="space-y-xl">
                 {/* Placeholder para gráficos */}
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-md md:grid-cols-2">
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-sm">Mensagens por Dia</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                      <div className="h-[200px] flex items-center justify-center text-neutral-textSecondary">
                         Gráfico em desenvolvimento
                       </div>
                     </CardContent>
@@ -188,7 +188,7 @@ export const WhatsAppManagementPage: React.FC = () => {
                       <CardTitle className="text-sm">Taxa de Entrega</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                      <div className="h-[200px] flex items-center justify-center text-neutral-textSecondary">
                         Gráfico em desenvolvimento
                       </div>
                     </CardContent>
@@ -196,13 +196,13 @@ export const WhatsAppManagementPage: React.FC = () => {
                 </div>
 
                 {/* Métricas detalhadas */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-md md:grid-cols-3">
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-sm">Horários de Pico</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-2">
+                      <div className="space-y-sm">
                         <div className="flex justify-between">
                           <span className="text-sm">09:00 - 12:00</span>
                           <span className="text-sm font-bold">42%</span>
@@ -224,7 +224,7 @@ export const WhatsAppManagementPage: React.FC = () => {
                       <CardTitle className="text-sm">Tipos de Mensagem</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-2">
+                      <div className="space-y-sm">
                         <div className="flex justify-between">
                           <span className="text-sm">Texto</span>
                           <span className="text-sm font-bold">85%</span>
@@ -246,7 +246,7 @@ export const WhatsAppManagementPage: React.FC = () => {
                       <CardTitle className="text-sm">Top Automações</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-2">
+                      <div className="space-y-sm">
                         <div className="flex justify-between">
                           <span className="text-sm">Boas-vindas</span>
                           <span className="text-sm font-bold">156</span>
@@ -268,7 +268,7 @@ export const WhatsAppManagementPage: React.FC = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-4">
+        <TabsContent value="settings" className="space-y-md">
           <WhatsAppConfigStatus />
           
           <Card>
@@ -278,12 +278,12 @@ export const WhatsAppManagementPage: React.FC = () => {
                 Configure o comportamento do WhatsApp
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
+            <CardContent className="space-y-xl">
+              <div className="space-y-md">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Respostas Automáticas</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-neutral-textSecondary">
                       Enviar respostas automáticas quando a mensagem não for reconhecida
                     </p>
                   </div>
@@ -293,7 +293,7 @@ export const WhatsAppManagementPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Horário de Atendimento</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-neutral-textSecondary">
                       Definir horários em que o sistema deve responder automaticamente
                     </p>
                   </div>
@@ -303,7 +303,7 @@ export const WhatsAppManagementPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Notificações</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-neutral-textSecondary">
                       Configurar notificações para a equipe quando receber mensagens
                     </p>
                   </div>
@@ -313,7 +313,7 @@ export const WhatsAppManagementPage: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-medium">Templates</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-neutral-textSecondary">
                       Gerenciar templates aprovados pelo WhatsApp Business
                     </p>
                   </div>

@@ -92,48 +92,48 @@ const ProtocolListPage: React.FC = () => {
   }, [filteredProtocols, exportToCSV]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Protocolos Clínicos</h1>
-          <p className="text-muted-foreground">
+          <p className="text-neutral-textSecondary">
             Biblioteca de protocolos baseados em evidências
           </p>
         </div>
         <Button onClick={() => toast.info('Criação de protocolo em desenvolvimento')}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-sm h-4 w-4" />
           Novo Protocolo
         </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-md md:grid-cols-4">
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Total</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Total</p>
             <p className="text-2xl font-bold">{filteredProtocols.length}</p>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Mais Usados</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Mais Usados</p>
             <p className="text-2xl font-bold">
               {filteredProtocols.filter((p: any) => p.timesUsed > 10).length}
             </p>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Alta Evidência</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Alta Evidência</p>
             <p className="text-2xl font-bold">
               {filteredProtocols.filter((p: any) => ['1A', '1B'].includes(p.evidenceLevel)).length}
             </p>
           </div>
         </Card>
         <Card>
-          <div className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">Ativos</p>
+          <div className="p-lg">
+            <p className="text-sm font-medium text-neutral-textSecondary">Ativos</p>
             <p className="text-2xl font-bold">
               {filteredProtocols.filter((p: any) => p.isActive).length}
             </p>
@@ -142,7 +142,7 @@ const ProtocolListPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2">
+      <div className="flex gap-sm">
         <SearchBar
           value={searchQuery}
           onChange={setSearchQuery}
@@ -150,20 +150,20 @@ const ProtocolListPage: React.FC = () => {
           className="max-w-md"
         />
         <Button variant="outline" size="sm" onClick={handleExport}>
-          <Download className="mr-2 h-4 w-4" />
+          <Download className="mr-sm h-4 w-4" />
           Exportar
         </Button>
       </div>
 
       {/* Protocol Grid */}
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <Card key={i} className="h-64 animate-pulse bg-muted" />
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
           {filteredProtocols.map((protocol: any) => (
             <ProtocolCard
               key={protocol.id}
@@ -182,9 +182,9 @@ const ProtocolListPage: React.FC = () => {
       {filteredProtocols.length === 0 && !isLoading && (
         <Card>
           <div className="flex flex-col items-center justify-center py-12">
-            <FileText className="mb-4 h-12 w-12 text-muted-foreground" />
+            <FileText className="mb-md h-12 w-12 text-neutral-textSecondary" />
             <p className="text-lg font-medium">Nenhum protocolo encontrado</p>
-            <p className="text-sm text-muted-foreground">Adicione novos protocolos clínicos</p>
+            <p className="text-sm text-neutral-textSecondary">Adicione novos protocolos clínicos</p>
           </div>
         </Card>
       )}

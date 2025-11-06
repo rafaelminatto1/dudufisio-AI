@@ -199,56 +199,56 @@ export default function ClinicalContentPage() {
   };
 
   const renderProtocols = () => (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {protocols.map(protocol => (
-        <div key={protocol.id} className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+        <div key={protocol.id} className="bg-white rounded-lg shadow-cardHover p-lg border-l-4 border-blue-500">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xl font-bold text-gray-900">{protocol.title}</h3>
-                <div className="flex gap-2">
+              <div className="flex items-center justify-between mb-sm">
+                <h3 className="text-xl font-bold text-neutral-text">{protocol.title}</h3>
+                <div className="flex gap-sm">
                   <button
                     onClick={() => handleAssignProtocol(protocol)}
-                    className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
+                    className="px-md py-1 bg-success-light0 text-white rounded hover:bg-green-600 text-sm"
                   >
                     👥 Atrelar a Paciente
                   </button>
                   <button
                     onClick={() => handleEditProtocol(protocol)}
-                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
+                    className="px-md py-1 bg-warning-light0 text-white rounded hover:bg-yellow-600 text-sm"
                   >
                     ✏️ Editar
                   </button>
                   <button
                     onClick={() => handleDeleteProtocol(protocol.id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                    className="px-md py-1 bg-error-light0 text-white rounded hover:bg-red-600 text-sm"
                   >
                     🗑️ Deletar
                   </button>
                 </div>
               </div>
-              <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-3">
+              <span className="inline-block px-md py-1 bg-primary-light text-blue-800 rounded-full text-sm font-medium mb-md">
                 {protocol.specialty}
               </span>
-              <p className="text-gray-700 mb-4">{protocol.summary}</p>
+              <p className="text-gray-700 mb-md">{protocol.summary}</p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div className="bg-gray-50 p-3 rounded">
-                  <span className="text-sm text-gray-600">Duração</span>
-                  <p className="font-semibold text-gray-900">{protocol.duration}</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-md mb-md">
+                <div className="bg-neutral-bgAlt p-md rounded">
+                  <span className="text-sm text-neutral-textSecondary">Duração</span>
+                  <p className="font-semibold text-neutral-text">{protocol.duration}</p>
                 </div>
-                <div className="bg-gray-50 p-3 rounded">
-                  <span className="text-sm text-gray-600">Frequência</span>
-                  <p className="font-semibold text-gray-900">{protocol.frequency}</p>
+                <div className="bg-neutral-bgAlt p-md rounded">
+                  <span className="text-sm text-neutral-textSecondary">Frequência</span>
+                  <p className="font-semibold text-neutral-text">{protocol.frequency}</p>
                 </div>
-                <div className="bg-gray-50 p-3 rounded">
-                  <span className="text-sm text-gray-600">Nível de Evidência</span>
-                  <p className="font-semibold text-gray-900">{protocol.evidenceLevel}</p>
+                <div className="bg-neutral-bgAlt p-md rounded">
+                  <span className="text-sm text-neutral-textSecondary">Nível de Evidência</span>
+                  <p className="font-semibold text-neutral-text">{protocol.evidenceLevel}</p>
                 </div>
               </div>
               
-              <div className="mb-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Objetivos:</h4>
+              <div className="mb-md">
+                <h4 className="font-semibold text-neutral-text mb-sm">Objetivos:</h4>
                 <ul className="list-disc list-inside space-y-1">
                   {protocol.objectives.map((obj, idx) => (
                     <li key={idx} className="text-gray-700">{obj}</li>
@@ -256,15 +256,15 @@ export default function ClinicalContentPage() {
                 </ul>
               </div>
               
-              <div className="mb-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Fases ({protocol.phases.length}):</h4>
-                <div className="space-y-2">
+              <div className="mb-md">
+                <h4 className="font-semibold text-neutral-text mb-sm">Fases ({protocol.phases.length}):</h4>
+                <div className="space-y-sm">
                   {protocol.phases.map(phase => (
-                    <div key={phase.id} className="bg-gray-50 p-3 rounded">
-                      <p className="font-medium text-gray-900">
-                        {phase.order}. {phase.name} <span className="text-sm text-gray-600">({phase.duration})</span>
+                    <div key={phase.id} className="bg-neutral-bgAlt p-md rounded">
+                      <p className="font-medium text-neutral-text">
+                        {phase.order}. {phase.name} <span className="text-sm text-neutral-textSecondary">({phase.duration})</span>
                       </p>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-neutral-textSecondary mt-xs">
                         {phase.goals.slice(0, 2).join('; ')}
                       </p>
                     </div>
@@ -272,9 +272,9 @@ export default function ClinicalContentPage() {
                 </div>
               </div>
               
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-sm">
                 {protocol.tags.map(tag => (
-                  <span key={tag} className="px-2 py-1 bg-gray-200 text-gray-700 rounded text-xs">
+                  <span key={tag} className="px-sm py-1 bg-gray-200 text-gray-700 rounded text-xs">
                     {tag}
                   </span>
                 ))}
@@ -297,57 +297,57 @@ export default function ClinicalContentPage() {
   );
 
   const renderExercises = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
       {exercises.map(exercise => (
-        <div key={exercise.id} className="bg-white rounded-lg shadow-md p-6 border-t-4 border-green-500">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-lg font-bold text-gray-900">{exercise.name}</h3>
-            <div className="flex gap-2">
+        <div key={exercise.id} className="bg-white rounded-lg shadow-cardHover p-lg border-t-4 border-green-500">
+          <div className="flex items-center justify-between mb-sm">
+            <h3 className="text-lg font-bold text-neutral-text">{exercise.name}</h3>
+            <div className="flex gap-sm">
               <button
                 onClick={() => handleEditExercise(exercise)}
-                className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs"
+                className="px-sm py-1 bg-warning-light0 text-white rounded hover:bg-yellow-600 text-xs"
               >
                 ✏️
               </button>
               <button
                 onClick={() => handleDeleteExercise(exercise.id)}
-                className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs"
+                className="px-sm py-1 bg-error-light0 text-white rounded hover:bg-red-600 text-xs"
               >
                 🗑️
               </button>
             </div>
           </div>
-          <div className="flex gap-2 mb-3">
+          <div className="flex gap-sm mb-md">
             {exercise.specialty.map(spec => (
-              <span key={spec} className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs">
+              <span key={spec} className="px-sm py-1 bg-success-light text-success rounded text-xs">
                 {spec}
               </span>
             ))}
           </div>
           
-          <p className="text-gray-700 mb-3">{exercise.description}</p>
+          <p className="text-gray-700 mb-md">{exercise.description}</p>
           
-          <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+          <div className="grid grid-cols-2 gap-sm mb-md text-sm">
             <div>
-              <span className="text-gray-600">Categoria:</span>
+              <span className="text-neutral-textSecondary">Categoria:</span>
               <p className="font-medium">{exercise.category}</p>
             </div>
             <div>
-              <span className="text-gray-600">Dificuldade:</span>
+              <span className="text-neutral-textSecondary">Dificuldade:</span>
               <p className="font-medium">{exercise.difficulty}</p>
             </div>
             <div>
-              <span className="text-gray-600">Séries:</span>
+              <span className="text-neutral-textSecondary">Séries:</span>
               <p className="font-medium">{exercise.sets} x {exercise.repetitions}</p>
             </div>
             <div>
-              <span className="text-gray-600">Descanso:</span>
+              <span className="text-neutral-textSecondary">Descanso:</span>
               <p className="font-medium">{exercise.restPeriod}</p>
             </div>
           </div>
           
           {exercise.images.length > 0 && (
-            <div className="flex gap-2 mb-3">
+            <div className="flex gap-sm mb-md">
               {exercise.images.slice(0, 3).map((img, idx) => (
                 <img 
                   key={idx}
@@ -361,10 +361,10 @@ export default function ClinicalContentPage() {
           
           <div className="mt-3">
             <details className="text-sm">
-              <summary className="cursor-pointer font-medium text-gray-700 hover:text-gray-900">
+              <summary className="cursor-pointer font-medium text-gray-700 hover:text-neutral-text">
                 Ver instruções completas
               </summary>
-              <ol className="list-decimal list-inside mt-2 space-y-1 text-gray-600">
+              <ol className="list-decimal list-inside mt-sm space-y-1 text-neutral-textSecondary">
                 {exercise.instructions.map(inst => (
                   <li key={inst.order}>{inst.text}</li>
                 ))}
@@ -374,7 +374,7 @@ export default function ClinicalContentPage() {
           
           <div className="flex flex-wrap gap-1 mt-3">
             {exercise.tags.map(tag => (
-              <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+              <span key={tag} className="px-sm py-1 bg-neutral-bgDark text-neutral-textSecondary rounded text-xs">
                 #{tag}
               </span>
             ))}
@@ -385,49 +385,49 @@ export default function ClinicalContentPage() {
   );
 
   const renderAssessments = () => (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {assessments.map(assessment => (
-        <div key={assessment.id} className="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xl font-bold text-gray-900">{assessment.title}</h3>
-            <div className="flex gap-2">
+        <div key={assessment.id} className="bg-white rounded-lg shadow-cardHover p-lg border-l-4 border-purple-500">
+          <div className="flex items-center justify-between mb-sm">
+            <h3 className="text-xl font-bold text-neutral-text">{assessment.title}</h3>
+            <div className="flex gap-sm">
               <button
                 onClick={() => handleEditAssessment(assessment)}
-                className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
+                className="px-md py-1 bg-warning-light0 text-white rounded hover:bg-yellow-600 text-sm"
               >
                 ✏️ Editar
               </button>
               <button
                 onClick={() => handleDeleteAssessment(assessment.id)}
-                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                className="px-md py-1 bg-error-light0 text-white rounded hover:bg-red-600 text-sm"
               >
                 🗑️ Deletar
               </button>
             </div>
           </div>
-          <span className="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium mb-3">
+          <span className="inline-block px-md py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium mb-md">
             {assessment.specialty}
           </span>
-          <p className="text-gray-700 mb-4">{assessment.description}</p>
+          <p className="text-gray-700 mb-md">{assessment.description}</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="bg-gray-50 p-3 rounded">
-              <span className="text-sm text-gray-600">Duração</span>
-              <p className="font-semibold text-gray-900">{assessment.duration}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-md mb-md">
+            <div className="bg-neutral-bgAlt p-md rounded">
+              <span className="text-sm text-neutral-textSecondary">Duração</span>
+              <p className="font-semibold text-neutral-text">{assessment.duration}</p>
             </div>
-            <div className="bg-gray-50 p-3 rounded">
-              <span className="text-sm text-gray-600">População Alvo</span>
-              <p className="font-semibold text-gray-900">{assessment.targetPopulation}</p>
+            <div className="bg-neutral-bgAlt p-md rounded">
+              <span className="text-sm text-neutral-textSecondary">População Alvo</span>
+              <p className="font-semibold text-neutral-text">{assessment.targetPopulation}</p>
             </div>
           </div>
           
-          <div className="mb-4">
-            <h4 className="font-semibold text-gray-900 mb-2">Procedimentos ({assessment.procedures.length}):</h4>
-            <div className="space-y-2">
+          <div className="mb-md">
+            <h4 className="font-semibold text-neutral-text mb-sm">Procedimentos ({assessment.procedures.length}):</h4>
+            <div className="space-y-sm">
               {assessment.procedures.map(proc => (
-                <div key={proc.id} className="bg-gray-50 p-3 rounded">
-                  <p className="font-medium text-gray-900">{proc.order}. {proc.step}</p>
-                  <p className="text-sm text-gray-600 mt-1">{proc.instruction}</p>
+                <div key={proc.id} className="bg-neutral-bgAlt p-md rounded">
+                  <p className="font-medium text-neutral-text">{proc.order}. {proc.step}</p>
+                  <p className="text-sm text-neutral-textSecondary mt-xs">{proc.instruction}</p>
                 </div>
               ))}
             </div>
@@ -438,53 +438,53 @@ export default function ClinicalContentPage() {
   );
 
   const renderMaterials = () => (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {materials.map(material => (
-        <div key={material.id} className="bg-white rounded-lg shadow-md p-6 border-l-4 border-yellow-500">
-          <div className="flex items-start justify-between mb-3">
+        <div key={material.id} className="bg-white rounded-lg shadow-cardHover p-lg border-l-4 border-yellow-500">
+          <div className="flex items-start justify-between mb-md">
             <div className="flex-1">
-              <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xl font-bold text-gray-900">{material.title}</h3>
-                <div className="flex gap-2">
+              <div className="flex items-center justify-between mb-sm">
+              <h3 className="text-xl font-bold text-neutral-text">{material.title}</h3>
+                <div className="flex gap-sm">
                   <button
                     onClick={() => handleEditMaterial(material)}
-                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-sm"
+                    className="px-md py-1 bg-warning-light0 text-white rounded hover:bg-yellow-600 text-sm"
                   >
                     ✏️ Editar
                   </button>
                   <button
                     onClick={() => handleDeleteMaterial(material.id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                    className="px-md py-1 bg-error-light0 text-white rounded hover:bg-red-600 text-sm"
                   >
                     🗑️ Deletar
                   </button>
                 </div>
               </div>
-              <div className="flex gap-2 mt-2">
-                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs">
+              <div className="flex gap-sm mt-sm">
+                <span className="px-sm py-1 bg-warning-light text-yellow-800 rounded text-xs">
                   {material.type}
                 </span>
-                <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                <span className="px-sm py-1 bg-neutral-bgDark text-gray-700 rounded text-xs">
                   {material.specialty}
                 </span>
               </div>
               {material.downloadable && (
-                <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mt-2">
+                <button className="px-md py-sm bg-primary text-white rounded hover:bg-primary mt-sm">
                   📥 Download
                 </button>
               )}
             </div>
           </div>
           
-          <p className="text-gray-700 mb-4">{material.description}</p>
+          <p className="text-gray-700 mb-md">{material.description}</p>
           
-          <div className="bg-gray-50 p-4 rounded max-h-96 overflow-y-auto">
+          <div className="bg-neutral-bgAlt p-md rounded max-h-96 overflow-y-auto">
             <pre className="whitespace-pre-wrap text-sm text-gray-700">
               {material.content.slice(0, 500)}...
             </pre>
           </div>
           
-          <div className="mt-3 flex justify-between items-center text-sm text-gray-600">
+          <div className="mt-3 flex justify-between items-center text-sm text-neutral-textSecondary">
             <span>Versão: {material.version}</span>
             <span>Revisado: {new Date(material.lastReviewed).toLocaleDateString('pt-BR')}</span>
           </div>
@@ -494,44 +494,44 @@ export default function ClinicalContentPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-neutral-bgAlt">
+      <div className="max-w-7xl mx-auto px-md py-3xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-mdxl">
+          <h1 className="text-3xl font-bold text-neutral-text mb-sm">
             🏥 Biblioteca de Conteúdo Clínico
           </h1>
-          <p className="text-gray-600">
+          <p className="text-neutral-textSecondary">
             Protocolos, exercícios e materiais baseados em evidências científicas
           </p>
         </div>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-blue-600">{stats.totalProtocols}</div>
-            <div className="text-sm text-gray-600">Protocolos</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-md mb-mdxl">
+          <div className="bg-white p-md rounded-lg shadow">
+            <div className="text-2xl font-bold text-primary">{stats.totalProtocols}</div>
+            <div className="text-sm text-neutral-textSecondary">Protocolos</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-green-600">{stats.totalExercises}</div>
-            <div className="text-sm text-gray-600">Exercícios</div>
+          <div className="bg-white p-md rounded-lg shadow">
+            <div className="text-2xl font-bold text-success">{stats.totalExercises}</div>
+            <div className="text-sm text-neutral-textSecondary">Exercícios</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
+          <div className="bg-white p-md rounded-lg shadow">
             <div className="text-2xl font-bold text-purple-600">{stats.totalAssessments}</div>
-            <div className="text-sm text-gray-600">Avaliações</div>
+            <div className="text-sm text-neutral-textSecondary">Avaliações</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-yellow-600">{stats.totalMaterials}</div>
-            <div className="text-sm text-gray-600">Materiais</div>
+          <div className="bg-white p-md rounded-lg shadow">
+            <div className="text-2xl font-bold text-warning">{stats.totalMaterials}</div>
+            <div className="text-sm text-neutral-textSecondary">Materiais</div>
           </div>
         </div>
 
         {/* Botão de Adicionar */}
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-md">
           {selectedType === 'protocols' && (
             <button
               onClick={handleCreateProtocol}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold shadow-md"
+              className="px-lg py-3 bg-primary text-white rounded-lg hover:bg-primary-hover font-semibold shadow-cardHover"
             >
               ➕ Adicionar Protocolo
             </button>
@@ -539,7 +539,7 @@ export default function ClinicalContentPage() {
           {selectedType === 'exercises' && (
             <button
               onClick={handleCreateExercise}
-              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold shadow-md"
+              className="px-lg py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold shadow-cardHover"
             >
               ➕ Adicionar Exercício
             </button>
@@ -547,7 +547,7 @@ export default function ClinicalContentPage() {
           {selectedType === 'assessments' && (
             <button
               onClick={handleCreateAssessment}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-md"
+              className="px-lg py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold shadow-cardHover"
             >
               ➕ Adicionar Avaliação
             </button>
@@ -555,7 +555,7 @@ export default function ClinicalContentPage() {
           {selectedType === 'materials' && (
             <button
               onClick={handleCreateMaterial}
-              className="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-semibold shadow-md"
+              className="px-lg py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-semibold shadow-cardHover"
             >
               ➕ Adicionar Material
             </button>
@@ -563,32 +563,32 @@ export default function ClinicalContentPage() {
         </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-          <div className="flex flex-wrap gap-4">
+        <div className="bg-white rounded-lg shadow-cardHover p-md mb-xl">
+          <div className="flex flex-wrap gap-md">
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Especialidade:</label>
-              <div className="flex gap-2">
+              <label className="text-sm font-medium text-gray-700 mb-sm block">Especialidade:</label>
+              <div className="flex gap-sm">
                 <button
                   onClick={() => setSelectedTab('all')}
-                  className={`px-4 py-2 rounded ${selectedTab === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-md py-sm rounded ${selectedTab === 'all' ? 'bg-primary text-white' : 'bg-gray-200'}`}
                 >
                   Todas
                 </button>
                 <button
                   onClick={() => setSelectedTab('esportiva')}
-                  className={`px-4 py-2 rounded ${selectedTab === 'esportiva' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-md py-sm rounded ${selectedTab === 'esportiva' ? 'bg-primary text-white' : 'bg-gray-200'}`}
                 >
                   Esportiva
                 </button>
                 <button
                   onClick={() => setSelectedTab('pos-operatoria')}
-                  className={`px-4 py-2 rounded ${selectedTab === 'pos-operatoria' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-md py-sm rounded ${selectedTab === 'pos-operatoria' ? 'bg-primary text-white' : 'bg-gray-200'}`}
                 >
                   Pós-Operatória
                 </button>
                 <button
                   onClick={() => setSelectedTab('geriatrica')}
-                  className={`px-4 py-2 rounded ${selectedTab === 'geriatrica' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-md py-sm rounded ${selectedTab === 'geriatrica' ? 'bg-primary text-white' : 'bg-gray-200'}`}
                 >
                   Gerontológica
                 </button>
@@ -596,29 +596,29 @@ export default function ClinicalContentPage() {
             </div>
             
             <div>
-              <label className="text-sm font-medium text-gray-700 mb-2 block">Tipo de Conteúdo:</label>
-              <div className="flex gap-2">
+              <label className="text-sm font-medium text-gray-700 mb-sm block">Tipo de Conteúdo:</label>
+              <div className="flex gap-sm">
                 <button
                   onClick={() => setSelectedType('protocols')}
-                  className={`px-4 py-2 rounded ${selectedType === 'protocols' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-md py-sm rounded ${selectedType === 'protocols' ? 'bg-primary text-white' : 'bg-gray-200'}`}
                 >
                   Protocolos
                 </button>
                 <button
                   onClick={() => setSelectedType('exercises')}
-                  className={`px-4 py-2 rounded ${selectedType === 'exercises' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-md py-sm rounded ${selectedType === 'exercises' ? 'bg-primary text-white' : 'bg-gray-200'}`}
                 >
                   Exercícios
                 </button>
                 <button
                   onClick={() => setSelectedType('assessments')}
-                  className={`px-4 py-2 rounded ${selectedType === 'assessments' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-md py-sm rounded ${selectedType === 'assessments' ? 'bg-primary text-white' : 'bg-gray-200'}`}
                 >
                   Avaliações
                 </button>
                 <button
                   onClick={() => setSelectedType('materials')}
-                  className={`px-4 py-2 rounded ${selectedType === 'materials' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                  className={`px-md py-sm rounded ${selectedType === 'materials' ? 'bg-primary text-white' : 'bg-gray-200'}`}
                 >
                   Materiais
                 </button>

@@ -115,9 +115,9 @@ const MaterialsPage: React.FC = () => {
   const getMaterialTypeColor = (type: string) => {
     switch (type) {
       case 'Escala de Avaliação':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-primary-light text-blue-800';
       case 'Protocolo Clínico':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-light text-success';
       default:
         return 'bg-purple-100 text-purple-800';
     }
@@ -130,16 +130,16 @@ const MaterialsPage: React.FC = () => {
           title="Materiais Clínicos"
           subtitle="Biblioteca de materiais e protocolos clínicos"
         />
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm">
-            <Skeleton className="h-10 w-full mb-4" />
+        <div className="space-y-xl">
+          <div className="bg-white p-lg rounded-card shadow-card">
+            <Skeleton className="h-10 w-full mb-md" />
             <Skeleton className="h-8 w-1/3" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white p-6 rounded-xl shadow-sm">
-                <Skeleton className="h-6 w-3/4 mb-2" />
-                <Skeleton className="h-4 w-full mb-4" />
+              <div key={i} className="bg-white p-lg rounded-card shadow-card">
+                <Skeleton className="h-6 w-3/4 mb-sm" />
+                <Skeleton className="h-4 w-full mb-md" />
                 <Skeleton className="h-8 w-1/2" />
               </div>
             ))}
@@ -165,11 +165,11 @@ const MaterialsPage: React.FC = () => {
       </PageHeader>
 
       {/* Filtros e Busca */}
-      <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="bg-white p-lg rounded-card shadow-card mb-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
           <div className="lg:col-span-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-textTertiary w-5 h-5" />
               <Input
                 type="text"
                 placeholder="Buscar por nome, descrição ou conteúdo..."
@@ -207,9 +207,9 @@ const MaterialsPage: React.FC = () => {
           </Select>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-md flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-neutral-textSecondary">
               {filteredMaterials.length} material(is) encontrado(s)
             </span>
           </div>
@@ -231,28 +231,28 @@ const MaterialsPage: React.FC = () => {
       </div>
 
       {/* Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
+        <div className="bg-white p-lg rounded-card shadow-card">
           <div className="flex items-center">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <BookOpen className="w-6 h-6 text-blue-600" />
+            <div className="p-md bg-primary-light rounded-lg">
+              <BookOpen className="w-6 h-6 text-primary" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-slate-600">Total de Materiais</p>
-              <p className="text-2xl font-bold text-slate-900">
+              <p className="text-sm font-medium text-neutral-textSecondary">Total de Materiais</p>
+              <p className="text-2xl font-bold text-neutral-text">
                 {categories.reduce((total, cat) => total + cat.materials.length, 0)}
               </p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm">
+        <div className="bg-white p-lg rounded-card shadow-card">
           <div className="flex items-center">
-            <div className="p-3 bg-green-100 rounded-lg">
-              <FileText className="w-6 h-6 text-green-600" />
+            <div className="p-md bg-success-light rounded-lg">
+              <FileText className="w-6 h-6 text-success" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-slate-600">Protocolos</p>
-              <p className="text-2xl font-bold text-slate-900">
+              <p className="text-sm font-medium text-neutral-textSecondary">Protocolos</p>
+              <p className="text-2xl font-bold text-neutral-text">
                 {categories.reduce((total, cat) => 
                   total + cat.materials.filter(m => m.type === 'Protocolo Clínico').length, 0
                 )}
@@ -260,14 +260,14 @@ const MaterialsPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm">
+        <div className="bg-white p-lg rounded-card shadow-card">
           <div className="flex items-center">
-            <div className="p-3 bg-purple-100 rounded-lg">
+            <div className="p-md bg-purple-100 rounded-lg">
               <ClipboardList className="w-6 h-6 text-purple-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-slate-600">Escalas</p>
-              <p className="text-2xl font-bold text-slate-900">
+              <p className="text-sm font-medium text-neutral-textSecondary">Escalas</p>
+              <p className="text-2xl font-bold text-neutral-text">
                 {categories.reduce((total, cat) => 
                   total + cat.materials.filter(m => m.type === 'Escala de Avaliação').length, 0
                 )}
@@ -278,16 +278,16 @@ const MaterialsPage: React.FC = () => {
       </div>
 
       {/* Lista de Materiais */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
         {filteredMaterials.map((material) => (
           <div
             key={material.id}
-            className="bg-white p-6 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300 group"
+            className="bg-white p-lg rounded-card shadow-card hover:shadow-cardActive transition-shadow duration-300 group"
           >
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex items-start justify-between mb-md">
               <div className="flex items-center">
                 {getMaterialIcon(material.type)}
-                <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${getMaterialTypeColor(material.type)}`}>
+                <span className={`ml-sm px-sm py-1 text-xs font-semibold rounded-full ${getMaterialTypeColor(material.type)}`}>
                   {material.type}
                 </span>
               </div>
@@ -310,22 +310,22 @@ const MaterialsPage: React.FC = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => navigate(`/material-detail/${material.id}`)}>
-                      <Eye className="mr-2 h-4 w-4" />
+                      <Eye className="mr-sm h-4 w-4" />
                       Visualizar
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => navigate(`/materials/${material.id}/edit`)}>
-                      <Edit className="mr-2 h-4 w-4" />
+                      <Edit className="mr-sm h-4 w-4" />
                       Editar
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleArchiveMaterial(material.id)}>
-                      <Archive className="mr-2 h-4 w-4" />
+                      <Archive className="mr-sm h-4 w-4" />
                       Arquivar
                     </DropdownMenuItem>
                     <DropdownMenuItem 
                       onClick={() => handleDeleteMaterial(material.id)}
-                      className="text-red-600"
+                      className="text-error"
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
+                      <Trash2 className="mr-sm h-4 w-4" />
                       Excluir
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -334,18 +334,18 @@ const MaterialsPage: React.FC = () => {
             </div>
             
             <Link to={`/material-detail/${material.id}`} className="block">
-              <h3 className="text-lg font-semibold text-slate-900 mb-2 group-hover:text-sky-600 transition-colors">
+              <h3 className="text-lg font-semibold text-neutral-text mb-sm group-hover:text-primary transition-colors">
                 {material.name}
               </h3>
             </Link>
             
-            <p className="text-sm text-slate-600 mb-4 line-clamp-3">
+            <p className="text-sm text-neutral-textSecondary mb-md line-clamp-md">
               {material.description}
             </p>
 
             {/* Tags */}
             {material.tags && material.tags.length > 0 && (
-              <div className="flex flex-wrap gap-1 mb-4">
+              <div className="flex flex-wrap gap-1 mb-md">
                 {material.tags.slice(0, 3).map((tag) => (
                   <Badge key={tag} variant="outline" className="text-xs">
                     {tag}
@@ -359,7 +359,7 @@ const MaterialsPage: React.FC = () => {
               </div>
             )}
             
-            <div className="flex items-center justify-between text-xs text-slate-500">
+            <div className="flex items-center justify-between text-xs text-neutral-textSecondary">
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-1">
                   <Calendar className="w-3 h-3" />
@@ -372,7 +372,7 @@ const MaterialsPage: React.FC = () => {
                   </div>
                 )}
               </div>
-              <div className="text-sky-600 text-sm font-medium group-hover:text-sky-700">
+              <div className="text-primary text-sm font-medium group-hover:text-primary">
                 Ver detalhes →
               </div>
             </div>
@@ -382,11 +382,11 @@ const MaterialsPage: React.FC = () => {
 
       {filteredMaterials.length === 0 && !isLoading && (
         <div className="text-center py-12">
-          <BookOpen className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-slate-900 mb-2">
+          <BookOpen className="w-16 h-16 text-slate-300 mx-auto mb-md" />
+          <h3 className="text-lg font-medium text-neutral-text mb-sm">
             Nenhum material encontrado
           </h3>
-          <p className="text-slate-600">
+          <p className="text-neutral-textSecondary">
             Tente ajustar os filtros ou termo de busca.
           </p>
         </div>

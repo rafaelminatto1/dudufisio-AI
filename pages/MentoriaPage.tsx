@@ -108,14 +108,14 @@ const MentoriaPage: React.FC = () => {
             {isLoading ? (
                 <Skeleton className="h-96 w-full" />
             ) : (
-                <div className="space-y-8">
+                <div className="space-y-smxl">
                     <MentoriaStats
                         activeInterns={activeInterns}
                         totalCases={cases.length}
                         avgGrade={avgGrade}
                     />
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-xl items-start">
                         <InternsTable
                             interns={interns}
                             onAdd={handleAddIntern}

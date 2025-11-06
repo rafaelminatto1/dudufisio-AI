@@ -22,13 +22,13 @@ const initialFormData: RiskAnalysisFormData = {
 };
 
 const MetricDisplay: React.FC<{ label: string; value: string; icon: React.ReactNode }> = ({ label, value, icon }) => (
-    <div className="bg-slate-50 p-3 rounded-lg flex items-start border border-slate-200">
-        <div className="flex-shrink-0 p-2 text-sky-600 mr-3">
+    <div className="bg-neutral-bgAlt p-md rounded-lg flex items-start border border-neutral-border">
+        <div className="flex-shrink-0 p-sm text-primary mr-3">
             {icon}
         </div>
         <div>
-            <p className="text-xs font-medium text-slate-500">{label}</p>
-            <p className="text-xl font-bold text-slate-800">{value || 'N/A'}</p>
+            <p className="text-xs font-medium text-neutral-textSecondary">{label}</p>
+            <p className="text-xl font-bold text-neutral-text">{value || 'N/A'}</p>
         </div>
     </div>
 );
@@ -37,14 +37,14 @@ type RiskLevel = 'Baixo' | 'Médio' | 'Alto';
 
 const RiskBadge: React.FC<{ level: RiskLevel }> = ({ level }) => {
     const levelInfo: Record<RiskLevel, { text: string; color: string }> = {
-        'Alto': { text: 'Alto Risco', color: 'bg-red-100 text-red-800 border-red-300' },
+        'Alto': { text: 'Alto Risco', color: 'bg-error-light text-error border-error' },
         'Médio': { text: 'Risco Médio', color: 'bg-amber-100 text-amber-800 border-amber-300' },
-        'Baixo': { text: 'Baixo Risco', color: 'bg-green-100 text-green-800 border-green-300' }
+        'Baixo': { text: 'Baixo Risco', color: 'bg-success-light text-success border-success' }
     };
     const info = levelInfo[level];
 
     return (
-        <div className={`mb-4 p-3 rounded-lg border text-center ${info.color}`}>
+        <div className={`mb-md p-md rounded-lg border text-center ${info.color}`}>
             <p className="font-bold text-lg">{info.text}</p>
         </div>
     );
@@ -192,10 +192,10 @@ const RiskAnalysisPage: React.FC = () => {
                 subtitle="Identifique pacientes em risco e receba sugestões para aumentar a retenção."
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <div className="bg-white p-6 rounded-2xl shadow-sm space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-xl items-start">
+                <div className="bg-white p-lg rounded-cardLarge shadow-card space-y-xl">
                     <div className="relative" ref={searchRef}>
-                        <label htmlFor="patient-search" className="block text-sm font-medium text-slate-700 mb-1">Selecionar Paciente*</label>
+                        <label htmlFor="patient-search" className="block text-sm font-medium text-neutral-text mb-1">Selecionar Paciente*</label>
                          <div className="relative">
                             <input
                                 id="patient-search"
@@ -208,13 +208,13 @@ const RiskAnalysisPage: React.FC = () => {
                                 }}
                                 onFocus={() => setShowDropdown(true)}
                                 placeholder="-- Selecione um paciente --"
-                                className="w-full p-2 pl-10 border border-slate-300 rounded-lg bg-white"
+                                className="w-full p-sm pl-10 border border-neutral-border rounded-lg bg-white"
                                 autoComplete="off"
                             />
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-textTertiary pointer-events-none" />
                         </div>
                         {showDropdown && (
-                            <div className="absolute z-10 w-full mt-1 bg-white border border-slate-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            <div className="absolute z-10 w-full mt-xs bg-white border border-neutral-border rounded-lg shadow-cardActive max-h-60 overflow-y-auto">
                                 {filteredPatients.length > 0 ? (
                                     filteredPatients.map(p => (
                                         <div
@@ -224,36 +224,36 @@ const RiskAnalysisPage: React.FC = () => {
                                                 setSearchTerm(p.name);
                                                 setShowDropdown(false);
                                             }}
-                                            className="px-4 py-2 text-slate-800 hover:bg-sky-100 cursor-pointer"
+                                            className="px-md py-sm text-neutral-text hover:bg-primary-light cursor-pointer"
                                         >
                                             {p.name}
                                         </div>
                                     ))
                                 ) : (
-                                    <div className="px-4 py-2 text-slate-500">Nenhum paciente encontrado.</div>
+                                    <div className="px-md py-sm text-neutral-textSecondary">Nenhum paciente encontrado.</div>
                                 )}
                             </div>
                         )}
                     </div>
 
                     { isFetchingData ? <Skeleton className="h-64 w-full" /> : selectedPatientId && (
-                         <div className="space-y-4 animate-fade-in-fast">
-                             <h3 className="text-md font-semibold text-sky-700 border-b pb-2">Ficha de Análise de Risco</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                         <div className="space-y-md animate-fade-in-fast">
+                             <h3 className="text-md font-semibold text-primary border-b pb-2">Ficha de Análise de Risco</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-md">
                                 <MetricDisplay label="Sessões Realizadas" value={formData.sessoes_realizadas} icon={<CheckCircle className="w-5 h-5"/>} />
                                 <MetricDisplay label="Sessões Prescritas" value={formData.sessoes_prescritas} icon={<ListChecks className="w-5 h-5"/>} />
                                 <MetricDisplay label="Faltas (30d)" value={formData.faltas} icon={<XCircle className="w-5 h-5"/>} />
                                 <MetricDisplay label="Cancel./Remarc. (30d)" value={formData.remarcacoes} icon={<RotateCcw className="w-5 h-5"/>} />
                             </div>
                             <div>
-                                <label className="text-sm font-medium text-slate-700">Último Feedback Registrado</label>
-                                <blockquote className="mt-1 p-3 bg-slate-50 border-l-4 border-slate-300 text-sm text-slate-600 italic">
+                                <label className="text-sm font-medium text-neutral-text">Último Feedback Registrado</label>
+                                <blockquote className="mt-xs p-md bg-neutral-bgAlt border-l-4 border-neutral-border text-sm text-neutral-textSecondary italic">
                                     "{formData.ultimo_feedback}"
                                 </blockquote>
                             </div>
                             <div>
-                                <label className="text-sm font-medium text-slate-700">Aderência ao Plano Domiciliar (Relatado)</label>
-                                <select name="aderencia_hep" value={formData.aderencia_hep} onChange={handleInputChange} className="mt-1 w-full p-2 border border-slate-300 rounded-lg bg-white">
+                                <label className="text-sm font-medium text-neutral-text">Aderência ao Plano Domiciliar (Relatado)</label>
+                                <select name="aderencia_hep" value={formData.aderencia_hep} onChange={handleInputChange} className="mt-xs w-full p-sm border border-neutral-border rounded-lg bg-white">
                                     <option>Não informada</option>
                                     <option>Alta</option>
                                     <option>Média</option>
@@ -267,41 +267,41 @@ const RiskAnalysisPage: React.FC = () => {
                         onClick={handleSubmit}
                         disabled={isSubmitDisabled}
                         title={isSubmitDisabled && !isLoading ? 'Selecione um paciente para gerar a análise' : undefined}
-                        className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-semibold rounded-md shadow-sm text-white bg-sky-500 hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:bg-sky-300 disabled:cursor-not-allowed"
+                        className="w-full inline-flex justify-center items-center px-lg py-3 border border-transparent text-base font-semibold rounded-md shadow-card text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:bg-sky-300 disabled:cursor-not-allowed"
                     >
-                        {isLoading || isFetchingData ? <Loader className="w-5 h-5 mr-3 -ml-1 animate-spin" /> : <Sparkles className="w-5 h-5 mr-3 -ml-1"/>}
+                        {isLoading || isFetchingData ? <Loader className="w-5 h-5 mr-3 -ml-xs animate-spin" /> : <Sparkles className="w-5 h-5 mr-3 -ml-xs"/>}
                         {isLoading ? 'Analisando...' : (isFetchingData ? 'Carregando...' : 'Gerar Análise com IA')}
                     </button>
                 </div>
                 
-                <div className="bg-white p-6 rounded-2xl shadow-sm">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold text-slate-800">Análise Gerada</h3>
-                        <button onClick={handleCopy} disabled={!analysisResult || copied} className="inline-flex items-center px-3 py-1.5 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50">
-                            {copied ? <Check className="w-4 h-4 mr-2 text-green-500"/> : <Clipboard className="w-4 h-4 mr-2"/>}
+                <div className="bg-white p-lg rounded-cardLarge shadow-card">
+                    <div className="flex justify-between items-center mb-md">
+                        <h3 className="text-lg font-semibold text-neutral-text">Análise Gerada</h3>
+                        <button onClick={handleCopy} disabled={!analysisResult || copied} className="inline-flex items-center px-md py-1.5 border border-neutral-border text-sm font-medium rounded-md text-neutral-text bg-white hover:bg-neutral-bgAlt disabled:opacity-50">
+                            {copied ? <Check className="w-4 h-4 mr-sm text-green-500"/> : <Clipboard className="w-4 h-4 mr-sm"/>}
                             {copied ? 'Copiado!' : 'Copiar'}
                         </button>
                     </div>
-                    <div className="bg-slate-50 p-6 rounded-lg min-h-[500px] overflow-y-auto border border-slate-200">
+                    <div className="bg-neutral-bgAlt p-lg rounded-lg min-h-[500px] overflow-y-auto border border-neutral-border">
                         {isLoading && (
-                            <div className="space-y-4 animate-pulse p-2">
-                                <Skeleton className="h-12 w-full mb-4" />
+                            <div className="space-y-md animate-pulse p-sm">
+                                <Skeleton className="h-12 w-full mb-md" />
                                 <Skeleton className="h-6 w-1/3" />
                                 <Skeleton className="h-16 w-full" />
                                 <br/>
-                                <Skeleton className="h-6 w-1/3 mt-4 mb-2" />
+                                <Skeleton className="h-6 w-1/3 mt-md mb-sm" />
                                 <Skeleton className="h-8 w-full" />
-                                <Skeleton className="h-8 w-full mt-2" />
+                                <Skeleton className="h-8 w-full mt-sm" />
                                 <br/>
-                                <Skeleton className="h-6 w-1/3 mt-4 mb-2" />
+                                <Skeleton className="h-6 w-1/3 mt-md mb-sm" />
                                 <Skeleton className="h-12 w-full" />
                             </div>
                         )}
                         {!isLoading && !analysisResult && (
-                             <div className="text-center text-slate-500 flex flex-col justify-center items-center h-full">
-                                <Activity className="w-16 h-16 text-slate-300 mb-4" />
+                             <div className="text-center text-neutral-textSecondary flex flex-col justify-center items-center h-full">
+                                <Activity className="w-16 h-16 text-slate-300 mb-md" />
                                 <p className="font-semibold">A análise de risco do paciente aparecerá aqui.</p>
-                                <p className="text-xs mt-1">Selecione um paciente e clique em "Gerar Análise".</p>
+                                <p className="text-xs mt-xs">Selecione um paciente e clique em "Gerar Análise".</p>
                             </div>
                         )}
                         {riskLevel && <RiskBadge level={riskLevel} />}

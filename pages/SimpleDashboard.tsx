@@ -16,14 +16,14 @@ interface StatCardProps {
 }
 
 const StatCard = memo<StatCardProps>(({ icon: Icon, iconBgColor, iconColor, label, value }) => (
-  <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+  <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
     <div className="flex items-center">
-      <div className={`p-2 ${iconBgColor} rounded-lg`}>
+      <div className={`p-sm ${iconBgColor} rounded-lg`}>
         <Icon className={`w-6 h-6 ${iconColor}`} />
       </div>
       <div className="ml-4">
-        <p className="text-sm font-medium text-slate-600">{label}</p>
-        <p className="text-2xl font-bold text-slate-900">{value}</p>
+        <p className="text-sm font-medium text-neutral-textSecondary">{label}</p>
+        <p className="text-2xl font-bold text-neutral-text">{value}</p>
       </div>
     </div>
   </div>
@@ -38,12 +38,12 @@ interface AppointmentItemProps {
 }
 
 const AppointmentItem = memo<AppointmentItemProps>(({ patientName, service, time }) => (
-  <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+  <div className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg">
     <div>
-      <p className="font-medium text-slate-900">{patientName}</p>
-      <p className="text-sm text-slate-600">{service}</p>
+      <p className="font-medium text-neutral-text">{patientName}</p>
+      <p className="text-sm text-neutral-textSecondary">{service}</p>
     </div>
-    <span className="text-sm text-sky-600 font-medium">{time}</span>
+    <span className="text-sm text-primary font-medium">{time}</span>
   </div>
 ));
 AppointmentItem.displayName = 'AppointmentItem';
@@ -62,9 +62,9 @@ interface ActionButtonProps {
 const ActionButton = memo<ActionButtonProps>(({ icon: Icon, label, bgColor, borderColor, hoverColor, textColor, onClick }) => (
   <button
     onClick={onClick}
-    className={`p-4 ${bgColor} border ${borderColor} rounded-lg ${hoverColor} transition-colors`}
+    className={`p-md ${bgColor} border ${borderColor} rounded-lg ${hoverColor} transition-colors`}
   >
-    <Icon className={`w-6 h-6 ${textColor} mx-auto mb-2`} />
+    <Icon className={`w-6 h-6 ${textColor} mx-auto mb-sm`} />
     <p className={`text-sm font-medium ${textColor}`}>{label}</p>
   </button>
 ));
@@ -72,27 +72,27 @@ ActionButton.displayName = 'ActionButton';
 
 const SimpleDashboard: React.FC<SimpleDashboardProps> = ({ user, onLogout }) => {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-neutral-bgAlt">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="bg-white shadow-card border-b border-neutral-border">
+        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-slate-900">
+              <h1 className="text-2xl font-bold text-neutral-text">
                 Fisio<span className="text-sky-500">Flow</span>
               </h1>
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
-                <User className="w-5 h-5 text-slate-400" />
-                <span className="text-sm font-medium text-slate-700">{user.name}</span>
-                <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">
+                <User className="w-5 h-5 text-neutral-textTertiary" />
+                <span className="text-sm font-medium text-neutral-text">{user.name}</span>
+                <span className="text-xs text-neutral-textSecondary bg-neutral-bgDark px-sm py-1 rounded-full">
                   {user.role}
                 </span>
               </div>
               <button
                 onClick={onLogout}
-                className="flex items-center space-x-2 text-slate-500 hover:text-slate-700 transition-colors"
+                className="flex items-center space-x-2 text-neutral-textSecondary hover:text-neutral-text transition-colors"
               >
                 <LogOut className="w-4 h-4" />
                 <span className="text-sm">Sair</span>
@@ -103,30 +103,30 @@ const SimpleDashboard: React.FC<SimpleDashboardProps> = ({ user, onLogout }) => 
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl py-3xl">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-slate-900 mb-2">
+        <div className="mb-mdxl">
+          <h2 className="text-3xl font-bold text-neutral-text mb-sm">
             Bem-vindo, {user.name}! 👋
           </h2>
-          <p className="text-slate-600">
+          <p className="text-neutral-textSecondary">
             Aqui está um resumo do seu dia na clínica.
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg mb-mdxl">
           <StatCard
             icon={Calendar}
-            iconBgColor="bg-blue-100"
-            iconColor="text-blue-600"
+            iconBgColor="bg-primary-light"
+            iconColor="text-primary"
             label="Consultas Hoje"
             value={12}
           />
           <StatCard
             icon={Users}
-            iconBgColor="bg-green-100"
-            iconColor="text-green-600"
+            iconBgColor="bg-success-light"
+            iconColor="text-success"
             label="Pacientes Ativos"
             value={156}
           />
@@ -139,20 +139,20 @@ const SimpleDashboard: React.FC<SimpleDashboardProps> = ({ user, onLogout }) => 
           />
           <StatCard
             icon={BarChart3}
-            iconBgColor="bg-orange-100"
-            iconColor="text-orange-600"
+            iconBgColor="bg-warning-light"
+            iconColor="text-warning"
             label="Taxa de Sucesso"
             value="94%"
           />
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+          <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+            <h3 className="text-lg font-semibold text-neutral-text mb-md">
               Próximas Consultas
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-sm">
               <AppointmentItem
                 patientName="Ana Silva"
                 service="Fisioterapia - Joelho"
@@ -171,26 +171,26 @@ const SimpleDashboard: React.FC<SimpleDashboardProps> = ({ user, onLogout }) => 
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">
+          <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+            <h3 className="text-lg font-semibold text-neutral-text mb-md">
               Ações Rápidas
             </h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-md">
               <ActionButton
                 icon={Calendar}
                 label="Nova Consulta"
-                bgColor="bg-sky-50"
+                bgColor="bg-primary-light"
                 borderColor="border-sky-200"
-                hoverColor="hover:bg-sky-100"
-                textColor="text-sky-600"
+                hoverColor="hover:bg-primary-light"
+                textColor="text-primary"
               />
               <ActionButton
                 icon={Users}
                 label="Novo Paciente"
-                bgColor="bg-green-50"
-                borderColor="border-green-200"
-                hoverColor="hover:bg-green-100"
-                textColor="text-green-600"
+                bgColor="bg-success-light"
+                borderColor="border-success"
+                hoverColor="hover:bg-success-light"
+                textColor="text-success"
               />
               <ActionButton
                 icon={Activity}
@@ -203,10 +203,10 @@ const SimpleDashboard: React.FC<SimpleDashboardProps> = ({ user, onLogout }) => 
               <ActionButton
                 icon={BarChart3}
                 label="Relatórios"
-                bgColor="bg-orange-50"
-                borderColor="border-orange-200"
-                hoverColor="hover:bg-orange-100"
-                textColor="text-orange-600"
+                bgColor="bg-warning-light"
+                borderColor="border-warning"
+                hoverColor="hover:bg-warning-light"
+                textColor="text-warning"
               />
             </div>
           </div>

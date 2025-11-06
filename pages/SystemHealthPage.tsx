@@ -84,21 +84,21 @@ const SystemHealthPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-neutral-bgAlt p-lg">
+      <div className="max-w-7xl mx-auto space-y-xl">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Saúde do Sistema</h1>
-            <p className="text-gray-600 mt-1">Monitoramento de erros e métricas</p>
+            <h1 className="text-3xl font-bold text-neutral-text">Saúde do Sistema</h1>
+            <p className="text-neutral-textSecondary mt-xs">Monitoramento de erros e métricas</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-sm">
             <Button variant="outline" onClick={handleRefresh}>
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 mr-sm" />
               Atualizar
             </Button>
             <Button variant="outline" onClick={handleExport}>
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="w-4 h-4 mr-sm" />
               Exportar
             </Button>
             <Button variant="destructive" onClick={handleClear}>
@@ -110,20 +110,20 @@ const SystemHealthPage: React.FC = () => {
         {/* Status Geral */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-sm">
               {healthStatus.icon}
               Status: {healthStatus.status}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-600">Total de Erros</div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-md">
+              <div className="bg-neutral-bgAlt p-md rounded-lg">
+                <div className="text-sm text-neutral-textSecondary">Total de Erros</div>
                 <div className="text-2xl font-bold">{healthMetrics.totalErrors}</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-600">Últimas 24h</div>
-                <div className="text-2xl font-bold flex items-center gap-2">
+              <div className="bg-neutral-bgAlt p-md rounded-lg">
+                <div className="text-sm text-neutral-textSecondary">Últimas 24h</div>
+                <div className="text-2xl font-bold flex items-center gap-sm">
                   {healthMetrics.errorsLast24h}
                   {healthMetrics.errorsLast24h > healthMetrics.errorsLastHour * 24 ? (
                     <TrendingUp className="w-5 h-5 text-red-500" />
@@ -132,13 +132,13 @@ const SystemHealthPage: React.FC = () => {
                   )}
                 </div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-600">Taxa de Erro/Hora</div>
+              <div className="bg-neutral-bgAlt p-md rounded-lg">
+                <div className="text-sm text-neutral-textSecondary">Taxa de Erro/Hora</div>
                 <div className="text-2xl font-bold">{healthMetrics.errorRate.toFixed(2)}</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-600">Erros Críticos</div>
-                <div className="text-2xl font-bold text-red-600">
+              <div className="bg-neutral-bgAlt p-md rounded-lg">
+                <div className="text-sm text-neutral-textSecondary">Erros Críticos</div>
+                <div className="text-2xl font-bold text-error">
                   {healthMetrics.criticalErrors}
                 </div>
               </div>
@@ -149,7 +149,7 @@ const SystemHealthPage: React.FC = () => {
         {/* Tempo Médio de Resolução */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-sm">
               <Clock className="w-5 h-5" />
               Tempo Médio de Resolução
             </CardTitle>
@@ -158,7 +158,7 @@ const SystemHealthPage: React.FC = () => {
             <div className="text-3xl font-bold">
               {formatDuration(healthMetrics.averageResolutionTime)}
             </div>
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-sm text-neutral-textSecondary mt-sm">
               Tempo médio para resolver erros com retry automático
             </p>
           </CardContent>
@@ -171,24 +171,24 @@ const SystemHealthPage: React.FC = () => {
             <CardDescription>Operações que falharam mais nas últimas 24h</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-sm">
               {healthMetrics.mostFailedOperations.map((op, index) => (
                 <div
                   key={op.operation}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
+                  className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg hover:bg-neutral-bgDark cursor-pointer"
                   onClick={() => setSelectedOperation(op.operation)}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-md">
                     <Badge variant={index === 0 ? 'destructive' : 'secondary'}>
                       #{index + 1}
                     </Badge>
                     <span className="font-medium">{op.operation}</span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-sm text-gray-600">
+                  <div className="flex items-center gap-md">
+                    <div className="text-sm text-neutral-textSecondary">
                       {op.count} erros
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-neutral-textSecondary">
                       {op.errorRate.toFixed(2)} erros/hora
                     </div>
                   </div>
@@ -215,18 +215,18 @@ const SystemHealthPage: React.FC = () => {
               {(() => {
                 const stats = getOperationStats(selectedOperation);
                 return (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <div className="text-sm text-gray-600">Total de Erros</div>
+                  <div className="space-y-md">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
+                      <div className="bg-neutral-bgAlt p-md rounded-lg">
+                        <div className="text-sm text-neutral-textSecondary">Total de Erros</div>
                         <div className="text-2xl font-bold">{stats.totalErrors}</div>
                       </div>
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <div className="text-sm text-gray-600">Taxa de Erro</div>
+                      <div className="bg-neutral-bgAlt p-md rounded-lg">
+                        <div className="text-sm text-neutral-textSecondary">Taxa de Erro</div>
                         <div className="text-2xl font-bold">{stats.errorRate.toFixed(2)}/h</div>
                       </div>
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <div className="text-sm text-gray-600">Tempo Médio Resolução</div>
+                      <div className="bg-neutral-bgAlt p-md rounded-lg">
+                        <div className="text-sm text-neutral-textSecondary">Tempo Médio Resolução</div>
                         <div className="text-2xl font-bold">
                           {formatDuration(stats.avgResolutionTime)}
                         </div>
@@ -234,10 +234,10 @@ const SystemHealthPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <h4 className="font-medium mb-2">Erros por Tipo</h4>
-                      <div className="space-y-2">
+                      <h4 className="font-medium mb-sm">Erros por Tipo</h4>
+                      <div className="space-y-sm">
                         {Object.entries(stats.errorsByType).map(([type, count]) => (
-                          <div key={type} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                          <div key={type} className="flex justify-between items-center p-sm bg-neutral-bgAlt rounded">
                             <span>{type}</span>
                             <Badge>{count}</Badge>
                           </div>
@@ -246,10 +246,10 @@ const SystemHealthPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <h4 className="font-medium mb-2">Erros por Severidade</h4>
-                      <div className="space-y-2">
+                      <h4 className="font-medium mb-sm">Erros por Severidade</h4>
+                      <div className="space-y-sm">
                         {Object.entries(stats.errorsBySeverity).map(([severity, count]) => (
-                          <div key={severity} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                          <div key={severity} className="flex justify-between items-center p-sm bg-neutral-bgAlt rounded">
                             <span className="capitalize">{severity}</span>
                             <Badge
                               variant={
@@ -279,7 +279,7 @@ const SystemHealthPage: React.FC = () => {
             <CardTitle>Todas as Operações com Erros ({operations.length})</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-sm">
               {operations.map((op) => (
                 <Button
                   key={op}

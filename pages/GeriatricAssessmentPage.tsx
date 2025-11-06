@@ -52,12 +52,12 @@ export const GeriatricAssessmentPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-neutral-bgAlt p-lg">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-xl">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+          className="flex items-center gap-sm text-neutral-textSecondary hover:text-neutral-text mb-md"
         >
           <ArrowLeft size={20} />
           Voltar
@@ -65,16 +65,16 @@ export const GeriatricAssessmentPage: React.FC = () => {
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-neutral-text">
               Avaliação Geriátrica
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-neutral-textSecondary mt-xs">
               Avaliação multidimensional do idoso
             </p>
           </div>
           <button
             onClick={() => setShowNewAssessment(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-sm px-md py-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
           >
             <Plus size={20} />
             Nova Avaliação
@@ -84,15 +84,15 @@ export const GeriatricAssessmentPage: React.FC = () => {
 
       {/* Quick Stats */}
       {latestAssessment && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg p-4 shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-red-100 rounded-lg">
-                <AlertTriangle className="text-red-600" size={24} />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-md mb-xl">
+          <div className="bg-white rounded-lg p-md shadow">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-error-light rounded-lg">
+                <AlertTriangle className="text-error" size={24} />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Risco de Queda</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-neutral-textSecondary">Risco de Queda</p>
+                <p className="text-2xl font-bold text-neutral-text">
                   {latestAssessment.fall_risk_level?.replace('_', ' ').toUpperCase() || 'N/A'}
                 </p>
                 <p className="text-xs text-gray-500">Morse: {latestAssessment.morse_score}</p>
@@ -100,14 +100,14 @@ export const GeriatricAssessmentPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-4 shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-purple-100 rounded-lg">
+          <div className="bg-white rounded-lg p-md shadow">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-purple-100 rounded-lg">
                 <Brain className="text-purple-600" size={24} />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Estado Cognitivo</p>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-sm text-neutral-textSecondary">Estado Cognitivo</p>
+                <p className="text-lg font-bold text-neutral-text">
                   {latestAssessment.cognitive_status?.replace('_', ' ') || 'N/A'}
                 </p>
                 <p className="text-xs text-gray-500">MEEM: {latestAssessment.meem_score}/30</p>
@@ -115,14 +115,14 @@ export const GeriatricAssessmentPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-4 shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Activity className="text-blue-600" size={24} />
+          <div className="bg-white rounded-lg p-md shadow">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-primary-light rounded-lg">
+                <Activity className="text-primary" size={24} />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Independência</p>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-sm text-neutral-textSecondary">Independência</p>
+                <p className="text-lg font-bold text-neutral-text">
                   {latestAssessment.independence_level || 'N/A'}
                 </p>
                 <p className="text-xs text-gray-500">Katz: {latestAssessment.katz_score}/6</p>
@@ -130,14 +130,14 @@ export const GeriatricAssessmentPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-4 shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-green-100 rounded-lg">
-                <Heart className="text-green-600" size={24} />
+          <div className="bg-white rounded-lg p-md shadow">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-success-light rounded-lg">
+                <Heart className="text-success" size={24} />
               </div>
               <div>
-                <p className="text-sm text-gray-600">Estado Nutricional</p>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-sm text-neutral-textSecondary">Estado Nutricional</p>
+                <p className="text-lg font-bold text-neutral-text">
                   {latestAssessment.nutritional_status || 'N/A'}
                 </p>
                 <p className="text-xs text-gray-500">MNA: {latestAssessment.mna_score}/30</p>
@@ -148,45 +148,45 @@ export const GeriatricAssessmentPage: React.FC = () => {
       )}
 
       {/* Assessments List */}
-      <div className="bg-white rounded-lg shadow mb-6">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
+      <div className="bg-white rounded-lg shadow mb-xl">
+        <div className="p-lg border-b">
+          <h2 className="text-xl font-semibold flex items-center gap-sm">
             <TrendingUp size={24} />
             Histórico de Avaliações
           </h2>
         </div>
-        <div className="p-6">
+        <div className="p-lg">
           {assessments && assessments.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-md">
               {assessments.map((assessment) => (
                 <div
                   key={assessment.id}
-                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
+                  className="border rounded-lg p-md hover:shadow-cardHover transition-shadow"
                 >
-                  <div className="flex justify-between items-start mb-3">
+                  <div className="flex justify-between items-start mb-md">
                     <div>
                       <p className="font-semibold text-lg">
                         {new Date(assessment.assessment_date).toLocaleDateString('pt-BR')}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-neutral-textSecondary">
                         Avaliado por: {assessment.assessed_by}
                       </p>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-sm">
                       {assessment.fall_risk_level === 'high_risk' && (
-                        <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                        <span className="px-md py-1 bg-error-light text-error rounded-full text-sm font-medium">
                           Alto Risco
                         </span>
                       )}
                       {assessment.cognitive_status === 'moderate_impairment' && (
-                        <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-medium">
+                        <span className="px-md py-1 bg-warning-light text-warning rounded-full text-sm font-medium">
                           Déficit Cognitivo
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-md mb-md">
                     <div>
                       <p className="text-xs text-gray-500">Morse (Queda)</p>
                       <p className="font-semibold">{assessment.morse_score || '-'}</p>
@@ -205,12 +205,12 @@ export const GeriatricAssessmentPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="text-sm text-gray-700 mb-2">
+                  <div className="text-sm text-gray-700 mb-sm">
                     <strong>Avaliação Geral:</strong> {assessment.overall_assessment}
                   </div>
 
                   {assessment.recommendations && assessment.recommendations.length > 0 && (
-                    <div className="mt-3 p-3 bg-blue-50 rounded">
+                    <div className="mt-3 p-md bg-primary-light rounded">
                       <p className="text-sm font-medium text-blue-900 mb-1">Recomendações:</p>
                       <ul className="list-disc list-inside text-sm text-blue-800 space-y-1">
                         {assessment.recommendations.map((rec, idx) => (
@@ -224,11 +224,11 @@ export const GeriatricAssessmentPage: React.FC = () => {
             </div>
           ) : (
             <div className="text-center py-12 text-gray-500">
-              <Brain size={48} className="mx-auto mb-4 opacity-50" />
+              <Brain size={48} className="mx-auto mb-md opacity-50" />
               <p>Nenhuma avaliação geriátrica ainda.</p>
               <button
                 onClick={() => setShowNewAssessment(true)}
-                className="mt-4 text-blue-600 hover:text-blue-700 font-medium"
+                className="mt-md text-primary hover:text-primary font-medium"
               >
                 Criar primeira avaliação
               </button>
@@ -240,27 +240,27 @@ export const GeriatricAssessmentPage: React.FC = () => {
       {/* Fall Prevention Plans */}
       {fallPlans && fallPlans.length > 0 && (
         <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
+          <div className="p-lg border-b">
+            <h2 className="text-xl font-semibold flex items-center gap-sm">
               <Shield size={24} />
               Planos de Prevenção de Quedas
             </h2>
           </div>
-          <div className="p-6">
-            <div className="space-y-3">
+          <div className="p-lg">
+            <div className="space-y-sm">
               {fallPlans.map((plan) => (
-                <div key={plan.id} className="border rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-2">
+                <div key={plan.id} className="border rounded-lg p-md">
+                  <div className="flex justify-between items-start mb-sm">
                     <div>
                       <p className="font-semibold">
                         Plano iniciado em {new Date(plan.plan_date).toLocaleDateString('pt-BR')}
                       </p>
-                      <p className="text-sm text-gray-600">Status: {plan.status}</p>
+                      <p className="text-sm text-neutral-textSecondary">Status: {plan.status}</p>
                     </div>
                     {plan.effectiveness_rating && (
                       <div className="text-right">
                         <p className="text-xs text-gray-500">Efetividade</p>
-                        <p className="text-lg font-bold text-green-600">
+                        <p className="text-lg font-bold text-success">
                           {plan.effectiveness_rating}/5 ⭐
                         </p>
                       </div>
@@ -271,9 +271,9 @@ export const GeriatricAssessmentPage: React.FC = () => {
                     <p><strong>Programa de Exercícios:</strong> {plan.exercise_program}</p>
                     
                     {plan.environmental_modifications && plan.environmental_modifications.length > 0 && (
-                      <div className="mt-2">
+                      <div className="mt-sm">
                         <strong>Modificações Ambientais:</strong>
-                        <ul className="list-disc list-inside ml-2">
+                        <ul className="list-disc list-inside ml-sm">
                           {plan.environmental_modifications.map((mod, idx) => (
                             <li key={idx}>{mod}</li>
                           ))}
@@ -282,9 +282,9 @@ export const GeriatricAssessmentPage: React.FC = () => {
                     )}
 
                     {plan.assistive_devices && plan.assistive_devices.length > 0 && (
-                      <div className="mt-2">
+                      <div className="mt-sm">
                         <strong>Dispositivos Assistivos:</strong>
-                        <ul className="list-disc list-inside ml-2">
+                        <ul className="list-disc list-inside ml-sm">
                           {plan.assistive_devices.map((device, idx) => (
                             <li key={idx}>{device}</li>
                           ))}
@@ -302,8 +302,8 @@ export const GeriatricAssessmentPage: React.FC = () => {
       {/* New Assessment Modal (simplificado) */}
       {showNewAssessment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">Nova Avaliação Geriátrica</h2>
+          <div className="bg-white rounded-lg p-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-md">Nova Avaliação Geriátrica</h2>
             
             <form
               onSubmit={(e) => {
@@ -324,7 +324,7 @@ export const GeriatricAssessmentPage: React.FC = () => {
                 
                 setShowNewAssessment(false);
               }}
-              className="space-y-4"
+              className="space-y-md"
             >
               <div>
                 <label className="block text-sm font-medium mb-1">Data da Avaliação</label>
@@ -333,7 +333,7 @@ export const GeriatricAssessmentPage: React.FC = () => {
                   name="date"
                   required
                   defaultValue={new Date().toISOString().split('T')[0]}
-                  className="w-full border rounded-lg p-2"
+                  className="w-full border rounded-lg p-sm"
                 />
               </div>
 
@@ -343,11 +343,11 @@ export const GeriatricAssessmentPage: React.FC = () => {
                   type="text"
                   name="assessor"
                   required
-                  className="w-full border rounded-lg p-2"
+                  className="w-full border rounded-lg p-sm"
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-md">
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     Morse Score (0-125)
@@ -357,7 +357,7 @@ export const GeriatricAssessmentPage: React.FC = () => {
                     name="morse"
                     min="0"
                     max="125"
-                    className="w-full border rounded-lg p-2"
+                    className="w-full border rounded-lg p-sm"
                   />
                 </div>
 
@@ -370,7 +370,7 @@ export const GeriatricAssessmentPage: React.FC = () => {
                     name="berg"
                     min="0"
                     max="56"
-                    className="w-full border rounded-lg p-2"
+                    className="w-full border rounded-lg p-sm"
                   />
                 </div>
 
@@ -383,7 +383,7 @@ export const GeriatricAssessmentPage: React.FC = () => {
                     name="meem"
                     min="0"
                     max="30"
-                    className="w-full border rounded-lg p-2"
+                    className="w-full border rounded-lg p-sm"
                   />
                 </div>
               </div>
@@ -394,7 +394,7 @@ export const GeriatricAssessmentPage: React.FC = () => {
                   name="assessment"
                   required
                   rows={3}
-                  className="w-full border rounded-lg p-2"
+                  className="w-full border rounded-lg p-sm"
                   placeholder="Descreva a avaliação geral do paciente..."
                 />
               </div>
@@ -405,23 +405,23 @@ export const GeriatricAssessmentPage: React.FC = () => {
                   name="plan"
                   required
                   rows={3}
-                  className="w-full border rounded-lg p-2"
+                  className="w-full border rounded-lg p-sm"
                   placeholder="Descreva o plano de intervenção..."
                 />
               </div>
 
-              <div className="flex gap-3 justify-end">
+              <div className="flex gap-md justify-end">
                 <button
                   type="button"
                   onClick={() => setShowNewAssessment(false)}
-                  className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+                  className="px-md py-sm border rounded-lg hover:bg-neutral-bgAlt"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+                  className="px-md py-sm bg-primary text-white rounded-lg hover:bg-primary-hover disabled:bg-gray-400"
                 >
                   {createMutation.isPending ? 'Salvando...' : 'Salvar Avaliação'}
                 </button>

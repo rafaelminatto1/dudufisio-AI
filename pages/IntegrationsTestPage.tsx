@@ -21,23 +21,23 @@ const IntegrationsTestPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-lg space-y-xl">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Teste das Integrações</h1>
         <UserButton />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
         {/* Sentry Test */}
         <Card>
           <CardHeader>
             <CardTitle>🔍 Sentry - Monitoramento de Erros</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-gray-600">
+          <CardContent className="space-y-md">
+            <p className="text-neutral-textSecondary">
               Teste o monitoramento de erros do Sentry
             </p>
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Button onClick={testSentry} variant="destructive">
                 Simular Erro
               </Button>
@@ -56,8 +56,8 @@ const IntegrationsTestPage: React.FC = () => {
           <CardHeader>
             <CardTitle>🔐 Clerk - Autenticação</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-gray-600">
+          <CardContent className="space-y-md">
+            <p className="text-neutral-textSecondary">
               Sistema de autenticação com Clerk
             </p>
             <div className="flex justify-center">
@@ -75,10 +75,10 @@ const IntegrationsTestPage: React.FC = () => {
             <CardTitle>🤖 XAI/Grok - Assistente AI</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-4">
+            <p className="text-neutral-textSecondary mb-md">
               Chat com IA usando XAI/Grok
             </p>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className="text-sm text-gray-500 mb-md">
               ✅ API Key: {import.meta.env.VITE_XAI_API_KEY ? 'Configurada' : 'Não configurada'}
             </p>
             <XAIChat />
@@ -91,13 +91,13 @@ const IntegrationsTestPage: React.FC = () => {
             <CardTitle>📈 Checkly - Monitoramento</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-4">
+            <p className="text-neutral-textSecondary mb-md">
               Monitoramento de uptime e performance
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
               <div>
                 <h4 className="font-medium">Checks Configurados:</h4>
-                <ul className="list-disc list-inside text-sm text-gray-600 mt-2">
+                <ul className="list-disc list-inside text-sm text-neutral-textSecondary mt-sm">
                   <li>Homepage Check</li>
                   <li>Login Flow Check</li>
                   <li>API Health Check</li>
@@ -106,14 +106,14 @@ const IntegrationsTestPage: React.FC = () => {
               </div>
               <div>
                 <h4 className="font-medium">Status:</h4>
-                <p className="text-sm text-gray-500 mt-2">
+                <p className="text-sm text-gray-500 mt-sm">
                   ✅ Account ID: {import.meta.env.CHECKLY_ACCOUNT_ID ? 'Configurado' : 'Não configurado'}
                   <br />
                   ✅ API Key: {import.meta.env.CHECKLY_API_KEY ? 'Configurada' : 'Não configurada'}
                 </p>
               </div>
             </div>
-            <div className="mt-4 p-3 bg-blue-50 rounded-md">
+            <div className="mt-md p-md bg-primary-light rounded-md">
               <p className="text-sm text-blue-800">
                 💡 Execute <code>npm run checkly:deploy</code> para ativar o monitoramento
               </p>
@@ -128,7 +128,7 @@ const IntegrationsTestPage: React.FC = () => {
           <CardTitle>🔧 Informações do Ambiente</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-md text-sm">
             <div>
               <h4 className="font-medium">Sentry:</h4>
               <p>Org: {import.meta.env.VITE_SENTRY_ORG}</p>

@@ -7,7 +7,6 @@ import * as patientService from '../services/patientService';
 import * as soapNoteService from '../services/soapNoteService';
 import { Appointment, Patient, SoapNote, EnrichedAppointment } from '../types';
 import PageLoader from '../components/ui/PageLoader';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 // Componentes da sessão
 import SessionForm from '../components/session/SessionForm';

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Stethoscope, Loader } from 'lucide-react';
+import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 interface SimpleLoginPageProps {
   onSuccess?: () => void;
@@ -39,35 +40,35 @@ const SimpleLoginPage: React.FC<SimpleLoginPageProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-md">
       <div className="w-full max-w-md">
         {/* Logo and Title */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-white p-3 rounded-full shadow-lg">
+        <div className="text-center mb-mdxl">
+          <div className="flex items-center justify-center mb-md">
+            <div className="bg-white p-md rounded-full shadow-cardActive">
               <Stethoscope className="w-8 h-8 text-indigo-600" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-neutral-text">
             Dudu<span className="text-indigo-600">Fisio</span>
           </h1>
-          <p className="text-gray-600 mt-2">Sistema de Gestão em Fisioterapia</p>
+          <p className="text-neutral-textSecondary mt-sm">Sistema de Gestão em Fisioterapia</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-900">
+        <div className="bg-white rounded-lg shadow-xl p-xl">
+          <div className="text-center mb-xl">
+            <h2 className="text-2xl font-semibold text-neutral-text">
               Bem-vindo de volta
             </h2>
-            <p className="text-gray-600 mt-2">
+            <p className="text-neutral-textSecondary mt-sm">
               Faça login para acessar sua conta
             </p>
           </div>
 
           {/* Error Alert */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-md p-4 mb-6">
+            <div className="bg-error-light border border-error rounded-md p-md mb-xl">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -75,19 +76,19 @@ const SimpleLoginPage: React.FC<SimpleLoginPageProps> = ({ onSuccess }) => {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm text-error">{error}</p>
                 </div>
               </div>
             </div>
           )}
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-xl">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email
               </label>
-              <div className="mt-1">
+              <div className="mt-xs">
                 <input
                   id="email"
                   name="email"
@@ -96,7 +97,7 @@ const SimpleLoginPage: React.FC<SimpleLoginPageProps> = ({ onSuccess }) => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="appearance-none block w-full px-md py-sm border border-gray-300 rounded-md shadow-card placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="seu@email.com"
                 />
               </div>
@@ -106,7 +107,7 @@ const SimpleLoginPage: React.FC<SimpleLoginPageProps> = ({ onSuccess }) => {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Senha
               </label>
-              <div className="mt-1">
+              <div className="mt-xs">
                 <input
                   id="password"
                   name="password"
@@ -115,7 +116,7 @@ const SimpleLoginPage: React.FC<SimpleLoginPageProps> = ({ onSuccess }) => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="appearance-none block w-full px-md py-sm border border-gray-300 rounded-md shadow-card placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   placeholder="••••••••"
                 />
               </div>
@@ -125,11 +126,11 @@ const SimpleLoginPage: React.FC<SimpleLoginPageProps> = ({ onSuccess }) => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative w-full flex justify-center py-sm px-md border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <>
-                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader className="mr-sm h-4 w-4 animate-spin" />
                     Entrando...
                   </>
                 ) : (
@@ -140,11 +141,11 @@ const SimpleLoginPage: React.FC<SimpleLoginPageProps> = ({ onSuccess }) => {
           </form>
 
           {/* Demo Info */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm font-medium text-gray-700 mb-2">
+          <div className="mt-xl p-md bg-neutral-bgAlt rounded-lg">
+            <p className="text-sm font-medium text-gray-700 mb-sm">
               Conta de Demonstração:
             </p>
-            <div className="text-xs text-gray-600">
+            <div className="text-xs text-neutral-textSecondary">
               <p><strong>Email:</strong> admin@dudufisio.com</p>
               <p><strong>Senha:</strong> demo123456</p>
             </div>
@@ -152,7 +153,7 @@ const SimpleLoginPage: React.FC<SimpleLoginPageProps> = ({ onSuccess }) => {
         </div>
 
         {/* Features */}
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-3xl text-center text-sm text-gray-500">
           <p>🔒 Login seguro</p>
           <p>🚀 Sistema completo de gestão</p>
           <p>🤖 Powered by AI</p>

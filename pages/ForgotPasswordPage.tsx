@@ -55,27 +55,27 @@ const ForgotPasswordPage: React.FC = () => {
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-md">
         <div className="w-full max-w-md">
-          <div className="rounded-2xl border border-green-200 bg-white p-8 shadow-xl">
-            <div className="mb-6 flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                <CheckCircle className="h-8 w-8 text-green-600" />
+          <div className="rounded-cardLarge border border-success bg-white p-xl shadow-xl">
+            <div className="mb-xl flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success-light">
+                <CheckCircle className="h-8 w-8 text-success" />
               </div>
             </div>
 
-            <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
+            <h1 className="mb-sm text-center text-2xl font-bold text-neutral-text">
               Email Enviado!
             </h1>
-            <p className="mb-6 text-center text-gray-600">
+            <p className="mb-xl text-center text-neutral-textSecondary">
               Enviamos um link de recuperação de senha para{' '}
-              <strong className="text-gray-900">{email}</strong>
+              <strong className="text-neutral-text">{email}</strong>
             </p>
 
-            <div className="space-y-4">
-              <div className="rounded-lg bg-sky-50 p-4">
-                <h3 className="mb-2 font-semibold text-sky-900">Próximos Passos:</h3>
-                <ol className="list-decimal list-inside space-y-1 text-sm text-sky-700">
+            <div className="space-y-md">
+              <div className="rounded-lg bg-primary-light p-md">
+                <h3 className="mb-sm font-semibold text-sky-900">Próximos Passos:</h3>
+                <ol className="list-decimal list-inside space-y-1 text-sm text-primary">
                   <li>Verifique sua caixa de entrada (e spam)</li>
                   <li>Clique no link no email</li>
                   <li>Defina uma nova senha</li>
@@ -83,7 +83,7 @@ const ForgotPasswordPage: React.FC = () => {
                 </ol>
               </div>
 
-              <div className="rounded-lg bg-yellow-50 border border-yellow-200 p-3">
+              <div className="rounded-lg bg-warning-light border border-yellow-200 p-md">
                 <p className="text-xs text-yellow-800">
                   ⏱️ O link expira em 1 hora. Se não receber o email em alguns minutos,
                   verifique sua pasta de spam ou solicite um novo link.
@@ -100,7 +100,7 @@ const ForgotPasswordPage: React.FC = () => {
 
               <Link to="/login">
                 <Button variant="ghost" className="w-full">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  <ArrowLeft className="mr-sm h-4 w-4" />
                   Voltar para Login
                 </Button>
               </Link>
@@ -112,49 +112,49 @@ const ForgotPasswordPage: React.FC = () => {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-md">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-mdxl">
           <Link
             to="/login"
-            className="mb-4 inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 transition"
+            className="mb-md inline-flex items-center text-sm font-medium text-neutral-textSecondary hover:text-neutral-text transition"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="mr-sm h-4 w-4" />
             Voltar para login
           </Link>
 
           <div className="text-center">
-            <div className="mb-4 flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-600 shadow-lg">
+            <div className="mb-md flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-hover shadow-cardActive">
                 <Mail className="h-8 w-8 text-white" />
               </div>
             </div>
-            <h1 className="mb-2 text-3xl font-bold text-gray-900">
+            <h1 className="mb-sm text-3xl font-bold text-neutral-text">
               Esqueceu a Senha?
             </h1>
-            <p className="text-gray-600">
+            <p className="text-neutral-textSecondary">
               Sem problemas! Digite seu email e enviaremos um link para redefinir sua senha.
             </p>
           </div>
         </div>
 
         {/* Form */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
+        <div className="rounded-cardLarge border border-neutral-border bg-white p-xl shadow-xl">
           {error && (
-            <Alert variant="destructive" className="mb-6">
+            <Alert variant="destructive" className="mb-xl">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Email */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label htmlFor="email" className="text-sm font-medium">
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Mail className="absolute left-3 top-md h-5 w-5 text-neutral-textTertiary" />
                 <Input
                   id="email"
                   type="email"
@@ -166,12 +166,12 @@ const ForgotPasswordPage: React.FC = () => {
                 />
               </div>
               {errors.email && (
-                <p className="text-xs text-red-600">{errors.email.message}</p>
+                <p className="text-xs text-error">{errors.email.message}</p>
               )}
             </div>
 
             {/* Info */}
-            <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
+            <div className="rounded-lg bg-primary-light border border-primary p-md">
               <p className="text-xs text-blue-900">
                 💡 <strong>Dica:</strong> Certifique-se de usar o mesmo email que você
                 utilizou para criar sua conta.
@@ -186,12 +186,12 @@ const ForgotPasswordPage: React.FC = () => {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-sm h-4 w-4 animate-spin" />
                   Enviando...
                 </>
               ) : (
                 <>
-                  <Send className="mr-2 h-4 w-4" />
+                  <Send className="mr-sm h-4 w-4" />
                   Enviar Link de Recuperação
                 </>
               )}
@@ -199,24 +199,24 @@ const ForgotPasswordPage: React.FC = () => {
           </form>
 
           {/* Additional Help */}
-          <div className="mt-6 space-y-4">
+          <div className="mt-xl space-y-md">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
+                <div className="w-full border-t border-neutral-border" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="bg-white px-2 text-gray-500">
+                <span className="bg-white px-sm text-gray-500">
                   Precisa de ajuda?
                 </span>
               </div>
             </div>
 
             <div className="text-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-neutral-textSecondary">
                 Não consegue acessar seu email?{' '}
                 <a
                   href="mailto:suporte@dudufisio.com.br"
-                  className="font-medium text-sky-600 hover:text-sky-700 hover:underline"
+                  className="font-medium text-primary hover:text-primary hover:underline"
                 >
                   Entre em contato com o suporte
                 </a>
@@ -226,12 +226,12 @@ const ForgotPasswordPage: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+        <div className="mt-xl text-center">
+          <p className="text-sm text-neutral-textSecondary">
             Lembrou sua senha?{' '}
             <Link
               to="/login"
-              className="font-medium text-sky-600 hover:text-sky-700 hover:underline"
+              className="font-medium text-primary hover:text-primary hover:underline"
             >
               Fazer login
             </Link>
@@ -239,11 +239,11 @@ const ForgotPasswordPage: React.FC = () => {
         </div>
 
         {/* Security Info */}
-        <div className="mt-8 rounded-lg bg-gray-50 p-4">
-          <h3 className="mb-2 text-sm font-semibold text-gray-900">
+        <div className="mt-3xl rounded-lg bg-neutral-bgAlt p-md">
+          <h3 className="mb-sm text-sm font-semibold text-neutral-text">
             🔒 Segurança
           </h3>
-          <ul className="space-y-1 text-xs text-gray-600">
+          <ul className="space-y-1 text-xs text-neutral-textSecondary">
             <li>• O link de recuperação expira em 1 hora</li>
             <li>• Nenhuma alteração será feita até você confirmar</li>
             <li>• Apenas você pode redefinir sua senha</li>

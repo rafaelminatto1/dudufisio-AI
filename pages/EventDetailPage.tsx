@@ -17,8 +17,8 @@ import ProviderTable from '../components/events/ProviderTable';
 import EventFormModal from '../components/events/EventFormModal';
 
 const TabButton: React.FC<{ icon: React.ElementType, label: string; isActive: boolean; onClick: () => void }> = ({ icon: Icon, label, isActive, onClick }) => (
-    <button onClick={onClick} className={`flex items-center whitespace-nowrap py-3 px-4 font-medium text-sm rounded-t-lg border-b-2 ${isActive ? 'border-teal-500 text-teal-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
-        <Icon className="w-5 h-5 mr-2" /> {label}
+    <button onClick={onClick} className={`flex items-center whitespace-nowrap py-3 px-md font-medium text-sm rounded-t-lg border-b-2 ${isActive ? 'border-teal-500 text-teal-600 bg-white' : 'border-transparent text-neutral-textSecondary hover:text-neutral-text hover:bg-neutral-bgAlt'}`}>
+        <Icon className="w-5 h-5 mr-sm" /> {label}
     </button>
 );
 
@@ -92,8 +92,8 @@ const EventDetailPage: React.FC = () => {
 
     return (
         <>
-            <ReactRouterDOM.Link to="/events" className="inline-flex items-center text-sm font-semibold text-slate-600 hover:text-slate-800 mb-4">
-                <ChevronLeft className="mr-2 h-4 w-4" />
+            <ReactRouterDOM.Link to="/events" className="inline-flex items-center text-sm font-semibold text-neutral-textSecondary hover:text-neutral-text mb-md">
+                <ChevronLeft className="mr-sm h-4 w-4" />
                 Voltar para todos os eventos
             </ReactRouterDOM.Link>
 
@@ -117,16 +117,16 @@ const EventDetailPage: React.FC = () => {
                 onCheckIn={handleCheckIn}
             />
 
-            <div className="mt-8 bg-white rounded-2xl shadow-sm">
-                <div className="border-b border-slate-200">
-                    <nav className="flex space-x-2 px-4" aria-label="Tabs">
+            <div className="mt-3xl bg-white rounded-cardLarge shadow-card">
+                <div className="border-b border-neutral-border">
+                    <nav className="flex space-x-2 px-md" aria-label="Tabs">
                         <TabButton icon={BarChart} label="Dashboard" isActive={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
                         <TabButton icon={Users} label="Participantes" isActive={activeTab === 'participants'} onClick={() => setActiveTab('participants')} />
                         {event.allowsProviders && <TabButton icon={UserCheck} label="Fisioterapeutas" isActive={activeTab === 'providers'} onClick={() => setActiveTab('providers')} />}
                     </nav>
                 </div>
                 
-                <div className="p-6">
+                <div className="p-lg">
                     {activeTab === 'dashboard' && (
                         <EventDashboardMetrics event={event} registrations={registrations} />
                     )}

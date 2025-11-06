@@ -106,13 +106,13 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
     const TabButton = memo<{ id: string; icon: React.ElementType; label: string }>(({ id, icon: Icon, label }) => (
         <button
             onClick={() => setActiveTab(id as any)}
-            className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+            className={`flex items-center px-md py-sm text-sm font-medium rounded-lg transition-colors ${
                 activeTab === id
-                    ? 'bg-sky-500 text-white'
-                    : 'text-slate-600 hover:bg-slate-100'
+                    ? 'bg-primary text-white'
+                    : 'text-neutral-textSecondary hover:bg-neutral-bgDark'
             }`}
         >
-            <Icon className="w-4 h-4 mr-2" />
+            <Icon className="w-4 h-4 mr-sm" />
             {label}
         </button>
     ));
@@ -120,28 +120,28 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
 
     return (
         <>
-            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[95vh] flex flex-col">
+            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md">
+                <div className="bg-white rounded-cardLarge shadow-2xl w-full max-w-6xl max-h-[95vh] flex flex-col">
                     {/* Header */}
-                    <header className="flex items-center justify-between p-6 border-b">
+                    <header className="flex items-center justify-between p-lg border-b">
                         <div>
-                            <h1 className="text-xl font-bold text-slate-800">
+                            <h1 className="text-xl font-bold text-neutral-text">
                                 Sessão de Atendimento
                             </h1>
-                            <p className="text-sm text-slate-600 mt-1">
+                            <p className="text-sm text-neutral-textSecondary mt-xs">
                                 {patient.name} - {new Date(appointment.startTime).toLocaleString('pt-BR')}
                             </p>
                         </div>
                         <button
                             onClick={onClose}
-                            className="p-2 rounded-full hover:bg-slate-100 transition-colors"
+                            className="p-sm rounded-full hover:bg-neutral-bgDark transition-colors"
                         >
-                            <X className="w-6 h-6 text-slate-500" />
+                            <X className="w-6 h-6 text-neutral-textSecondary" />
                         </button>
                     </header>
 
                     {/* Tabs */}
-                    <div className="flex gap-2 p-4 border-b">
+                    <div className="flex gap-sm p-md border-b">
                         <TabButton id="session" icon={Activity} label="Sessão Atual" />
                         <TabButton id="history" icon={History} label="Histórico" />
                         <TabButton id="patient" icon={User} label="Dados do Paciente" />
@@ -150,16 +150,16 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
                     {/* Content */}
                     <div className="flex-1 overflow-hidden">
                         {activeTab === 'session' && (
-                            <div className="p-6 h-full overflow-y-auto">
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+                            <div className="p-lg h-full overflow-y-auto">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg h-full">
                                     {/* Informações da Sessão */}
-                                    <div className="space-y-4">
-                                        <div className="bg-slate-50 rounded-lg p-4">
-                                            <h3 className="font-semibold text-slate-800 mb-3 flex items-center">
-                                                <Clock className="w-5 h-5 mr-2" />
+                                    <div className="space-y-md">
+                                        <div className="bg-neutral-bgAlt rounded-lg p-md">
+                                            <h3 className="font-semibold text-neutral-text mb-md flex items-center">
+                                                <Clock className="w-5 h-5 mr-sm" />
                                                 Informações da Sessão
                                             </h3>
-                                            <div className="space-y-2 text-sm">
+                                            <div className="space-y-sm text-sm">
                                                 <div><strong>Paciente:</strong> {patient.name}</div>
                                                 <div><strong>Fisioterapeuta:</strong> {therapist?.name || 'N/A'}</div>
                                                 <div><strong>Data/Hora:</strong> {new Date(appointment.startTime).toLocaleString('pt-BR')}</div>
@@ -173,14 +173,14 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
 
                                         {/* Condições do Paciente */}
                                         {patient.conditions && patient.conditions.length > 0 && (
-                                            <div className="bg-blue-50 rounded-lg p-4">
-                                                <h3 className="font-semibold text-slate-800 mb-3">Condições/Queixas</h3>
-                                                <div className="space-y-2">
+                                            <div className="bg-primary-light rounded-lg p-md">
+                                                <h3 className="font-semibold text-neutral-text mb-md">Condições/Queixas</h3>
+                                                <div className="space-y-sm">
                                                     {patient.conditions.map((condition, index) => (
-                                                        <div key={index} className="text-sm bg-white p-2 rounded border-l-4 border-blue-400">
+                                                        <div key={index} className="text-sm bg-white p-sm rounded border-l-4 border-blue-400">
                                                             <strong>{condition.name}</strong>
                                                             {condition.description && (
-                                                                <p className="text-slate-600 mt-1">{condition.description}</p>
+                                                                <p className="text-neutral-textSecondary mt-xs">{condition.description}</p>
                                                             )}
                                                         </div>
                                                     ))}
@@ -190,46 +190,46 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
 
                                         <button
                                             onClick={() => setIsSoapModalOpen(true)}
-                                            className="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
+                                            className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 px-md rounded-lg transition-colors flex items-center justify-center"
                                         >
-                                            <Plus className="w-5 h-5 mr-2" />
+                                            <Plus className="w-5 h-5 mr-sm" />
                                             Registrar Evolução da Sessão
                                         </button>
                                     </div>
 
                                     {/* Última Sessão */}
-                                    <div className="space-y-4">
-                                        <h3 className="font-semibold text-slate-800 flex items-center">
-                                            <FileText className="w-5 h-5 mr-2" />
+                                    <div className="space-y-md">
+                                        <h3 className="font-semibold text-neutral-text flex items-center">
+                                            <FileText className="w-5 h-5 mr-sm" />
                                             Última Sessão
                                         </h3>
                                         {patientNotes.length > 0 ? (
-                                            <div className="bg-slate-50 rounded-lg p-4 max-h-96 overflow-y-auto">
-                                                <div className="text-sm text-slate-600 mb-2">
+                                            <div className="bg-neutral-bgAlt rounded-lg p-md max-h-96 overflow-y-auto">
+                                                <div className="text-sm text-neutral-textSecondary mb-sm">
                                                     Sessão #{patientNotes[0].sessionNumber} - {patientNotes[0].date}
                                                 </div>
-                                                <div className="space-y-3">
+                                                <div className="space-y-sm">
                                                     <div>
-                                                        <strong className="text-sky-600">S (Subjetivo):</strong>
+                                                        <strong className="text-primary">S (Subjetivo):</strong>
                                                         <MarkdownRenderer content={patientNotes[0].subjective} />
                                                     </div>
                                                     <div>
-                                                        <strong className="text-sky-600">O (Objetivo):</strong>
+                                                        <strong className="text-primary">O (Objetivo):</strong>
                                                         <MarkdownRenderer content={patientNotes[0].objective} />
                                                     </div>
                                                     <div>
-                                                        <strong className="text-sky-600">A (Avaliação):</strong>
+                                                        <strong className="text-primary">A (Avaliação):</strong>
                                                         <MarkdownRenderer content={patientNotes[0].assessment} />
                                                     </div>
                                                     <div>
-                                                        <strong className="text-sky-600">P (Plano):</strong>
+                                                        <strong className="text-primary">P (Plano):</strong>
                                                         <MarkdownRenderer content={patientNotes[0].plan} />
                                                     </div>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="bg-slate-50 rounded-lg p-4 text-center text-slate-500">
-                                                <FileText className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                                            <div className="bg-neutral-bgAlt rounded-lg p-md text-center text-neutral-textSecondary">
+                                                <FileText className="w-8 h-8 mx-auto mb-sm text-slate-300" />
                                                 Nenhuma sessão anterior registrada
                                             </div>
                                         )}
@@ -239,38 +239,38 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
                         )}
 
                         {activeTab === 'history' && (
-                            <div className="p-6 h-full overflow-y-auto">
-                                <h3 className="font-semibold text-slate-800 mb-4 flex items-center">
-                                    <History className="w-5 h-5 mr-2" />
+                            <div className="p-lg h-full overflow-y-auto">
+                                <h3 className="font-semibold text-neutral-text mb-md flex items-center">
+                                    <History className="w-5 h-5 mr-sm" />
                                     Histórico de Sessões ({patientNotes.length})
                                 </h3>
                                 {patientNotes.length > 0 ? (
-                                    <div className="space-y-4">
+                                    <div className="space-y-md">
                                         {patientNotes.map((note, index) => (
-                                            <div key={note.id} className="bg-white border border-slate-200 rounded-lg p-4">
-                                                <div className="flex justify-between items-start mb-3">
+                                            <div key={note.id} className="bg-white border border-neutral-border rounded-lg p-md">
+                                                <div className="flex justify-between items-start mb-md">
                                                     <div>
-                                                        <h4 className="font-semibold text-slate-800">
+                                                        <h4 className="font-semibold text-neutral-text">
                                                             Sessão #{note.sessionNumber}
                                                         </h4>
-                                                        <p className="text-sm text-slate-500">{note.date} - {note.therapist}</p>
+                                                        <p className="text-sm text-neutral-textSecondary">{note.date} - {note.therapist}</p>
                                                     </div>
                                                 </div>
-                                                <div className="space-y-2 text-sm">
+                                                <div className="space-y-sm text-sm">
                                                     <div>
-                                                        <strong className="text-sky-600">S:</strong>
+                                                        <strong className="text-primary">S:</strong>
                                                         <div className="ml-4"><MarkdownRenderer content={note.subjective} /></div>
                                                     </div>
                                                     <div>
-                                                        <strong className="text-sky-600">O:</strong>
+                                                        <strong className="text-primary">O:</strong>
                                                         <div className="ml-4"><MarkdownRenderer content={note.objective} /></div>
                                                     </div>
                                                     <div>
-                                                        <strong className="text-sky-600">A:</strong>
+                                                        <strong className="text-primary">A:</strong>
                                                         <div className="ml-4"><MarkdownRenderer content={note.assessment} /></div>
                                                     </div>
                                                     <div>
-                                                        <strong className="text-sky-600">P:</strong>
+                                                        <strong className="text-primary">P:</strong>
                                                         <div className="ml-4"><MarkdownRenderer content={note.plan} /></div>
                                                     </div>
                                                 </div>
@@ -278,8 +278,8 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className="text-center text-slate-500 py-8">
-                                        <FileText className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                                    <div className="text-center text-neutral-textSecondary py-3xl">
+                                        <FileText className="w-12 h-12 mx-auto mb-md text-slate-300" />
                                         <p>Nenhuma sessão registrada ainda</p>
                                     </div>
                                 )}
@@ -287,16 +287,16 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
                         )}
 
                         {activeTab === 'patient' && (
-                            <div className="p-6 h-full overflow-y-auto">
-                                <h3 className="font-semibold text-slate-800 mb-4 flex items-center">
-                                    <User className="w-5 h-5 mr-2" />
+                            <div className="p-lg h-full overflow-y-auto">
+                                <h3 className="font-semibold text-neutral-text mb-md flex items-center">
+                                    <User className="w-5 h-5 mr-sm" />
                                     Dados do Paciente
                                 </h3>
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                        <div className="bg-slate-50 rounded-lg p-4">
-                                            <h4 className="font-semibold text-slate-800 mb-3">Informações Pessoais</h4>
-                                            <div className="space-y-2 text-sm">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
+                                    <div className="space-y-md">
+                                        <div className="bg-neutral-bgAlt rounded-lg p-md">
+                                            <h4 className="font-semibold text-neutral-text mb-md">Informações Pessoais</h4>
+                                            <div className="space-y-sm text-sm">
                                                 <div><strong>Nome:</strong> {patient.name}</div>
                                                 <div><strong>E-mail:</strong> {patient.email}</div>
                                                 <div><strong>Telefone:</strong> {patient.phone}</div>
@@ -306,16 +306,16 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4">
+                                    <div className="space-y-md">
                                         {patient.conditions && patient.conditions.length > 0 && (
-                                            <div className="bg-blue-50 rounded-lg p-4">
-                                                <h4 className="font-semibold text-slate-800 mb-3">Condições/Queixas</h4>
-                                                <div className="space-y-2">
+                                            <div className="bg-primary-light rounded-lg p-md">
+                                                <h4 className="font-semibold text-neutral-text mb-md">Condições/Queixas</h4>
+                                                <div className="space-y-sm">
                                                     {patient.conditions.map((condition, index) => (
                                                         <div key={index} className="text-sm">
                                                             <strong>{condition.name}</strong>
                                                             {condition.description && (
-                                                                <p className="text-slate-600">{condition.description}</p>
+                                                                <p className="text-neutral-textSecondary">{condition.description}</p>
                                                             )}
                                                         </div>
                                                     ))}
@@ -324,13 +324,13 @@ const SessionPage: React.FC<SessionPageProps> = ({ appointmentId, onClose }) => 
                                         )}
 
                                         {patient.surgeries && patient.surgeries.length > 0 && (
-                                            <div className="bg-red-50 rounded-lg p-4">
-                                                <h4 className="font-semibold text-slate-800 mb-3">Histórico Cirúrgico</h4>
-                                                <div className="space-y-2">
+                                            <div className="bg-error-light rounded-lg p-md">
+                                                <h4 className="font-semibold text-neutral-text mb-md">Histórico Cirúrgico</h4>
+                                                <div className="space-y-sm">
                                                     {patient.surgeries.map((surgery, index) => (
                                                         <div key={index} className="text-sm">
                                                             <strong>{surgery.name}</strong>
-                                                            <p className="text-slate-600">{new Date(surgery.date).toLocaleDateString('pt-BR')}</p>
+                                                            <p className="text-neutral-textSecondary">{new Date(surgery.date).toLocaleDateString('pt-BR')}</p>
                                                         </div>
                                                     ))}
                                                 </div>

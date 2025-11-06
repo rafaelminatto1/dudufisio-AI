@@ -20,7 +20,6 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { NotificationPermissionPrompt } from '@/components/notifications/NotificationPermissionPrompt';
-import { H1, Body } from '../src/components/ui/Typography';
 
 const DashboardPageV2: React.FC = () => {
   const { user } = useApp();

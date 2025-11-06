@@ -132,9 +132,9 @@ const AdvancedReportsPage: React.FC = () => {
   const getMetricChangeIcon = (changeType?: 'positive' | 'negative' | 'neutral') => {
     switch (changeType) {
       case 'positive':
-        return <ArrowUpRight className="w-4 h-4 text-green-600" />;
+        return <ArrowUpRight className="w-4 h-4 text-success" />;
       case 'negative':
-        return <ArrowDownRight className="w-4 h-4 text-red-600" />;
+        return <ArrowDownRight className="w-4 h-4 text-error" />;
       default:
         return <div className="w-4 h-4 rounded-full bg-gray-400" />;
     }
@@ -143,41 +143,41 @@ const AdvancedReportsPage: React.FC = () => {
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'financial':
-        return <DollarSign className="w-5 h-5 text-green-600" />;
+        return <DollarSign className="w-5 h-5 text-success" />;
       case 'clinical':
-        return <Heart className="w-5 h-5 text-red-600" />;
+        return <Heart className="w-5 h-5 text-error" />;
       case 'operational':
-        return <Settings className="w-5 h-5 text-blue-600" />;
+        return <Settings className="w-5 h-5 text-primary" />;
       case 'compliance':
         return <Shield className="w-5 h-5 text-purple-600" />;
       default:
-        return <FileText className="w-5 h-5 text-gray-600" />;
+        return <FileText className="w-5 h-5 text-neutral-textSecondary" />;
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'financial':
-        return 'bg-green-50 text-green-700 border-green-200';
+        return 'bg-success-light text-success border-success';
       case 'clinical':
-        return 'bg-red-50 text-red-700 border-red-200';
+        return 'bg-error-light text-error border-error';
       case 'operational':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'bg-primary-light text-primary border-primary';
       case 'compliance':
         return 'bg-purple-50 text-purple-700 border-purple-200';
       default:
-        return 'bg-gray-50 text-gray-700 border-gray-200';
+        return 'bg-neutral-bgAlt text-gray-700 border-neutral-border';
     }
   };
 
   if (isLoading && !biMetrics) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="flex items-center gap-3">
-          <BarChart3 className="w-8 h-8 animate-pulse text-sky-600" />
+        <div className="flex items-center gap-md">
+          <BarChart3 className="w-8 h-8 animate-pulse text-primary" />
           <div>
-            <div className="text-lg font-semibold text-gray-900">Carregando relatórios...</div>
-            <div className="text-sm text-gray-600">Preparando dashboard de BI</div>
+            <div className="text-lg font-semibold text-neutral-text">Carregando relatórios...</div>
+            <div className="text-sm text-neutral-textSecondary">Preparando dashboard de BI</div>
           </div>
         </div>
       </div>
@@ -186,41 +186,41 @@ const AdvancedReportsPage: React.FC = () => {
 
   return (
     <PermissionGuard permission="reports:read">
-      <div className="p-6 max-w-7xl mx-auto space-y-6">
+      <div className="p-lg max-w-7xl mx-auto space-y-xl">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <BarChart3 className="w-8 h-8 text-sky-600" />
+            <h1 className="text-3xl font-bold text-neutral-text flex items-center gap-md">
+              <BarChart3 className="w-8 h-8 text-primary" />
               Relatórios Avançados
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-neutral-textSecondary mt-xs">
               Business Intelligence, Analytics e Compliance em tempo real
             </p>
           </div>
 
-          <div className="flex items-center gap-3 mt-4 lg:mt-0">
+          <div className="flex items-center gap-md mt-md lg:mt-0">
             {/* Date Range Selector */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-sm">
               <input
                 type="date"
                 value={dateRange.start}
                 onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                className="border border-gray-300 rounded-lg px-md py-sm text-sm"
               />
-              <span className="text-gray-400">até</span>
+              <span className="text-neutral-textTertiary">até</span>
               <input
                 type="date"
                 value={dateRange.end}
                 onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                className="border border-gray-300 rounded-lg px-md py-sm text-sm"
               />
             </div>
 
             <button
               onClick={refreshData}
               disabled={isLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50"
+              className="flex items-center gap-sm px-md py-sm bg-primary-hover text-white rounded-lg hover:bg-primary-hover transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
               Atualizar
@@ -230,54 +230,54 @@ const AdvancedReportsPage: React.FC = () => {
 
         {/* Error Alert */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-red-600" />
-              <span className="text-red-800 font-medium">Erro:</span>
-              <span className="text-red-700">{error}</span>
+          <div className="bg-error-light border border-error rounded-lg p-md">
+            <div className="flex items-center gap-sm">
+              <AlertTriangle className="w-5 h-5 text-error" />
+              <span className="text-error font-medium">Erro:</span>
+              <span className="text-error">{error}</span>
             </div>
           </div>
         )}
 
         {/* Business Intelligence Summary Cards */}
         {biMetrics && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-lg border border-success">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-green-700">Receita Total</p>
+                  <p className="text-sm font-medium text-success">Receita Total</p>
                   <p className="text-2xl font-bold text-green-900">
                     R$ {biMetrics.revenue.total.toLocaleString()}
                   </p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <ArrowUpRight className="w-4 h-4 text-green-600" />
-                    <span className="text-sm text-green-700">+{biMetrics.revenue.growth}%</span>
+                  <div className="flex items-center gap-1 mt-xs">
+                    <ArrowUpRight className="w-4 h-4 text-success" />
+                    <span className="text-sm text-success">+{biMetrics.revenue.growth}%</span>
                   </div>
                 </div>
-                <DollarSign className="w-8 h-8 text-green-600" />
+                <DollarSign className="w-8 h-8 text-success" />
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-lg border border-primary">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-blue-700">Pacientes Ativos</p>
+                  <p className="text-sm font-medium text-primary">Pacientes Ativos</p>
                   <p className="text-2xl font-bold text-blue-900">{biMetrics.patients.total}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Users className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm text-blue-700">{biMetrics.patients.retention}% retenção</span>
+                  <div className="flex items-center gap-1 mt-xs">
+                    <Users className="w-4 h-4 text-primary" />
+                    <span className="text-sm text-primary">{biMetrics.patients.retention}% retenção</span>
                   </div>
                 </div>
-                <Users className="w-8 h-8 text-blue-600" />
+                <Users className="w-8 h-8 text-primary" />
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-lg border border-purple-200">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-purple-700">Taxa de Sucesso</p>
                   <p className="text-2xl font-bold text-purple-900">{biMetrics.clinical.outcomeSuccess}%</p>
-                  <div className="flex items-center gap-1 mt-1">
+                  <div className="flex items-center gap-1 mt-xs">
                     <Target className="w-4 h-4 text-purple-600" />
                     <span className="text-sm text-purple-700">{biMetrics.clinical.averageTreatmentTime} dias média</span>
                   </div>
@@ -286,24 +286,24 @@ const AdvancedReportsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 border border-orange-200">
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-lg border border-warning">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-orange-700">Eficiência Operacional</p>
+                  <p className="text-sm font-medium text-warning">Eficiência Operacional</p>
                   <p className="text-2xl font-bold text-orange-900">{biMetrics.operations.efficiency}%</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Zap className="w-4 h-4 text-orange-600" />
-                    <span className="text-sm text-orange-700">{biMetrics.operations.utilization}% ocupação</span>
+                  <div className="flex items-center gap-1 mt-xs">
+                    <Zap className="w-4 h-4 text-warning" />
+                    <span className="text-sm text-warning">{biMetrics.operations.utilization}% ocupação</span>
                   </div>
                 </div>
-                <Activity className="w-8 h-8 text-orange-600" />
+                <Activity className="w-8 h-8 text-warning" />
               </div>
             </div>
           </div>
         )}
 
         {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-xl">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Visão Geral</TabsTrigger>
             <TabsTrigger value="templates">Templates</TabsTrigger>
@@ -314,33 +314,33 @@ const AdvancedReportsPage: React.FC = () => {
           </TabsList>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="overview" className="space-y-xl">
             {/* Recent Reports */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+              <div className="p-lg border-b border-neutral-border">
+                <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
                   <Clock className="w-5 h-5 text-blue-500" />
                   Relatórios Recentes
                 </h3>
               </div>
-              <div className="p-6">
-                <div className="space-y-4">
+              <div className="p-lg">
+                <div className="space-y-md">
                   {reports.slice(0, 5).map((report: any) => (
-                    <div key={report.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                      <div className="flex items-center gap-3">
+                    <div key={report.id} className="flex items-center justify-between p-md border border-neutral-border rounded-lg">
+                      <div className="flex items-center gap-md">
                         {getCategoryIcon(templates.find(t => t.id === report.templateId)?.category || '')}
                         <div>
-                          <h4 className="font-medium text-gray-900">{report.title}</h4>
-                          <p className="text-sm text-gray-600">
+                          <h4 className="font-medium text-neutral-text">{report.title}</h4>
+                          <p className="text-sm text-neutral-textSecondary">
                             Gerado em {new Date(report.generatedAt).toLocaleDateString('pt-BR')}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          report.status === 'completed' ? 'bg-green-100 text-green-700' :
-                          report.status === 'generating' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-red-100 text-red-700'
+                      <div className="flex items-center gap-sm">
+                        <span className={`px-sm py-1 rounded-full text-xs font-medium ${
+                          report.status === 'completed' ? 'bg-success-light text-success' :
+                          report.status === 'generating' ? 'bg-warning-light text-yellow-700' :
+                          'bg-error-light text-error'
                         }`}>
                           {report.status === 'completed' ? 'Concluído' :
                            report.status === 'generating' ? 'Gerando' : 'Erro'}
@@ -348,7 +348,7 @@ const AdvancedReportsPage: React.FC = () => {
                         {report.status === 'completed' && (
                           <button
                             onClick={() => handleExportReport(report.id, 'pdf')}
-                            className="text-sky-600 hover:text-sky-700"
+                            className="text-primary hover:text-primary"
                           >
                             <Download className="w-4 h-4" />
                           </button>
@@ -362,13 +362,13 @@ const AdvancedReportsPage: React.FC = () => {
 
             {/* Quick Analytics */}
             {biMetrics && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
                 {/* Revenue Forecast Chart */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900">Projeção de Receita</h3>
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+                  <div className="p-lg border-b border-neutral-border">
+                    <h3 className="text-lg font-semibold text-neutral-text">Projeção de Receita</h3>
                   </div>
-                  <div className="p-6">
+                  <div className="p-lg">
                     <ResponsiveContainer width="100%" height={300}>
                       <AreaChart data={biMetrics.revenue.forecast.map((value, index) => ({
                         month: `Mês ${index + 1}`,
@@ -386,11 +386,11 @@ const AdvancedReportsPage: React.FC = () => {
                 </div>
 
                 {/* Patient Risk Segments */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900">Segmentação de Risco</h3>
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+                  <div className="p-lg border-b border-neutral-border">
+                    <h3 className="text-lg font-semibold text-neutral-text">Segmentação de Risco</h3>
                   </div>
-                  <div className="p-6">
+                  <div className="p-lg">
                     <ResponsiveContainer width="100%" height={300}>
                       <RechartsPieChart>
                         <Pie
@@ -416,26 +416,26 @@ const AdvancedReportsPage: React.FC = () => {
           </TabsContent>
 
           {/* Templates Tab */}
-          <TabsContent value="templates" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
+          <TabsContent value="templates" className="space-y-xl">
+            <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+              <div className="p-lg border-b border-neutral-border">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Templates de Relatórios</h3>
-                  <div className="flex items-center gap-3">
+                  <h3 className="text-lg font-semibold text-neutral-text">Templates de Relatórios</h3>
+                  <div className="flex items-center gap-md">
                     <div className="relative">
-                      <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-textTertiary" />
                       <input
                         type="text"
                         placeholder="Buscar templates..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        className="pl-10 pr-4 py-sm border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                       />
                     </div>
                     <select
                       value={filterCategory}
                       onChange={(e) => setFilterCategory(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="border border-gray-300 rounded-lg px-md py-sm text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
                     >
                       <option value="all">Todas as Categorias</option>
                       <option value="financial">Financeiros</option>
@@ -446,38 +446,38 @@ const AdvancedReportsPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="p-lg">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
                   {filteredTemplates.map((template: any) => (
-                    <div key={template.id} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
+                    <div key={template.id} className="border border-neutral-border rounded-lg p-lg hover:shadow-cardHover transition-shadow">
+                      <div className="flex items-start justify-between mb-md">
+                        <div className="flex items-center gap-md">
                           {getCategoryIcon(template.category)}
                           <div>
-                            <h4 className="font-semibold text-gray-900">{template.name}</h4>
-                            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(template.category)}`}>
+                            <h4 className="font-semibold text-neutral-text">{template.name}</h4>
+                            <span className={`inline-block px-sm py-1 rounded-full text-xs font-medium ${getCategoryColor(template.category)}`}>
                               {template.category}
                             </span>
                           </div>
                         </div>
                       </div>
 
-                      <p className="text-gray-600 text-sm mb-4">{template.description}</p>
+                      <p className="text-neutral-textSecondary text-sm mb-md">{template.description}</p>
 
-                      <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                      <div className="flex items-center justify-between text-xs text-gray-500 mb-md">
                         <span>Tipo: {template.type}</span>
                         <span>Freq: {template.frequency}</span>
                       </div>
 
-                      <div className="flex gap-2">
+                      <div className="flex gap-sm">
                         <button
                           onClick={() => setReportModal({ isOpen: true, templateId: template.id })}
                           disabled={isGenerating}
-                          className="flex-1 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50 text-sm"
+                          className="flex-1 bg-primary-hover text-white px-md py-sm rounded-lg hover:bg-primary-hover transition-colors disabled:opacity-50 text-sm"
                         >
                           Gerar Relatório
                         </button>
-                        <button className="text-gray-400 hover:text-gray-600 p-2">
+                        <button className="text-neutral-textTertiary hover:text-neutral-textSecondary p-sm">
                           <Eye className="w-4 h-4" />
                         </button>
                       </div>
@@ -489,13 +489,13 @@ const AdvancedReportsPage: React.FC = () => {
           </TabsContent>
 
           {/* Reports Tab */}
-          <TabsContent value="reports" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
+          <TabsContent value="reports" className="space-y-xl">
+            <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+              <div className="p-lg border-b border-neutral-border">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Relatórios Gerados</h3>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm text-gray-600">
+                  <h3 className="text-lg font-semibold text-neutral-text">Relatórios Gerados</h3>
+                  <div className="flex items-center gap-md">
+                    <span className="text-sm text-neutral-textSecondary">
                       {reports.length} relatórios disponíveis
                     </span>
                   </div>
@@ -503,21 +503,21 @@ const AdvancedReportsPage: React.FC = () => {
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-neutral-bgAlt">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-lg py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Relatório
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-lg py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Categoria
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-lg py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Gerado em
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-lg py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-lg py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Ações
                       </th>
                     </tr>
@@ -526,54 +526,54 @@ const AdvancedReportsPage: React.FC = () => {
                     {filteredReports.map((report: any) => {
                       const template = templates.find(t => t.id === report.templateId);
                       return (
-                        <tr key={report.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-3">
+                        <tr key={report.id} className="hover:bg-neutral-bgAlt">
+                          <td className="px-lg py-md whitespace-nowrap">
+                            <div className="flex items-center gap-md">
                               {template && getCategoryIcon(template.category)}
                               <div>
-                                <div className="text-sm font-medium text-gray-900">{report.title}</div>
+                                <div className="text-sm font-medium text-neutral-text">{report.title}</div>
                                 <div className="text-sm text-gray-500">{template?.name}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-lg py-md whitespace-nowrap">
                             {template && (
-                              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(template.category)}`}>
+                              <span className={`inline-flex px-sm py-1 text-xs font-medium rounded-full ${getCategoryColor(template.category)}`}>
                                 {template.category}
                               </span>
                             )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-lg py-md whitespace-nowrap text-sm text-gray-500">
                             {new Date(report.generatedAt).toLocaleDateString('pt-BR')} às{' '}
                             {new Date(report.generatedAt).toLocaleTimeString('pt-BR', {
                               hour: '2-digit',
                               minute: '2-digit'
                             })}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                              report.status === 'completed' ? 'bg-green-100 text-green-800' :
-                              report.status === 'generating' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-red-100 text-red-800'
+                          <td className="px-lg py-md whitespace-nowrap">
+                            <span className={`inline-flex px-sm py-1 text-xs font-medium rounded-full ${
+                              report.status === 'completed' ? 'bg-success-light text-success' :
+                              report.status === 'generating' ? 'bg-warning-light text-yellow-800' :
+                              'bg-error-light text-error'
                             }`}>
                               {report.status === 'completed' ? 'Concluído' :
                                report.status === 'generating' ? 'Gerando' : 'Erro'}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div className="flex items-center gap-2">
+                          <td className="px-lg py-md whitespace-nowrap text-sm font-medium">
+                            <div className="flex items-center gap-sm">
                               {report.status === 'completed' && (
                                 <>
                                   <button
                                     onClick={() => handleExportReport(report.id, 'pdf')}
-                                    className="text-sky-600 hover:text-sky-700"
+                                    className="text-primary hover:text-primary"
                                     title="Baixar PDF"
                                   >
                                     <Download className="w-4 h-4" />
                                   </button>
                                   <button
                                     onClick={() => handleExportReport(report.id, 'excel')}
-                                    className="text-green-600 hover:text-green-700"
+                                    className="text-success hover:text-success"
                                     title="Baixar Excel"
                                   >
                                     <FileSpreadsheet className="w-4 h-4" />
@@ -583,7 +583,7 @@ const AdvancedReportsPage: React.FC = () => {
                               <IfPermission permission="reports:delete">
                                 <button
                                   onClick={() => deleteReport(report.id)}
-                                  className="text-red-600 hover:text-red-700"
+                                  className="text-error hover:text-error"
                                   title="Deletar"
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -601,36 +601,36 @@ const AdvancedReportsPage: React.FC = () => {
           </TabsContent>
 
           {/* Analytics Tab */}
-          <TabsContent value="analytics" className="space-y-6">
+          <TabsContent value="analytics" className="space-y-xl">
             {biMetrics && (
               <>
                 {/* Financial Analytics */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                      <DollarSign className="w-5 h-5 text-green-600" />
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+                  <div className="p-lg border-b border-neutral-border">
+                    <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
+                      <DollarSign className="w-5 h-5 text-success" />
                       Analytics Financeiro
                     </h3>
                   </div>
-                  <div className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <div className="p-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-green-600">
+                        <div className="text-3xl font-bold text-success">
                           R$ {biMetrics.financial.averageRevenuePatientsHour.toLocaleString()}
                         </div>
-                        <div className="text-sm text-gray-600">Receita/Hora</div>
+                        <div className="text-sm text-neutral-textSecondary">Receita/Hora</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-blue-600">
+                        <div className="text-3xl font-bold text-primary">
                           {biMetrics.financial.profitMargin}%
                         </div>
-                        <div className="text-sm text-gray-600">Margem de Lucro</div>
+                        <div className="text-sm text-neutral-textSecondary">Margem de Lucro</div>
                       </div>
                       <div className="text-center">
                         <div className="text-3xl font-bold text-purple-600">
                           {biMetrics.financial.paymentCollection}%
                         </div>
-                        <div className="text-sm text-gray-600">Taxa de Cobrança</div>
+                        <div className="text-sm text-neutral-textSecondary">Taxa de Cobrança</div>
                       </div>
                     </div>
 
@@ -647,32 +647,32 @@ const AdvancedReportsPage: React.FC = () => {
                 </div>
 
                 {/* Operational Analytics */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                      <Activity className="w-5 h-5 text-blue-600" />
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+                  <div className="p-lg border-b border-neutral-border">
+                    <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
+                      <Activity className="w-5 h-5 text-primary" />
                       Analytics Operacional
                     </h3>
                   </div>
-                  <div className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <div className="p-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-sky-600">
+                        <div className="text-3xl font-bold text-primary">
                           {biMetrics.operations.utilization}%
                         </div>
-                        <div className="text-sm text-gray-600">Taxa de Utilização</div>
+                        <div className="text-sm text-neutral-textSecondary">Taxa de Utilização</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-orange-600">
+                        <div className="text-3xl font-bold text-warning">
                           {biMetrics.operations.waitTime} min
                         </div>
-                        <div className="text-sm text-gray-600">Tempo de Espera</div>
+                        <div className="text-sm text-neutral-textSecondary">Tempo de Espera</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-red-600">
+                        <div className="text-3xl font-bold text-error">
                           {biMetrics.operations.noShowRate}%
                         </div>
-                        <div className="text-sm text-gray-600">Taxa No-Show</div>
+                        <div className="text-sm text-neutral-textSecondary">Taxa No-Show</div>
                       </div>
                     </div>
 
@@ -692,58 +692,58 @@ const AdvancedReportsPage: React.FC = () => {
           </TabsContent>
 
           {/* Compliance Tab */}
-          <TabsContent value="compliance" className="space-y-6">
+          <TabsContent value="compliance" className="space-y-xl">
             {complianceReport && (
-              <div className="space-y-6">
+              <div className="space-y-xl">
                 {/* Compliance Overview */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900">COFFITO</h3>
-                      <Shield className="w-6 h-6 text-blue-600" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-lg">
+                  <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+                    <div className="flex items-center justify-between mb-md">
+                      <h3 className="text-lg font-semibold text-neutral-text">COFFITO</h3>
+                      <Shield className="w-6 h-6 text-primary" />
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-sm">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Registros Válidos</span>
+                        <span className="text-sm text-neutral-textSecondary">Registros Válidos</span>
                         <span className="font-semibold">{complianceReport.cfft.registrations.valid}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Taxa de Conformidade</span>
-                        <span className="font-semibold text-green-600">{complianceReport.cfft.ceeRate}%</span>
+                        <span className="text-sm text-neutral-textSecondary">Taxa de Conformidade</span>
+                        <span className="font-semibold text-success">{complianceReport.cfft.ceeRate}%</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900">LGPD</h3>
+                  <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+                    <div className="flex items-center justify-between mb-md">
+                      <h3 className="text-lg font-semibold text-neutral-text">LGPD</h3>
                       <Shield className="w-6 h-6 text-purple-600" />
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-sm">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Processamentos Válidos</span>
+                        <span className="text-sm text-neutral-textSecondary">Processamentos Válidos</span>
                         <span className="font-semibold">{complianceReport.lgpd.dataProcessing.lawful}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Consentimentos Ativos</span>
-                        <span className="font-semibold text-green-600">{complianceReport.lgpd.consentManagement.valid}</span>
+                        <span className="text-sm text-neutral-textSecondary">Consentimentos Ativos</span>
+                        <span className="font-semibold text-success">{complianceReport.lgpd.consentManagement.valid}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900">Qualidade</h3>
-                      <Award className="w-6 h-6 text-yellow-600" />
+                  <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+                    <div className="flex items-center justify-between mb-md">
+                      <h3 className="text-lg font-semibold text-neutral-text">Qualidade</h3>
+                      <Award className="w-6 h-6 text-warning" />
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-sm">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Aderência Protocolos</span>
-                        <span className="font-semibold text-green-600">{complianceReport.quality.protocolAdherence}%</span>
+                        <span className="text-sm text-neutral-textSecondary">Aderência Protocolos</span>
+                        <span className="font-semibold text-success">{complianceReport.quality.protocolAdherence}%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Qualidade Docs</span>
-                        <span className="font-semibold text-blue-600">{complianceReport.quality.documentationQuality}%</span>
+                        <span className="text-sm text-neutral-textSecondary">Qualidade Docs</span>
+                        <span className="font-semibold text-primary">{complianceReport.quality.documentationQuality}%</span>
                       </div>
                     </div>
                   </div>
@@ -753,21 +753,21 @@ const AdvancedReportsPage: React.FC = () => {
           </TabsContent>
 
           {/* Predictive Tab */}
-          <TabsContent value="predictive" className="space-y-6">
+          <TabsContent value="predictive" className="space-y-xl">
             {predictiveAnalytics && (
-              <div className="space-y-6">
+              <div className="space-y-xl">
                 {/* Demand Forecast */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+                  <div className="p-lg border-b border-neutral-border">
+                    <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
                       <Brain className="w-5 h-5 text-purple-600" />
                       Previsão de Demanda
-                      <span className="text-sm font-normal text-gray-600">
+                      <span className="text-sm font-normal text-neutral-textSecondary">
                         (Confiança: {Math.round(predictiveAnalytics.demandForecast.confidence * 100)}%)
                       </span>
                     </h3>
                   </div>
-                  <div className="p-6">
+                  <div className="p-lg">
                     <ResponsiveContainer width="100%" height={300}>
                       <RechartsLineChart data={predictiveAnalytics.demandForecast.nextWeek.map((value, index) => ({
                         day: `Dia ${index + 1}`,
@@ -784,14 +784,14 @@ const AdvancedReportsPage: React.FC = () => {
                 </div>
 
                 {/* Financial Projections */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-green-600" />
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+                  <div className="p-lg border-b border-neutral-border">
+                    <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
+                      <TrendingUp className="w-5 h-5 text-success" />
                       Projeções Financeiras
                     </h3>
                   </div>
-                  <div className="p-6">
+                  <div className="p-lg">
                     <ResponsiveContainer width="100%" height={300}>
                       <AreaChart data={predictiveAnalytics.financialProjection.revenueForcast}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -805,27 +805,27 @@ const AdvancedReportsPage: React.FC = () => {
                 </div>
 
                 {/* Patient Risk Predictions */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                  <div className="p-6 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                      <AlertTriangle className="w-5 h-5 text-orange-600" />
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+                  <div className="p-lg border-b border-neutral-border">
+                    <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
+                      <AlertTriangle className="w-5 h-5 text-warning" />
                       Predições de Risco de Pacientes
                     </h3>
                   </div>
-                  <div className="p-6">
-                    <div className="space-y-4">
+                  <div className="p-lg">
+                    <div className="space-y-md">
                       {predictiveAnalytics.patientRisk.dropoutPrediction.map((prediction, index) => (
-                        <div key={index} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                        <div key={index} className="flex items-center justify-between p-md border border-neutral-border rounded-lg">
                           <div>
-                            <div className="font-medium text-gray-900">Paciente {prediction.patientId}</div>
-                            <div className="text-sm text-gray-600">
+                            <div className="font-medium text-neutral-text">Paciente {prediction.patientId}</div>
+                            <div className="text-sm text-neutral-textSecondary">
                               Fatores: {prediction.factors.join(', ')}
                             </div>
                           </div>
                           <div className="text-right">
                             <div className={`text-lg font-bold ${
-                              prediction.risk > 0.7 ? 'text-red-600' :
-                              prediction.risk > 0.4 ? 'text-yellow-600' : 'text-green-600'
+                              prediction.risk > 0.7 ? 'text-error' :
+                              prediction.risk > 0.4 ? 'text-warning' : 'text-success'
                             }`}>
                               {Math.round(prediction.risk * 100)}%
                             </div>
@@ -844,27 +844,27 @@ const AdvancedReportsPage: React.FC = () => {
         {/* Report Generation Modal */}
         {reportModal.isOpen && reportModal.templateId && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <div className="bg-white rounded-lg p-lg w-full max-w-md">
+              <h3 className="text-lg font-semibold text-neutral-text mb-md">
                 Gerar Relatório
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-neutral-textSecondary mb-xl">
                 Configurar parâmetros para o relatório selecionado.
               </p>
-              <div className="flex gap-3">
+              <div className="flex gap-md">
                 <button
                   onClick={() => handleGenerateReport(reportModal.templateId!, {
                     dateRange: dateRange,
                     includeForecasts: true
                   })}
                   disabled={isGenerating}
-                  className="flex-1 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50"
+                  className="flex-1 bg-primary-hover text-white px-md py-sm rounded-lg hover:bg-primary-hover transition-colors disabled:opacity-50"
                 >
                   {isGenerating ? 'Gerando...' : 'Gerar'}
                 </button>
                 <button
                   onClick={() => setReportModal({ isOpen: false, templateId: null })}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="px-md py-sm border border-gray-300 rounded-lg hover:bg-neutral-bgAlt transition-colors"
                 >
                   Cancelar
                 </button>

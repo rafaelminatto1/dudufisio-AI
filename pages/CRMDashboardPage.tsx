@@ -9,7 +9,6 @@ import { LeadsKanban } from '@/components/crm/LeadsKanban';
 import { LeadDetailPanel } from '@/components/crm/LeadDetailPanel';
 import { Lead } from '@/types/crm';
 import { LayoutDashboard, Users, TrendingUp, Settings } from 'lucide-react';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 export const CRMDashboardPage: React.FC = () => {
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);

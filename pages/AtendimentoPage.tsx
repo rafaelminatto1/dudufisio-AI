@@ -295,9 +295,9 @@ const AtendimentoPage: React.FC = () => {
 
     const getSaveStatusIndicator = () => {
         switch (saveStatus) {
-            case 'unsaved': return <span className="text-xs text-slate-500">Alterações não salvas</span>;
-            case 'saving': return <span className="text-xs text-amber-600 flex items-center"><Loader size={12} className="animate-spin mr-1.5" /> Salvando...</span>;
-            case 'saved': return <span className="text-xs text-green-600 flex items-center"><CheckCircle size={12} className="mr-1.5" /> Salvo</span>;
+            case 'unsaved': return <span className="text-xs text-neutral-textSecondary">Alterações não salvas</span>;
+            case 'saving': return <span className="text-xs text-amber-600 flex items-center"><Loader size={12} className="animate-spin mr-xs.5" /> Salvando...</span>;
+            case 'saved': return <span className="text-xs text-success flex items-center"><CheckCircle size={12} className="mr-xs.5" /> Salvo</span>;
             default: return null;
         }
     };
@@ -416,18 +416,18 @@ const AtendimentoPage: React.FC = () => {
 
     return (
         <>
-            <div className="space-y-6 max-w-7xl mx-auto">
+            <div className="space-y-xl max-w-7xl mx-auto">
                  {/* Header Simplificado */}
-                 <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-200">
-                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                 <div className="bg-white rounded-card shadow-card p-lg border border-neutral-border">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-md">
                         {/* Info do Paciente */}
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-md">
                             <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
                                 <span className="text-xl font-bold text-white">{patient.name.charAt(0)}</span>
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-slate-900">{patient.name}</h1>
-                                <div className="flex items-center gap-3 mt-1 text-sm text-slate-600">
+                                <h1 className="text-2xl font-bold text-neutral-text">{patient.name}</h1>
+                                <div className="flex items-center gap-md mt-xs text-sm text-neutral-textSecondary">
                                     <span className="flex items-center gap-1">
                                         <Phone className="w-3.5 h-3.5" />
                                         {patient.phone}
@@ -443,27 +443,27 @@ const AtendimentoPage: React.FC = () => {
                         </div>
 
                         {/* Controles da Sessão */}
-                        <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-md">
                             {/* Timer */}
-                            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200">
-                                <Clock className="w-4 h-4 text-slate-500" />
-                                <span className="font-mono text-sm font-medium text-slate-700">{formatDuration(sessionDuration)}</span>
-                                {isSessionActive && <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse ml-1"></div>}
+                            <div className="flex items-center gap-sm px-md py-sm bg-neutral-bgAlt rounded-lg border border-neutral-border">
+                                <Clock className="w-4 h-4 text-neutral-textSecondary" />
+                                <span className="font-mono text-sm font-medium text-neutral-text">{formatDuration(sessionDuration)}</span>
+                                {isSessionActive && <div className="w-2 h-2 bg-success-light0 rounded-full animate-pulse ml-xs"></div>}
                             </div>
 
                             {/* Botões de Controle */}
                             {!isSessionActive && !sessionStartTime ? (
-                                <button onClick={handleStartSession} className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                <button onClick={handleStartSession} className="px-md py-sm bg-primary hover:bg-primary text-white font-medium rounded-lg transition-colors flex items-center gap-sm">
                                     <Play className="w-4 h-4" />
                                     Iniciar
                                 </button>
                             ) : isSessionActive ? (
-                                <button onClick={handlePauseSession} className="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                <button onClick={handlePauseSession} className="px-md py-sm bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors flex items-center gap-sm">
                                     <Pause className="w-4 h-4" />
                                     Pausar
                                 </button>
                             ) : (
-                                <button onClick={handleResumeSession} className="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                <button onClick={handleResumeSession} className="px-md py-sm bg-primary hover:bg-primary text-white font-medium rounded-lg transition-colors flex items-center gap-sm">
                                     <Play className="w-4 h-4" />
                                     Retomar
                                 </button>
@@ -476,7 +476,7 @@ const AtendimentoPage: React.FC = () => {
                             <button
                                 onClick={handleFinishSession}
                                 disabled={isFinishing || saveStatus !== 'saved' || !canFinish}
-                                className="px-5 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-sm transition-colors disabled:bg-green-300 disabled:cursor-not-allowed flex items-center gap-2"
+                                className="px-5 py-sm bg-success-light0 hover:bg-green-600 text-white font-bold rounded-lg shadow-card transition-colors disabled:bg-green-300 disabled:cursor-not-allowed flex items-center gap-sm"
                                 title={!canFinish ? 'Preencha todos os campos obrigatórios' : ''}
                             >
                                 {isFinishing ? <Loader className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
@@ -498,28 +498,28 @@ const AtendimentoPage: React.FC = () => {
                     />
                     
                     {/* Dica de Atalhos - Compacta */}
-                    <details className="mt-2">
-                        <summary className="text-xs text-slate-400 hover:text-slate-600 cursor-pointer text-center">
+                    <details className="mt-sm">
+                        <summary className="text-xs text-neutral-textTertiary hover:text-neutral-textSecondary cursor-pointer text-center">
                             💡 Atalhos de teclado disponíveis
                         </summary>
-                        <div className="mt-2 text-xs text-slate-500 text-center space-x-2">
-                            <kbd className="px-1.5 py-0.5 bg-slate-100 rounded border border-slate-300">Ctrl+1-6</kbd> cards • 
-                            <kbd className="px-1.5 py-0.5 bg-slate-100 rounded border border-slate-300">Ctrl+Shift+E</kbd> expandir • 
-                            <kbd className="px-1.5 py-0.5 bg-slate-100 rounded border border-slate-300">Ctrl+Shift+C</kbd> colapsar
+                        <div className="mt-sm text-xs text-neutral-textSecondary text-center space-x-2">
+                            <kbd className="px-1.5 py-0.5 bg-neutral-bgDark rounded border border-neutral-border">Ctrl+1-6</kbd> cards • 
+                            <kbd className="px-1.5 py-0.5 bg-neutral-bgDark rounded border border-neutral-border">Ctrl+Shift+E</kbd> expandir • 
+                            <kbd className="px-1.5 py-0.5 bg-neutral-bgDark rounded border border-neutral-border">Ctrl+Shift+C</kbd> colapsar
                         </div>
                     </details>
                 </div>
 
                 {/* Formulário SOAP - Limpo e Focado */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm space-y-6">
+                <div className="bg-white p-lg rounded-cardLarge shadow-card space-y-xl">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-bold text-slate-800">Registro SOAP da Sessão</h2>
+                            <h2 className="text-xl font-bold text-neutral-text">Registro SOAP da Sessão</h2>
                             
                             {/* Progresso Compacto */}
-                            <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2">
-                                    <Progress value={formCompletion} className="h-2 w-24 bg-sky-100" />
-                                    <span className="text-xs font-bold text-sky-600">{formCompletion}%</span>
+                            <div className="flex items-center gap-md">
+                                <div className="flex items-center gap-sm">
+                                    <Progress value={formCompletion} className="h-2 w-24 bg-primary-light" />
+                                    <span className="text-xs font-bold text-primary">{formCompletion}%</span>
                                 </div>
                                 {!canFinish && (
                                     <span className="text-xs text-amber-600 flex items-center gap-1">
@@ -538,26 +538,26 @@ const AtendimentoPage: React.FC = () => {
 
                         {/* Métricas de Acompanhamento - Se houver */}
                         {activeMetrics.length > 0 && (
-                            <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                                <h3 className="text-sm font-semibold text-slate-700 mb-3">Métricas da Sessão</h3>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                            <div className="p-md bg-neutral-bgAlt rounded-lg border border-neutral-border">
+                                <h3 className="text-sm font-semibold text-neutral-text mb-md">Métricas da Sessão</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-md">
                                     {activeMetrics.map(metric => {
                                         const currentMetricResults = formData.metricResults;
                                         const metricValue = currentMetricResults.find(m => m.metricId === metric.id)?.value ?? '';
 
                                         return (
                                             <div key={metric.id}>
-                                                <label className="text-xs font-medium text-slate-600">{metric.name}</label>
+                                                <label className="text-xs font-medium text-neutral-textSecondary">{metric.name}</label>
                                                 <div className="relative">
                                                     <input
                                                         type="number"
                                                         value={metricValue}
                                                         onChange={e => handleMetricChange(metric.id, e.target.value)}
-                                                        className="mt-1 w-full p-2 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                        className="mt-xs w-full p-sm pr-10 border border-neutral-border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                                         aria-label={`Valor para ${metric.name}`}
                                                         placeholder="0"
                                                     />
-                                                    <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-slate-500">{metric.unit}</span>
+                                                    <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-xs text-neutral-textSecondary">{metric.unit}</span>
                                                 </div>
                                             </div>
                                         );
@@ -567,19 +567,19 @@ const AtendimentoPage: React.FC = () => {
                         )}
 
                         {/* Campos SOAP em Grid 2 Colunas */}
-                        <div className="space-y-6">
+                        <div className="space-y-xl">
                             {/* S e O - Primeira linha */}
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
                                 {/* SUBJETIVO */}
-                                <div className="space-y-2">
+                                <div className="space-y-sm">
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <MessageSquare className="w-5 h-5 text-blue-600" />
-                                            <label className="text-base font-bold text-slate-900">
+                                        <div className="flex items-center gap-sm">
+                                            <MessageSquare className="w-5 h-5 text-primary" />
+                                            <label className="text-base font-bold text-neutral-text">
                                                 Subjetivo <span className="text-red-500">*</span>
                                             </label>
                                         </div>
-                                        <span className={`text-xs ${formData.subjective.length < 10 ? 'text-red-500' : formData.subjective.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                        <span className={`text-xs ${formData.subjective.length < 10 ? 'text-red-500' : formData.subjective.length > 4500 ? 'text-amber-600' : 'text-neutral-textSecondary'}`}>
                                             {formData.subjective.length}/5000
                                         </span>
                                     </div>
@@ -598,15 +598,15 @@ const AtendimentoPage: React.FC = () => {
                                 </div>
 
                                 {/* OBJETIVO */}
-                                <div className="space-y-2">
+                                <div className="space-y-sm">
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <Stethoscope className="w-5 h-5 text-green-600" />
-                                            <label className="text-base font-bold text-slate-900">
+                                        <div className="flex items-center gap-sm">
+                                            <Stethoscope className="w-5 h-5 text-success" />
+                                            <label className="text-base font-bold text-neutral-text">
                                                 Objetivo <span className="text-red-500">*</span>
                                             </label>
                                         </div>
-                                        <span className={`text-xs ${formData.objective.length < 10 ? 'text-red-500' : formData.objective.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                        <span className={`text-xs ${formData.objective.length < 10 ? 'text-red-500' : formData.objective.length > 4500 ? 'text-amber-600' : 'text-neutral-textSecondary'}`}>
                                             {formData.objective.length}/5000
                                         </span>
                                     </div>
@@ -630,7 +630,7 @@ const AtendimentoPage: React.FC = () => {
                                 <button
                                     onClick={handleGenerateSuggestion}
                                     disabled={isAiLoading || (!formData.subjective?.trim() && !formData.objective?.trim())}
-                                    className="px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 rounded-lg shadow-md hover:shadow-lg flex items-center gap-2 disabled:from-slate-300 disabled:to-slate-400 disabled:cursor-not-allowed transition-all"
+                                    className="px-lg py-3 text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 rounded-lg shadow-cardHover hover:shadow-cardActive flex items-center gap-sm disabled:from-slate-300 disabled:to-slate-400 disabled:cursor-not-allowed transition-all"
                                 >
                                     {isAiLoading ? <Loader className="w-5 h-5 animate-spin" /> : <BrainCircuit className="w-5 h-5" />}
                                     {isAiLoading ? 'IA gerando sugestões...' : '✨ Gerar Avaliação e Plano com IA'}
@@ -638,17 +638,17 @@ const AtendimentoPage: React.FC = () => {
                             </div>
 
                             {/* A e P - Segunda linha */}
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
                                 {/* AVALIAÇÃO */}
-                                <div className="space-y-2">
+                                <div className="space-y-sm">
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-sm">
                                             <ClipboardCheck className="w-5 h-5 text-purple-600" />
-                                            <label className="text-base font-bold text-slate-900">
+                                            <label className="text-base font-bold text-neutral-text">
                                                 Avaliação <span className="text-red-500">*</span>
                                             </label>
                                         </div>
-                                        <span className={`text-xs ${formData.assessment.length < 10 ? 'text-red-500' : formData.assessment.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                        <span className={`text-xs ${formData.assessment.length < 10 ? 'text-red-500' : formData.assessment.length > 4500 ? 'text-amber-600' : 'text-neutral-textSecondary'}`}>
                                             {formData.assessment.length}/5000
                                         </span>
                                     </div>
@@ -667,15 +667,15 @@ const AtendimentoPage: React.FC = () => {
                                 </div>
 
                                 {/* PLANO */}
-                                <div className="space-y-2">
+                                <div className="space-y-sm">
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <ClipboardList className="w-5 h-5 text-orange-600" />
-                                            <label className="text-base font-bold text-slate-900">
+                                        <div className="flex items-center gap-sm">
+                                            <ClipboardList className="w-5 h-5 text-warning" />
+                                            <label className="text-base font-bold text-neutral-text">
                                                 Plano <span className="text-red-500">*</span>
                                             </label>
                                         </div>
-                                        <span className={`text-xs ${formData.plan.length < 10 ? 'text-red-500' : formData.plan.length > 4500 ? 'text-amber-600' : 'text-slate-500'}`}>
+                                        <span className={`text-xs ${formData.plan.length < 10 ? 'text-red-500' : formData.plan.length > 4500 ? 'text-amber-600' : 'text-neutral-textSecondary'}`}>
                                             {formData.plan.length}/5000
                                         </span>
                                     </div>

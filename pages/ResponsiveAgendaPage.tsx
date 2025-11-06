@@ -69,24 +69,24 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({
   };
 
   return (
-    <div className="bg-white border-b border-fisio-neutral-200 sticky top-0 z-10">
+    <div className="bg-white border-b border-neutral-border sticky top-0 z-10">
       {/* Header Principal */}
-      <div className="px-4 py-3">
-        <div className="flex items-center justify-between mb-3">
-          <h1 className="text-xl font-bold text-fisio-neutral-800">
+      <div className="px-md py-3">
+        <div className="flex items-center justify-between mb-md">
+          <h1 className="text-xl font-bold text-neutral-text">
             {getHeaderTitle()}
           </h1>
           <div className="flex items-center space-x-2">
             <button
               onClick={onFilterClick}
-              className="p-2 rounded-lg hover:bg-fisio-neutral-100 transition-colors"
+              className="p-sm rounded-lg hover:bg-fisio-neutral-100 transition-colors"
               aria-label="Filtros"
             >
               <Filter className="w-5 h-5 text-fisio-neutral-600" />
             </button>
             <button
               onClick={onAddClick}
-              className="p-2 bg-fisio-primary-DEFAULT text-white rounded-lg hover:bg-fisio-primary-600 transition-colors"
+              className="p-sm bg-fisio-primary-DEFAULT text-white rounded-lg hover:bg-primary transition-colors"
               aria-label="Novo agendamento"
             >
               <Plus className="w-5 h-5" />
@@ -99,20 +99,20 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({
           <div className="flex items-center space-x-2">
             <button
               onClick={onPrevious}
-              className="p-2 rounded-lg hover:bg-fisio-neutral-100 transition-colors"
+              className="p-sm rounded-lg hover:bg-fisio-neutral-100 transition-colors"
               aria-label="Anterior"
             >
               <ChevronLeft className="w-4 h-4 text-fisio-neutral-600" />
             </button>
             <button
               onClick={onToday}
-              className="px-3 py-1 text-sm font-medium text-fisio-primary-DEFAULT hover:bg-fisio-primary-50 rounded-lg transition-colors"
+              className="px-md py-1 text-sm font-medium text-fisio-primary-DEFAULT hover:bg-fisio-primary-50 rounded-lg transition-colors"
             >
               Hoje
             </button>
             <button
               onClick={onNext}
-              className="p-2 rounded-lg hover:bg-fisio-neutral-100 transition-colors"
+              className="p-sm rounded-lg hover:bg-fisio-neutral-100 transition-colors"
               aria-label="Próximo"
             >
               <ChevronRight className="w-4 h-4 text-fisio-neutral-600" />
@@ -126,10 +126,10 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({
                 key={option.value}
                 onClick={() => onViewChange(option.value as MobileViewType)}
                 className={`
-                  px-3 py-1.5 rounded-md transition-all duration-200 text-sm font-medium
+                  px-md py-1.5 rounded-md transition-all duration-200 text-sm font-medium
                   ${currentView === option.value 
-                    ? 'bg-white text-fisio-primary-DEFAULT shadow-sm' 
-                    : 'text-fisio-neutral-600 hover:text-fisio-neutral-800'}
+                    ? 'bg-white text-fisio-primary-DEFAULT shadow-card' 
+                    : 'text-fisio-neutral-600 hover:text-neutral-text'}
                 `}
                 aria-label={option.label}
               >
@@ -143,7 +143,7 @@ const AgendaHeader: React.FC<AgendaHeaderProps> = ({
 
       {/* Mini Calendário - Visível apenas em vista de lista */}
       {currentView === 'list' && (
-        <div className="px-4 pb-3">
+        <div className="px-md pb-3">
           <MiniCalendar currentDate={currentDate} onDateSelect={() => {}} />
         </div>
       )}
@@ -170,7 +170,7 @@ const MiniCalendar: React.FC<{ currentDate: Date; onDateSelect: (date: Date) => 
   }
 
   return (
-    <div className="bg-fisio-neutral-50 rounded-lg p-3">
+    <div className="bg-neutral-bgAlt rounded-lg p-md">
       <div className="grid grid-cols-7 gap-1 text-center">
         {['S', 'T', 'Q', 'Q', 'S', 'S', 'D'].map((dayName, i) => (
           <div key={i} className="text-xs font-medium text-fisio-neutral-500 py-1">
@@ -189,7 +189,7 @@ const MiniCalendar: React.FC<{ currentDate: Date; onDateSelect: (date: Date) => 
               className={`
                 p-1.5 text-xs rounded-md transition-colors
                 ${isToday ? 'bg-fisio-primary-100 text-fisio-primary-700 font-bold' : ''}
-                ${isSelected && !isToday ? 'bg-fisio-neutral-200 text-fisio-neutral-800' : ''}
+                ${isSelected && !isToday ? 'bg-fisio-neutral-200 text-neutral-text' : ''}
                 ${!isCurrentMonth ? 'text-fisio-neutral-400' : 'text-fisio-neutral-700'}
                 ${!isToday && !isSelected ? 'hover:bg-fisio-neutral-100' : ''}
               `}
@@ -210,7 +210,7 @@ const AppointmentCard: React.FC<{
   isCompact?: boolean;
 }> = ({ appointment, onSelect, isCompact = false }) => {
   const statusColors = {
-    [AppointmentStatus.SCHEDULED]: 'border-fisio-neutral-300 bg-fisio-neutral-50',
+    [AppointmentStatus.SCHEDULED]: 'border-fisio-neutral-300 bg-neutral-bgAlt',
     [AppointmentStatus.CONFIRMED]: 'border-fisio-primary-300 bg-fisio-primary-50',
     [AppointmentStatus.COMPLETED]: 'border-fisio-secondary-300 bg-fisio-secondary-50',
     [AppointmentStatus.CANCELLED]: 'border-fisio-error-300 bg-fisio-error-50',
@@ -235,14 +235,14 @@ const AppointmentCard: React.FC<{
         exit={{ opacity: 0, y: -10 }}
         onClick={() => onSelect(appointment)}
         className={`
-          p-3 rounded-lg border-l-4 cursor-pointer transition-all
-          hover:shadow-md ${statusColor}
+          p-md rounded-lg border-l-4 cursor-pointer transition-all
+          hover:shadow-cardHover ${statusColor}
         `}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Clock className="w-4 h-4 text-fisio-neutral-500" />
-            <span className="font-medium text-fisio-neutral-800">
+            <span className="font-medium text-neutral-text">
               {format(new Date(appointment.datetime), 'HH:mm')}
             </span>
             <span className="text-sm text-fisio-neutral-600">
@@ -250,7 +250,7 @@ const AppointmentCard: React.FC<{
             </span>
           </div>
           <span className={`
-            text-xs px-2 py-1 rounded-full font-medium
+            text-xs px-sm py-1 rounded-full font-medium
             ${appointment.status === AppointmentStatus.CONFIRMED ? 'bg-fisio-primary-100 text-fisio-primary-700' :
               appointment.status === AppointmentStatus.COMPLETED ? 'bg-fisio-secondary-100 text-fisio-secondary-700' :
               'bg-fisio-neutral-100 text-fisio-neutral-700'}
@@ -269,18 +269,18 @@ const AppointmentCard: React.FC<{
       exit={{ opacity: 0, y: -20 }}
       onClick={() => onSelect(appointment)}
       className={`
-        bg-white rounded-lg shadow-sm border p-4 cursor-pointer
-        transition-all hover:shadow-md ${statusColor}
+        bg-white rounded-lg shadow-card border p-md cursor-pointer
+        transition-all hover:shadow-cardHover ${statusColor}
       `}
     >
       {/* Header do Card */}
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-md">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 bg-fisio-primary-100 rounded-full flex items-center justify-center">
             <User className="w-5 h-5 text-fisio-primary-700" />
           </div>
           <div>
-            <h3 className="font-semibold text-fisio-neutral-800">
+            <h3 className="font-semibold text-neutral-text">
               {appointment.patient?.name || 'Paciente não definido'}
             </h3>
             <p className="text-sm text-fisio-neutral-500">
@@ -289,7 +289,7 @@ const AppointmentCard: React.FC<{
           </div>
         </div>
         <span className={`
-          text-xs px-3 py-1 rounded-full font-medium
+          text-xs px-md py-1 rounded-full font-medium
           ${appointment.status === AppointmentStatus.CONFIRMED ? 'bg-fisio-primary-100 text-fisio-primary-700' :
             appointment.status === AppointmentStatus.COMPLETED ? 'bg-fisio-secondary-100 text-fisio-secondary-700' :
             appointment.status === AppointmentStatus.CANCELLED ? 'bg-fisio-error-100 text-fisio-error-700' :
@@ -300,14 +300,14 @@ const AppointmentCard: React.FC<{
       </div>
 
       {/* Informações do Agendamento */}
-      <div className="space-y-2">
+      <div className="space-y-sm">
         <div className="flex items-center text-sm text-fisio-neutral-600">
-          <Clock className="w-4 h-4 mr-2 text-fisio-neutral-400" />
+          <Clock className="w-4 h-4 mr-sm text-fisio-neutral-400" />
           <span className="font-medium">
             {format(new Date(appointment.datetime), "dd/MM/yyyy 'às' HH:mm")}
           </span>
           {appointment.duration && (
-            <span className="ml-2 text-fisio-neutral-500">
+            <span className="ml-sm text-fisio-neutral-500">
               ({appointment.duration} min)
             </span>
           )}
@@ -315,33 +315,33 @@ const AppointmentCard: React.FC<{
 
         {appointment.type && (
           <div className="flex items-center text-sm text-fisio-neutral-600">
-            <MapPin className="w-4 h-4 mr-2 text-fisio-neutral-400" />
+            <MapPin className="w-4 h-4 mr-sm text-fisio-neutral-400" />
             <span>{appointment.type}</span>
           </div>
         )}
 
         {appointment.patient?.phone && (
           <div className="flex items-center text-sm text-fisio-neutral-600">
-            <Phone className="w-4 h-4 mr-2 text-fisio-neutral-400" />
+            <Phone className="w-4 h-4 mr-sm text-fisio-neutral-400" />
             <span>{appointment.patient.phone}</span>
           </div>
         )}
 
         {appointment.notes && (
-          <p className="text-sm text-fisio-neutral-500 italic mt-2 line-clamp-2">
+          <p className="text-sm text-fisio-neutral-500 italic mt-sm line-clamp-sm">
             {appointment.notes}
           </p>
         )}
       </div>
 
       {/* Ações Rápidas */}
-      <div className="flex items-center justify-end mt-4 space-x-2">
+      <div className="flex items-center justify-end mt-md space-x-2">
         <button
           onClick={(e) => {
             e.stopPropagation();
             // Lógica para confirmar agendamento
           }}
-          className="text-xs px-3 py-1 text-fisio-primary-600 hover:bg-fisio-primary-50 rounded-lg transition-colors"
+          className="text-xs px-md py-1 text-primary hover:bg-fisio-primary-50 rounded-lg transition-colors"
         >
           Confirmar
         </button>
@@ -350,7 +350,7 @@ const AppointmentCard: React.FC<{
             e.stopPropagation();
             // Lógica para editar agendamento
           }}
-          className="text-xs px-3 py-1 text-fisio-neutral-600 hover:bg-fisio-neutral-100 rounded-lg transition-colors"
+          className="text-xs px-md py-1 text-fisio-neutral-600 hover:bg-fisio-neutral-100 rounded-lg transition-colors"
         >
           Editar
         </button>
@@ -473,7 +473,7 @@ export default function ResponsiveAgendaPage() {
     switch (currentView) {
       case 'list':
         return (
-          <div className="space-y-6">
+          <div className="space-y-xl">
             {Object.keys(groupedAppointments).sort().map(dateKey => {
               const date = new Date(dateKey);
               const isToday = format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
@@ -481,8 +481,8 @@ export default function ResponsiveAgendaPage() {
               return (
                 <div key={dateKey}>
                   <div className={`
-                    sticky top-0 z-5 px-4 py-2 mb-3
-                    ${isToday ? 'bg-fisio-primary-50' : 'bg-fisio-neutral-50'}
+                    sticky top-0 z-5 px-md py-sm mb-md
+                    ${isToday ? 'bg-fisio-primary-50' : 'bg-neutral-bgAlt'}
                   `}>
                     <h3 className={`
                       text-sm font-semibold uppercase tracking-wider
@@ -492,7 +492,7 @@ export default function ResponsiveAgendaPage() {
                       {format(date, "EEEE, dd 'de' MMMM", { locale: ptBR })}
                     </h3>
                   </div>
-                  <div className="px-4 space-y-3">
+                  <div className="px-md space-y-sm">
                     <AnimatePresence>
                       {groupedAppointments[dateKey].map(appointment => (
                         <AppointmentCard
@@ -507,12 +507,12 @@ export default function ResponsiveAgendaPage() {
               );
             })}
             {Object.keys(groupedAppointments).length === 0 && (
-              <div className="text-center py-12 px-4">
-                <CalendarIcon className="w-12 h-12 text-fisio-neutral-300 mx-auto mb-4" />
+              <div className="text-center py-12 px-md">
+                <CalendarIcon className="w-12 h-12 text-fisio-neutral-300 mx-auto mb-md" />
                 <p className="text-fisio-neutral-500">Nenhum agendamento encontrado</p>
                 <button
                   onClick={() => setIsFormOpen(true)}
-                  className="mt-4 px-4 py-2 bg-fisio-primary-DEFAULT text-white rounded-lg hover:bg-fisio-primary-600 transition-colors"
+                  className="mt-md px-md py-sm bg-fisio-primary-DEFAULT text-white rounded-lg hover:bg-primary transition-colors"
                 >
                   Criar Novo Agendamento
                 </button>
@@ -528,7 +528,7 @@ export default function ResponsiveAgendaPage() {
         );
 
         return (
-          <div className="px-4 py-4 space-y-3">
+          <div className="px-md py-md space-y-sm">
             <AnimatePresence>
               {dayAppointments.map(appointment => (
                 <AppointmentCard
@@ -541,7 +541,7 @@ export default function ResponsiveAgendaPage() {
             </AnimatePresence>
             {dayAppointments.length === 0 && (
               <div className="text-center py-12">
-                <CalendarIcon className="w-12 h-12 text-fisio-neutral-300 mx-auto mb-4" />
+                <CalendarIcon className="w-12 h-12 text-fisio-neutral-300 mx-auto mb-md" />
                 <p className="text-fisio-neutral-500">Nenhum agendamento para hoje</p>
               </div>
             )}
@@ -556,7 +556,7 @@ export default function ResponsiveAgendaPage() {
         }
         // Desktop mantém visualização tradicional (não implementada aqui)
         return (
-          <div className="p-4 text-center">
+          <div className="p-md text-center">
             <p className="text-fisio-neutral-500">
               Visualização {currentView === 'week' ? 'semanal' : 'mensal'} disponível apenas em desktop
             </p>
@@ -569,7 +569,7 @@ export default function ResponsiveAgendaPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-fisio-neutral-50">
+    <div className="flex flex-col h-full bg-neutral-bgAlt">
       {/* Header da Agenda */}
       <AgendaHeader
         currentDate={currentDate}
@@ -588,7 +588,7 @@ export default function ResponsiveAgendaPage() {
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: 'auto', opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
-          className="bg-white border-b border-fisio-neutral-200 px-4 py-3"
+          className="bg-white border-b border-neutral-border px-md py-3"
         >
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-fisio-neutral-400" />
@@ -597,7 +597,7 @@ export default function ResponsiveAgendaPage() {
               placeholder="Buscar por paciente, terapeuta ou tipo..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-fisio-neutral-50 border border-fisio-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-fisio-primary-500"
+              className="w-full pl-10 pr-4 py-sm bg-neutral-bgAlt border border-neutral-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-fisio-primary-500"
             />
           </div>
           {/* Adicionar mais filtros aqui se necessário */}

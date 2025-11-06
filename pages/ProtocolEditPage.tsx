@@ -213,10 +213,10 @@ const ProtocolEditPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-lg space-y-xl max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-md">
           <Button
             variant="ghost"
             size="icon"
@@ -225,33 +225,33 @@ const ProtocolEditPage: React.FC = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-neutral-text">
               {isNewProtocol ? 'Novo Protocolo' : 'Editar Protocolo'}
             </h1>
-            <p className="text-gray-500 mt-1">
+            <p className="text-gray-500 mt-xs">
               {isNewProtocol
                 ? 'Crie um novo protocolo de exercícios'
                 : 'Edite o protocolo de tratamento'}
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-sm">
           <Button variant="outline" onClick={() => navigate('/protocols')}>
-            <X className="h-4 w-4 mr-2" />
+            <X className="h-4 w-4 mr-sm" />
             Cancelar
           </Button>
           <Button onClick={form.handleSubmit(onSubmit)} disabled={isLoading}>
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-4 w-4 mr-sm" />
             {isLoading ? 'Salvando...' : 'Salvar Protocolo'}
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
         {/* Formulário */}
         <div className="lg:col-span-2">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-xl">
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="basic">Básico</TabsTrigger>
@@ -260,7 +260,7 @@ const ProtocolEditPage: React.FC = () => {
                 </TabsList>
 
                 {/* Tab: Básico */}
-                <TabsContent value="basic" className="space-y-4">
+                <TabsContent value="basic" className="space-y-md">
                   <Card>
                     <CardHeader>
                       <CardTitle>Informações do Protocolo</CardTitle>
@@ -268,7 +268,7 @@ const ProtocolEditPage: React.FC = () => {
                         Dados fundamentais do protocolo de tratamento
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-md">
                       {/* Nome */}
                       <FormField
                         control={form.control}
@@ -306,7 +306,7 @@ const ProtocolEditPage: React.FC = () => {
                         )}
                       />
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-md">
                         {/* Duração */}
                         <FormField
                           control={form.control}
@@ -382,7 +382,7 @@ const ProtocolEditPage: React.FC = () => {
                 </TabsContent>
 
                 {/* Tab: Exercícios */}
-                <TabsContent value="exercises" className="space-y-4">
+                <TabsContent value="exercises" className="space-y-md">
                   <Card>
                     <CardHeader>
                       <div className="flex items-center justify-between">
@@ -396,17 +396,17 @@ const ProtocolEditPage: React.FC = () => {
                           type="button"
                           onClick={() => setShowExerciseSelector(true)}
                         >
-                          <Plus className="h-4 w-4 mr-2" />
+                          <Plus className="h-4 w-4 mr-sm" />
                           Adicionar Exercícios
                         </Button>
                       </div>
                     </CardHeader>
                     <CardContent>
                       {protocolExercises.length > 0 ? (
-                        <div className="space-y-3">
+                        <div className="space-y-sm">
                           {protocolExercises.map((ex, index) => (
-                            <Card key={index} className="p-4">
-                              <div className="flex gap-4">
+                            <Card key={index} className="p-md">
+                              <div className="flex gap-md">
                                 {/* Drag Handle */}
                                 <div className="flex flex-col gap-1">
                                   <Button
@@ -418,7 +418,7 @@ const ProtocolEditPage: React.FC = () => {
                                   >
                                     ↑
                                   </Button>
-                                  <GripVertical className="h-5 w-5 text-gray-400" />
+                                  <GripVertical className="h-5 w-5 text-neutral-textTertiary" />
                                   <Button
                                     type="button"
                                     variant="ghost"
@@ -431,10 +431,10 @@ const ProtocolEditPage: React.FC = () => {
                                 </div>
 
                                 {/* Exercise Info */}
-                                <div className="flex-1 space-y-3">
+                                <div className="flex-1 space-y-sm">
                                   <div className="flex items-start justify-between">
                                     <div>
-                                      <div className="flex items-center gap-2">
+                                      <div className="flex items-center gap-sm">
                                         <span className="font-bold text-primary">#{ex.order}</span>
                                         <h4 className="font-medium">{ex.exercise?.name}</h4>
                                         {ex.isOptional && (
@@ -443,7 +443,7 @@ const ProtocolEditPage: React.FC = () => {
                                           </Badge>
                                         )}
                                       </div>
-                                      <p className="text-sm text-gray-600 mt-1">
+                                      <p className="text-sm text-neutral-textSecondary mt-xs">
                                         {ex.exercise?.description}
                                       </p>
                                     </div>
@@ -461,7 +461,7 @@ const ProtocolEditPage: React.FC = () => {
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => removeExercise(index)}
-                                        className="text-red-600"
+                                        className="text-error"
                                       >
                                         <Trash2 className="h-4 w-4" />
                                       </Button>
@@ -470,60 +470,60 @@ const ProtocolEditPage: React.FC = () => {
 
                                   {/* Configuração */}
                                   {editingExerciseIndex === index ? (
-                                    <div className="grid grid-cols-3 gap-3 p-3 bg-gray-50 rounded-lg">
+                                    <div className="grid grid-cols-3 gap-md p-md bg-neutral-bgAlt rounded-lg">
                                       <div>
-                                        <label className="text-xs text-gray-600">Séries</label>
+                                        <label className="text-xs text-neutral-textSecondary">Séries</label>
                                         <Input
                                           type="number"
                                           min={1}
                                           value={ex.sets}
                                           onChange={(e) => updateExerciseConfig(index, 'sets', parseInt(e.target.value))}
-                                          className="mt-1"
+                                          className="mt-xs"
                                         />
                                       </div>
                                       <div>
-                                        <label className="text-xs text-gray-600">Repetições</label>
+                                        <label className="text-xs text-neutral-textSecondary">Repetições</label>
                                         <Input
                                           type="number"
                                           min={1}
                                           value={ex.reps}
                                           onChange={(e) => updateExerciseConfig(index, 'reps', parseInt(e.target.value))}
-                                          className="mt-1"
+                                          className="mt-xs"
                                         />
                                       </div>
                                       <div>
-                                        <label className="text-xs text-gray-600">Peso (kg)</label>
+                                        <label className="text-xs text-neutral-textSecondary">Peso (kg)</label>
                                         <Input
                                           type="number"
                                           min={0}
                                           step={0.5}
                                           value={ex.weight || ''}
                                           onChange={(e) => updateExerciseConfig(index, 'weight', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                          className="mt-1"
+                                          className="mt-xs"
                                         />
                                       </div>
                                       <div>
-                                        <label className="text-xs text-gray-600">Duração (min)</label>
+                                        <label className="text-xs text-neutral-textSecondary">Duração (min)</label>
                                         <Input
                                           type="number"
                                           min={0}
                                           value={ex.duration || ''}
                                           onChange={(e) => updateExerciseConfig(index, 'duration', e.target.value ? parseInt(e.target.value) : undefined)}
-                                          className="mt-1"
+                                          className="mt-xs"
                                         />
                                       </div>
                                       <div>
-                                        <label className="text-xs text-gray-600">Descanso (s)</label>
+                                        <label className="text-xs text-neutral-textSecondary">Descanso (s)</label>
                                         <Input
                                           type="number"
                                           min={0}
                                           value={ex.restTime}
                                           onChange={(e) => updateExerciseConfig(index, 'restTime', parseInt(e.target.value))}
-                                          className="mt-1"
+                                          className="mt-xs"
                                         />
                                       </div>
                                       <div className="flex items-end">
-                                        <label className="flex items-center gap-2 cursor-pointer">
+                                        <label className="flex items-center gap-sm cursor-pointer">
                                           <input
                                             type="checkbox"
                                             checked={ex.isOptional}
@@ -534,13 +534,13 @@ const ProtocolEditPage: React.FC = () => {
                                         </label>
                                       </div>
                                       <div className="col-span-3">
-                                        <label className="text-xs text-gray-600">Notas</label>
+                                        <label className="text-xs text-neutral-textSecondary">Notas</label>
                                         <Textarea
                                           value={ex.notes}
                                           onChange={(e) => updateExerciseConfig(index, 'notes', e.target.value)}
                                           placeholder="Observações específicas..."
                                           rows={2}
-                                          className="mt-1"
+                                          className="mt-xs"
                                         />
                                       </div>
                                       <div className="col-span-3 flex justify-end">
@@ -554,7 +554,7 @@ const ProtocolEditPage: React.FC = () => {
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className="flex gap-3 text-sm text-gray-600">
+                                    <div className="flex gap-md text-sm text-neutral-textSecondary">
                                       <span>{ex.sets} séries</span>
                                       <span>{ex.reps} reps</span>
                                       {ex.weight && <span>{ex.weight}kg</span>}
@@ -569,13 +569,13 @@ const ProtocolEditPage: React.FC = () => {
                         </div>
                       ) : (
                         <div className="text-center py-12 text-gray-500">
-                          <p className="mb-2">Nenhum exercício adicionado ainda</p>
+                          <p className="mb-sm">Nenhum exercício adicionado ainda</p>
                           <Button
                             type="button"
                             variant="outline"
                             onClick={() => setShowExerciseSelector(true)}
                           >
-                            <Plus className="h-4 w-4 mr-2" />
+                            <Plus className="h-4 w-4 mr-sm" />
                             Adicionar Exercícios
                           </Button>
                         </div>
@@ -585,7 +585,7 @@ const ProtocolEditPage: React.FC = () => {
                 </TabsContent>
 
                 {/* Tab: Avançado */}
-                <TabsContent value="advanced" className="space-y-4">
+                <TabsContent value="advanced" className="space-y-md">
                   <Card>
                     <CardHeader>
                       <CardTitle>Configurações Avançadas</CardTitle>
@@ -593,7 +593,7 @@ const ProtocolEditPage: React.FC = () => {
                         Condições alvo e configurações adicionais
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-md">
                       {/* Condições Alvo */}
                       <FormField
                         control={form.control}
@@ -601,7 +601,7 @@ const ProtocolEditPage: React.FC = () => {
                         render={() => (
                           <FormItem>
                             <FormLabel>Condições Alvo</FormLabel>
-                            <div className="flex gap-2">
+                            <div className="flex gap-sm">
                               <Input
                                 placeholder="Ex: Pós-operatório LCA"
                                 value={newCondition}
@@ -621,14 +621,14 @@ const ProtocolEditPage: React.FC = () => {
                                 <Plus className="h-4 w-4" />
                               </Button>
                             </div>
-                            <div className="flex flex-wrap gap-2 mt-2">
+                            <div className="flex flex-wrap gap-sm mt-sm">
                               {form.watch('targetConditions').map((condition, index) => (
                                 <Badge key={index} variant="secondary" className="gap-1">
                                   {condition}
                                   <button
                                     type="button"
                                     onClick={() => removeCondition(index)}
-                                    className="ml-1 hover:text-red-600"
+                                    className="ml-xs hover:text-error"
                                     aria-label="Remover condição"
                                   >
                                     <X className="h-3 w-3" />
@@ -642,7 +642,7 @@ const ProtocolEditPage: React.FC = () => {
                       />
 
                       {/* Switches */}
-                      <div className="space-y-4 pt-4 border-t">
+                      <div className="space-y-md pt-4 border-t">
                         <FormField
                           control={form.control}
                           name="isPublic"
@@ -695,7 +695,7 @@ const ProtocolEditPage: React.FC = () => {
 
         {/* Preview */}
         <div className="lg:col-span-1">
-          <div className="sticky top-6">
+          <div className="sticky top-lg">
             <ProtocolPreview
               protocol={form.getValues()}
               exercises={protocolExercises}
@@ -718,27 +718,27 @@ const ProtocolEditPage: React.FC = () => {
 // Skeleton Loading
 const ProtocolEditPageSkeleton: React.FC = () => {
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-lg space-y-xl max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-md">
           <Skeleton className="h-10 w-10" />
           <div>
-            <Skeleton className="h-8 w-64 mb-2" />
+            <Skeleton className="h-8 w-64 mb-sm" />
             <Skeleton className="h-4 w-96" />
           </div>
         </div>
         <Skeleton className="h-10 w-32" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
               <Skeleton className="h-6 w-48" />
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-md">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="space-y-2">
+                <div key={i} className="space-y-sm">
                   <Skeleton className="h-4 w-32" />
                   <Skeleton className="h-10 w-full" />
                 </div>

@@ -103,24 +103,24 @@ const InventoryPage: React.FC = () => {
   }, []);
 
   const MetricCard = ({ icon: Icon, title, value, subtitle, color = 'blue' }: any) => (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+    <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
       <div className="flex items-center">
-        <div className={`p-3 bg-${color}-100 rounded-lg`}>
+        <div className={`p-md bg-${color}-100 rounded-lg`}>
           <Icon className={`w-6 h-6 text-${color}-600`} />
         </div>
         <div className="ml-4">
-          <p className="text-sm font-medium text-slate-600">{title}</p>
-          <p className="text-2xl font-bold text-slate-900">{value}</p>
-          {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
+          <p className="text-sm font-medium text-neutral-textSecondary">{title}</p>
+          <p className="text-2xl font-bold text-neutral-text">{value}</p>
+          {subtitle && <p className="text-sm text-neutral-textSecondary">{subtitle}</p>}
         </div>
       </div>
     </div>
   );
 
   const OverviewTab = () => (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {/* Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
         <MetricCard
           icon={Package}
           title="Total de Itens"
@@ -153,25 +153,25 @@ const InventoryPage: React.FC = () => {
 
       {/* Alerts Section */}
       {alerts.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200">
-          <div className="p-6 border-b border-slate-200">
+        <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+          <div className="p-lg border-b border-neutral-border">
             <div className="flex items-center">
-              <AlertTriangle className="w-5 h-5 text-red-500 mr-2" />
-              <h3 className="text-lg font-semibold text-slate-900">
+              <AlertTriangle className="w-5 h-5 text-red-500 mr-sm" />
+              <h3 className="text-lg font-semibold text-neutral-text">
                 Alertas Críticos ({unreadAlertsCount})
               </h3>
             </div>
           </div>
-          <div className="p-6">
-            <div className="space-y-3">
+          <div className="p-lg">
+            <div className="space-y-sm">
               {alerts.slice(0, 5).map((alert, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-200">
+                <div key={index} className="flex items-center justify-between p-md bg-error-light rounded-lg border border-error">
                   <div>
                     <p className="font-medium text-red-900">{alert.message}</p>
-                    <p className="text-sm text-red-700">{alert.itemName}</p>
+                    <p className="text-sm text-error">{alert.itemName}</p>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    alert.severity === 'critical' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                  <span className={`px-sm py-1 rounded-full text-xs font-medium ${
+                    alert.severity === 'critical' ? 'bg-error-light text-error' : 'bg-warning-light text-yellow-800'
                   }`}>
                     {alert.severity === 'critical' ? 'Crítico' : 'Atenção'}
                   </span>
@@ -183,26 +183,26 @@ const InventoryPage: React.FC = () => {
       )}
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
         {/* Low Stock Items */}
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200">
-          <div className="p-6 border-b border-slate-200">
-            <h3 className="text-lg font-semibold text-slate-900">Estoque Baixo</h3>
+        <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+          <div className="p-lg border-b border-neutral-border">
+            <h3 className="text-lg font-semibold text-neutral-text">Estoque Baixo</h3>
           </div>
-          <div className="p-6">
+          <div className="p-lg">
             {lowStockItems.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-sm">
                 {lowStockItems.slice(0, 5).map((item: any) => (
                   <div key={item.id} className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-slate-900">{item.name}</p>
-                      <p className="text-sm text-slate-600">
+                      <p className="font-medium text-neutral-text">{item.name}</p>
+                      <p className="text-sm text-neutral-textSecondary">
                         Estoque: {item.currentStock} | Mínimo: {item.minStock}
                       </p>
                     </div>
                     <button
                       onClick={() => openMovementModal(item, 'entrada')}
-                      className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+                      className="px-md py-1 bg-primary text-white rounded-md text-sm hover:bg-primary-hover"
                     >
                       Repor
                     </button>
@@ -210,35 +210,35 @@ const InventoryPage: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-slate-500">Nenhum item com estoque baixo</p>
+              <p className="text-neutral-textSecondary">Nenhum item com estoque baixo</p>
             )}
           </div>
         </div>
 
         {/* Expiring Items */}
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200">
-          <div className="p-6 border-b border-slate-200">
-            <h3 className="text-lg font-semibold text-slate-900">Próximos ao Vencimento</h3>
+        <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+          <div className="p-lg border-b border-neutral-border">
+            <h3 className="text-lg font-semibold text-neutral-text">Próximos ao Vencimento</h3>
           </div>
-          <div className="p-6">
+          <div className="p-lg">
             {expiringItems.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-sm">
                 {expiringItems.slice(0, 5).map((item: any) => (
                   <div key={item.id} className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-slate-900">{item.name}</p>
-                      <p className="text-sm text-slate-600">
+                      <p className="font-medium text-neutral-text">{item.name}</p>
+                      <p className="text-sm text-neutral-textSecondary">
                         Vence em: {item.expiryDate ? new Date(item.expiryDate).toLocaleDateString('pt-BR') : 'N/A'}
                       </p>
                     </div>
-                    <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
+                    <span className="px-sm py-1 bg-warning-light text-yellow-800 rounded-full text-xs">
                       Atenção
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-slate-500">Nenhum item próximo ao vencimento</p>
+              <p className="text-neutral-textSecondary">Nenhum item próximo ao vencimento</p>
             )}
           </div>
         </div>
@@ -247,24 +247,24 @@ const InventoryPage: React.FC = () => {
   );
 
   const ItemsTab = () => (
-    <div className="space-y-6">
+    <div className="space-y-xl">
       {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-        <div className="flex flex-col lg:flex-row gap-4">
+      <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+        <div className="flex flex-col lg:flex-row gap-md">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-textTertiary w-5 h-5" />
             <input
               type="text"
               placeholder="Buscar itens..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-sm border border-neutral-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-md py-sm border border-neutral-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label="Filtrar por categoria"
             title="Filtrar por categoria"
           >
@@ -277,7 +277,7 @@ const InventoryPage: React.FC = () => {
           </select>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+            className="px-md py-sm bg-primary text-white rounded-lg hover:bg-primary-hover flex items-center gap-sm"
           >
             <Plus className="w-4 h-4" />
             Novo Item
@@ -286,17 +286,17 @@ const InventoryPage: React.FC = () => {
       </div>
 
       {/* Items Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+      <div className="bg-white rounded-lg shadow-card border border-neutral-border">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-slate-50 border-b border-slate-200">
+            <thead className="bg-neutral-bgAlt border-b border-neutral-border">
               <tr>
-                <th className="text-left p-4 font-medium text-slate-700">Item</th>
-                <th className="text-left p-4 font-medium text-slate-700">Categoria</th>
-                <th className="text-left p-4 font-medium text-slate-700">Estoque</th>
-                <th className="text-left p-4 font-medium text-slate-700">Valor Unit.</th>
-                <th className="text-left p-4 font-medium text-slate-700">Status</th>
-                <th className="text-left p-4 font-medium text-slate-700">Ações</th>
+                <th className="text-left p-md font-medium text-neutral-text">Item</th>
+                <th className="text-left p-md font-medium text-neutral-text">Categoria</th>
+                <th className="text-left p-md font-medium text-neutral-text">Estoque</th>
+                <th className="text-left p-md font-medium text-neutral-text">Valor Unit.</th>
+                <th className="text-left p-md font-medium text-neutral-text">Status</th>
+                <th className="text-left p-md font-medium text-neutral-text">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -306,54 +306,54 @@ const InventoryPage: React.FC = () => {
                 const isExpiring = item.expiryDate && new Date(item.expiryDate) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
                 return (
-                  <tr key={item.id} className="border-b border-slate-200 hover:bg-slate-50">
-                    <td className="p-4">
+                  <tr key={item.id} className="border-b border-neutral-border hover:bg-neutral-bgAlt">
+                    <td className="p-md">
                       <div>
-                        <p className="font-medium text-slate-900">{item.name}</p>
-                        <p className="text-sm text-slate-600">{item.description}</p>
+                        <p className="font-medium text-neutral-text">{item.name}</p>
+                        <p className="text-sm text-neutral-textSecondary">{item.description}</p>
                       </div>
                     </td>
-                    <td className="p-4 text-slate-600">{category?.name || 'N/A'}</td>
-                    <td className="p-4">
-                      <span className={`font-medium ${isLowStock ? 'text-red-600' : 'text-slate-900'}`}>
+                    <td className="p-md text-neutral-textSecondary">{category?.name || 'N/A'}</td>
+                    <td className="p-md">
+                      <span className={`font-medium ${isLowStock ? 'text-error' : 'text-neutral-text'}`}>
                         {item.currentStock}
                       </span>
-                      <span className="text-slate-500 ml-1">/ {item.minStock} mín</span>
+                      <span className="text-neutral-textSecondary ml-xs">/ {item.minStock} mín</span>
                     </td>
-                    <td className="p-4 text-slate-600">
+                    <td className="p-md text-neutral-textSecondary">
                       R$ {(item.unitPrice || 0).toFixed(2)}
                     </td>
-                    <td className="p-4">
+                    <td className="p-md">
                       <div className="space-y-1">
                         {isLowStock && (
-                          <span className="inline-block px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
+                          <span className="inline-block px-sm py-1 bg-error-light text-error rounded-full text-xs">
                             Estoque Baixo
                           </span>
                         )}
                         {isExpiring && (
-                          <span className="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
+                          <span className="inline-block px-sm py-1 bg-warning-light text-yellow-800 rounded-full text-xs">
                             Vencendo
                           </span>
                         )}
                         {!isLowStock && !isExpiring && (
-                          <span className="inline-block px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                          <span className="inline-block px-sm py-1 bg-success-light text-success rounded-full text-xs">
                             Normal
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
+                    <td className="p-md">
+                      <div className="flex items-center gap-sm">
                         <button
                           onClick={() => openMovementModal(item, 'entrada')}
-                          className="p-1 text-green-600 hover:bg-green-100 rounded"
+                          className="p-1 text-success hover:bg-success-light rounded"
                           title="Entrada de estoque"
                         >
                           <Upload className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => openMovementModal(item, 'saida')}
-                          className="p-1 text-red-600 hover:bg-red-100 rounded"
+                          className="p-1 text-error hover:bg-error-light rounded"
                           title="Saída de estoque"
                         >
                           <Download className="w-4 h-4" />
@@ -363,13 +363,13 @@ const InventoryPage: React.FC = () => {
                             setSelectedItem(item);
                             setShowCreateModal(true);
                           }}
-                          className="p-1 text-slate-600 hover:bg-slate-100 rounded"
+                          className="p-1 text-neutral-textSecondary hover:bg-neutral-bgDark rounded"
                           title="Editar"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
-                          className="p-1 text-red-600 hover:bg-red-100 rounded"
+                          className="p-1 text-error hover:bg-error-light rounded"
                           title="Excluir"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -387,23 +387,23 @@ const InventoryPage: React.FC = () => {
   );
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-lg space-y-xl">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Gestão de Inventário</h1>
-          <p className="text-slate-600 mt-1">Controle completo do estoque da clínica</p>
+          <h1 className="text-2xl font-bold text-neutral-text">Gestão de Inventário</h1>
+          <p className="text-neutral-textSecondary mt-xs">Controle completo do estoque da clínica</p>
         </div>
-        <div className="flex items-center gap-3 mt-4 lg:mt-0">
+        <div className="flex items-center gap-md mt-md lg:mt-0">
           <button
             onClick={refreshData}
-            className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 flex items-center gap-2"
+            className="px-md py-sm bg-neutral-bgDark text-neutral-text rounded-lg hover:bg-neutral-bgDark flex items-center gap-sm"
             disabled={isLoading}
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             Atualizar
           </button>
-          <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2">
+          <button className="px-md py-sm bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-sm">
             <Download className="w-4 h-4" />
             Exportar
           </button>
@@ -412,14 +412,14 @@ const InventoryPage: React.FC = () => {
 
       {/* Error Alert */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center justify-between">
+        <div className="bg-error-light border border-error rounded-lg p-md flex items-center justify-between">
           <div className="flex items-center">
-            <AlertTriangle className="w-5 h-5 text-red-500 mr-2" />
-            <span className="text-red-700">{error}</span>
+            <AlertTriangle className="w-5 h-5 text-red-500 mr-sm" />
+            <span className="text-error">{error}</span>
           </div>
           <button
             onClick={clearError}
-            className="text-red-500 hover:text-red-700"
+            className="text-red-500 hover:text-error"
           >
             ×
           </button>
@@ -427,7 +427,7 @@ const InventoryPage: React.FC = () => {
       )}
 
       {/* Navigation Tabs */}
-      <div className="border-b border-slate-200">
+      <div className="border-b border-neutral-border">
         <nav className="flex space-x-8">
           {[
             { id: 'overview', label: 'Visão Geral', icon: BarChart3 },
@@ -438,16 +438,16 @@ const InventoryPage: React.FC = () => {
             <button
               key={id}
               onClick={() => setActiveTab(id as any)}
-              className={`py-3 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
+              className={`py-3 px-1 border-b-2 font-medium text-sm flex items-center gap-sm ${
                 activeTab === id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-slate-500 hover:text-slate-700'
+                  ? 'border-blue-500 text-primary'
+                  : 'border-transparent text-neutral-textSecondary hover:text-neutral-text'
               }`}
             >
               <Icon className="w-4 h-4" />
               {label}
               {badge && badge > 0 && (
-                <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                <span className="bg-error-light text-error text-xs px-sm py-1 rounded-full">
                   {badge}
                 </span>
               )}
@@ -461,8 +461,8 @@ const InventoryPage: React.FC = () => {
       {activeTab === 'items' && <ItemsTab />}
       {activeTab === 'movements' && (
         <div className="text-center py-12">
-          <Package className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-          <p className="text-slate-500">Histórico de movimentações será implementado em breve</p>
+          <Package className="w-12 h-12 text-neutral-textTertiary mx-auto mb-md" />
+          <p className="text-neutral-textSecondary">Histórico de movimentações será implementado em breve</p>
         </div>
       )}
       {activeTab === 'alerts' && (
@@ -481,7 +481,7 @@ const InventoryPage: React.FC = () => {
       {/* Loading Overlay */}
       {isUpdating && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 flex items-center gap-3">
+          <div className="bg-white rounded-lg p-lg flex items-center gap-md">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
             <span>Atualizando...</span>
           </div>

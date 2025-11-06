@@ -144,19 +144,19 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
   const SocialLoginButtons = lazy(() => import('../../components/auth/SocialLoginButtons'));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-md">
+      <div className="w-full max-w-md space-y-xl">
         {/* Logo and Title */}
         <div className="text-center">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-white p-3 rounded-full shadow-lg">
+          <div className="flex items-center justify-center mb-md">
+            <div className="bg-white p-md rounded-full shadow-cardActive">
               <Stethoscope className="w-8 h-8 text-indigo-600" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-neutral-text">
             Mooca<span className="text-indigo-600">Fisio</span>
           </h1>
-          <p className="text-gray-600 mt-2">Sistema de Gestão em Fisioterapia</p>
+          <p className="text-neutral-textSecondary mt-sm">Sistema de Gestão em Fisioterapia</p>
         </div>
 
         {/* Login Card */}
@@ -170,7 +170,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-md">
             {/* Error Alert */}
             {error && (
               <Alert variant="destructive">
@@ -180,14 +180,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
             )}
 
             {/* Login Mode Tabs */}
-            <div className="flex gap-2 p-1 bg-gray-100 rounded-lg mb-4">
+            <div className="flex gap-sm p-1 bg-neutral-bgDark rounded-lg mb-md">
               <button
                 type="button"
                 onClick={() => setLoginMode('password')}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                className={`flex-1 py-sm px-md rounded-md text-sm font-medium transition-colors ${
                   loginMode === 'password'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-white text-neutral-text shadow-card'
+                    : 'text-neutral-textSecondary hover:text-neutral-text'
                 }`}
               >
                 Senha
@@ -195,10 +195,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
               <button
                 type="button"
                 onClick={() => setLoginMode('otp')}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                className={`flex-1 py-sm px-md rounded-md text-sm font-medium transition-colors ${
                   loginMode === 'otp'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-white text-neutral-text shadow-card'
+                    : 'text-neutral-textSecondary hover:text-neutral-text'
                 }`}
               >
                 Login sem senha
@@ -207,13 +207,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
 
             {/* Login Form */}
             {loginMode === 'password' ? (
-              <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
+              <form onSubmit={handleSubmit} className="space-y-md">
+              <div className="space-y-sm">
                 <label htmlFor="email" className="text-sm font-medium text-gray-700">
                   Email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-md h-4 w-4 text-neutral-textTertiary" />
                   <Input
                     id="email"
                     name="email"
@@ -229,12 +229,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-sm">
                 <label htmlFor="password" className="text-sm font-medium text-gray-700">
                   Senha
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Lock className="absolute left-3 top-md h-4 w-4 text-neutral-textTertiary" />
                   <Input
                     id="password"
                     name="password"
@@ -250,7 +250,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                    className="absolute right-3 top-md text-neutral-textTertiary hover:text-neutral-textSecondary"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -265,7 +265,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
               >
                 {isLoading || loading ? (
                   <>
-                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader className="mr-sm h-4 w-4 animate-spin" />
                     Entrando...
                   </>
                 ) : (
@@ -283,7 +283,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">Ou continue com</span>
+                <span className="bg-white px-sm text-gray-500">Ou continue com</span>
               </div>
             </div>
 
@@ -304,36 +304,36 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
 
             {/* Demo Accounts */}
             {showDemo && (
-              <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-700 mb-3">
+              <div className="space-y-sm p-md bg-neutral-bgAlt rounded-lg">
+                <p className="text-sm font-medium text-gray-700 mb-md">
                   Contas de Demonstração:
                 </p>
                 {demoAccounts.map((account, index) => (
                   <button
                     key={index}
                     onClick={() => handleDemoLogin(account.email)}
-                    className="w-full text-left p-3 bg-white rounded border hover:bg-gray-50 transition-colors"
+                    className="w-full text-left p-md bg-white rounded border hover:bg-neutral-bgAlt transition-colors"
                   >
-                    <div className="font-medium text-sm text-gray-900">
+                    <div className="font-medium text-sm text-neutral-text">
                       {account.role}
                     </div>
                     <div className="text-xs text-gray-500">
                       {account.email}
                     </div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-neutral-textTertiary mt-xs">
                       {account.description}
                     </div>
                   </button>
                 ))}
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-500 mt-sm">
                   Senha para todas as contas: <code className="bg-gray-200 px-1 rounded">demo123456</code>
                 </p>
               </div>
             )}
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-2">
-            <div className="text-sm text-center text-gray-600">
+          <CardFooter className="flex flex-col space-y-sm">
+            <div className="text-sm text-center text-neutral-textSecondary">
               Esqueceu sua senha?{' '}
               <Link
                 to="/forgot-password"
@@ -342,7 +342,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onSuccess }) => {
                 Recuperar senha
               </Link>
             </div>
-            <div className="text-sm text-center text-gray-600">
+            <div className="text-sm text-center text-neutral-textSecondary">
               Não tem uma conta?{' '}
               <Link
                 to="/register"

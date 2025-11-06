@@ -239,11 +239,11 @@ const TeleconsultaPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full bg-slate-900 text-white -m-8">
+    <div className="flex h-full bg-neutral-text text-white -m-8">
       {/* Main Content */}
-      <main className="flex-1 flex flex-col p-4 overflow-hidden">
-        <header className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-4">
+      <main className="flex-1 flex flex-col p-md overflow-hidden">
+        <header className="flex justify-between items-center mb-md">
+            <div className="flex items-center gap-md">
                 <h1 className="text-xl font-bold truncate">Teleconsulta: {patient.name}</h1>
                 <ConnectionStatus
                     isConnected={!!localStream}
@@ -252,13 +252,13 @@ const TeleconsultaPage: React.FC = () => {
                     latency={latency}
                 />
             </div>
-            <div className="flex items-center gap-4">
-                <div className="bg-red-500/80 text-white px-3 py-1 rounded-md text-sm font-semibold flex items-center">
-                    <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
+            <div className="flex items-center gap-md">
+                <div className="bg-error-light0/80 text-white px-md py-1 rounded-md text-sm font-semibold flex items-center">
+                    <div className="w-2 h-2 bg-white rounded-full mr-sm animate-pulse"></div>
                     <span>REC</span>
-                    <span className="ml-2 font-mono">{formatTime(sessionTime)}</span>
+                    <span className="ml-sm font-mono">{formatTime(sessionTime)}</span>
                 </div>
-                <button onClick={handleToggleFullscreen} className="p-2 hover:bg-slate-700 rounded-full">
+                <button onClick={handleToggleFullscreen} className="p-sm hover:bg-slate-700 rounded-full">
                     {isFullscreen ? <Minimize/> : <Maximize />}
                 </button>
             </div>
@@ -272,7 +272,7 @@ const TeleconsultaPage: React.FC = () => {
             isScreenSharing={isScreenSharing}
         />
 
-        <footer className="mt-4">
+        <footer className="mt-md">
             <ControlBar
                 isMicOn={isMicOn}
                 isCameraOn={isCameraOn}

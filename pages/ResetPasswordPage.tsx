@@ -73,9 +73,9 @@ const ResetPasswordPage: React.FC = () => {
     if (/[0-9]/.test(password)) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
 
-    if (score <= 2) return { score, label: 'Fraca', color: 'bg-red-500' };
-    if (score <= 4) return { score, label: 'Média', color: 'bg-yellow-500' };
-    return { score, label: 'Forte', color: 'bg-green-500' };
+    if (score <= 2) return { score, label: 'Fraca', color: 'bg-error-light0' };
+    if (score <= 4) return { score, label: 'Média', color: 'bg-warning-light0' };
+    return { score, label: 'Forte', color: 'bg-success-light0' };
   };
 
   const passwordStrength = password ? getPasswordStrength(password) : null;
@@ -106,24 +106,24 @@ const ResetPasswordPage: React.FC = () => {
   // Invalid token
   if (tokenValid === false) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-md">
         <div className="w-full max-w-md">
-          <div className="rounded-2xl border border-red-200 bg-white p-8 shadow-xl">
-            <div className="mb-6 flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-                <AlertTriangle className="h-8 w-8 text-red-600" />
+          <div className="rounded-cardLarge border border-error bg-white p-xl shadow-xl">
+            <div className="mb-xl flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-error-light">
+                <AlertTriangle className="h-8 w-8 text-error" />
               </div>
             </div>
 
-            <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
+            <h1 className="mb-sm text-center text-2xl font-bold text-neutral-text">
               Link Inválido ou Expirado
             </h1>
-            <p className="mb-6 text-center text-gray-600">
+            <p className="mb-xl text-center text-neutral-textSecondary">
               Este link de recuperação de senha é inválido ou já expirou.
               Links de recuperação são válidos por 1 hora.
             </p>
 
-            <div className="space-y-3">
+            <div className="space-y-sm">
               <Button
                 onClick={() => navigate('/forgot-password')}
                 className="w-full"
@@ -147,19 +147,19 @@ const ResetPasswordPage: React.FC = () => {
   // Success screen
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-md">
         <div className="w-full max-w-md">
-          <div className="rounded-2xl border border-green-200 bg-white p-8 shadow-xl">
-            <div className="mb-6 flex justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                <CheckCircle className="h-8 w-8 text-green-600" />
+          <div className="rounded-cardLarge border border-success bg-white p-xl shadow-xl">
+            <div className="mb-xl flex justify-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-success-light">
+                <CheckCircle className="h-8 w-8 text-success" />
               </div>
             </div>
 
-            <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
+            <h1 className="mb-sm text-center text-2xl font-bold text-neutral-text">
               Senha Redefinida!
             </h1>
-            <p className="mb-6 text-center text-gray-600">
+            <p className="mb-xl text-center text-neutral-textSecondary">
               Sua senha foi alterada com sucesso. Você será redirecionado para a
               página de login em instantes.
             </p>
@@ -178,39 +178,39 @@ const ResetPasswordPage: React.FC = () => {
 
   // Reset form
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-indigo-100 p-md">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="mb-4 flex justify-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-600 shadow-lg">
+        <div className="mb-mdxl text-center">
+          <div className="mb-md flex justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-hover shadow-cardActive">
               <Lock className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h1 className="mb-2 text-3xl font-bold text-gray-900">
+          <h1 className="mb-sm text-3xl font-bold text-neutral-text">
             Redefinir Senha
           </h1>
-          <p className="text-gray-600">
+          <p className="text-neutral-textSecondary">
             Crie uma nova senha forte para sua conta
           </p>
         </div>
 
         {/* Form */}
-        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-xl">
+        <div className="rounded-cardLarge border border-neutral-border bg-white p-xl shadow-xl">
           {error && (
-            <Alert variant="destructive" className="mb-6">
+            <Alert variant="destructive" className="mb-xl">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Password */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label htmlFor="password" className="text-sm font-medium">
                 Nova Senha
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Lock className="absolute left-3 top-md h-5 w-5 text-neutral-textTertiary" />
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -223,24 +223,24 @@ const ResetPasswordPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-md text-neutral-textTertiary hover:text-neutral-textSecondary"
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-red-600">{errors.password.message}</p>
+                <p className="text-xs text-error">{errors.password.message}</p>
               )}
 
               {/* Password Strength Indicator */}
               {passwordStrength && (
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-gray-600">Força da senha:</span>
+                    <span className="text-neutral-textSecondary">Força da senha:</span>
                     <span className={`font-medium ${
-                      passwordStrength.score <= 2 ? 'text-red-600' :
-                      passwordStrength.score <= 4 ? 'text-yellow-600' :
-                      'text-green-600'
+                      passwordStrength.score <= 2 ? 'text-error' :
+                      passwordStrength.score <= 4 ? 'text-warning' :
+                      'text-success'
                     }`}>
                       {passwordStrength.label}
                     </span>
@@ -256,12 +256,12 @@ const ResetPasswordPage: React.FC = () => {
             </div>
 
             {/* Confirm Password */}
-            <div className="space-y-2">
+            <div className="space-y-sm">
               <Label htmlFor="confirmPassword" className="text-sm font-medium">
                 Confirmar Nova Senha
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                <Lock className="absolute left-3 top-md h-5 w-5 text-neutral-textTertiary" />
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
@@ -273,35 +273,35 @@ const ResetPasswordPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-md text-neutral-textTertiary hover:text-neutral-textSecondary"
                 >
                   {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-xs text-red-600">{errors.confirmPassword.message}</p>
+                <p className="text-xs text-error">{errors.confirmPassword.message}</p>
               )}
             </div>
 
             {/* Password Requirements */}
-            <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
-              <p className="mb-2 text-xs font-semibold text-blue-900">
+            <div className="rounded-lg bg-primary-light border border-primary p-md">
+              <p className="mb-sm text-xs font-semibold text-blue-900">
                 Requisitos da senha:
               </p>
               <ul className="space-y-1 text-xs text-blue-800">
-                <li className={password.length >= 8 ? 'text-green-600' : ''}>
+                <li className={password.length >= 8 ? 'text-success' : ''}>
                   • Mínimo de 8 caracteres
                 </li>
-                <li className={/[A-Z]/.test(password) ? 'text-green-600' : ''}>
+                <li className={/[A-Z]/.test(password) ? 'text-success' : ''}>
                   • Pelo menos uma letra maiúscula
                 </li>
-                <li className={/[a-z]/.test(password) ? 'text-green-600' : ''}>
+                <li className={/[a-z]/.test(password) ? 'text-success' : ''}>
                   • Pelo menos uma letra minúscula
                 </li>
-                <li className={/[0-9]/.test(password) ? 'text-green-600' : ''}>
+                <li className={/[0-9]/.test(password) ? 'text-success' : ''}>
                   • Pelo menos um número
                 </li>
-                <li className={/[^A-Za-z0-9]/.test(password) ? 'text-green-600' : ''}>
+                <li className={/[^A-Za-z0-9]/.test(password) ? 'text-success' : ''}>
                   • Pelo menos um caractere especial (!@#$%^&*)
                 </li>
               </ul>
@@ -315,12 +315,12 @@ const ResetPasswordPage: React.FC = () => {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-sm h-4 w-4 animate-spin" />
                   Redefinindo...
                 </>
               ) : (
                 <>
-                  <Lock className="mr-2 h-4 w-4" />
+                  <Lock className="mr-sm h-4 w-4" />
                   Redefinir Senha
                 </>
               )}
@@ -329,11 +329,11 @@ const ResetPasswordPage: React.FC = () => {
         </div>
 
         {/* Security Info */}
-        <div className="mt-6 rounded-lg bg-gray-50 p-4">
-          <h3 className="mb-2 text-sm font-semibold text-gray-900">
+        <div className="mt-xl rounded-lg bg-neutral-bgAlt p-md">
+          <h3 className="mb-sm text-sm font-semibold text-neutral-text">
             🔒 Dicas de Segurança
           </h3>
-          <ul className="space-y-1 text-xs text-gray-600">
+          <ul className="space-y-1 text-xs text-neutral-textSecondary">
             <li>• Use uma senha única que você não usa em outros sites</li>
             <li>• Evite informações pessoais óbvias</li>
             <li>• Considere usar um gerenciador de senhas</li>

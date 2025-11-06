@@ -22,7 +22,7 @@ const FilterCheckbox = memo<{ id: string; label: string; checked: boolean; onCha
             onChange={(e) => onChange(e.target.checked)}
             className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
         />
-        <label htmlFor={id} className="ml-3 text-sm text-slate-600">
+        <label htmlFor={id} className="ml-3 text-sm text-neutral-textSecondary">
             {label}
         </label>
     </div>
@@ -210,15 +210,15 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
   };
 
   const renderSkeleton = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <Skeleton className="lg:col-span-1 h-96 rounded-2xl" />
-        <div className="lg:col-span-3 space-y-4">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-xl">
+        <Skeleton className="lg:col-span-1 h-96 rounded-cardLarge" />
+        <div className="lg:col-span-3 space-y-md">
              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-white p-4 rounded-2xl shadow-sm">
-                    <Skeleton className="h-8 w-1/3 mb-4" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <Skeleton className="h-48 w-full rounded-xl" />
-                        <Skeleton className="h-48 w-full rounded-xl" />
+                <div key={i} className="bg-white p-md rounded-cardLarge shadow-card">
+                    <Skeleton className="h-8 w-1/3 mb-md" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+                        <Skeleton className="h-48 w-full rounded-card" />
+                        <Skeleton className="h-48 w-full rounded-card" />
                     </div>
                 </div>
             ))}
@@ -232,62 +232,62 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
         title="Biblioteca de Exercícios Integrada"
         subtitle="Exercícios do sistema + conteúdo clínico especializado com vinculação a protocolos."
       >
-        <button onClick={() => handleOpenGroupModal('create')} className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 mr-3">
-            <Plus className="-ml-1 mr-2 h-5 w-5" />
+        <button onClick={() => handleOpenGroupModal('create')} className="inline-flex items-center justify-center rounded-lg border border-neutral-border bg-white px-md py-sm text-sm font-medium text-neutral-text shadow-card hover:bg-neutral-bgAlt mr-3">
+            <Plus className="-ml-xs mr-sm h-5 w-5" />
             Novo Grupo
         </button>
-        <button onClick={() => handleOpenExerciseModal()} className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-600">
-          <Plus className="-ml-1 mr-2 h-5 w-5" />
+        <button onClick={() => handleOpenExerciseModal()} className="inline-flex items-center justify-center rounded-lg border border-transparent bg-teal-500 px-md py-sm text-sm font-medium text-white shadow-card hover:bg-teal-600">
+          <Plus className="-ml-xs mr-sm h-5 w-5" />
           Novo Exercício
         </button>
       </PageHeader>
       
       {/* Estatísticas */}
-      <div className="mb-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div className="mb-mdxl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+        <div className="bg-white p-lg rounded-cardLarge shadow-card border border-neutral-border">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Activity className="w-6 h-6 text-blue-600" />
+            <div className="p-sm bg-primary-light rounded-lg">
+              <Activity className="w-6 h-6 text-primary" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-slate-600">Total de Exercícios</p>
-              <p className="text-2xl font-bold text-slate-900">{statistics.totalExercises || 0}</p>
+              <p className="text-sm font-medium text-neutral-textSecondary">Total de Exercícios</p>
+              <p className="text-2xl font-bold text-neutral-text">{statistics.totalExercises || 0}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div className="bg-white p-lg rounded-cardLarge shadow-card border border-neutral-border">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <BookOpen className="w-6 h-6 text-green-600" />
+            <div className="p-sm bg-success-light rounded-lg">
+              <BookOpen className="w-6 h-6 text-success" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-slate-600">Com Protocolos</p>
-              <p className="text-2xl font-bold text-slate-900">{statistics.exercisesWithProtocols || 0}</p>
+              <p className="text-sm font-medium text-neutral-textSecondary">Com Protocolos</p>
+              <p className="text-2xl font-bold text-neutral-text">{statistics.exercisesWithProtocols || 0}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div className="bg-white p-lg rounded-cardLarge shadow-card border border-neutral-border">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
+            <div className="p-sm bg-purple-100 rounded-lg">
               <Users className="w-6 h-6 text-purple-600" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-slate-600">Especialidades</p>
-              <p className="text-2xl font-bold text-slate-900">{Object.keys(statistics.specialties || {}).length}</p>
+              <p className="text-sm font-medium text-neutral-textSecondary">Especialidades</p>
+              <p className="text-2xl font-bold text-neutral-text">{Object.keys(statistics.specialties || {}).length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div className="bg-white p-lg rounded-cardLarge shadow-card border border-neutral-border">
           <div className="flex items-center">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Link className="w-6 h-6 text-orange-600" />
+            <div className="p-sm bg-warning-light rounded-lg">
+              <Link className="w-6 h-6 text-warning" />
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-slate-600">Categorias</p>
-              <p className="text-2xl font-bold text-slate-900">{statistics.totalCategories || 0}</p>
+              <p className="text-sm font-medium text-neutral-textSecondary">Categorias</p>
+              <p className="text-2xl font-bold text-neutral-text">{statistics.totalCategories || 0}</p>
             </div>
           </div>
         </div>
@@ -303,34 +303,34 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
       />
 
       {loading ? renderSkeleton() : (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <aside className="lg:col-span-1 space-y-6">
-            <div className="bg-white p-4 rounded-2xl shadow-sm">
-                <h3 className="font-bold text-slate-800 mb-4 flex items-center justify-between">
-                    <span className="flex items-center"><Filter className="w-5 h-5 mr-2" />Filtros</span>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-xl">
+          <aside className="lg:col-span-1 space-y-xl">
+            <div className="bg-white p-md rounded-cardLarge shadow-card">
+                <h3 className="font-bold text-neutral-text mb-md flex items-center justify-between">
+                    <span className="flex items-center"><Filter className="w-5 h-5 mr-sm" />Filtros</span>
                      {areFiltersActive && (
                         <button onClick={resetFilters} className="text-xs font-semibold text-teal-600 hover:underline flex items-center">
-                            <X className="w-3 h-3 mr-1"/> Limpar
+                            <X className="w-3 h-3 mr-xs"/> Limpar
                         </button>
                     )}
                 </h3>
 
-                <div className="space-y-6">
+                <div className="space-y-xl">
                      <div>
-                        <label className="text-sm font-semibold text-slate-700">Busca por nome</label>
-                        <div className="relative mt-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                            <input type="text" placeholder="Ex: Agachamento" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg"/>
+                        <label className="text-sm font-semibold text-neutral-text">Busca por nome</label>
+                        <div className="relative mt-xs">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-textTertiary" />
+                            <input type="text" placeholder="Ex: Agachamento" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-sm border border-neutral-border rounded-lg"/>
                         </div>
                     </div>
 
                     <div>
-                        <label htmlFor="specialty-select" className="text-sm font-semibold text-slate-700">Especialidade</label>
+                        <label htmlFor="specialty-select" className="text-sm font-semibold text-neutral-text">Especialidade</label>
                         <select 
                             id="specialty-select"
                             value={selectedSpecialty} 
                             onChange={(e) => setSelectedSpecialty(e.target.value)} 
-                            className="w-full mt-1 p-2 border border-slate-300 rounded-lg"
+                            className="w-full mt-xs p-sm border border-neutral-border rounded-lg"
                             title="Filtrar exercícios por especialidade clínica"
                         >
                             <option value="">Todas as especialidades</option>
@@ -341,7 +341,7 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="difficulty-range" className="text-sm font-semibold text-slate-700">Nível de Dificuldade (máx. {maxDifficulty})</label>
+                        <label htmlFor="difficulty-range" className="text-sm font-semibold text-neutral-text">Nível de Dificuldade (máx. {maxDifficulty})</label>
                         <input 
                             id="difficulty-range"
                             type="range" 
@@ -349,7 +349,7 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
                             max="5" 
                             value={maxDifficulty} 
                             onChange={(e) => setMaxDifficulty(Number(e.target.value))} 
-                            className="w-full mt-2"
+                            className="w-full mt-sm"
                             title={`Filtrar exercícios até nível de dificuldade ${maxDifficulty}`}
                         />
                     </div>
@@ -362,21 +362,21 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
                             onChange={(e) => setShowOnlyWithProtocols(e.target.checked)}
                             className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
                         />
-                        <label htmlFor="showProtocols" className="ml-3 text-sm text-slate-600">
+                        <label htmlFor="showProtocols" className="ml-3 text-sm text-neutral-textSecondary">
                             Apenas exercícios com protocolos
                         </label>
                     </div>
                      
                      <div>
-                        <h4 className="text-sm font-semibold text-slate-700 mb-2">Parte do Corpo</h4>
-                        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                        <h4 className="text-sm font-semibold text-neutral-text mb-sm">Parte do Corpo</h4>
+                        <div className="space-y-sm max-h-40 overflow-y-auto pr-2">
                            {bodyParts.map(part => <FilterCheckbox key={part} id={`part-${part}`} label={part} checked={selectedBodyParts.includes(part)} onChange={(c) => handleBodyPartChange(part, c)} />)}
                         </div>
                     </div>
                      
                      <div>
-                        <h4 className="text-sm font-semibold text-slate-700 mb-2">Equipamento</h4>
-                        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                        <h4 className="text-sm font-semibold text-neutral-text mb-sm">Equipamento</h4>
+                        <div className="space-y-sm max-h-40 overflow-y-auto pr-2">
                             {equipment.map(equip => <FilterCheckbox key={equip} id={`equip-${equip}`} label={equip} checked={selectedEquipment.includes(equip)} onChange={(c) => handleEquipmentChange(equip, c)} />)}
                         </div>
                     </div>
@@ -384,36 +384,36 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
             </div>
           </aside>
           
-          <main className="lg:col-span-3 space-y-4">
+          <main className="lg:col-span-3 space-y-md">
             {categories.map(category => {
               const categoryExercises = filteredExercises.filter(ex => ex.category === category);
               if (categoryExercises.length === 0) return null;
               const isOpen = openCategories.includes(category);
               
               return (
-                <div key={category} className="bg-white rounded-2xl shadow-sm transition-shadow hover:shadow-md">
-                  <div className="group flex items-center p-4 cursor-pointer" onClick={() => toggleCategory(category)}>
-                    <h3 className="text-xl font-bold text-slate-800 flex-1">
+                <div key={category} className="bg-white rounded-cardLarge shadow-card transition-shadow hover:shadow-cardHover">
+                  <div className="group flex items-center p-md cursor-pointer" onClick={() => toggleCategory(category)}>
+                    <h3 className="text-xl font-bold text-neutral-text flex-1">
                       {category} 
-                      <span className="text-base font-normal text-slate-500">({categoryExercises.length})</span>
+                      <span className="text-base font-normal text-neutral-textSecondary">({categoryExercises.length})</span>
                       {categoryExercises.some(ex => (ex as any).linkedProtocols?.length > 0) && (
-                        <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          <Link className="w-3 h-3 mr-1" />
+                        <span className="ml-sm inline-flex items-center px-sm py-1 rounded-full text-xs font-medium bg-success-light text-success">
+                          <Link className="w-3 h-3 mr-xs" />
                           Protocolos
                         </span>
                       )}
                     </h3>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
-                      <button onClick={() => handleOpenExerciseModal(undefined, category)} className="p-2 rounded-full hover:bg-slate-100 text-slate-600" title="Adicionar Exercício"><Plus size={18}/></button>
-                      <button onClick={() => handleOpenGroupModal('edit', category)} className="p-2 rounded-full hover:bg-slate-100 text-slate-600" title="Renomear Grupo"><Edit size={16}/></button>
-                      <button onClick={() => handleOpenGroupModal('copy', category)} className="p-2 rounded-full hover:bg-slate-100 text-slate-600" title="Copiar Grupo"><Copy size={16}/></button>
-                      <button onClick={() => handleDeleteCategory(category)} className="p-2 rounded-full hover:bg-red-50 text-red-600" title="Excluir Grupo"><Trash2 size={16}/></button>
+                      <button onClick={() => handleOpenExerciseModal(undefined, category)} className="p-sm rounded-full hover:bg-neutral-bgDark text-neutral-textSecondary" title="Adicionar Exercício"><Plus size={18}/></button>
+                      <button onClick={() => handleOpenGroupModal('edit', category)} className="p-sm rounded-full hover:bg-neutral-bgDark text-neutral-textSecondary" title="Renomear Grupo"><Edit size={16}/></button>
+                      <button onClick={() => handleOpenGroupModal('copy', category)} className="p-sm rounded-full hover:bg-neutral-bgDark text-neutral-textSecondary" title="Copiar Grupo"><Copy size={16}/></button>
+                      <button onClick={() => handleDeleteCategory(category)} className="p-sm rounded-full hover:bg-error-light text-error" title="Excluir Grupo"><Trash2 size={16}/></button>
                     </div>
-                    <ChevronDown className={`ml-2 w-6 h-6 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`ml-sm w-6 h-6 text-neutral-textTertiary transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                   </div>
                   {isOpen && (
-                    <div className="p-4 border-t border-slate-200">
-                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div className="p-md border-t border-neutral-border">
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-lg">
                         {categoryExercises.map(ex => (
                           <div key={ex.id} className="relative">
                             <ExerciseCard 
@@ -423,9 +423,9 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
                               onPlay={() => ex.media?.videoUrl && setPlayingVideo({ url: ex.media.videoUrl, title: ex.name })}
                             />
                             {(ex as any).linkedProtocols?.length > 0 && (
-                              <div className="absolute top-2 right-2">
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                  <Link className="w-3 h-3 mr-1" />
+                              <div className="absolute top-sm right-2">
+                                <span className="inline-flex items-center px-sm py-1 rounded-full text-xs font-medium bg-success-light text-success">
+                                  <Link className="w-3 h-3 mr-xs" />
                                   {(ex as any).linkedProtocols.length}
                                 </span>
                               </div>
@@ -439,9 +439,9 @@ const EnhancedExerciseLibraryPage: React.FC = () => {
               );
             })}
              {filteredExercises.length === 0 && (
-                <div className="text-center p-10 bg-white rounded-2xl shadow-sm">
-                    <h3 className="text-lg font-semibold text-slate-700">Nenhum exercício encontrado</h3>
-                    <p className="text-slate-500 mt-1">Tente ajustar seus filtros para encontrar o que procura.</p>
+                <div className="text-center p-10 bg-white rounded-cardLarge shadow-card">
+                    <h3 className="text-lg font-semibold text-neutral-text">Nenhum exercício encontrado</h3>
+                    <p className="text-neutral-textSecondary mt-xs">Tente ajustar seus filtros para encontrar o que procura.</p>
                 </div>
             )}
           </main>

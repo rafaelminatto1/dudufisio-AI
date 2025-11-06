@@ -167,28 +167,28 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
   const getMaterialTypeColor = (type: string) => {
     switch (type) {
       case 'Protocolo Clínico':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-primary-light text-blue-800';
       case 'Escala de Avaliação':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-light text-success';
       case 'Material Educacional':
         return 'bg-purple-100 text-purple-800';
       case 'Guia de Exercícios':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-warning-light text-warning';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-neutral-bgDark text-gray-800';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'published':
-        return 'bg-green-100 text-green-800';
+        return 'bg-success-light text-success';
       case 'draft':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning-light text-yellow-800';
       case 'archived':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-neutral-bgDark text-gray-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-neutral-bgDark text-gray-800';
     }
   };
 
@@ -196,8 +196,8 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando material...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-md"></div>
+          <p className="text-neutral-textSecondary">Carregando material...</p>
         </div>
         </div>
     );
@@ -206,11 +206,11 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
   if (!material) {
     return (
       <div className="text-center py-12">
-        <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Material não encontrado</h2>
-        <p className="text-gray-600 mb-4">O material que você está procurando não existe ou foi removido.</p>
+        <FileText className="w-16 h-16 text-gray-300 mx-auto mb-md" />
+        <h2 className="text-xl font-semibold text-neutral-text mb-sm">Material não encontrado</h2>
+        <p className="text-neutral-textSecondary mb-md">O material que você está procurando não existe ou foi removido.</p>
         <Button onClick={() => navigate('/materials')}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4 mr-sm" />
           Voltar aos Materiais
         </Button>
       </div>
@@ -228,15 +228,15 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
         ]}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-lg">
         {/* Main Content */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className="lg:col-span-3 space-y-xl">
           {/* Material Header */}
           <Card>
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-md mb-sm">
                     <Badge className={getMaterialTypeColor(material.type)}>
                       {material.type}
                     </Badge>
@@ -245,25 +245,25 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
                        material.status === 'draft' ? 'Rascunho' : 'Arquivado'}
                     </Badge>
                   </div>
-                  <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h1 className="text-2xl font-bold text-neutral-text mb-sm">
                     {material.name}
                   </h1>
-                  <p className="text-gray-600 text-lg">
+                  <p className="text-neutral-textSecondary text-lg">
                     {material.description}
                   </p>
                 </div>
                 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-sm">
                   <Button variant="outline" size="sm" onClick={handleShare}>
-                    <Share className="w-4 h-4 mr-2" />
+                    <Share className="w-4 h-4 mr-sm" />
                     Compartilhar
                   </Button>
                   <Button variant="outline" size="sm" onClick={handleDownload}>
-                    <Download className="w-4 h-4 mr-2" />
+                    <Download className="w-4 h-4 mr-sm" />
                     Download
                   </Button>
                   <Button onClick={handleEdit}>
-                    <Edit className="w-4 h-4 mr-2" />
+                    <Edit className="w-4 h-4 mr-sm" />
                     Editar
                   </Button>
                 </div>
@@ -274,7 +274,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
           {/* Content */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-sm">
                 <FileText className="w-5 h-5" />
                 Conteúdo
               </CardTitle>
@@ -283,8 +283,8 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
               {material.content ? (
                 renderRichContent(material.content)
               ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <div className="text-center py-3xl text-gray-500">
+                  <FileText className="w-12 h-12 mx-auto mb-md text-gray-300" />
                   <p>Nenhum conteúdo disponível</p>
                 </div>
               )}
@@ -295,31 +295,31 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
           {relatedMaterials.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-sm">
                   <LinkIcon className="w-5 h-5" />
                   Materiais Relacionados ({relatedMaterials.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
                   {relatedMaterials.map((related) => (
                     <div
                       key={related.id}
-                      className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                      className="p-md border rounded-lg hover:bg-neutral-bgAlt cursor-pointer transition-colors"
                       onClick={() => navigate(`/material-detail/${related.id}`)}
                     >
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-medium text-gray-900 line-clamp-2">
+                      <div className="flex items-start justify-between mb-sm">
+                        <h3 className="font-medium text-neutral-text line-clamp-sm">
                           {related.name}
                         </h3>
                         <Badge className={`text-xs ${getMaterialTypeColor(related.type)}`}>
                           {related.type}
                         </Badge>
                       </div>
-                      <p className="text-sm text-gray-600 line-clamp-2">
+                      <p className="text-sm text-neutral-textSecondary line-clamp-sm">
                         {related.description}
                       </p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                      <div className="flex items-center gap-md mt-3 text-xs text-gray-500">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           {new Date(related.updatedAt).toLocaleDateString('pt-BR')}
@@ -335,45 +335,45 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-xl">
           {/* Material Info */}
           <Card>
             <CardHeader>
               <CardTitle className="text-sm">Informações</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
+            <CardContent className="space-y-md">
+              <div className="flex items-center gap-md">
                 <User className="w-4 h-4 text-gray-500" />
                 <div>
                   <p className="text-sm font-medium">Criado por</p>
-                  <p className="text-sm text-gray-600">{material.createdBy || 'Sistema'}</p>
+                  <p className="text-sm text-neutral-textSecondary">{material.createdBy || 'Sistema'}</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-md">
                 <Calendar className="w-4 h-4 text-gray-500" />
                 <div>
                   <p className="text-sm font-medium">Atualizado em</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-neutral-textSecondary">
                     {new Date(material.updatedAt).toLocaleDateString('pt-BR')}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-md">
                 <TrendingUp className="w-4 h-4 text-gray-500" />
                 <div>
                   <p className="text-sm font-medium">Categoria</p>
-                  <p className="text-sm text-gray-600">{material.category.name}</p>
+                  <p className="text-sm text-neutral-textSecondary">{material.category.name}</p>
                 </div>
               </div>
 
               {material.version && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-md">
                   <Clock className="w-4 h-4 text-gray-500" />
                   <div>
                     <p className="text-sm font-medium">Versão</p>
-                    <p className="text-sm text-gray-600">v{material.version}</p>
+                    <p className="text-sm text-neutral-textSecondary">v{material.version}</p>
                   </div>
                  </div>
             )}
@@ -384,13 +384,13 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
           {material.tags && material.tags.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="text-sm flex items-center gap-sm">
                   <Tag className="w-4 h-4" />
                   Tags ({material.tags.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-sm">
                   {material.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
                       {tag}
@@ -405,20 +405,20 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
           {links.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-sm flex items-center gap-2">
+                <CardTitle className="text-sm flex items-center gap-sm">
                   <LinkIcon className="w-4 h-4" />
                   Links ({links.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="space-y-sm">
                   {links.map((link) => (
                     <div
                       key={link.id}
-                      className="p-2 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer transition-colors"
+                      className="p-sm bg-neutral-bgAlt rounded-md hover:bg-neutral-bgDark cursor-pointer transition-colors"
                       onClick={() => navigate(`/material-detail/${link.toMaterialId}`)}
                     >
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-neutral-text">
                         {link.linkText}
                       </p>
                       <p className="text-xs text-gray-500">
@@ -436,14 +436,14 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
             <CardHeader>
               <CardTitle className="text-sm">Ações Rápidas</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-sm">
               <Button 
                 variant="outline" 
                 size="sm" 
                 className="w-full justify-start"
                 onClick={() => navigate(`/materials/${material.id}/edit`)}
               >
-                <Edit className="w-4 h-4 mr-2" />
+                <Edit className="w-4 h-4 mr-sm" />
                 Editar Material
               </Button>
               
@@ -453,7 +453,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
                 className="w-full justify-start"
                 onClick={() => navigate('/material-tasks')}
               >
-                <Eye className="w-4 h-4 mr-2" />
+                <Eye className="w-4 h-4 mr-sm" />
                 Ver Tarefas
               </Button>
               
@@ -463,7 +463,7 @@ Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTim
                 className="input justify-start"
                 onClick={() => navigate('/materials')}
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
+                <ArrowLeft className="w-4 h-4 mr-sm" />
                 Voltar à Lista
               </Button>
             </CardContent>

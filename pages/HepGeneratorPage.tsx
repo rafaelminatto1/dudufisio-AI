@@ -24,15 +24,15 @@ const initialFormData: Partial<HepFormData> = {
 const FormInput: React.FC<{label: string, name: keyof HepFormData, value: string, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, placeholder: string}> = 
     ({label, name, value, onChange, placeholder}) => (
     <div>
-        <label htmlFor={name} className="block text-sm font-medium text-slate-700">{label}</label>
-        <input type="text" name={name} id={name} value={value} onChange={onChange} placeholder={placeholder} className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
+        <label htmlFor={name} className="block text-sm font-medium text-neutral-text">{label}</label>
+        <input type="text" name={name} id={name} value={value} onChange={onChange} placeholder={placeholder} className="mt-xs block w-full px-md py-sm bg-white border border-neutral-border rounded-md shadow-card placeholder-slate-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm" />
     </div>
 );
 
 const FormTextarea: React.FC<{label: string, name: keyof HepFormData, value: string, onChange: (value: string) => void, placeholder: string, rows?: number}> = 
     ({label, name, value, onChange, placeholder, rows=2}) => (
     <div className="sm:col-span-2">
-        <label htmlFor={name} className="block text-sm font-medium text-slate-700">{label}</label>
+        <label htmlFor={name} className="block text-sm font-medium text-neutral-text">{label}</label>
         <TiptapEditorLazy
             value={value}
             onChange={onChange}
@@ -146,15 +146,15 @@ const HepGeneratorPage: React.FC = () => {
                 subtitle="Crie um plano de exercícios domiciliar personalizado e didático com IA."
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <div className="bg-white p-6 rounded-2xl shadow-sm space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-xl items-start">
+                <div className="bg-white p-lg rounded-cardLarge shadow-card space-y-md">
                      <div>
-                        <label htmlFor="patient-select" className="block text-sm font-medium text-slate-700 mb-1">Selecionar Paciente*</label>
+                        <label htmlFor="patient-select" className="block text-sm font-medium text-neutral-text mb-1">Selecionar Paciente*</label>
                         <select
                             id="patient-select"
                             value={selectedPatientId}
                             onChange={(e) => setSelectedPatientId(e.target.value)}
-                            className="w-full p-2 border border-slate-300 rounded-lg bg-white"
+                            className="w-full p-sm border border-neutral-border rounded-lg bg-white"
                         >
                             <option value="">-- Selecione para preencher dados --</option>
                             {patients.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -165,7 +165,7 @@ const HepGeneratorPage: React.FC = () => {
                     <FormTextarea label="Objetivo Principal do Plano*" name="objetivo_hep" value={formData.objetivo_hep} onChange={(value) => handleRichTextChange('objetivo_hep', value)} placeholder="Ex: Fortalecer o manguito rotador e melhorar a ADM"/>
                     <FormTextarea label="Lista de Exercícios (separados por vírgula)*" name="lista_exercicios" value={formData.lista_exercicios} onChange={(value) => handleRichTextChange('lista_exercicios', value)} placeholder="Ex: Ponte de glúteos, Perdigueiro, Prancha frontal"/>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-md">
                         <FormInput label="Séries" name="series" value={formData.series} onChange={handleInputChange} placeholder="Ex: 3"/>
                         <FormInput label="Repetições" name="repeticoes" value={formData.repeticoes} onChange={handleInputChange} placeholder="Ex: 15"/>
                         <FormInput label="Frequência" name="frequencia" value={formData.frequencia} onChange={handleInputChange} placeholder="Ex: 3x por semana"/>
@@ -177,46 +177,46 @@ const HepGeneratorPage: React.FC = () => {
                         onClick={handleSubmit}
                         disabled={isSubmitDisabled}
                         title={isSubmitDisabled && !isLoading ? 'Preencha o Objetivo e a Lista de Exercícios' : undefined}
-                        className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-teal-300 disabled:cursor-not-allowed"
+                        className="w-full inline-flex justify-center items-center px-lg py-3 border border-transparent text-base font-medium rounded-md shadow-card text-white bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-teal-300 disabled:cursor-not-allowed"
                     >
-                        {isLoading ? <Loader className="w-5 h-5 mr-3 -ml-1 animate-spin" /> : <Sparkles className="w-5 h-5 mr-3 -ml-1"/>}
+                        {isLoading ? <Loader className="w-5 h-5 mr-3 -ml-xs animate-spin" /> : <Sparkles className="w-5 h-5 mr-3 -ml-xs"/>}
                         {isLoading ? 'Gerando Plano...' : 'Gerar Plano com IA'}
                     </button>
                 </div>
                 
-                <div className="bg-white p-6 rounded-2xl shadow-sm">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold text-slate-800">Plano de Exercícios Gerado</h3>
-                        <div className="flex gap-2">
-                             <button onClick={handleSendWhatsApp} disabled={!hep || !selectedPatientId} className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-500 hover:bg-green-600 disabled:opacity-50">
-                                <MessageSquare className="w-4 h-4 mr-2"/>
+                <div className="bg-white p-lg rounded-cardLarge shadow-card">
+                    <div className="flex justify-between items-center mb-md">
+                        <h3 className="text-lg font-semibold text-neutral-text">Plano de Exercícios Gerado</h3>
+                        <div className="flex gap-sm">
+                             <button onClick={handleSendWhatsApp} disabled={!hep || !selectedPatientId} className="inline-flex items-center px-md py-1.5 border border-transparent text-sm font-medium rounded-md shadow-card text-white bg-success-light0 hover:bg-green-600 disabled:opacity-50">
+                                <MessageSquare className="w-4 h-4 mr-sm"/>
                                 Enviar
                             </button>
-                            <button onClick={handleCopy} disabled={!hep || copied} className="inline-flex items-center px-3 py-1.5 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50">
-                                {copied ? <Check className="w-4 h-4 mr-2 text-green-500"/> : <Clipboard className="w-4 h-4 mr-2"/>}
+                            <button onClick={handleCopy} disabled={!hep || copied} className="inline-flex items-center px-md py-1.5 border border-neutral-border text-sm font-medium rounded-md text-neutral-text bg-white hover:bg-neutral-bgAlt disabled:opacity-50">
+                                {copied ? <Check className="w-4 h-4 mr-sm text-green-500"/> : <Clipboard className="w-4 h-4 mr-sm"/>}
                                 {copied ? 'Copiado!' : 'Copiar'}
                             </button>
                         </div>
                     </div>
-                    <div className="bg-slate-50 p-6 rounded-lg min-h-[600px] overflow-y-auto border border-slate-200">
+                    <div className="bg-neutral-bgAlt p-lg rounded-lg min-h-[600px] overflow-y-auto border border-neutral-border">
                         {isLoading && (
-                            <div className="space-y-4 animate-pulse p-2">
-                                <Skeleton className="h-8 w-3/4 mb-4" />
+                            <div className="space-y-md animate-pulse p-sm">
+                                <Skeleton className="h-8 w-3/4 mb-md" />
                                 <Skeleton className="h-4 w-1/2" />
                                 <Skeleton className="h-4 w-1/3" />
                                 <br/>
-                                <Skeleton className="h-6 w-1/3 mt-4 mb-2" />
+                                <Skeleton className="h-6 w-1/3 mt-md mb-sm" />
                                 <Skeleton className="h-20 w-full" />
                                 <br/>
-                                <Skeleton className="h-20 w-full mt-2" />
-                                <Skeleton className="h-20 w-full mt-2" />
+                                <Skeleton className="h-20 w-full mt-sm" />
+                                <Skeleton className="h-20 w-full mt-sm" />
                             </div>
                         )}
                         {!isLoading && !hep && (
-                             <div className="text-center text-slate-500 flex flex-col justify-center items-center h-full">
-                                <Sparkles className="w-16 h-16 text-slate-300 mb-4" />
+                             <div className="text-center text-neutral-textSecondary flex flex-col justify-center items-center h-full">
+                                <Sparkles className="w-16 h-16 text-slate-300 mb-md" />
                                 <p className="font-semibold">O plano de exercícios para o paciente aparecerá aqui.</p>
-                                <p className="text-xs mt-1">Preencha o formulário e clique em "Gerar Plano".</p>
+                                <p className="text-xs mt-xs">Preencha o formulário e clique em "Gerar Plano".</p>
                             </div>
                         )}
                         <MarkdownRenderer content={hep} />

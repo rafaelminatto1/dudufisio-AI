@@ -42,7 +42,6 @@ import { MedicalReportSuggestions } from '../components/session/MedicalReportSug
 import { SaveBlockingDialog } from '../components/session/SaveBlockingDialog';
 import { ConductReplicationDialog } from '../components/session/ConductReplicationDialog';
 import { BodyMapProfessional, BodyMapComparisonModal, type PainData, type PainModalData, BODY_REGIONS_FRONT, BODY_REGIONS_BACK } from '../components/body-map-pro';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 /**
  * OPÇÃO 1: Página Nova para Evolução de Sessão

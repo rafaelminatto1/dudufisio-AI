@@ -395,19 +395,19 @@ const AiAnalyticsPage: React.FC = () => {
 
   // 🚀 Helper functions memoizadas (usadas em loops .map())
   const getConfidenceColor = useCallback((confidence: number): string => {
-    if (confidence >= 90) return 'text-green-600 bg-green-50';
-    if (confidence >= 80) return 'text-blue-600 bg-blue-50';
-    if (confidence >= 70) return 'text-yellow-600 bg-yellow-50';
-    return 'text-red-600 bg-red-50';
+    if (confidence >= 90) return 'text-success bg-success-light';
+    if (confidence >= 80) return 'text-primary bg-primary-light';
+    if (confidence >= 70) return 'text-warning bg-warning-light';
+    return 'text-error bg-error-light';
   }, []);
 
   const getRiskColor = useCallback((risk: string): string => {
     switch (risk) {
-      case 'critical': return 'text-red-600 bg-red-100';
-      case 'high': return 'text-orange-600 bg-orange-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
-      case 'low': return 'text-green-600 bg-green-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'critical': return 'text-error bg-error-light';
+      case 'high': return 'text-warning bg-warning-light';
+      case 'medium': return 'text-warning bg-warning-light';
+      case 'low': return 'text-success bg-success-light';
+      default: return 'text-neutral-textSecondary bg-neutral-bgDark';
     }
   }, []);
 
@@ -416,11 +416,11 @@ const AiAnalyticsPage: React.FC = () => {
       case 'up':
       case 'positive':
       case 'improving':
-        return <ArrowUpRight className="w-4 h-4 text-green-600" />;
+        return <ArrowUpRight className="w-4 h-4 text-success" />;
       case 'down':
       case 'negative':
       case 'declining':
-        return <ArrowDownRight className="w-4 h-4 text-red-600" />;
+        return <ArrowDownRight className="w-4 h-4 text-error" />;
       default:
         return <div className="w-4 h-4 rounded-full bg-gray-400" />;
     }
@@ -429,11 +429,11 @@ const AiAnalyticsPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-96">
-        <div className="flex items-center gap-3">
-          <Bot className="w-8 h-8 animate-pulse text-sky-600" />
+        <div className="flex items-center gap-md">
+          <Bot className="w-8 h-8 animate-pulse text-primary" />
           <div>
-            <div className="text-lg font-semibold text-gray-900">Analisando dados com IA...</div>
-            <div className="text-sm text-gray-600">Processando insights e previs�es</div>
+            <div className="text-lg font-semibold text-neutral-text">Analisando dados com IA...</div>
+            <div className="text-sm text-neutral-textSecondary">Processando insights e previs�es</div>
           </div>
         </div>
       </div>
@@ -449,14 +449,14 @@ const AiAnalyticsPage: React.FC = () => {
             subtitle="Insights inteligentes e an�lises preditivas para sua cl�nica"
           />
 
-          <div className="flex items-center gap-3">
-            <div className="text-sm text-gray-600">
+          <div className="flex items-center gap-md">
+            <div className="text-sm text-neutral-textSecondary">
               �ltima atualiza��o: {lastUpdate}
             </div>
             <button
               onClick={refreshAIAnalytics}
               disabled={isGeneratingInsights}
-              className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors disabled:opacity-50"
+              className="flex items-center gap-sm px-md py-sm bg-primary-hover text-white rounded-lg hover:bg-primary-hover transition-colors disabled:opacity-50"
             >
               {isGeneratingInsights ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />
@@ -469,10 +469,10 @@ const AiAnalyticsPage: React.FC = () => {
         </div>
 
         {/* AI Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-6 border border-purple-200">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-purple-500 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-lg">
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-lg border border-purple-200">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-purple-500 rounded-lg">
                 <Brain className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -482,13 +482,13 @@ const AiAnalyticsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-green-500 rounded-lg">
+          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-lg border border-success">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-success-light0 rounded-lg">
                 <Target className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-green-700">Confian�a M�dia</p>
+                <p className="text-sm font-medium text-success">Confian�a M�dia</p>
                 <p className="text-2xl font-bold text-green-900">
                   {Math.round(predictions.reduce((acc, p) => acc + p.confidence, 0) / predictions.length)}%
                 </p>
@@ -496,13 +496,13 @@ const AiAnalyticsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-6 border border-orange-200">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-orange-500 rounded-lg">
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-lg border border-warning">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-warning-light0 rounded-lg">
                 <AlertTriangle className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-orange-700">Pacientes em Risco</p>
+                <p className="text-sm font-medium text-warning">Pacientes em Risco</p>
                 <p className="text-2xl font-bold text-orange-900">
                   {patientInsights.filter(p => p.riskLevel === 'high' || p.riskLevel === 'critical').length}
                 </p>
@@ -510,13 +510,13 @@ const AiAnalyticsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 border border-blue-200">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-500 rounded-lg">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-lg border border-primary">
+            <div className="flex items-center gap-md">
+              <div className="p-md bg-primary rounded-lg">
                 <TrendingUp className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-blue-700">Protocolos Otimizados</p>
+                <p className="text-sm font-medium text-primary">Protocolos Otimizados</p>
                 <p className="text-2xl font-bold text-blue-900">
                   {treatmentEffectiveness.filter(t => t.trend === 'improving').length}
                 </p>
@@ -526,7 +526,7 @@ const AiAnalyticsPage: React.FC = () => {
         </div>
 
         {/* Main Analytics Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-xl">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Vis�o Geral</TabsTrigger>
             <TabsTrigger value="predictions">Previs�es</TabsTrigger>
@@ -536,42 +536,42 @@ const AiAnalyticsPage: React.FC = () => {
           </TabsList>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="overview" className="space-y-xl">
             {/* Top Predictions */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+              <div className="p-lg border-b border-neutral-border">
+                <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
                   <Lightbulb className="w-5 h-5 text-yellow-500" />
                   Principais Insights de IA
                 </h3>
               </div>
-              <div className="p-6">
-                <div className="space-y-4">
+              <div className="p-lg">
+                <div className="space-y-md">
                   {predictions.slice(0, 3).map((prediction: any) => (
-                    <div key={prediction.id} className="border border-gray-200 rounded-lg p-4">
+                    <div key={prediction.id} className="border border-neutral-border rounded-lg p-md">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-semibold text-gray-900">{prediction.title}</h4>
+                          <div className="flex items-center gap-sm mb-sm">
+                            <h4 className="font-semibold text-neutral-text">{prediction.title}</h4>
                             {getTrendIcon(prediction.trend)}
                           </div>
-                          <p className="text-gray-600 text-sm mb-3">{prediction.description}</p>
-                          <div className="flex items-center gap-4 text-xs">
-                            <span className={`px-2 py-1 rounded-full ${getConfidenceColor(prediction.confidence)}`}>
+                          <p className="text-neutral-textSecondary text-sm mb-md">{prediction.description}</p>
+                          <div className="flex items-center gap-md text-xs">
+                            <span className={`px-sm py-1 rounded-full ${getConfidenceColor(prediction.confidence)}`}>
                               {prediction.confidence}% confian�a
                             </span>
                             <span className="text-gray-500">{prediction.timeframe}</span>
-                            <span className={`px-2 py-1 rounded-full ${
-                              prediction.impact === 'high' ? 'bg-red-100 text-red-700' :
-                              prediction.impact === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-green-100 text-green-700'
+                            <span className={`px-sm py-1 rounded-full ${
+                              prediction.impact === 'high' ? 'bg-error-light text-error' :
+                              prediction.impact === 'medium' ? 'bg-warning-light text-yellow-700' :
+                              'bg-success-light text-success'
                             }`}>
                               Impacto {prediction.impact}
                             </span>
                           </div>
                         </div>
                         {prediction.actionable && (
-                          <button className="ml-4 text-sky-600 hover:text-sky-700">
+                          <button className="ml-4 text-primary hover:text-primary">
                             <ChevronRight className="w-5 h-5" />
                           </button>
                         )}
@@ -583,26 +583,26 @@ const AiAnalyticsPage: React.FC = () => {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-lg">
               {/* Operational Metrics */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+                <div className="p-lg border-b border-neutral-border">
+                  <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
                     <BarChart3 className="w-5 h-5 text-blue-500" />
                     M�tricas Operacionais
                   </h3>
                 </div>
-                <div className="p-6">
-                  <div className="space-y-4">
+                <div className="p-lg">
+                  <div className="space-y-md">
                     {operationalInsights.slice(0, 3).map((insight, index) => (
                       <div key={index} className="flex items-center justify-between">
                         <div>
-                          <p className="font-medium text-gray-900">{insight.metric}</p>
-                          <p className="text-sm text-gray-600">{insight.aiRecommendation}</p>
+                          <p className="font-medium text-neutral-text">{insight.metric}</p>
+                          <p className="text-sm text-neutral-textSecondary">{insight.aiRecommendation}</p>
                         </div>
                         <div className="text-right">
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg font-bold text-gray-900">
+                          <div className="flex items-center gap-sm">
+                            <span className="text-lg font-bold text-neutral-text">
                               {insight.currentValue}
                               {insight.metric.includes('Taxa') || insight.metric.includes('Satisfa��o') ? '%' : ''}
                             </span>
@@ -620,27 +620,27 @@ const AiAnalyticsPage: React.FC = () => {
               </div>
 
               {/* Treatment Performance */}
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+                <div className="p-lg border-b border-neutral-border">
+                  <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
                     <Award className="w-5 h-5 text-purple-500" />
                     Performance de Tratamentos
                   </h3>
                 </div>
-                <div className="p-6">
-                  <div className="space-y-4">
+                <div className="p-lg">
+                  <div className="space-y-md">
                     {treatmentEffectiveness.slice(0, 3).map((treatment, index) => (
                       <div key={index} className="border-l-4 border-sky-500 pl-4">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-medium text-gray-900">{treatment.protocolName}</p>
-                            <p className="text-sm text-gray-600">
+                            <p className="font-medium text-neutral-text">{treatment.protocolName}</p>
+                            <p className="text-sm text-neutral-textSecondary">
                               {treatment.patientsCompleted} pacientes " {treatment.averageRecoveryTime} dias avg
                             </p>
                           </div>
                           <div className="text-right">
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg font-bold text-green-600">
+                            <div className="flex items-center gap-sm">
+                              <span className="text-lg font-bold text-success">
                                 {treatment.successRate}%
                               </span>
                               {getTrendIcon(treatment.trend)}
@@ -665,14 +665,14 @@ const AiAnalyticsPage: React.FC = () => {
           </TabsContent>
 
           {/* Predictions Tab */}
-          <TabsContent value="predictions" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
+          <TabsContent value="predictions" className="space-y-xl">
+            <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+              <div className="p-lg border-b border-neutral-border">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Previs�es e Insights de IA</h3>
-                  <div className="flex items-center gap-2">
-                    <Filter className="w-4 h-4 text-gray-400" />
-                    <select className="border border-gray-300 rounded px-3 py-1 text-sm">
+                  <h3 className="text-lg font-semibold text-neutral-text">Previs�es e Insights de IA</h3>
+                  <div className="flex items-center gap-sm">
+                    <Filter className="w-4 h-4 text-neutral-textTertiary" />
+                    <select className="border border-gray-300 rounded px-md py-1 text-sm">
                       <option>Todas as previs�es</option>
                       <option>Alta confian�a (&gt;90%)</option>
                       <option>A��o necess�ria</option>
@@ -681,50 +681,50 @@ const AiAnalyticsPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-6">
-                <div className="space-y-6">
+              <div className="p-lg">
+                <div className="space-y-xl">
                   {predictions.map((prediction: any) => (
-                    <div key={prediction.id} className="border border-gray-200 rounded-lg p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="p-3 bg-sky-100 rounded-lg">
-                          {prediction.type === 'demand' && <TrendingUp className="w-6 h-6 text-sky-600" />}
-                          {prediction.type === 'outcome' && <Target className="w-6 h-6 text-sky-600" />}
-                          {prediction.type === 'risk' && <AlertTriangle className="w-6 h-6 text-sky-600" />}
-                          {prediction.type === 'efficiency' && <Zap className="w-6 h-6 text-sky-600" />}
-                          {prediction.type === 'revenue' && <BarChart3 className="w-6 h-6 text-sky-600" />}
+                    <div key={prediction.id} className="border border-neutral-border rounded-lg p-lg">
+                      <div className="flex items-start gap-md">
+                        <div className="p-md bg-primary-light rounded-lg">
+                          {prediction.type === 'demand' && <TrendingUp className="w-6 h-6 text-primary" />}
+                          {prediction.type === 'outcome' && <Target className="w-6 h-6 text-primary" />}
+                          {prediction.type === 'risk' && <AlertTriangle className="w-6 h-6 text-primary" />}
+                          {prediction.type === 'efficiency' && <Zap className="w-6 h-6 text-primary" />}
+                          {prediction.type === 'revenue' && <BarChart3 className="w-6 h-6 text-primary" />}
                         </div>
 
                         <div className="flex-1">
-                          <div className="flex items-center justify-between mb-3">
-                            <h4 className="text-xl font-semibold text-gray-900">{prediction.title}</h4>
-                            <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-between mb-md">
+                            <h4 className="text-xl font-semibold text-neutral-text">{prediction.title}</h4>
+                            <div className="flex items-center gap-sm">
                               {getTrendIcon(prediction.trend)}
-                              <span className={`px-3 py-1 rounded-full text-sm font-medium ${getConfidenceColor(prediction.confidence)}`}>
+                              <span className={`px-md py-1 rounded-full text-sm font-medium ${getConfidenceColor(prediction.confidence)}`}>
                                 {prediction.confidence}% confian�a
                               </span>
                             </div>
                           </div>
 
-                          <p className="text-gray-600 mb-4">{prediction.description}</p>
+                          <p className="text-neutral-textSecondary mb-md">{prediction.description}</p>
 
-                          <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                            <h5 className="font-medium text-gray-900 mb-2">An�lise Detalhada:</h5>
+                          <div className="bg-neutral-bgAlt rounded-lg p-md mb-md">
+                            <h5 className="font-medium text-neutral-text mb-sm">An�lise Detalhada:</h5>
                             <p className="text-gray-700 text-sm">{prediction.prediction}</p>
                           </div>
 
                           {prediction.value && prediction.previousValue && (
-                            <div className="flex items-center gap-4 mb-4">
+                            <div className="flex items-center gap-md mb-md">
                               <div className="text-center">
                                 <p className="text-sm text-gray-500">Valor Atual</p>
-                                <p className="text-lg font-bold text-gray-900">
+                                <p className="text-lg font-bold text-neutral-text">
                                   {prediction.type === 'revenue' ? `R$ ${prediction.previousValue.toLocaleString()}` : prediction.previousValue}
                                   {prediction.type === 'demand' || prediction.type === 'efficiency' ? '%' : ''}
                                 </p>
                               </div>
-                              <ChevronRight className="w-4 h-4 text-gray-400" />
+                              <ChevronRight className="w-4 h-4 text-neutral-textTertiary" />
                               <div className="text-center">
                                 <p className="text-sm text-gray-500">Valor Previsto</p>
-                                <p className="text-lg font-bold text-sky-600">
+                                <p className="text-lg font-bold text-primary">
                                   {prediction.type === 'revenue' ? `R$ ${prediction.value.toLocaleString()}` : prediction.value}
                                   {prediction.type === 'demand' || prediction.type === 'efficiency' ? '%' : ''}
                                 </p>
@@ -732,20 +732,20 @@ const AiAnalyticsPage: React.FC = () => {
                             </div>
                           )}
 
-                          <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                          <div className="flex items-center justify-between text-xs text-gray-500 mb-md">
                             <span>Baseado em {prediction.dataPoints.toLocaleString()} pontos de dados</span>
                             <span>{prediction.timeframe}</span>
                           </div>
 
                           {prediction.actionable && prediction.recommendations.length > 0 && (
-                            <div className="border-t border-gray-200 pt-4">
-                              <h5 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                            <div className="border-t border-neutral-border pt-4">
+                              <h5 className="font-medium text-neutral-text mb-sm flex items-center gap-sm">
                                 <Lightbulb className="w-4 h-4 text-yellow-500" />
                                 Recomenda��es de A��o:
                               </h5>
                               <ul className="space-y-1">
                                 {prediction.recommendations.map((rec: any, index: number) => (
-                                  <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                                  <li key={index} className="flex items-start gap-sm text-sm text-gray-700">
                                     <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                                     {rec}
                                   </li>
@@ -763,32 +763,32 @@ const AiAnalyticsPage: React.FC = () => {
           </TabsContent>
 
           {/* Patients Tab */}
-          <TabsContent value="patients" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <TabsContent value="patients" className="space-y-xl">
+            <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+              <div className="p-lg border-b border-neutral-border">
+                <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
                   <Users className="w-5 h-5 text-purple-500" />
                   Insights de Pacientes por IA
                 </h3>
               </div>
-              <div className="p-6">
-                <div className="grid gap-6">
+              <div className="p-lg">
+                <div className="grid gap-lg">
                   {patientInsights.map((insight: any) => (
-                    <div key={insight.patientId} className="border border-gray-200 rounded-lg p-6">
-                      <div className="flex items-start justify-between mb-4">
+                    <div key={insight.patientId} className="border border-neutral-border rounded-lg p-lg">
+                      <div className="flex items-start justify-between mb-md">
                         <div>
-                          <h4 className="text-lg font-semibold text-gray-900">{insight.patientName}</h4>
-                          <p className="text-sm text-gray-600">ID: {insight.patientId}</p>
+                          <h4 className="text-lg font-semibold text-neutral-text">{insight.patientName}</h4>
+                          <p className="text-sm text-neutral-textSecondary">ID: {insight.patientId}</p>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getRiskColor(insight.riskLevel)}`}>
+                        <span className={`px-md py-1 rounded-full text-sm font-medium ${getRiskColor(insight.riskLevel)}`}>
                           Risco {insight.riskLevel}
                         </span>
                       </div>
 
                       {/* Prediction Metrics */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-md mb-xl">
                         <div className="text-center">
-                          <div className="relative w-16 h-16 mx-auto mb-2">
+                          <div className="relative w-16 h-16 mx-auto mb-sm">
                             <svg className="w-16 h-16 transform -rotate-90">
                               <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="4" fill="none" />
                               <circle
@@ -798,14 +798,14 @@ const AiAnalyticsPage: React.FC = () => {
                               />
                             </svg>
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-sm font-bold text-gray-900">{insight.predictions.adherence}%</span>
+                              <span className="text-sm font-bold text-neutral-text">{insight.predictions.adherence}%</span>
                             </div>
                           </div>
-                          <p className="text-xs text-gray-600">Ader�ncia</p>
+                          <p className="text-xs text-neutral-textSecondary">Ader�ncia</p>
                         </div>
 
                         <div className="text-center">
-                          <div className="relative w-16 h-16 mx-auto mb-2">
+                          <div className="relative w-16 h-16 mx-auto mb-sm">
                             <svg className="w-16 h-16 transform -rotate-90">
                               <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="4" fill="none" />
                               <circle
@@ -815,14 +815,14 @@ const AiAnalyticsPage: React.FC = () => {
                               />
                             </svg>
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-sm font-bold text-gray-900">{insight.predictions.outcome}%</span>
+                              <span className="text-sm font-bold text-neutral-text">{insight.predictions.outcome}%</span>
                             </div>
                           </div>
-                          <p className="text-xs text-gray-600">Sucesso</p>
+                          <p className="text-xs text-neutral-textSecondary">Sucesso</p>
                         </div>
 
                         <div className="text-center">
-                          <div className="relative w-16 h-16 mx-auto mb-2">
+                          <div className="relative w-16 h-16 mx-auto mb-sm">
                             <svg className="w-16 h-16 transform -rotate-90">
                               <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="4" fill="none" />
                               <circle
@@ -832,14 +832,14 @@ const AiAnalyticsPage: React.FC = () => {
                               />
                             </svg>
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-sm font-bold text-gray-900">{insight.predictions.dropoutRisk}%</span>
+                              <span className="text-sm font-bold text-neutral-text">{insight.predictions.dropoutRisk}%</span>
                             </div>
                           </div>
-                          <p className="text-xs text-gray-600">Risco Abandono</p>
+                          <p className="text-xs text-neutral-textSecondary">Risco Abandono</p>
                         </div>
 
                         <div className="text-center">
-                          <div className="relative w-16 h-16 mx-auto mb-2">
+                          <div className="relative w-16 h-16 mx-auto mb-sm">
                             <svg className="w-16 h-16 transform -rotate-90">
                               <circle cx="32" cy="32" r="28" stroke="#e5e7eb" strokeWidth="4" fill="none" />
                               <circle
@@ -849,22 +849,22 @@ const AiAnalyticsPage: React.FC = () => {
                               />
                             </svg>
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-sm font-bold text-gray-900">{insight.predictions.recoveryTime}%</span>
+                              <span className="text-sm font-bold text-neutral-text">{insight.predictions.recoveryTime}%</span>
                             </div>
                           </div>
-                          <p className="text-xs text-gray-600">Recupera��o</p>
+                          <p className="text-xs text-neutral-textSecondary">Recupera��o</p>
                         </div>
                       </div>
 
                       {/* Recommendations */}
-                      <div className="border-t border-gray-200 pt-4">
-                        <h5 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                      <div className="border-t border-neutral-border pt-4">
+                        <h5 className="font-medium text-neutral-text mb-md flex items-center gap-sm">
                           <Heart className="w-4 h-4 text-red-500" />
                           Recomenda��es Personalizadas:
                         </h5>
-                        <div className="space-y-2">
+                        <div className="space-y-sm">
                           {insight.recommendations.map((rec: any, index: number) => (
-                            <div key={index} className="flex items-start gap-2">
+                            <div key={index} className="flex items-start gap-sm">
                               <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                               <span className="text-sm text-gray-700">{rec}</span>
                             </div>
@@ -879,71 +879,71 @@ const AiAnalyticsPage: React.FC = () => {
           </TabsContent>
 
           {/* Treatments Tab */}
-          <TabsContent value="treatments" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <TabsContent value="treatments" className="space-y-xl">
+            <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+              <div className="p-lg border-b border-neutral-border">
+                <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
                   <Activity className="w-5 h-5 text-green-500" />
                   Efic�cia de Tratamentos
                 </h3>
               </div>
-              <div className="p-6">
-                <div className="space-y-6">
+              <div className="p-lg">
+                <div className="space-y-xl">
                   {treatmentEffectiveness.map((treatment, index) => (
-                    <div key={index} className="border border-gray-200 rounded-lg p-6">
-                      <div className="flex items-start justify-between mb-4">
+                    <div key={index} className="border border-neutral-border rounded-lg p-lg">
+                      <div className="flex items-start justify-between mb-md">
                         <div>
-                          <h4 className="text-lg font-semibold text-gray-900">{treatment.protocolName}</h4>
-                          <p className="text-sm text-gray-600">{treatment.patientsCompleted} pacientes conclu�dos</p>
+                          <h4 className="text-lg font-semibold text-neutral-text">{treatment.protocolName}</h4>
+                          <p className="text-sm text-neutral-textSecondary">{treatment.patientsCompleted} pacientes conclu�dos</p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-sm">
                           {getTrendIcon(treatment.trend)}
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            treatment.successRate >= 90 ? 'bg-green-100 text-green-700' :
-                            treatment.successRate >= 80 ? 'bg-blue-100 text-blue-700' :
-                            treatment.successRate >= 70 ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-red-100 text-red-700'
+                          <span className={`px-md py-1 rounded-full text-sm font-medium ${
+                            treatment.successRate >= 90 ? 'bg-success-light text-success' :
+                            treatment.successRate >= 80 ? 'bg-primary-light text-primary' :
+                            treatment.successRate >= 70 ? 'bg-warning-light text-yellow-700' :
+                            'bg-error-light text-error'
                           }`}>
                             {treatment.successRate}% sucesso
                           </span>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-lg mb-xl">
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-sky-600">{treatment.successRate}%</div>
-                          <div className="text-sm text-gray-600">Taxa de Sucesso</div>
+                          <div className="text-2xl font-bold text-primary">{treatment.successRate}%</div>
+                          <div className="text-sm text-neutral-textSecondary">Taxa de Sucesso</div>
                         </div>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-purple-600">{treatment.averageRecoveryTime}</div>
-                          <div className="text-sm text-gray-600">Dias (m�dia)</div>
+                          <div className="text-sm text-neutral-textSecondary">Dias (m�dia)</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-green-600">{treatment.patientSatisfaction}%</div>
-                          <div className="text-sm text-gray-600">Satisfa��o</div>
+                          <div className="text-2xl font-bold text-success">{treatment.patientSatisfaction}%</div>
+                          <div className="text-sm text-neutral-textSecondary">Satisfa��o</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-orange-600">{treatment.costEffectiveness}%</div>
-                          <div className="text-sm text-gray-600">Custo-Efetividade</div>
+                          <div className="text-2xl font-bold text-warning">{treatment.costEffectiveness}%</div>
+                          <div className="text-sm text-neutral-textSecondary">Custo-Efetividade</div>
                         </div>
                       </div>
 
                       {/* Progress Bars */}
-                      <div className="space-y-3 mb-6">
+                      <div className="space-y-sm mb-xl">
                         <div>
-                          <div className="flex justify-between text-sm text-gray-600 mb-1">
+                          <div className="flex justify-between text-sm text-neutral-textSecondary mb-1">
                             <span>Taxa de Sucesso</span>
                             <span>{treatment.successRate}%</span>
                           </div>
                           <div className="w-full bg-gray-200 rounded-full h-2">
                             <div
-                              className="bg-sky-600 h-2 rounded-full"
+                              className="bg-primary-hover h-2 rounded-full"
                               style={{ width: `${treatment.successRate}%` }}
                             />
                           </div>
                         </div>
                         <div>
-                          <div className="flex justify-between text-sm text-gray-600 mb-1">
+                          <div className="flex justify-between text-sm text-neutral-textSecondary mb-1">
                             <span>Satisfa��o do Paciente</span>
                             <span>{treatment.patientSatisfaction}%</span>
                           </div>
@@ -955,7 +955,7 @@ const AiAnalyticsPage: React.FC = () => {
                           </div>
                         </div>
                         <div>
-                          <div className="flex justify-between text-sm text-gray-600 mb-1">
+                          <div className="flex justify-between text-sm text-neutral-textSecondary mb-1">
                             <span>Custo-Efetividade</span>
                             <span>{treatment.costEffectiveness}%</span>
                           </div>
@@ -969,14 +969,14 @@ const AiAnalyticsPage: React.FC = () => {
                       </div>
 
                       {/* Recommendations */}
-                      <div className="border-t border-gray-200 pt-4">
-                        <h5 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                      <div className="border-t border-neutral-border pt-4">
+                        <h5 className="font-medium text-neutral-text mb-md flex items-center gap-sm">
                           <Lightbulb className="w-4 h-4 text-yellow-500" />
                           Recomenda��es de Melhoria:
                         </h5>
-                        <div className="space-y-2">
+                        <div className="space-y-sm">
                           {treatment.recommendations.map((rec, index) => (
-                            <div key={index} className="flex items-start gap-2">
+                            <div key={index} className="flex items-start gap-sm">
                               <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                               <span className="text-sm text-gray-700">{rec}</span>
                             </div>
@@ -991,61 +991,61 @@ const AiAnalyticsPage: React.FC = () => {
           </TabsContent>
 
           {/* Operations Tab */}
-          <TabsContent value="operations" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <TabsContent value="operations" className="space-y-xl">
+            <div className="bg-white rounded-lg shadow-card border border-neutral-border">
+              <div className="p-lg border-b border-neutral-border">
+                <h3 className="text-lg font-semibold text-neutral-text flex items-center gap-sm">
                   <BarChart3 className="w-5 h-5 text-blue-500" />
                   Insights Operacionais
                 </h3>
               </div>
-              <div className="p-6">
-                <div className="grid gap-6">
+              <div className="p-lg">
+                <div className="grid gap-lg">
                   {operationalInsights.map((insight, index) => (
-                    <div key={index} className="border border-gray-200 rounded-lg p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-lg font-semibold text-gray-900">{insight.metric}</h4>
-                        <div className="flex items-center gap-2">
+                    <div key={index} className="border border-neutral-border rounded-lg p-lg">
+                      <div className="flex items-center justify-between mb-md">
+                        <h4 className="text-lg font-semibold text-neutral-text">{insight.metric}</h4>
+                        <div className="flex items-center gap-sm">
                           {getTrendIcon(insight.trend)}
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            insight.urgency === 'critical' ? 'bg-red-100 text-red-700' :
-                            insight.urgency === 'high' ? 'bg-orange-100 text-orange-700' :
-                            insight.urgency === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-green-100 text-green-700'
+                          <span className={`px-md py-1 rounded-full text-sm font-medium ${
+                            insight.urgency === 'critical' ? 'bg-error-light text-error' :
+                            insight.urgency === 'high' ? 'bg-warning-light text-warning' :
+                            insight.urgency === 'medium' ? 'bg-warning-light text-yellow-700' :
+                            'bg-success-light text-success'
                           }`}>
                             {insight.urgency}
                           </span>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-lg mb-md">
                         <div className="text-center">
-                          <div className="text-3xl font-bold text-gray-900">
+                          <div className="text-3xl font-bold text-neutral-text">
                             {insight.currentValue}
                             {insight.metric.includes('Taxa') || insight.metric.includes('Satisfa��o') ? '%' : ''}
                           </div>
-                          <div className="text-sm text-gray-600">Valor Atual</div>
+                          <div className="text-sm text-neutral-textSecondary">Valor Atual</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-3xl font-bold text-sky-600">
+                          <div className="text-3xl font-bold text-primary">
                             {insight.predictedValue}
                             {insight.metric.includes('Taxa') || insight.metric.includes('Satisfa��o') ? '%' : ''}
                           </div>
-                          <div className="text-sm text-gray-600">Previs�o IA</div>
+                          <div className="text-sm text-neutral-textSecondary">Previs�o IA</div>
                         </div>
                         <div className="text-center">
                           <div className={`text-3xl font-bold ${
-                            insight.variance > 0 ? 'text-green-600' : 'text-red-600'
+                            insight.variance > 0 ? 'text-success' : 'text-error'
                           }`}>
                             {insight.variance > 0 ? '+' : ''}{insight.variance}
                             {insight.metric.includes('Taxa') || insight.metric.includes('Satisfa��o') ? '%' : ''}
                           </div>
-                          <div className="text-sm text-gray-600">Varia��o</div>
+                          <div className="text-sm text-neutral-textSecondary">Varia��o</div>
                         </div>
                       </div>
 
-                      <div className="bg-blue-50 rounded-lg p-4">
-                        <h5 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                      <div className="bg-primary-light rounded-lg p-md">
+                        <h5 className="font-medium text-blue-900 mb-sm flex items-center gap-sm">
                           <Bot className="w-4 h-4" />
                           Recomenda��o de IA:
                         </h5>
@@ -1062,7 +1062,7 @@ const AiAnalyticsPage: React.FC = () => {
         {/* Export and Actions */}
         <IfPermission permission="analytics:export">
           <div className="flex justify-end">
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="flex items-center gap-sm px-md py-sm border border-gray-300 rounded-lg hover:bg-neutral-bgAlt transition-colors">
               <Download className="w-4 h-4" />
               Exportar Relat�rio de IA
             </button>

@@ -47,12 +47,12 @@ const InactivePatientEmailPage: React.FC = () => {
                 subtitle="Crie um e-mail de reengajamento para pacientes que não retornam há algum tempo."
             />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-xl items-start">
                 {/* Form Column */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm space-y-6">
+                <div className="bg-white p-lg rounded-cardLarge shadow-card space-y-xl">
                     <h3 className="text-lg font-semibold text-teal-700">Parâmetros do Template</h3>
                     <div>
-                        <label htmlFor="dias-inatividade" className="block text-sm font-medium text-slate-700">Paciente inativo há mais de (dias)</label>
+                        <label htmlFor="dias-inatividade" className="block text-sm font-medium text-neutral-text">Paciente inativo há mais de (dias)</label>
                         <input
                             type="number"
                             name="dias-inatividade"
@@ -60,50 +60,50 @@ const InactivePatientEmailPage: React.FC = () => {
                             value={diasInatividade}
                             onChange={(e) => setDiasInatividade(e.target.value)}
                             placeholder="Ex: 90"
-                            className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+                            className="mt-xs block w-full px-md py-sm bg-white border border-neutral-border rounded-md shadow-card placeholder-slate-400 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
                         />
                     </div>
                      <button
                         onClick={handleSubmit}
                         disabled={isLoading}
-                        className="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-teal-300 disabled:cursor-not-allowed"
+                        className="w-full inline-flex justify-center items-center px-lg py-3 border border-transparent text-base font-medium rounded-md shadow-card text-white bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-teal-300 disabled:cursor-not-allowed"
                     >
-                        {isLoading ? <Loader className="w-5 h-5 mr-3 -ml-1 animate-spin" /> : <Sparkles className="w-5 h-5 mr-3 -ml-1"/>}
+                        {isLoading ? <Loader className="w-5 h-5 mr-3 -ml-xs animate-spin" /> : <Sparkles className="w-5 h-5 mr-3 -ml-xs"/>}
                         {isLoading ? 'Gerando E-mail...' : 'Gerar Template com IA'}
                     </button>
-                    <div className="text-xs text-slate-500 p-3 bg-slate-50 rounded-lg">
+                    <div className="text-xs text-neutral-textSecondary p-md bg-neutral-bgAlt rounded-lg">
                         <p><strong>Nota:</strong> A IA irá gerar um template HTML com placeholders como <code>{'{{nome_paciente}}'}</code>. Seu sistema de disparo de e-mails deverá substituir esses placeholders pelos dados reais de cada paciente.</p>
                     </div>
                 </div>
 
                 {/* Report Column */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm">
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-semibold text-slate-800">Preview do E-mail</h3>
-                        <button onClick={handleCopy} disabled={!emailHtml || copied} className="inline-flex items-center px-3 py-1.5 border border-slate-300 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 disabled:opacity-50">
-                            {copied ? <Check className="w-4 h-4 mr-2 text-green-500"/> : <Clipboard className="w-4 h-4 mr-2"/>}
+                <div className="bg-white p-lg rounded-cardLarge shadow-card">
+                    <div className="flex justify-between items-center mb-md">
+                        <h3 className="text-lg font-semibold text-neutral-text">Preview do E-mail</h3>
+                        <button onClick={handleCopy} disabled={!emailHtml || copied} className="inline-flex items-center px-md py-1.5 border border-neutral-border text-sm font-medium rounded-md text-neutral-text bg-white hover:bg-neutral-bgAlt disabled:opacity-50">
+                            {copied ? <Check className="w-4 h-4 mr-sm text-green-500"/> : <Clipboard className="w-4 h-4 mr-sm"/>}
                             {copied ? 'Copiado!' : 'Copiar HTML'}
                         </button>
                     </div>
-                    <div className="bg-slate-50 p-4 rounded-lg min-h-[500px] overflow-y-auto border border-slate-200">
+                    <div className="bg-neutral-bgAlt p-md rounded-lg min-h-[500px] overflow-y-auto border border-neutral-border">
                         {isLoading && (
-                            <div className="space-y-4 animate-pulse p-2">
+                            <div className="space-y-md animate-pulse p-sm">
                                 <Skeleton className="h-4 w-1/3" />
                                 <br/>
                                 <Skeleton className="h-4 w-full" />
-                                <Skeleton className="h-4 w-full mt-2" />
+                                <Skeleton className="h-4 w-full mt-sm" />
                                 <br/>
                                 <Skeleton className="h-4 w-full" />
-                                <Skeleton className="h-4 w-full mt-2" />
+                                <Skeleton className="h-4 w-full mt-sm" />
                                 <br/>
-                                <Skeleton className="h-10 w-48 mt-2" />
+                                <Skeleton className="h-10 w-48 mt-sm" />
                             </div>
                         )}
                         {!isLoading && !emailHtml && (
-                             <div className="text-center text-slate-500 flex flex-col justify-center items-center h-full">
-                                <Mail className="w-16 h-16 text-slate-300 mb-4" />
+                             <div className="text-center text-neutral-textSecondary flex flex-col justify-center items-center h-full">
+                                <Mail className="w-16 h-16 text-slate-300 mb-md" />
                                 <p className="font-semibold">O preview do e-mail aparecerá aqui.</p>
-                                <p className="text-xs mt-1">Preencha os parâmetros e clique em "Gerar Template".</p>
+                                <p className="text-xs mt-xs">Preencha os parâmetros e clique em "Gerar Template".</p>
                             </div>
                         )}
                         {emailHtml && (

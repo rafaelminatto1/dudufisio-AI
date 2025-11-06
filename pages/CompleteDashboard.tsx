@@ -127,15 +127,15 @@ const PageLoader = () => <PageSkeleton />;
 
 // StatCard component for dashboard - memoized for performance
 const StatCard = React.memo(({ icon: Icon, title, value, change, changeType }: any) => (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+    <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
         <div className="flex items-center">
-            <div className="p-3 bg-sky-100 rounded-lg">
-                <Icon className="w-6 h-6 text-sky-600" />
+            <div className="p-md bg-primary-light rounded-lg">
+                <Icon className="w-6 h-6 text-primary" />
             </div>
             <div className="ml-4 flex-1">
-                <p className="text-sm font-medium text-slate-600">{title}</p>
-                <p className="text-2xl font-bold text-slate-900">{value}</p>
-                <p className={`text-sm ${changeType === 'positive' ? 'text-green-600' : changeType === 'negative' ? 'text-red-600' : 'text-slate-600'}`}>
+                <p className="text-sm font-medium text-neutral-textSecondary">{title}</p>
+                <p className="text-2xl font-bold text-neutral-text">{value}</p>
+                <p className={`text-sm ${changeType === 'positive' ? 'text-success' : changeType === 'negative' ? 'text-error' : 'text-neutral-textSecondary'}`}>
                     {change}
                 </p>
             </div>
@@ -172,25 +172,25 @@ const DashboardContent = React.memo(() => {
     ];
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-lg space-y-xl">
             {/* Header */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-                    <p className="text-slate-600 mt-1">Visão geral das atividades da clínica</p>
+                    <h1 className="text-2xl font-bold text-neutral-text">Dashboard</h1>
+                    <p className="text-neutral-textSecondary mt-xs">Visão geral das atividades da clínica</p>
                 </div>
-                <div className="flex items-center space-x-3 mt-4 lg:mt-0">
+                <div className="flex items-center space-x-3 mt-md lg:mt-0">
                     <select
                         value={timeframe}
                         onChange={(e) => setTimeframe(e.target.value)}
-                        className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                        className="border border-neutral-border rounded-lg px-md py-sm text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
                         aria-label="Selecionar período de tempo"
                     >
                         <option value="today">Hoje</option>
                         <option value="week">Esta Semana</option>
                         <option value="month">Este Mês</option>
                     </select>
-                    <button className="flex items-center space-x-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors">
+                    <button className="flex items-center space-x-2 px-md py-sm bg-primary-hover text-white rounded-lg hover:bg-primary-hover transition-colors">
                         <RefreshCw className="w-4 h-4" />
                         <span>Atualizar</span>
                     </button>
@@ -198,20 +198,20 @@ const DashboardContent = React.memo(() => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-lg">
                 {stats.map((stat, index) => (
                     <StatCard key={index} {...stat} />
                 ))}
             </div>
 
             {/* Charts Row */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-lg">
                 {/* Revenue Chart */}
-                <div className="xl:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-slate-900">Receita Mensal</h3>
+                <div className="xl:col-span-2 bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+                    <div className="flex items-center justify-between mb-md">
+                        <h3 className="text-lg font-semibold text-neutral-text">Receita Mensal</h3>
                         <button 
-                            className="text-slate-400 hover:text-slate-600"
+                            className="text-neutral-textTertiary hover:text-neutral-textSecondary"
                             title="Baixar relatório de receita"
                             aria-label="Baixar relatório de receita"
                         >
@@ -241,50 +241,50 @@ const DashboardContent = React.memo(() => {
                 </div>
 
                 {/* Quick Stats */}
-                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-4">Estatísticas Rápidas</h3>
-                    <div className="space-y-4">
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+                    <h3 className="text-lg font-semibold text-neutral-text mb-md">Estatísticas Rápidas</h3>
+                    <div className="space-y-md">
                         <div className="flex items-center justify-between">
-                            <span className="text-sm text-slate-600">Receita do Mês</span>
-                            <span className="font-semibold text-green-600">R$ 24.500</span>
+                            <span className="text-sm text-neutral-textSecondary">Receita do Mês</span>
+                            <span className="font-semibold text-success">R$ 24.500</span>
                         </div>
                         <div className="flex items-center justify-between">
-                            <span className="text-sm text-slate-600">Novos Pacientes</span>
-                            <span className="font-semibold text-blue-600">18</span>
+                            <span className="text-sm text-neutral-textSecondary">Novos Pacientes</span>
+                            <span className="font-semibold text-primary">18</span>
                         </div>
                         <div className="flex items-center justify-between">
-                            <span className="text-sm text-slate-600">Taxa de Retorno</span>
+                            <span className="text-sm text-neutral-textSecondary">Taxa de Retorno</span>
                             <span className="font-semibold text-purple-600">87%</span>
                         </div>
                         <div className="flex items-center justify-between">
-                            <span className="text-sm text-slate-600">Avaliação Média</span>
-                            <span className="font-semibold text-yellow-600">4.8/5</span>
+                            <span className="text-sm text-neutral-textSecondary">Avaliação Média</span>
+                            <span className="font-semibold text-warning">4.8/5</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Today's Activities */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
                 {/* Today's Appointments */}
-                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-slate-900">Consultas de Hoje</h3>
-                        <button className="text-sky-600 hover:text-sky-700 text-sm font-medium">Ver todas</button>
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+                    <div className="flex items-center justify-between mb-md">
+                        <h3 className="text-lg font-semibold text-neutral-text">Consultas de Hoje</h3>
+                        <button className="text-primary hover:text-primary text-sm font-medium">Ver todas</button>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-sm">
                         {todayAppointments.slice(0, 4).map((appointment, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                            <div key={index} className="flex items-center justify-between p-md bg-neutral-bgAlt rounded-lg">
                                 <div className="flex-1">
-                                    <h4 className="font-medium text-slate-900">{appointment.patient}</h4>
-                                    <p className="text-sm text-slate-600">{appointment.treatment}</p>
+                                    <h4 className="font-medium text-neutral-text">{appointment.patient}</h4>
+                                    <p className="text-sm text-neutral-textSecondary">{appointment.treatment}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm font-medium text-slate-900">{appointment.time}</p>
-                                    <span className={`text-xs px-2 py-1 rounded-full ${
+                                    <p className="text-sm font-medium text-neutral-text">{appointment.time}</p>
+                                    <span className={`text-xs px-sm py-1 rounded-full ${
                                         appointment.status === 'confirmed'
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-yellow-100 text-yellow-800'
+                                            ? 'bg-success-light text-success'
+                                            : 'bg-warning-light text-yellow-800'
                                     }`}>
                                         {appointment.status === 'confirmed' ? 'Confirmado' : 'Pendente'}
                                     </span>
@@ -295,22 +295,22 @@ const DashboardContent = React.memo(() => {
                 </div>
 
                 {/* Recent Patients */}
-                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-slate-900">Pacientes Recentes</h3>
-                        <button className="text-sky-600 hover:text-sky-700 text-sm font-medium">Ver todos</button>
+                <div className="bg-white rounded-lg shadow-card border border-neutral-border p-lg">
+                    <div className="flex items-center justify-between mb-md">
+                        <h3 className="text-lg font-semibold text-neutral-text">Pacientes Recentes</h3>
+                        <button className="text-primary hover:text-primary text-sm font-medium">Ver todos</button>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-sm">
                         {recentPatients.map((patient, index) => (
-                            <div key={index} className="flex items-center space-x-3 p-3 hover:bg-slate-50 rounded-lg cursor-pointer">
-                                <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center">
-                                    <span className="text-sky-600 font-semibold text-sm">
+                            <div key={index} className="flex items-center space-x-3 p-md hover:bg-neutral-bgAlt rounded-lg cursor-pointer">
+                                <div className="w-10 h-10 bg-primary-light rounded-full flex items-center justify-center">
+                                    <span className="text-primary font-semibold text-sm">
                                         {patient.name.split(' ').map(n => n[0]).join('')}
                                     </span>
                                 </div>
                                 <div className="flex-1">
-                                    <h4 className="font-medium text-slate-900">{patient.name}</h4>
-                                    <p className="text-sm text-slate-600">{patient.condition}</p>
+                                    <h4 className="font-medium text-neutral-text">{patient.name}</h4>
+                                    <p className="text-sm text-neutral-textSecondary">{patient.condition}</p>
                                 </div>
                                 <div className="flex items-center">
                                     {[...Array(5)].map((_, i) => (

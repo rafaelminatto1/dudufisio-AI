@@ -65,24 +65,24 @@ export const FamilyPortalPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-bgAlt flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando portal...</p>
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-md"></div>
+          <p className="text-neutral-textSecondary">Carregando portal...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-neutral-bgAlt">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-4">
+      <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-cardActive">
+        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl py-3xl">
+          <div className="flex items-center gap-md">
             <button
               onClick={() => navigate(-1)}
-              className="p-2 hover:bg-white/10 rounded-lg transition"
+              className="p-sm hover:bg-white/10 rounded-lg transition"
               aria-label="Voltar"
               title="Voltar"
             >
@@ -97,66 +97,66 @@ export const FamilyPortalPage: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl py-3xl">
         {familyMembers.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <div className="bg-white rounded-lg shadow-cardHover p-12 text-center">
+            <Users className="w-16 h-16 text-neutral-textTertiary mx-auto mb-md" />
+            <h2 className="text-2xl font-bold text-neutral-text mb-sm">
               Nenhum Membro da Família Cadastrado
             </h2>
-            <p className="text-gray-600">
+            <p className="text-neutral-textSecondary">
               Adicione membros da família para compartilhar o progresso do tratamento.
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-lg">
             {/* Membros da Família */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="bg-white rounded-lg shadow-cardHover p-lg">
+              <h2 className="text-xl font-bold text-neutral-text mb-md flex items-center gap-sm">
                 <Users className="w-5 h-5 text-purple-600" />
                 Membros da Família
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-sm">
                 {familyMembers.map((member) => (
                   <div
                     key={member.id}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition ${
+                    className={`p-md rounded-lg border-2 cursor-pointer transition ${
                       selectedMember?.id === member.id
                         ? 'border-purple-500 bg-purple-50'
-                        : 'border-gray-200 hover:border-purple-300'
+                        : 'border-neutral-border hover:border-purple-300'
                     }`}
                     onClick={() => setSelectedMember(member)}
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-semibold text-gray-900">{member.name}</h3>
-                        <p className="text-sm text-gray-600">{member.relationship}</p>
-                        <p className="text-xs text-gray-500 mt-1">{member.email}</p>
+                        <h3 className="font-semibold text-neutral-text">{member.name}</h3>
+                        <p className="text-sm text-neutral-textSecondary">{member.relationship}</p>
+                        <p className="text-xs text-gray-500 mt-xs">{member.email}</p>
                       </div>
                       {member.isPrimaryContact && (
-                        <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                        <span className="text-xs bg-purple-100 text-purple-700 px-sm py-1 rounded">
                           Principal
                         </span>
                       )}
                     </div>
                     
                     {/* Permissões */}
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-3 flex flex-wrap gap-sm">
                       {member.permissions.canViewMedicalRecords && (
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                          <FileText className="w-3 h-3 inline mr-1" />
+                        <span className="text-xs bg-primary-light text-primary px-sm py-1 rounded">
+                          <FileText className="w-3 h-3 inline mr-xs" />
                           Registros
                         </span>
                       )}
                       {member.permissions.canScheduleAppointments && (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                          <Calendar className="w-3 h-3 inline mr-1" />
+                        <span className="text-xs bg-success-light text-success px-sm py-1 rounded">
+                          <Calendar className="w-3 h-3 inline mr-xs" />
                           Agendar
                         </span>
                       )}
                       {member.permissions.canMessageTherapist && (
-                        <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded">
-                          <Mail className="w-3 h-3 inline mr-1" />
+                        <span className="text-xs bg-warning-light text-warning px-sm py-1 rounded">
+                          <Mail className="w-3 h-3 inline mr-xs" />
                           Mensagens
                         </span>
                       )}
@@ -167,16 +167,16 @@ export const FamilyPortalPage: React.FC = () => {
             </div>
 
             {/* Relatórios de Progresso */}
-            <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-blue-600" />
+            <div className="lg:col-span-2 bg-white rounded-lg shadow-cardHover p-lg">
+              <div className="flex items-center justify-between mb-md">
+                <h2 className="text-xl font-bold text-neutral-text flex items-center gap-sm">
+                  <Activity className="w-5 h-5 text-primary" />
                   Relatórios de Progresso
                 </h2>
                 {selectedMember?.permissions.canMessageTherapist && (
                   <button
                     onClick={handleSendMessage}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+                    className="flex items-center gap-sm px-md py-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
                   >
                     <Mail className="w-4 h-4" />
                     Mensagem
@@ -185,25 +185,25 @@ export const FamilyPortalPage: React.FC = () => {
               </div>
 
               {reports.length > 0 ? (
-                <div className="space-y-4">
+                <div className="space-y-md">
                   {reports.map((report) => (
                     <div
                       key={report.reportId}
-                      className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition"
+                      className="border border-neutral-border rounded-lg p-md hover:border-blue-300 transition"
                     >
-                      <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-start justify-between mb-sm">
                         <div>
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 className="font-semibold text-neutral-text">
                             Sessão de {new Date(report.date).toLocaleDateString('pt-BR')}
                           </h3>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-neutral-textSecondary">
                             Terapeuta: {report.therapistName}
                           </p>
                         </div>
-                        <span className={`text-xs px-2 py-1 rounded ${
-                          report.painLevelChange < 0 ? 'bg-green-100 text-green-700' :
-                          report.painLevelChange === 0 ? 'bg-blue-100 text-blue-700' :
-                          'bg-orange-100 text-orange-700'
+                        <span className={`text-xs px-sm py-1 rounded ${
+                          report.painLevelChange < 0 ? 'bg-success-light text-success' :
+                          report.painLevelChange === 0 ? 'bg-primary-light text-primary' :
+                          'bg-warning-light text-warning'
                         }`}>
                           {report.painLevelChange < 0 ? 'Dor reduzida' :
                            report.painLevelChange === 0 ? 'Estável' :
@@ -211,7 +211,7 @@ export const FamilyPortalPage: React.FC = () => {
                         </span>
                       </div>
                       <p className="text-sm text-gray-700">{report.summary}</p>
-                      <p className="text-sm text-gray-600 mt-2">
+                      <p className="text-sm text-neutral-textSecondary mt-sm">
                         <strong>Progresso:</strong> {report.functionalProgress}
                       </p>
                     </div>
@@ -219,7 +219,7 @@ export const FamilyPortalPage: React.FC = () => {
                 </div>
               ) : (
                 <div className="text-center py-12 text-gray-500">
-                  <FileText className="w-16 h-16 mx-auto mb-3 opacity-20" />
+                  <FileText className="w-16 h-16 mx-auto mb-md opacity-20" />
                   <p>Nenhum relatório disponível</p>
                 </div>
               )}
@@ -228,11 +228,11 @@ export const FamilyPortalPage: React.FC = () => {
         )}
 
         {/* Info Banner */}
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
-          <div className="flex items-start gap-4">
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-lg">
+          <div className="flex items-start gap-md">
             <Shield className="w-6 h-6 text-purple-600 flex-shrink-0" />
             <div>
-              <h3 className="text-lg font-semibold text-purple-900 mb-2">
+              <h3 className="text-lg font-semibold text-purple-900 mb-sm">
                 Privacidade e Segurança
               </h3>
               <p className="text-purple-800 text-sm">

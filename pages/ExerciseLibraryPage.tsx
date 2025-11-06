@@ -10,7 +10,6 @@ import { Skeleton } from '../components/ui/skeleton';
 import GroupFormModal from '../components/GroupFormModal';
 import VideoPlayerModal from '../components/VideoPlayerModal';
 import { useDebouncedValue } from '../lib/performanceOptimization';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 // Memoizado para evitar re-renders desnecessários
 const FilterCheckbox = memo<{ id: string; label: string; checked: boolean; onChange: (checked: boolean) => void; }>(

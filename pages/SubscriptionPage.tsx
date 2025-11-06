@@ -62,11 +62,11 @@ const PlanCard: React.FC<{ plan: any }> = ({ plan }) => {
   };
 
   return (
-    <Card className={`relative ${plan.popular ? 'border-sky-500 shadow-lg' : 'border-slate-200'}`}>
+    <Card className={`relative ${plan.popular ? 'border-sky-500 shadow-cardActive' : 'border-neutral-border'}`}>
       {plan.popular && (
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-sky-100 text-sky-700">
-            <Star className="w-4 h-4 mr-2" /> Mais Popular
+        <div className="absolute -top-md left-1/2 transform -translate-x-1/2">
+          <span className="inline-flex items-center px-md py-1 rounded-full text-sm font-semibold bg-primary-light text-primary">
+            <Star className="w-4 h-4 mr-sm" /> Mais Popular
           </span>
         </div>
       )}
@@ -75,15 +75,15 @@ const PlanCard: React.FC<{ plan: any }> = ({ plan }) => {
         <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
         <div className="my-4">
           <span className="text-4xl font-extrabold">R${plan.price_monthly.toFixed(2).replace('.', ',')}</span>
-          <span className="text-base font-medium text-muted-foreground">/mês</span>
-          <p className="text-sm text-muted-foreground mt-1">
+          <span className="text-base font-medium text-neutral-textSecondary">/mês</span>
+          <p className="text-sm text-neutral-textSecondary mt-xs">
             ou R${plan.price_yearly.toFixed(2).replace('.', ',')} por ano
           </p>
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
-        <ul className="space-y-3">
+      <CardContent className="space-y-md">
+        <ul className="space-y-sm">
           {plan.features.map((feature: string, index: number) => (
             <li key={index} className="flex items-start">
               <CheckCircle className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
@@ -95,12 +95,12 @@ const PlanCard: React.FC<{ plan: any }> = ({ plan }) => {
         <Button 
           onClick={handleSubscribe}
           disabled={isLoading}
-          className={`w-full ${plan.popular ? 'bg-sky-500 hover:bg-sky-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+          className={`w-full ${plan.popular ? 'bg-primary hover:bg-primary-hover' : 'bg-neutral-bgDark text-neutral-text hover:bg-neutral-bgDark'}`}
         >
           {isLoading ? (
-            <Zap className="w-4 h-4 mr-2 animate-spin" />
+            <Zap className="w-4 h-4 mr-sm animate-spin" />
           ) : (
-            <CreditCard className="w-4 h-4 mr-2" />
+            <CreditCard className="w-4 h-4 mr-sm" />
           )}
           {plan.price_monthly === 0 ? 'Começar Gratuitamente' : 'Assinar Plano'}
         </Button>
@@ -111,50 +111,50 @@ const PlanCard: React.FC<{ plan: any }> = ({ plan }) => {
 
 const SubscriptionPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-neutral-bgAlt py-3xl">
+      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
+          <h1 className="text-4xl font-bold text-neutral-text mb-md">
             Planos e Assinatura
           </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+          <p className="text-xl text-neutral-textSecondary max-w-2xl mx-auto">
             Escolha o plano que melhor se adapta às necessidades da sua clínica.
           </p>
         </div>
 
         {/* Features destacadas */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-lg mb-12">
           <div className="text-center">
-            <Shield className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Segurança Total</h3>
-            <p className="text-slate-600">Seus dados protegidos com criptografia de nível bancário</p>
+            <Shield className="w-12 h-12 text-sky-500 mx-auto mb-md" />
+            <h3 className="text-lg font-semibold text-neutral-text mb-sm">Segurança Total</h3>
+            <p className="text-neutral-textSecondary">Seus dados protegidos com criptografia de nível bancário</p>
           </div>
           <div className="text-center">
-            <Zap className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Performance</h3>
-            <p className="text-slate-600">Sistema otimizado para máxima velocidade e confiabilidade</p>
+            <Zap className="w-12 h-12 text-sky-500 mx-auto mb-md" />
+            <h3 className="text-lg font-semibold text-neutral-text mb-sm">Performance</h3>
+            <p className="text-neutral-textSecondary">Sistema otimizado para máxima velocidade e confiabilidade</p>
           </div>
           <div className="text-center">
-            <CreditCard className="w-12 h-12 text-sky-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">Pagamento Seguro</h3>
-            <p className="text-slate-600">Processamento seguro com as melhores práticas do mercado</p>
+            <CreditCard className="w-12 h-12 text-sky-500 mx-auto mb-md" />
+            <h3 className="text-lg font-semibold text-neutral-text mb-sm">Pagamento Seguro</h3>
+            <p className="text-neutral-textSecondary">Processamento seguro com as melhores práticas do mercado</p>
           </div>
         </div>
 
         {/* Planos */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-xl items-stretch">
           {SUBSCRIPTION_PLANS.map(plan => (
             <PlanCard key={plan.id} plan={plan} />
           ))}
         </div>
 
         {/* FAQ ou informações adicionais */}
-        <div className="mt-16 text-center">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">
+        <div className="mt-xs6 text-center">
+          <h2 className="text-2xl font-bold text-neutral-text mb-md">
             Dúvidas sobre os planos?
           </h2>
-          <p className="text-slate-600 mb-6">
+          <p className="text-neutral-textSecondary mb-xl">
             Nossa equipe está pronta para ajudar você a escolher o plano ideal.
           </p>
           <Button variant="outline" size="lg">
