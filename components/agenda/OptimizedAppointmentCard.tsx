@@ -94,6 +94,13 @@ const STATUS_COLORS = {
     border: '#F97316', // orange-500
     icon: Ban,
     label: 'Faltou'
+  },
+  [AppointmentStatus.InProgress]: {
+    bg: '#FEF3C7', // amber-100
+    text: '#92400E', // amber-900
+    border: '#F59E0B', // amber-500
+    icon: Clock,
+    label: 'Em Andamento'
   }
 };
 

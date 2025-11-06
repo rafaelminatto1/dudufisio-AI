@@ -196,9 +196,9 @@ class AgendaExportService {
       [AppointmentStatus.Confirmed]: 'Confirmado',
       [AppointmentStatus.Completed]: 'Realizado',
       [AppointmentStatus.Canceled]: 'Cancelado',
+      [AppointmentStatus.Cancelled]: 'Cancelado',
       [AppointmentStatus.NoShow]: 'Faltou',
-      [AppointmentStatus.InProgress]: 'Em Andamento',
-      [AppointmentStatus.Rescheduled]: 'Reagendado'
+      [AppointmentStatus.InProgress]: 'Em Andamento'
     };
 
     // Preparar dados para exportação
