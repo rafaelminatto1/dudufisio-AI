@@ -17,7 +17,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { H1, Body } from '../src/components/ui/Typography';
 import { toast } from 'sonner';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { NotificationPermissionPrompt } from '@/components/notifications/NotificationPermissionPrompt';
