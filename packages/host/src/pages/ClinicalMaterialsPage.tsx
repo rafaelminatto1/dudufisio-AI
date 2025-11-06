@@ -33,6 +33,24 @@ export function ClinicalMaterialsPage() {
 
   // Carregar materiais quando filtros mudarem
   useEffect(() => {
+    const loadMaterials = async () => {
+      setLoading(true);
+      try {
+        const data = await clinicalMaterialsService.getAll({
+          category: selectedCategory !== 'all' ? selectedCategory : undefined,
+          specialty: selectedSpecialty !== 'all' ? selectedSpecialty : undefined,
+          search: searchTerm || undefined,
+          favorites_only: showFavoritesOnly,
+        });
+        setMaterials(data);
+      } catch (error) {
+        console.error('Erro ao carregar materiais:', error);
+        toast.error('Não foi possível carregar os materiais');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadMaterials();
   }, [selectedCategory, selectedSpecialty, searchTerm, showFavoritesOnly]);
 

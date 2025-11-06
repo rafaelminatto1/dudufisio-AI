@@ -1,0 +1,56 @@
+═══════════════════════════════════════════════════════════
+  APP PARA PACIENTES - MOOCAFISIO
+═══════════════════════════════════════════════════════════
+
+✅ ARQUIVO PARA COPIAR NO SUPABASE:
+
+   APLICAR_MIGRATIONS_APP_PACIENTES.sql
+
+✅ STATUS:
+   - Migrations antigas DELETADAS
+   - Migration corrigida PRONTA
+   - SQL JÁ ESTÁ NO CLIPBOARD
+   - Dashboard Supabase ABERTO
+
+═══════════════════════════════════════════════════════════
+
+COMO APLICAR:
+
+1. Vá para aba do Supabase (já aberta)
+2. Ctrl+V (colar)
+3. RUN (executar)
+4. Aguardar 20 segundos
+5. Ver "Tabelas criadas: 7" ✅
+
+═══════════════════════════════════════════════════════════
+
+DEPOIS:
+
+npm run seed:patient
+npm run start:patient-app
+
+TESTAR EM:
+
+http://localhost:5173/patient/login
+Código em: CODIGO_ACESSO_TESTE.txt
+
+═══════════════════════════════════════════════════════════
+
+CORREÇÕES APLICADAS:
+
+1. Linha 295: COALESCE(p.full_name, p.name, 'Paciente')
+   → Compatível com diferentes schemas
+
+2. Linhas 662-685: Verificação da tabela patients
+   → Cria se não existir
+
+═══════════════════════════════════════════════════════════
+
+ARQUIVO: APLICAR_MIGRATIONS_APP_PACIENTES.sql
+TAMANHO: 24 KB | LINHAS: 687
+STATUS: ✅ CORRIGIDO E PRONTO
+
+AÇÃO: Ctrl+V no Supabase → RUN
+
+═══════════════════════════════════════════════════════════
+

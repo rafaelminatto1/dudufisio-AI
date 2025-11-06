@@ -7,6 +7,7 @@ import * as patientService from '../services/patientService';
 import * as soapNoteService from '../services/soapNoteService';
 import { Appointment, Patient, SoapNote, EnrichedAppointment } from '../types';
 import PageLoader from '../components/ui/PageLoader';
+import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 // Componentes da sessão
 import SessionForm from '../components/session/SessionForm';
@@ -214,9 +215,9 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-        <div className="bg-white rounded-lg p-6 flex items-center space-x-3">
+        <div className="bg-white rounded-lg p-lg flex items-center space-x-3">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="text-slate-600">Carregando dados da sessão...</span>
+          <span className="text-neutral-textSecondary">Carregando dados da sessão...</span>
         </div>
       </div>
     );
@@ -228,22 +229,22 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[95vh] flex flex-col">
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-md">
+        <div className="bg-white rounded-cardLarge shadow-2xl w-full max-w-7xl max-h-[95vh] flex flex-col">
           {/* Header */}
-          <header className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+          <header className="flex items-center justify-between p-lg border-b bg-gradient-to-r from-blue-50 to-indigo-50">
             <div className="flex items-center space-x-4">
               <button
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-white/50 transition-colors"
+                className="p-sm rounded-full hover:bg-white/50 transition-colors"
               >
-                <ArrowLeft className="w-6 h-6 text-slate-600" />
+                <ArrowLeft className="w-6 h-6 text-neutral-textSecondary" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">
+                <h1 className="text-2xl font-bold text-neutral-text">
                   Nova Sessão de Atendimento
                 </h1>
-                <div className="flex items-center space-x-4 mt-2 text-sm text-slate-600">
+                <div className="flex items-center space-x-4 mt-sm text-sm text-neutral-textSecondary">
                   <div className="flex items-center space-x-1">
                     <User className="w-4 h-4" />
                     <span>{patient.name}</span>
@@ -263,16 +264,16 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-full hover:bg-white/50 transition-colors"
+              className="p-sm rounded-full hover:bg-white/50 transition-colors"
             >
-              <X className="w-6 h-6 text-slate-600" />
+              <X className="w-6 h-6 text-neutral-textSecondary" />
             </button>
           </header>
 
           {/* Content - Layout 4 Colunas (EXPANDIDO) */}
           <div className="flex-1 overflow-hidden flex flex-row">
             {/* Coluna 1 (30%): Formulário SOAP */}
-            <div className="w-[30%] p-6 overflow-y-auto border-r border-slate-200">
+            <div className="w-[30%] p-lg overflow-y-auto border-r border-neutral-border">
               <SessionForm
                 patient={patient}
                 onSave={handleSaveNote}
@@ -286,10 +287,10 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
             </div>
 
             {/* Coluna 2 (25%): Histórico & Condutas */}
-            <div className="w-[25%] p-6 overflow-y-auto border-r border-slate-200 bg-slate-50">
-              <div className="space-y-6">
+            <div className="w-[25%] p-lg overflow-y-auto border-r border-neutral-border bg-neutral-bgAlt">
+              <div className="space-y-xl">
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-700 mb-3">Histórico de Sessões</h3>
+                  <h3 className="text-sm font-semibold text-neutral-text mb-md">Histórico de Sessões</h3>
               <PatientContextPanel 
                 patient={patient}
                 sessionNumber={patientNotes.length + 1}
@@ -300,15 +301,15 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
             </div>
 
             {/* Coluna 3 (25%): Testes & Evolução */}
-            <div className="w-[25%] p-6 overflow-y-auto border-r border-slate-200 bg-white">
-              <div className="space-y-6">
+            <div className="w-[25%] p-lg overflow-y-auto border-r border-neutral-border bg-white">
+              <div className="space-y-xl">
                 {/* Alertas e Testes */}
                 {pendingMandatoryTests.length > 0 && (
-                  <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
-                    <p className="text-sm font-semibold text-red-800 mb-2">
+                  <div className="bg-error-light border-2 border-error rounded-lg p-md">
+                    <p className="text-sm font-semibold text-error mb-sm">
                       ⚠️ {pendingMandatoryTests.length} teste(s) obrigatório(s)
                     </p>
-                    <ul className="text-xs text-red-700 space-y-1">
+                    <ul className="text-xs text-error space-y-1">
                       {pendingMandatoryTests.map((test, idx) => (
                         <li key={idx}>• {test.testName}</li>
                       ))}
@@ -319,8 +320,8 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
             </div>
 
             {/* Coluna 4 (20%): Resumo Paciente */}
-            <div className="w-[20%] p-6 overflow-y-auto bg-slate-50">
-              <div className="space-y-6">
+            <div className="w-[20%] p-lg overflow-y-auto bg-neutral-bgAlt">
+              <div className="space-y-xl">
                 {/* Visão Geral do Paciente */}
                 <PatientOverview patient={patient} />
 
@@ -334,8 +335,8 @@ const SessionFormPage: React.FC<SessionFormPageProps> = ({ appointmentId, onClos
           </div>
 
           {/* Seção Inferior - Histórico de Sessões */}
-          <div className="border-t border-slate-200 bg-white">
-            <div className="p-6">
+          <div className="border-t border-neutral-border bg-white">
+            <div className="p-lg">
               <SessionHistory
                 patientNotes={patientNotes}
                 onRepeatConduct={handleRepeatConduct}

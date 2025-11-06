@@ -29,17 +29,8 @@ class ClinicalMaterialsService {
         query = query.eq('type', filters.category);
       }
 
-      // Filtro por especialidade - busca nas tags (AND com outros filtros)
-      if (filters?.specialty) {
-        // Buscar pela especialidade nas tags (case-insensitive)
-        const specialtyLower = filters.specialty.toLowerCase();
-        // Usa contains que é AND com filtros anteriores
-        query = query.contains('tags', [specialtyLower]);
-      }
-
-      // Filtro de busca por nome, descrição ou tags (OR dentro da busca, AND com outros filtros)
+      // Filtro de busca por nome, descrição (OR dentro da busca, AND com categoria)
       if (filters?.search) {
-        // OR entre nome/descrição/tags, mas AND com categoria/especialidade
         query = query.or(
           `name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`
         );
@@ -53,6 +44,17 @@ class ClinicalMaterialsService {
       }
 
       let materials = data || [];
+
+      // Filtro de especialidade (client-side para busca flexível)
+      if (filters?.specialty) {
+        const specialtyLower = filters.specialty.toLowerCase();
+        materials = materials.filter(material => 
+          // Busca flexível: nas tags, nome ou descrição
+          material.tags.some((tag: string) => tag.toLowerCase().includes(specialtyLower)) ||
+          material.name.toLowerCase().includes(specialtyLower) ||
+          material.description?.toLowerCase().includes(specialtyLower)
+        );
+      }
 
       // Se filtro de favoritos estiver ativo
       if (filters?.favorites_only) {

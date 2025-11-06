@@ -8,6 +8,7 @@ import LoadingState from '@/components/ui/LoadingState';
 import ErrorState from '@/components/ui/ErrorState';
 import EmptyState from '@/components/ui/EmptyState';
 import { handleError } from '@/lib/middleware/errorHandler';
+import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
 
 const PatientListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ const PatientListPage: React.FC = () => {
   // Mostrar estados de loading/erro
   if (isLoading && patients.length === 0) {
     return (
-      <main className="min-h-screen bg-secondary-50 py-8" role="main">
+      <main className="min-h-screen bg-secondary-50 py-3xl" role="main">
         <ResponsiveContainer>
           <LoadingState 
             message="Carregando lista de pacientes..." 
@@ -76,7 +77,7 @@ const PatientListPage: React.FC = () => {
 
   if (error && patients.length === 0) {
     return (
-      <main className="min-h-screen bg-secondary-50 py-8" role="main">
+      <main className="min-h-screen bg-secondary-50 py-3xl" role="main">
         <ResponsiveContainer>
           <ErrorState 
             error={error}
@@ -91,7 +92,7 @@ const PatientListPage: React.FC = () => {
 
   if (!isLoading && patients.length === 0) {
     return (
-      <main className="min-h-screen bg-secondary-50 py-8" role="main">
+      <main className="min-h-screen bg-secondary-50 py-3xl" role="main">
         <ResponsiveContainer>
           <EmptyState 
             type="users"
@@ -106,12 +107,12 @@ const PatientListPage: React.FC = () => {
   }
 
   return (
-    <main className="min-h-screen bg-fisio-neutral-50 py-8" role="main">
+    <main className="min-h-screen bg-neutral-bgAlt py-3xl" role="main">
       <ResponsiveContainer>
         {/* Header */}
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-md mb-mdxl">
           <div>
-            <h1 className="heading-lg-responsive font-bold text-fisio-neutral-800 mb-2">
+            <h1 className="heading-lg-responsive font-bold text-neutral-text mb-sm">
               Lista de Pacientes
             </h1>
             <p className="text-responsive text-fisio-neutral-600">
@@ -121,9 +122,9 @@ const PatientListPage: React.FC = () => {
           {/* 🔧 FIX: Botão de Novo Paciente estava faltando */}
           <button
             onClick={() => navigate('/patients/new')}
-            className="inline-flex items-center justify-center rounded-lg bg-fisio-primary-600 hover:bg-fisio-primary-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors"
+            className="inline-flex items-center justify-center rounded-lg bg-primary hover:bg-fisio-primary-700 px-md py-sm text-sm font-medium text-white shadow-card transition-colors"
           >
-            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 mr-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             Novo Paciente
@@ -131,9 +132,9 @@ const PatientListPage: React.FC = () => {
         </header>
 
         {/* Estatísticas com Gradientes Vibrantes - Paleta MoocaFisio */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6" data-testid="patient-stats">
-          <Card className="bg-gradient-to-br from-fisio-primary-500 to-fisio-primary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200" data-testid="stat-total">
-            <CardContent className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md mb-xl" data-testid="patient-stats">
+          <Card className="bg-gradient-to-br from-fisio-primary-500 to-fisio-primary-600 text-white border-0 shadow-cardActive hover:shadow-xl transition-all duration-200" data-testid="stat-total">
+            <CardContent className="p-lg">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Total de Pacientes</p>
@@ -148,8 +149,8 @@ const PatientListPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-fisio-secondary-500 to-fisio-secondary-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200" data-testid="stat-active">
-            <CardContent className="p-6">
+          <Card className="bg-gradient-to-br from-fisio-secondary-500 to-fisio-secondary-600 text-white border-0 shadow-cardActive hover:shadow-xl transition-all duration-200" data-testid="stat-active">
+            <CardContent className="p-lg">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Pacientes Ativos</p>
@@ -164,8 +165,8 @@ const PatientListPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-fisio-warning-500 to-fisio-warning-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200" data-testid="stat-inactive">
-            <CardContent className="p-6">
+          <Card className="bg-gradient-to-br from-fisio-warning-500 to-fisio-warning-600 text-white border-0 shadow-cardActive hover:shadow-xl transition-all duration-200" data-testid="stat-inactive">
+            <CardContent className="p-lg">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Pacientes Inativos</p>
@@ -180,8 +181,8 @@ const PatientListPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-500 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200" data-testid="stat-discharged">
-            <CardContent className="p-6">
+          <Card className="bg-gradient-to-br from-fisio-primary-400 to-fisio-primary-500 text-white border-0 shadow-cardActive hover:shadow-xl transition-all duration-200" data-testid="stat-discharged">
+            <CardContent className="p-lg">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm opacity-90 mb-1">Pacientes com Alta</p>
@@ -198,7 +199,7 @@ const PatientListPage: React.FC = () => {
         </div>
 
         {/* Data Table (Supabase + shadcn) */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-fisio-neutral-200">
+        <div className="bg-white p-md sm:p-lg rounded-cardLarge shadow-card border border-neutral-border">
           <PatientTable 
             patients={patients}
             loading={isLoading}

@@ -107,22 +107,22 @@ const DashboardPage: React.FC = () => {
     // 🎨 Loading state otimizado com skeleton
     if (isLoading) {
         return (
-            <div className="space-y-6 pb-20 lg:pb-6">
+            <div className="space-y-xl pb-20 lg:pb-6">
                 {/* Skeleton Header */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                <div className="bg-white rounded-card shadow-card border border-neutral-border p-md sm:p-lg">
                     <div className="animate-pulse">
-                        <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
+                        <div className="h-8 bg-gray-200 rounded w-1/3 mb-sm"></div>
                         <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                     </div>
                 </div>
 
                 {/* Skeleton Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md">
                     {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <div key={i} className="bg-white rounded-card shadow-card border border-neutral-border p-md sm:p-lg">
                             <div className="animate-pulse">
-                                <div className="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-                                <div className="h-8 bg-gray-200 rounded w-32 mb-2"></div>
+                                <div className="h-4 bg-gray-200 rounded w-24 mb-sm"></div>
+                                <div className="h-8 bg-gray-200 rounded w-32 mb-sm"></div>
                                 <div className="h-3 bg-gray-200 rounded w-40"></div>
                             </div>
                         </div>
@@ -130,11 +130,11 @@ const DashboardPage: React.FC = () => {
                 </div>
 
                 {/* Skeleton Charts */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg">
                     {[1, 2].map((i) => (
-                        <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+                        <div key={i} className="bg-white rounded-card shadow-card border border-neutral-border p-md sm:p-lg">
                             <div className="animate-pulse">
-                                <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
+                                <div className="h-6 bg-gray-200 rounded w-48 mb-md"></div>
                                 <div className="h-64 bg-gray-200 rounded"></div>
                             </div>
                         </div>
@@ -152,13 +152,13 @@ const DashboardPage: React.FC = () => {
             />
             <ResponsiveContainer className="space-responsive" role="main">
                 {/* Welcome Header with Gradient Background */}
-                <AnimatedContainer animation="fadeInUp" className="mb-8">
+                <AnimatedContainer animation="fadeInUp" className="mb-mdxl">
                     <GlassCard 
                         variant="colored"
-                        className="p-8 text-center"
+                        className="p-xl text-center"
                         hover={false}
                     >
-                        <div className="space-y-4">
+                        <div className="space-y-md">
                             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
                                 Bom dia, Dr. Eduardo! 👋
                             </h1>
@@ -170,7 +170,7 @@ const DashboardPage: React.FC = () => {
                 </AnimatedContainer>
 
                 {/* Quick Stats */}
-                <AnimatedContainer animation="stagger" className="mb-8">
+                <AnimatedContainer animation="stagger" className="mb-mdxl">
                     <ResponsiveGrid cols={{ base: 1, sm: 2, lg: 4 }} gap="lg" className="space-responsive">
                         <StatCard
                             title="Pacientes Hoje"
@@ -204,14 +204,14 @@ const DashboardPage: React.FC = () => {
                 </AnimatedContainer>
 
                 {/* Incomplete Registrations Alert */}
-                <AnimatedContainer animation="fadeInUp" className="mb-8">
+                <AnimatedContainer animation="fadeInUp" className="mb-mdxl">
                     <IncompleteRegistrationsCard patients={patients || []} />
                 </AnimatedContainer>
 
                 {/* Quick Actions */}
-                <ScrollReveal animation="slideInLeft" className="mb-8">
-                    <div className="space-y-6">
-                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <ScrollReveal animation="slideInLeft" className="mb-mdxl">
+                    <div className="space-y-xl">
+                        <h2 className="text-xl font-semibold text-neutral-text dark:text-white">
                             Ações Rápidas
                         </h2>
                         <ResponsiveGrid cols={{ base: 1, sm: 2, lg: 3 }} gap="lg" className="space-responsive">
@@ -241,23 +241,23 @@ const DashboardPage: React.FC = () => {
                 </ScrollReveal>
 
                 {/* KPI Cards */}
-                <ScrollReveal animation="fadeInUp" className="mb-8">
+                <ScrollReveal animation="fadeInUp" className="mb-mdxl">
                     <Suspense fallback={<OptimizedLoader />}>
                         <KPICards stats={stats} isLoading={isLoading} />
                     </Suspense>
                 </ScrollReveal>
 
                 {/* Satisfação dos Pacientes */}
-                <ScrollReveal animation="fadeInUp" className="mb-8">
+                <ScrollReveal animation="fadeInUp" className="mb-mdxl">
                     <Suspense fallback={<OptimizedLoader />}>
                         <RatingSummaryWidget limit={10} showActions={true} />
                     </Suspense>
                 </ScrollReveal>
 
                 {/* Daily Summary */}
-                <ScrollReveal animation="slideInRight" className="mb-8">
-                    <div className="space-y-8">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <ScrollReveal animation="slideInRight" className="mb-mdxl">
+                    <div className="space-y-smxl">
+                        <h2 className="text-2xl font-bold text-neutral-text dark:text-white">
                             Resumo do Dia
                         </h2>
                         <ResponsiveGrid cols={{ base: 1, lg: 3 }} gap="lg" className="space-responsive">
@@ -275,7 +275,7 @@ const DashboardPage: React.FC = () => {
                 </ScrollReveal>
 
                 {/* Charts Section */}
-                <ScrollReveal animation="fadeInUp" className="mb-8">
+                <ScrollReveal animation="fadeInUp" className="mb-mdxl">
                     <ResponsiveGrid cols={{ base: 1, xl: 2 }} gap="lg" className="space-responsive">
                         <GlassCard 
                             header={{ 
@@ -303,7 +303,7 @@ const DashboardPage: React.FC = () => {
                 </ScrollReveal>
 
                 {/* Analytics Section */}
-                <ScrollReveal animation="scaleIn" className="mb-8">
+                <ScrollReveal animation="scaleIn" className="mb-mdxl">
                     <ResponsiveGrid cols={{ base: 1, lg: 3 }} gap="lg" className="space-responsive">
                         <GlassCard 
                             className="lg:col-span-2"

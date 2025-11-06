@@ -15,12 +15,53 @@
 -- =====================================================
 
 -- =====================================================
--- PARTE 1: SISTEMA DE APP PARA PACIENTES
+-- PARTE 1: VERIFICAR/CRIAR TABELA PATIENTS PRIMEIRO
 -- =====================================================
 
 -- Extensões necessárias
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- IMPORTANTE: Verificar e criar tabela patients ANTES de tudo
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'patients') THEN
+    RAISE NOTICE 'Criando tabela patients...';
+    
+    CREATE TABLE patients (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+      full_name TEXT NOT NULL,
+      name TEXT, -- Alias/compatibilidade
+      email TEXT,
+      phone TEXT,
+      cpf TEXT UNIQUE,
+      birth_date DATE,
+      gender TEXT CHECK (gender IN ('male', 'female', 'other', 'prefer_not_to_say')),
+      status TEXT DEFAULT 'Active',
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+    
+    CREATE INDEX IF NOT EXISTS idx_patients_user_id ON patients(user_id);
+    CREATE INDEX IF NOT EXISTS idx_patients_email ON patients(email);
+    
+    RAISE NOTICE 'Tabela patients criada com sucesso!';
+  ELSE
+    RAISE NOTICE 'Tabela patients já existe. Verificando colunas...';
+    
+    -- Adicionar coluna 'name' se não existir (para compatibilidade)
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'patients' AND column_name = 'name') THEN
+      ALTER TABLE patients ADD COLUMN name TEXT;
+      UPDATE patients SET name = full_name WHERE name IS NULL;
+      RAISE NOTICE 'Coluna name adicionada para compatibilidade';
+    END IF;
+  END IF;
+END $$;
+
+-- =====================================================
+-- PARTE 2: TABELAS DO SISTEMA DE PACIENTES
+-- =====================================================
 
 -- Tabela de códigos de acesso
 CREATE TABLE IF NOT EXISTS patient_access_codes (
@@ -639,7 +680,7 @@ COMMENT ON FUNCTION validate_access_code(TEXT) IS 'Valida código de acesso e re
 -- =====================================================
 
 -- =====================================================
--- VERIFICAÇÃO E DADOS DE TESTE
+-- VERIFICAÇÃO FINAL
 -- =====================================================
 
 -- Verificar se tudo foi criado corretamente
@@ -657,30 +698,4 @@ WHERE table_schema = 'public'
     'patient_messages',
     'patient_access_logs'
   );
-
--- Verificar se tabela patients existe
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'patients') THEN
-    RAISE NOTICE 'AVISO: Tabela patients não encontrada. Criando tabela básica...';
-    
-    CREATE TABLE patients (
-      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-      user_id UUID UNIQUE REFERENCES users(id) ON DELETE SET NULL,
-      full_name TEXT NOT NULL,
-      email TEXT,
-      phone TEXT,
-      cpf TEXT UNIQUE,
-      birth_date DATE,
-      gender TEXT CHECK (gender IN ('male', 'female', 'other', 'prefer_not_to_say')),
-      status TEXT DEFAULT 'Active',
-      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-      updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-    );
-    
-    RAISE NOTICE 'Tabela patients criada com sucesso!';
-  ELSE
-    RAISE NOTICE 'Tabela patients já existe. OK!';
-  END IF;
-END $$;
 
