@@ -35,6 +35,7 @@ export function RatingSummaryWidget({
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit]);
 
   const loadData = async () => {

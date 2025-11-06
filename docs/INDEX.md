@@ -1,281 +1,267 @@
-# 📚 Índice da Documentação - Sistema de Cores MoocaFisio
+# 📚 Índice de Documentação - DuduFisio-AI
 
-Bem-vindo à documentação completa do redesign do sistema de cores do MoocaFisio.
-
-## 🎯 Por onde começar?
-
-### 👨‍💻 Se você é Desenvolvedor
-1. **[REDESIGN_SUMMARY.md](./REDESIGN_SUMMARY.md)** - Leia o resumo executivo (5 min)
-2. **[COLOR_SYSTEM.md](./COLOR_SYSTEM.md)** - Entenda a paleta completa (10 min)
-3. **[MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md)** - Aprenda a migrar código (15 min)
-4. **[QUICK_COMMANDS.md](./QUICK_COMMANDS.md)** - Use comandos práticos
-
-### 🎨 Se você é Designer
-1. **[COLOR_SYSTEM.md](./COLOR_SYSTEM.md)** - Paleta completa e uso
-2. **[ACCESSIBILITY_REPORT.md](./ACCESSIBILITY_REPORT.md)** - Contraste e acessibilidade
-3. **[REDESIGN_SUMMARY.md](./REDESIGN_SUMMARY.md)** - Visão geral das mudanças
-
-### 👔 Se você é Gestor/Product Owner
-1. **[REDESIGN_SUMMARY.md](./REDESIGN_SUMMARY.md)** - Resumo executivo completo
-2. **[ACCESSIBILITY_REPORT.md](./ACCESSIBILITY_REPORT.md)** - Conformidade WCAG 2.1
+Este arquivo serve como ponto de entrada para toda a documentação do projeto.
 
 ---
 
-## 📖 Documentos Disponíveis
+## 🚀 Quick Start
 
-### 1. 📊 [REDESIGN_SUMMARY.md](./REDESIGN_SUMMARY.md)
-**Resumo Executivo da Implementação**
+**Novo no projeto?** Comece aqui:
 
-- ✅ Status da implementação
-- 📊 Antes vs Depois
-- 🎨 Paleta implementada
-- 🔧 Componentes atualizados
-- 📈 Melhorias de acessibilidade
-- 🚀 Próximos passos
-- 📚 Recursos disponíveis
-
-**Ideal para:** Visão geral rápida do projeto  
-**Tempo de leitura:** 10-15 minutos  
-**Público:** Todos
+1. **[README.md](./README.md)** - Visão geral e início rápido
+2. **[DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)** - Guia completo para desenvolvedores
+3. **[AI_CONTEXT.md](./AI_CONTEXT.md)** - Se você é uma IA/LLM, comece aqui
 
 ---
 
-### 2. 🎨 [COLOR_SYSTEM.md](./COLOR_SYSTEM.md)
-**Sistema de Cores Completo**
-
-- 🎨 Paleta de cores detalhada
-- 📋 Quando usar cada cor
-- 🎯 Guia de uso com exemplos
-- ⚠️ O que evitar
-- 📦 Uso em código (Tailwind, CSS, TypeScript)
-- 🚫 Anti-padrões
-
-**Ideal para:** Referência diária de desenvolvimento  
-**Tempo de leitura:** 15-20 minutos  
-**Público:** Desenvolvedores, Designers
-
----
-
-### 3. ♿ [ACCESSIBILITY_REPORT.md](./ACCESSIBILITY_REPORT.md)
-**Relatório de Acessibilidade WCAG 2.1**
-
-- ✅ Testes de contraste completos
-- 📊 Tabelas de validação
-- 🎯 Padrões de uso validados
-- 📋 Checklist de validação
-- 🎓 Recomendações finais
-- 📚 Recursos e ferramentas
-
-**Ideal para:** Validação de acessibilidade  
-**Tempo de leitura:** 20-25 minutos  
-**Público:** Desenvolvedores, Designers, QA
-
----
-
-### 4. 🔄 [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md)
-**Guia de Migração de Código Antigo**
-
-- 📋 Tabela de migração rápida
-- 🔧 Padrões de substituição
-- 🤖 Scripts de automação
-- 📝 Checklist de migração
-- 🆘 Problemas comuns e soluções
-- 💡 Exemplos práticos
-
-**Ideal para:** Migrar código existente  
-**Tempo de leitura:** 20-30 minutos  
-**Público:** Desenvolvedores
-
----
-
-### 5. 🚀 [QUICK_COMMANDS.md](./QUICK_COMMANDS.md)
-**Comandos Práticos e Scripts**
-
-- 📋 Verificar o que falta migrar
-- 🔧 Scripts PowerShell de migração
-- 🐧 Scripts Bash de migração
-- 🔍 Verificar progresso
-- ✅ Validação após migração
-- 📊 Estatísticas de migração
-
-**Ideal para:** Executar migração rápida  
-**Tempo de leitura:** 10 minutos + execução  
-**Público:** Desenvolvedores
-
----
-
-## 🗂️ Estrutura de Arquivos
-
-```
-docs/
-├── INDEX.md                    # ← Este arquivo (índice geral)
-├── REDESIGN_SUMMARY.md         # Resumo executivo
-├── COLOR_SYSTEM.md             # Sistema de cores completo
-├── ACCESSIBILITY_REPORT.md     # Relatório de acessibilidade
-├── MIGRATION_GUIDE.md          # Guia de migração
-└── QUICK_COMMANDS.md           # Comandos práticos
-
-lib/
-└── colors.ts                   # Configuração TypeScript de cores
-
-index.css                       # Variáveis CSS root
-tailwind.config.ts              # Configuração Tailwind
-
-components/
-├── Sidebar.tsx                 # ✅ Atualizado
-├── dashboard/
-│   └── StatCard.tsx           # ✅ Atualizado
-└── Layout.tsx                  # ✅ Atualizado
-
-src/components/ui/
-├── Button.tsx                  # ✅ Atualizado
-└── Card.tsx                    # ✅ Atualizado
-
-pages/
-├── DashboardPage.tsx           # ✅ Atualizado
-└── PatientListPage.tsx         # ✅ Atualizado
-```
-
----
-
-## 🎯 Casos de Uso
-
-### Caso 1: "Preciso adicionar um novo botão"
-1. Consulte [COLOR_SYSTEM.md](./COLOR_SYSTEM.md) → Seção "Botões"
-2. Use as classes definidas: `bg-primary`, `bg-success`, etc.
-3. Verifique contraste em [ACCESSIBILITY_REPORT.md](./ACCESSIBILITY_REPORT.md)
-
-### Caso 2: "Preciso migrar um componente antigo"
-1. Leia [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md) → Tabela de migração
-2. Use [QUICK_COMMANDS.md](./QUICK_COMMANDS.md) → Scripts automáticos
-3. Valide resultado com linter e testes visuais
-
-### Caso 3: "Preciso criar uma nova página"
-1. Use componentes atualizados como referência:
-   - `components/Sidebar.tsx`
-   - `components/dashboard/StatCard.tsx`
-   - `pages/DashboardPage.tsx`
-2. Consulte [COLOR_SYSTEM.md](./COLOR_SYSTEM.md) para classes corretas
-3. Valide acessibilidade com [ACCESSIBILITY_REPORT.md](./ACCESSIBILITY_REPORT.md)
-
-### Caso 4: "Uma cor não está funcionando"
-1. Verifique se a classe existe em `tailwind.config.ts`
-2. Consulte [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md) → "Problemas Comuns"
-3. Use opacidade com `/` (ex: `bg-primary/10`)
-
----
-
-## 🔍 Busca Rápida
-
-### Procurando por...
-
-#### "Qual cor usar para botão primário?"
-→ [COLOR_SYSTEM.md](./COLOR_SYSTEM.md) → Seção "Botões"  
-Resposta: `bg-primary hover:bg-primary-dark text-white`
-
-#### "Como migrar bg-blue-50?"
-→ [MIGRATION_GUIDE.md](./MIGRATION_GUIDE.md) → Tabela de migração  
-Resposta: `bg-blue-50` → `bg-primary/10`
-
-#### "Contraste mínimo para texto?"
-→ [ACCESSIBILITY_REPORT.md](./ACCESSIBILITY_REPORT.md) → Critérios de teste  
-Resposta: 4.5:1 para texto normal, 3:1 para texto grande
-
-#### "Script para migrar tudo?"
-→ [QUICK_COMMANDS.md](./QUICK_COMMANDS.md) → Script completo  
-Resposta: PowerShell ou Bash script disponível
-
-#### "Quais componentes já foram atualizados?"
-→ [REDESIGN_SUMMARY.md](./REDESIGN_SUMMARY.md) → Componentes atualizados  
-Resposta: Sidebar, StatCard, Button, Card, + páginas principais
-
----
-
-## 📊 Checklist de Implementação
+## 📖 Documentação Principal
 
 ### Para Desenvolvedores
 
-- [ ] Li o `REDESIGN_SUMMARY.md`
-- [ ] Li o `COLOR_SYSTEM.md`
-- [ ] Li o `MIGRATION_GUIDE.md`
-- [ ] Sei usar `QUICK_COMMANDS.md` para migração
-- [ ] Entendo os testes de acessibilidade
-- [ ] Sei onde buscar referências de código
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) | Guia técnico completo: arquitetura, stack, padrões, setup | 600+ |
+| [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) | APIs, Supabase, services, integrações | 700+ |
+| [BUSINESS_RULES.md](./BUSINESS_RULES.md) | Regras de negócio, validações, LGPD, fluxos | 900+ |
 
-### Para Novos Componentes
+### Para IAs e LLMs
 
-- [ ] Uso classes do sistema de cores definido
-- [ ] Verifiquei contraste de cores (WCAG AA)
-- [ ] Testei visualmente em diferentes telas
-- [ ] Validei com linter (sem erros)
-- [ ] Segui padrões dos componentes atualizados
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [AI_CONTEXT.md](./AI_CONTEXT.md) | Contexto específico para assistentes de IA | 800+ |
+| [CLAUDE.md](./CLAUDE.md) | Instruções para Claude AI | 300+ |
 
-### Para Migração de Código
+### Para Usuários Finais
 
-- [ ] Identifiquei cores antigas no código
-- [ ] Usei tabela de migração ou scripts
-- [ ] Testei visualmente após migração
-- [ ] Validei com linter e build
-- [ ] Verifiquei acessibilidade
-
----
-
-## 📞 Suporte
-
-### Encontrou um problema?
-
-1. **Documentação:** Verifique se há resposta nos docs
-2. **Exemplos:** Veja componentes já atualizados
-3. **Equipe:** Entre em contato com time de desenvolvimento
-
-### Quer contribuir?
-
-1. Identifique componente que precisa migração
-2. Use guias e scripts disponíveis
-3. Teste e valide
-4. Abra PR com referência a esta documentação
+| Documento | Tipo |
+|-----------|------|
+| [docs/GUIA_USUARIO_FISIOTERAPEUTA.md](./docs/GUIA_USUARIO_FISIOTERAPEUTA.md) | Fisioterapeutas |
+| [docs/GUIA_USUARIO_PACIENTE.md](./docs/GUIA_USUARIO_PACIENTE.md) | Pacientes |
+| [docs/GUIA_USUARIO_ADMIN.md](./docs/GUIA_USUARIO_ADMIN.md) | Administradores |
+| [docs/GUIA_USUARIO_EDUCADOR.md](./docs/GUIA_USUARIO_EDUCADOR.md) | Educadores Físicos |
 
 ---
 
-## 🏆 Status do Projeto
+## 📊 Relatórios de Implementação
 
-### ✅ Concluído
-- [x] Paleta de cores definida
-- [x] Configuração Tailwind atualizada
-- [x] Variáveis CSS atualizadas
-- [x] Componentes principais migrados
-- [x] Páginas principais migradas
-- [x] Documentação completa criada
-- [x] Testes de acessibilidade realizados
-- [x] Scripts de migração disponíveis
+### Relatórios Atuais
 
-### 🚀 Próximos Passos
-- [ ] Migrar componentes restantes
-- [ ] Testes em diferentes dispositivos
-- [ ] Feedback de usuários
-- [ ] Testes automatizados de acessibilidade
-- [ ] Implementar modo escuro (futuro)
+| Documento | Descrição |
+|-----------|-----------|
+| [FINAL_IMPLEMENTATION_REPORT.md](./FINAL_IMPLEMENTATION_REPORT.md) | **📌 COMECE AQUI** - Relatório final consolidado |
+| [SESSION_REPORT.md](./SESSION_REPORT.md) | Detalhes da última sessão de implementação |
+| [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) | Resumo do que foi implementado |
+| [PROGRESS_REPORT.md](./PROGRESS_REPORT.md) | Progresso geral do projeto |
 
----
+### Relatórios Históricos
 
-## 📈 Versão
-
-**Versão da Documentação:** 1.0  
-**Data:** 5 de Novembro de 2025  
-**Próxima Revisão:** Quando houver atualizações no sistema
+| Documento | Descrição |
+|-----------|-----------|
+| [testsprite_tests/testsprite-comprehensive-test-report.md](./testsprite_tests/testsprite-comprehensive-test-report.md) | Relatório TestSprite MCP |
+| [testsprite_tests/RESOLUCAO_COMPLETA.md](./testsprite_tests/RESOLUCAO_COMPLETA.md) | Resolução de problemas TestSprite |
+| [testsprite_tests/IMPLEMENTATION_REPORT.md](./testsprite_tests/IMPLEMENTATION_REPORT.md) | Implementação de testes |
 
 ---
 
-## 🔗 Links Externos Úteis
+## 🔥 Hotfixes e Otimizações
 
-- [Tailwind CSS Docs](https://tailwindcss.com/docs)
-- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
-- [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
-- [Colour Contrast Analyser](https://www.tpgi.com/color-contrast-checker/)
-- [Color Blindness Simulator](https://www.color-blindness.com/coblis-color-blindness-simulator/)
+### Hotfix de Produção - 3 Nov 2025
+
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [SESSAO_HOTFIX_03_NOV_2025.md](./SESSAO_HOTFIX_03_NOV_2025.md) | **📌 INÍCIO** - Resumo executivo do hotfix (62min) | 300+ |
+| [HOTFIX_PRODUCTION_ERROR.md](./HOTFIX_PRODUCTION_ERROR.md) | Análise detalhada do erro "format is not defined" | 580+ |
+
+### Otimização de Performance - 4 Nov 2025
+
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [SESSAO_OTIMIZACAO_COMPLETA_04_NOV.md](./SESSAO_OTIMIZACAO_COMPLETA_04_NOV.md) | **📌 RESUMO COMPLETO** - Sessão de 4h de otimização | 800+ |
+| [FASE_2_RESULTADOS_FINAIS.md](./FASE_2_RESULTADOS_FINAIS.md) | Resultados da Fase 2 (vendor-misc -45%) | 600+ |
+| [BUNDLE_OPTIMIZATION_PLAN.md](./BUNDLE_OPTIMIZATION_PLAN.md) | Plano detalhado de otimização de bundles | 500+ |
+
+### Runbooks e Procedimentos
+
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [RUNBOOK_CACHE_DEPLOYMENT_ISSUES.md](./RUNBOOK_CACHE_DEPLOYMENT_ISSUES.md) | Procedimentos para problemas de cache do Vercel | 300+ |
+| [SENTRY_MONITORING_SETUP.md](./SENTRY_MONITORING_SETUP.md) | Configuração completa de monitoramento Sentry | 400+ |
 
 ---
 
-**🎨 Sistema de cores MoocaFisio - Implementado com sucesso!**
+## 🎨 Sistema de Design
 
-Para começar, leia o [REDESIGN_SUMMARY.md](./REDESIGN_SUMMARY.md) 🚀
+### Tipografia e UI - 5 Nov 2025
+
+| Documento | Descrição | Linhas |
+|-----------|-----------|--------|
+| [docs/TYPOGRAPHY_GUIDE.md](./docs/TYPOGRAPHY_GUIDE.md) | **📌 GUIA COMPLETO** - Sistema tipográfico hierárquico | 400+ |
+| [src/components/ui/Typography.README.md](./src/components/ui/Typography.README.md) | Quick start e referência rápida | 100+ |
+| [src/components/examples/TypographyExamples.tsx](./src/components/examples/TypographyExamples.tsx) | 7 exemplos práticos de implementação | 500+ |
+
+**Componentes**: H1, H2, H3, Body, Small, Caption, NumericValue, Label  
+**Acessibilidade**: WCAG AA/AAA validado  
+**Fonte**: Inter (Google Fonts)
+
+---
+
+## 🛠️ Recursos Técnicos
+
+### Código Implementado
+
+| Arquivo | Descrição | Linhas |
+|---------|-----------|--------|
+| [src/components/ui/Typography.tsx](./src/components/ui/Typography.tsx) | **NOVO** - 8 componentes tipográficos reutilizáveis | 150+ |
+| [lib/validators/index.ts](./lib/validators/index.ts) | Validadores centralizados + 12 schemas Zod | 500+ |
+| [lib/guards/AuthGuard.tsx](./lib/guards/AuthGuard.tsx) | Proteção de autenticação | 80+ |
+| [lib/guards/RoleGuard.tsx](./lib/guards/RoleGuard.tsx) | Proteção RBAC (4 roles, 65+ permissões) | 200+ |
+| [lib/middleware/errorHandler.ts](./lib/middleware/errorHandler.ts) | 8 classes de erro + handlers | 400+ |
+| [lib/middleware/logger.ts](./lib/middleware/logger.ts) | Sistema de logging estruturado | 300+ |
+
+### Scripts de Automação
+
+#### Deployment e Validação
+
+| Arquivo | Descrição | Linhas |
+|---------|-----------|--------|
+| [scripts/validate-deployment.js](./scripts/validate-deployment.js) | ✨ Validação completa de deployment (site, bundles, headers) | 350 |
+| [scripts/verify-bundle-hash.js](./scripts/verify-bundle-hash.js) | ✨ Verificação de bundle hash (detecta cache) | 400 |
+| [scripts/validate-sentry-setup.js](./scripts/validate-sentry-setup.js) | ✨ Validação de configuração do Sentry | 250 |
+| [scripts/analyze-bundle-size.cjs](./scripts/analyze-bundle-size.cjs) | ✨ Análise detalhada de bundle size | 300 |
+| [scripts/find-uncategorized-deps.cjs](./scripts/find-uncategorized-deps.cjs) | ✨ Identificar deps não categorizadas | 200 |
+
+#### CI/CD Workflows
+
+| Arquivo | Descrição |
+|---------|-----------|
+| [.github/workflows/verify-deployment.yml](./.github/workflows/verify-deployment.yml) | ✨ Workflow automático de validação pós-deploy |
+| [.github/workflows/ci.yml](./.github/workflows/ci.yml) | Pipeline CI/CD |
+
+#### Outros Scripts
+
+| Arquivo | Descrição |
+|---------|-----------|
+| [scripts/validate-project.sh](./scripts/validate-project.sh) | Validação completa do projeto |
+| [scripts/migrate-to-typescript.sh](./scripts/migrate-to-typescript.sh) | Migração .jsx → .tsx |
+| [.husky/pre-commit](./.husky/pre-commit) | Pre-commit hooks |
+
+---
+
+## 🎯 Testes
+
+### TestSprite MCP
+
+| Arquivo | Descrição |
+|---------|-----------|
+| [testsprite_tests/testsprite_frontend_test_plan.json](./testsprite_tests/testsprite_frontend_test_plan.json) | 25 casos de teste (TC001-TC025) |
+| [testsprite_tests/standard_prd.json](./testsprite_tests/standard_prd.json) | PRD padronizado |
+| [testsprite_tests/tmp/code_summary.json](./testsprite_tests/tmp/code_summary.json) | Resumo de código (28 features) |
+
+### Testes Implementados
+
+| Pasta | Tipo |
+|-------|------|
+| [tests/unit/](./tests/unit/) | Testes unitários |
+| [tests/integration/](./tests/integration/) | Testes de integração |
+| [tests/e2e/](./tests/) | Testes end-to-end (Playwright) |
+
+---
+
+## 🔍 Navegação por Tópico
+
+### Arquitetura
+- [DEVELOPER_GUIDE.md#arquitetura-do-projeto](./DEVELOPER_GUIDE.md#arquitetura-do-projeto)
+- [AI_CONTEXT.md#arquitetura-simplificada](./AI_CONTEXT.md#arquitetura-simplificada)
+
+### Stack Tecnológico
+- [DEVELOPER_GUIDE.md#stack-tecnológico](./DEVELOPER_GUIDE.md#stack-tecnológico)
+- [README.md#stack-tecnológica](./README.md#stack-tecnológica)
+
+### Padrões de Código
+- [DEVELOPER_GUIDE.md#padrões-de-código](./DEVELOPER_GUIDE.md#padrões-de-código)
+- [AI_CONTEXT.md#padrões-e-convenções](./AI_CONTEXT.md#padrões-e-convenções)
+
+### Regras de Negócio
+- [BUSINESS_RULES.md](./BUSINESS_RULES.md)
+- [AI_CONTEXT.md#regras-de-negócio-resumo](./AI_CONTEXT.md#regras-de-negócio-resumo)
+
+### APIs e Integrações
+- [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
+- [API_DOCUMENTATION.md#integração-supabase](./API_DOCUMENTATION.md#integração-supabase)
+- [API_DOCUMENTATION.md#integração-google-gemini-ai](./API_DOCUMENTATION.md#integração-google-gemini-ai)
+
+### Validações
+- [lib/validators/index.ts](./lib/validators/index.ts)
+- [BUSINESS_RULES.md#regras-de-validação-de-dados](./BUSINESS_RULES.md#regras-de-validação-de-dados)
+
+### Segurança
+- [lib/guards/](./lib/guards/)
+- [BUSINESS_RULES.md#regras-de-permissões-rbac](./BUSINESS_RULES.md#regras-de-permissões-rbac)
+- [BUSINESS_RULES.md#regras-de-segurança-e-lgpd](./BUSINESS_RULES.md#regras-de-segurança-e-lgpd)
+
+### Testes
+- [testsprite_tests/](./testsprite_tests/)
+- [DEVELOPER_GUIDE.md#testes](./DEVELOPER_GUIDE.md#testes)
+
+### Troubleshooting
+- [DEVELOPER_GUIDE.md#troubleshooting](./DEVELOPER_GUIDE.md#troubleshooting)
+- [AI_CONTEXT.md#troubleshooting-rápido](./AI_CONTEXT.md#troubleshooting-rápido)
+
+---
+
+## 🔗 Links Úteis
+
+### Documentação Externa
+- [React 19](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- [Supabase](https://supabase.com/docs)
+- [Shadcn/ui](https://ui.shadcn.com/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [Zod](https://zod.dev/)
+- [Google Gemini](https://ai.google.dev/docs)
+
+### Repositório
+- Issues
+- Pull Requests
+- Discussions
+
+### Ferramentas de Documentação
+
+| Documento | Descrição |
+|-----------|-----------|
+| [docs/DOCVIEW_TRAE.md](./docs/DOCVIEW_TRAE.md) | Guia para visualizar e manter docs no Trae |
+
+---
+
+## 📅 Última Atualização
+
+**Data:** Janeiro 2025  
+**Versão Docs:** 1.0  
+**Status:** ✅ Documentação Completa
+
+---
+
+## 💡 Dica para Novos Colaboradores
+
+**Primeiro Dia:**
+1. Leia [README.md](./README.md)
+2. Leia [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md)
+3. Configure o ambiente local
+4. Execute `npm run dev`
+
+**Primeira Tarefa:**
+1. Leia [AI_CONTEXT.md](./AI_CONTEXT.md)
+2. Leia [BUSINESS_RULES.md](./BUSINESS_RULES.md)
+3. Explore o código em `components/ui/`
+4. Crie um componente simples seguindo os padrões
+
+**Primeira Semana:**
+1. Leia [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
+2. Entenda os services principais
+3. Execute os testes: `npm test`
+4. Contribua com sua primeira feature
+
+---
+
+**Bem-vindo ao DuduFisio-AI! 🏥**
+

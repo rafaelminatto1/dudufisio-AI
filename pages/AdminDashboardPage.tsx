@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { LazyLineChart, LazyAreaChart, LazyPieChart } from '../components/charts/LazyCharts';
+import { H1, Body, Small } from '../src/components/ui/Typography';
+import StatCard from '../components/dashboard/StatCard';
 
 interface AdminMetrics {
   totalUsers: number;
@@ -308,54 +310,52 @@ const AdminDashboardPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-bgAlt flex items-center justify-center">
         <div className="text-center">
-          <RefreshCw className="w-8 h-8 animate-spin text-sky-500 mx-auto mb-4" />
-          <p className="text-slate-600">Carregando dashboard administrativo...</p>
+          <RefreshCw className="w-8 h-8 animate-spin text-primary mx-auto mb-md" />
+          <Body className="text-neutral-textSecondary">Carregando dashboard administrativo...</Body>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-neutral-bgAlt">
+      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl py-4xl">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-3xl">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">
-                Dashboard Administrativo
-        </h1>
-              <p className="text-slate-600 mt-1">
+              <H1>Dashboard Administrativo</H1>
+              <Body className="text-neutral-textSecondary mt-sm">
                 Visão geral do sistema e métricas de gestão
-              </p>
+              </Body>
             </div>
-            <div className="flex items-center space-x-3">
-              <button className="flex items-center px-4 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                <Download className="w-4 h-4 mr-2" />
+            <div className="flex items-center gap-md">
+              <button className="flex items-center px-md py-sm bg-white border border-neutral-border rounded-lg hover:bg-neutral-bgAlt transition-colors">
+                <Download className="w-4 h-4 mr-sm" />
                 Exportar
               </button>
-              <button className="flex items-center px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors">
-                <RefreshCw className="w-4 h-4 mr-2" />
+              <button className="flex items-center px-md py-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors">
+                <RefreshCw className="w-4 h-4 mr-sm" />
                 Atualizar
-        </button>
+              </button>
             </div>
           </div>
         </div>
 
         {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-md mb-3xl">
           {metricCards.map((card, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div key={index} className="bg-white rounded-card shadow-card border border-neutral-border p-lg hover:shadow-cardHover transition-all">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-600">{card.title}</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{card.value}</p>
-                  <p className={`text-sm mt-1 ${
-                    card.changeType === 'positive' ? 'text-green-600' :
-                    card.changeType === 'negative' ? 'text-red-600' :
-                    'text-slate-600'
+                  <Small className="text-neutral-textSecondary font-medium">{card.title}</Small>
+                  <p className="text-h2 font-bold text-neutral-text mt-xs">{card.value}</p>
+                  <p className={`text-small mt-xs ${
+                    card.changeType === 'positive' ? 'text-success' :
+                    card.changeType === 'negative' ? 'text-error' :
+                    'text-neutral-textSecondary'
                   }`}>
                     {card.change}
                   </p>

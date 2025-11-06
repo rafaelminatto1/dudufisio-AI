@@ -1,86 +1,114 @@
-// hooks/useAppointments.ts
+// hooks/useAppointments.js
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppointmentTypeColors } from '../types';
 import * as appointmentService from '../services/appointmentService';
 import { useData } from '../contexts/AppContext';
 import { eventService } from '../services/eventService';
+import { AppointmentType } from '../types';
+import { getCachedOrFetch, deleteCache, DEFAULT_CACHE_TTL_MS } from '../packages/agenda-pacientes/src/lib/cache';
+import { apmService } from '../services/monitoring/apmService';
+
 export const useAppointments = (startDate, endDate) => {
-    const [appointments, setAppointments] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const { patients, therapists } = useData();
-    const fetchAppointments = useCallback(async () => {
-        if (!startDate || !endDate) {
-            setIsLoading(false);
-            setAppointments([]);
-            return;
-        }
-        const cacheKey = `appointments_cache_${startDate.toISOString()}_${endDate.toISOString()}`;
-        // Stale: Try loading from cache first to show something immediately.
-        try {
-            const cachedItem = sessionStorage.getItem(cacheKey);
-            if (cachedItem) {
-                const cachedAppointments = JSON.parse(cachedItem).map((app) => ({
-                    ...app,
-                    startTime: new Date(app.startTime),
-                    endTime: new Date(app.endTime),
-                }));
-                setAppointments(cachedAppointments);
-                setIsLoading(false); // We have data to show, so we're not in a hard loading state.
-            }
-            else {
-                setIsLoading(true); // No cache, so we are truly loading from scratch.
-            }
-        }
-        catch (e) {
-            console.error("Failed to read from appointment cache", e);
-            setIsLoading(true); // If cache fails, treat as a hard load.
-        }
-        // Revalidate: Always fetch fresh data from the network.
-        try {
-            const fetchedAppointments = await appointmentService.getAppointments(startDate, endDate);
-            setAppointments(fetchedAppointments); // Update state with the fresh data.
-            setError(null);
-            // Update cache with the new fresh data.
-            try {
-                sessionStorage.setItem(cacheKey, JSON.stringify(fetchedAppointments));
-            }
-            catch (e) {
-                console.error("Failed to write to appointment cache", e);
-            }
-        }
-        catch (err) {
-            setError(err);
-            // We only set loading to false here if there was no cache hit.
-            // If there was a cache hit, loading is already false and we just silently fail the background update.
-            if (!sessionStorage.getItem(cacheKey)) {
-                setIsLoading(false);
-            }
-        }
-    }, [startDate, endDate]);
-    useEffect(() => {
-        fetchAppointments();
-        eventService.on('appointments:changed', fetchAppointments);
-        return () => {
-            eventService.off('appointments:changed', fetchAppointments);
-        };
-    }, [fetchAppointments]);
-    const enrichedAppointments = useMemo(() => {
-        const patientMap = new Map(patients.map(p => [p.id, p]));
-        const therapistMap = new Map(therapists.map(t => [t.id, t]));
-        return appointments.map(app => ({
+  const [appointments, setAppointments] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const { patients, therapists } = useData();
+  
+  const makeCacheKey = useCallback(() => {
+    if (!startDate || !endDate) return '';
+    return `appointments:${startDate.toISOString()}:${endDate.toISOString()}`;
+  }, [startDate, endDate]);
+
+  const clearCache = useCallback(() => {
+      const key = makeCacheKey();
+      if (!key) return;
+      deleteCache(key);
+  }, [makeCacheKey]);
+
+  const fetchAppointments = useCallback(async () => {
+      if (!startDate || !endDate) {
+          setIsLoading(false);
+          setAppointments([]);
+          return;
+      }
+
+      const cacheKey = makeCacheKey();
+
+      performance.mark('appointments:fetch:start');
+      try {
+          const fetchedAppointments = await getCachedOrFetch(
+            cacheKey,
+            async () => {
+              const t0 = performance.now();
+              const data = await appointmentService.getAppointments(startDate, endDate);
+              const t1 = performance.now();
+              apmService.trackMetric({
+                type: 'api_request',
+                name: 'appointments_fetch_time',
+                value: t1 - t0,
+                unit: 'ms',
+                tags: { page: window.location.pathname },
+              });
+              return data;
+            },
+            DEFAULT_CACHE_TTL_MS
+          );
+
+          setAppointments(fetchedAppointments);
+          setError(null);
+      } catch (err) {
+          setError(err);
+      } finally {
+          setIsLoading(false);
+          performance.mark('appointments:fetch:end');
+          performance.measure('appointments:fetch', 'appointments:fetch:start', 'appointments:fetch:end');
+      }
+  }, [startDate, endDate, makeCacheKey]);
+
+  useEffect(() => {
+      fetchAppointments();
+      
+      const handleAppointmentsChanged = () => {
+          clearCache();
+          fetchAppointments();
+      };
+      
+      eventService.on('appointments:changed', handleAppointmentsChanged);
+      
+      return () => {
+          eventService.off('appointments:changed', handleAppointmentsChanged);
+      };
+  }, [fetchAppointments, clearCache]);
+
+  const enrichedAppointments = useMemo(() => {
+    const patientMap = new Map(patients.map(p => [p.id, p]));
+    const therapistMap = new Map(therapists.map(t => [t.id, t]));
+
+    return appointments.map(app => {
+        const patient = patientMap.get(app.patientId);
+        
+        return {
             ...app,
-            patientPhone: patientMap.get(app.patientId)?.phone || '',
+            // Defaults seguros
+            type: (app.type) || AppointmentType.Session,
+            value: typeof app.value === 'number' && Number.isFinite(app.value) ? app.value : 0,
+            // 🔥 FIX: Garantir que patientName esteja sempre presente
+            patientName: app.patientName || patient?.name || 'Paciente não identificado',
+            patientPhone: patient?.phone || '',
+            patientAvatarUrl: app.patientAvatarUrl || patient?.avatarUrl || '',
             therapistColor: therapistMap.get(app.therapistId)?.color || 'slate',
-            typeColor: AppointmentTypeColors[app.type] || 'slate',
-            patientMedicalAlerts: patientMap.get(app.patientId)?.medicalAlerts,
+            typeColor: AppointmentTypeColors[(app.type) || AppointmentType.Session] || 'slate',
+            patientMedicalAlerts: patient?.medicalAlerts,
             therapistName: therapistMap.get(app.therapistId)?.name || '(escolher depois na evolução)',
-        }));
-    }, [appointments, patients, therapists]);
-    return {
-        appointments: enrichedAppointments,
-        isLoading,
-        error,
-        refetch: fetchAppointments
-    };
+        };
+    });
+  }, [appointments, patients, therapists]);
+
+  return { 
+    appointments: enrichedAppointments, 
+    isLoading, 
+    error, 
+    refetch: fetchAppointments
+  };
 };

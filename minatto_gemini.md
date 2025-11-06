@@ -53,8 +53,9 @@ O roadmap está dividido em fases para priorizar o impacto e organizar o desenvo
 - [ ] **Tarefa 2.3:** Implementar um `bundle-analyzer` para identificar e otimizar dependências duplicadas nos microfrontends.
 
 ### **3. Qualidade de Código e Dívida Técnica**
-- [ ] **Tarefa 3.1:** Mover todos os arquivos `.md` do diretório raiz para uma nova pasta `docs/`.
-- [ ] **Tarefa 3.2:** Refatorar scripts do `package.json` para serem cross-platform (remover dependências de PowerShell).
+- [x] **Tarefa 3.1:** Mover todos os arquivos `.md` do diretório raiz para uma nova pasta `docs/`.
+- [x] **Tarefa 3.2:** Refatorar scripts do `package.json` para serem cross-platform (remover dependências de PowerShell).
+  - **Nota:** O script `bundle:size` foi mantido com comandos Unix-like (`du`, `sort`, `head`) por ser um script de conveniência para desenvolvedores e não crítico para o build.
 - [ ] **Tarefa 3.3:** Finalizar a migração de todos os arquivos `.js` e `.jsx` para `.ts` e `.tsx`.
 
 ### **4. Melhorias de UX/UI**

@@ -12,6 +12,7 @@ import * as patientService from '../services/patientService';
 import * as appointmentService from '../services/appointmentService';
 import { eventService } from '../services/eventService';
 import { auditService } from '../services/auditService';
+import { H2, H3, Body, Small } from '../src/components/ui/Typography';
 
 /**
  * 🩺 DASHBOARD DO FISIOTERAPEUTA
@@ -34,7 +35,7 @@ interface TherapistMetrics {
   criticalAlerts: number;
 }
 
-// 🚀 Componente de Métrica Profissional Memoizado
+// 🚀 Componente de Métrica Profissional Memoizado - Monday.com Design
 const MetricCard = memo<{
   title: string;
   value: string | number;
@@ -43,24 +44,24 @@ const MetricCard = memo<{
   trend?: { value: number; positive: boolean };
   alert?: boolean;
 }>(({ title, value, subtitle, icon: Icon, trend, alert }) => (
-  <div className={`bg-white rounded-xl shadow-sm border p-6 transition-all hover:shadow-md ${alert ? 'border-orange-200 bg-orange-50' : 'border-slate-200'}`}>
+  <div className={`bg-white rounded-card shadow-card border p-lg transition-all hover:shadow-cardHover ${alert ? 'border-warning bg-warning-light' : 'border-neutral-border'}`}>
     <div className="flex items-center justify-between">
       <div className="flex-1">
-        <div className="flex items-center gap-3">
-          <div className={`p-3 rounded-lg ${alert ? 'bg-orange-100' : 'bg-sky-100'}`}>
-            <Icon className={`w-5 h-5 ${alert ? 'text-orange-600' : 'text-sky-600'}`} />
+        <div className="flex items-center gap-md">
+          <div className={`p-md rounded-lg ${alert ? 'bg-warning-light' : 'bg-primary-light'}`}>
+            <Icon className={`w-5 h-5 ${alert ? 'text-warning' : 'text-primary'}`} />
           </div>
           <div>
-            <p className={`text-sm font-medium ${alert ? 'text-orange-800' : 'text-slate-600'}`}>{title}</p>
-            <p className={`text-2xl font-bold ${alert ? 'text-orange-900' : 'text-slate-900'}`}>{value}</p>
+            <p className={`text-small font-medium ${alert ? 'text-warning' : 'text-neutral-textSecondary'}`}>{title}</p>
+            <p className={`text-h2 font-bold ${alert ? 'text-warning' : 'text-neutral-text'}`}>{value}</p>
             {subtitle && (
-              <p className={`text-xs ${alert ? 'text-orange-600' : 'text-slate-500'}`}>{subtitle}</p>
+              <p className={`text-xs ${alert ? 'text-warning' : 'text-neutral-textTertiary'}`}>{subtitle}</p>
             )}
           </div>
         </div>
       </div>
       {trend && (
-        <div className={`text-sm font-medium ${trend.positive ? 'text-green-600' : 'text-red-600'}`}>
+        <div className={`text-small font-medium ${trend.positive ? 'text-success' : 'text-error'}`}>
           {trend.positive ? '+' : ''}{trend.value}%
         </div>
       )}
@@ -77,9 +78,9 @@ const PatientProgressCard = memo<{
   status: 'on-track' | 'needs-attention' | 'excellent';
 }>(({ patient, progress, nextSession, status }) => {
   const statusConfig = {
-    'excellent': { color: 'text-green-600', bg: 'bg-green-100', label: 'Excelente' },
-    'on-track': { color: 'text-sky-600', bg: 'bg-sky-100', label: 'No Cronograma' },
-    'needs-attention': { color: 'text-orange-600', bg: 'bg-orange-100', label: 'Requer Atenção' }
+    'excellent': { color: 'text-success', bg: 'bg-success-light', label: 'Excelente' },
+    'on-track': { color: 'text-primary', bg: 'bg-primary-light', label: 'No Cronograma' },
+    'needs-attention': { color: 'text-warning', bg: 'bg-warning-light', label: 'Requer Atenção' }
   };
 
   const config = statusConfig[status];
