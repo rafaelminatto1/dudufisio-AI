@@ -75,7 +75,7 @@ const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
 };
 
 // Função para renderizar eixo Y com emojis
-const renderYAxisTick = (props: any) => {
+const renderYAxisTick = (props: { x: number; y: number; payload: { value: number } }) => {
   const { x, y, payload } = props;
   const value = payload.value as number;
   

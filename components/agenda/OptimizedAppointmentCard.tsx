@@ -191,7 +191,6 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
   // Obter cores baseadas no modo de visualização
   const cardColors = getCardColors(appointment.status, therapistIndex, colorMode);
   const statusInfo = STATUS_COLORS[appointment.status] || STATUS_COLORS[AppointmentStatus.Scheduled];
-  const StatusIcon = statusInfo.icon;
   
   // Verificar se é primeira consulta ou retorno
   const isFirstAppointment = allAppointments.filter(app => 
@@ -199,31 +198,11 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
     app.startTime < appointment.startTime
   ).length === 0;
 
-  const isReturn = !isFirstAppointment;
-
   // Verificar se é urgente (nas próximas 2 horas)
   const isUrgent = () => {
     const now = new Date();
     const diffInHours = (appointment.startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
     return diffInHours > 0 && diffInHours <= 2 && appointment.status === AppointmentStatus.Scheduled;
-  };
-
-  // Estilos aprimorados para status
-  const getStatusStyle = (status: AppointmentStatus) => {
-    const baseStyle = 'transition-all duration-200';
-    
-    switch (status) {
-      case AppointmentStatus.Scheduled:
-        return `${baseStyle} bg-white border-slate-200 hover:border-blue-300`;
-      case AppointmentStatus.Completed:
-        return `${baseStyle} bg-green-50 border-green-300 hover:border-green-400`;
-      case AppointmentStatus.Canceled:
-        return `${baseStyle} bg-gray-100 border-gray-400`;
-      case AppointmentStatus.NoShow:
-        return `${baseStyle} bg-orange-50 border-orange-300 hover:border-orange-400`;
-      default:
-        return `${baseStyle} bg-white border-slate-200`;
-    }
   };
 
   const getInitials = (name: string) => {
@@ -251,7 +230,6 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
         onDragEnd={onDragEnd}
         className={cn(
           "absolute rounded-lg cursor-pointer transition-all duration-200 overflow-hidden flex flex-col border-2 shadow-md font-semibold",
-          getStatusStyle(appointment.status),
           isBeingDragged && 'opacity-50 ring-4 ring-blue-400',
           appointment.hasConflict && 'ring-4 ring-red-500 ring-opacity-75 animate-pulse',
           isUrgent() && 'ring-2 ring-yellow-400 animate-pulse',
@@ -393,7 +371,7 @@ export const OptimizedAppointmentCard: React.FC<OptimizedAppointmentCardProps> =
                         💰 {appointment.paymentStatus === 'paid' ? 'Pago' : 'Pendente'}
                       </span>
                     )}
-                    {isReturn && (
+                    {!isFirstAppointment && (
                       <span>🔄 Retorno</span>
                     )}
                   </div>

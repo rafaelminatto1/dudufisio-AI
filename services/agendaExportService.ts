@@ -138,7 +138,6 @@ class AgendaExportService {
       'Paciente',
       'Telefone',
       'Terapeuta',
-      'Especialização',
       'Tipo de Consulta',
       'Status',
       'Valor',
@@ -160,7 +159,6 @@ class AgendaExportService {
         apt.patientName,
         apt.patientPhone || '',
         apt.therapistName || '',
-        therapist?.specialization || '',
         apt.type,
         apt.status,
         apt.value.toString().replace('.', ','),
@@ -190,6 +188,12 @@ class AgendaExportService {
     therapists: Therapist[],
     filename?: string
   ): void {
+    // Validação: lista vazia
+    if (!appointments || appointments.length === 0) {
+      console.warn('Nenhum agendamento para exportar');
+      return;
+    }
+
     // Mapeamento de labels de status
     const statusLabels: Record<AppointmentStatus, string> = {
       [AppointmentStatus.Scheduled]: 'Agendado',
@@ -215,13 +219,12 @@ class AgendaExportService {
         'Paciente': apt.patientName,
         'Telefone': apt.patientPhone || '-',
         'Terapeuta': apt.therapistName || '-',
-        'Especialização': therapist?.specialization || '-',
         'Tipo de Consulta': apt.type,
         'Status': statusLabels[apt.status] || apt.status,
         'Valor': formatCurrencyBR(apt.value || 0),
         'Status Pagamento': apt.paymentStatus === 'paid' ? 'Pago' : 'Pendente',
         'Sessão': apt.sessionNumber && apt.totalSessions ? `${apt.sessionNumber}/${apt.totalSessions}` : '-',
-        'Sessões Restantes': apt.sessions_remaining !== undefined ? apt.sessions_remaining : '-',
+        'Sessões Restantes': (apt.sessions_remaining !== undefined && apt.sessions_remaining !== null) ? apt.sessions_remaining : '-',
         'Observações': apt.notes || apt.observations || '-'
       };
     });
@@ -239,7 +242,6 @@ class AgendaExportService {
       { wch: 30 },  // Paciente
       { wch: 15 },  // Telefone
       { wch: 25 },  // Terapeuta
-      { wch: 20 },  // Especialização
       { wch: 20 },  // Tipo
       { wch: 12 },  // Status
       { wch: 12 },  // Valor
@@ -263,8 +265,13 @@ class AgendaExportService {
     };
 
     // Fazer download do arquivo
-    const fileName = filename || `agenda_${format(new Date(), 'yyyy-MM-dd')}.xlsx`;
-    XLSX.writeFile(wb, fileName);
+    try {
+      const fileName = filename || `agenda_${format(new Date(), 'yyyy-MM-dd')}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+    } catch (error) {
+      console.error('Erro ao exportar para Excel:', error);
+      throw new Error('Falha ao gerar arquivo Excel. Verifique se o navegador permite downloads.');
+    }
   }
 
   /**

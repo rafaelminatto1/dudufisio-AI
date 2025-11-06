@@ -46,8 +46,9 @@ export const ColorModeToggle: React.FC<ColorModeToggleProps> = ({
   className
 }) => {
   const [currentMode, setCurrentMode] = useState<ColorDisplayMode>(() => {
-    // Tentar carregar do localStorage
+    // Tentar carregar do localStorage (com verificação SSR)
     if (value) return value;
+    if (typeof window === 'undefined') return 'hybrid';
     const stored = localStorage.getItem(STORAGE_KEY);
     return (stored as ColorDisplayMode) || 'hybrid';
   });
@@ -60,7 +61,9 @@ export const ColorModeToggle: React.FC<ColorModeToggleProps> = ({
 
   const handleModeChange = (mode: ColorDisplayMode) => {
     setCurrentMode(mode);
-    localStorage.setItem(STORAGE_KEY, mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, mode);
+    }
     onChange(mode);
   };
 
@@ -129,13 +132,16 @@ export const ColorModeToggle: React.FC<ColorModeToggleProps> = ({
 // Hook para usar o modo de cor salvo
 export const useColorMode = (): [ColorDisplayMode, (mode: ColorDisplayMode) => void] => {
   const [colorMode, setColorMode] = useState<ColorDisplayMode>(() => {
+    if (typeof window === 'undefined') return 'hybrid';
     const stored = localStorage.getItem(STORAGE_KEY);
     return (stored as ColorDisplayMode) || 'hybrid';
   });
 
   const updateColorMode = (mode: ColorDisplayMode) => {
     setColorMode(mode);
-    localStorage.setItem(STORAGE_KEY, mode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, mode);
+    }
   };
 
   return [colorMode, updateColorMode];

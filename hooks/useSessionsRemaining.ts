@@ -26,6 +26,9 @@ export function useSessionsRemaining(appointment: Appointment) {
       return;
     }
 
+    // Flag para evitar memory leaks
+    let isCancelled = false;
+
     // Calcular automaticamente
     const fetchSessionsRemaining = async () => {
       setIsLoading(true);
@@ -36,16 +39,29 @@ export function useSessionsRemaining(appointment: Appointment) {
           appointment.patientId,
           appointment.type
         );
-        setSessionsRemaining(remaining);
+        
+        // Verificar se o componente ainda está montado
+        if (!isCancelled) {
+          setSessionsRemaining(remaining);
+        }
       } catch (err) {
-        setError(err as Error);
-        setSessionsRemaining(undefined);
+        if (!isCancelled) {
+          setError(err as Error);
+          setSessionsRemaining(undefined);
+        }
       } finally {
-        setIsLoading(false);
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchSessionsRemaining();
+
+    // Cleanup function
+    return () => {
+      isCancelled = true;
+    };
   }, [
     appointment.id,
     appointment.patientId,

@@ -352,5 +352,15 @@ describe('AppointmentService', () => {
       expect(duration).toBeLessThan(500);
     });
   });
+
+  describe('calculateSessionsRemaining', () => {
+    it('deve retornar undefined se o paciente não tiver agendamentos', async () => {
+      const { db } = await import('@/services/mockDb');
+      vi.spyOn(db, 'getAppointments').mockReturnValue([]);
+      
+      const remaining = await appointmentService.calculateSessionsRemaining('patient-sem-agendamentos');
+      expect(remaining).toBeUndefined();
+    });
+  });
 });
 

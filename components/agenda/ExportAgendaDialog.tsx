@@ -79,6 +79,9 @@ const ExportAgendaDialog: React.FC<ExportAgendaDialogProps> = ({
     setExporting(true);
     try {
       agendaExportService.exportToExcelXLSX(appointments, therapists);
+    } catch (error) {
+      console.error('Erro ao exportar Excel:', error);
+      alert('Erro ao exportar para Excel. Verifique se o navegador permite downloads.');
     } finally {
       setExporting(false);
     }

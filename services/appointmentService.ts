@@ -1,4 +1,4 @@
-import { Appointment } from '../types';
+import { Appointment, AppointmentStatus } from '../types';
 import { db } from './mockDb';
 import { eventService } from './eventService';
 import { mockPatients } from '../data/mockData';
@@ -276,7 +276,7 @@ export const calculateSessionsRemaining = async (
 
     // Contar sessões realizadas (completed) do mesmo tipo
     const completedSessions = appointments.filter(apt => {
-      const isCompleted = apt.status === 'completed';
+      const isCompleted = apt.status === AppointmentStatus.Completed;
       const isSameType = appointmentType ? apt.type === appointmentType : true;
       return isCompleted && isSameType;
     }).length;

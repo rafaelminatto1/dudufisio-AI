@@ -1,5 +1,5 @@
-import { SessionEvolution, EmojiRatingValue, Patient } from '../types';
-import { shouldUseSupabase, logDataSource } from '../config/supabaseTablesConfig';
+import { EmojiRatingValue } from '../types';
+import { logDataSource } from '../config/supabaseTablesConfig';
 import * as sessionEvolutionService from './sessionEvolutionService';
 
 /**
