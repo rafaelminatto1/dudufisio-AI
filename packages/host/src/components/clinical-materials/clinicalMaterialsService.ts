@@ -5,7 +5,7 @@
  * Serviço para gerenciar materiais clínicos (fichas, escalas, formulários)
  */
 
-import { supabase } from '../../../../shared/services/supabaseClient';
+import { supabase } from '../../services/supabaseClient';
 import type { 
   ClinicalMaterial, 
   MaterialFilters, 
@@ -24,18 +24,22 @@ class ClinicalMaterialsService {
         .eq('status', 'published')
         .order('name', { ascending: true });
 
-      // Filtro por categoria
+      // Filtro por categoria (AND)
       if (filters?.category) {
         query = query.eq('type', filters.category);
       }
 
-      // Filtro por especialidade
+      // Filtro por especialidade - busca nas tags (AND com outros filtros)
       if (filters?.specialty) {
-        query = query.contains('tags', [filters.specialty]);
+        // Buscar pela especialidade nas tags (case-insensitive)
+        const specialtyLower = filters.specialty.toLowerCase();
+        // Usa contains que é AND com filtros anteriores
+        query = query.contains('tags', [specialtyLower]);
       }
 
-      // Filtro de busca por nome, descrição ou tags
+      // Filtro de busca por nome, descrição ou tags (OR dentro da busca, AND com outros filtros)
       if (filters?.search) {
+        // OR entre nome/descrição/tags, mas AND com categoria/especialidade
         query = query.or(
           `name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`
         );

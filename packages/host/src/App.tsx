@@ -11,6 +11,11 @@ const PatientDetailPage = lazy(() => import('agendaPacientes/PatientDetailPage')
 const ClinicalMaterialsPage = lazy(() => import('./pages/ClinicalMaterialsPage'));
 const AcompanhamentoPage = lazy(() => import('tratamentos/AcompanhamentoPage'));
 const FinancialDashboardPage = lazy(() => import('financeiro/FinancialDashboardPage'));
+// Patient Portal - App para Pacientes
+const PatientLoginPage = lazy(() => import('patientPortal/PatientLoginPage'));
+const PatientDashboardPage = lazy(() => import('patientPortal/PatientDashboardPage'));
+const PatientExercisesPage = lazy(() => import('patientPortal/PatientExercisesPage'));
+const PatientProfilePage = lazy(() => import('patientPortal/PatientProfilePage'));
 
 // Configure React Query
 const queryClient = new QueryClient({
@@ -52,6 +57,13 @@ function App() {
           
           {/* Financeiro (Remote 3) */}
           <Route path="/financial" element={<FinancialDashboardPage />} />
+          
+          {/* Patient Portal (Remote 4) - App para Pacientes */}
+          <Route path="/patient/login" element={<PatientLoginPage />} />
+          <Route path="/patient/dashboard" element={<PatientDashboardPage />} />
+          <Route path="/patient/exercises" element={<PatientExercisesPage />} />
+          <Route path="/patient/profile" element={<PatientProfilePage />} />
+          <Route path="/patient" element={<Navigate to="/patient/login" replace />} />
           
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/auth/login" replace />} />

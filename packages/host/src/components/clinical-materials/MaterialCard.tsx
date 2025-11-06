@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { Download, Star } from 'lucide-react';
-import { Button } from '../../../../shared/components/ui/button';
+import { Button } from '../ui/button';
 import type { ClinicalMaterial } from './types';
 import { CATEGORY_LABELS, CATEGORY_ICONS } from './types';
 

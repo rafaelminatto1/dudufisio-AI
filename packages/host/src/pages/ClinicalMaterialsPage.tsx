@@ -7,8 +7,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, FileText, Star } from 'lucide-react';
-import { Input } from '../../../../shared/components/ui/input';
-import { Button } from '../../../../shared/components/ui/button';
+import { Input } from '../components/ui/input';
+import { Button } from '../components/ui/button';
 import { MaterialCard } from '../components/clinical-materials/MaterialCard';
 import { clinicalMaterialsService } from '../components/clinical-materials/clinicalMaterialsService';
 import type { 
