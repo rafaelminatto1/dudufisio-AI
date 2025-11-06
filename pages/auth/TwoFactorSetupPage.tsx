@@ -14,7 +14,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
+import { H1, H2, H3, H4, Body, Small } from '@/components/ui/Typography';
 
 interface TwoFactorSetupPageProps {
   onComplete?: () => void;

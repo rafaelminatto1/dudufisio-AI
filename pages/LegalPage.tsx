@@ -2,7 +2,7 @@
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
+import { H1, H2, H3, H4, Body, Small } from '@/components/ui/Typography';
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mb-mdxl">

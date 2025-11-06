@@ -47,7 +47,7 @@ import SurgeryManager from '../components/atendimento/SurgeryManager';
 import PatientGoalsManager from '../components/atendimento/PatientGoalsManager';
 import BodyMapPain from '../components/atendimento/BodyMapPain';
 import { Surgery, PatientGoal, PainPoint } from '../types';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
+import { H1, H2, H3, H4, Body, Small } from '@/components/ui/Typography';
 
 const AtendimentoPageDemo: React.FC = () => {
     // Mock data

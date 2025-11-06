@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, ArrowLeft, Search, HelpCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
+import { H1, H2, H3, H4, Body, Small } from '@/components/ui/Typography';
 
 const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();

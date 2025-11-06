@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Input from '../src/components/ui/Input';
-import Badge from '../src/components/ui/Badge';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../src/components/ui/Table';
-import Modal from '../src/components/ui/Modal';
-import Card from '../src/components/ui/Card';
-import Button from '../src/components/ui/Button';
+import Input from '@/components/ui/Input';
+import Badge from '@/components/ui/Badge';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import Modal from '@/components/ui/Modal';
+import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
 import { Search, Mail, User, Check, AlertTriangle, Info } from 'lucide-react';
 
 const ComponentsTestPage: React.FC = () => {

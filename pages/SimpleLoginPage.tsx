@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Stethoscope, Loader } from 'lucide-react';
-import { H1, H2, H3, H4, Body, Small } from '../src/components/ui/Typography';
+import { H1, H2, H3, H4, Body, Small } from '@/components/ui/Typography';
 
 interface SimpleLoginPageProps {
   onSuccess?: () => void;

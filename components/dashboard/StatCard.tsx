@@ -1,7 +1,7 @@
 // components/dashboard/StatCard.tsx
 import React from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
-import Card from '../../src/components/ui/Card';
+import { Card } from '@/components/ui/card';
 
 interface StatCardProps {
   title: string;
