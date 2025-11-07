@@ -36,6 +36,7 @@ import {
   Globe,
   Wrench,
   Palette,
+  Brain,
 } from 'lucide-react';
 import { Role } from '@/types';
 import { NavItemConfig } from './NavItem';
@@ -63,6 +64,13 @@ export function getNavigationConfig(role: Role, unreadCount: number = 0): Naviga
                 to: '/dashboard',
                 icon: LayoutGrid,
                 label: 'Visão Geral',
+              },
+              {
+                id: 'ai-dashboard',
+                to: '/ai-dashboard',
+                icon: Brain,
+                label: 'Dashboard de IA',
+                isNew: true,
               },
               {
                 id: 'admin-dashboard',

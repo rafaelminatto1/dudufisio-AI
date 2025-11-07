@@ -1,7 +1,7 @@
 {
   "config": {
     "configFile": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\playwright.config.ts",
-    "rootDir": "C:/Users/rafal/cursor/dudufisio-ai/dudufisio-AI/testsprite_tests",
+    "rootDir": "C:/Users/rafal/cursor/dudufisio-ai/dudufisio-AI/tests",
     "forbidOnly": false,
     "fullyParallel": false,
     "globalSetup": null,
@@ -43,7 +43,7 @@
         "metadata": {},
         "id": "chromium",
         "name": "chromium",
-        "testDir": "C:/Users/rafal/cursor/dudufisio-ai/dudufisio-AI/testsprite_tests",
+        "testDir": "C:/Users/rafal/cursor/dudufisio-ai/dudufisio-AI/tests",
         "testIgnore": [],
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
@@ -63,452 +63,456 @@
       "timeout": 120000
     }
   },
-  "suites": [
+  "suites": [],
+  "errors": [
     {
-      "title": "ai-features.spec.ts",
-      "file": "ai-features.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Funcionalidades de IA - Evolução de Pacientes",
-          "file": "ai-features.spec.ts",
-          "line": 20,
-          "column": 6,
-          "specs": [
-            {
-              "title": "TC005: Verificar presença do Card \"Assistente de IA\"",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "28a6903c16d2a979b1d9-d76bb2986db76481e1e8",
-              "file": "ai-features.spec.ts",
-              "line": 75,
-              "column": 3
-            },
-            {
-              "title": "TC006: Verificar botões de IA no card",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "28a6903c16d2a979b1d9-81f02901f04584d1a77f",
-              "file": "ai-features.spec.ts",
-              "line": 83,
-              "column": 3
-            },
-            {
-              "title": "TC007: Testar fluxo de Estruturação SOAP",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "28a6903c16d2a979b1d9-51657ac8e8570a9b1eb9",
-              "file": "ai-features.spec.ts",
-              "line": 105,
-              "column": 3
-            },
-            {
-              "title": "TC008: Testar abertura do diálogo de Sugestão de Exercícios",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "28a6903c16d2a979b1d9-cd61aaa145b580c8b2a0",
-              "file": "ai-features.spec.ts",
-              "line": 150,
-              "column": 3
-            },
-            {
-              "title": "TC009: Verificar presença de elementos de gravação de áudio",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "28a6903c16d2a979b1d9-bcb7e2b5ad2eed552a67",
-              "file": "ai-features.spec.ts",
-              "line": 182,
-              "column": 3
-            },
-            {
-              "title": "TC010: Verificar configuração da API Key do Gemini",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "28a6903c16d2a979b1d9-11f7852d33e4ad6182a4",
-              "file": "ai-features.spec.ts",
-              "line": 206,
-              "column": 3
-            }
-          ]
-        },
-        {
-          "title": "Resumo de Progresso com IA",
-          "file": "ai-features.spec.ts",
-          "line": 235,
-          "column": 6,
-          "specs": [
-            {
-              "title": "TC011: Navegar para página de Resumo de Progresso",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "28a6903c16d2a979b1d9-85d9ef2579c2f3c56d4e",
-              "file": "ai-features.spec.ts",
-              "line": 237,
-              "column": 3
-            }
-          ]
-        },
-        {
-          "title": "Relatório de Testes de IA",
-          "file": "ai-features.spec.ts",
-          "line": 288,
-          "column": 6,
-          "specs": [
-            {
-              "title": "TC012: Gerar relatório final dos testes de IA",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "28a6903c16d2a979b1d9-df9b8e33c4719779054f",
-              "file": "ai-features.spec.ts",
-              "line": 290,
-              "column": 3
-            }
-          ]
-        }
-      ]
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
     },
     {
-      "title": "evolution-advanced-features.spec.ts",
-      "file": "evolution-advanced-features.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Funcionalidades Avançadas de Evolução",
-          "file": "evolution-advanced-features.spec.ts",
-          "line": 22,
-          "column": 6,
-          "specs": [
-            {
-              "title": "1. Timer de Sessão - Deve iniciar automaticamente",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-aa9dcd3522ee7f1a2236",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 52,
-              "column": 3
-            },
-            {
-              "title": "2. Sessão Anterior - Deve exibir dados da última sessão",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-eddde3f81e465eee1f88",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 68,
-              "column": 3
-            },
-            {
-              "title": "3. Exercícios - Tab deve existir e permitir adicionar exercícios",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-5ba9302888b60b44ac9b",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 88,
-              "column": 3
-            },
-            {
-              "title": "4. Upload de Fotos - Deve permitir upload",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-0ba0625af8cfc9ecb4af",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 116,
-              "column": 3
-            },
-            {
-              "title": "5. Templates - Botão deve abrir modal de templates",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-2c8000d472a1ee20ed99",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 138,
-              "column": 3
-            },
-            {
-              "title": "6. Salvar como Template - Deve permitir salvar evolução atual como template",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-692dca88315b237569fd",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 176,
-              "column": 3
-            },
-            {
-              "title": "7. Exportar PDF - Botão deve existir",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-436c73ebd090cabe4c71",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 217,
-              "column": 3
-            },
-            {
-              "title": "8. Integração Completa - Todos componentes carregados sem erros",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-e5d29620b05d3d074939",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 243,
-              "column": 3
-            },
-            {
-              "title": "9. Layout Responsivo - Sidebar deve estar visível",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-bb34be876fa605899c4e",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 271,
-              "column": 3
-            },
-            {
-              "title": "10. Formulário SOAP - Todos campos principais devem existir",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-930267b6a83bf68ad193",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 286,
-              "column": 3
-            }
-          ]
-        },
-        {
-          "title": "Testes de Performance",
-          "file": "evolution-advanced-features.spec.ts",
-          "line": 309,
-          "column": 6,
-          "specs": [
-            {
-              "title": "Página de evolução deve carregar em menos de 5 segundos",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "5874c7d9e4d951ae1345-0ee3b3278e7b1e625c50",
-              "file": "evolution-advanced-features.spec.ts",
-              "line": 310,
-              "column": 3
-            }
-          ]
-        }
-      ]
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\AutomationEngine.test.ts",
+      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\AutomationEngine.test.ts"
+    },
+    {
+      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\index.test.ts",
+      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\index.test.ts"
+    },
+    {
+      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\MessageBus.test.ts",
+      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\MessageBus.test.ts"
+    },
+    {
+      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\TemplateEngine.test.ts",
+      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\TemplateEngine.test.ts"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_appointments_post.test.ts",
+      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_appointments_post.test.ts"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_body_map_post.test.ts",
+      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_body_map_post.test.ts"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_patients_post.test.ts",
+      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_patients_post.test.ts"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "ReferenceError: jest is not defined",
+      "stack": "ReferenceError: jest is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\application\\services\\BillingService.test.ts:8:26",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\application\\services\\BillingService.test.ts",
+        "column": 26,
+        "line": 8
+      },
+      "snippet": "\u001b[90m   at \u001b[39mfinancial\\application\\services\\BillingService.test.ts:8\n\n\u001b[0m \u001b[90m  6 |\u001b[39m \u001b[90m// Mock repository\u001b[39m\n \u001b[90m  7 |\u001b[39m \u001b[36mconst\u001b[39m mockRepository\u001b[33m:\u001b[39m jest\u001b[33m.\u001b[39m\u001b[33mMocked\u001b[39m\u001b[33m<\u001b[39m\u001b[33mIFinancialRepository\u001b[39m\u001b[33m>\u001b[39m \u001b[33m=\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m   findPackagesByPatient\u001b[33m:\u001b[39m jest\u001b[33m.\u001b[39mfn()\u001b[33m,\u001b[39m\n \u001b[90m    |\u001b[39m                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m   findTransactionsByPatient\u001b[33m:\u001b[39m jest\u001b[33m.\u001b[39mfn()\u001b[33m,\u001b[39m\n \u001b[90m 10 |\u001b[39m   saveInvoice\u001b[33m:\u001b[39m jest\u001b[33m.\u001b[39mfn()\u001b[33m,\u001b[39m\n \u001b[90m 11 |\u001b[39m   generateInvoiceNumber\u001b[33m:\u001b[39m jest\u001b[33m.\u001b[39mfn()\u001b[33m,\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "ReferenceError: jest is not defined",
+      "stack": "ReferenceError: jest is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\application\\use-cases\\CreatePackageUseCase.test.ts:12:32",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\application\\use-cases\\CreatePackageUseCase.test.ts",
+        "column": 32,
+        "line": 12
+      },
+      "snippet": "\u001b[90m   at \u001b[39mfinancial\\application\\use-cases\\CreatePackageUseCase.test.ts:12\n\n\u001b[0m \u001b[90m 10 |\u001b[39m \u001b[90m// Mock dependencies\u001b[39m\n \u001b[90m 11 |\u001b[39m \u001b[36mconst\u001b[39m mockRepository\u001b[33m:\u001b[39m jest\u001b[33m.\u001b[39m\u001b[33mMocked\u001b[39m\u001b[33m<\u001b[39m\u001b[33mIFinancialRepository\u001b[39m\u001b[33m>\u001b[39m \u001b[33m=\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 12 |\u001b[39m   findActivePackagesByPatient\u001b[33m:\u001b[39m jest\u001b[33m.\u001b[39mfn()\u001b[33m,\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 13 |\u001b[39m   findTransactionsByPatient\u001b[33m:\u001b[39m jest\u001b[33m.\u001b[39mfn()\u001b[33m,\u001b[39m\n \u001b[90m 14 |\u001b[39m   withTransaction\u001b[33m:\u001b[39m jest\u001b[33m.\u001b[39mfn()\u001b[33m,\u001b[39m\n \u001b[90m 15 |\u001b[39m   \u001b[90m// Add other required methods as empty mocks\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Package.test.ts: Unexpected reserved word 'package'. (63:12)\n\n\u001b[0m \u001b[90m 61 |\u001b[39m   describe(\u001b[32m'Package Creation'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 62 |\u001b[39m     it(\u001b[32m'should create package with valid data'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 63 |\u001b[39m       \u001b[36mconst\u001b[39m \u001b[36mpackage\u001b[39m \u001b[33m=\u001b[39m \u001b[33mPackage\u001b[39m\u001b[33m.\u001b[39mcreate(validPackageData)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 64 |\u001b[39m       \n \u001b[90m 65 |\u001b[39m       expect(\u001b[36mpackage\u001b[39m\u001b[33m.\u001b[39mgetPatientId())\u001b[33m.\u001b[39mtoBe(\u001b[32m'patient-123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 66 |\u001b[39m       expect(\u001b[36mpackage\u001b[39m\u001b[33m.\u001b[39mgetTransactionId())\u001b[33m.\u001b[39mtoBe(\u001b[32m'transaction-123'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Package.test.ts: Unexpected reserved word 'package'. (63:12)\n\n\u001b[0m \u001b[90m 61 |\u001b[39m   describe(\u001b[32m'Package Creation'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 62 |\u001b[39m     it(\u001b[32m'should create package with valid data'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 63 |\u001b[39m       \u001b[36mconst\u001b[39m \u001b[36mpackage\u001b[39m \u001b[33m=\u001b[39m \u001b[33mPackage\u001b[39m\u001b[33m.\u001b[39mcreate(validPackageData)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 64 |\u001b[39m       \n \u001b[90m 65 |\u001b[39m       expect(\u001b[36mpackage\u001b[39m\u001b[33m.\u001b[39mgetPatientId())\u001b[33m.\u001b[39mtoBe(\u001b[32m'patient-123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 66 |\u001b[39m       expect(\u001b[36mpackage\u001b[39m\u001b[33m.\u001b[39mgetTransactionId())\u001b[33m.\u001b[39mtoBe(\u001b[32m'transaction-123'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Package.test.ts",
+        "line": 63,
+        "column": 12
+      },
+      "snippet": "\u001b[90m   at \u001b[39mfinancial\\domain\\entities\\Package.test.ts:63\n\n\u001b[0m \u001b[90m 61 |\u001b[39m   describe(\u001b[32m'Package Creation'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 62 |\u001b[39m     it(\u001b[32m'should create package with valid data'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 63 |\u001b[39m       \u001b[36mconst\u001b[39m \u001b[36mpackage\u001b[39m \u001b[33m=\u001b[39m \u001b[33mPackage\u001b[39m\u001b[33m.\u001b[39mcreate(validPackageData)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 64 |\u001b[39m       \n \u001b[90m 65 |\u001b[39m       expect(\u001b[36mpackage\u001b[39m\u001b[33m.\u001b[39mgetPatientId())\u001b[33m.\u001b[39mtoBe(\u001b[32m'patient-123'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 66 |\u001b[39m       expect(\u001b[36mpackage\u001b[39m\u001b[33m.\u001b[39mgetTransactionId())\u001b[33m.\u001b[39mtoBe(\u001b[32m'transaction-123'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "ReferenceError: describe is not defined",
+      "stack": "ReferenceError: describe is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Transaction.test.ts:6:1",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Transaction.test.ts",
+        "column": 1,
+        "line": 6
+      },
+      "snippet": "\u001b[90m   at \u001b[39mfinancial\\domain\\entities\\Transaction.test.ts:6\n\n\u001b[0m \u001b[90m 4 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mDomainError\u001b[39m\u001b[33m,\u001b[39m \u001b[33mBusinessRuleError\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'../../../../lib/financial/domain/errors/DomainError'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 5 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 6 |\u001b[39m describe(\u001b[32m'Transaction Entity'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m   |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 7 |\u001b[39m   \u001b[36mconst\u001b[39m mockPaymentMethod \u001b[33m=\u001b[39m \u001b[33mPaymentMethod\u001b[39m\u001b[33m.\u001b[39mcreditCard(\n \u001b[90m 8 |\u001b[39m     \u001b[32m'visa'\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 9 |\u001b[39m     \u001b[32m'1234'\u001b[39m\u001b[33m,\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "ReferenceError: describe is not defined",
+      "stack": "ReferenceError: describe is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\value-objects\\Money.test.ts:4:1",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\value-objects\\Money.test.ts",
+        "column": 1,
+        "line": 4
+      },
+      "snippet": "\u001b[90m   at \u001b[39mfinancial\\domain\\value-objects\\Money.test.ts:4\n\n\u001b[0m \u001b[90m 2 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mDomainError\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'../../../../lib/financial/domain/errors/DomainError'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 3 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 4 |\u001b[39m describe(\u001b[32m'Money Value Object'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m   |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 5 |\u001b[39m   describe(\u001b[32m'Construction'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 6 |\u001b[39m     it(\u001b[32m'should create money with valid amount and currency'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 7 |\u001b[39m       \u001b[36mconst\u001b[39m money \u001b[33m=\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mMoney\u001b[39m(\u001b[35m100\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'BRL'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "ReferenceError: jest is not defined",
+      "stack": "ReferenceError: jest is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\infrastructure\\gateways\\StripeGateway.test.ts:8:1",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\infrastructure\\gateways\\StripeGateway.test.ts",
+        "column": 1,
+        "line": 8
+      },
+      "snippet": "\u001b[90m   at \u001b[39mfinancial\\infrastructure\\gateways\\StripeGateway.test.ts:8\n\n\u001b[0m \u001b[90m  6 |\u001b[39m\n \u001b[90m  7 |\u001b[39m \u001b[90m// Mock Stripe\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m jest\u001b[33m.\u001b[39mmock(\u001b[32m'stripe'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m\n \u001b[90m 10 |\u001b[39m \u001b[36mconst\u001b[39m mockStripe \u001b[33m=\u001b[39m {\n \u001b[90m 11 |\u001b[39m   paymentIntents\u001b[33m:\u001b[39m {\u001b[0m"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\inventory.test.ts: Unexpected token, expected \",\" (59:31)\n\n\u001b[0m \u001b[90m 57 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 58 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 59 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mInventoryDashboard\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 60 |\u001b[39m\n \u001b[90m 61 |\u001b[39m     \u001b[90m// Cadastrar item com estoque mínimo\u001b[39m\n \u001b[90m 62 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/adicionar item/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\inventory.test.ts: Unexpected token, expected \",\" (59:31)\n\n\u001b[0m \u001b[90m 57 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 58 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 59 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mInventoryDashboard\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 60 |\u001b[39m\n \u001b[90m 61 |\u001b[39m     \u001b[90m// Cadastrar item com estoque mínimo\u001b[39m\n \u001b[90m 62 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/adicionar item/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\inventory.test.ts",
+        "line": 59,
+        "column": 31
+      },
+      "snippet": "\u001b[90m   at \u001b[39mintegration\\inventory.test.ts:59\n\n\u001b[0m \u001b[90m 57 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 58 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 59 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mInventoryDashboard\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 60 |\u001b[39m\n \u001b[90m 61 |\u001b[39m     \u001b[90m// Cadastrar item com estoque mínimo\u001b[39m\n \u001b[90m 62 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/adicionar item/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\kanban.test.ts: Unexpected token, expected \",\" (61:23)\n\n\u001b[0m \u001b[90m 59 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 60 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 61 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mKanbanPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 62 |\u001b[39m\n \u001b[90m 63 |\u001b[39m     \u001b[90m// 1. Criar nova tarefa\u001b[39m\n \u001b[90m 64 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/nova tarefa/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\kanban.test.ts: Unexpected token, expected \",\" (61:23)\n\n\u001b[0m \u001b[90m 59 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 60 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 61 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mKanbanPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 62 |\u001b[39m\n \u001b[90m 63 |\u001b[39m     \u001b[90m// 1. Criar nova tarefa\u001b[39m\n \u001b[90m 64 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/nova tarefa/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\kanban.test.ts",
+        "line": 61,
+        "column": 23
+      },
+      "snippet": "\u001b[90m   at \u001b[39mintegration\\kanban.test.ts:61\n\n\u001b[0m \u001b[90m 59 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 60 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 61 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mKanbanPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 62 |\u001b[39m\n \u001b[90m 63 |\u001b[39m     \u001b[90m// 1. Criar nova tarefa\u001b[39m\n \u001b[90m 64 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/nova tarefa/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\notifications.test.ts: Unexpected token, expected \",\" (48:35)\n\n\u001b[0m \u001b[90m 46 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 47 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mNotificationCenterPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m     \u001b[90m// Criar agendamento com notificação\u001b[39m\n \u001b[90m 51 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/criar agendamento/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\notifications.test.ts: Unexpected token, expected \",\" (48:35)\n\n\u001b[0m \u001b[90m 46 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 47 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mNotificationCenterPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m     \u001b[90m// Criar agendamento com notificação\u001b[39m\n \u001b[90m 51 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/criar agendamento/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\notifications.test.ts",
+        "line": 48,
+        "column": 35
+      },
+      "snippet": "\u001b[90m   at \u001b[39mintegration\\notifications.test.ts:48\n\n\u001b[0m \u001b[90m 46 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 47 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 48 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mNotificationCenterPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 49 |\u001b[39m\n \u001b[90m 50 |\u001b[39m     \u001b[90m// Criar agendamento com notificação\u001b[39m\n \u001b[90m 51 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/criar agendamento/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\patient-portal.test.ts: Unexpected token, expected \",\" (56:32)\n\n\u001b[0m \u001b[90m 54 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 55 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 56 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mPatientPortalLayout\u001b[39m patientId\u001b[33m=\u001b[39m\u001b[32m\"1\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 57 |\u001b[39m\n \u001b[90m 58 |\u001b[39m     \u001b[90m// Acessar área de comunicação\u001b[39m\n \u001b[90m 59 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/mensagens/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\patient-portal.test.ts: Unexpected token, expected \",\" (56:32)\n\n\u001b[0m \u001b[90m 54 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 55 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 56 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mPatientPortalLayout\u001b[39m patientId\u001b[33m=\u001b[39m\u001b[32m\"1\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 57 |\u001b[39m\n \u001b[90m 58 |\u001b[39m     \u001b[90m// Acessar área de comunicação\u001b[39m\n \u001b[90m 59 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/mensagens/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\patient-portal.test.ts",
+        "line": 56,
+        "column": 32
+      },
+      "snippet": "\u001b[90m   at \u001b[39mintegration\\patient-portal.test.ts:56\n\n\u001b[0m \u001b[90m 54 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 55 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 56 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mPatientPortalLayout\u001b[39m patientId\u001b[33m=\u001b[39m\u001b[32m\"1\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 57 |\u001b[39m\n \u001b[90m 58 |\u001b[39m     \u001b[90m// Acessar área de comunicação\u001b[39m\n \u001b[90m 59 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/mensagens/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\reports.test.ts: Unexpected token, expected \",\" (32:24)\n\n\u001b[0m \u001b[90m 30 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 31 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mReportsPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m\n \u001b[90m 34 |\u001b[39m     \u001b[90m// Gerar relatório clínico\u001b[39m\n \u001b[90m 35 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/gerar relatório clínico/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\reports.test.ts: Unexpected token, expected \",\" (32:24)\n\n\u001b[0m \u001b[90m 30 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 31 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mReportsPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m\n \u001b[90m 34 |\u001b[39m     \u001b[90m// Gerar relatório clínico\u001b[39m\n \u001b[90m 35 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/gerar relatório clínico/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\reports.test.ts",
+        "line": 32,
+        "column": 24
+      },
+      "snippet": "\u001b[90m   at \u001b[39mintegration\\reports.test.ts:32\n\n\u001b[0m \u001b[90m 30 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 31 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mReportsPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m\n \u001b[90m 34 |\u001b[39m     \u001b[90m// Gerar relatório clínico\u001b[39m\n \u001b[90m 35 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/gerar relatório clínico/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_admin_workflow.test.ts: Unterminated string constant. (6:53)\n\n\u001b[0m \u001b[90m 4 |\u001b[39m\n \u001b[90m 5 |\u001b[39m \u001b[90m// Mock components that don't exist yet - THIS TEST MUST FAIL\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 6 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mAuthProvider\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m\"../contexts/AppContext\"\u001b[39m\u001b[32m';\u001b[39m\n \u001b[90m   |\u001b[39m                                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 7 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mAdminDashboard\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@/pages/AdminDashboard'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 8 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mUserManagement\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@/components/admin/UserManagement'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 9 |\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_admin_workflow.test.ts: Unterminated string constant. (6:53)\n\n\u001b[0m \u001b[90m 4 |\u001b[39m\n \u001b[90m 5 |\u001b[39m \u001b[90m// Mock components that don't exist yet - THIS TEST MUST FAIL\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 6 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mAuthProvider\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m\"../contexts/AppContext\"\u001b[39m\u001b[32m';\u001b[39m\n \u001b[90m   |\u001b[39m                                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 7 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mAdminDashboard\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@/pages/AdminDashboard'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 8 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mUserManagement\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@/components/admin/UserManagement'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 9 |\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_admin_workflow.test.ts",
+        "line": 6,
+        "column": 53
+      },
+      "snippet": "\u001b[90m   at \u001b[39mintegration\\test_admin_workflow.test.ts:6\n\n\u001b[0m \u001b[90m 4 |\u001b[39m\n \u001b[90m 5 |\u001b[39m \u001b[90m// Mock components that don't exist yet - THIS TEST MUST FAIL\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 6 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mAuthProvider\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m\"../contexts/AppContext\"\u001b[39m\u001b[32m';\u001b[39m\n \u001b[90m   |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 7 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mAdminDashboard\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@/pages/AdminDashboard'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 8 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mUserManagement\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m'@/components/admin/UserManagement'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 9 |\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_patient_portal.test.ts: Unexpected token, expected \",\" (40:38)\n\n\u001b[0m \u001b[90m 38 |\u001b[39m vi\u001b[33m.\u001b[39mmock(\u001b[32m'react-router-dom'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m ({\n \u001b[90m 39 |\u001b[39m   useNavigate\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m mockNavigate\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m   \u001b[33mLink\u001b[39m\u001b[33m:\u001b[39m ({ children\u001b[33m,\u001b[39m to }\u001b[33m:\u001b[39m any) \u001b[33m=>\u001b[39m \u001b[33m<\u001b[39m\u001b[33ma\u001b[39m href\u001b[33m=\u001b[39m{to}\u001b[33m>\u001b[39m{children}\u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33ma\u001b[39m\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m    |\u001b[39m                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   useParams\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m ({ id\u001b[33m:\u001b[39m \u001b[32m'patient-123'\u001b[39m })\n \u001b[90m 42 |\u001b[39m }))\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_patient_portal.test.ts: Unexpected token, expected \",\" (40:38)\n\n\u001b[0m \u001b[90m 38 |\u001b[39m vi\u001b[33m.\u001b[39mmock(\u001b[32m'react-router-dom'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m ({\n \u001b[90m 39 |\u001b[39m   useNavigate\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m mockNavigate\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m   \u001b[33mLink\u001b[39m\u001b[33m:\u001b[39m ({ children\u001b[33m,\u001b[39m to }\u001b[33m:\u001b[39m any) \u001b[33m=>\u001b[39m \u001b[33m<\u001b[39m\u001b[33ma\u001b[39m href\u001b[33m=\u001b[39m{to}\u001b[33m>\u001b[39m{children}\u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33ma\u001b[39m\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m    |\u001b[39m                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   useParams\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m ({ id\u001b[33m:\u001b[39m \u001b[32m'patient-123'\u001b[39m })\n \u001b[90m 42 |\u001b[39m }))\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_patient_portal.test.ts",
+        "line": 40,
+        "column": 38
+      },
+      "snippet": "\u001b[90m   at \u001b[39mintegration\\test_patient_portal.test.ts:40\n\n\u001b[0m \u001b[90m 38 |\u001b[39m vi\u001b[33m.\u001b[39mmock(\u001b[32m'react-router-dom'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m ({\n \u001b[90m 39 |\u001b[39m   useNavigate\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m mockNavigate\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m   \u001b[33mLink\u001b[39m\u001b[33m:\u001b[39m ({ children\u001b[33m,\u001b[39m to }\u001b[33m:\u001b[39m any) \u001b[33m=>\u001b[39m \u001b[33m<\u001b[39m\u001b[33ma\u001b[39m href\u001b[33m=\u001b[39m{to}\u001b[33m>\u001b[39m{children}\u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33ma\u001b[39m\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m    |\u001b[39m                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m   useParams\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m ({ id\u001b[33m:\u001b[39m \u001b[32m'patient-123'\u001b[39m })\n \u001b[90m 42 |\u001b[39m }))\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_therapist_workflow.test.ts: Unexpected token, expected \",\" (37:38)\n\n\u001b[0m \u001b[90m 35 |\u001b[39m vi\u001b[33m.\u001b[39mmock(\u001b[32m'react-router-dom'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m ({\n \u001b[90m 36 |\u001b[39m   useNavigate\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m mockNavigate\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 37 |\u001b[39m   \u001b[33mLink\u001b[39m\u001b[33m:\u001b[39m ({ children\u001b[33m,\u001b[39m to }\u001b[33m:\u001b[39m any) \u001b[33m=>\u001b[39m \u001b[33m<\u001b[39m\u001b[33ma\u001b[39m href\u001b[33m=\u001b[39m{to}\u001b[33m>\u001b[39m{children}\u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33ma\u001b[39m\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m    |\u001b[39m                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 38 |\u001b[39m   useParams\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m ({ id\u001b[33m:\u001b[39m \u001b[32m'patient-123'\u001b[39m })\n \u001b[90m 39 |\u001b[39m }))\u001b[33m;\u001b[39m\n \u001b[90m 40 |\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_therapist_workflow.test.ts: Unexpected token, expected \",\" (37:38)\n\n\u001b[0m \u001b[90m 35 |\u001b[39m vi\u001b[33m.\u001b[39mmock(\u001b[32m'react-router-dom'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m ({\n \u001b[90m 36 |\u001b[39m   useNavigate\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m mockNavigate\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 37 |\u001b[39m   \u001b[33mLink\u001b[39m\u001b[33m:\u001b[39m ({ children\u001b[33m,\u001b[39m to }\u001b[33m:\u001b[39m any) \u001b[33m=>\u001b[39m \u001b[33m<\u001b[39m\u001b[33ma\u001b[39m href\u001b[33m=\u001b[39m{to}\u001b[33m>\u001b[39m{children}\u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33ma\u001b[39m\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m    |\u001b[39m                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 38 |\u001b[39m   useParams\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m ({ id\u001b[33m:\u001b[39m \u001b[32m'patient-123'\u001b[39m })\n \u001b[90m 39 |\u001b[39m }))\u001b[33m;\u001b[39m\n \u001b[90m 40 |\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_therapist_workflow.test.ts",
+        "line": 37,
+        "column": 38
+      },
+      "snippet": "\u001b[90m   at \u001b[39mintegration\\test_therapist_workflow.test.ts:37\n\n\u001b[0m \u001b[90m 35 |\u001b[39m vi\u001b[33m.\u001b[39mmock(\u001b[32m'react-router-dom'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m ({\n \u001b[90m 36 |\u001b[39m   useNavigate\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m mockNavigate\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 37 |\u001b[39m   \u001b[33mLink\u001b[39m\u001b[33m:\u001b[39m ({ children\u001b[33m,\u001b[39m to }\u001b[33m:\u001b[39m any) \u001b[33m=>\u001b[39m \u001b[33m<\u001b[39m\u001b[33ma\u001b[39m href\u001b[33m=\u001b[39m{to}\u001b[33m>\u001b[39m{children}\u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33ma\u001b[39m\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m    |\u001b[39m                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 38 |\u001b[39m   useParams\u001b[33m:\u001b[39m () \u001b[33m=>\u001b[39m ({ id\u001b[33m:\u001b[39m \u001b[32m'patient-123'\u001b[39m })\n \u001b[90m 39 |\u001b[39m }))\u001b[33m;\u001b[39m\n \u001b[90m 40 |\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: The requested module '@/lib/utils' does not provide an export named 'formatDate'",
+      "stack": "SyntaxError: The requested module '@/lib/utils' does not provide an export named 'formatDate'"
+    },
+    {
+      "message": "Error: Directory import 'C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\date-fns\\locale' is not supported resolving ES modules imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\components\\patients\\PatientTable.tsx\nDid you mean to import \"date-fns/locale/index.js\"?",
+      "stack": "Error: Directory import 'C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\date-fns\\locale' is not supported resolving ES modules imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\components\\patients\\PatientTable.tsx\nDid you mean to import \"date-fns/locale/index.js\"?"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot read properties of undefined (reading 'VITE_SUPABASE_URL')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'VITE_SUPABASE_URL')\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\lib\\supabaseClient.ts:16:37",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\lib\\supabaseClient.ts",
+        "column": 37,
+        "line": 16
+      },
+      "snippet": "\u001b[90m   at \u001b[39m..\\lib\\supabaseClient.ts:16\n\n\u001b[0m \u001b[90m 14 |\u001b[39m\n \u001b[90m 15 |\u001b[39m \u001b[90m// Validar variáveis de ambiente (VITE syntax)\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 16 |\u001b[39m \u001b[36mconst\u001b[39m supabaseUrl \u001b[33m=\u001b[39m \u001b[36mimport\u001b[39m\u001b[33m.\u001b[39mmeta\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mVITE_SUPABASE_URL\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 17 |\u001b[39m \u001b[36mconst\u001b[39m supabaseAnonKey \u001b[33m=\u001b[39m \u001b[36mimport\u001b[39m\u001b[33m.\u001b[39mmeta\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mVITE_SUPABASE_ANON_KEY\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 18 |\u001b[39m\n \u001b[90m 19 |\u001b[39m \u001b[36mif\u001b[39m (\u001b[33m!\u001b[39msupabaseUrl) {\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
+      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
+    },
+    {
+      "message": "SyntaxError: The requested module '../../services/supabase/patientService' does not provide an export named 'default'",
+      "stack": "SyntaxError: The requested module '../../services/supabase/patientService' does not provide an export named 'default'"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\ai.test.ts: Unexpected token, expected \",\" (36:24)\n\n\u001b[0m \u001b[90m 34 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 36 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mAiAssistant\u001b[39m patientId\u001b[33m=\u001b[39m\u001b[32m\"1\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 37 |\u001b[39m\n \u001b[90m 38 |\u001b[39m     \u001b[90m// Iniciar geração de laudo\u001b[39m\n \u001b[90m 39 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/gerar laudo/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\ai.test.ts: Unexpected token, expected \",\" (36:24)\n\n\u001b[0m \u001b[90m 34 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 36 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mAiAssistant\u001b[39m patientId\u001b[33m=\u001b[39m\u001b[32m\"1\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 37 |\u001b[39m\n \u001b[90m 38 |\u001b[39m     \u001b[90m// Iniciar geração de laudo\u001b[39m\n \u001b[90m 39 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/gerar laudo/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\ai.test.ts",
+        "line": 36,
+        "column": 24
+      },
+      "snippet": "\u001b[90m   at \u001b[39munit\\ai.test.ts:36\n\n\u001b[0m \u001b[90m 34 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 36 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mAiAssistant\u001b[39m patientId\u001b[33m=\u001b[39m\u001b[32m\"1\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 37 |\u001b[39m\n \u001b[90m 38 |\u001b[39m     \u001b[90m// Iniciar geração de laudo\u001b[39m\n \u001b[90m 39 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mclick(screen\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/gerar laudo/i\u001b[39m }))\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\appointment.test.ts: Unexpected token, expected \",\" (45:33)\n\n\u001b[0m \u001b[90m 43 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 44 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 45 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mAppointmentFormModal\u001b[39m isOpen\u001b[33m=\u001b[39m{\u001b[36mtrue\u001b[39m} onClose\u001b[33m=\u001b[39m{jest\u001b[33m.\u001b[39mfn()} \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 46 |\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[90m// Primeiro agendamento\u001b[39m\n \u001b[90m 48 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mselectOptions(screen\u001b[33m.\u001b[39mgetByLabelText(\u001b[35m/paciente/i\u001b[39m)\u001b[33m,\u001b[39m \u001b[32m'1'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\appointment.test.ts: Unexpected token, expected \",\" (45:33)\n\n\u001b[0m \u001b[90m 43 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 44 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 45 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mAppointmentFormModal\u001b[39m isOpen\u001b[33m=\u001b[39m{\u001b[36mtrue\u001b[39m} onClose\u001b[33m=\u001b[39m{jest\u001b[33m.\u001b[39mfn()} \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 46 |\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[90m// Primeiro agendamento\u001b[39m\n \u001b[90m 48 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mselectOptions(screen\u001b[33m.\u001b[39mgetByLabelText(\u001b[35m/paciente/i\u001b[39m)\u001b[33m,\u001b[39m \u001b[32m'1'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\appointment.test.ts",
+        "line": 45,
+        "column": 33
+      },
+      "snippet": "\u001b[90m   at \u001b[39munit\\appointment.test.ts:45\n\n\u001b[0m \u001b[90m 43 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 44 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 45 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mAppointmentFormModal\u001b[39m isOpen\u001b[33m=\u001b[39m{\u001b[36mtrue\u001b[39m} onClose\u001b[33m=\u001b[39m{jest\u001b[33m.\u001b[39mfn()} \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 46 |\u001b[39m\n \u001b[90m 47 |\u001b[39m     \u001b[90m// Primeiro agendamento\u001b[39m\n \u001b[90m 48 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mselectOptions(screen\u001b[33m.\u001b[39mgetByLabelText(\u001b[35m/paciente/i\u001b[39m)\u001b[33m,\u001b[39m \u001b[32m'1'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\auth.test.ts: Unterminated string constant. (3:53)\n\n\u001b[0m \u001b[90m 1 |\u001b[39m \u001b[36mimport\u001b[39m { render\u001b[33m,\u001b[39m screen\u001b[33m,\u001b[39m fireEvent\u001b[33m,\u001b[39m waitFor } \u001b[36mfrom\u001b[39m \u001b[32m'@testing-library/react'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 2 |\u001b[39m \u001b[36mimport\u001b[39m userEvent \u001b[36mfrom\u001b[39m \u001b[32m'@testing-library/user-event'\u001b[39m\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 3 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mAuthProvider\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m\"../contexts/AppContext\"\u001b[39m\u001b[32m';\u001b[39m\n \u001b[90m   |\u001b[39m                                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 4 |\u001b[39m \u001b[36mimport\u001b[39m { authService } \u001b[36mfrom\u001b[39m \u001b[32m'@/services/authService'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 5 |\u001b[39m\n \u001b[90m 6 |\u001b[39m \u001b[90m// Mock do authService\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\auth.test.ts: Unterminated string constant. (3:53)\n\n\u001b[0m \u001b[90m 1 |\u001b[39m \u001b[36mimport\u001b[39m { render\u001b[33m,\u001b[39m screen\u001b[33m,\u001b[39m fireEvent\u001b[33m,\u001b[39m waitFor } \u001b[36mfrom\u001b[39m \u001b[32m'@testing-library/react'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 2 |\u001b[39m \u001b[36mimport\u001b[39m userEvent \u001b[36mfrom\u001b[39m \u001b[32m'@testing-library/user-event'\u001b[39m\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 3 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mAuthProvider\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m\"../contexts/AppContext\"\u001b[39m\u001b[32m';\u001b[39m\n \u001b[90m   |\u001b[39m                                                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 4 |\u001b[39m \u001b[36mimport\u001b[39m { authService } \u001b[36mfrom\u001b[39m \u001b[32m'@/services/authService'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 5 |\u001b[39m\n \u001b[90m 6 |\u001b[39m \u001b[90m// Mock do authService\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\auth.test.ts",
+        "line": 3,
+        "column": 53
+      },
+      "snippet": "\u001b[90m   at \u001b[39munit\\auth.test.ts:3\n\n\u001b[0m \u001b[90m 1 |\u001b[39m \u001b[36mimport\u001b[39m { render\u001b[33m,\u001b[39m screen\u001b[33m,\u001b[39m fireEvent\u001b[33m,\u001b[39m waitFor } \u001b[36mfrom\u001b[39m \u001b[32m'@testing-library/react'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 2 |\u001b[39m \u001b[36mimport\u001b[39m userEvent \u001b[36mfrom\u001b[39m \u001b[32m'@testing-library/user-event'\u001b[39m\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 3 |\u001b[39m \u001b[36mimport\u001b[39m { \u001b[33mAuthProvider\u001b[39m } \u001b[36mfrom\u001b[39m \u001b[32m\"../contexts/AppContext\"\u001b[39m\u001b[32m';\u001b[39m\n \u001b[90m   |\u001b[39m                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 4 |\u001b[39m \u001b[36mimport\u001b[39m { authService } \u001b[36mfrom\u001b[39m \u001b[32m'@/services/authService'\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 5 |\u001b[39m\n \u001b[90m 6 |\u001b[39m \u001b[90m// Mock do authService\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "Error: Directory import 'C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\date-fns\\locale' is not supported resolving ES modules imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\components\\dashboard\\widgets\\RevenueWidget.tsx\nDid you mean to import \"date-fns/locale/index.js\"?",
+      "stack": "Error: Directory import 'C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\date-fns\\locale' is not supported resolving ES modules imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\components\\dashboard\\widgets\\RevenueWidget.tsx\nDid you mean to import \"date-fns/locale/index.js\"?"
+    },
+    {
+      "message": "SyntaxError: The requested module '../../../hooks/useOnlineStatus' does not provide an export named 'usePushNotifications'",
+      "stack": "SyntaxError: The requested module '../../../hooks/useOnlineStatus' does not provide an export named 'usePushNotifications'"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\patient.test.ts: Unexpected token, expected \",\" (47:29)\n\n\u001b[0m \u001b[90m 45 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 46 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 47 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mPatientFormModal\u001b[39m isOpen\u001b[33m=\u001b[39m{\u001b[36mtrue\u001b[39m} onClose\u001b[33m=\u001b[39m{jest\u001b[33m.\u001b[39mfn()} \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m     \u001b[90m// Preencher formulário\u001b[39m\n \u001b[90m 50 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mtype(screen\u001b[33m.\u001b[39mgetByLabelText(\u001b[35m/nome/i\u001b[39m)\u001b[33m,\u001b[39m \u001b[32m'João Silva'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\patient.test.ts: Unexpected token, expected \",\" (47:29)\n\n\u001b[0m \u001b[90m 45 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 46 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 47 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mPatientFormModal\u001b[39m isOpen\u001b[33m=\u001b[39m{\u001b[36mtrue\u001b[39m} onClose\u001b[33m=\u001b[39m{jest\u001b[33m.\u001b[39mfn()} \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m     \u001b[90m// Preencher formulário\u001b[39m\n \u001b[90m 50 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mtype(screen\u001b[33m.\u001b[39mgetByLabelText(\u001b[35m/nome/i\u001b[39m)\u001b[33m,\u001b[39m \u001b[32m'João Silva'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\patient.test.ts",
+        "line": 47,
+        "column": 29
+      },
+      "snippet": "\u001b[90m   at \u001b[39munit\\patient.test.ts:47\n\n\u001b[0m \u001b[90m 45 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 46 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 47 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mPatientFormModal\u001b[39m isOpen\u001b[33m=\u001b[39m{\u001b[36mtrue\u001b[39m} onClose\u001b[33m=\u001b[39m{jest\u001b[33m.\u001b[39mfn()} \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m     \u001b[90m// Preencher formulário\u001b[39m\n \u001b[90m 50 |\u001b[39m     \u001b[36mawait\u001b[39m user\u001b[33m.\u001b[39mtype(screen\u001b[33m.\u001b[39mgetByLabelText(\u001b[35m/nome/i\u001b[39m)\u001b[33m,\u001b[39m \u001b[32m'João Silva'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\performance.test.ts: Unexpected token, expected \",\" (32:48)\n\n\u001b[0m \u001b[90m 30 |\u001b[39m       \u001b[33m.\u001b[39mmockReturnValueOnce(endTime)\u001b[33m;\u001b[39m\n \u001b[90m 31 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     \u001b[36mconst\u001b[39m { container } \u001b[33m=\u001b[39m render(\u001b[33m<\u001b[39m\u001b[33mDashboardPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m\n \u001b[90m 34 |\u001b[39m     \u001b[90m// Simular carregamento completo\u001b[39m\n \u001b[90m 35 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mPromise\u001b[39m(resolve \u001b[33m=>\u001b[39m setTimeout(resolve\u001b[33m,\u001b[39m \u001b[35m100\u001b[39m))\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\performance.test.ts: Unexpected token, expected \",\" (32:48)\n\n\u001b[0m \u001b[90m 30 |\u001b[39m       \u001b[33m.\u001b[39mmockReturnValueOnce(endTime)\u001b[33m;\u001b[39m\n \u001b[90m 31 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     \u001b[36mconst\u001b[39m { container } \u001b[33m=\u001b[39m render(\u001b[33m<\u001b[39m\u001b[33mDashboardPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m\n \u001b[90m 34 |\u001b[39m     \u001b[90m// Simular carregamento completo\u001b[39m\n \u001b[90m 35 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mPromise\u001b[39m(resolve \u001b[33m=>\u001b[39m setTimeout(resolve\u001b[33m,\u001b[39m \u001b[35m100\u001b[39m))\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\performance.test.ts",
+        "line": 32,
+        "column": 48
+      },
+      "snippet": "\u001b[90m   at \u001b[39munit\\performance.test.ts:32\n\n\u001b[0m \u001b[90m 30 |\u001b[39m       \u001b[33m.\u001b[39mmockReturnValueOnce(endTime)\u001b[33m;\u001b[39m\n \u001b[90m 31 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     \u001b[36mconst\u001b[39m { container } \u001b[33m=\u001b[39m render(\u001b[33m<\u001b[39m\u001b[33mDashboardPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m\n \u001b[90m 34 |\u001b[39m     \u001b[90m// Simular carregamento completo\u001b[39m\n \u001b[90m 35 |\u001b[39m     \u001b[36mawait\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mPromise\u001b[39m(resolve \u001b[33m=>\u001b[39m setTimeout(resolve\u001b[33m,\u001b[39m \u001b[35m100\u001b[39m))\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\responsive.test.ts: Unexpected token, expected \",\" (47:26)\n\n\u001b[0m \u001b[90m 45 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 46 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 47 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mDashboardPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m     \u001b[90m// Verificar se elementos responsivos estão presentes\u001b[39m\n \u001b[90m 50 |\u001b[39m     expect(screen\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'mobile-menu'\u001b[39m))\u001b[33m.\u001b[39mtoBeInTheDocument()\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\responsive.test.ts: Unexpected token, expected \",\" (47:26)\n\n\u001b[0m \u001b[90m 45 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 46 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 47 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mDashboardPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m     \u001b[90m// Verificar se elementos responsivos estão presentes\u001b[39m\n \u001b[90m 50 |\u001b[39m     expect(screen\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'mobile-menu'\u001b[39m))\u001b[33m.\u001b[39mtoBeInTheDocument()\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\responsive.test.ts",
+        "line": 47,
+        "column": 26
+      },
+      "snippet": "\u001b[90m   at \u001b[39munit\\responsive.test.ts:47\n\n\u001b[0m \u001b[90m 45 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 46 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 47 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mDashboardPage\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 48 |\u001b[39m\n \u001b[90m 49 |\u001b[39m     \u001b[90m// Verificar se elementos responsivos estão presentes\u001b[39m\n \u001b[90m 50 |\u001b[39m     expect(screen\u001b[33m.\u001b[39mgetByTestId(\u001b[32m'mobile-menu'\u001b[39m))\u001b[33m.\u001b[39mtoBeInTheDocument()\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\security.test.ts: Unexpected token, expected \",\" (37:22)\n\n\u001b[0m \u001b[90m 35 |\u001b[39m\n \u001b[90m 36 |\u001b[39m     render(\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 37 |\u001b[39m       \u001b[33m<\u001b[39m\u001b[33mProtectedRoute\u001b[39m requiredRole\u001b[33m=\u001b[39m\u001b[32m\"patient\"\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m    |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 38 |\u001b[39m         \u001b[33m<\u001b[39m\u001b[33mPatientPortalLayout\u001b[39m patientId\u001b[33m=\u001b[39m\u001b[32m\"2\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m 39 |\u001b[39m       \u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33mProtectedRoute\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m 40 |\u001b[39m     )\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\security.test.ts: Unexpected token, expected \",\" (37:22)\n\n\u001b[0m \u001b[90m 35 |\u001b[39m\n \u001b[90m 36 |\u001b[39m     render(\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 37 |\u001b[39m       \u001b[33m<\u001b[39m\u001b[33mProtectedRoute\u001b[39m requiredRole\u001b[33m=\u001b[39m\u001b[32m\"patient\"\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m    |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 38 |\u001b[39m         \u001b[33m<\u001b[39m\u001b[33mPatientPortalLayout\u001b[39m patientId\u001b[33m=\u001b[39m\u001b[32m\"2\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m 39 |\u001b[39m       \u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33mProtectedRoute\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m 40 |\u001b[39m     )\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\security.test.ts",
+        "line": 37,
+        "column": 22
+      },
+      "snippet": "\u001b[90m   at \u001b[39munit\\security.test.ts:37\n\n\u001b[0m \u001b[90m 35 |\u001b[39m\n \u001b[90m 36 |\u001b[39m     render(\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 37 |\u001b[39m       \u001b[33m<\u001b[39m\u001b[33mProtectedRoute\u001b[39m requiredRole\u001b[33m=\u001b[39m\u001b[32m\"patient\"\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 38 |\u001b[39m         \u001b[33m<\u001b[39m\u001b[33mPatientPortalLayout\u001b[39m patientId\u001b[33m=\u001b[39m\u001b[32m\"2\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m 39 |\u001b[39m       \u001b[33m<\u001b[39m\u001b[33m/\u001b[39m\u001b[33mProtectedRoute\u001b[39m\u001b[33m>\u001b[39m\n \u001b[90m 40 |\u001b[39m     )\u001b[33m;\u001b[39m\u001b[0m"
+    },
+    {
+      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
+      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
+    },
+    {
+      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
+      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
+      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
+      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
+      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
+      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
+    },
+    {
+      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
+      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
+    },
+    {
+      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
+      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
+    },
+    {
+      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\soap.test.ts: Unexpected token, expected \",\" (70:29)\n\n\u001b[0m \u001b[90m 68 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 69 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 70 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mNewSoapNoteModal\u001b[39m isOpen\u001b[33m=\u001b[39m{\u001b[36mtrue\u001b[39m} onClose\u001b[33m=\u001b[39m{jest\u001b[33m.\u001b[39mfn()} patientId\u001b[33m=\u001b[39m\u001b[32m\"1\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 71 |\u001b[39m\n \u001b[90m 72 |\u001b[39m     \u001b[90m// Inserir texto na seção Subjetivo\u001b[39m\n \u001b[90m 73 |\u001b[39m     \u001b[36mconst\u001b[39m subjectiveField \u001b[33m=\u001b[39m screen\u001b[33m.\u001b[39mgetByLabelText(\u001b[35m/subjetivo/i\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m",
+      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\soap.test.ts: Unexpected token, expected \",\" (70:29)\n\n\u001b[0m \u001b[90m 68 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 69 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 70 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mNewSoapNoteModal\u001b[39m isOpen\u001b[33m=\u001b[39m{\u001b[36mtrue\u001b[39m} onClose\u001b[33m=\u001b[39m{jest\u001b[33m.\u001b[39mfn()} patientId\u001b[33m=\u001b[39m\u001b[32m\"1\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 71 |\u001b[39m\n \u001b[90m 72 |\u001b[39m     \u001b[90m// Inserir texto na seção Subjetivo\u001b[39m\n \u001b[90m 73 |\u001b[39m     \u001b[36mconst\u001b[39m subjectiveField \u001b[33m=\u001b[39m screen\u001b[33m.\u001b[39mgetByLabelText(\u001b[35m/subjetivo/i\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m",
+      "location": {
+        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\soap.test.ts",
+        "line": 70,
+        "column": 29
+      },
+      "snippet": "\u001b[90m   at \u001b[39munit\\soap.test.ts:70\n\n\u001b[0m \u001b[90m 68 |\u001b[39m     \u001b[36mconst\u001b[39m user \u001b[33m=\u001b[39m userEvent\u001b[33m.\u001b[39msetup()\u001b[33m;\u001b[39m\n \u001b[90m 69 |\u001b[39m     \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 70 |\u001b[39m     render(\u001b[33m<\u001b[39m\u001b[33mNewSoapNoteModal\u001b[39m isOpen\u001b[33m=\u001b[39m{\u001b[36mtrue\u001b[39m} onClose\u001b[33m=\u001b[39m{jest\u001b[33m.\u001b[39mfn()} patientId\u001b[33m=\u001b[39m\u001b[32m\"1\"\u001b[39m \u001b[33m/\u001b[39m\u001b[33m>\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 71 |\u001b[39m\n \u001b[90m 72 |\u001b[39m     \u001b[90m// Inserir texto na seção Subjetivo\u001b[39m\n \u001b[90m 73 |\u001b[39m     \u001b[36mconst\u001b[39m subjectiveField \u001b[33m=\u001b[39m screen\u001b[33m.\u001b[39mgetByLabelText(\u001b[35m/subjetivo/i\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
     }
   ],
-  "errors": [],
   "stats": {
-    "startTime": "2025-11-06T03:25:37.926Z",
-    "duration": 448.92499999999995,
+    "startTime": "2025-11-07T00:03:49.374Z",
+    "duration": 11677.437,
     "expected": 0,
-    "skipped": 19,
+    "skipped": 0,
     "unexpected": 0,
     "flaky": 0
   }

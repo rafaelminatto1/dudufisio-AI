@@ -10,7 +10,7 @@ import ClinicalHistoryTimeline from './ClinicalHistoryTimeline';
 import NewSoapNoteModal from './NewSoapNoteModal';
 
 
-// Supondo que o tipo do Prisma seja estendido ou importado
+// Patient type extended with relations
 type PatientWithRelations = Patient & {
   soapNotes: SoapNote[];
   treatmentPlan: TreatmentPlan | null;
