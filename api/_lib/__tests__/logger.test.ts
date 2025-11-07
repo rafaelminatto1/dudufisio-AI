@@ -18,7 +18,7 @@ const mockConsoleDebug = vi.spyOn(console, 'debug').mockImplementation(() => {})
 
 describe('SimpleLogger', () => {
   // Reimport logger para cada teste
-  let logger: any;
+  let logger: typeof import('../logger').logger;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -268,15 +268,37 @@ describe('SimpleLogger', () => {
       expect(message).toContain('[INFO]');
     });
 
-    it('deve lidar com contexto circular (JSON.stringify falha gracefully)', () => {
-      const circular: any = { name: 'test' };
+    it('deve lidar com contexto circular gracefully', () => {
+      const circular: Record<string, unknown> = { name: 'test' };
       circular.self = circular;
       
-      // JSON.stringify vai lançar erro, mas não queremos que o logger quebre
-      // Em produção, você pode querer um try-catch no logger
+      // Agora com safeStringify, não deve mais lançar erro
       expect(() => {
         logger.info('Circular reference', circular);
-      }).toThrow(); // Por enquanto vai falhar, mas documentado
+      }).not.toThrow();
+      
+      // Verificar que logou algo útil
+      expect(mockConsoleLog).toHaveBeenCalledOnce();
+      const message = mockConsoleLog.mock.calls[0][0];
+      expect(message).toContain('Circular reference');
+      expect(message).toMatch(/Circular|keys/); // Deve mencionar circular ou keys
+    });
+
+    it('deve lidar com BigInt e tipos não serializáveis', () => {
+      const contextWithBigInt = {
+        bigNumber: BigInt(9007199254740991),
+        normalNumber: 42,
+        string: 'test',
+      };
+      
+      expect(() => {
+        logger.info('BigInt test', contextWithBigInt);
+      }).not.toThrow();
+      
+      const message = mockConsoleLog.mock.calls[0][0];
+      expect(message).toContain('BigInt test');
+      // BigInt deve ser serializado como string com 'n' no final
+      expect(message).toMatch(/9007199254740991n|normalNumber/);
     });
 
     it('deve lidar com caracteres especiais', () => {

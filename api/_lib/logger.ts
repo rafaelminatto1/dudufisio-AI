@@ -41,6 +41,35 @@ interface LogContext {
  */
 class SimpleLogger {
   /**
+   * Serializa contexto de forma segura, lidando com casos extremos
+   * @private
+   * @param context - Contexto a ser serializado
+   * @returns String JSON ou fallback descritivo
+   */
+  private safeStringify(context: LogContext): string {
+    try {
+      return JSON.stringify(context);
+    } catch (error) {
+      // Caso 1: Referências circulares
+      if (error instanceof TypeError && error.message.includes('circular')) {
+        const keys = Object.keys(context);
+        return `[Circular reference with keys: ${keys.join(', ')}]`;
+      }
+      
+      // Caso 2: BigInt ou outros não serializáveis
+      try {
+        return JSON.stringify(context, (_, value) => 
+          typeof value === 'bigint' ? value.toString() + 'n' : value
+        );
+      } catch {
+        // Caso 3: Falha total - retornar descrição
+        const keys = Object.keys(context);
+        return `[Non-serializable object with keys: ${keys.join(', ')}]`;
+      }
+    }
+  }
+
+  /**
    * Formata mensagem de log com timestamp e contexto
    * @private
    * @param level - Nível do log (info, warn, error, debug)
@@ -50,7 +79,7 @@ class SimpleLogger {
    */
   private formatMessage(level: LogLevel, message: string, context?: LogContext): string {
     const timestamp = new Date().toISOString();
-    const contextStr = context ? ` ${JSON.stringify(context)}` : '';
+    const contextStr = context ? ` ${this.safeStringify(context)}` : '';
     return `[${timestamp}] [${level.toUpperCase()}] ${message}${contextStr}`;
   }
 
