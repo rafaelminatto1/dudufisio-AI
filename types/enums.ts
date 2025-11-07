@@ -112,170 +112,194 @@ export enum TransactionType {
 }
 
 export enum ExpenseCategory {
-  Salaries = 'Salários',
-  Rent = 'Aluguel',
-  Utilities = 'Utilidades',
-  Supplies = 'Suprimentos',
+  Salaries = 'Salaries',
+  Rent = 'Rent',
+  Equipment = 'Equipment',
+  Supplies = 'Supplies',
   Marketing = 'Marketing',
-  Other = 'Outro',
+  Other = 'Other',
+  Outros = 'Outros', // Portuguese compatibility
+  Aluguel = 'Aluguel', // Portuguese for Rent
+  Salarios = 'Salarios', // Portuguese for Salaries
+  Suprimentos = 'Suprimentos', // Portuguese for Supplies
 }
 
 // --- Intern & Education Enums ---
 
 export enum InternStatus {
-  Pending = 'Pendente',
-  Approved = 'Aprovado',
-  Rejected = 'Rejeitado',
-  Active = 'Ativo',
-  Graduated = 'Graduado',
+  Active = 'Active',
+  Inactive = 'Inactive',
+  Graduated = 'Graduated',
+  Suspended = 'Suspended'
 }
 
 export enum CompetencyLevel {
-  Beginner = 'Iniciante',
-  Intermediate = 'Intermediário',
-  Advanced = 'Avançado',
-  Expert = 'Especialista',
+  Beginner = 'Beginner',
+  Intermediate = 'Intermediate',
+  Advanced = 'Advanced',
+  Expert = 'Expert'
 }
 
 export enum CompetencyCategory {
-  Assessment = 'Avaliação',
-  Treatment = 'Tratamento',
-  Communication = 'Comunicação',
-  Documentation = 'Documentação',
-  Professionalism = 'Profissionalismo',
+  Assessment = 'Assessment',
+  Treatment = 'Treatment',
+  Communication = 'Communication',
+  Documentation = 'Documentation',
+  Research = 'Research',
+  Management = 'Management'
 }
 
 // --- Inventory Enums ---
 
 export enum ItemStatus {
-  Available = 'Disponível',
-  LowStock = 'Estoque Baixo',
-  OutOfStock = 'Fora de Estoque',
-  OnOrder = 'Em Pedido',
+  Active = 'Active',
+  Maintenance = 'Maintenance',
+  Retired = 'Retired',
+  Inactive = 'Inactive',
+  OutOfStock = 'OutOfStock',
+  Discontinued = 'Discontinued'
 }
 
 export enum InventoryAlertType {
-  LowStock = 'Estoque Baixo',
-  OutOfStock = 'Fora de Estoque',
-  Expiring = 'Expirando',
-  Expired = 'Expirado',
+    LowStock = 'LowStock',
+    OutOfStock = 'OutOfStock',
+    Expiring = 'Expiring',
+    Expired = 'Expired',
+    OverdueOrder = 'OverdueOrder',
+    HighConsumption = 'HighConsumption',
+    LowTurnover = 'LowTurnover',
+    PriceChange = 'PriceChange',
+    SupplierDelay = 'SupplierDelay'
 }
 
 // --- Events & Partnerships Enums ---
 
 export enum EventType {
   Workshop = 'Workshop',
-  Training = 'Treinamento',
+  Seminar = 'Seminário',
   Conference = 'Conferência',
-  Webinar = 'Webinar',
-  SocialEvent = 'Evento Social',
+  Training = 'Treinamento',
+  Meeting = 'Reunião',
+  Campaign = 'Campanha',
+  Race = 'Corrida',
+  Other = 'Outro'
 }
 
 export enum EventStatus {
-  Scheduled = 'Agendado',
-  InProgress = 'Em Andamento',
-  Completed = 'Concluído',
-  Cancelled = 'Cancelado',
+  Draft = 'Draft',
+  Published = 'Published',
+  Active = 'Active',
+  InProgress = 'InProgress',
+  Completed = 'Completed',
+  Cancelled = 'Cancelled'
 }
 
 export enum RegistrationStatus {
-  Pending = 'Pendente',
-  Confirmed = 'Confirmado',
-  Cancelled = 'Cancelado',
+  Pending = 'Pending',
+  Confirmed = 'Confirmed',
+  Attended = 'Attended',
+  Cancelled = 'Cancelled'
 }
 
 export enum ProviderStatus {
-  Active = 'Ativo',
-  Inactive = 'Inativo',
-  Suspended = 'Suspenso',
+  Applied = 'Applied',
+  Confirmed = 'Confirmed',
+  Paid = 'Paid',
+  Rejected = 'Rejected',
+  Cancelled = 'Cancelled'
 }
 
 // --- Calendar Enums ---
 
 export enum CalendarFeature {
-  WeekView = 'Visão Semanal',
-  MonthView = 'Visão Mensal',
-  DayView = 'Visão Diária',
-  AgendaView = 'Visão de Agenda',
-  ConflictDetection = 'Detecção de Conflitos',
-  RecurringEvents = 'Eventos Recorrentes',
-  Reminders = 'Lembretes',
-  MultipleCalendars = 'Múltiplos Calendários',
-  ColorCoding = 'Codificação por Cores',
-  DragAndDrop = 'Arrastar e Soltar',
+  CREATE_EVENT = 'CREATE_EVENT',
+  UPDATE_EVENT = 'UPDATE_EVENT',
+  DELETE_EVENT = 'DELETE_EVENT',
+  REMINDERS = 'REMINDERS',
+  RECURRENCE = 'RECURRENCE',
+  ATTENDEES = 'ATTENDEES',
+  AVAILABILITY = 'AVAILABILITY'
 }
 
 // --- Communication Enums ---
 
 export enum CommunicationChannel {
-  WhatsApp = 'WhatsApp',
-  Email = 'E-mail',
-  SMS = 'SMS',
-  Phone = 'Telefone',
-  InPerson = 'Presencial',
+  Email = 'email',
+  SMS = 'sms',
+  WhatsApp = 'whatsapp',
+  Push = 'push',
+  Voice = 'voice'
 }
 
 export enum ChannelCapability {
-  TextMessage = 'Mensagem de Texto',
-  RichMedia = 'Mídia Rica',
-  VoiceCall = 'Chamada de Voz',
-  VideoCall = 'Chamada de Vídeo',
-  FileAttachment = 'Anexo de Arquivo',
-  ReadReceipts = 'Confirmação de Leitura',
-  Encryption = 'Criptografia',
+  // Channel types
+  Email = 'email',
+  SMS = 'sms',
+  WhatsApp = 'whatsapp',
+  Push = 'push',
+  Voice = 'voice',
+  Automation = 'automation',
+
+  // Content capabilities
+  TEXT = 'text',
+  HTML = 'html',
+  IMAGES = 'images',
+  DOCUMENTS = 'documents',
+  RICH_CONTENT = 'rich_content',
+  ATTACHMENTS = 'attachments',
+  TEMPLATES = 'templates',
+  DELIVERY_STATUS = 'delivery_status',
+  TRACKING = 'tracking',
+  SHORT_LINKS = 'short_links'
 }
 
 export enum MessagePriority {
-  Low = 'Baixa',
-  Normal = 'Normal',
-  High = 'Alta',
-  Urgent = 'Urgente',
+  Low = 'low',
+  Normal = 'normal',
+  High = 'high',
+  Critical = 'critical'
 }
 
 export enum MessageStatus {
-  Draft = 'Rascunho',
-  Scheduled = 'Agendado',
-  Sent = 'Enviado',
-  Delivered = 'Entregue',
-  Read = 'Lido',
-  Failed = 'Falhou',
-  Cancelled = 'Cancelado',
+  Pending = 'pending',
+  Queued = 'queued',
+  Processing = 'processing',
+  Sending = 'sending',
+  Sent = 'sent',
+  Delivered = 'delivered',
+  Read = 'read',
+  Failed = 'failed',
+  Cancelled = 'cancelled',
+  RetryScheduled = 'retry_scheduled'
 }
 
 // --- Templates & Campaigns Enums ---
 
 export enum TemplateType {
-  Appointment = 'Agendamento',
-  Reminder = 'Lembrete',
-  Welcome = 'Boas-vindas',
-  FollowUp = 'Acompanhamento',
-  Promotional = 'Promocional',
-  Educational = 'Educacional',
-  Survey = 'Pesquisa',
-  Alert = 'Alerta',
-  Custom = 'Personalizado',
+  Transactional = 'transactional',
+  Reminder = 'reminder',
+  Marketing = 'marketing',
+  FollowUp = 'follow_up',
+  Alert = 'alert'
 }
 
 export enum CampaignStatus {
-  Draft = 'Rascunho',
-  Scheduled = 'Agendado',
-  InProgress = 'Em Andamento',
-  Completed = 'Concluído',
-  Paused = 'Pausado',
-  Cancelled = 'Cancelado',
+  Draft = 'draft',
+  Scheduled = 'scheduled',
+  Running = 'running',
+  Paused = 'paused',
+  Completed = 'completed',
+  Cancelled = 'cancelled'
 }
 
 // --- Automation Enums ---
 
 export enum TriggerType {
-  AppointmentCreated = 'Agendamento Criado',
-  AppointmentCancelled = 'Agendamento Cancelado',
-  AppointmentCompleted = 'Agendamento Concluído',
-  PatientRegistered = 'Paciente Registrado',
-  PaymentReceived = 'Pagamento Recebido',
-  PaymentOverdue = 'Pagamento Atrasado',
-  BirthdayReminder = 'Lembrete de Aniversário',
-  FollowUpDue = 'Acompanhamento Devido',
-  Custom = 'Personalizado',
+  APPOINTMENT_CREATED = 'APPOINTMENT_CREATED',
+  APPOINTMENT_REMINDER = 'APPOINTMENT_REMINDER',
+  PAYMENT_DUE = 'PAYMENT_DUE',
+  TREATMENT_COMPLETED = 'TREATMENT_COMPLETED',
+  PATIENT_REGISTERED = 'PATIENT_REGISTERED',
+  FOLLOW_UP_DUE = 'FOLLOW_UP_DUE'
 }
 

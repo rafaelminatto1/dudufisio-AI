@@ -1396,24 +1396,6 @@ export interface Specialty {
 
 // --- Financial & Partnership Types ---
 
-export enum TransactionType {
-  Receita = 'Receita',
-  Despesa = 'Despesa',
-}
-
-export enum ExpenseCategory {
-  Salaries = 'Salaries',
-  Rent = 'Rent',
-  Equipment = 'Equipment',
-  Supplies = 'Supplies',
-  Marketing = 'Marketing',
-  Other = 'Other',
-  Outros = 'Outros', // Portuguese compatibility
-  Aluguel = 'Aluguel', // Portuguese for Rent
-  Salarios = 'Salarios', // Portuguese for Salaries
-  Suprimentos = 'Suprimentos', // Portuguese for Supplies
-}
-
 export interface FinancialTransaction {
   id: string;
   type: TransactionType;
@@ -1535,35 +1517,12 @@ export interface WhatsappMessage {
 
 // --- Mentorship & Teaching Module Types ---
 
-export enum InternStatus {
-  Active = 'Active',
-  Inactive = 'Inactive',
-  Graduated = 'Graduated',
-  Suspended = 'Suspended'
-}
-
 // Status color mapping for InternStatus
 export const InternStatusColorMap: Record<InternStatus, string> = {
   [InternStatus.Active]: 'bg-green-100 text-green-800',
   [InternStatus.Inactive]: 'bg-slate-100 text-slate-800',
   [InternStatus.Graduated]: 'bg-blue-100 text-blue-800',
   [InternStatus.Suspended]: 'bg-red-100 text-red-800',
-}
-
-export enum CompetencyLevel {
-  Beginner = 'Beginner',
-  Intermediate = 'Intermediate',
-  Advanced = 'Advanced',
-  Expert = 'Expert'
-}
-
-export enum CompetencyCategory {
-  Assessment = 'Assessment',
-  Treatment = 'Treatment',
-  Communication = 'Communication',
-  Documentation = 'Documentation',
-  Research = 'Research',
-  Management = 'Management'
 }
 
 export interface Competency {
@@ -1883,15 +1842,6 @@ export interface Supplier {
   email?: string;
 }
 
-export enum ItemStatus {
-  Active = 'Active',
-  Maintenance = 'Maintenance',
-  Retired = 'Retired',
-  Inactive = 'Inactive',
-  OutOfStock = 'OutOfStock',
-  Discontinued = 'Discontinued'
-}
-
 // Tipos que estavam faltando
 export interface CommunicationLog {
   id: string;
@@ -1935,18 +1885,6 @@ export interface InventoryItem {
 // REMOVED: MovementType enum and StockMovement interface - DEPRECATED
 // Use InventoryMovementType (linha ~2979) e StockMovement (linha ~3052) instead
 
-export enum InventoryAlertType {
-    LowStock = 'LowStock',
-    OutOfStock = 'OutOfStock',
-    Expiring = 'Expiring',
-    Expired = 'Expired',
-    OverdueOrder = 'OverdueOrder',
-    HighConsumption = 'HighConsumption',
-    LowTurnover = 'LowTurnover',
-    PriceChange = 'PriceChange',
-    SupplierDelay = 'SupplierDelay'
-}
-
 export interface InventoryAlert {
     id: string;
     type: InventoryAlertType;
@@ -1967,41 +1905,6 @@ export interface InventoryMetrics {
 }
 
 // --- Event Management Types ---
-
-export enum EventType {
-  Workshop = 'Workshop',
-  Seminar = 'Seminário',
-  Conference = 'Conferência',
-  Training = 'Treinamento',
-  Meeting = 'Reunião',
-  Campaign = 'Campanha',
-  Race = 'Corrida',
-  Other = 'Outro'
-}
-
-export enum EventStatus {
-  Draft = 'Draft',
-  Published = 'Published',
-  Active = 'Active',
-  InProgress = 'InProgress',
-  Completed = 'Completed',
-  Cancelled = 'Cancelled'
-}
-
-export enum RegistrationStatus {
-  Pending = 'Pending',
-  Confirmed = 'Confirmed',
-  Attended = 'Attended',
-  Cancelled = 'Cancelled'
-}
-
-export enum ProviderStatus {
-  Applied = 'Applied',
-  Confirmed = 'Confirmed',
-  Paid = 'Paid',
-  Rejected = 'Rejected',
-  Cancelled = 'Cancelled' // Added missing status
-}
 
 export interface Event {
   id: string;
@@ -2129,16 +2032,6 @@ export interface CalendarLink {
   access_count: number;
   created_at: string;
   updated_at: string;
-}
-
-export enum CalendarFeature {
-  CREATE_EVENT = 'CREATE_EVENT',
-  UPDATE_EVENT = 'UPDATE_EVENT',
-  DELETE_EVENT = 'DELETE_EVENT',
-  REMINDERS = 'REMINDERS',
-  RECURRENCE = 'RECURRENCE',
-  ATTENDEES = 'ATTENDEES',
-  AVAILABILITY = 'AVAILABILITY'
 }
 
 export interface CalendarLocation {
@@ -2307,56 +2200,6 @@ export type TemplateId = string;
 export type CampaignId = string;
 export type TriggerEventType = string;
 
-export enum CommunicationChannel {
-  Email = 'email',
-  SMS = 'sms',
-  WhatsApp = 'whatsapp',
-  Push = 'push',
-  Voice = 'voice'
-}
-
-export enum ChannelCapability {
-  // Channel types
-  Email = 'email',
-  SMS = 'sms',
-  WhatsApp = 'whatsapp',
-  Push = 'push',
-  Voice = 'voice',
-  Automation = 'automation',
-
-  // Content capabilities
-  TEXT = 'text',
-  HTML = 'html',
-  IMAGES = 'images',
-  DOCUMENTS = 'documents',
-  RICH_CONTENT = 'rich_content',
-  ATTACHMENTS = 'attachments',
-  TEMPLATES = 'templates',
-  DELIVERY_STATUS = 'delivery_status',
-  TRACKING = 'tracking',
-  SHORT_LINKS = 'short_links'
-}
-
-export enum MessagePriority {
-  Low = 'low',
-  Normal = 'normal',
-  High = 'high',
-  Critical = 'critical'
-}
-
-export enum MessageStatus {
-  Pending = 'pending',
-  Queued = 'queued',
-  Processing = 'processing',
-  Sending = 'sending',
-  Sent = 'sent',
-  Delivered = 'delivered',
-  Read = 'read',
-  Failed = 'failed',
-  Cancelled = 'cancelled',
-  RetryScheduled = 'retry_scheduled'
-}
-
 // Recipient and Preferences
 export interface Recipient {
   id: string;
@@ -2494,14 +2337,6 @@ export interface CommunicationTemplate {
   updatedAt: Date;
 }
 
-export enum TemplateType {
-  Transactional = 'transactional',
-  Reminder = 'reminder',
-  Marketing = 'marketing',
-  FollowUp = 'follow_up',
-  Alert = 'alert'
-}
-
 export interface TemplateVariable {
   name: string;
   type: 'string' | 'number' | 'date' | 'boolean';
@@ -2523,15 +2358,6 @@ export interface Campaign {
   statistics: CampaignStatistics;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export enum CampaignStatus {
-  Draft = 'draft',
-  Scheduled = 'scheduled',
-  Running = 'running',
-  Paused = 'paused',
-  Completed = 'completed',
-  Cancelled = 'cancelled'
 }
 
 export interface AudienceFilter {
@@ -2715,15 +2541,6 @@ export interface WhatsAppStatus {
 }
 
 // --- Automation Types ---
-
-export enum TriggerType {
-  APPOINTMENT_CREATED = 'APPOINTMENT_CREATED',
-  APPOINTMENT_REMINDER = 'APPOINTMENT_REMINDER',
-  PAYMENT_DUE = 'PAYMENT_DUE',
-  TREATMENT_COMPLETED = 'TREATMENT_COMPLETED',
-  PATIENT_REGISTERED = 'PATIENT_REGISTERED',
-  FOLLOW_UP_DUE = 'FOLLOW_UP_DUE'
-}
 
 // MessageType for communication system
 export type MessageType =
