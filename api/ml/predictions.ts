@@ -6,8 +6,8 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk';
-import { supabase } from '../../lib/supabaseClient';
-import { logger } from '../../lib/logger';
+import { supabase } from '../_lib/supabaseClient';
+import { logger } from '../_lib/logger';
 import type { AIPredictionInsert } from '../../types';
 
 type PatientData = {

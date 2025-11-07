@@ -47,7 +47,8 @@
     "../components/**",
     "../pages/**",
     "../hooks/**",
-    "../contexts/**"
+    "../contexts/**",
+    "../types.ts"
   ]
 }
 

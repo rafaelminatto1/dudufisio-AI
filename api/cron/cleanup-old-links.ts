@@ -6,7 +6,7 @@
 
 export const config = { runtime: 'edge' };
 
-import { logger } from '../../lib/logger';
+import { logger } from '../_lib/logger';
 
 export default async function handler(req: Request) {
   try {
@@ -44,7 +44,7 @@ export default async function handler(req: Request) {
       throw new Error(`Failed to fetch old links: ${response.statusText}`);
     }
 
-    const oldLinks = await response.json();
+    const oldLinks = (await response.json()) as Array<{ id: string; event_date: string }>;
     const count = oldLinks?.length || 0;
 
     // Deletar links antigos

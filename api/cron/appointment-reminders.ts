@@ -10,7 +10,7 @@
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { logger } from '../../lib/logger';
+import { logger } from '../_lib/logger';
 
 // Tipos
 interface Appointment {

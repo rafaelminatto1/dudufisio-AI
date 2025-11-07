@@ -4,9 +4,18 @@
  * Envia lembretes para appointments nas próximas 24h
  */
 
-import { logger } from '../../lib/logger';
+import { logger } from '../_lib/logger';
 
 export const config = { runtime: 'edge' };
+
+type ReminderAppointment = {
+  id: string;
+  start_time: string;
+  patient?: { name?: string; phone?: string };
+  therapist?: { full_name?: string };
+  location?: string;
+  calendar_link?: { google_link?: string };
+};
 
 export default async function handler(req: Request) {
   try {
@@ -44,7 +53,7 @@ export default async function handler(req: Request) {
       throw new Error(`Failed to fetch appointments: ${response.statusText}`);
     }
 
-    const appointments = await response.json();
+    const appointments = (await response.json()) as ReminderAppointment[];
 
     let sentCount = 0;
 
@@ -87,15 +96,6 @@ export default async function handler(req: Request) {
     );
   }
 }
-
-type ReminderAppointment = {
-  id: string;
-  start_time: string;
-  patient?: { name?: string; phone?: string };
-  therapist?: { full_name?: string };
-  location?: string;
-  calendar_link?: { google_link?: string };
-};
 
 async function sendReminderWhatsApp(appointment: ReminderAppointment) {
   const startTime = new Date(appointment.start_time);

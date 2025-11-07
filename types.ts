@@ -1,3 +1,5 @@
+import type { ElementType, ReactNode } from 'react';
+
 // --- User & Auth Types ---
 
 export enum Role {
@@ -1184,7 +1186,7 @@ export type Achievement = {
   name: string;
   description: string;
   unlocked: boolean;
-  icon: React.ElementType;
+  icon: ElementType;
   progress?: number; // 0-1 when partially unlocked
   rewardPoints?: number;
 };
@@ -1212,7 +1214,7 @@ export interface GamificationReward {
   pointsRequired: number;
   unlocked: boolean;
   claimed: boolean;
-  icon?: React.ElementType;
+  icon?: ElementType;
 }
 
 export interface GamificationLeaderboardEntry {
@@ -1229,7 +1231,7 @@ export interface GamificationPointsBreakdown {
   id: string;
   label: string;
   points: number;
-  icon?: React.ElementType;
+  icon?: ElementType;
   description?: string;
 }
 
@@ -1263,7 +1265,7 @@ export interface StatCardData {
   value: string;
   change?: string;
   changeType?: 'increase' | 'decrease';
-  icon: React.ReactNode;
+  icon: ReactNode;
 }
 
 export interface ToastMessage {
@@ -3581,7 +3583,7 @@ export interface BodyMapVisualizationType {
   id: 'svg-detailed' | 'svg-simple' | 'canvas-interactive' | 'image-anatomical';
   name: string;
   description: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 }
 
 export interface BodyMapAnalytics {

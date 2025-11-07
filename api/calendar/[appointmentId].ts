@@ -6,7 +6,7 @@
  */
 
 import { generateICS } from '../../lib/calendar/icsGenerator';
-import { logger } from '../../lib/logger';
+import { logger } from '../_lib/logger';
 
 // Edge Runtime = resposta global instantânea
 export const config = { runtime: 'edge' };

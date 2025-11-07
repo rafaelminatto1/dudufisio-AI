@@ -6,7 +6,7 @@
 
 export const config = { runtime: 'edge' };
 
-import { logger } from '../../lib/logger';
+import { logger } from '../_lib/logger';
 
 export default async function handler(req: Request) {
   try {
@@ -40,7 +40,7 @@ export default async function handler(req: Request) {
       throw new Error(`Failed to fetch calendar links: ${response.statusText}`);
     }
 
-    const links = await response.json();
+    const links = (await response.json()) as Array<{ id: string; accessed: boolean }>;
     const count = links?.length || 0;
 
     // Log para monitoramento

@@ -3,14 +3,14 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 /**
  * Vercel Cron Job: Atualiza Edge Config com dados da agenda
- * Schedule: A cada 6 horas (0 */6 * * *)
+ * Schedule: A cada 6 horas (0 asterisco-barra 6 asterisco asterisco asterisco)
  * 
  * Atualiza dados que mudam pouco:
  * - Lista de terapeutas ativos
- * - Bloqueios de horário recorrentes
+ * - Bloqueios de horario recorrentes
  * - Top 50 pacientes mais frequentes
  * 
- * Benefício: Reduz latência de 200ms para ~10ms
+ * Beneficio: Reduz latencia de 200ms para aproximadamente 10ms
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
