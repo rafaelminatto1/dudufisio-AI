@@ -1,5 +1,3 @@
-import React from 'react';
-
 // --- User & Auth Types ---
 
 export enum Role {
@@ -3782,15 +3780,136 @@ export interface CreateLeadInput {
 // ============================================================================
 
 // Exercício prescrito (camada sobre biblioteca de exercícios)
+// DEPRECATED: Use ProtocolExercise, PrescriptionExercise ou EvolutionPrescribedExercise
 export interface PrescribedExercise {
-  id: string;
+  id?: string;
   exerciseId: string;  // Referência ao exercício da biblioteca
-  exercise: Exercise;  // Dados completos do exercício
-  sets: number;
-  reps: number;
+  exercise?: Exercise;  // Dados completos do exercício
+  sets?: number;
+  reps?: number;
   load?: string;      // Ex: "5kg", "banda verde"
   duration?: string;  // Ex: "30seg", "2min"
   notes?: string;     // Observações específicas da prescrição
+  position?: number;
+  holdTimeSeconds?: number;
+  restTimeSeconds?: number;
+  frequencyPerWeek?: number;
+  intensity?: string;
+  performed?: boolean;
+  painScore?: number;
+}
+
+// ============================================================================
+// JUNCTION TABLES - Exercise Relations (Normalized Structure)
+// ============================================================================
+
+/**
+ * Protocol Exercise - Junction table for exercise_protocols <-> exercises
+ * Represents exercises within a protocol template
+ */
+export interface ProtocolExercise {
+  id: string;
+  protocolId: string;
+  exerciseId: string;
+  exercise?: Exercise;
+  position: number;
+  sets?: number;
+  reps?: number;
+  holdTimeSeconds?: number;
+  restTimeSeconds?: number;
+  frequencyPerWeek?: number;
+  intensity?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/**
+ * Prescription Exercise - Junction table for patient_exercise_prescriptions <-> exercises
+ * Represents exercises prescribed to a patient
+ */
+export interface PrescriptionExercise {
+  id: string;
+  prescriptionId: string;
+  exerciseId: string;
+  exercise?: Exercise;
+  position: number;
+  sets?: number;
+  reps?: number;
+  holdTimeSeconds?: number;
+  restTimeSeconds?: number;
+  frequencyPerWeek?: number;
+  intensity?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/**
+ * Evolution Prescribed Exercise - Junction table for session_evolutions <-> exercises
+ * Represents exercises prescribed during a specific session
+ */
+export interface EvolutionPrescribedExercise {
+  id: string;
+  evolutionId: string;
+  exerciseId: string;
+  exercise?: Exercise;
+  position: number;
+  sets?: number;
+  reps?: number;
+  holdTimeSeconds?: number;
+  restTimeSeconds?: number;
+  intensity?: string;
+  performed?: boolean;  // Whether exercise was performed
+  painScore?: number;    // Pain level during exercise (0-10)
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/**
+ * Exercise Protocol - Complete protocol with exercises
+ */
+export interface ExerciseProtocolWithExercises {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  pathology: string;
+  phase: 'acute' | 'subacute' | 'chronic' | 'maintenance';
+  durationWeeks: number;
+  frequencyPerWeek: number;
+  exercises: ProtocolExercise[];
+  isActive?: boolean;
+  createdBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+/**
+ * Patient Exercise Prescription - Complete prescription with exercises
+ */
+export interface PatientExercisePrescription {
+  id: string;
+  patientId: string;
+  therapistId: string;
+  protocolId?: string;
+  title: string;
+  description?: string;
+  startDate: string;
+  endDate?: string;
+  frequencyPerWeek: number;
+  status: 'active' | 'completed' | 'paused' | 'cancelled';
+  completionPercentage?: number;
+  totalSessionsPlanned?: number;
+  sessionsCompleted?: number;
+  notes?: string;
+  patientFeedback?: string;
+  exercises: PrescriptionExercise[];
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  deletedAt?: string;
 }
 
 // Foto de progresso do paciente
@@ -3896,7 +4015,7 @@ export interface SessionEvolution {
   rating_comment?: string; // Comentário opcional sobre as avaliações
   
   // Funcionalidades avançadas
-  prescribedExercises?: PrescribedExercise[];  // Exercícios prescritos na sessão
+  prescribedExercises?: PrescribedExercise[];  // Exercícios prescritos na sessão (usar EvolutionPrescribedExercise para novo código)
   progressPhotos?: ProgressPhoto[];            // Fotos de progresso
   sessionTimer?: SessionTimer;                 // Dados do timer da sessão
   
