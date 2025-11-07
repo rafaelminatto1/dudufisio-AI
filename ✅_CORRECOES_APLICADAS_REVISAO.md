@@ -225,3 +225,4 @@ http://localhost:5173/materials
 **Testes:** ✅ APROVADO  
 **Qualidade Final:** ⭐⭐⭐⭐⭐ 4.9/5.0  
 
+

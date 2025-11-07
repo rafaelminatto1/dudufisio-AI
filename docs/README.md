@@ -548,3 +548,4 @@ Para suporte técnico ou dúvidas:
 **Desenvolvido com ❤️ usando React 19, TypeScript, Supabase e Google Gemini AI**
 
 _Última atualização: 09 de Outubro de 2025_
+
