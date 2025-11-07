@@ -1,16 +1,48 @@
 import type { ElementType, ReactNode } from 'react';
 
-// --- User & Auth Types ---
+// =============================================================================
+// ENUMS RE-EXPORTADOS
+// =============================================================================
+// Todos os enums foram movidos para types/enums.ts para evitar importação circular
+// e problemas de ordem de carregamento do Vite/Rollup
+export * from './types/enums';
 
-export enum Role {
-  Admin = 'admin',
-  Therapist = 'therapist',
-  Patient = 'patient',
-  Educator = 'educator',
-  Partner = 'partner',
-  Manager = 'manager',
-  Receptionist = 'receptionist',
-}
+// Import dos enums para uso local neste arquivo
+import {
+  Role,
+  AIProvider,
+  PatientStatus,
+  AppointmentStatus,
+  AppointmentType,
+  ProtocolCategory,
+  EvidenceLevel,
+  ProtocolPhase,
+  ProjectStatus,
+  TaskStatus,
+  TaskPriority,
+  TransactionType,
+  ExpenseCategory,
+  InternStatus,
+  CompetencyLevel,
+  CompetencyCategory,
+  ItemStatus,
+  InventoryAlertType,
+  EventType,
+  EventStatus,
+  RegistrationStatus,
+  ProviderStatus,
+  CalendarFeature,
+  CommunicationChannel,
+  ChannelCapability,
+  MessagePriority,
+  MessageStatus,
+  TemplateType,
+  CampaignStatus,
+  TriggerType,
+} from './types/enums';
+// =============================================================================
+
+// --- User & Auth Types ---
 
 export interface User {
   id: string;
@@ -26,14 +58,6 @@ export interface User {
   mfaEnabled?: boolean;
 }
 
-export enum AIProvider {
-  Gemini = 'gemini',
-  OpenAI = 'openai',
-  Anthropic = 'anthropic',
-  Groq = 'groq',
-  Mock = 'mock'
-}
-
 export interface Therapist {
   id:string;
   name: string;
@@ -43,12 +67,6 @@ export interface Therapist {
 }
 
 // --- Patient Related Types ---
-
-export enum PatientStatus {
-  Active = 'Active',
-  Inactive = 'Inactive',
-  Discharged = 'Discharged',
-}
 
 export interface Surgery {
   id: string;
@@ -307,16 +325,6 @@ export interface PatientSummary {
 
 // --- Appointment & Scheduling Types ---
 
-export enum AppointmentStatus {
-  Scheduled = 'Agendado',
-  Confirmed = 'Confirmado', // NOVO
-  InProgress = 'Em Andamento', // NOVO
-  Completed = 'Realizado',
-  Canceled = 'Cancelado',
-  Cancelled = 'Cancelado', // Alias para Canceled
-  NoShow = 'Faltou'
-}
-
 // Mapping for AppointmentStatus to lowercase keys for UI components
 export const AppointmentStatusMap = {
   scheduled: AppointmentStatus.Scheduled,
@@ -327,15 +335,6 @@ export const AppointmentStatusMap = {
   cancelled: AppointmentStatus.Cancelled,
   no_show: AppointmentStatus.NoShow
 } as const
-
-export enum AppointmentType {
-    Evaluation = 'Avaliação',
-    Session = 'Sessão',
-    Return = 'Retorno',
-    Pilates = 'Pilates',
-    Urgent = 'Urgente',
-    Teleconsulta = 'Teleconsulta',
-}
 
 export const AppointmentTypeColors: Record<string, string> = {
     [AppointmentType.Evaluation]: 'purple',
@@ -616,34 +615,6 @@ export interface AuditLogEntry {
 }
 
 // --- Clinical Protocols Types ---
-
-export enum ProtocolCategory {
-  Orthopedic = 'Ortopedia',
-  Neurological = 'Neurologia',
-  Cardiorespiratory = 'Cardiorrespiratória',
-  Pediatric = 'Pediatria',
-  Sports = 'Esportiva',
-  Geriatric = 'Gerontologia',
-  Oncology = 'Oncologia',
-  Women = 'Saúde da Mulher',
-}
-
-export enum EvidenceLevel {
-  IA = '1A',
-  IB = '1B',
-  IIA = '2A',
-  IIB = '2B',
-  III = '3',
-  IV = '4',
-  V = '5',
-}
-
-export enum ProtocolPhase {
-  Acute = 'Aguda',
-  Subacute = 'Subaguda',
-  Chronic = 'Crônica',
-  Maintenance = 'Manutenção',
-}
 
 export interface Protocol {
   id: string;
@@ -1118,12 +1089,6 @@ export interface Group {
 
 // --- Task & Project Management Types ---
 
-export enum ProjectStatus {
-  Active = 'Ativo',
-  Concluded = 'Concluído',
-  Paused = 'Pausado',
-}
-
 export interface Project {
   id: string;
   title: string;
@@ -1133,18 +1098,6 @@ export interface Project {
   type: 'Clinical' | 'Research' | 'Operational';
   startDate: string; // YYYY-MM-DD
   endDate?: string; // YYYY-MM-DD
-}
-
-export enum TaskStatus {
-  ToDo = 'A Fazer',
-  InProgress = 'Em Andamento',
-  Done = 'Concluído',
-}
-
-export enum TaskPriority {
-  High = 'Alta',
-  Medium = 'Média',
-  Low = 'Baixa',
 }
 
 export interface Task {
