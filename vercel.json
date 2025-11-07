@@ -1,54 +1,38 @@
 {
-  "buildCommand": "npm run vercel-build",
-  "outputDirectory": "dist",
-  "framework": null,
-  "functions": {
-    "api/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 10
-    },
-    "api/**/*.js": {
-      "memory": 1024,
-      "maxDuration": 10
+  "version": 2,
+  "name": "dudufisio-ai",
+  "alias": ["app.dudufisio.com"],
+  "regions": ["gru1", "iad1"],
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  
+  "env": {
+    "NODE_ENV": "production"
+  },
+  
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_SUPABASE_URL": "@supabase-url",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase-anon-key",
+      "NEXT_PUBLIC_GEMINI_API_KEY": "@gemini-api-key",
+      "SUPABASE_SERVICE_ROLE_KEY": "@supabase-service-role-key"
     }
   },
+  
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "edge"
+    },
+    "api/webhooks/**/*.ts": {
+      "runtime": "edge",
+      "regions": ["gru1"]
+    }
+  },
+  
   "headers": [
-    {
-      "source": "/manifest.json",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/manifest+json"
-        }
-      ]
-    },
-    {
-      "source": "/assets/(.*)\\.css",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/assets/(.*)\\.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
     {
       "source": "/(.*)",
       "headers": [
@@ -59,14 +43,55 @@
         {
           "key": "X-Frame-Options",
           "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(self), geolocation=()"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, must-revalidate"
         }
       ]
     }
   ],
+  
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "/dashboard",
+      "permanent": false
+    }
+  ],
+  
   "rewrites": [
     {
-      "source": "/((?!api|assets|_next|favicon\\.ico|manifest\\.json).*)",
-      "destination": "/index.html"
+      "source": "/api/v1/:path*",
+      "destination": "/api/:path*"
+    }
+  ],
+  
+  "crons": [
+    {
+      "path": "/api/cron/daily-stats",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/refresh-cache",
+      "schedule": "*/5 * * * *"
     }
   ]
 }

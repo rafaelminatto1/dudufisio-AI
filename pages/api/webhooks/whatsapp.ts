@@ -1,6 +1,19 @@
 /**
- * WhatsApp Webhook API Endpoint
- * DuduFisio-AI - Meta WhatsApp Business API Integration
+ * WhatsApp Webhook API Endpoint (Next.js Pages Router)
+ * 
+ * ⚠️ DEPRECATED: This file is deprecated in favor of Edge Function version
+ * 
+ * Migration date: 06/11/2025
+ * New version: api/webhooks/whatsapp-edge.ts (Vercel Edge Runtime)
+ * 
+ * Reason for deprecation:
+ * - Edge Functions provide better performance
+ * - Lower costs
+ * - This is Next.js Pages Router (we're using App Router)
+ * 
+ * TODO: Remove this file after validating Edge version
+ * 
+ * @deprecated Use api/webhooks/whatsapp-edge.ts instead
  */
 
 import { getWhatsAppService } from '@/services/whatsapp/WhatsAppService';

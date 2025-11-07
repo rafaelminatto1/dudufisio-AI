@@ -2,43 +2,251 @@
  * contexts/PatientContext.tsx
  * Context profissional para gerenciamento de pacientes
  * Inclui: CRUD completo, persistência localStorage, validação, cache e otimizações
+ * 
+ * MIGRADO PARA TYPESCRIPT: 06/11/2025
  */
-
 import React, { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react';
-import { Patient, PatientFormData } from '../types/patient';
 import { patientToasts } from '../utils/toast';
-import { handleError } from '../lib/middleware/errorHandler';
 
 // ============================================================================
-// TYPES
+// TYPES & INTERFACES
 // ============================================================================
 
-interface PatientContextType {
-  // State
-  patients: Patient[];
-  currentPatient: Patient | null;
-  isLoading: boolean;
-  error: string | null;
+export interface Address {
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+
+export interface EmergencyContact {
+  name: string;
+  relationship: string;
+  phone: string;
+  phone2?: string;
+  email?: string;
+}
+
+export interface Condition {
+  id: string;
+  name: string;
+  diagnosisDate: string;
+  severity: 'mild' | 'moderate' | 'severe';
+  status: 'active' | 'inactive' | 'resolved';
+}
+
+export interface MedicalHistory {
+  allergies: string[];
+  chronicDiseases: string[];
+  previousSurgeries: string[];
+  currentMedications: string[];
+  familyHistory: string[];
+  smokingStatus: 'never' | 'former' | 'current';
+  alcoholConsumption: 'never' | 'occasional' | 'frequent';
+  physicalActivityLevel: 'sedentary' | 'low' | 'moderate' | 'high';
+  observations?: string;
+}
+
+export interface SessionProgress {
+  currentSession: number;
+  totalPlannedSessions: number;
+  completedSessions: number;
+  canceledSessions: number;
+  noShowSessions: number;
+  firstSessionDate: string;
+  weeksInTreatment: number;
+  daysInTreatment: number;
+  averageSessionsPerWeek: number;
+  adherenceRate: number;
+}
+
+export interface MetricValue {
+  initial: number;
+  current: number;
+  improvement: number;
+}
+
+export interface TreatmentMetrics {
+  painLevel: MetricValue;
+  mobility: MetricValue;
+  functionality: MetricValue;
+  satisfaction: number;
+  goals: string[];
+  goalsAchieved: number;
+}
+
+export interface Insurance {
+  type: 'particular' | 'health_plan' | 'sus';
+  provider?: string;
+  planName?: string;
+  policyNumber?: string;
+  validUntil?: string;
+}
+
+export interface FinancialInfo {
+  totalSpent: number;
+  totalPending: number;
+  totalPaid: number;
+  averageSessionCost: number;
+  paymentMethod: 'cash' | 'credit_card' | 'debit_card' | 'pix' | 'health_plan';
+  hasOutstandingBalance: boolean;
+  outstandingBalance: number;
+}
+
+export interface Patient {
+  // ID e código
+  id: string;
+  code: string;
   
-  // CRUD Operations
-  createPatient: (patient: PatientFormData) => Promise<Patient>;
-  updatePatient: (id: string, patient: Partial<PatientFormData>) => Promise<Patient>;
-  deletePatient: (id: string) => Promise<void>;
-  getPatient: (id: string) => Promise<Patient | null>;
-  getAllPatients: () => Promise<Patient[]>;
+  // Dados pessoais
+  name: string;
+  email: string;
+  phone: string;
+  phone2?: string;
+  cpf: string;
+  rg?: string;
+  birthDate: string;
+  age: number;
+  gender: 'male' | 'female' | 'other';
+  maritalStatus?: 'single' | 'married' | 'divorced' | 'widowed';
+  occupation?: string;
+  avatarUrl?: string;
   
-  // Search & Filter
-  searchPatients: (query: string) => Patient[];
-  filterPatients: (filters: PatientFilters) => Patient[];
+  // Endereço
+  address: Address;
   
-  // State Management
-  setCurrentPatient: (patient: Patient | null) => void;
-  clearError: () => void;
-  refreshPatients: () => Promise<void>;
+  // Contato de emergência
+  emergencyContact: EmergencyContact;
   
-  // Validation
-  validateUniqueCPF: (cpf: string, excludeId?: string) => boolean;
-  validateUniqueEmail: (email: string, excludeId?: string) => boolean;
+  // Dados físicos e saúde
+  bloodType?: string;
+  height?: number;
+  weight?: number;
+  bmi?: number;
+  
+  // Histórico médico
+  medicalHistory: MedicalHistory;
+  
+  // Condições e tratamento
+  conditions: Condition[];
+  mainDiagnosis?: string;
+  referringDoctor?: string;
+  referringDoctorCRM?: string;
+  
+  // Status e datas
+  status: 'Active' | 'Inactive' | 'Discharged';
+  registrationDate: string;
+  firstAppointmentDate?: string;
+  lastAppointmentDate?: string;
+  
+  // Progresso de sessões
+  sessionProgress: SessionProgress;
+  
+  // Métricas de tratamento
+  treatmentMetrics: TreatmentMetrics;
+  
+  // Convênio
+  insurance: Insurance;
+  
+  // Informações financeiras
+  financialInfo: FinancialInfo;
+  
+  // Observações
+  observations?: string;
+  internalNotes?: string;
+  
+  // Preferências
+  preferredDaysOfWeek?: string[];
+  preferredTimeSlots?: string[];
+  
+  // Documentos e consentimentos
+  hasConsentForm?: boolean;
+  hasDataPrivacyConsent?: boolean;
+  documents?: any[];
+  
+  // Metadata
+  createdBy: string;
+  createdAt: string;
+  updatedBy: string;
+  updatedAt: string;
+  tags?: string[];
+}
+
+export interface PatientFormData {
+  name: string;
+  email: string;
+  phone: string;
+  phone2?: string;
+  cpf: string;
+  rg?: string;
+  birthDate: string;
+  gender: 'male' | 'female' | 'other';
+  maritalStatus?: 'single' | 'married' | 'divorced' | 'widowed';
+  occupation?: string;
+  
+  // Endereço
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  
+  // Contato de emergência
+  emergencyName: string;
+  emergencyRelationship: string;
+  emergencyPhone: string;
+  emergencyPhone2?: string;
+  emergencyEmail?: string;
+  
+  // Dados físicos
+  bloodType?: string;
+  height?: number;
+  weight?: number;
+  
+  // Histórico médico (strings separadas por vírgula)
+  allergies?: string;
+  chronicDiseases?: string;
+  previousSurgeries?: string;
+  currentMedications?: string;
+  familyHistory?: string;
+  smokingStatus?: 'never' | 'former' | 'current';
+  alcoholConsumption?: 'never' | 'occasional' | 'frequent';
+  physicalActivityLevel?: 'sedentary' | 'low' | 'moderate' | 'high';
+  
+  // Condições
+  conditions?: string;
+  mainDiagnosis?: string;
+  referringDoctor?: string;
+  referringDoctorCRM?: string;
+  
+  // Status
+  status: 'Active' | 'Inactive' | 'Discharged';
+  totalPlannedSessions?: number;
+  
+  // Convênio
+  insuranceType: 'particular' | 'health_plan' | 'sus';
+  insuranceProvider?: string;
+  insurancePlanName?: string;
+  insurancePolicyNumber?: string;
+  insuranceValidUntil?: string;
+  
+  // Observações
+  observations?: string;
+  internalNotes?: string;
+  
+  // Preferências
+  preferredDaysOfWeek?: string[];
+  preferredTimeSlots?: string[];
+  
+  // Consentimentos
+  hasConsentForm?: boolean;
+  hasDataPrivacyConsent?: boolean;
 }
 
 export interface PatientFilters {
@@ -48,6 +256,31 @@ export interface PatientFilters {
   minAge?: number;
   maxAge?: number;
   searchQuery?: string;
+}
+
+export interface StorageData {
+  version: string;
+  patients: Patient[];
+  lastUpdated: string;
+}
+
+export interface PatientContextType {
+  patients: Patient[];
+  currentPatient: Patient | null;
+  isLoading: boolean;
+  error: string | null;
+  createPatient: (formData: PatientFormData) => Promise<Patient>;
+  updatePatient: (id: string, formData: Partial<PatientFormData>) => Promise<Patient>;
+  deletePatient: (id: string) => Promise<void>;
+  getPatient: (id: string) => Promise<Patient | null>;
+  getAllPatients: () => Promise<Patient[]>;
+  searchPatients: (query: string) => Patient[];
+  filterPatients: (filters: PatientFilters) => Patient[];
+  setCurrentPatient: (patient: Patient | null) => void;
+  clearError: () => void;
+  refreshPatients: () => Promise<void>;
+  validateUniqueCPF: (cpf: string, excludeId?: string) => boolean;
+  validateUniqueEmail: (email: string, excludeId?: string) => boolean;
 }
 
 // ============================================================================
@@ -74,7 +307,7 @@ function loadPatientsFromStorage(): Patient[] {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      const data = JSON.parse(stored);
+      const data: StorageData = JSON.parse(stored);
       if (data.version === CACHE_VERSION) {
         return data.patients;
       }
@@ -82,7 +315,6 @@ function loadPatientsFromStorage(): Patient[] {
   } catch (error) {
     console.error('Erro ao carregar pacientes do storage:', error);
   }
-  
   // Retornar mock data inicial se não houver dados salvos
   return getMockPatients();
 }
@@ -92,7 +324,7 @@ function loadPatientsFromStorage(): Patient[] {
  */
 function savePatientsToStorage(patients: Patient[]): void {
   try {
-    const data = {
+    const data: StorageData = {
       version: CACHE_VERSION,
       patients,
       lastUpdated: new Date().toISOString(),
@@ -106,63 +338,66 @@ function savePatientsToStorage(patients: Patient[]): void {
 /**
  * Converte PatientFormData para Patient
  */
-function convertFormDataToPatient(formData: PatientFormData, existingPatient?: Patient): Patient {
+function convertFormDataToPatient(
+  formData: PatientFormData | Partial<PatientFormData>,
+  existingPatient?: Patient
+): Patient {
   const now = new Date().toISOString();
-  const birthDate = new Date(formData.birthDate);
+  const birthDate = new Date(formData.birthDate!);
   const age = Math.floor((Date.now() - birthDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-  
+
   // Calcular BMI se altura e peso estiverem disponíveis
   let bmi: number | undefined;
   if (formData.height && formData.weight) {
     bmi = formData.weight / ((formData.height / 100) ** 2);
   }
-  
+
   const patient: Patient = {
     // ID e código
     id: existingPatient?.id || `PAT-${Date.now()}`,
     code: existingPatient?.code || `PAC-${String(Date.now()).slice(-6)}`,
-    
+
     // Dados pessoais
-    name: formData.name,
-    email: formData.email,
-    phone: formData.phone,
+    name: formData.name!,
+    email: formData.email!,
+    phone: formData.phone!,
     phone2: formData.phone2,
-    cpf: formData.cpf,
+    cpf: formData.cpf!,
     rg: formData.rg,
-    birthDate: formData.birthDate,
+    birthDate: formData.birthDate!,
     age,
-    gender: formData.gender,
+    gender: formData.gender!,
     maritalStatus: formData.maritalStatus,
     occupation: formData.occupation,
     avatarUrl: existingPatient?.avatarUrl,
-    
+
     // Endereço
     address: {
-      street: formData.street,
-      number: formData.number,
+      street: formData.street!,
+      number: formData.number!,
       complement: formData.complement,
-      neighborhood: formData.neighborhood,
-      city: formData.city,
-      state: formData.state,
-      zipCode: formData.zipCode,
+      neighborhood: formData.neighborhood!,
+      city: formData.city!,
+      state: formData.state!,
+      zipCode: formData.zipCode!,
       country: 'Brasil',
     },
-    
+
     // Contato de emergência
     emergencyContact: {
-      name: formData.emergencyName,
-      relationship: formData.emergencyRelationship,
-      phone: formData.emergencyPhone,
+      name: formData.emergencyName!,
+      relationship: formData.emergencyRelationship!,
+      phone: formData.emergencyPhone!,
       phone2: formData.emergencyPhone2,
       email: formData.emergencyEmail,
     },
-    
+
     // Dados físicos e saúde
     bloodType: formData.bloodType,
     height: formData.height,
     weight: formData.weight,
     bmi,
-    
+
     // Histórico médico
     medicalHistory: {
       allergies: formData.allergies ? formData.allergies.split(',').map(s => s.trim()) : [],
@@ -170,30 +405,32 @@ function convertFormDataToPatient(formData: PatientFormData, existingPatient?: P
       previousSurgeries: formData.previousSurgeries ? formData.previousSurgeries.split(',').map(s => s.trim()) : [],
       currentMedications: formData.currentMedications ? formData.currentMedications.split(',').map(s => s.trim()) : [],
       familyHistory: formData.familyHistory ? formData.familyHistory.split(',').map(s => s.trim()) : [],
-      smokingStatus: formData.smokingStatus,
-      alcoholConsumption: formData.alcoholConsumption,
-      physicalActivityLevel: formData.physicalActivityLevel,
+      smokingStatus: formData.smokingStatus || 'never',
+      alcoholConsumption: formData.alcoholConsumption || 'never',
+      physicalActivityLevel: formData.physicalActivityLevel || 'moderate',
       observations: formData.observations,
     },
-    
+
     // Condições e tratamento
-    conditions: formData.conditions ? formData.conditions.split(',').map(c => ({
-      id: `COND-${Date.now()}-${Math.random()}`,
-      name: c.trim(),
-      diagnosisDate: now,
-      severity: 'moderate' as const,
-      status: 'active' as const,
-    })) : existingPatient?.conditions || [],
+    conditions: formData.conditions
+      ? formData.conditions.split(',').map(c => ({
+          id: `COND-${Date.now()}-${Math.random()}`,
+          name: c.trim(),
+          diagnosisDate: now,
+          severity: 'moderate' as const,
+          status: 'active' as const,
+        }))
+      : existingPatient?.conditions || [],
     mainDiagnosis: formData.mainDiagnosis,
     referringDoctor: formData.referringDoctor,
     referringDoctorCRM: formData.referringDoctorCRM,
-    
+
     // Status e datas
-    status: formData.status,
+    status: formData.status!,
     registrationDate: existingPatient?.registrationDate || now.split('T')[0],
     firstAppointmentDate: existingPatient?.firstAppointmentDate,
     lastAppointmentDate: existingPatient?.lastAppointmentDate,
-    
+
     // Progresso de sessões (manter dados existentes ou inicializar)
     sessionProgress: existingPatient?.sessionProgress || {
       currentSession: 0,
@@ -207,7 +444,7 @@ function convertFormDataToPatient(formData: PatientFormData, existingPatient?: P
       averageSessionsPerWeek: 0,
       adherenceRate: 100,
     },
-    
+
     // Métricas de tratamento (manter dados existentes ou inicializar)
     treatmentMetrics: existingPatient?.treatmentMetrics || {
       painLevel: {
@@ -229,16 +466,16 @@ function convertFormDataToPatient(formData: PatientFormData, existingPatient?: P
       goals: [],
       goalsAchieved: 0,
     },
-    
+
     // Convênio
     insurance: {
-      type: formData.insuranceType,
+      type: formData.insuranceType!,
       provider: formData.insuranceProvider,
       planName: formData.insurancePlanName,
       policyNumber: formData.insurancePolicyNumber,
       validUntil: formData.insuranceValidUntil,
     },
-    
+
     // Informações financeiras (manter dados existentes ou inicializar)
     financialInfo: existingPatient?.financialInfo || {
       totalSpent: 0,
@@ -249,20 +486,20 @@ function convertFormDataToPatient(formData: PatientFormData, existingPatient?: P
       hasOutstandingBalance: false,
       outstandingBalance: 0,
     },
-    
+
     // Observações
     observations: formData.observations,
     internalNotes: formData.internalNotes,
-    
+
     // Preferências
     preferredDaysOfWeek: formData.preferredDaysOfWeek,
     preferredTimeSlots: formData.preferredTimeSlots,
-    
+
     // Documentos e consentimentos
     hasConsentForm: formData.hasConsentForm,
     hasDataPrivacyConsent: formData.hasDataPrivacyConsent,
     documents: existingPatient?.documents || [],
-    
+
     // Metadata
     createdBy: existingPatient?.createdBy || 'system',
     createdAt: existingPatient?.createdAt || now,
@@ -270,7 +507,7 @@ function convertFormDataToPatient(formData: PatientFormData, existingPatient?: P
     updatedAt: now,
     tags: existingPatient?.tags || [],
   };
-  
+
   return patient;
 }
 
@@ -278,10 +515,8 @@ function convertFormDataToPatient(formData: PatientFormData, existingPatient?: P
  * Obtém mock data inicial
  */
 function getMockPatients(): Patient[] {
-  // Retornar pacientes de exemplo para demonstração
   const now = new Date().toISOString();
-  const today = now.split('T')[0];
-  
+
   return [
     {
       id: 'PAT-001',
@@ -660,10 +895,14 @@ function getMockPatients(): Patient[] {
 // PROVIDER COMPONENT
 // ============================================================================
 
-export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+interface PatientProviderProps {
+  children: ReactNode;
+}
+
+export const PatientProvider: React.FC<PatientProviderProps> = ({ children }) => {
   const [patients, setPatients] = useState<Patient[]>(() => loadPatientsFromStorage());
   const [currentPatient, setCurrentPatient] = useState<Patient | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   // ========== PERSISTENCE ==========
@@ -676,208 +915,174 @@ export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, [patients]);
 
   // ========== CRUD OPERATIONS ==========
-
+  
   /**
    * Cria um novo paciente
    */
-  const createPatient = useCallback(async (formData: PatientFormData): Promise<Patient> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Simular delay de API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Validar CPF único
-      if (patients.some(p => p.cpf === formData.cpf)) {
-        patientToasts.duplicateCPF();
-        throw new Error('CPF já cadastrado');
+  const createPatient = useCallback(
+    async (formData: PatientFormData): Promise<Patient> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Simular delay de API
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Validar CPF único
+        if (patients.some(p => p.cpf === formData.cpf)) {
+          patientToasts.duplicateCPF();
+          throw new Error('CPF já cadastrado');
+        }
+
+        // Validar email único
+        if (patients.some(p => p.email === formData.email)) {
+          patientToasts.duplicateEmail();
+          throw new Error('Email já cadastrado');
+        }
+
+        const newPatient = convertFormDataToPatient(formData);
+        setPatients(prev => [...prev, newPatient]);
+        setCurrentPatient(newPatient);
+
+        patientToasts.created(newPatient.name);
+        return newPatient;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Erro ao criar paciente';
+        setError(errorMessage);
+        if (!errorMessage.includes('já cadastrado')) {
+          patientToasts.createError(errorMessage);
+        }
+        throw err;
+      } finally {
+        setIsLoading(false);
       }
-      
-      // Validar email único
-      if (patients.some(p => p.email === formData.email)) {
-        patientToasts.duplicateEmail();
-        throw new Error('Email já cadastrado');
-      }
-      
-      const newPatient = convertFormDataToPatient(formData);
-      
-      setPatients(prev => [...prev, newPatient]);
-      setCurrentPatient(newPatient);
-      
-      patientToasts.created(newPatient.name);
-      
-      return newPatient;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar paciente';
-      setError(errorMessage);
-      
-      // Usar handleError para erros não relacionados a validação
-      if (!errorMessage.includes('já cadastrado')) {
-        handleError(err, {
-          operation: 'createPatient',
-          severity: 'medium',
-          fallbackMessage: 'Erro ao criar paciente',
-          context: { 
-            patientName: formData.name,
-            hasCPF: !!formData.cpf,
-            hasEmail: !!formData.email
-          }
-        });
-      }
-      
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [patients]);
+    },
+    [patients]
+  );
 
   /**
    * Atualiza um paciente existente
    */
-  const updatePatient = useCallback(async (id: string, formData: Partial<PatientFormData>): Promise<Patient> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Simular delay de API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const existingPatient = patients.find(p => p.id === id);
-      if (!existingPatient) {
-        throw new Error('Paciente não encontrado');
+  const updatePatient = useCallback(
+    async (id: string, formData: Partial<PatientFormData>): Promise<Patient> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Simular delay de API
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const existingPatient = patients.find(p => p.id === id);
+        if (!existingPatient) {
+          throw new Error('Paciente não encontrado');
+        }
+
+        // Validar CPF único (excluindo o paciente atual)
+        if (formData.cpf && patients.some(p => p.id !== id && p.cpf === formData.cpf)) {
+          patientToasts.duplicateCPF();
+          throw new Error('CPF já cadastrado');
+        }
+
+        // Validar email único (excluindo o paciente atual)
+        if (formData.email && patients.some(p => p.id !== id && p.email === formData.email)) {
+          patientToasts.duplicateEmail();
+          throw new Error('Email já cadastrado');
+        }
+
+        const updatedPatient = convertFormDataToPatient(
+          { ...existingPatient, ...formData } as PatientFormData,
+          existingPatient
+        );
+
+        setPatients(prev => prev.map(p => (p.id === id ? updatedPatient : p)));
+
+        if (currentPatient?.id === id) {
+          setCurrentPatient(updatedPatient);
+        }
+
+        patientToasts.updated(updatedPatient.name);
+        return updatedPatient;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar paciente';
+        setError(errorMessage);
+        if (!errorMessage.includes('já cadastrado')) {
+          patientToasts.updateError(errorMessage);
+        }
+        throw err;
+      } finally {
+        setIsLoading(false);
       }
-      
-      // Validar CPF único (excluindo o paciente atual)
-      if (formData.cpf && patients.some(p => p.id !== id && p.cpf === formData.cpf)) {
-        patientToasts.duplicateCPF();
-        throw new Error('CPF já cadastrado');
-      }
-      
-      // Validar email único (excluindo o paciente atual)
-      if (formData.email && patients.some(p => p.id !== id && p.email === formData.email)) {
-        patientToasts.duplicateEmail();
-        throw new Error('Email já cadastrado');
-      }
-      
-      const updatedPatient = convertFormDataToPatient(
-        { ...existingPatient, ...formData } as PatientFormData,
-        existingPatient
-      );
-      
-      setPatients(prev => prev.map(p => p.id === id ? updatedPatient : p));
-      
-      if (currentPatient?.id === id) {
-        setCurrentPatient(updatedPatient);
-      }
-      
-      patientToasts.updated(updatedPatient.name);
-      
-      return updatedPatient;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar paciente';
-      setError(errorMessage);
-      
-      // Usar handleError para erros não relacionados a validação
-      if (!errorMessage.includes('já cadastrado') && !errorMessage.includes('não encontrado')) {
-        handleError(err, {
-          operation: 'updatePatient',
-          severity: 'medium',
-          fallbackMessage: 'Erro ao atualizar paciente',
-          context: { 
-            patientId: id,
-            hasCPF: !!formData.cpf,
-            hasEmail: !!formData.email
-          }
-        });
-      }
-      
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [patients, currentPatient?.id]);
+    },
+    [patients, currentPatient?.id]
+  );
 
   /**
    * Exclui um paciente
    */
-  const deletePatient = useCallback(async (id: string): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Simular delay de API
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      const patient = patients.find(p => p.id === id);
-      if (!patient) {
-        throw new Error('Paciente não encontrado');
+  const deletePatient = useCallback(
+    async (id: string): Promise<void> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Simular delay de API
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const patient = patients.find(p => p.id === id);
+        if (!patient) {
+          throw new Error('Paciente não encontrado');
+        }
+
+        setPatients(prev => prev.filter(p => p.id !== id));
+
+        if (currentPatient?.id === id) {
+          setCurrentPatient(null);
+        }
+
+        patientToasts.deleted(patient.name);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Erro ao excluir paciente';
+        setError(errorMessage);
+        patientToasts.deleteError(errorMessage);
+        throw err;
+      } finally {
+        setIsLoading(false);
       }
-      
-      setPatients(prev => prev.filter(p => p.id !== id));
-      
-      if (currentPatient?.id === id) {
-        setCurrentPatient(null);
-      }
-      
-      patientToasts.deleted(patient.name);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao excluir paciente';
-      setError(errorMessage);
-      // Usar handleError para erros não relacionados a validação
-      if (!errorMessage.includes('não encontrado')) {
-        handleError(err, {
-          operation: 'deletePatient',
-          severity: 'medium',
-          fallbackMessage: 'Erro ao excluir paciente',
-          context: { 
-            patientId: id,
-            patientName: patient?.name
-          }
-        });
-      }
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [patients, currentPatient?.id]);
+    },
+    [patients, currentPatient?.id]
+  );
 
   /**
    * Busca um paciente por ID
    */
-  const getPatient = useCallback(async (id: string): Promise<Patient | null> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Simular delay de API
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const patient = patients.find(p => p.id === id) || null;
-      setCurrentPatient(patient);
-      
-      if (!patient) {
-        patientToasts.loadError();
-      }
-      
-      return patient;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar paciente';
-      setError(errorMessage);
-      // Usar handleError para erros não relacionados a validação
-      handleError(err, {
-        operation: 'getPatient',
-        severity: 'low',
-        fallbackMessage: 'Erro ao buscar paciente',
-        context: { 
-          patientId: id
+  const getPatient = useCallback(
+    async (id: string): Promise<Patient | null> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Simular delay de API
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        const patient = patients.find(p => p.id === id) || null;
+        setCurrentPatient(patient);
+
+        if (!patient) {
+          patientToasts.loadError();
         }
-      });
-      return null;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [patients]);
+
+        return patient;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar paciente';
+        setError(errorMessage);
+        patientToasts.loadError();
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [patients]
+  );
 
   /**
    * Busca todos os pacientes
@@ -885,24 +1090,14 @@ export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children })
   const getAllPatients = useCallback(async (): Promise<Patient[]> => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Simular delay de API
       await new Promise(resolve => setTimeout(resolve, 300));
-      
       return patients;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro ao buscar pacientes';
       setError(errorMessage);
-      // Usar handleError para erros não relacionados a validação
-      handleError(err, {
-        operation: 'getAllPatients',
-        severity: 'medium',
-        fallbackMessage: 'Erro ao buscar todos os pacientes',
-        context: { 
-          patientsCount: patients.length
-        }
-      });
       return [];
     } finally {
       setIsLoading(false);
@@ -910,74 +1105,89 @@ export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, [patients]);
 
   // ========== SEARCH & FILTER ==========
-
+  
   /**
    * Busca pacientes por query
    */
-  const searchPatients = useCallback((query: string): Patient[] => {
-    if (!query.trim()) return patients;
-    
-    const lowerQuery = query.toLowerCase();
-    return patients.filter(patient => 
-      patient.name.toLowerCase().includes(lowerQuery) ||
-      patient.email.toLowerCase().includes(lowerQuery) ||
-      patient.cpf.includes(query) ||
-      patient.phone.includes(query) ||
-      patient.code.toLowerCase().includes(lowerQuery)
-    );
-  }, [patients]);
+  const searchPatients = useCallback(
+    (query: string): Patient[] => {
+      if (!query.trim()) return patients;
+
+      const lowerQuery = query.toLowerCase();
+      return patients.filter(
+        patient =>
+          patient.name.toLowerCase().includes(lowerQuery) ||
+          patient.email.toLowerCase().includes(lowerQuery) ||
+          patient.cpf.includes(query) ||
+          patient.phone.includes(query) ||
+          patient.code.toLowerCase().includes(lowerQuery)
+      );
+    },
+    [patients]
+  );
 
   /**
    * Filtra pacientes por critérios
    */
-  const filterPatients = useCallback((filters: PatientFilters): Patient[] => {
-    let filtered = patients;
-    
-    if (filters.status && filters.status.length > 0) {
-      filtered = filtered.filter(p => filters.status!.includes(p.status));
-    }
-    
-    if (filters.gender && filters.gender.length > 0) {
-      filtered = filtered.filter(p => filters.gender!.includes(p.gender));
-    }
-    
-    if (filters.hasOutstandingBalance !== undefined) {
-      filtered = filtered.filter(p => p.financialInfo.hasOutstandingBalance === filters.hasOutstandingBalance);
-    }
-    
-    if (filters.minAge !== undefined) {
-      filtered = filtered.filter(p => p.age >= filters.minAge!);
-    }
-    
-    if (filters.maxAge !== undefined) {
-      filtered = filtered.filter(p => p.age <= filters.maxAge!);
-    }
-    
-    if (filters.searchQuery) {
-      filtered = searchPatients(filters.searchQuery);
-    }
-    
-    return filtered;
-  }, [patients, searchPatients]);
+  const filterPatients = useCallback(
+    (filters: PatientFilters): Patient[] => {
+      let filtered = patients;
+
+      if (filters.status && filters.status.length > 0) {
+        filtered = filtered.filter(p => filters.status!.includes(p.status));
+      }
+
+      if (filters.gender && filters.gender.length > 0) {
+        filtered = filtered.filter(p => filters.gender!.includes(p.gender));
+      }
+
+      if (filters.hasOutstandingBalance !== undefined) {
+        filtered = filtered.filter(
+          p => p.financialInfo.hasOutstandingBalance === filters.hasOutstandingBalance
+        );
+      }
+
+      if (filters.minAge !== undefined) {
+        filtered = filtered.filter(p => p.age >= filters.minAge!);
+      }
+
+      if (filters.maxAge !== undefined) {
+        filtered = filtered.filter(p => p.age <= filters.maxAge!);
+      }
+
+      if (filters.searchQuery) {
+        filtered = searchPatients(filters.searchQuery);
+      }
+
+      return filtered;
+    },
+    [patients, searchPatients]
+  );
 
   // ========== VALIDATION ==========
-
+  
   /**
    * Valida se CPF é único
    */
-  const validateUniqueCPF = useCallback((cpf: string, excludeId?: string): boolean => {
-    return !patients.some(p => p.cpf === cpf && p.id !== excludeId);
-  }, [patients]);
+  const validateUniqueCPF = useCallback(
+    (cpf: string, excludeId?: string): boolean => {
+      return !patients.some(p => p.cpf === cpf && p.id !== excludeId);
+    },
+    [patients]
+  );
 
   /**
    * Valida se email é único
    */
-  const validateUniqueEmail = useCallback((email: string, excludeId?: string): boolean => {
-    return !patients.some(p => p.email === email && p.id !== excludeId);
-  }, [patients]);
+  const validateUniqueEmail = useCallback(
+    (email: string, excludeId?: string): boolean => {
+      return !patients.some(p => p.email === email && p.id !== excludeId);
+    },
+    [patients]
+  );
 
   // ========== STATE MANAGEMENT ==========
-
+  
   /**
    * Atualiza lista de pacientes
    */
@@ -1000,47 +1210,46 @@ export const PatientProvider: React.FC<{ children: ReactNode }> = ({ children })
   }, []);
 
   // ========== MEMOIZED VALUE ==========
-
-  const value: PatientContextType = useMemo(() => ({
-    patients,
-    currentPatient,
-    isLoading,
-    error,
-    createPatient,
-    updatePatient,
-    deletePatient,
-    getPatient,
-    getAllPatients,
-    searchPatients,
-    filterPatients,
-    setCurrentPatient,
-    clearError,
-    refreshPatients,
-    validateUniqueCPF,
-    validateUniqueEmail,
-  }), [
-    patients,
-    currentPatient,
-    isLoading,
-    error,
-    createPatient,
-    updatePatient,
-    deletePatient,
-    getPatient,
-    getAllPatients,
-    searchPatients,
-    filterPatients,
-    clearError,
-    refreshPatients,
-    validateUniqueCPF,
-    validateUniqueEmail,
-  ]);
-
-  return (
-    <PatientContext.Provider value={value}>
-      {children}
-    </PatientContext.Provider>
+  
+  const value = useMemo<PatientContextType>(
+    () => ({
+      patients,
+      currentPatient,
+      isLoading,
+      error,
+      createPatient,
+      updatePatient,
+      deletePatient,
+      getPatient,
+      getAllPatients,
+      searchPatients,
+      filterPatients,
+      setCurrentPatient,
+      clearError,
+      refreshPatients,
+      validateUniqueCPF,
+      validateUniqueEmail,
+    }),
+    [
+      patients,
+      currentPatient,
+      isLoading,
+      error,
+      createPatient,
+      updatePatient,
+      deletePatient,
+      getPatient,
+      getAllPatients,
+      searchPatients,
+      filterPatients,
+      clearError,
+      refreshPatients,
+      validateUniqueCPF,
+      validateUniqueEmail,
+    ]
   );
+
+  return <PatientContext.Provider value={value}>{children}</PatientContext.Provider>;
 };
 
 // ============================================================================

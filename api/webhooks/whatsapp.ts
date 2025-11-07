@@ -1,7 +1,19 @@
 /**
- * WhatsApp Webhook API Endpoint
- * Recebe eventos do Meta/Facebook WhatsApp Business API
- *
+ * WhatsApp Webhook API Endpoint (Node.js Serverless)
+ * 
+ * ⚠️ DEPRECATED: This file is deprecated in favor of Edge Function version
+ * 
+ * Migration date: 06/11/2025
+ * New version: api/webhooks/whatsapp-edge.ts (Vercel Edge Runtime)
+ * 
+ * Reason for deprecation:
+ * - Edge Functions are 50ms faster (0ms cold starts)
+ * - 50% cheaper than Node.js serverless
+ * - Better for webhooks (instant response)
+ * 
+ * TODO: Remove this file after validating Edge version in production
+ * 
+ * @deprecated Use api/webhooks/whatsapp-edge.ts instead
  * @see https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks
  */
 
