@@ -6,8 +6,8 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "outputDirectory": ".next",
+  "framework": "vite",
+  "outputDirectory": "dist",
   
   "env": {
     "NODE_ENV": "production"
@@ -27,8 +27,7 @@
       "runtime": "edge"
     },
     "api/webhooks/**/*.ts": {
-      "runtime": "edge",
-      "regions": ["gru1"]
+      "runtime": "edge"
     }
   },
   
