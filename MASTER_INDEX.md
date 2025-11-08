@@ -46,7 +46,7 @@ Fase 4: ████████████████████  100% ✅
 4. `CONQUISTA_HISTORICA.md` - Celebração
 5. `INDEX_DOCUMENTACAO.md` - Índice completo
 
-### 💻 Técnico (8)
+### 💻 Técnico (10)
 6. `README.md` - Setup e quick start
 7. `minatto_gemini.md` - Roadmap completo
 8. `REVISAO_TECNICA_COMPLETA_06_NOV_2025.md` - Code review
@@ -55,40 +55,42 @@ Fase 4: ████████████████████  100% ✅
 11. `package.json.additions.txt` - Dependencies
 12. `.env.example` - Environment vars
 13. `.env.staging.example` - Staging config
+14. `docs/TELEMEDICINA.md` - Guia teleconsulta
+15. `docs/MOVEMENT_ANALYSIS.md` - Guia movement IA
 
 ### 🚀 Deploy (5)
-14. `DEPLOYMENT_GUIDE.md` - Guia completo
-15. `PRODUCTION_CHECKLIST.md` - Checklist
-16. `scripts/deploy-staging.sh` - Script staging
-17. `scripts/production-deploy.sh` - Script production
-18. `vercel.json` - Vercel config
+16. `DEPLOYMENT_GUIDE.md` - Guia completo
+17. `PRODUCTION_CHECKLIST.md` - Checklist
+18. `scripts/deploy-staging.sh` - Script staging
+19. `scripts/production-deploy.sh` - Script production
+20. `vercel.json` - Vercel config
 
 ### 🧪 Testes (3)
-19. `jest.config.js` - Jest config
-20. `jest.setup.js` - Test setup
-21. `__tests__/**/*.test.tsx` - 40+ tests
+21. `jest.config.js` - Jest config
+22. `jest.setup.js` - Test setup
+23. `__tests__/**/*.test.tsx` - 40+ tests
 
 ### 📊 Relatórios (7)
-22. `RELATORIO_FINAL_COMPLETO_06_NOV_2025.md`
-23. `RELATORIO_SESSAO_COMPLETO_06_NOV_2025_PARTE_2.md`
-24. `RELATORIO_FINAL_DEFINITIVO_06_NOV_2025.md`
-25. `docs/MIGRATION_FINAL_REPORT.md`
-26. `MIGRATION_COMPLETE.md`
-27. `docs/MIGRATION_SUCCESS_EMPTY_DATABASE.md`
-28. `O_QUE_FALTA_FAZER.md`
+24. `RELATORIO_FINAL_COMPLETO_06_NOV_2025.md`
+25. `RELATORIO_SESSAO_COMPLETO_06_NOV_2025_PARTE_2.md`
+26. `RELATORIO_FINAL_DEFINITIVO_06_NOV_2025.md`
+27. `docs/MIGRATION_FINAL_REPORT.md`
+28. `MIGRATION_COMPLETE.md`
+29. `docs/MIGRATION_SUCCESS_EMPTY_DATABASE.md`
+30. `O_QUE_FALTA_FAZER.md`
 
 ### 🗄️ Database (7)
-29. `docs/QUERY_OPTIMIZATION_GUIDE.md`
-30. `docs/DATABASE_NOMENCLATURE_GUIDE.md`
-31. `supabase/migrations/2025-11-06_create_exercise_junction_tables.sql`
-32. `supabase/migrations/2025-11-06_backfill_exercise_junctions.sql`
-33. `supabase/migrations/2025-11-06_remove_exercise_jsonb_fields.sql`
-34. `supabase/migrations/2025-11-06_performance_optimizations.sql`
-35. `validation-queries.sql`
+31. `docs/QUERY_OPTIMIZATION_GUIDE.md`
+32. `docs/DATABASE_NOMENCLATURE_GUIDE.md`
+33. `supabase/migrations/2025-11-06_create_exercise_junction_tables.sql`
+34. `supabase/migrations/2025-11-06_backfill_exercise_junctions.sql`
+35. `supabase/migrations/2025-11-06_remove_exercise_jsonb_fields.sql`
+36. `supabase/migrations/2025-11-06_performance_optimizations.sql`
+37. `validation-queries.sql`
 
 ---
 
-## 🎯 FEATURES (21 TOTAL)
+## 🎯 FEATURES (22 TOTAL)
 
 ### Fase 1-2: Core (10)
 1. Gestão de pacientes
@@ -131,7 +133,8 @@ Fase 4: ████████████████████  100% ✅
 | AI Insights | R$ 5k-8k |
 | Marketplace | R$ 20k-50k |
 | Telemedicina | R$ 10k-20k |
-| **TOTAL** | **R$ 60k-108k** |
+| Video Movement Analysis | R$ 8k-12k |
+| **TOTAL** | **R$ 68k-120k** |
 
 **Anual:** R$ 720k-1.3M
 

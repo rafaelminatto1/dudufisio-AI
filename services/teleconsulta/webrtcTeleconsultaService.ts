@@ -1,6 +1,20 @@
 // WebRTC teleconsulta service for real-time video consultations
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+const readEnv = (keys: string[]): string | undefined => {
+  const metaEnv = (typeof import.meta !== 'undefined' && (import.meta as any).env) || {};
+  for (const key of keys) {
+    if (metaEnv[key] !== undefined) {
+      return metaEnv[key];
+    }
+    if (typeof process !== 'undefined' && process.env?.[key]) {
+      return process.env[key];
+    }
+  }
+
+  return undefined;
+};
+
 interface TeleconsultaSession {
   id: string;
   appointmentId: string;
@@ -165,6 +179,7 @@ class WebRTCTeleconsultaService {
   private websocket: WebSocket | null = null;
   private currentSession: TeleconsultaSession | null = null;
   private isScreenSharing: boolean = false;
+  private networkMonitorInterval: ReturnType<typeof setInterval> | null = null;
 
   // WebRTC configuration
   private rtcConfiguration: RTCConfiguration = {
@@ -175,24 +190,31 @@ class WebRTCTeleconsultaService {
       // Custom TURN servers (would be configured in production)
       {
         urls: 'turn:turn.dudufisio.com:3478',
-        username: import.meta.env.TURN_USERNAME || 'default',
-        credential: import.meta.env.TURN_PASSWORD || 'default',
+        username: readEnv(['TURN_USERNAME', 'NEXT_PUBLIC_TURN_USERNAME']) || 'default',
+        credential: readEnv(['TURN_PASSWORD', 'NEXT_PUBLIC_TURN_PASSWORD']) || 'default',
       },
     ],
     iceCandidatePoolSize: 10,
   };
 
   constructor() {
-    this.supabase = createClient(
-      import.meta.env.VITE_SUPABASE_URL!,
-      import.meta.env.VITE_SUPABASE_ANON_KEY!
-    );
+    const supabaseUrl = readEnv(['VITE_SUPABASE_URL', 'NEXT_PUBLIC_SUPABASE_URL']) ?? 'http://localhost:54321';
+    const supabaseAnon = readEnv(['VITE_SUPABASE_ANON_KEY', 'NEXT_PUBLIC_SUPABASE_ANON_KEY']) ?? 'public-anon-key';
 
-    this.setupWebSocketConnection();
+    this.supabase = createClient(supabaseUrl, supabaseAnon);
+
+    if (typeof window !== 'undefined') {
+      this.setupWebSocketConnection();
+    }
   }
 
   private setupWebSocketConnection(): void {
-    const wsUrl = import.meta.env.VITE_WEBSOCKET_URL || 'ws://localhost:8080';
+    if (typeof WebSocket === 'undefined') {
+      return;
+    }
+    const wsUrl =
+      readEnv(['VITE_WEBSOCKET_URL', 'NEXT_PUBLIC_TELEMEDICINE_WEBSOCKET_URL']) ||
+      'ws://localhost:8080';
     this.websocket = new WebSocket(wsUrl);
 
     this.websocket.onopen = () => {
@@ -614,6 +636,12 @@ class WebRTCTeleconsultaService {
     }
   }
 
+  async stopRecording(): Promise<void> {
+    if (this.mediaRecorder?.state === 'recording') {
+      this.mediaRecorder.stop();
+    }
+  }
+
   private async createCompositeStream(): Promise<MediaStream> {
     // Create a composite video stream from all participants
     const canvas = document.createElement('canvas');
@@ -991,10 +1019,19 @@ class WebRTCTeleconsultaService {
   }
 
   private startNetworkQualityMonitoring(): void {
-    setInterval(async () => {
+    if (this.networkMonitorInterval) {
+      clearInterval(this.networkMonitorInterval);
+    }
+
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    this.networkMonitorInterval = setInterval(async () => {
       if (this.currentSession) {
         const metrics = await this.measureNetworkQuality();
         await this.updateSessionQuality(this.currentSession.id, metrics);
+        this.onNetworkQuality?.(metrics);
       }
     }, 10000); // Every 10 seconds
   }
@@ -1152,6 +1189,7 @@ class WebRTCTeleconsultaService {
   onChatMessage?: (message: ChatMessage) => void;
   onScreenShareStarted?: (data: Record<string, unknown>) => void;
   onScreenShareEnded?: (data: Record<string, unknown>) => void;
+  onNetworkQuality?: (metrics: NetworkQualityMetrics) => void;
 
   // Cleanup methods
   async leaveSession(): Promise<void> {
@@ -1173,6 +1211,11 @@ class WebRTCTeleconsultaService {
     // Stop recording if active
     if (this.mediaRecorder?.state === 'recording') {
       this.mediaRecorder.stop();
+    }
+
+    if (this.networkMonitorInterval) {
+      clearInterval(this.networkMonitorInterval);
+      this.networkMonitorInterval = null;
     }
 
     // Close WebSocket
@@ -1282,6 +1325,18 @@ class WebRTCTeleconsultaService {
         }
       }
     }
+  }
+
+  getLocalStream(): MediaStream | null {
+    return this.localStream;
+  }
+
+  getRemoteStreams(): Map<string, MediaStream> {
+    return new Map(this.remoteStreams);
+  }
+
+  getCurrentSession(): TeleconsultaSession | null {
+    return this.currentSession;
   }
 }
 

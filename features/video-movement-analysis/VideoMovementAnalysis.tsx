@@ -33,103 +33,7 @@ import {
   TrendingUp,
   Zap,
 } from 'lucide-react';
-
-// ============================================================================
-// TYPES
-// ============================================================================
-
-interface FrameAnalysis {
-  frameNumber: number;
-  timestamp: number; // segundos
-  pose: {
-    keypoints: Array<{
-      name: string;
-      x: number;
-      y: number;
-      score: number;
-    }>;
-    score: number;
-  };
-  angles: {
-    joint: string;
-    angle: number;
-    expected: number;
-    difference: number;
-    status: 'correct' | 'close' | 'incorrect';
-  }[];
-  feedback: string[];
-}
-
-interface VideoAnalysisResult {
-  duration: number;
-  totalFrames: number;
-  framesAnalyzed: number;
-  frameAnalysis: FrameAnalysis[];
-  summary: {
-    overallScore: number;
-    consistency: number;
-    rangeOfMotion: {
-      joint: string;
-      min: number;
-      max: number;
-      average: number;
-      expected: number;
-    }[];
-    movementQuality: {
-      smoothness: number; // 0-100
-      speed: number; // degrees/second
-      compensation: string[];
-    };
-    improvements: string[];
-    strengths: string[];
-  };
-}
-
-// ============================================================================
-// VIDEO ANALYSIS SERVICE
-// ============================================================================
-
-class VideoAnalysisService {
-  async analyzeVideo(videoFile: File, exerciseType: string): Promise<VideoAnalysisResult> {
-    // Simular análise (em produção, usar TensorFlow.js + PoseNet)
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
-    return {
-      duration: 15.5,
-      totalFrames: 465,
-      framesAnalyzed: 465,
-      frameAnalysis: [], // Análise frame-by-frame
-      summary: {
-        overallScore: 82,
-        consistency: 88,
-        rangeOfMotion: [
-          { joint: 'Joelho direito', min: 10, max: 165, average: 145, expected: 180 },
-          { joint: 'Quadril', min: 0, max: 95, average: 85, expected: 90 },
-        ],
-        movementQuality: {
-          smoothness: 85,
-          speed: 45, // degrees/sec
-          compensation: ['Leve rotação de tronco', 'Compensação com ombro esquerdo'],
-        },
-        improvements: [
-          'Aumentar amplitude final em 15°',
-          'Manter tronco mais estável',
-          'Movimento mais controlado na fase excêntrica',
-        ],
-        strengths: [
-          'Boa ativação muscular',
-          'Velocidade adequada',
-          'Padrão consistente ao longo do exercício',
-        ],
-      },
-    };
-  }
-
-  async generateAnnotatedVideo(videoFile: File, analysis: VideoAnalysisResult): Promise<Blob> {
-    // Gerar vídeo com anotações visuais
-    return new Blob(['mock'], { type: 'video/mp4' });
-  }
-}
+import { runVideoAnalysis, VideoAnalysisResult } from '../../services/videoMovementAnalysisService';
 
 // ============================================================================
 // COMPONENTS
@@ -191,7 +95,6 @@ export const VideoMovementAnalysis: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const analysisService = useRef(new VideoAnalysisService());
 
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -213,7 +116,7 @@ export const VideoMovementAnalysis: React.FC = () => {
     setIsAnalyzing(true);
 
     try {
-      const analysis = await analysisService.current.analyzeVideo(videoFile, 'knee-flexion');
+      const analysis = await runVideoAnalysis(videoFile, 'knee-flexion');
       setResult(analysis);
     } catch (error) {
       console.error('Erro na análise:', error);

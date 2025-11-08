@@ -25,7 +25,6 @@ export default [
       'temp/**',
       '.vercel/**',
       '.turbo/**',
-      'scripts/**/*.js',
       '**/*.min.js',
       '*.log',
       '*.zip',
@@ -106,6 +105,41 @@ export default [
     }
   },
 
+  // Supabase edge functions and serverless scripts (type-aware parsing desativado)
+  {
+    files: ['supabase/functions/**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        project: null
+      },
+      globals: {
+        ...globals.node
+      }
+    },
+    rules: {
+      'no-console': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/prefer-optional-chain': 'off'
+    }
+  },
+
+  // Tipos compartilhados extensos (catálogos/enums)
+  {
+    files: ['types.ts', 'types/**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        project: null
+      }
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/prefer-optional-chain': 'off'
+    }
+  },
+
   // JavaScript base configuration (sem TypeScript project)
   {
     files: ['**/*.{js,jsx}'],
@@ -131,6 +165,20 @@ export default [
       'prefer-const': 'error',
       'no-var': 'error',
     },
+  },
+
+  // Scripts utilitários (root test-*.js, ferramentas de diagnóstico)
+  {
+    files: [
+      'test-*.js',
+      'testsprite_tests/**/*.ts',
+      'test/**/*.ts',
+      'workers/**/*.js'
+    ],
+    rules: {
+      'no-console': 'off',
+      'no-unused-vars': 'off'
+    }
   },
 
   // Test files configuration

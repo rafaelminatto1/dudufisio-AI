@@ -84,6 +84,9 @@ mobile-app/
 │   ├── ProgressChart.tsx
 │   └── VideoPlayer.tsx
 │
+├── __tests__/             # Jest + Testing Library
+│   └── Home.test.tsx
+│
 ├── services/             # API & Business logic
 │   ├── supabase.ts
 │   ├── auth.service.ts
@@ -102,19 +105,36 @@ mobile-app/
 │   ├── Colors.ts
 │   └── Config.ts
 │
+├── jest.config.js      # Jest Expo preset
+├── setupTests.ts       # Testing Library config
+├── tsconfig.json       # TypeScript strict config
+├── babel.config.js     # Expo + expo-router plugin
+├── metro.config.js     # Metro bundler config
+│
 └── assets/            # Images, fonts, etc
 ```
+
+---
+
+## ✅ Implementado nesta entrega (07/11/2025)
+
+- Expo Router com abas principais e fluxo de autenticação
+- Telas base: Home, Exercícios, Agenda e Perfil
+- Serviços e hooks: `useAuth`, `useExercises`, `useAppointments`
+- Componentes reutilizáveis para cards, gráfico e player de vídeo
+- Integração Supabase + utilitários de notificações Expo
+- Suite inicial de testes com Jest + Testing Library
 
 ---
 
 ## 🎨 FEATURES PLANEJADAS
 
 ### MVP (Versão 1.0)
-- [ ] Login/Registro
-- [ ] Home dashboard
-- [ ] Lista de exercícios com vídeos
-- [ ] Agendamento de consultas
-- [ ] Perfil do paciente
+- [x] Login/Registro (fluxo básico)
+- [x] Home dashboard
+- [x] Lista de exercícios com vídeos
+- [x] Agendamento de consultas
+- [x] Perfil do paciente
 - [ ] Notificações push
 - [ ] Histórico de sessões
 
@@ -162,11 +182,14 @@ npm run lint          # Lint code
 ```typescript
 // services/supabase.ts
 import { createClient } from '@supabase/supabase-js';
+import { Config } from '../constants/Config';
 
-export const supabase = createClient(
-  process.env.EXPO_PUBLIC_SUPABASE_URL!,
-  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!
-);
+export const supabase = createClient(Config.supabaseUrl, Config.supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});
 ```
 
 ### 2. Push Notifications
@@ -187,6 +210,7 @@ npx expo install expo-notifications
 EXPO_PUBLIC_SUPABASE_URL=your_url
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your_key
 EXPO_PUBLIC_API_URL=your_api_url
+EXPO_PUBLIC_ENABLE_PUSH=true
 ```
 
 ---
