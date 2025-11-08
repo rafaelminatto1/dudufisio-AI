@@ -211,3 +211,5 @@ Você terá 80% do contexto! ✅
 
 **Próximo passo:** Leia `APRESENTACAO_EXECUTIVA.md` →
 
+<!-- Redeploy 2025-11-07 -->
+
