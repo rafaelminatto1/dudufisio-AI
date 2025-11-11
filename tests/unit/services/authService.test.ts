@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as authService from '@/services/authService';
 import { createTestUser, clearStorage } from './__helpers__/testFixtures';
-import { Role } from '@/types';
+import { Role } from '@/types/enums';
 
 // Mock do sessionStorage
 const sessionStorageMock = (() => {

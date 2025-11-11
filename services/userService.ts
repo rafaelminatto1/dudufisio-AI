@@ -2,7 +2,7 @@
 import { supabase } from '../lib/supabaseClient';
 import type { Database } from '../types/database';
 import { mockUsers } from '../data/mockData';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 
 export type UserProfile = Database['public']['Tables']['users']['Row'];
 

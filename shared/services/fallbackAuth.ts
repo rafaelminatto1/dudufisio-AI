@@ -5,7 +5,8 @@
  * para permitir que a aplicação continue funcionando
  */
 
-import { User, Role } from '../types';
+import { User } from '../types';
+import { Role } from '../types/enums';
 import { logger } from './logger';
 
 interface FallbackAuthState {

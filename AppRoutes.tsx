@@ -21,7 +21,8 @@ import { ExerciseProvider } from './contexts/ExerciseContext';
 import { SafeOfflineProvider } from './contexts/SafeOfflineContext';
 import { ProviderErrorBoundary } from './components/ProviderErrorBoundary';
 import AuthRoutes from './pages/auth/AuthRoutes';
-import { Role } from './types';
+import { Role } from './types/enums';
+import { ThemeProvider } from './src/contexts/ThemeContext';
 
 // Lazy load dos dashboards específicos por role
 const MainDashboard = React.lazy(() => import('./pages/MainDashboard'));
@@ -418,35 +419,37 @@ const AppRoutes: React.FC = () => {
 
   return (
     <ProviderErrorBoundary providerName="Root Providers">
-      <SafeOfflineProvider>
-        <AppErrorBoundary>
-          <RouterWrapper>
-            {memoizedProviders.debug && (
-              <DebugProvider>
-                <SupabaseAuthProvider>
-                  <AppProvider>
-                    <PatientProvider>
-                      <ExerciseProvider>
-                        <PerformanceProfiler
-                          id="AppRoutes"
-                          onRender={(id, _phase, actualDuration) => {
-                            logger.performance(id, actualDuration, 100);
-                          }}
-                        >
-                          <ToastProvider>
-                            <AppContent />
-                            <UnifiedOfflineIndicator position="bottom-right" showSyncDetails />
-                          </ToastProvider>
-                        </PerformanceProfiler>
-                      </ExerciseProvider>
-                    </PatientProvider>
-                  </AppProvider>
-                </SupabaseAuthProvider>
-              </DebugProvider>
-            )}
-          </RouterWrapper>
-        </AppErrorBoundary>
-      </SafeOfflineProvider>
+      <ThemeProvider>
+        <SafeOfflineProvider>
+          <AppErrorBoundary>
+            <RouterWrapper>
+              {memoizedProviders.debug && (
+                <DebugProvider>
+                  <SupabaseAuthProvider>
+                    <AppProvider>
+                      <PatientProvider>
+                        <ExerciseProvider>
+                          <PerformanceProfiler
+                            id="AppRoutes"
+                            onRender={(id, _phase, actualDuration) => {
+                              logger.performance(id, actualDuration, 100);
+                            }}
+                          >
+                            <ToastProvider>
+                              <AppContent />
+                              <UnifiedOfflineIndicator position="bottom-right" showSyncDetails />
+                            </ToastProvider>
+                          </PerformanceProfiler>
+                        </ExerciseProvider>
+                      </PatientProvider>
+                    </AppProvider>
+                  </SupabaseAuthProvider>
+                </DebugProvider>
+              )}
+            </RouterWrapper>
+          </AppErrorBoundary>
+        </SafeOfflineProvider>
+      </ThemeProvider>
     </ProviderErrorBoundary>
   );
 };

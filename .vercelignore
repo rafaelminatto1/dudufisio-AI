@@ -48,8 +48,11 @@ docs/
 !README.md
 *.plan.md
 
-# Scripts de desenvolvimento (não usados no build)
-scripts/
+# Garantir que scripts críticos sejam enviados
+!scripts/
+!scripts/**/*
+
+# Scripts de desenvolvimento (mantemos scripts necessários para validação de build)
 playwright.config.ts
 playwright.config.performance.ts
 vitest.config.ts

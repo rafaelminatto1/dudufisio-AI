@@ -1,5 +1,6 @@
 
-import { User, Role } from '../types';
+import { User } from '../types';
+import { Role } from '../types/enums';
 import { mockUsers } from '../data/mockData';
 
 const SESSION_KEY = 'fisioflow_user_session';

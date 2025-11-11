@@ -9,7 +9,7 @@ import {
   FileSpreadsheet, FilePlus, FileClock, AlertTriangle, AreaChart,
   Archive, BookMarked, Dumbbell
 } from 'lucide-react';
-import { Role } from '../../types';
+import { Role } from '../../types/enums';
 import { useNotifications } from '../../hooks/useNotifications';
 
 interface ResponsiveSidebarProps {

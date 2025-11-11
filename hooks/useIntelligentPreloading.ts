@@ -6,7 +6,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 import {
   initializeIntelligentPreloading,
   preloadComponent,

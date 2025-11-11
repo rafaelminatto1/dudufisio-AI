@@ -1,5 +1,5 @@
 import React from 'react';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import { ShieldX } from 'lucide-react';
 

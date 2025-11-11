@@ -1,5 +1,5 @@
 import React from 'react';
-import { Role } from '../../types';
+import { Role } from '../../types/enums';
 import { useApp } from '../../contexts/AppContext';
 import { AlertTriangle, Lock, ChevronLeft } from 'lucide-react';
 

@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { useNotifications } from '@/hooks/useNotifications';
-import { Role } from '@/types';
+import { Role } from '@/types/enums';
 import { NavSection } from './NavSection';
 import { NavItemConfig } from './NavItem';
 import { Button } from '@/components/ui/button';

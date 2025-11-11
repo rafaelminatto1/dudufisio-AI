@@ -1,161 +1,140 @@
 import React from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './card';
+import { Button } from './button';
+import { LucideIcon, ArrowRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { LucideIcon } from 'lucide-react';
 
-interface FeatureCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  icon: LucideIcon;
+export interface FeatureCardProps {
+  /** Título da feature */
   title: string;
+  /** Descrição da feature */
   description: string;
-  variant?: 'default' | 'primary' | 'success' | 'warning' | 'error';
-  size?: 'sm' | 'md' | 'lg';
-  animated?: boolean;
-  glow?: boolean;
+  /** Ícone da feature */
+  icon: LucideIcon;
+  /** Cor do ícone/tema */
+  variant?: 'primary' | 'secondary' | 'accent-orange' | 'accent-pink' | 'accent-blue' | 'accent-purple';
+  /** Texto do botão de ação */
+  actionLabel?: string;
+  /** Callback ao clicar no botão */
+  onAction?: () => void;
+  /** Lista de recursos/benefícios */
+  features?: string[];
+  /** Se o card deve ter hover effect */
+  hoverable?: boolean;
   className?: string;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({
-  icon: Icon,
+/**
+ * FeatureCard - Card de Feature/Funcionalidade (Monday.com Inspired)
+ *
+ * Card moderno para destacar funcionalidades e recursos do sistema
+ *
+ * @example
+ * ```tsx
+ * <FeatureCard
+ *   title="Agenda Inteligente"
+ *   description="Gerencie consultas e horários facilmente com IA"
+ *   icon={Calendar}
+ *   variant="primary"
+ *   actionLabel="Explorar"
+ *   features={[
+ *     "Agendamento automático",
+ *     "Notificações por SMS",
+ *     "Sincronização com calendário"
+ *   ]}
+ *   hoverable
+ * />
+ * ```
+ */
+export default function FeatureCard({
   title,
   description,
-  variant = 'default',
-  size = 'md',
-  animated = true,
-  glow = false,
+  icon: Icon,
+  variant = 'primary',
+  actionLabel,
+  onAction,
+  features,
+  hoverable = true,
   className,
-  ...props
-}) => {
-  const sizeClasses = {
-    sm: 'p-4',
-    md: 'p-6',
-    lg: 'p-8',
-  };
-
-  const iconSizeClasses = {
-    sm: 'w-8 h-8',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16',
-  };
-
-  const variantClasses = {
-    default: {
-      card: 'glass-card hover-lift',
-      iconContainer: 'bg-neutral-100 dark:bg-neutral-800',
-      icon: 'text-neutral-700 dark:text-neutral-300',
-      title: 'text-gray-900 dark:text-white',
-      description: 'text-gray-600 dark:text-gray-300',
-    },
+}: FeatureCardProps) {
+  const variantStyles = {
     primary: {
-      card: 'glass-card hover-lift hover-glow',
-      iconContainer: 'bg-gradient-primary',
-      icon: 'text-white',
-      title: 'text-gray-900 dark:text-white',
-      description: 'text-gray-600 dark:text-gray-300',
+      bg: 'bg-primary-light',
+      icon: 'text-primary',
+      border: 'hover:border-primary',
     },
-    success: {
-      card: 'glass-card hover-lift',
-      iconContainer: 'bg-health-success/10',
-      icon: 'text-health-success',
-      title: 'text-gray-900 dark:text-white',
-      description: 'text-gray-600 dark:text-gray-300',
+    secondary: {
+      bg: 'bg-secondary-light',
+      icon: 'text-secondary',
+      border: 'hover:border-secondary',
     },
-    warning: {
-      card: 'glass-card hover-lift',
-      iconContainer: 'bg-health-warning/10',
-      icon: 'text-health-warning',
-      title: 'text-gray-900 dark:text-white',
-      description: 'text-gray-600 dark:text-gray-300',
+    'accent-orange': {
+      bg: 'bg-accent-orange-light',
+      icon: 'text-accent-orange',
+      border: 'hover:border-accent-orange',
     },
-    error: {
-      card: 'glass-card hover-lift',
-      iconContainer: 'bg-health-error/10',
-      icon: 'text-health-error',
-      title: 'text-gray-900 dark:text-white',
-      description: 'text-gray-600 dark:text-gray-300',
+    'accent-pink': {
+      bg: 'bg-accent-pink-light',
+      icon: 'text-accent-pink',
+      border: 'hover:border-accent-pink',
+    },
+    'accent-blue': {
+      bg: 'bg-accent-blue-light',
+      icon: 'text-accent-blue',
+      border: 'hover:border-accent-blue',
+    },
+    'accent-purple': {
+      bg: 'bg-accent-purple-light',
+      icon: 'text-accent-purple',
+      border: 'hover:border-accent-purple',
     },
   };
 
-  const currentVariant = variantClasses[variant];
+  const styles = variantStyles[variant];
 
   return (
-    <div
+    <Card
+      hoverable={hoverable}
       className={cn(
-        'relative rounded-xl transition-all duration-300',
-        currentVariant.card,
-        sizeClasses[size],
-        {
-          'animate-fade-in-up': animated,
-          'hover-glow': glow,
-        },
+        'border-2 border-neutral-border transition-all duration-300',
+        styles.border,
         className
       )}
-      {...props}
     >
-      {/* Icon Container */}
-      <div className="mb-4">
-        <div
-          className={cn(
-            'inline-flex items-center justify-center rounded-lg transition-transform duration-300',
-            currentVariant.iconContainer,
-            iconSizeClasses[size],
-            {
-              'group-hover:rotate-12': animated,
-            }
-          )}
-        >
-          <Icon
-            className={cn(
-              'transition-colors duration-300',
-              currentVariant.icon,
-              {
-                'w-4 h-4': size === 'sm',
-                'w-6 h-6': size === 'md',
-                'w-8 h-8': size === 'lg',
-              }
-            )}
-          />
+      <CardHeader>
+        <div className={cn('w-14 h-14 rounded-xl flex items-center justify-center mb-md', styles.bg)}>
+          <Icon className={cn(styles.icon)} size={28} />
         </div>
-      </div>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
 
-      {/* Content */}
-      <div className="space-y-2">
-        <h3
-          className={cn(
-            'font-semibold transition-colors duration-300',
-            currentVariant.title,
-            {
-              'text-sm': size === 'sm',
-              'text-base': size === 'md',
-              'text-lg': size === 'lg',
-            }
-          )}
-        >
-          {title}
-        </h3>
-        <p
-          className={cn(
-            'transition-colors duration-300',
-            currentVariant.description,
-            {
-              'text-xs': size === 'sm',
-              'text-sm': size === 'md',
-              'text-base': size === 'lg',
-            }
-          )}
-        >
-          {description}
-        </p>
-      </div>
-
-      {/* Subtle particle effect overlay */}
-      {variant === 'primary' && (
-        <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
-          <div className="absolute top-4 right-4 w-1 h-1 bg-white/30 rounded-full animate-pulse" />
-          <div className="absolute bottom-6 left-6 w-0.5 h-0.5 bg-white/20 rounded-full animate-pulse delay-1000" />
-          <div className="absolute top-1/2 left-4 w-0.5 h-0.5 bg-white/25 rounded-full animate-pulse delay-500" />
-        </div>
+      {features && features.length > 0 && (
+        <CardContent className="pt-md">
+          <ul className="space-y-sm">
+            {features.map((feature, index) => (
+              <li key={index} className="flex items-start gap-sm text-neutral-textSecondary text-small">
+                <span className={cn('mt-1 flex-shrink-0', styles.icon)}>•</span>
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
       )}
-    </div>
-  );
-};
 
-export default FeatureCard;
+      {actionLabel && onAction && (
+        <CardContent className="pt-md">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onAction}
+            icon={<ArrowRight size={16} />}
+            className="w-full justify-between"
+          >
+            {actionLabel}
+          </Button>
+        </CardContent>
+      )}
+    </Card>
+  );
+}

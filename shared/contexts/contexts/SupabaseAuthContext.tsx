@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode, useMemo, useCallback } from 'react';
-import { User, Role } from '../types';
+import { User } from '../types';
+import { Role } from '../types/enums';
 import authService, {
   AuthState,
   LoginCredentials,

@@ -1,4 +1,5 @@
-import { AppointmentStatus, AppointmentType, Role, TaskStatus, TaskPriority, TransactionType, ExpenseCategory, InternStatus, ProjectStatus, ItemStatus, MovementType, EventType, EventStatus, RegistrationStatus, ProviderStatus, PatientStatus } from '../types';
+import { AppointmentStatus, AppointmentType, TaskStatus, TaskPriority, TransactionType, ExpenseCategory, InternStatus, ProjectStatus, ItemStatus, MovementType, EventType, EventStatus, RegistrationStatus, ProviderStatus, PatientStatus } from '../types';
+import { Role } from '../types/enums';
 import { CalendarCheck, Flame, Medal, Shield, Star, Trophy } from 'lucide-react';
 import { generateRecurrences } from '../services/scheduling/recurrenceService';
 export const mockUsers = [

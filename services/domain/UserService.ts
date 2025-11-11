@@ -5,7 +5,8 @@
  */
 
 import { userRepository, type UserFilters } from '../repositories/UserRepository';
-import type { User, Role } from '@/types';
+import type { User } from '@/types';
+import { Role } from '@/types/enums';
 import type { Database } from '@/types/supabase';
 import { eventService } from '../eventService';
 import { secureLogger } from '@/lib/secureLogger';

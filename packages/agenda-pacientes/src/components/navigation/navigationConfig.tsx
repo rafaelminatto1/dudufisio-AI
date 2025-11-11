@@ -36,7 +36,7 @@ import {
   Globe,
   Wrench,
 } from 'lucide-react';
-import { Role } from '@/types';
+import { Role } from '@/types/enums';
 import { NavItemConfig } from './NavItem';
 
 export interface NavigationSection {

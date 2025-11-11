@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutGrid, Calendar, Users, Activity, Plus } from 'lucide-react';
-import { Role } from '../../types';
+import { Role } from '../../types/enums';
 
 interface BottomNavigationProps {
   user: any;

@@ -6,8 +6,9 @@ import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import { useApp } from '@/contexts/AppContext';
 import { useOptimizedPatients, useOptimizedAppointments } from '@/hooks/useOptimizedData';
 import useDashboardStats from '@/hooks/useDashboardStats';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Button } from '../components/ui/Button.tsx';
+import { Card } from '../components/ui/Card.tsx';
+import Section from '../components/layout/Section.tsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { NotificationPermissionPrompt } from '@/components/notifications/NotificationPermissionPrompt';
-import { H1, Body } from '@/components/ui/Typography';
+import { H1, Body, Small } from '../components/ui/Typography.tsx';
 
 const DashboardPageV2: React.FC = () => {
   const { user } = useApp();
@@ -138,108 +139,117 @@ const DashboardPageV2: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <Body className="text-neutral-textSecondary">Carregando...</Body>
-      </div>
+      <Section variant="white" paddingY="5xl">
+        <div className="flex h-96 items-center justify-center">
+          <Body className="text-neutral-textSecondary">Carregando...</Body>
+        </div>
+      </Section>
     );
   }
 
   return (
-    <div className="space-y-xl">
+    <div className="min-h-screen">
       {/* Push Notifications Prompt */}
       <NotificationPermissionPrompt />
 
-      {/* Header */}
-      <div className="flex flex-col gap-md sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <H1>Dashboard</H1>
-          <Body className="text-neutral-textSecondary mt-sm">
-            Visão geral da sua clínica de fisioterapia
-          </Body>
-        </div>
+      {/* Header Section */}
+      <Section variant="white" paddingY="lg">
+        <div className="flex flex-col gap-md sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <H1>Dashboard</H1>
+            <Body className="text-neutral-textSecondary mt-sm">
+              Visão geral da sua clínica de fisioterapia
+            </Body>
+          </div>
 
-        <div className="flex gap-sm">
-          {/* Layout Management */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Edit className="mr-sm h-4 w-4" />
-                Layout
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Gerenciar Layout</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => layout.setIsEditMode(!layout.isEditMode)}>
-                {layout.isEditMode ? 'Sair do Modo Edição' : 'Modo Edição'}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleSaveLayout}>
-                <Save className="mr-sm h-4 w-4" />
-                Salvar Layout
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleResetLayout}>
-                <RotateCcw className="mr-sm h-4 w-4" />
-                Restaurar Padrão
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel>Layouts Salvos</DropdownMenuLabel>
-              {layout.layouts.map((l) => (
-                <DropdownMenuItem
-                  key={l.id}
-                  onClick={() => layout.switchLayout(l.id)}
-                >
-                  {l.name}
-                  {l.id === layout.currentLayoutId && (
-                    <Badge variant="default" className="ml-auto text-xs">
-                      Atual
-                    </Badge>
-                  )}
+          <div className="flex gap-sm">
+            {/* Layout Management */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="md" icon={<Edit size={16} />}>
+                  Layout
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Gerenciar Layout</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => layout.setIsEditMode(!layout.isEditMode)}>
+                  {layout.isEditMode ? 'Sair do Modo Edição' : 'Modo Edição'}
                 </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuItem onClick={handleSaveLayout}>
+                  <Save className="mr-sm h-4 w-4" />
+                  Salvar Layout
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleResetLayout}>
+                  <RotateCcw className="mr-sm h-4 w-4" />
+                  Restaurar Padrão
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Layouts Salvos</DropdownMenuLabel>
+                {layout.layouts.map((l) => (
+                  <DropdownMenuItem
+                    key={l.id}
+                    onClick={() => layout.switchLayout(l.id)}
+                  >
+                    {l.name}
+                    {l.id === layout.currentLayoutId && (
+                      <Badge variant="default" className="ml-auto text-xs">
+                        Atual
+                      </Badge>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          {/* Add Widget */}
-          {layout.isEditMode && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => toast.info('Adicionar widget em desenvolvimento')}
-            >
-              <Plus className="mr-sm h-4 w-4" />
-              Adicionar Widget
-            </Button>
-          )}
+            {/* Add Widget */}
+            {layout.isEditMode && (
+              <Button
+                variant="outline"
+                size="md"
+                icon={<Plus size={16} />}
+                onClick={() => toast.info('Adicionar widget em desenvolvimento')}
+              >
+                Adicionar Widget
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      </Section>
 
       {/* Edit Mode Indicator */}
       {layout.isEditMode && (
-        <Card className="border-primary bg-primary-light shadow-card">
-          <div className="p-md">
-            <p className="text-small font-medium text-neutral-text">
-              🎨 Modo de Edição Ativo - Arraste os widgets para reorganizar
-            </p>
-          </div>
-        </Card>
+        <Section variant="white" paddingY="sm">
+          <Card className="border-primary bg-primary-light shadow-card">
+            <div className="p-md">
+              <Small className="font-medium text-neutral-text">
+                🎨 Modo de Edição Ativo - Arraste os widgets para reorganizar
+              </Small>
+            </div>
+          </Card>
+        </Section>
       )}
 
-      {/* Filters */}
-      <DashboardFilters
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onClearFilters={handleClearFilters}
-      />
+      {/* Filters Section */}
+      <Section variant="gray" paddingY="md">
+        <DashboardFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onClearFilters={handleClearFilters}
+        />
+      </Section>
 
-      {/* Dashboard Grid */}
-      <DashboardGrid
-        widgets={layout.widgets}
-        data={filteredData}
-        isEditMode={layout.isEditMode}
-        onRemoveWidget={handleRemoveWidget}
-        onExpandWidget={handleExpandWidget}
-        expandedWidgets={expandedWidgets}
-      />
+      {/* Dashboard Grid Section */}
+      <Section variant="white" paddingY="lg">
+        <DashboardGrid
+          widgets={layout.widgets}
+          data={filteredData}
+          isEditMode={layout.isEditMode}
+          onRemoveWidget={handleRemoveWidget}
+          onExpandWidget={handleExpandWidget}
+          expandedWidgets={expandedWidgets}
+        />
+      </Section>
     </div>
   );
 };

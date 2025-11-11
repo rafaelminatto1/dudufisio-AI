@@ -2,10 +2,13 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { StripeCheckout } from '../components/payments/StripeCheckout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Loader2, XCircle } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card.tsx';
+import { Alert, AlertDescription } from '../components/ui/alert.tsx';
+import { Button } from '../components/ui/Button.tsx';
+import StatsCard from '../components/ui/StatsCard.tsx';
+import Section from '../components/layout/Section.tsx';
+import { H1, H2, Body, Small } from '../components/ui/Typography.tsx';
+import { ArrowLeft, Loader2, XCircle, CreditCard, DollarSign, Shield, CheckCircle2 } from 'lucide-react';
 
 interface PaymentDetails {
   id: string;
@@ -89,108 +92,157 @@ export default function CheckoutPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-4" />
-            <p className="text-gray-600">Carregando detalhes do pagamento...</p>
-          </CardContent>
-        </Card>
-      </div>
+      <Section variant="gray" paddingY="5xl">
+        <div className="flex items-center justify-center">
+          <Card className="w-full max-w-md">
+            <CardContent className="flex flex-col items-center justify-center py-5xl">
+              <Loader2 className="h-12 w-12 animate-spin text-primary mb-lg" />
+              <Body className="text-neutral-textSecondary">Carregando detalhes do pagamento...</Body>
+            </CardContent>
+          </Card>
+        </div>
+      </Section>
     );
   }
 
   if (error || !payment) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <XCircle className="h-5 w-5 text-red-500" />
-              Erro no Pagamento
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => navigate('/financial')}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Voltar para Financeiro
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <Section variant="gray" paddingY="5xl">
+        <div className="flex items-center justify-center">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <div className="w-14 h-14 bg-error-light rounded-xl flex items-center justify-center mb-md">
+                <XCircle className="h-7 w-7 text-error" />
+              </div>
+              <CardTitle>Erro no Pagamento</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-lg">
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+              <Button
+                variant="outline"
+                size="lg"
+                icon={<ArrowLeft size={20} />}
+                iconPosition="left"
+                onClick={() => navigate('/financial')}
+              >
+                Voltar para Financeiro
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </Section>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
+    <div className="min-h-screen">
+      {/* Header Section */}
+      <Section variant="white" paddingY="lg">
+        <div className="max-w-2xl mx-auto">
           <Button
             variant="ghost"
             size="sm"
+            icon={<ArrowLeft size={20} />}
+            iconPosition="left"
             onClick={() => navigate('/financial')}
-            className="mb-4"
+            className="mb-md"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-          <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
-          <p className="text-gray-600 mt-1">
-            Complete o pagamento de forma segura
-          </p>
+          <H1 className="text-h2">Checkout Seguro</H1>
+          <Body className="text-neutral-textSecondary mt-sm">
+            Complete o pagamento de forma segura e rápida
+          </Body>
         </div>
+      </Section>
 
-        {/* Informações do Paciente */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg">Detalhes do Pagamento</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Paciente:</span>
-              <span className="font-medium">{payment.patient_name}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Email:</span>
-              <span className="font-medium">{payment.patient_email}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Status:</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                Aguardando pagamento
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Payment Amount Section */}
+      <Section variant="gray" paddingY="lg">
+        <div className="max-w-2xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xl">
+            <StatsCard
+              title="Valor Total"
+              value={`R$ ${(payment.amount / 100).toFixed(2)}`}
+              icon={DollarSign}
+              variant="primary"
+              caption="Pagamento único"
+            />
+            <StatsCard
+              title="Método"
+              value="Cartão"
+              icon={CreditCard}
+              variant="secondary"
+              caption="Processamento seguro"
+            />
+            <StatsCard
+              title="Proteção"
+              value="100%"
+              icon={Shield}
+              variant="success"
+              caption="PCI DSS Level 1"
+            />
+          </div>
 
-        {/* Componente de Checkout */}
-        <StripeCheckout
-          amount={payment.amount}
-          paymentId={payment.id}
-          patientEmail={payment.patient_email}
-          description={payment.description}
-          onSuccess={handleSuccess}
-          onError={handleError}
-        />
+          {/* Informações do Paciente */}
+          <Card className="mb-lg">
+            <CardHeader>
+              <CardTitle>Detalhes do Pagamento</CardTitle>
+              <CardDescription>Informações do paciente e serviço</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-md">
+              <div className="flex justify-between items-center py-sm border-b border-neutral-border">
+                <Small className="text-neutral-textSecondary">Paciente:</Small>
+                <Body className="font-medium">{payment.patient_name}</Body>
+              </div>
+              <div className="flex justify-between items-center py-sm border-b border-neutral-border">
+                <Small className="text-neutral-textSecondary">Email:</Small>
+                <Body className="font-medium">{payment.patient_email}</Body>
+              </div>
+              <div className="flex justify-between items-center py-sm border-b border-neutral-border">
+                <Small className="text-neutral-textSecondary">Serviço:</Small>
+                <Body className="font-medium">{payment.description}</Body>
+              </div>
+              <div className="flex justify-between items-center py-sm">
+                <Small className="text-neutral-textSecondary">Status:</Small>
+                <span className="inline-flex items-center px-md py-xs rounded-full text-xs font-medium bg-warning-light text-warning">
+                  Aguardando pagamento
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </Section>
 
-        {/* Informações de Segurança */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
-            🔒 Pagamento 100% seguro e criptografado
-          </p>
-          <p className="text-xs text-gray-400 mt-1">
+      {/* Checkout Form Section */}
+      <Section variant="white" paddingY="lg">
+        <div className="max-w-2xl mx-auto">
+          <StripeCheckout
+            amount={payment.amount}
+            paymentId={payment.id}
+            patientEmail={payment.patient_email}
+            description={payment.description}
+            onSuccess={handleSuccess}
+            onError={handleError}
+          />
+        </div>
+      </Section>
+
+      {/* Security Footer */}
+      <Section variant="gray" paddingY="md">
+        <div className="max-w-2xl mx-auto text-center space-y-sm">
+          <div className="flex items-center justify-center gap-sm">
+            <Shield className="h-4 w-4 text-success" />
+            <Small className="text-neutral-textSecondary font-medium">
+              Pagamento 100% seguro e criptografado
+            </Small>
+          </div>
+          <Small className="text-neutral-textTertiary">
             Processado via Stripe - Padrão PCI DSS Level 1
-          </p>
+          </Small>
         </div>
-      </div>
+      </Section>
     </div>
   );
 }

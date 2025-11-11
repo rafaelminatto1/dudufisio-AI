@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { Eye, EyeOff, Github, ArrowLeft } from 'lucide-react';
 import { useSupabaseAuth } from '../../contexts/SupabaseAuthContext';
-import { Role } from '../../types';
+import { Role } from '../../types/enums';
 
 interface RegisterPageProps {
   onSuccess?: () => void;

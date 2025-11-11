@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabaseClient';
-import { useSupabaseAuth } from '../../contexts/SupabaseAuthContext';
-import { useToast } from '../../contexts/ToastContext';
+import { supabase } from '@/lib/supabaseClient';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useToast } from '@/contexts/ToastContext';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card.tsx';
+import { Button } from '../components/ui/Button.tsx';
+import StatsCard from '../components/ui/StatsCard.tsx';
+import Section from '../components/layout/Section.tsx';
+import { H1, H2, Body, Small } from '../components/ui/Typography.tsx';
 import {
   Video,
   Calendar,
@@ -13,6 +18,9 @@ import {
   Loader2,
   ExternalLink,
   User,
+  Users,
+  Activity,
+  CheckCircle2,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -30,12 +38,12 @@ interface Teleconsulta {
 }
 
 const statusConfig = {
-  scheduled: { label: 'Agendada', color: 'bg-blue-100 text-blue-800', icon: Calendar },
-  waiting: { label: 'Aguardando', color: 'bg-yellow-100 text-yellow-800', icon: Clock },
-  in_progress: { label: 'Em Andamento', color: 'bg-green-100 text-green-800', icon: Video },
-  completed: { label: 'Concluída', color: 'bg-gray-100 text-gray-800', icon: Check },
-  cancelled: { label: 'Cancelada', color: 'bg-red-100 text-red-800', icon: X },
-  no_show: { label: 'Não Compareceu', color: 'bg-orange-100 text-orange-800', icon: X },
+  scheduled: { label: 'Agendada', color: 'bg-info-light text-info', icon: Calendar },
+  waiting: { label: 'Aguardando', color: 'bg-warning-light text-warning', icon: Clock },
+  in_progress: { label: 'Em Andamento', color: 'bg-success-light text-success', icon: Video },
+  completed: { label: 'Concluída', color: 'bg-neutral-bgAlt text-neutral-text', icon: Check },
+  cancelled: { label: 'Cancelada', color: 'bg-error-light text-error', icon: X },
+  no_show: { label: 'Não Compareceu', color: 'bg-accent-orange-light text-accent-orange', icon: X },
 };
 
 export default function TeleconsultasListPage() {
@@ -144,196 +152,255 @@ export default function TeleconsultasListPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-sky-600" />
-      </div>
+      <Section variant="white" paddingY="5xl">
+        <div className="flex items-center justify-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      </Section>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
-      <div className="mx-auto max-w-6xl">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900">Teleconsultas</h1>
-              <p className="mt-1 text-slate-600">Gerencie suas consultas online</p>
-            </div>
-            {user?.role === 'therapist' && (
-              <button
-                onClick={() => navigate('/teleconsultas/new')}
-                className="flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-white hover:bg-sky-700"
-              >
-                <Plus className="h-5 w-5" />
-                Nova Teleconsulta
-              </button>
-            )}
-          </div>
+  // Calcular estatísticas
+  const stats = {
+    total: teleconsultas.length,
+    upcoming: teleconsultas.filter(t => ['scheduled', 'waiting', 'in_progress'].includes(t.status)).length,
+    completed: teleconsultas.filter(t => t.status === 'completed').length,
+    cancelled: teleconsultas.filter(t => ['cancelled', 'no_show'].includes(t.status)).length,
+  };
 
-          {/* Filters */}
-          <div className="mt-6 flex gap-2">
-            <button
-              onClick={() => setFilter('upcoming')}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                filter === 'upcoming'
-                  ? 'bg-sky-600 text-white'
-                  : 'bg-white text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              Próximas
-            </button>
-            <button
-              onClick={() => setFilter('completed')}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                filter === 'completed'
-                  ? 'bg-sky-600 text-white'
-                  : 'bg-white text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              Concluídas
-            </button>
-            <button
-              onClick={() => setFilter('all')}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                filter === 'all'
-                  ? 'bg-sky-600 text-white'
-                  : 'bg-white text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              Todas
-            </button>
+  return (
+    <div className="min-h-screen">
+      {/* Header Section */}
+      <Section variant="white" paddingY="lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <H1>Teleconsultas</H1>
+            <Body className="text-neutral-textSecondary mt-sm">
+              Gerencie suas consultas online com facilidade
+            </Body>
           </div>
+          {user?.role === 'therapist' && (
+            <Button
+              variant="primary"
+              size="lg"
+              icon={<Plus size={20} />}
+              onClick={() => navigate('/teleconsultas/new')}
+            >
+              Nova Teleconsulta
+            </Button>
+          )}
+        </div>
+      </Section>
+
+      {/* Stats Section */}
+      <Section variant="gray" paddingY="lg">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-lg mb-xl">
+          <StatsCard
+            title="Total"
+            value={stats.total}
+            icon={Video}
+            variant="primary"
+            comparison={`${stats.upcoming} agendadas`}
+            comparisonType="neutral"
+          />
+          <StatsCard
+            title="Próximas"
+            value={stats.upcoming}
+            icon={Calendar}
+            variant="info"
+            comparison="Aguardando"
+            comparisonType="neutral"
+          />
+          <StatsCard
+            title="Concluídas"
+            value={stats.completed}
+            icon={CheckCircle2}
+            variant="success"
+            comparison="Finalizadas"
+            comparisonType="positive"
+          />
+          <StatsCard
+            title="Canceladas"
+            value={stats.cancelled}
+            icon={X}
+            variant="error"
+            comparison="Não realizadas"
+            comparisonType="neutral"
+          />
         </div>
 
-        {/* Lista de Teleconsultas */}
+        {/* Filters */}
+        <div className="flex gap-md">
+          <Button
+            variant={filter === 'upcoming' ? 'primary' : 'outline'}
+            size="md"
+            onClick={() => setFilter('upcoming')}
+          >
+            Próximas
+          </Button>
+          <Button
+            variant={filter === 'completed' ? 'primary' : 'outline'}
+            size="md"
+            onClick={() => setFilter('completed')}
+          >
+            Concluídas
+          </Button>
+          <Button
+            variant={filter === 'all' ? 'primary' : 'outline'}
+            size="md"
+            onClick={() => setFilter('all')}
+          >
+            Todas
+          </Button>
+        </div>
+      </Section>
+
+      {/* Lista de Teleconsultas */}
+      <Section variant="white" paddingY="lg">
         {teleconsultas.length === 0 ? (
-          <div className="rounded-lg bg-white p-12 text-center shadow-sm">
-            <Video className="mx-auto mb-4 h-16 w-16 text-slate-300" />
-            <h3 className="mb-2 text-lg font-semibold text-slate-900">
-              Nenhuma teleconsulta encontrada
-            </h3>
-            <p className="text-slate-600">
-              {filter === 'upcoming'
-                ? 'Você não tem teleconsultas agendadas.'
-                : 'Nenhuma teleconsulta encontrada nesta categoria.'}
-            </p>
-          </div>
+          <Card className="text-center py-5xl">
+            <CardContent>
+              <div className="w-20 h-20 bg-primary-light rounded-2xl flex items-center justify-center mx-auto mb-lg">
+                <Video className="h-10 w-10 text-primary" />
+              </div>
+              <H2 className="text-h3 mb-sm">Nenhuma teleconsulta encontrada</H2>
+              <Body className="text-neutral-textSecondary mb-lg">
+                {filter === 'upcoming'
+                  ? 'Você não tem teleconsultas agendadas no momento.'
+                  : 'Nenhuma teleconsulta encontrada nesta categoria.'}
+              </Body>
+              {user?.role === 'therapist' && filter === 'upcoming' && (
+                <Button
+                  variant="primary"
+                  size="lg"
+                  icon={<Plus size={20} />}
+                  onClick={() => navigate('/teleconsultas/new')}
+                >
+                  Agendar Primeira Teleconsulta
+                </Button>
+              )}
+            </CardContent>
+          </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-lg">
             {teleconsultas.map((teleconsulta) => {
               const StatusIcon = statusConfig[teleconsulta.status].icon;
               const isJoinable = canJoin(teleconsulta);
               const isCancellable = canCancel(teleconsulta);
 
               return (
-                <div
-                  key={teleconsulta.id}
-                  className="rounded-lg bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      {/* Status Badge */}
-                      <div className="mb-3 flex items-center gap-3">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
-                            statusConfig[teleconsulta.status].color
-                          }`}
-                        >
-                          <StatusIcon className="h-3.5 w-3.5" />
-                          {statusConfig[teleconsulta.status].label}
-                        </span>
-
-                        {teleconsulta.status === 'in_progress' && (
-                          <span className="flex items-center gap-1.5 text-xs text-red-600">
-                            <span className="h-2 w-2 animate-pulse rounded-full bg-red-600" />
-                            Ao Vivo
+                <Card key={teleconsulta.id} hoverable>
+                  <CardContent className="p-lg">
+                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-lg">
+                      <div className="flex-1 space-y-md">
+                        {/* Status Badge */}
+                        <div className="flex items-center gap-md flex-wrap">
+                          <span
+                            className={`inline-flex items-center gap-sm rounded-full px-md py-xs text-small font-medium ${
+                              statusConfig[teleconsulta.status].color
+                            }`}
+                          >
+                            <StatusIcon className="h-4 w-4" />
+                            {statusConfig[teleconsulta.status].label}
                           </span>
-                        )}
-                      </div>
 
-                      {/* Participantes */}
-                      <div className="mb-3 flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-slate-400" />
-                          <span className="font-medium text-slate-700">
-                            {teleconsulta.patient_name}
-                          </span>
-                          <span className="text-slate-400">•</span>
-                          <span className="text-slate-600">
-                            Dr(a). {teleconsulta.therapist_name}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Data e Hora */}
-                      <div className="flex items-center gap-4 text-sm text-slate-600">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="h-4 w-4" />
-                          {format(new Date(teleconsulta.scheduled_start), "dd 'de' MMMM", {
-                            locale: ptBR,
-                          })}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="h-4 w-4" />
-                          {format(new Date(teleconsulta.scheduled_start), 'HH:mm')} -{' '}
-                          {format(new Date(teleconsulta.scheduled_end), 'HH:mm')}
-                        </div>
-                        {teleconsulta.duration_minutes && (
-                          <span className="text-slate-500">
-                            ({teleconsulta.duration_minutes} min)
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Rating */}
-                      {teleconsulta.patient_rating && (
-                        <div className="mt-2 flex items-center gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <span
-                              key={i}
-                              className={`text-sm ${
-                                i < teleconsulta.patient_rating!
-                                  ? 'text-yellow-400'
-                                  : 'text-slate-300'
-                              }`}
-                            >
-                              ★
+                          {teleconsulta.status === 'in_progress' && (
+                            <span className="flex items-center gap-sm text-small text-error">
+                              <span className="h-2 w-2 animate-pulse rounded-full bg-error" />
+                              <Small className="font-medium">Ao Vivo</Small>
                             </span>
-                          ))}
+                          )}
                         </div>
-                      )}
-                    </div>
 
-                    {/* Actions */}
-                    <div className="flex gap-2">
-                      {isJoinable && (
-                        <button
-                          onClick={() => handleJoinMeeting(teleconsulta.id)}
-                          className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
-                        >
-                          <Video className="h-4 w-4" />
-                          Entrar
-                        </button>
-                      )}
+                        {/* Participantes */}
+                        <div className="space-y-sm">
+                          <div className="flex items-center gap-sm">
+                            <User className="h-4 w-4 text-neutral-textTertiary" />
+                            <Body className="font-medium">{teleconsulta.patient_name}</Body>
+                            <Small className="text-neutral-textTertiary">•</Small>
+                            <Small className="text-neutral-textSecondary">
+                              Dr(a). {teleconsulta.therapist_name}
+                            </Small>
+                          </div>
 
-                      {isCancellable && (
-                        <button
-                          onClick={() => handleCancelTeleconsulta(teleconsulta.id)}
-                          className="flex items-center gap-2 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-                        >
-                          <X className="h-4 w-4" />
-                          Cancelar
-                        </button>
-                      )}
+                          {/* Data e Hora */}
+                          <div className="flex items-center gap-lg flex-wrap">
+                            <div className="flex items-center gap-sm">
+                              <Calendar className="h-4 w-4 text-neutral-textTertiary" />
+                              <Small className="text-neutral-textSecondary">
+                                {format(new Date(teleconsulta.scheduled_start), "dd 'de' MMMM", {
+                                  locale: ptBR,
+                                })}
+                              </Small>
+                            </div>
+                            <div className="flex items-center gap-sm">
+                              <Clock className="h-4 w-4 text-neutral-textTertiary" />
+                              <Small className="text-neutral-textSecondary">
+                                {format(new Date(teleconsulta.scheduled_start), 'HH:mm')} -{' '}
+                                {format(new Date(teleconsulta.scheduled_end), 'HH:mm')}
+                              </Small>
+                            </div>
+                            {teleconsulta.duration_minutes && (
+                              <Small className="text-neutral-textTertiary">
+                                ({teleconsulta.duration_minutes} min)
+                              </Small>
+                            )}
+                          </div>
+
+                          {/* Rating */}
+                          {teleconsulta.patient_rating && (
+                            <div className="flex items-center gap-xs">
+                              {[...Array(5)].map((_, i) => (
+                                <span
+                                  key={i}
+                                  className={`text-lg ${
+                                    i < teleconsulta.patient_rating!
+                                      ? 'text-warning'
+                                      : 'text-neutral-border'
+                                  }`}
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-md flex-wrap md:flex-col md:min-w-[150px]">
+                        {isJoinable && (
+                          <Button
+                            variant="secondary"
+                            size="md"
+                            icon={<Video size={16} />}
+                            onClick={() => handleJoinMeeting(teleconsulta.id)}
+                            className="flex-1 md:flex-initial"
+                          >
+                            Entrar
+                          </Button>
+                        )}
+
+                        {isCancellable && (
+                          <Button
+                            variant="outline"
+                            size="md"
+                            icon={<X size={16} />}
+                            onClick={() => handleCancelTeleconsulta(teleconsulta.id)}
+                            className="flex-1 md:flex-initial border-error text-error hover:bg-error-light"
+                          >
+                            Cancelar
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               );
             })}
           </div>
         )}
-      </div>
+      </Section>
     </div>
   );
 }

@@ -18,6 +18,11 @@ import {
   PieChart as PieChartIcon, BarChart3, Target, Wallet,
   ArrowUpRight, ArrowDownRight, Activity, Bell, Star
 } from 'lucide-react';
+import { H1, H2, Body, Small, Caption } from '../../../../components/ui/Typography.tsx';
+import Section from '../../../../components/layout/Section.tsx';
+import StatsCard from '../../../../components/ui/StatsCard.tsx';
+import { Button } from '../../../../components/ui/Button.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card.tsx';
 import PageHeader from '../components/PageHeader';
 import { FinancialTransaction } from '../types';
 import MetricCard from '../components/MetricCard';
@@ -25,7 +30,7 @@ import TransactionFormModal from '../components/financial/TransactionFormModal';
 import TransactionList from '../components/financial/TransactionList';
 import * as financialService from '../services/financialService';
 import { RoleGuard } from '../components/RoleGuard';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 import { auditHelpers } from '../services/auditService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import PermissionGuard, { IfPermission } from '../components/auth/PermissionGuard';
@@ -406,32 +411,38 @@ const FinancialDashboardPage: React.FC = () => {
 
   return (
     <PermissionGuard permission="financial:read">
-      <div className="p-8 max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <PageHeader
-            title="Gestão Financeira"
-            subtitle="Dashboard financeiro completo com análises avançadas e gestão de pagamentos"
-          />
+      <div className="min-h-screen">
+        {/* Header Section */}
+        <Section variant="white" paddingY="lg">
+          <div className="flex flex-col gap-md sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <H1>Gestão Financeira</H1>
+              <Body className="text-neutral-textSecondary mt-sm">
+                Dashboard financeiro completo com análises avançadas e gestão de pagamentos
+              </Body>
+            </div>
 
-          <div className="flex items-center gap-3">
-            <select
-              value={period}
-              onChange={(e) => setPeriod(e.target.value as TimePeriod)}
-              className="rounded-lg border-gray-300 bg-white shadow-sm focus:ring-sky-500 focus:border-sky-500"
-            >
-              <option value="this_month">Este Mês</option>
-              <option value="last_3_months">Últimos 3 Meses</option>
-              <option value="this_year">Este Ano</option>
-            </select>
-            <button
-              onClick={() => handleOpenModal()}
-              className="flex items-center bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-colors"
-            >
-              <PlusCircle className="w-4 h-4 mr-2" />
-              Nova Transação
-            </button>
+            <div className="flex items-center gap-sm">
+              <select
+                value={period}
+                onChange={(e) => setPeriod(e.target.value as TimePeriod)}
+                className="rounded-lg border-gray-300 bg-white shadow-sm focus:ring-sky-500 focus:border-sky-500"
+              >
+                <option value="this_month">Este Mês</option>
+                <option value="last_3_months">Últimos 3 Meses</option>
+                <option value="this_year">Este Ano</option>
+              </select>
+              <Button
+                variant="primary"
+                size="md"
+                icon={<PlusCircle size={16} />}
+                onClick={() => handleOpenModal()}
+              >
+                Nova Transação
+              </Button>
+            </div>
           </div>
-        </div>
+        </Section>
 
         <TransactionFormModal
           isOpen={isModalOpen}
@@ -443,122 +454,105 @@ const FinancialDashboardPage: React.FC = () => {
 
         {/* Financial Alerts */}
         {financialAlerts.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-sky-600" />
-              Alertas Financeiros
-            </h3>
-            <div className="space-y-4">
-              {financialAlerts.map((alert: any) => (
-                <div key={alert.id} className={`border rounded-lg p-3 ${getSeverityColor(alert.severity)}`}>
-                  <div className="flex items-start gap-3">
-                    {getAlertIcon(alert.type)}
-                    <div className="flex-1">
-                      <h4 className="font-medium">{alert.title}</h4>
-                      <p className="text-sm mt-1">{alert.message}</p>
-                      {alert.actionable && alert.action && (
-                        <p className="text-xs mt-2 font-medium">💡 {alert.action}</p>
-                      )}
+          <Section variant="white" paddingY="md">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-sm">
+                  <Bell className="w-5 h-5 text-sky-600" />
+                  <H2>Alertas Financeiros</H2>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-md">
+                {financialAlerts.map((alert: any) => (
+                  <div key={alert.id} className={`border rounded-lg p-md ${getSeverityColor(alert.severity)}`}>
+                    <div className="flex items-start gap-sm">
+                      {getAlertIcon(alert.type)}
+                      <div className="flex-1">
+                        <Body className="font-medium">{alert.title}</Body>
+                        <Small className="mt-xs">{alert.message}</Small>
+                        {alert.actionable && alert.action && (
+                          <Small className="mt-xs font-medium">💡 {alert.action}</Small>
+                        )}
+                      </div>
+                      <Caption className="text-neutral-textSecondary">
+                        {new Date(alert.timestamp).toLocaleDateString('pt-BR')}
+                      </Caption>
                     </div>
-                    <span className="text-xs text-gray-500">
-                      {new Date(alert.timestamp).toLocaleDateString('pt-BR')}
-                    </span>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                ))}
+              </CardContent>
+            </Card>
+          </Section>
         )}
 
         {/* Enhanced KPIs */}
-        <ResponsiveGrid 
-          cols={{ base: 1, sm: 2, lg: 5 }}
-          gap="lg"
-          className="space-responsive mb-8"
-        >
-          <MetricCard
-            title="Faturamento Bruto"
-            value={formatCurrency(data.kpis.grossRevenue)}
-            icon={<TrendingUp className="w-5 h-5 text-white" />}
-            trend={{
-              value: 8.2,
-              isPositive: true,
-              label: "+8.2% vs mês anterior"
-            }}
-            variant="success"
-            size="md"
-            className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200"
-          />
+        <Section variant="gray" paddingY="lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-lg">
+            <StatsCard
+              title="Faturamento Bruto"
+              value={formatCurrency(data.kpis.grossRevenue)}
+              icon={TrendingUp}
+              variant="success"
+              caption="+8.2% vs mês anterior"
+              comparison="+8.2%"
+              comparisonType="positive"
+            />
 
-          <MetricCard
-            title="Despesas"
-            value={formatCurrency(data.kpis.totalExpenses)}
-            icon={<TrendingDown className="w-5 h-5 text-white" />}
-            trend={{
-              value: -2.1,
-              isPositive: true,
-              label: "-2.1% vs mês anterior"
-            }}
-            variant="error"
-            size="md"
-            className="bg-gradient-to-br from-red-50 to-red-100 border border-red-200"
-          />
+            <StatsCard
+              title="Despesas"
+              value={formatCurrency(data.kpis.totalExpenses)}
+              icon={TrendingDown}
+              variant="error"
+              caption="-2.1% vs mês anterior"
+              comparison="-2.1%"
+              comparisonType="positive"
+            />
 
-          <MetricCard
-            title="Lucro Líquido"
-            value={formatCurrency(data.kpis.netProfit)}
-            icon={<DollarSign className="w-5 h-5 text-white" />}
-            trend={{
-              value: 12.5,
-              isPositive: true,
-              label: "+12.5% vs mês anterior"
-            }}
-            variant="info"
-            size="md"
-            className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200"
-          />
+            <StatsCard
+              title="Lucro Líquido"
+              value={formatCurrency(data.kpis.netProfit)}
+              icon={DollarSign}
+              variant="info"
+              caption="+12.5% vs mês anterior"
+              comparison="+12.5%"
+              comparisonType="positive"
+            />
 
-          <MetricCard
-            title="Pacientes Ativos"
-            value={data.kpis.activePatients.toString()}
-            icon={<Activity className="w-5 h-5 text-white" />}
-            trend={{
-              value: 5,
-              isPositive: true,
-              label: "+5 novos pacientes"
-            }}
-            variant="default"
-            size="md"
-            className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200"
-          />
+            <StatsCard
+              title="Pacientes Ativos"
+              value={data.kpis.activePatients.toString()}
+              icon={Activity}
+              variant="primary"
+              caption="+5 novos pacientes"
+              comparison="+5"
+              comparisonType="positive"
+            />
 
-          <MetricCard
-            title="Ticket Médio"
-            value={formatCurrency(data.kpis.averageTicket)}
-            icon={<Target className="w-5 h-5 text-white" />}
-            trend={{
-              value: 3.8,
-              isPositive: true,
-              label: "+3.8% vs mês anterior"
-            }}
-            variant="warning"
-            size="md"
-            className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200"
-          />
-        </ResponsiveGrid>
+            <StatsCard
+              title="Ticket Médio"
+              value={formatCurrency(data.kpis.averageTicket)}
+              icon={Target}
+              variant="warning"
+              caption="+3.8% vs mês anterior"
+              comparison="+3.8%"
+              comparisonType="positive"
+            />
+          </div>
+        </Section>
 
         {/* Main Content Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <div className="tabs-responsive">
-            <TabsList className="tabs-list-responsive">
-              <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 sm:px-4">Visão Geral</TabsTrigger>
-              <TabsTrigger value="payments" className="text-xs sm:text-sm px-2 sm:px-4">Pagamentos</TabsTrigger>
-              <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 sm:px-4">Analytics</TabsTrigger>
-              <TabsTrigger value="goals" className="text-xs sm:text-sm px-2 sm:px-4">Metas</TabsTrigger>
-              <TabsTrigger value="predictions" className="text-xs sm:text-sm px-2 sm:px-4">Previsões</TabsTrigger>
-              <TabsTrigger value="reports" className="text-xs sm:text-sm px-2 sm:px-4">Relatórios</TabsTrigger>
-          </TabsList>
-          </div>
+        <Section variant="white" paddingY="lg">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-lg">
+            <div className="tabs-responsive">
+              <TabsList className="tabs-list-responsive">
+                <TabsTrigger value="overview" className="text-xs sm:text-sm px-2 sm:px-4">Visão Geral</TabsTrigger>
+                <TabsTrigger value="payments" className="text-xs sm:text-sm px-2 sm:px-4">Pagamentos</TabsTrigger>
+                <TabsTrigger value="analytics" className="text-xs sm:text-sm px-2 sm:px-4">Analytics</TabsTrigger>
+                <TabsTrigger value="goals" className="text-xs sm:text-sm px-2 sm:px-4">Metas</TabsTrigger>
+                <TabsTrigger value="predictions" className="text-xs sm:text-sm px-2 sm:px-4">Previsões</TabsTrigger>
+                <TabsTrigger value="reports" className="text-xs sm:text-sm px-2 sm:px-4">Relatórios</TabsTrigger>
+            </TabsList>
+            </div>
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-8">
@@ -977,21 +971,31 @@ const FinancialDashboardPage: React.FC = () => {
               </div>
             </div>
           </TabsContent>
-        </Tabs>
+          </Tabs>
+        </Section>
 
         {/* Export Actions */}
-        <IfPermission permission="financial:export">
-          <div className="flex justify-end gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              <Download className="w-4 h-4" />
-              Exportar Dashboard
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors">
-              <RefreshCw className="w-4 h-4" />
-              Atualizar Dados
-            </button>
-          </div>
-        </IfPermission>
+        <Section variant="white" paddingY="md">
+          <IfPermission permission="financial:export">
+            <div className="flex justify-end gap-sm">
+              <Button
+                variant="outline"
+                size="md"
+                icon={<Download size={16} />}
+              >
+                Exportar Dashboard
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                icon={<RefreshCw size={16} />}
+                onClick={() => refetch()}
+              >
+                Atualizar Dados
+              </Button>
+            </div>
+          </IfPermission>
+        </Section>
       </div>
     </PermissionGuard>
   );

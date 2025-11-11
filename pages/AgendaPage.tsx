@@ -24,7 +24,7 @@ import EmptyState from '../components/ui/EmptyState';
 import { handleError } from '../lib/middleware/errorHandler';
 import { useData } from '../contexts/AppContext';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 import AppointmentDetailModal from '../components/AppointmentDetailModal';
 import AppointmentFormModal from '../components/AppointmentFormModal';
 import AgendaViewSelector, { AgendaViewType } from '../components/agenda/AgendaViewSelector';

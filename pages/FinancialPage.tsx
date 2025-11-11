@@ -25,7 +25,7 @@ import TransactionFormModal from '../components/financial/TransactionFormModal';
 import TransactionList from '../components/financial/TransactionList';
 import * as financialService from '../services/financialService';
 import { RoleGuard } from '../components/RoleGuard';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 import { auditHelpers } from '../services/auditService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import PermissionGuard, { IfPermission } from '../components/auth/PermissionGuard';

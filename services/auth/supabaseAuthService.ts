@@ -1,7 +1,8 @@
 import { handleSupabaseError } from '../../lib/middleware/errorHandler';
 import { retryApiCall } from '../../lib/retryManager';
 import { fallbackAuthService } from '../../lib/fallbackAuth';
-import { User, Role } from '../../types';
+import { User } from '../../types';
+import { Role } from '../../types/enums';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { secureLogger } from '../../lib/secureLogger';
 

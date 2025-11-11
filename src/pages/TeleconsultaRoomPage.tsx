@@ -1,10 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { JitsiMeeting } from '../components/teleconsulta/JitsiMeeting';
-import { supabase } from '../../lib/supabaseClient';
-import { useSupabaseAuth } from '../../contexts/SupabaseAuthContext';
-import { useToast } from '../../contexts/ToastContext';
-import { Loader2, AlertCircle, Video } from 'lucide-react';
+import { JitsiMeeting } from '../components/teleconsulta/JitsiMeeting.tsx';
+import { supabase } from '@/lib/supabaseClient';
+import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
+import { useToast } from '@/contexts/ToastContext';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card.tsx';
+import { Button } from '../components/ui/Button.tsx';
+import { H2, Body, Small } from '../components/ui/Typography.tsx';
+import { Loader2, AlertCircle, Video, ArrowLeft, Wifi, WifiOff } from 'lucide-react';
 
 interface TeleconsultaData {
   id: string;
@@ -149,29 +152,40 @@ export default function TeleconsultaRoomPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-900">
-        <div className="text-center">
-          <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-sky-500" />
-          <p className="text-white">Carregando teleconsulta...</p>
-        </div>
+      <div className="flex h-screen items-center justify-center bg-neutral-text">
+        <Card className="w-full max-w-md bg-white/10 backdrop-blur-md border-white/20">
+          <CardContent className="flex flex-col items-center justify-center py-5xl">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mb-lg" />
+            <Body className="text-white">Carregando teleconsulta...</Body>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (error || !teleconsulta) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-900">
-        <div className="max-w-md rounded-lg bg-slate-800 p-8 text-center">
-          <AlertCircle className="mx-auto mb-4 h-16 w-16 text-red-500" />
-          <h2 className="mb-2 text-2xl font-bold text-white">Erro</h2>
-          <p className="mb-6 text-slate-300">{error || 'Teleconsulta não encontrada.'}</p>
-          <button
-            onClick={() => navigate('/teleconsultas')}
-            className="rounded-lg bg-sky-600 px-6 py-2 text-white hover:bg-sky-700"
-          >
-            Voltar para Lista
-          </button>
-        </div>
+      <div className="flex h-screen items-center justify-center bg-neutral-text p-lg">
+        <Card className="w-full max-w-md bg-white/10 backdrop-blur-md border-white/20">
+          <CardHeader>
+            <div className="w-16 h-16 bg-error-light rounded-xl flex items-center justify-center mx-auto mb-md">
+              <AlertCircle className="h-8 w-8 text-error" />
+            </div>
+            <H2 className="text-white text-center">Erro ao Acessar</H2>
+          </CardHeader>
+          <CardContent className="space-y-lg text-center">
+            <Body className="text-white/80">{error || 'Teleconsulta não encontrada.'}</Body>
+            <Button
+              variant="primary"
+              size="lg"
+              icon={<ArrowLeft size={20} />}
+              iconPosition="left"
+              onClick={() => navigate('/teleconsultas')}
+            >
+              Voltar para Lista
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -191,41 +205,53 @@ export default function TeleconsultaRoomPage() {
       ? teleconsulta.moderator_password
       : teleconsulta.participant_password;
 
+  // Configuração de cor para qualidade de conexão
+  const connectionQualityConfig = {
+    excellent: { color: 'bg-success', textColor: 'text-success', label: 'Excelente', icon: Wifi },
+    good: { color: 'bg-info', textColor: 'text-info', label: 'Boa', icon: Wifi },
+    fair: { color: 'bg-warning', textColor: 'text-warning', label: 'Regular', icon: Wifi },
+    poor: { color: 'bg-error', textColor: 'text-error', label: 'Ruim', icon: WifiOff },
+  };
+
+  const qualityConfig = connectionQualityConfig[connectionQuality];
+  const QualityIcon = qualityConfig.icon;
+
   return (
     <div className="h-screen w-screen overflow-hidden">
-      {/* Header Info */}
-      <div className="absolute left-4 top-4 z-10 rounded-lg bg-slate-800/90 p-3 shadow-lg backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <Video className="h-5 w-5 text-sky-500" />
-          <div>
-            <p className="text-sm font-semibold text-white">
-              {userRole === 'moderator' ? 'Teleconsulta com' : 'Teleconsulta'}
-            </p>
-            <p className="text-xs text-slate-300">
-              {userRole === 'moderator'
-                ? teleconsulta.patient.full_name
-                : `Dr(a). ${teleconsulta.therapist.full_name}`}
-            </p>
-          </div>
-        </div>
+      {/* Header Info - Monday.com Style */}
+      <div className="absolute left-lg top-lg z-10">
+        <Card className="bg-white/95 backdrop-blur-md border-0 shadow-cardHover">
+          <CardContent className="p-md">
+            <div className="flex items-center gap-md">
+              <div className="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center">
+                <Video className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <Small className="font-semibold text-neutral-text block">
+                  {userRole === 'moderator' ? 'Teleconsulta com' : 'Teleconsulta'}
+                </Small>
+                <Small className="text-neutral-textSecondary">
+                  {userRole === 'moderator'
+                    ? teleconsulta.patient.full_name
+                    : `Dr(a). ${teleconsulta.therapist.full_name}`}
+                </Small>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Connection Quality Indicator */}
-      <div className="absolute right-4 top-4 z-10 rounded-lg bg-slate-800/90 p-2 shadow-lg backdrop-blur-sm">
-        <div className="flex items-center gap-2">
-          <div
-            className={`h-2 w-2 rounded-full ${
-              connectionQuality === 'excellent'
-                ? 'bg-green-500'
-                : connectionQuality === 'good'
-                ? 'bg-yellow-500'
-                : connectionQuality === 'fair'
-                ? 'bg-orange-500'
-                : 'bg-red-500'
-            }`}
-          />
-          <span className="text-xs text-white capitalize">{connectionQuality}</span>
-        </div>
+      {/* Connection Quality Indicator - Monday.com Style */}
+      <div className="absolute right-lg top-lg z-10">
+        <Card className="bg-white/95 backdrop-blur-md border-0 shadow-cardHover">
+          <CardContent className="p-md">
+            <div className="flex items-center gap-sm">
+              <div className={`w-3 h-3 rounded-full ${qualityConfig.color} animate-pulse`} />
+              <QualityIcon className={`h-4 w-4 ${qualityConfig.textColor}`} />
+              <Small className="text-neutral-text font-medium">{qualityConfig.label}</Small>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Jitsi Meeting */}

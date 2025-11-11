@@ -11,7 +11,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { lazy, Suspense } from 'react';
-import { Role } from '../../types';
+import { Role } from '../../types/enums';
 import { useSupabaseAuth } from '../../contexts/SupabaseAuthContext';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';

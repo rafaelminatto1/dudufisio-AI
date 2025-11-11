@@ -14,10 +14,11 @@ import {
 } from 'lucide-react';
 import { useApp } from "../contexts/AppContext";
 import { useNotifications } from '../hooks/useNotifications';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 import SidebarSearch from './SidebarSearch';
 import NotificationBell from './NotificationBell';
 import { secureLogger } from '../lib/secureLogger';
+import ThemeToggle from '../src/components/ui/ThemeToggle';
 
 const NavLinkComponent = withMemoization(({ to, icon: Icon, label, isCollapsed, badgeCount }: { to: string, icon: React.ElementType, label: string, isCollapsed: boolean, badgeCount?: number }) => (
     <NavLink
@@ -511,9 +512,10 @@ const Sidebar: React.FC = () => {
                 </Link>
                 <div className="flex flex-col items-center space-y-1">
                   <NotificationBell isCollapsed={isCollapsed} />
-                  <button 
-                    onClick={handleLogout} 
-                    title="Sair do sistema" 
+                  <ThemeToggle />
+                  <button
+                    onClick={handleLogout}
+                    title="Sair do sistema"
                     className="p-1.5 rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
@@ -556,6 +558,7 @@ const Sidebar: React.FC = () => {
                 
                 <div className="flex items-center justify-between space-x-1">
                     <NotificationBell isCollapsed={isCollapsed} />
+                    <ThemeToggle />
                     <button onClick={handleLogout} title="Sair do sistema" className="p-2 rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors">
                         <LogOut className="w-4 h-4" />
                     </button>

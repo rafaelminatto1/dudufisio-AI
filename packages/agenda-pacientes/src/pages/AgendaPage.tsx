@@ -11,7 +11,9 @@ import setMinutes from 'date-fns/setMinutes';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, ArrowLeft } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
-import { Button } from '../components/ui/button';
+import { Button } from '../../../../components/ui/Button.tsx';
+import { H1, H2, Body, Small } from '../../../../components/ui/Typography.tsx';
+import Section from '../../../../components/layout/Section.tsx';
 import { useAppointments } from '../hooks/useAppointments';
 import { EnrichedAppointment, Appointment, AppointmentStatus, Patient, SchedulingAlert, WaitlistEntry, ScheduleBlock } from '../types';
 import { useToast } from '../contexts/ToastContext';
@@ -24,7 +26,7 @@ import EmptyState from '../components/ui/EmptyState';
 import { handleError } from '../lib/middleware/errorHandler';
 import { useData } from '../contexts/AppContext';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 import AppointmentDetailModal from '../components/AppointmentDetailModal';
 import AppointmentFormModal from '../components/AppointmentFormModal';
 import AgendaViewSelector, { AgendaViewType } from '../components/agenda/AgendaViewSelector';
@@ -850,12 +852,12 @@ export default function AgendaPage() {
                             <div className="flex-1 flex flex-col gap-2 min-w-0">
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-2">
-                                        <CalendarIcon className="w-4 h-4 text-blue-600" />
-                                        <h1 className="text-base sm:text-lg font-semibold text-slate-900">Agenda</h1>
+                                        <CalendarIcon className="w-4 h-4 text-primary" />
+                                        <H1 className="text-base sm:text-lg">Agenda</H1>
                                     </div>
-                                    <div className="text-sm text-slate-600 font-medium truncate hidden sm:block">
+                                    <Body className="text-neutral-textSecondary truncate hidden sm:block">
                                         {getViewTitle()}
-                                    </div>
+                                    </Body>
                                 </div>
                             {highlightedPatient && (
                                 <div className="flex items-center justify-between rounded-md border border-sky-100 bg-sky-50 px-3 py-2 text-sm text-sky-700">

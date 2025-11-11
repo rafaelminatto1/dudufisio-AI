@@ -3,7 +3,8 @@
  * Fornece objetos de teste padronizados para uso em testes unitários
  */
 
-import { Patient, Appointment, User, Role, PatientStatus, AppointmentStatus } from '@/types';
+import { Patient, Appointment, User, PatientStatus, AppointmentStatus } from '@/types';
+import { Role } from '@/types/enums';
 
 /**
  * Cria um paciente de teste com valores padrão

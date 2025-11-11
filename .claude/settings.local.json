@@ -38,7 +38,11 @@
       "Bash(timeout 180 npm run build:*)",
       "Bash(find:*)",
       "Bash(npm run preview:*)",
-      "Bash(npm run start)"
+      "Bash(npm run start)",
+      "Bash(npm run:*)",
+      "Bash(npm start)",
+      "Bash(curl:*)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []

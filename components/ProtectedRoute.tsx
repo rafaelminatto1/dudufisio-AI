@@ -2,7 +2,7 @@
 
 'use client';
 import React from 'react';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

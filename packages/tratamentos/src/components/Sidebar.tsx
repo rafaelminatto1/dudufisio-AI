@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useApp } from "../contexts/AppContext";
 import { useNotifications } from '../hooks/useNotifications';
-import { Role } from '../types';
+import { Role } from '../types/enums';
 import SidebarSearch from './SidebarSearch';
 import NotificationBell from './NotificationBell';
 import { secureLogger } from '../lib/secureLogger';

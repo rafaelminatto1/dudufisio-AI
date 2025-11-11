@@ -8,7 +8,7 @@
  * - Preload de componentes críticos
  */
 
-import { Role } from '../types';
+import { Role } from '../types/enums';
 import { logger } from './logger';
 
 /**

@@ -9,7 +9,7 @@ import { EnrichedAppointment, Patient } from '../../types';
 import { useToast } from '../../contexts/ToastContext';
 import { useData } from '../../contexts/AppContext';
 import { useSupabaseAuth } from '../../contexts/SupabaseAuthContext';
-import { Role } from '../../types';
+import { Role } from '../../types/enums';
 import AppointmentDetailModal from '../AppointmentDetailModal';
 import AppointmentFormModal from '../AppointmentFormModal';
 import EnhancedAgendaHeader from './EnhancedAgendaHeader';

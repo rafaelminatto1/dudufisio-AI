@@ -1,6 +1,6 @@
 import React from 'react';
-import Card, { CardHeader, CardTitle, CardDescription, CardContent } from './Card';
-import Button from './Button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from './card';
+import { Button } from './button';
 import { LucideIcon, ArrowRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
