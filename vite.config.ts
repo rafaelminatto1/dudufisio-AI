@@ -9,6 +9,26 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const pageChunkGroups = [
+  { name: 'page-ai-analytics', test: /[/\\]pages[/\\]AiAnalyticsPage\.[tj]sx?$/i },
+  { name: 'page-clinical-analytics', test: /[/\\]pages[/\\]ClinicalAnalyticsPage\.[tj]sx?$/i },
+  { name: 'page-protocols', test: /[/\\]pages[/\\](EnhancedProtocolsPage|ProtocolEditPage)\.[tj]sx?$/i },
+  { name: 'page-exercise-edit', test: /[/\\]pages[/\\]ExerciseEditPage\.[tj]sx?$/i },
+  { name: 'page-exercise-library', test: /[/\\]pages[/\\]EnhancedExerciseLibraryPage\.[tj]sx?$/i },
+  { name: 'page-clinical-content', test: /[/\\]pages[/\\]ClinicalContentPage\.[tj]sx?$/i },
+  { name: 'page-session-evolution', test: /[/\\]pages[/\\]SessionEvolutionPage\.[tj]sx?$/i },
+  { name: 'page-ai-lab', test: /[/\\]pages[/\\]AiAnalyticsLabPage\.[tj]sx?$/i },
+  { name: 'page-agenda', test: /[/\\]pages[/\\]AgendaPage\.[tj]sx?$/i },
+  { name: 'page-atendimento', test: /[/\\]pages[/\\](AtendimentoPage|AtendimentoPageDemo)\.[tj]sx?$/i },
+  { name: 'page-bi-integration', test: /[/\\]pages[/\\]BIIntegrationTestPage\.[tj]sx?$/i },
+  { name: 'page-free-video', test: /[/\\]pages[/\\]FreeVideoGeneratorReal\.[tj]sx?$/i },
+  { name: 'page-inventory', test: /[/\\]pages[/\\]InventoryPage\.[tj]sx?$/i },
+];
+
+const pdfVendorPattern = /[/\\]node_modules[/\\](?:@react-pdf|pdfkit|fontkit|png-js|yoga-layout|linebreak|textkit|canvg)[/\\]/;
+const compressionVendorPattern = /[/\\]node_modules[/\\](?:pako|brotli)[/\\]/;
+const sentryReplayPattern = /[/\\]node_modules[/\\]@sentry-internal[/\\]replay[/\\]/;
+
 export default defineConfig({
   plugins: [
     react({
@@ -314,6 +334,17 @@ export default defineConfig({
             return 'feature-pdf';
           }
 
+          // 🧾 CHUNK ESPECÍFICO: Ecossistema React-PDF
+          if (pdfVendorPattern.test(normalizedId)) {
+            return 'vendor-pdf';
+          }
+          if (compressionVendorPattern.test(normalizedId)) {
+            return 'vendor-compression';
+          }
+          if (sentryReplayPattern.test(normalizedId)) {
+            return 'vendor-sentry-replay';
+          }
+
           // 📸 CHUNK ESPECÍFICO: Image Processing (lazy load)
           if (normalizedId.includes('node_modules/html2canvas/')) {
             return 'feature-capture';
@@ -442,6 +473,10 @@ export default defineConfig({
 
           // 🏠 CHUNK: Páginas principais (agrupadas por funcionalidade)
           if (normalizedId.includes('/pages/')) {
+            const matchedPageGroup = pageChunkGroups.find(({ test }) => test.test(normalizedId));
+            if (matchedPageGroup) {
+              return matchedPageGroup.name;
+            }
             if (normalizedId.includes('Dashboard') || normalizedId.includes('Home')) {
               return 'page-dashboard';
             }
@@ -537,6 +572,18 @@ export default defineConfig({
                 normalizedId.includes('/components/clinical/')) {
               return 'comp-medical';
             }
+            if (normalizedId.includes('/components/medical-records/')) {
+              return 'comp-medical-records';
+            }
+            if (normalizedId.includes('/components/ai-tools/')) {
+              return 'comp-ai-tools';
+            }
+            if (normalizedId.includes('/components/backup/')) {
+              return 'comp-backup';
+            }
+            if (normalizedId.includes('/components/reports/')) {
+              return 'comp-reports';
+            }
 
             // Categorias existentes
             if (normalizedId.includes('dashboard') || normalizedId.includes('widgets')) {
@@ -554,6 +601,15 @@ export default defineConfig({
           // ⚡ RESTO: Vendor comum (minimizar este chunk)
           if (normalizedId.includes('node_modules/')) {
             return 'vendor-misc';
+          }
+
+          // 📚 Dados volumosos
+          if (normalizedId.includes('/data/')) {
+            return 'data-libraries';
+          }
+
+          if (normalizedId.includes('/services/monitoring/')) {
+            return 'service-monitoring';
           }
 
           // 📦 Código da aplicação

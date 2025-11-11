@@ -1,23 +1,17 @@
 /**
  * Service para geração de relatórios PDF de evolução
- * Usa react-pdf para criar documentos profissionais
+ * Usa react-pdf para criar documentos profissionais com carregamento sob demanda
  */
 
 import React from 'react';
-import { 
-  Document, 
-  Page, 
-  Text, 
-  View, 
-  StyleSheet, 
-  pdf,
-  Font 
-} from '@react-pdf/renderer';
 import { SessionEvolution, Patient, Therapist, PrescribedExercise } from '@/types';
 import { formatDate } from '@/lib/utils';
 
-// Estilos do PDF
-const styles = StyleSheet.create({
+type ReactPDFModule = typeof import('@react-pdf/renderer');
+type PDFStyles = ReturnType<ReactPDFModule['StyleSheet']['create']>;
+
+// Estilos do PDF (serão convertidos para StyleSheet apenas quando o módulo for carregado)
+const styleDefinitions = {
   page: {
     padding: 40,
     fontSize: 11,
@@ -185,7 +179,33 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     textAlign: 'center',
   },
-});
+} as const;
+
+let cachedReactPdfModule: ReactPDFModule | null = null;
+let reactPdfModulePromise: Promise<ReactPDFModule> | null = null;
+let cachedStyles: PDFStyles | null = null;
+
+async function loadReactPdfModule(): Promise<ReactPDFModule> {
+  if (cachedReactPdfModule) {
+    return cachedReactPdfModule;
+  }
+
+  if (!reactPdfModulePromise) {
+    reactPdfModulePromise = import('@react-pdf/renderer').then((module) => {
+      cachedReactPdfModule = module;
+      return module;
+    });
+  }
+
+  return reactPdfModulePromise;
+}
+
+function getPdfStyles(module: ReactPDFModule): PDFStyles {
+  if (!cachedStyles) {
+    cachedStyles = module.StyleSheet.create(styleDefinitions);
+  }
+  return cachedStyles;
+}
 
 interface EvolutionPDFDocumentProps {
   patient: Patient;
@@ -194,175 +214,182 @@ interface EvolutionPDFDocumentProps {
   prescribedExercises?: PrescribedExercise[];
 }
 
-// Componente do documento PDF
-const EvolutionPDFDocument: React.FC<EvolutionPDFDocumentProps> = ({
-  patient,
-  evolution,
-  therapist,
-  prescribedExercises = []
-}) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      {/* Cabeçalho */}
-      <View style={styles.header}>
-        <Text style={styles.clinicName}>MoocaFisio</Text>
-        <Text style={styles.clinicInfo}>
-          Relatório de Evolução Fisioterapêutica
-        </Text>
-        <Text style={styles.clinicInfo}>
-          moocafisio.com.br • noreply@moocafisio.com.br
-        </Text>
-      </View>
+function renderEvolutionPDFDocument(
+  module: ReactPDFModule,
+  styles: PDFStyles,
+  {
+    patient,
+    evolution,
+    therapist,
+    prescribedExercises = [],
+  }: EvolutionPDFDocumentProps
+): React.ReactElement {
+  const { Document, Page, Text, View } = module;
 
-      {/* Informações do Paciente */}
-      <View style={styles.patientInfo}>
-        <View style={styles.patientInfoColumn}>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Paciente:</Text>
-            <Text style={styles.infoValue}>{patient.name}</Text>
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        {/* Cabeçalho */}
+        <View style={styles.header}>
+          <Text style={styles.clinicName}>MoocaFisio</Text>
+          <Text style={styles.clinicInfo}>
+            Relatório de Evolução Fisioterapêutica
+          </Text>
+          <Text style={styles.clinicInfo}>
+            moocafisio.com.br • noreply@moocafisio.com.br
+          </Text>
+        </View>
+
+        {/* Informações do Paciente */}
+        <View style={styles.patientInfo}>
+          <View style={styles.patientInfoColumn}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Paciente:</Text>
+              <Text style={styles.infoValue}>{patient.name}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>CPF:</Text>
+              <Text style={styles.infoValue}>{patient.cpf || 'Não informado'}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Data Nasc.:</Text>
+              <Text style={styles.infoValue}>
+                {patient.dateOfBirth ? formatDate(patient.dateOfBirth) : 'Não informado'}
+              </Text>
+            </View>
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>CPF:</Text>
-            <Text style={styles.infoValue}>{patient.cpf || 'Não informado'}</Text>
+          <View style={styles.patientInfoColumn}>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Sessão:</Text>
+              <Text style={styles.infoValue}>#{evolution.sessionNumber}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Data:</Text>
+              <Text style={styles.infoValue}>{formatDate(evolution.sessionDate)}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Terapeuta:</Text>
+              <Text style={styles.infoValue}>{therapist.name}</Text>
+            </View>
+            {evolution.duration && (
+              <View style={styles.infoRow}>
+                <Text style={styles.infoLabel}>Duração:</Text>
+                <Text style={styles.infoValue}>{evolution.duration} minutos</Text>
+              </View>
+            )}
           </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Data Nasc.:</Text>
-            <Text style={styles.infoValue}>
-              {patient.dateOfBirth ? formatDate(patient.dateOfBirth) : 'Não informado'}
+        </View>
+
+        {/* S - Subjetivo */}
+        {evolution.subjective && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>S - Avaliação Subjetiva</Text>
+            <Text style={styles.text}>{evolution.subjective}</Text>
+          </View>
+        )}
+
+        {/* O - Objetivo */}
+        {evolution.objective && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>O - Avaliação Objetiva</Text>
+            <Text style={styles.text}>{evolution.objective}</Text>
+          </View>
+        )}
+
+        {/* A - Avaliação */}
+        {evolution.assessment && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>A - Avaliação/Análise</Text>
+            <Text style={styles.text}>{evolution.assessment}</Text>
+          </View>
+        )}
+
+        {/* P - Plano (Condutas) */}
+        {evolution.conducts && evolution.conducts.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>P - Plano (Condutas Realizadas)</Text>
+            {evolution.conducts.map((conduct) => (
+              <View key={conduct.id} style={styles.conductItem}>
+                <Text style={styles.conductCategory}>{conduct.name}</Text>
+                {conduct.details && (
+                  <Text style={styles.conductDetails}>Região/Parâmetros: {conduct.details}</Text>
+                )}
+                {conduct.duration && (
+                  <Text style={styles.conductDetails}>Duração: {conduct.duration}</Text>
+                )}
+                {conduct.equipment && (
+                  <Text style={styles.conductDetails}>Equipamento: {conduct.equipment}</Text>
+                )}
+                {conduct.notes && (
+                  <Text style={styles.conductDetails}>Obs: {conduct.notes}</Text>
+                )}
+              </View>
+            ))}
+            {evolution.planGeneralNotes && (
+              <Text style={[styles.text, { marginTop: 10 }]}>{evolution.planGeneralNotes}</Text>
+            )}
+          </View>
+        )}
+
+        {/* Exercícios Prescritos */}
+        {prescribedExercises.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Exercícios Prescritos</Text>
+            <View style={styles.exerciseTable}>
+              {/* Header */}
+              <View style={styles.exerciseHeader}>
+                <Text style={styles.exerciseCol1}>Exercício</Text>
+                <Text style={styles.exerciseCol2}>Séries</Text>
+                <Text style={styles.exerciseCol3}>Reps</Text>
+                <Text style={styles.exerciseCol4}>Carga/Tempo</Text>
+              </View>
+              {/* Rows */}
+              {prescribedExercises.map((ex) => (
+                <View key={ex.id} style={styles.exerciseRow}>
+                  <Text style={styles.exerciseCol1}>{ex.exercise.name}</Text>
+                  <Text style={styles.exerciseCol2}>{ex.sets}</Text>
+                  <Text style={styles.exerciseCol3}>{ex.reps}</Text>
+                  <Text style={styles.exerciseCol4}>
+                    {ex.load || ex.duration || '-'}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Nível de Dor */}
+        {(evolution.painLevel !== undefined) && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Evolução da Dor (EVA)</Text>
+            <View style={styles.painBox}>
+              <View style={styles.painValue}>
+                <Text style={styles.painNumber}>{evolution.painLevel}</Text>
+                <Text style={styles.painLabel}>Nível de Dor</Text>
+              </View>
+            </View>
+          </View>
+        )}
+
+        {/* Assinatura */}
+        <View style={{ marginTop: 40 }}>
+          <View style={styles.signature}>
+            <Text style={{ fontSize: 10 }}>{therapist.name}</Text>
+            <Text style={{ fontSize: 8, color: '#6b7280' }}>
+              {therapist.crefito ? `CREFITO: ${therapist.crefito}` : 'Fisioterapeuta'}
             </Text>
           </View>
         </View>
-        <View style={styles.patientInfoColumn}>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Sessão:</Text>
-            <Text style={styles.infoValue}>#{evolution.sessionNumber}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Data:</Text>
-            <Text style={styles.infoValue}>{formatDate(evolution.sessionDate)}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Terapeuta:</Text>
-            <Text style={styles.infoValue}>{therapist.name}</Text>
-          </View>
-          {evolution.duration && (
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Duração:</Text>
-              <Text style={styles.infoValue}>{evolution.duration} minutos</Text>
-            </View>
-          )}
-        </View>
-      </View>
 
-      {/* S - Subjetivo */}
-      {evolution.subjective && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>S - Avaliação Subjetiva</Text>
-          <Text style={styles.text}>{evolution.subjective}</Text>
+        {/* Rodapé */}
+        <View style={styles.footer}>
+          <Text>Gerado em {formatDate(new Date().toISOString())}</Text>
+          <Text>MoocaFisio - Sistema de Gestão Fisioterapêutica</Text>
         </View>
-      )}
-
-      {/* O - Objetivo */}
-      {evolution.objective && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>O - Avaliação Objetiva</Text>
-          <Text style={styles.text}>{evolution.objective}</Text>
-        </View>
-      )}
-
-      {/* A - Avaliação */}
-      {evolution.assessment && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>A - Avaliação/Análise</Text>
-          <Text style={styles.text}>{evolution.assessment}</Text>
-        </View>
-      )}
-
-      {/* P - Plano (Condutas) */}
-      {evolution.conducts && evolution.conducts.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>P - Plano (Condutas Realizadas)</Text>
-          {evolution.conducts.map((conduct, index) => (
-            <View key={conduct.id} style={styles.conductItem}>
-              <Text style={styles.conductCategory}>{conduct.name}</Text>
-              {conduct.details && (
-                <Text style={styles.conductDetails}>Região/Parâmetros: {conduct.details}</Text>
-              )}
-              {conduct.duration && (
-                <Text style={styles.conductDetails}>Duração: {conduct.duration}</Text>
-              )}
-              {conduct.equipment && (
-                <Text style={styles.conductDetails}>Equipamento: {conduct.equipment}</Text>
-              )}
-              {conduct.notes && (
-                <Text style={styles.conductDetails}>Obs: {conduct.notes}</Text>
-              )}
-            </View>
-          ))}
-          {evolution.planGeneralNotes && (
-            <Text style={[styles.text, { marginTop: 10 }]}>{evolution.planGeneralNotes}</Text>
-          )}
-        </View>
-      )}
-
-      {/* Exercícios Prescritos */}
-      {prescribedExercises.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Exercícios Prescritos</Text>
-          <View style={styles.exerciseTable}>
-            {/* Header */}
-            <View style={styles.exerciseHeader}>
-              <Text style={styles.exerciseCol1}>Exercício</Text>
-              <Text style={styles.exerciseCol2}>Séries</Text>
-              <Text style={styles.exerciseCol3}>Reps</Text>
-              <Text style={styles.exerciseCol4}>Carga/Tempo</Text>
-            </View>
-            {/* Rows */}
-            {prescribedExercises.map((ex) => (
-              <View key={ex.id} style={styles.exerciseRow}>
-                <Text style={styles.exerciseCol1}>{ex.exercise.name}</Text>
-                <Text style={styles.exerciseCol2}>{ex.sets}</Text>
-                <Text style={styles.exerciseCol3}>{ex.reps}</Text>
-                <Text style={styles.exerciseCol4}>
-                  {ex.load || ex.duration || '-'}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      )}
-
-      {/* Nível de Dor */}
-      {(evolution.painLevel !== undefined) && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Evolução da Dor (EVA)</Text>
-          <View style={styles.painBox}>
-            <View style={styles.painValue}>
-              <Text style={styles.painNumber}>{evolution.painLevel}</Text>
-              <Text style={styles.painLabel}>Nível de Dor</Text>
-            </View>
-          </View>
-        </View>
-      )}
-
-      {/* Assinatura */}
-      <View style={{ marginTop: 40 }}>
-        <View style={styles.signature}>
-          <Text style={{ fontSize: 10 }}>{therapist.name}</Text>
-          <Text style={{ fontSize: 8, color: '#6b7280' }}>
-            {therapist.crefito ? `CREFITO: ${therapist.crefito}` : 'Fisioterapeuta'}
-          </Text>
-        </View>
-      </View>
-
-      {/* Rodapé */}
-      <View style={styles.footer}>
-        <Text>Gerado em {formatDate(new Date().toISOString())}</Text>
-        <Text>MoocaFisio - Sistema de Gestão Fisioterapêutica</Text>
-      </View>
-    </Page>
-  </Document>
-);
+      </Page>
+    </Document>
+  );
+}
 
 /**
  * Gera o PDF e retorna como Blob
@@ -373,16 +400,16 @@ export async function generateEvolutionPDF(
   therapist: Therapist,
   prescribedExercises?: PrescribedExercise[]
 ): Promise<Blob> {
-  const doc = (
-    <EvolutionPDFDocument
-      patient={patient}
-      evolution={evolution}
-      therapist={therapist}
-      prescribedExercises={prescribedExercises}
-    />
-  );
+  const pdfModule = await loadReactPdfModule();
+  const styles = getPdfStyles(pdfModule);
+  const documentElement = renderEvolutionPDFDocument(pdfModule, styles, {
+    patient,
+    evolution,
+    therapist,
+    prescribedExercises,
+  });
 
-  const blob = await pdf(doc).toBlob();
+  const blob = await pdfModule.pdf(documentElement).toBlob();
   return blob;
 }
 
@@ -396,7 +423,7 @@ export async function downloadEvolutionPDF(
   prescribedExercises?: PrescribedExercise[]
 ): Promise<void> {
   const blob = await generateEvolutionPDF(patient, evolution, therapist, prescribedExercises);
-  
+
   // Criar nome do arquivo
   const date = formatDate(evolution.sessionDate).replace(/\//g, '-');
   const patientName = patient.name.replace(/\s+/g, '_');

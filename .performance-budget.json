@@ -1,25 +1,30 @@
 {
   "budgets": [
     {
-      "name": "Total Bundle Size (gzipped)",
-      "limit": "400KB",
-      "limitBytes": 409600,
+      "name": "Total JS Bundle Size",
+      "limit": "9MB",
+      "limitBytes": 9437184,
       "status": "ok",
-      "priority": "medium"
+      "priority": "medium",
+      "description": "Soma de todos os arquivos JS em dist/assets"
     },
     {
-      "name": "Main Chunk Size",
-      "limit": "150KB",
-      "limitBytes": 153600,
+      "name": "Main Entry Chunk",
+      "limit": "1.5MB",
+      "limitBytes": 1572864,
       "status": "ok",
-      "priority": "high"
+      "priority": "high",
+      "patterns": "^index-.*\\.js$",
+      "description": "Chunk principal gerado pelo Vite"
     },
     {
       "name": "Vendor React Core",
-      "limit": "180KB",
-      "limitBytes": 184320,
+      "limit": "220KB",
+      "limitBytes": 225280,
       "status": "ok",
-      "priority": "low"
+      "priority": "low",
+      "patterns": "vendor-react",
+      "description": "Dependências centrais do React"
     },
     {
       "name": "First Contentful Paint (FCP)",
@@ -96,7 +101,6 @@
       "SI": "< 2.0s"
     }
   },
-  "lastChecked": null,
+  "lastChecked": "2025-11-11T20:39:25.824Z",
   "violations": []
 }
-

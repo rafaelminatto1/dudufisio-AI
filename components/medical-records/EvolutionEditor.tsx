@@ -4,7 +4,7 @@
  * Versão atualizada com funcionalidades avançadas
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -94,24 +94,64 @@ import { EmojiRating } from '../feedback/EmojiRating';
 import { EmojiRatingValue } from '../../types';
 
 // Novos imports para funcionalidades avançadas
-import { SessionTimer, useSessionTimer } from '../evolution/SessionTimer';
-import { PreviousSessionComparison } from '../evolution/PreviousSessionComparison';
-import { ExerciseSelector } from '../evolution/ExerciseSelector';
-import { PrescribedExerciseList } from '../evolution/PrescribedExerciseList';
-import { PhotoUpload } from '../evolution/PhotoUpload';
-import { TemplateSelector } from '../evolution/TemplateSelector';
-import { TemplateSaveDialog } from '../evolution/TemplateSaveDialog';
+import { useSessionTimer } from '../evolution/useSessionTimer';
 import { PrescribedExercise, ProgressPhoto, Patient, Therapist } from '@/types';
 import { downloadEvolutionPDF } from '@/services/pdf/evolutionReportService';
 import { useToast } from '@/contexts/ToastContext';
 import { useApp } from '@/contexts/AppContext';
 
 // Imports de IA
-import { AudioRecorder } from '../evolution/AudioRecorder';
 import { isGeminiConfigured } from '@/services/geminiService';
 import { structureToSOAP } from '@/services/ai/soapStructureService';
 import { suggestExercises } from '@/services/ai/exerciseSuggestionService';
 import { Sparkles } from 'lucide-react';
+const SessionTimer = React.lazy(() =>
+  import('../evolution/SessionTimer').then((module) => ({
+    default: module.SessionTimer,
+  }))
+);
+
+const PreviousSessionComparison = React.lazy(() =>
+  import('../evolution/PreviousSessionComparison').then((module) => ({
+    default: module.PreviousSessionComparison,
+  }))
+);
+
+const ExerciseSelector = React.lazy(() =>
+  import('../evolution/ExerciseSelector').then((module) => ({
+    default: module.ExerciseSelector,
+  }))
+);
+
+const PrescribedExerciseList = React.lazy(() =>
+  import('../evolution/PrescribedExerciseList').then((module) => ({
+    default: module.PrescribedExerciseList,
+  }))
+);
+
+const PhotoUpload = React.lazy(() =>
+  import('../evolution/PhotoUpload').then((module) => ({
+    default: module.PhotoUpload,
+  }))
+);
+
+const TemplateSelector = React.lazy(() =>
+  import('../evolution/TemplateSelector').then((module) => ({
+    default: module.TemplateSelector,
+  }))
+);
+
+const TemplateSaveDialog = React.lazy(() =>
+  import('../evolution/TemplateSaveDialog').then((module) => ({
+    default: module.TemplateSaveDialog,
+  }))
+);
+
+const AudioRecorder = React.lazy(() =>
+  import('../evolution/AudioRecorder').then((module) => ({
+    default: module.AudioRecorder,
+  }))
+);
 
 // Schema de validação
 const evolutionSchema = z.object({
@@ -594,10 +634,18 @@ export function EvolutionEditor({
             {/* Mostrar AudioRecorder quando ativado */}
             {showAIAssistant && (
               <div className="mt-4">
-                <AudioRecorder 
-                  onTranscription={handleTranscription}
-                  onError={(error) => showToast(error, 'error')}
-                />
+                <Suspense
+                  fallback={
+                    <div className="flex items-center justify-center rounded-lg border border-purple-200 bg-purple-50 p-6 text-sm text-purple-600">
+                      Preparando assistente de gravação...
+                    </div>
+                  }
+                >
+                  <AudioRecorder
+                    onTranscription={handleTranscription}
+                    onError={(error) => showToast(error, 'error')}
+                  />
+                </Suspense>
               </div>
             )}
           </CardContent>
@@ -915,17 +963,33 @@ export function EvolutionEditor({
                 <CardContent className="space-y-6">
                   {/* Seletor de exercícios */}
                   {showExerciseSelector && (
-                    <ExerciseSelector
-                      onSelect={setPrescribedExercises}
-                      selectedExercises={prescribedExercises}
-                    />
+                    <Suspense
+                      fallback={
+                        <div className="rounded-lg border border-dashed border-gray-300 p-6 text-sm text-muted-foreground">
+                          Carregando biblioteca de exercícios...
+                        </div>
+                      }
+                    >
+                      <ExerciseSelector
+                        onSelect={setPrescribedExercises}
+                        selectedExercises={prescribedExercises}
+                      />
+                    </Suspense>
                   )}
 
                   {/* Lista de exercícios prescritos */}
-                  <PrescribedExerciseList
-                    exercises={prescribedExercises}
-                    onUpdate={setPrescribedExercises}
-                  />
+                  <Suspense
+                    fallback={
+                      <div className="rounded-lg border border-dashed border-gray-300 p-6 text-sm text-muted-foreground">
+                        Carregando lista de exercícios prescritos...
+                      </div>
+                    }
+                  >
+                    <PrescribedExerciseList
+                      exercises={prescribedExercises}
+                      onUpdate={setPrescribedExercises}
+                    />
+                  </Suspense>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -981,12 +1045,20 @@ export function EvolutionEditor({
 
                   {/* Fotos de Progresso (Novo) */}
                   <div className="pt-4 border-t">
-                    <PhotoUpload
-                      patientId={patientId}
-                      sessionId={sessionId}
-                      photos={progressPhotos}
-                      onPhotosChange={setProgressPhotos}
-                    />
+                    <Suspense
+                      fallback={
+                        <div className="rounded-lg border border-dashed border-gray-300 p-6 text-sm text-muted-foreground">
+                          Carregando gerenciador de fotos...
+                        </div>
+                      }
+                    >
+                      <PhotoUpload
+                        patientId={patientId}
+                        sessionId={sessionId}
+                        photos={progressPhotos}
+                        onPhotosChange={setProgressPhotos}
+                      />
+                    </Suspense>
                   </div>
                 </CardContent>
               </Card>
@@ -1340,14 +1412,34 @@ export function EvolutionEditor({
 
         {/* Barra Lateral Direita (1/4) - Sticky */}
         <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-6 lg:self-start">
-          {/* Timer de Sessão */}
-          <SessionTimer onTimeUpdate={handleTimeUpdate} autoStart={true} />
+        {/* Timer de Sessão */}
+        <Suspense
+          fallback={
+            <Card className="border-dashed border-2 border-blue-200">
+              <CardContent className="py-10 text-center text-sm text-blue-500">
+                Carregando controle de tempo da sessão...
+              </CardContent>
+            </Card>
+          }
+        >
+          <SessionTimer onTimeUpdate={handleTimeUpdate} autoStart />
+        </Suspense>
 
-          {/* Comparação com Sessão Anterior */}
-          <PreviousSessionComparison 
+        {/* Comparação com Sessão Anterior */}
+        <Suspense
+          fallback={
+            <Card>
+              <CardContent className="py-10 text-center text-sm text-muted-foreground">
+                Carregando comparativo com sessão anterior...
+              </CardContent>
+            </Card>
+          }
+        >
+          <PreviousSessionComparison
             patientId={patientId}
             currentPainLevel={watchedValues.painLevelAfter}
           />
+        </Suspense>
         </div>
       </div>
 
@@ -1367,33 +1459,43 @@ export function EvolutionEditor({
                   <X className="w-5 h-5" />
                 </Button>
               </div>
-              <TemplateSelector
-                therapistId={user?.id || ''}
-                onSelect={handleApplyTemplate}
-                onCreateNew={() => {
-                  setShowTemplateSelector(false);
-                  setShowTemplateSaveDialog(true);
-                }}
-              />
+              <Suspense
+                fallback={
+                  <div className="rounded-lg border border-dashed border-gray-300 p-6 text-sm text-muted-foreground">
+                    Carregando templates disponíveis...
+                  </div>
+                }
+              >
+                <TemplateSelector
+                  therapistId={user?.id || ''}
+                  onSelect={handleApplyTemplate}
+                  onCreateNew={() => {
+                    setShowTemplateSelector(false);
+                    setShowTemplateSaveDialog(true);
+                  }}
+                />
+              </Suspense>
             </div>
           </div>
         </div>
       )}
 
       {/* Dialog para salvar template */}
-      <TemplateSaveDialog
-        open={showTemplateSaveDialog}
-        onOpenChange={setShowTemplateSaveDialog}
-        therapistId={user?.id || ''}
-        templateData={{
-          subjective_template: watchedValues.subjectiveAssessment,
-          objective_template: watchedValues.objectiveFindings,
-          assessment_template: '',
-          conducts: conducts,
-          exercises: prescribedExercises
-        }}
-        onSuccess={() => showToast('Template salvo com sucesso!', 'success')}
-      />
+      <Suspense fallback={null}>
+        <TemplateSaveDialog
+          open={showTemplateSaveDialog}
+          onOpenChange={setShowTemplateSaveDialog}
+          therapistId={user?.id || ''}
+          templateData={{
+            subjective_template: watchedValues.subjectiveAssessment,
+            objective_template: watchedValues.objectiveFindings,
+            assessment_template: '',
+            conducts: conducts,
+            exercises: prescribedExercises
+          }}
+          onSuccess={() => showToast('Template salvo com sucesso!', 'success')}
+        />
+      </Suspense>
     </div>
   );
 }

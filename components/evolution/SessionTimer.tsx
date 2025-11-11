@@ -191,31 +191,5 @@ export function SessionTimer({ onTimeUpdate, autoStart = true }: SessionTimerPro
   );
 }
 
-/**
- * Hook para usar o timer em outros componentes
- */
-export function useSessionTimer() {
-  const [timerData, setTimerData] = useState<{
-    startTime: Date | null;
-    endTime: Date | null;
-    duration: number;
-  }>({
-    startTime: null,
-    endTime: null,
-    duration: 0
-  });
-
-  const handleTimeUpdate = (start: Date, end: Date | undefined, minutes: number) => {
-    setTimerData({
-      startTime: start,
-      endTime: end || null,
-      duration: minutes
-    });
-  };
-
-  return {
-    timerData,
-    handleTimeUpdate
-  };
-}
+export { useSessionTimer } from './useSessionTimer';
 

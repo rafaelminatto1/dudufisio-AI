@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { Suspense, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -19,7 +19,12 @@ import {
 import MedicalRecordsDashboard from './MedicalRecordsDashboard';
 import { ClinicalTemplatesManager } from './ClinicalTemplatesManager';
 import { DigitalSignatureManager } from './DigitalSignatureManager';
-import { ClinicalReportsGenerator } from './ClinicalReportsGenerator';
+
+const ClinicalReportsGenerator = React.lazy(() =>
+  import('./ClinicalReportsGenerator').then((module) => ({
+    default: module.ClinicalReportsGenerator,
+  }))
+);
 
 interface SystemStatus {
   database: 'connected' | 'disconnected' | 'error';
@@ -73,36 +78,50 @@ export function MedicalRecordsSystem() {
     }
   };
 
-  const modules = [
-    {
-      id: 'dashboard',
-      name: 'Dashboard Principal',
-      description: 'Visão geral dos prontuários e pacientes',
-      icon: <FileText className="h-5 w-5" />,
-      component: <MedicalRecordsDashboard />
-    },
-    {
-      id: 'templates',
-      name: 'Templates Clínicos',
-      description: 'Gerenciar templates dinâmicos',
-      icon: <Settings className="h-5 w-5" />,
-      component: <ClinicalTemplatesManager />
-    },
-    {
-      id: 'signatures',
-      name: 'Assinaturas Digitais',
-      description: 'Gerenciar certificados e assinaturas',
-      icon: <Shield className="h-5 w-5" />,
-      component: <DigitalSignatureManager />
-    },
-    {
-      id: 'reports',
-      name: 'Relatórios Clínicos',
-      description: 'Gerar relatórios de progresso e alta',
-      icon: <BarChart3 className="h-5 w-5" />,
-      component: <ClinicalReportsGenerator />
-    }
-  ];
+  const modules = useMemo(
+    () => [
+      {
+        id: 'dashboard',
+        name: 'Dashboard Principal',
+        description: 'Visão geral dos prontuários e pacientes',
+        icon: <FileText className="h-5 w-5" />,
+        component: <MedicalRecordsDashboard />,
+      },
+      {
+        id: 'templates',
+        name: 'Templates Clínicos',
+        description: 'Gerenciar templates dinâmicos',
+        icon: <Settings className="h-5 w-5" />,
+        component: <ClinicalTemplatesManager />,
+      },
+      {
+        id: 'signatures',
+        name: 'Assinaturas Digitais',
+        description: 'Gerenciar certificados e assinaturas',
+        icon: <Shield className="h-5 w-5" />,
+        component: <DigitalSignatureManager />,
+      },
+      {
+        id: 'reports',
+        name: 'Relatórios Clínicos',
+        description: 'Gerar relatórios de progresso e alta',
+        icon: <BarChart3 className="h-5 w-5" />,
+        component: (
+          <Suspense
+            fallback={
+              <div className="flex min-h-[200px] flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+                <BarChart3 className="h-6 w-6 animate-pulse" />
+                Carregando ferramentas de relatório clínico...
+              </div>
+            }
+          >
+            <ClinicalReportsGenerator />
+          </Suspense>
+        ),
+      },
+    ],
+    []
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
