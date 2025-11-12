@@ -340,12 +340,13 @@ export default defineConfig({
           if (pdfVendorPattern.test(normalizedId)) {
             return 'vendor-pdf';
           }
-          // 🔧 FIX: Agrupar compression com vendor-pdf para evitar circular dependency
-          // Issue: vendor-compression separado causava "Cannot access 'Un' before initialization"
-          // Data: 11 Jan 2025
-          if (compressionVendorPattern.test(normalizedId)) {
-            return 'vendor-pdf'; // Agrupado com vendor-pdf ao invés de chunk separado
-          }
+          // 🔧 FIX: REMOVER agrupamento de compression - deixar Vite decidir
+          // Issue: Mesmo agrupado com vendor-pdf, circular dependency persiste
+          // Solution: Não forçar chunk específico para compression libs
+          // Data: 12 Jan 2025
+          // if (compressionVendorPattern.test(normalizedId)) {
+          //   return 'vendor-pdf';
+          // }
           if (sentryReplayPattern.test(normalizedId)) {
             return 'vendor-sentry-replay';
           }
