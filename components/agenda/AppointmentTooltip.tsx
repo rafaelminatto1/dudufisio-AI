@@ -51,7 +51,7 @@ const AppointmentTooltip: React.FC<AppointmentTooltipProps> = ({
             {displayAppointmentType(appointment.type)}
           </p>
         </div>
-        <Badge variant="secondary" className={cn("text-xs", statusConfig.bg, statusConfig.color)}>
+        <Badge variant="outline" className={cn("text-xs", statusConfig.bg, statusConfig.color)}>
           <StatusIcon className="w-3 h-3 mr-1" />
           {statusConfig.label}
         </Badge>

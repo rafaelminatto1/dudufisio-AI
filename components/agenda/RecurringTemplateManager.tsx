@@ -304,7 +304,7 @@ const RecurringTemplateManager: React.FC<RecurringTemplateManagerProps> = ({
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <h4 className="font-semibold text-slate-900">{template.title}</h4>
-                              <Badge variant="secondary">{template.recurrenceRule.frequency}</Badge>
+                              <Badge variant="outline">{template.recurrenceRule.frequency}</Badge>
                             </div>
                             {template.description && (
                               <p className="text-sm text-slate-600 mb-2">{template.description}</p>

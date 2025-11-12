@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Bundle Analysis - DuduFisio-AI</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f8fafc; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 24px; font-weight: bold; color: #1e293b; }
+        .stat-label { color: #64748b; font-size: 14px; }
+        .section { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px; }
+        .section-title { font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 16px; }
+        .module-list { max-height: 400px; overflow-y: auto; }
+        .module-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #e2e8f0; }
+        .module-name { font-weight: 500; color: #1e293b; }
+        .module-size { color: #64748b; font-size: 14px; }
+        .recommendation { background: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #3b82f6; }
+        .recommendation-title { font-weight: 600; color: #1e293b; margin-bottom: 8px; }
+        .recommendation-text { color: #64748b; font-size: 14px; line-height: 1.5; }
+        .priority-high { border-left-color: #ef4444; }
+        .priority-medium { border-left-color: #f59e0b; }
+        .priority-low { border-left-color: #10b981; }
+        .performance-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .performance-item { text-align: center; }
+        .performance-value { font-size: 20px; font-weight: bold; color: #1e293b; }
+        .performance-label { color: #64748b; font-size: 12px; }
+        .timestamp { color: #64748b; font-size: 12px; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Advanced Bundle Analysis</h1>
+            <p>Comprehensive analysis of your application bundle</p>
+            <div class="timestamp">Generated: 11/11/2025, 18:24:13</div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value">12.22 MB</div>
+                <div class="stat-label">Total Bundle Size</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2.83 MB</div>
+                <div class="stat-label">Gzipped Size</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">145</div>
+                <div class="stat-label">Total Modules</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Estimated Lighthouse Score</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📊 Performance Metrics</div>
+            <div class="performance-grid">
+                <div class="performance-item">
+                    <div class="performance-value">12513ms</div>
+                    <div class="performance-label">Estimated Load Time</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">3128ms</div>
+                    <div class="performance-label">Parse Time</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">8342ms</div>
+                    <div class="performance-label">Execution Time</div>
+                </div>
+                <div class="performance-item">
+                    <div class="performance-value">4171MB</div>
+                    <div class="performance-label">Memory Usage</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">📦 Largest Modules</div>
+            <div class="module-list">
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">stats.html</div>
+                            <div style="font-size: 12px; color: #64748b;">stats.html</div>
+                        </div>
+                        <div class="module-size">
+                            3293.9 KB (26.3%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">vendor-pdf-BXGHOadA.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\vendor-pdf-BXGHOadA.js</div>
+                        </div>
+                        <div class="module-size">
+                            1186.4 KB (9.5%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">comp-common-_WEJEJCu.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\comp-common-_WEJEJCu.js</div>
+                        </div>
+                        <div class="module-size">
+                            1083.9 KB (8.7%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">index-CvoJcjWh.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\index-CvoJcjWh.js</div>
+                        </div>
+                        <div class="module-size">
+                            864.7 KB (6.9%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">vendor-misc-CQc2Xzpq.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\vendor-misc-CQc2Xzpq.js</div>
+                        </div>
+                        <div class="module-size">
+                            644.0 KB (5.1%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">page-other-CDtsm1J6.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\page-other-CDtsm1J6.js</div>
+                        </div>
+                        <div class="module-size">
+                            408.5 KB (3.3%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">feature-editor-CzlvfmnX.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\feature-editor-CzlvfmnX.js</div>
+                        </div>
+                        <div class="module-size">
+                            378.5 KB (3.0%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">feature-charts-BzwyhHk_.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\feature-charts-BzwyhHk_.js</div>
+                        </div>
+                        <div class="module-size">
+                            350.7 KB (2.8%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">feature-pdf-CbIxCQ3c.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\feature-pdf-CbIxCQ3c.js</div>
+                        </div>
+                        <div class="module-size">
+                            334.1 KB (2.7%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">comp-medical-Cq4u2zuY.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\comp-medical-Cq4u2zuY.js</div>
+                        </div>
+                        <div class="module-size">
+                            239.8 KB (1.9%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">data-libraries-BFsysePG.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\data-libraries-BFsysePG.js</div>
+                        </div>
+                        <div class="module-size">
+                            229.9 KB (1.8%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">feature-capture-BILt7_IL.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\feature-capture-BILt7_IL.js</div>
+                        </div>
+                        <div class="module-size">
+                            197.6 KB (1.6%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">index-otYuEqUo.css</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\index-otYuEqUo.css</div>
+                        </div>
+                        <div class="module-size">
+                            185.6 KB (1.5%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">page-dashboard-Cc8M5udh.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\page-dashboard-Cc8M5udh.js</div>
+                        </div>
+                        <div class="module-size">
+                            172.3 KB (1.4%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">vendor-compression-LkjK7DZQ.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\vendor-compression-LkjK7DZQ.js</div>
+                        </div>
+                        <div class="module-size">
+                            150.3 KB (1.2%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">vendor-forms-BSw_47un.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\vendor-forms-BSw_47un.js</div>
+                        </div>
+                        <div class="module-size">
+                            148.5 KB (1.2%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">vendor-supabase-CBJRZ2KQ.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\vendor-supabase-CBJRZ2KQ.js</div>
+                        </div>
+                        <div class="module-size">
+                            144.2 KB (1.2%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">vendor-react-core-HH5O5jW4.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\vendor-react-core-HH5O5jW4.js</div>
+                        </div>
+                        <div class="module-size">
+                            140.0 KB (1.1%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">vendor-ai-BzaBi4tP.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\vendor-ai-BzaBi4tP.js</div>
+                        </div>
+                        <div class="module-size">
+                            125.8 KB (1.0%)
+                        </div>
+                    </div>
+                
+                    <div class="module-item">
+                        <div>
+                            <div class="module-name">vendor-sentry-replay-D9Vjm9Xh.js</div>
+                            <div style="font-size: 12px; color: #64748b;">assets\vendor-sentry-replay-D9Vjm9Xh.js</div>
+                        </div>
+                        <div class="module-size">
+                            121.1 KB (1.0%)
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">💡 Optimization Recommendations</div>
+            
+                <div class="recommendation priority-high">
+                    <div class="recommendation-title">
+                        🔴 
+                        Found 5 large modules (>500KB)
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>Impact:</strong> Significant impact on initial load time<br>
+                        <strong>Solution:</strong> Consider code splitting, lazy loading, or removing unused dependencies
+                        <br><strong>Potential Savings:</strong> 2121.8 KB
+                    </div>
+                </div>
+            
+                <div class="recommendation priority-medium">
+                    <div class="recommendation-title">
+                        🟡 
+                        High number of dependencies (72)
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>Impact:</strong> Increased bundle size and slower builds<br>
+                        <strong>Solution:</strong> Review and remove unused dependencies, consider alternative lighter libraries
+                        <br><strong>Potential Savings:</strong> 3600.0 KB
+                    </div>
+                </div>
+            
+                <div class="recommendation priority-medium">
+                    <div class="recommendation-title">
+                        🟡 
+                        Found 9 potentially unoptimized images
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>Impact:</strong> Larger bundle size and slower loading<br>
+                        <strong>Solution:</strong> Convert images to WebP format, implement responsive images, use lazy loading
+                        <br><strong>Potential Savings:</strong> 44.1 KB
+                    </div>
+                </div>
+            
+                <div class="recommendation priority-high">
+                    <div class="recommendation-title">
+                        🔴 
+                        Total bundle size exceeds 2MB
+                    </div>
+                    <div class="recommendation-text">
+                        <strong>Impact:</strong> Poor performance on slow networks and mobile devices<br>
+                        <strong>Solution:</strong> Implement code splitting, optimize dependencies, use tree shaking
+                        <br><strong>Potential Savings:</strong> 3128.4 KB
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</body>
+</html>
+    

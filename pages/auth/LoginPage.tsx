@@ -13,9 +13,9 @@ import {
 import { lazy, Suspense } from 'react';
 import { Role } from '../../types/enums';
 import { useSupabaseAuth } from '../../contexts/SupabaseAuthContext';
-import { Button } from '../../components/ui/button';
+import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../components/ui/Card';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { OTPLoginForm } from '../../components/auth/OTPLoginForm';
 

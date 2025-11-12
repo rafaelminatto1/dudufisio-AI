@@ -29,7 +29,7 @@ const HolidayIndicator: React.FC<HolidayIndicatorProps> = ({ date, className = '
 
   return (
     <Badge 
-      variant="destructive" 
+      variant="error" 
       className={`text-xs h-3 px-1 mt-0.5 ${className}`}
       title={holiday.name}
       data-testid="holiday-indicator"

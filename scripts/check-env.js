@@ -58,10 +58,34 @@ const OPTIONAL_VARS = {
     example: 'AIza...',
     test: (value) => value.startsWith('AIza'),
   },
-  'VITE_SUPABASE_SERVICE_ROLE_KEY': {
-    description: 'Chave de serviço do Supabase (para operações admin)',
+  'SUPABASE_SERVICE_ROLE_KEY': {
+    description: 'Chave de serviço do Supabase (server-side, não exposta no client)',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
     test: (value) => value.startsWith('eyJ'),
+  },
+  'VITE_SENTRY_DSN': {
+    description: 'DSN do Sentry para monitoramento client-side',
+    example: 'https://<key>@o<org>.ingest.sentry.io/<project>',
+    test: (value) => {
+      try {
+        const url = new URL(value);
+        return url.hostname.includes('sentry.io');
+      } catch {
+        return false;
+      }
+    },
+  },
+  'VITE_APP_URL': {
+    description: 'URL pública da aplicação (client)',
+    example: 'http://localhost:5173',
+    test: (value) => {
+      try {
+        const url = new URL(value);
+        return !!url.protocol && !!url.host;
+      } catch {
+        return false;
+      }
+    },
   },
 };
 

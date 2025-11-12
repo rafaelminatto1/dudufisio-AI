@@ -190,25 +190,29 @@ const EnhancedAppointmentCard: React.FC<EnhancedAppointmentCardProps> = ({
         <TooltipTrigger asChild>
           {cardContent}
         </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-xs">
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <User className="w-4 h-4" />
-              <span className="font-medium">{appointment.patientName}</span>
+        <TooltipContent 
+          side="top" 
+          className="max-w-xs"
+          content={
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <User className="w-4 h-4" />
+                <span className="font-medium">{appointment.patientName}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Calendar className="w-4 h-4" />
+                <span>{appointment.startTime.toLocaleDateString('pt-BR')}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Clock className="w-4 h-4" />
+                <span>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}</span>
+              </div>
+              {appointment.notes && (
+                <p className="text-sm text-muted-foreground">{appointment.notes}</p>
+              )}
             </div>
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-4 h-4" />
-              <span>{appointment.startTime.toLocaleDateString('pt-BR')}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4" />
-              <span>{formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}</span>
-            </div>
-            {appointment.notes && (
-              <p className="text-sm text-muted-foreground">{appointment.notes}</p>
-            )}
-          </div>
-        </TooltipContent>
+          }
+        />
       </Tooltip>
     </TooltipProvider>
   );

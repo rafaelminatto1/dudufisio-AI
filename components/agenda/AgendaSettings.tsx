@@ -115,7 +115,7 @@ const AgendaSettings: React.FC<AgendaSettingsProps> = ({
                     >
                       <Eye className="w-4 h-4 mr-2" />
                       Compacta
-                      <Badge variant="secondary" className="ml-auto">Padrão</Badge>
+                      <Badge variant="outline" className="ml-auto">Padrão</Badge>
                     </Button>
                     <Button
                       variant={appointmentViewMode === 'detailed' ? 'default' : 'outline'}
@@ -125,7 +125,7 @@ const AgendaSettings: React.FC<AgendaSettingsProps> = ({
                     >
                       <Eye className="w-4 h-4 mr-2" />
                       Detalhada
-                      <Badge variant="secondary" className="ml-auto">Recomendado</Badge>
+                      <Badge variant="outline" className="ml-auto">Recomendado</Badge>
                     </Button>
                     <Button
                       variant={appointmentViewMode === 'list' ? 'default' : 'outline'}

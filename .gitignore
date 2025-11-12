@@ -65,3 +65,6 @@ nul
 tsconfig.tsbuildinfo
 
 minatto/
+
+# Turborepo
+.turbo

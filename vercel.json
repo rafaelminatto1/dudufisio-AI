@@ -6,7 +6,7 @@
   "framework": "vite",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
-  "buildCommand": "cross-env NODE_OPTIONS=--max_old_space_size=4096 npm run vercel-build",
+  "buildCommand": "npx cross-env NODE_OPTIONS=--max_old_space_size=4096 npm run vercel-build",
   "devCommand": "npm run dev",
   "ignoreCommand": "node scripts/vercel-ignore.js",
   "headers": [

@@ -56,7 +56,7 @@ const ConflictWarningDialog: React.FC<ConflictWarningDialogProps> = ({
   };
 
   const getConflictColor = (severity: Conflict['severity']) => {
-    return severity === 'error' ? 'destructive' : 'default';
+    return severity === 'error' ? 'error' : 'default';
   };
 
   return (

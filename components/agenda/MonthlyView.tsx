@@ -155,12 +155,12 @@ const MonthlyView: React.FC<MonthlyViewProps> = ({
                     {/* Badge de contagem */}
                     {stats.total > 0 && (
                       <Badge 
-                        variant="secondary" 
-                        className={cn(
-                          "text-xs h-5 px-1.5",
-                          stats.hasConflicts && "bg-red-100 text-red-700 border-red-200"
-                        )}
-                      >
+                      variant="outline" 
+                      className={cn(
+                        "text-xs h-5 px-1.5",
+                        stats.hasConflicts && "bg-red-100 text-red-700 border-red-200"
+                      )}
+                    >
                         {stats.total}
                       </Badge>
                     )}

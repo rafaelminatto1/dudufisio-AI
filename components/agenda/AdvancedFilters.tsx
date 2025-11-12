@@ -116,7 +116,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
           <Filter className="w-4 h-4 text-slate-600" />
           <h3 className="font-semibold text-slate-900">Filtros Avançados</h3>
           {activeFiltersCount > 0 && (
-            <Badge variant="secondary" className="ml-2">
+            <Badge variant="outline" className="ml-2">
               {activeFiltersCount} ativo(s)
               </Badge>
             )}

@@ -51,7 +51,7 @@ const QuickTemplateSelector: React.FC<QuickTemplateSelectorProps> = ({
           <Zap className="w-4 h-4" />
           <span>Templates Rápidos</span>
           {mostUsed.length > 0 && (
-            <Badge variant="secondary" className="h-5 px-2 ml-1">
+            <Badge variant="outline" className="h-5 px-2 ml-1">
               {mostUsed.length}
             </Badge>
           )}

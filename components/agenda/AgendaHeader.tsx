@@ -166,7 +166,7 @@ export function AgendaHeader({
               {getDateRangeText()}
             </h1>
             {isToday() && (
-              <Badge variant="secondary" className="ml-1">
+              <Badge variant="outline" className="ml-1">
                 Hoje
               </Badge>
             )}

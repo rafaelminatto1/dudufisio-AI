@@ -15,6 +15,8 @@ import { Badge } from '../ui/badge';
 import { EnrichedAppointment } from '../../types';
 import format from 'date-fns/format';
 import { ptBR } from 'date-fns/locale';
+import { formatCurrencyBR } from '../../lib/format';
+import { AppointmentStatus } from '../../types';
 
 interface MobileAppointmentDrawerProps {
   isOpen: boolean;
@@ -100,7 +102,7 @@ const MobileAppointmentDrawer: React.FC<MobileAppointmentDrawerProps> = ({
 
           {/* Status */}
           <div className="flex gap-2">
-            <Badge variant="outline" className={appointment.status === 'completed' ? 'bg-green-50 text-green-700 border-green-300' : ''}>
+            <Badge variant="outline" className={appointment.status === AppointmentStatus.Completed ? 'bg-green-50 text-green-700 border-green-300' : ''}>
               {appointment.status}
             </Badge>
             <Badge variant="outline" className={appointment.paymentStatus === 'paid' ? 'bg-green-50 text-green-700 border-green-300' : 'bg-yellow-50 text-yellow-700 border-yellow-300'}>
@@ -128,7 +130,7 @@ const MobileAppointmentDrawer: React.FC<MobileAppointmentDrawerProps> = ({
         {/* Quick Actions */}
         <DrawerFooter className="gap-2">
           <div className="grid grid-cols-2 gap-2">
-            {appointment.status !== 'completed' && onMarkComplete && (
+            {appointment.status !== AppointmentStatus.Completed && onMarkComplete && (
               <Button
                 variant="outline"
                 onClick={() => {
@@ -187,7 +189,7 @@ const MobileAppointmentDrawer: React.FC<MobileAppointmentDrawerProps> = ({
 
           {onDelete && (
             <Button
-              variant="destructive"
+              variant="error"
               onClick={() => {
                 onDelete();
                 onClose();

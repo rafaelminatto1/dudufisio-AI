@@ -137,7 +137,7 @@ export function DashboardFilters({
             <Filter className="mr-2 h-4 w-4" />
             Mais Filtros
             {activeFiltersCount > 2 && (
-              <Badge variant="destructive" className="ml-2">
+              <Badge variant="error" className="ml-2">
                 {activeFiltersCount - 2}
               </Badge>
             )}

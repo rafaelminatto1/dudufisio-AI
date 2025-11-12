@@ -66,7 +66,7 @@ export function MultiSelect({
           {selected.map((value) => {
             const option = options.find((o) => o.value === value)
             return (
-              <Badge key={value} variant="secondary">
+              <Badge key={value} variant="outline">
                 {option?.label}
                 <button
                   className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"

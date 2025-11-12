@@ -63,7 +63,7 @@ const QuickConfirmationPanel: React.FC<QuickConfirmationPanelProps> = ({
     <Card className={cn("p-4", className)}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-slate-900">Check-in Rápido</h3>
-        <Badge variant="secondary">{todayAppointments.length} hoje</Badge>
+        <Badge variant="outline">{todayAppointments.length} hoje</Badge>
       </div>
 
       <div className="space-y-2 max-h-96 overflow-y-auto">

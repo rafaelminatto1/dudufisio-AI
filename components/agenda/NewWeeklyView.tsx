@@ -151,7 +151,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
     const newStartTime = new Date(appointment.startTime);
     newStartTime.setDate(newStartTime.getDate() + 7);
 
-    onSlotClick(newStartTime, format(newStartTime, 'HH:mm'), appointment.therapistId);
+    onSlotClick(newStartTime, format(newStartTime, 'HH:mm'), appointment.therapistId || '');
   };
 
   // Handler melhorado para drag over com feedback visual
@@ -271,7 +271,7 @@ const NewWeeklyView: React.FC<NewWeeklyViewProps> = ({
                   </div>
                   {dayAppointments.length > 0 && (
                     <Badge
-                      variant={isToday(day) ? "default" : "secondary"}
+                      variant={isToday(day) ? "default" : "outline"}
                       className={cn(
                         "text-xs h-5 px-2 font-semibold shadow-sm",
                         isToday(day) && "bg-blue-600 hover:bg-blue-700"

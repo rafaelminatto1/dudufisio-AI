@@ -171,7 +171,7 @@ const AgendaDashboard: React.FC<AgendaDashboardProps> = ({ appointments, therapi
                       {conflicts.length} agendamento(s) com conflitos
                     </p>
                   </div>
-                  <Badge variant="destructive">{conflicts.length}</Badge>
+                  <Badge variant="error">{conflicts.length}</Badge>
                 </div>
               </div>
             )}

@@ -191,7 +191,7 @@ export default function EnhancedAgendaPage() {
 
   const renderView = () => {
     if (isLoading) {
-      return <AgendaSkeleton viewType={currentView} therapistCount={therapists.length} />;
+      return <AgendaSkeleton viewType={currentView} therapistCount={therapists?.length || 0} />;
     }
 
     if (filteredAppointments.length === 0) {

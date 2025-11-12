@@ -165,7 +165,7 @@ const TherapistComparisonView: React.FC<TherapistComparisonViewProps> = ({
           <Card className="p-4">
             <div className="flex items-center justify-between mb-2">
               <Calendar className="w-5 h-5 text-blue-600" />
-              <Badge variant="secondary">Total</Badge>
+              <Badge variant="outline">Total</Badge>
             </div>
             <p className="text-2xl font-bold text-slate-900">
               {therapistStats.reduce((sum, s) => sum + s.totalAppointments, 0)}
@@ -176,7 +176,7 @@ const TherapistComparisonView: React.FC<TherapistComparisonViewProps> = ({
           <Card className="p-4">
             <div className="flex items-center justify-between mb-2">
               <DollarSign className="w-5 h-5 text-green-600" />
-              <Badge variant="secondary">Receita</Badge>
+              <Badge variant="outline">Receita</Badge>
             </div>
             <p className="text-2xl font-bold text-green-600">
               {formatCurrencyBR(therapistStats.reduce((sum, s) => sum + s.totalRevenue, 0))}
@@ -187,7 +187,7 @@ const TherapistComparisonView: React.FC<TherapistComparisonViewProps> = ({
           <Card className="p-4">
             <div className="flex items-center justify-between mb-2">
               <Users className="w-5 h-5 text-purple-600" />
-              <Badge variant="secondary">Pacientes</Badge>
+              <Badge variant="outline">Pacientes</Badge>
             </div>
             <p className="text-2xl font-bold text-purple-600">
               {therapistStats.reduce((sum, s) => sum + s.uniquePatients, 0)}

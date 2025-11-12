@@ -1,0 +1,1217 @@
+{
+  "timestamp": "2025-11-11T21:24:13.386Z",
+  "totalSize": 12813746,
+  "gzipSize": 2965532,
+  "modules": [
+    {
+      "name": "stats.html",
+      "size": 3372921,
+      "gzipSize": 325289,
+      "percentage": 26.322677224911434,
+      "type": "application",
+      "path": "stats.html"
+    },
+    {
+      "name": "vendor-pdf-BXGHOadA.js",
+      "size": 1214836,
+      "gzipSize": 360142,
+      "percentage": 9.480724840339429,
+      "type": "dependency",
+      "path": "assets\\vendor-pdf-BXGHOadA.js"
+    },
+    {
+      "name": "comp-common-_WEJEJCu.js",
+      "size": 1109899,
+      "gzipSize": 242876,
+      "percentage": 8.661783993533195,
+      "type": "dependency",
+      "path": "assets\\comp-common-_WEJEJCu.js"
+    },
+    {
+      "name": "index-CvoJcjWh.js",
+      "size": 885452,
+      "gzipSize": 241810,
+      "percentage": 6.9101728721640026,
+      "type": "dependency",
+      "path": "assets\\index-CvoJcjWh.js"
+    },
+    {
+      "name": "vendor-misc-CQc2Xzpq.js",
+      "size": 659448,
+      "gzipSize": 229082,
+      "percentage": 5.146410737344099,
+      "type": "dependency",
+      "path": "assets\\vendor-misc-CQc2Xzpq.js"
+    },
+    {
+      "name": "page-other-CDtsm1J6.js",
+      "size": 418264,
+      "gzipSize": 88990,
+      "percentage": 3.2641820744690895,
+      "type": "dependency",
+      "path": "assets\\page-other-CDtsm1J6.js"
+    },
+    {
+      "name": "feature-editor-CzlvfmnX.js",
+      "size": 387620,
+      "gzipSize": 116819,
+      "percentage": 3.025032648532287,
+      "type": "dependency",
+      "path": "assets\\feature-editor-CzlvfmnX.js"
+    },
+    {
+      "name": "feature-charts-BzwyhHk_.js",
+      "size": 359106,
+      "gzipSize": 80803,
+      "percentage": 2.8025059962949164,
+      "type": "dependency",
+      "path": "assets\\feature-charts-BzwyhHk_.js"
+    },
+    {
+      "name": "feature-pdf-CbIxCQ3c.js",
+      "size": 342146,
+      "gzipSize": 111785,
+      "percentage": 2.670148136228079,
+      "type": "dependency",
+      "path": "assets\\feature-pdf-CbIxCQ3c.js"
+    },
+    {
+      "name": "comp-medical-Cq4u2zuY.js",
+      "size": 245544,
+      "gzipSize": 51877,
+      "percentage": 1.9162546221846446,
+      "type": "dependency",
+      "path": "assets\\comp-medical-Cq4u2zuY.js"
+    },
+    {
+      "name": "data-libraries-BFsysePG.js",
+      "size": 235374,
+      "gzipSize": 59472,
+      "percentage": 1.836886730859188,
+      "type": "dependency",
+      "path": "assets\\data-libraries-BFsysePG.js"
+    },
+    {
+      "name": "feature-capture-BILt7_IL.js",
+      "size": 202310,
+      "gzipSize": 48004,
+      "percentage": 1.5788513366817167,
+      "type": "dependency",
+      "path": "assets\\feature-capture-BILt7_IL.js"
+    },
+    {
+      "name": "index-otYuEqUo.css",
+      "size": 190085,
+      "gzipSize": 27756,
+      "percentage": 1.4834459805899072,
+      "type": "asset",
+      "path": "assets\\index-otYuEqUo.css"
+    },
+    {
+      "name": "page-dashboard-Cc8M5udh.js",
+      "size": 176433,
+      "gzipSize": 33531,
+      "percentage": 1.3769041465313892,
+      "type": "dependency",
+      "path": "assets\\page-dashboard-Cc8M5udh.js"
+    },
+    {
+      "name": "vendor-compression-LkjK7DZQ.js",
+      "size": 153945,
+      "gzipSize": 81729,
+      "percentage": 1.2014051160371058,
+      "type": "dependency",
+      "path": "assets\\vendor-compression-LkjK7DZQ.js"
+    },
+    {
+      "name": "vendor-forms-BSw_47un.js",
+      "size": 152079,
+      "gzipSize": 41102,
+      "percentage": 1.1868426297821106,
+      "type": "dependency",
+      "path": "assets\\vendor-forms-BSw_47un.js"
+    },
+    {
+      "name": "vendor-supabase-CBJRZ2KQ.js",
+      "size": 147637,
+      "gzipSize": 39003,
+      "percentage": 1.1521767327056427,
+      "type": "dependency",
+      "path": "assets\\vendor-supabase-CBJRZ2KQ.js"
+    },
+    {
+      "name": "vendor-react-core-HH5O5jW4.js",
+      "size": 143338,
+      "gzipSize": 45990,
+      "percentage": 1.1186268246615783,
+      "type": "dependency",
+      "path": "assets\\vendor-react-core-HH5O5jW4.js"
+    },
+    {
+      "name": "vendor-ai-BzaBi4tP.js",
+      "size": 128810,
+      "gzipSize": 34920,
+      "percentage": 1.0052485822647024,
+      "type": "dependency",
+      "path": "assets\\vendor-ai-BzaBi4tP.js"
+    },
+    {
+      "name": "vendor-sentry-replay-D9Vjm9Xh.js",
+      "size": 123957,
+      "gzipSize": 39807,
+      "percentage": 0.9673751922349639,
+      "type": "dependency",
+      "path": "assets\\vendor-sentry-replay-D9Vjm9Xh.js"
+    },
+    {
+      "name": "comp-medical-records-q9sawNjL.js",
+      "size": 117584,
+      "gzipSize": 23459,
+      "percentage": 0.9176395411614996,
+      "type": "dependency",
+      "path": "assets\\comp-medical-records-q9sawNjL.js"
+    },
+    {
+      "name": "vendor-ui-framer-jU9ZpIQ1.js",
+      "size": 110530,
+      "gzipSize": 36453,
+      "percentage": 0.8625892849756817,
+      "type": "dependency",
+      "path": "assets\\vendor-ui-framer-jU9ZpIQ1.js"
+    },
+    {
+      "name": "vendor-ui-radix-DdTz3STp.js",
+      "size": 110223,
+      "gzipSize": 32531,
+      "percentage": 0.8601934204096132,
+      "type": "dependency",
+      "path": "assets\\vendor-ui-radix-DdTz3STp.js"
+    },
+    {
+      "name": "vendor-analytics-BrdOm-FH.js",
+      "size": 106586,
+      "gzipSize": 36616,
+      "percentage": 0.8318098392148556,
+      "type": "dependency",
+      "path": "assets\\vendor-analytics-BrdOm-FH.js"
+    },
+    {
+      "name": "comp-ai-tools-M1iqt_Fw.js",
+      "size": 103884,
+      "gzipSize": 21602,
+      "percentage": 0.8107231093858112,
+      "type": "dependency",
+      "path": "assets\\comp-ai-tools-M1iqt_Fw.js"
+    },
+    {
+      "name": "comp-ui-DJSH24XF.js",
+      "size": 102781,
+      "gzipSize": 25560,
+      "percentage": 0.8021151660100021,
+      "type": "dependency",
+      "path": "assets\\comp-ui-DJSH24XF.js"
+    },
+    {
+      "name": "vendor-icons-CLKDZuss.js",
+      "size": 100887,
+      "gzipSize": 19141,
+      "percentage": 0.7873341644199907,
+      "type": "dependency",
+      "path": "assets\\vendor-icons-CLKDZuss.js"
+    },
+    {
+      "name": "clinical-content-complete.json",
+      "size": 96257,
+      "gzipSize": 21735,
+      "percentage": 0.7512010929512728,
+      "type": "application",
+      "path": "clinical-content\\clinical-content-complete.json"
+    },
+    {
+      "name": "page-business-Cz5vpP3G.js",
+      "size": 79318,
+      "gzipSize": 17099,
+      "percentage": 0.6190071193856972,
+      "type": "dependency",
+      "path": "assets\\page-business-Cz5vpP3G.js"
+    },
+    {
+      "name": "page-clinical-QJTpzN3R.js",
+      "size": 74424,
+      "gzipSize": 19518,
+      "percentage": 0.5808137604725425,
+      "type": "dependency",
+      "path": "assets\\page-clinical-QJTpzN3R.js"
+    },
+    {
+      "name": "vendor-daypicker-DDFAH4IT.js",
+      "size": 60971,
+      "gzipSize": 17704,
+      "percentage": 0.4758249461164596,
+      "type": "dependency",
+      "path": "assets\\vendor-daypicker-DDFAH4IT.js"
+    },
+    {
+      "name": "vendor-table-BVQmBdM_.js",
+      "size": 54154,
+      "gzipSize": 14452,
+      "percentage": 0.42262426615917,
+      "type": "dependency",
+      "path": "assets\\vendor-table-BVQmBdM_.js"
+    },
+    {
+      "name": "page-settings-DHCt76YR.js",
+      "size": 53067,
+      "gzipSize": 12006,
+      "percentage": 0.4141411886890844,
+      "type": "dependency",
+      "path": "assets\\page-settings-DHCt76YR.js"
+    },
+    {
+      "name": "comp-features-CRaeLyTi.js",
+      "size": 48454,
+      "gzipSize": 11686,
+      "percentage": 0.37814078724519745,
+      "type": "dependency",
+      "path": "assets\\comp-features-CRaeLyTi.js"
+    },
+    {
+      "name": "comp-dashboard-BmB3ong4.js",
+      "size": 41533,
+      "gzipSize": 11201,
+      "percentage": 0.32412847890070556,
+      "type": "dependency",
+      "path": "assets\\comp-dashboard-BmB3ong4.js"
+    },
+    {
+      "name": "vendor-date-Cl30Ei3n.js",
+      "size": 39469,
+      "gzipSize": 10484,
+      "percentage": 0.30802077706238284,
+      "type": "dependency",
+      "path": "assets\\vendor-date-Cl30Ei3n.js"
+    },
+    {
+      "name": "vendor-notifications-L_DOPbLJ.js",
+      "size": 35832,
+      "gzipSize": 7824,
+      "percentage": 0.27963719586762525,
+      "type": "dependency",
+      "path": "assets\\vendor-notifications-L_DOPbLJ.js"
+    },
+    {
+      "name": "vendor-axios-BNRTnRqa.js",
+      "size": 35767,
+      "gzipSize": 14468,
+      "percentage": 0.27912992812562387,
+      "type": "dependency",
+      "path": "assets\\vendor-axios-BNRTnRqa.js"
+    },
+    {
+      "name": "page-atendimento-BMTXSkvQ.js",
+      "size": 34744,
+      "gzipSize": 8594,
+      "percentage": 0.27114631427843194,
+      "type": "dependency",
+      "path": "assets\\page-atendimento-BMTXSkvQ.js"
+    },
+    {
+      "name": "vendor-router-DIg1kKKE.js",
+      "size": 33526,
+      "gzipSize": 12420,
+      "percentage": 0.2616408972052357,
+      "type": "dependency",
+      "path": "assets\\vendor-router-DIg1kKKE.js"
+    },
+    {
+      "name": "page-protocols-C5trKq38.js",
+      "size": 33121,
+      "gzipSize": 7579,
+      "percentage": 0.2584802289666113,
+      "type": "dependency",
+      "path": "assets\\page-protocols-C5trKq38.js"
+    },
+    {
+      "name": "page-ai-analytics-DEuRx3bB.js",
+      "size": 31365,
+      "gzipSize": 6664,
+      "percentage": 0.2447761958134647,
+      "type": "dependency",
+      "path": "assets\\page-ai-analytics-DEuRx3bB.js"
+    },
+    {
+      "name": "icon-512.png",
+      "size": 29651,
+      "gzipSize": 29135,
+      "percentage": 0.23139993566284206,
+      "type": "asset",
+      "path": "icon-512.png"
+    },
+    {
+      "name": "vendor-vaul-DZBKWIcG.js",
+      "size": 29326,
+      "gzipSize": 8941,
+      "percentage": 0.2288635969528349,
+      "type": "dependency",
+      "path": "assets\\vendor-vaul-DZBKWIcG.js"
+    },
+    {
+      "name": "page-clinical-analytics-BsZLULyC.js",
+      "size": 27456,
+      "gzipSize": 6039,
+      "percentage": 0.21426989422140877,
+      "type": "dependency",
+      "path": "assets\\page-clinical-analytics-BsZLULyC.js"
+    },
+    {
+      "name": "feature-ai-BkECFJTA.js",
+      "size": 27288,
+      "gzipSize": 6143,
+      "percentage": 0.21295880221131278,
+      "type": "dependency",
+      "path": "assets\\feature-ai-BkECFJTA.js"
+    },
+    {
+      "name": "logo-512.png",
+      "size": 26886,
+      "gzipSize": 25937,
+      "percentage": 0.20982154633001154,
+      "type": "asset",
+      "path": "logo-512.png"
+    },
+    {
+      "name": "comp-reports-C2vA4fJ-.js",
+      "size": 25816,
+      "gzipSize": 5437,
+      "percentage": 0.201471138884757,
+      "type": "dependency",
+      "path": "assets\\comp-reports-C2vA4fJ-.js"
+    },
+    {
+      "name": "vendor-dom-B6FQ9oRL.js",
+      "size": 22565,
+      "gzipSize": 8744,
+      "percentage": 0.17609994766557727,
+      "type": "dependency",
+      "path": "assets\\vendor-dom-B6FQ9oRL.js"
+    },
+    {
+      "name": "page-exercise-edit-BbYzqMcN.js",
+      "size": 21572,
+      "gzipSize": 4870,
+      "percentage": 0.16835045739161678,
+      "type": "dependency",
+      "path": "assets\\page-exercise-edit-BbYzqMcN.js"
+    },
+    {
+      "name": "comp-backup-nIDbJbZ7.js",
+      "size": 21368,
+      "gzipSize": 4386,
+      "percentage": 0.16675841709364303,
+      "type": "dependency",
+      "path": "assets\\comp-backup-nIDbJbZ7.js"
+    },
+    {
+      "name": "comp-charts-C9R7VdDp.js",
+      "size": 21215,
+      "gzipSize": 5157,
+      "percentage": 0.16556438687016273,
+      "type": "dependency",
+      "path": "assets\\comp-charts-C9R7VdDp.js"
+    },
+    {
+      "name": "vendor-utils-CfDMlrKu.js",
+      "size": 21034,
+      "gzipSize": 7140,
+      "percentage": 0.16415184131166638,
+      "type": "dependency",
+      "path": "assets\\vendor-utils-CfDMlrKu.js"
+    },
+    {
+      "name": "page-free-video-Cgmajv2n.js",
+      "size": 20762,
+      "gzipSize": 6149,
+      "percentage": 0.16202912091436805,
+      "type": "dependency",
+      "path": "assets\\page-free-video-Cgmajv2n.js"
+    },
+    {
+      "name": "vendor-interaction-CnodhE01.js",
+      "size": 20567,
+      "gzipSize": 6926,
+      "percentage": 0.16050731768836374,
+      "type": "dependency",
+      "path": "assets\\vendor-interaction-CnodhE01.js"
+    },
+    {
+      "name": "service-monitoring-3cwBRq4-.js",
+      "size": 20161,
+      "gzipSize": 6792,
+      "percentage": 0.15733884533063167,
+      "type": "dependency",
+      "path": "assets\\service-monitoring-3cwBRq4-.js"
+    },
+    {
+      "name": "page-bi-integration-DbpPIEvk.js",
+      "size": 18506,
+      "gzipSize": 5442,
+      "percentage": 0.1444230282073642,
+      "type": "dependency",
+      "path": "assets\\page-bi-integration-DbpPIEvk.js"
+    },
+    {
+      "name": "page-agenda-CK9JZxXh.js",
+      "size": 17577,
+      "gzipSize": 6051,
+      "percentage": 0.13717300155629744,
+      "type": "dependency",
+      "path": "assets\\page-agenda-CK9JZxXh.js"
+    },
+    {
+      "name": "icon-512x512.png",
+      "size": 17416,
+      "gzipSize": 14398,
+      "percentage": 0.1359165383799554,
+      "type": "asset",
+      "path": "icon-512x512.png"
+    },
+    {
+      "name": "page-clinical-content-CKVQ3WAk.js",
+      "size": 16983,
+      "gzipSize": 3629,
+      "percentage": 0.13253735480631504,
+      "type": "dependency",
+      "path": "assets\\page-clinical-content-CKVQ3WAk.js"
+    },
+    {
+      "name": "page-session-evolution-BwlycxxS.js",
+      "size": 16419,
+      "gzipSize": 4948,
+      "percentage": 0.12813583162956407,
+      "type": "dependency",
+      "path": "assets\\page-session-evolution-BwlycxxS.js"
+    },
+    {
+      "name": "page-inventory-C0xPMxCR.js",
+      "size": 13940,
+      "gzipSize": 3869,
+      "percentage": 0.10878942036153987,
+      "type": "dependency",
+      "path": "assets\\page-inventory-C0xPMxCR.js"
+    },
+    {
+      "name": "page-exercise-library-BQtcPn6Z.js",
+      "size": 13867,
+      "gzipSize": 4132,
+      "percentage": 0.1082197196666767,
+      "type": "dependency",
+      "path": "assets\\page-exercise-library-BQtcPn6Z.js"
+    },
+    {
+      "name": "service-worker.js",
+      "size": 12668,
+      "gzipSize": 3622,
+      "percentage": 0.09886258085652705,
+      "type": "dependency",
+      "path": "service-worker.js"
+    },
+    {
+      "name": "vendor-cmdk-Ds9nNf5b.js",
+      "size": 11876,
+      "gzipSize": 4664,
+      "percentage": 0.09268171852321717,
+      "type": "dependency",
+      "path": "assets\\vendor-cmdk-Ds9nNf5b.js"
+    },
+    {
+      "name": "logo-192.png",
+      "size": 10874,
+      "gzipSize": 10350,
+      "percentage": 0.08486199117728727,
+      "type": "asset",
+      "path": "logo-192.png"
+    },
+    {
+      "name": "icon-192.png",
+      "size": 10269,
+      "gzipSize": 10292,
+      "percentage": 0.08014049911712,
+      "type": "asset",
+      "path": "icon-192.png"
+    },
+    {
+      "name": "apple-touch-icon.png",
+      "size": 9689,
+      "gzipSize": 9712,
+      "percentage": 0.0756141100346456,
+      "type": "asset",
+      "path": "apple-touch-icon.png"
+    },
+    {
+      "name": "service-worker-advanced.js",
+      "size": 9633,
+      "gzipSize": 2828,
+      "percentage": 0.0751770793646136,
+      "type": "dependency",
+      "path": "service-worker-advanced.js"
+    },
+    {
+      "name": "sw.js",
+      "size": 8188,
+      "gzipSize": 2431,
+      "percentage": 0.06390012725396617,
+      "type": "dependency",
+      "path": "sw.js"
+    },
+    {
+      "name": "vendor-virtual-Bbi5NQ7J.js",
+      "size": 7810,
+      "gzipSize": 2987,
+      "percentage": 0.06095017023125009,
+      "type": "dependency",
+      "path": "assets\\vendor-virtual-Bbi5NQ7J.js"
+    },
+    {
+      "name": "offline.html",
+      "size": 7439,
+      "gzipSize": 1872,
+      "percentage": 0.05805484204228803,
+      "type": "application",
+      "path": "offline.html"
+    },
+    {
+      "name": "index.html",
+      "size": 6341,
+      "gzipSize": 1749,
+      "percentage": 0.04948591926201753,
+      "type": "application",
+      "path": "index.html"
+    },
+    {
+      "name": "README.md",
+      "size": 4947,
+      "gzipSize": 1911,
+      "percentage": 0.03860697722586354,
+      "type": "application",
+      "path": "README.md"
+    },
+    {
+      "name": "icon-192x192.png",
+      "size": 4867,
+      "gzipSize": 4848,
+      "percentage": 0.03798264769724638,
+      "type": "asset",
+      "path": "icon-192x192.png"
+    },
+    {
+      "name": "comp-forms-BxOrpoHI.js",
+      "size": 4695,
+      "gzipSize": 1747,
+      "percentage": 0.036640339210719484,
+      "type": "dependency",
+      "path": "assets\\comp-forms-BxOrpoHI.js"
+    },
+    {
+      "name": "firebase-messaging-sw.js",
+      "size": 2882,
+      "gzipSize": 1120,
+      "percentage": 0.022491471268433132,
+      "type": "dependency",
+      "path": "firebase-messaging-sw.js"
+    },
+    {
+      "name": "shared-services-yI221Wii.js",
+      "size": 2865,
+      "gzipSize": 936,
+      "percentage": 0.02235880124360199,
+      "type": "dependency",
+      "path": "assets\\shared-services-yI221Wii.js"
+    },
+    {
+      "name": "manifest.json",
+      "size": 2383,
+      "gzipSize": 850,
+      "percentage": 0.01859721583368361,
+      "type": "application",
+      "path": "manifest.json"
+    },
+    {
+      "name": "vendor-input-B_ayN4je.js",
+      "size": 2040,
+      "gzipSize": 909,
+      "percentage": 0.01592040297973754,
+      "type": "dependency",
+      "path": "assets\\vendor-input-B_ayN4je.js"
+    },
+    {
+      "name": "badge-72x72.png",
+      "size": 1770,
+      "gzipSize": 1793,
+      "percentage": 0.01381329082065463,
+      "type": "asset",
+      "path": "badge-72x72.png"
+    },
+    {
+      "name": "favicon-32.png",
+      "size": 1500,
+      "gzipSize": 1523,
+      "percentage": 0.011706178661571722,
+      "type": "asset",
+      "path": "favicon-32.png"
+    },
+    {
+      "name": "icon.svg",
+      "size": 1468,
+      "gzipSize": 563,
+      "percentage": 0.011456446850124858,
+      "type": "asset",
+      "path": "icon.svg"
+    },
+    {
+      "name": "ex-post-002.svg",
+      "size": 1459,
+      "gzipSize": 591,
+      "percentage": 0.011386209778155427,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-002.svg"
+    },
+    {
+      "name": "ex-post-003.svg",
+      "size": 1459,
+      "gzipSize": 597,
+      "percentage": 0.011386209778155427,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-003.svg"
+    },
+    {
+      "name": "ex-post-008.svg",
+      "size": 1457,
+      "gzipSize": 584,
+      "percentage": 0.011370601539939998,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-008.svg"
+    },
+    {
+      "name": "ex-geri-004.svg",
+      "size": 1456,
+      "gzipSize": 586,
+      "percentage": 0.011362797420832285,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-004.svg"
+    },
+    {
+      "name": "ex-post-001.svg",
+      "size": 1453,
+      "gzipSize": 584,
+      "percentage": 0.011339385063509141,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-001.svg"
+    },
+    {
+      "name": "ex-post-004.svg",
+      "size": 1453,
+      "gzipSize": 587,
+      "percentage": 0.011339385063509141,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-004.svg"
+    },
+    {
+      "name": "ex-sport-003.svg",
+      "size": 1453,
+      "gzipSize": 591,
+      "percentage": 0.011339385063509141,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-003.svg"
+    },
+    {
+      "name": "ex-geri-001.svg",
+      "size": 1451,
+      "gzipSize": 582,
+      "percentage": 0.011323776825293713,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-001.svg"
+    },
+    {
+      "name": "ex-post-014.svg",
+      "size": 1451,
+      "gzipSize": 584,
+      "percentage": 0.011323776825293713,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-014.svg"
+    },
+    {
+      "name": "ex-post-015.svg",
+      "size": 1451,
+      "gzipSize": 582,
+      "percentage": 0.011323776825293713,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-015.svg"
+    },
+    {
+      "name": "ex-post-018.svg",
+      "size": 1451,
+      "gzipSize": 578,
+      "percentage": 0.011323776825293713,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-018.svg"
+    },
+    {
+      "name": "ex-geri-003.svg",
+      "size": 1450,
+      "gzipSize": 577,
+      "percentage": 0.011315972706185997,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-003.svg"
+    },
+    {
+      "name": "ex-post-019.svg",
+      "size": 1450,
+      "gzipSize": 581,
+      "percentage": 0.011315972706185997,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-019.svg"
+    },
+    {
+      "name": "ex-sport-001.svg",
+      "size": 1449,
+      "gzipSize": 580,
+      "percentage": 0.011308168587078282,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-001.svg"
+    },
+    {
+      "name": "ex-post-005.svg",
+      "size": 1448,
+      "gzipSize": 577,
+      "percentage": 0.011300364467970569,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-005.svg"
+    },
+    {
+      "name": "ex-post-009.svg",
+      "size": 1448,
+      "gzipSize": 581,
+      "percentage": 0.011300364467970569,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-009.svg"
+    },
+    {
+      "name": "ex-post-010.svg",
+      "size": 1448,
+      "gzipSize": 579,
+      "percentage": 0.011300364467970569,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-010.svg"
+    },
+    {
+      "name": "ex-post-012.svg",
+      "size": 1448,
+      "gzipSize": 573,
+      "percentage": 0.011300364467970569,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-012.svg"
+    },
+    {
+      "name": "ex-geri-013.svg",
+      "size": 1447,
+      "gzipSize": 572,
+      "percentage": 0.011292560348862854,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-013.svg"
+    },
+    {
+      "name": "ex-sport-005.svg",
+      "size": 1447,
+      "gzipSize": 577,
+      "percentage": 0.011292560348862854,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-005.svg"
+    },
+    {
+      "name": "ex-post-020.svg",
+      "size": 1446,
+      "gzipSize": 579,
+      "percentage": 0.01128475622975514,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-020.svg"
+    },
+    {
+      "name": "ex-geri-007.svg",
+      "size": 1445,
+      "gzipSize": 574,
+      "percentage": 0.011276952110647425,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-007.svg"
+    },
+    {
+      "name": "ex-post-011.svg",
+      "size": 1445,
+      "gzipSize": 574,
+      "percentage": 0.011276952110647425,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-011.svg"
+    },
+    {
+      "name": "ex-post-013.svg",
+      "size": 1445,
+      "gzipSize": 577,
+      "percentage": 0.011276952110647425,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-013.svg"
+    },
+    {
+      "name": "ex-post-006.svg",
+      "size": 1444,
+      "gzipSize": 577,
+      "percentage": 0.01126914799153971,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-006.svg"
+    },
+    {
+      "name": "ex-post-007.svg",
+      "size": 1444,
+      "gzipSize": 577,
+      "percentage": 0.01126914799153971,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-007.svg"
+    },
+    {
+      "name": "ex-geri-010.svg",
+      "size": 1443,
+      "gzipSize": 571,
+      "percentage": 0.011261343872431996,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-010.svg"
+    },
+    {
+      "name": "ex-post-017.svg",
+      "size": 1443,
+      "gzipSize": 578,
+      "percentage": 0.011261343872431996,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-017.svg"
+    },
+    {
+      "name": "ex-geri-009.svg",
+      "size": 1442,
+      "gzipSize": 572,
+      "percentage": 0.011253539753324281,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-009.svg"
+    },
+    {
+      "name": "ex-geri-014.svg",
+      "size": 1442,
+      "gzipSize": 570,
+      "percentage": 0.011253539753324281,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-014.svg"
+    },
+    {
+      "name": "ex-sport-006.svg",
+      "size": 1442,
+      "gzipSize": 572,
+      "percentage": 0.011253539753324281,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-006.svg"
+    },
+    {
+      "name": "ex-geri-011.svg",
+      "size": 1441,
+      "gzipSize": 571,
+      "percentage": 0.011245735634216566,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-011.svg"
+    },
+    {
+      "name": "ex-post-016.svg",
+      "size": 1441,
+      "gzipSize": 571,
+      "percentage": 0.011245735634216566,
+      "type": "asset",
+      "path": "images\\exercises\\ex-post-016.svg"
+    },
+    {
+      "name": "ex-geri-012.svg",
+      "size": 1440,
+      "gzipSize": 568,
+      "percentage": 0.011237931515108853,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-012.svg"
+    },
+    {
+      "name": "ex-geri-015.svg",
+      "size": 1440,
+      "gzipSize": 566,
+      "percentage": 0.011237931515108853,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-015.svg"
+    },
+    {
+      "name": "ex-geri-002.svg",
+      "size": 1439,
+      "gzipSize": 570,
+      "percentage": 0.011230127396001138,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-002.svg"
+    },
+    {
+      "name": "ex-geri-006.svg",
+      "size": 1439,
+      "gzipSize": 568,
+      "percentage": 0.011230127396001138,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-006.svg"
+    },
+    {
+      "name": "ex-geri-008.svg",
+      "size": 1439,
+      "gzipSize": 581,
+      "percentage": 0.011230127396001138,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-008.svg"
+    },
+    {
+      "name": "ex-sport-009.svg",
+      "size": 1439,
+      "gzipSize": 579,
+      "percentage": 0.011230127396001138,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-009.svg"
+    },
+    {
+      "name": "ex-sport-015.svg",
+      "size": 1435,
+      "gzipSize": 564,
+      "percentage": 0.01119891091957028,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-015.svg"
+    },
+    {
+      "name": "ex-sport-016.svg",
+      "size": 1435,
+      "gzipSize": 568,
+      "percentage": 0.01119891091957028,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-016.svg"
+    },
+    {
+      "name": "ex-geri-005.svg",
+      "size": 1434,
+      "gzipSize": 564,
+      "percentage": 0.011191106800462565,
+      "type": "asset",
+      "path": "images\\exercises\\ex-geri-005.svg"
+    },
+    {
+      "name": "ex-sport-013.svg",
+      "size": 1433,
+      "gzipSize": 570,
+      "percentage": 0.011183302681354852,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-013.svg"
+    },
+    {
+      "name": "ex-sport-017.svg",
+      "size": 1433,
+      "gzipSize": 566,
+      "percentage": 0.011183302681354852,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-017.svg"
+    },
+    {
+      "name": "ex-sport-011.svg",
+      "size": 1432,
+      "gzipSize": 566,
+      "percentage": 0.011175498562247137,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-011.svg"
+    },
+    {
+      "name": "ex-sport-004.svg",
+      "size": 1431,
+      "gzipSize": 566,
+      "percentage": 0.011167694443139422,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-004.svg"
+    },
+    {
+      "name": "ex-sport-018.svg",
+      "size": 1431,
+      "gzipSize": 561,
+      "percentage": 0.011167694443139422,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-018.svg"
+    },
+    {
+      "name": "ex-sport-002.svg",
+      "size": 1430,
+      "gzipSize": 562,
+      "percentage": 0.011159890324031708,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-002.svg"
+    },
+    {
+      "name": "ex-sport-008.svg",
+      "size": 1430,
+      "gzipSize": 564,
+      "percentage": 0.011159890324031708,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-008.svg"
+    },
+    {
+      "name": "ex-sport-019.svg",
+      "size": 1430,
+      "gzipSize": 563,
+      "percentage": 0.011159890324031708,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-019.svg"
+    },
+    {
+      "name": "ex-sport-014.svg",
+      "size": 1427,
+      "gzipSize": 558,
+      "percentage": 0.011136477966708564,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-014.svg"
+    },
+    {
+      "name": "ex-sport-012.svg",
+      "size": 1425,
+      "gzipSize": 557,
+      "percentage": 0.011120869728493136,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-012.svg"
+    },
+    {
+      "name": "ex-sport-020.svg",
+      "size": 1424,
+      "gzipSize": 557,
+      "percentage": 0.01111306560938542,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-020.svg"
+    },
+    {
+      "name": "ex-sport-007.svg",
+      "size": 1423,
+      "gzipSize": 558,
+      "percentage": 0.011105261490277706,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-007.svg"
+    },
+    {
+      "name": "ex-sport-010.svg",
+      "size": 1422,
+      "gzipSize": 557,
+      "percentage": 0.011097457371169992,
+      "type": "asset",
+      "path": "images\\exercises\\ex-sport-010.svg"
+    },
+    {
+      "name": "vendor-firebase-D5ftr7Pq.js",
+      "size": 1262,
+      "gzipSize": 759,
+      "percentage": 0.009848798313935675,
+      "type": "dependency",
+      "path": "assets\\vendor-firebase-D5ftr7Pq.js"
+    },
+    {
+      "name": "LICENSE",
+      "size": 1109,
+      "gzipSize": 679,
+      "percentage": 0.008654768090455359,
+      "type": "application",
+      "path": "LICENSE"
+    },
+    {
+      "name": "shared-common-CtVH6waz.js",
+      "size": 1075,
+      "gzipSize": 570,
+      "percentage": 0.008389428040793068,
+      "type": "dependency",
+      "path": "assets\\shared-common-CtVH6waz.js"
+    },
+    {
+      "name": "disable-sw.js",
+      "size": 951,
+      "gzipSize": 445,
+      "percentage": 0.007421717271436471,
+      "type": "dependency",
+      "path": "disable-sw.js"
+    },
+    {
+      "name": "vendor-uuid-CcQs6ztn.js",
+      "size": 941,
+      "gzipSize": 512,
+      "percentage": 0.007343676080359327,
+      "type": "dependency",
+      "path": "assets\\vendor-uuid-CcQs6ztn.js"
+    },
+    {
+      "name": "unregister-sw.js",
+      "size": 621,
+      "gzipSize": 280,
+      "percentage": 0.004846357965890693,
+      "type": "dependency",
+      "path": "unregister-sw.js"
+    },
+    {
+      "name": "vendor-query-CRydJB1C.js",
+      "size": 224,
+      "gzipSize": 193,
+      "percentage": 0.0017481226801280437,
+      "type": "dependency",
+      "path": "assets\\vendor-query-CRydJB1C.js"
+    }
+  ],
+  "chunks": [
+    {
+      "name": "index.html",
+      "size": 6341,
+      "modules": 1,
+      "entry": true,
+      "initial": true
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "size",
+      "priority": "high",
+      "description": "Found 5 large modules (>500KB)",
+      "impact": "Significant impact on initial load time",
+      "solution": "Consider code splitting, lazy loading, or removing unused dependencies",
+      "estimatedSavings": 2172766.8
+    },
+    {
+      "type": "performance",
+      "priority": "medium",
+      "description": "High number of dependencies (72)",
+      "impact": "Increased bundle size and slower builds",
+      "solution": "Review and remove unused dependencies, consider alternative lighter libraries",
+      "estimatedSavings": 3686400
+    },
+    {
+      "type": "performance",
+      "priority": "medium",
+      "description": "Found 9 potentially unoptimized images",
+      "impact": "Larger bundle size and slower loading",
+      "solution": "Convert images to WebP format, implement responsive images, use lazy loading",
+      "estimatedSavings": 45168.8
+    },
+    {
+      "type": "performance",
+      "priority": "high",
+      "description": "Total bundle size exceeds 2MB",
+      "impact": "Poor performance on slow networks and mobile devices",
+      "solution": "Implement code splitting, optimize dependencies, use tree shaking",
+      "estimatedSavings": 3203436.5
+    }
+  ],
+  "performance": {
+    "loadTime": 12513.423828125,
+    "parseTime": 3128.35595703125,
+    "executionTime": 8342.282552083332,
+    "memoryUsage": 4171.141276041666,
+    "lighthouseScore": 0
+  }
+}

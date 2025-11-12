@@ -128,11 +128,13 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
     }
   };
   
-  const handleSelectPatient = (patient: PatientSummary | Patient) => {
-    onSelectPatient(patient);
-    setSearchTerm(patient.name);
-    setShowDropdown(false);
-    setShowQuickRegister(false);
+  const handleSelectPatient = (patient: PatientSummary | Patient | undefined) => {
+    if (patient) {
+      onSelectPatient(patient);
+      setSearchTerm(patient.name);
+      setShowDropdown(false);
+      setShowQuickRegister(false);
+    }
   };
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,7 +164,7 @@ export const PatientSearchInput: React.FC<PatientSearchInputProps> = ({ onSelect
           if (selectedIndex < searchResults.length) {
             handleSelectPatient(searchResults[selectedIndex]);
           } else if (showQuickRegister) {
-            handleQuickRegister();
+            handleQuickRegisterClick();
           }
         }
         break;

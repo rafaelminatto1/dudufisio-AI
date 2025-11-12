@@ -15,6 +15,9 @@ interface ImportMetaEnv {
   readonly VITE_GEMINI_API_KEY: string;
   readonly VITE_OPENAI_API_KEY: string;
 
+  // Monitoring
+  readonly VITE_SENTRY_DSN?: string;
+
   // Authentication
   readonly NEXTAUTH_SECRET: string;
   readonly NEXTAUTH_URL: string;
@@ -51,6 +54,7 @@ interface ImportMetaEnv {
   // Application Configuration
   readonly VITE_APP_ENV: 'development' | 'production' | 'test';
   readonly VITE_APP_URL: string;
+  readonly VITE_APP_VERSION?: string;
 
   // Development/Runtime
   readonly NODE_ENV: 'development' | 'production' | 'test';

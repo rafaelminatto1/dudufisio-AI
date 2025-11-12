@@ -42,8 +42,8 @@ const Section = React.forwardRef<HTMLElement, SectionProps>(
     ...props
   }, ref) => {
     const bgVariants = {
-      white: 'bg-neutral-bg',
-      gray: 'bg-neutral-bgAlt',
+      white: 'bg-neutral-bg dark:bg-gray-900',
+      gray: 'bg-neutral-bgAlt dark:bg-gray-800',
     };
 
     const maxWidths = {

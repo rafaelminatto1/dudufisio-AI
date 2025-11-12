@@ -1,0 +1,144 @@
+{
+  "summary": {
+    "total_tables": 2,
+    "total_columns": 10,
+    "consistent_tables": 2,
+    "consistency_percentage": 100.0
+  },
+  "naming_patterns": {
+    "table_patterns": {
+      "simples_minuscula": 2
+    },
+    "column_patterns": {
+      "simple_lower": 3,
+      "snake_case": 3,
+      "timestamp": 2,
+      "foreign_key": 1,
+      "boolean_flag": 1
+    }
+  },
+  "tables_analysis": [
+    {
+      "table_name": "users",
+      "naming_pattern": "simples_minuscula",
+      "columns_analysis": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "naming_pattern": "simple_lower",
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "is_timestamp": false,
+          "is_boolean": false,
+          "is_json": false
+        },
+        {
+          "name": "email",
+          "data_type": "text",
+          "naming_pattern": "simple_lower",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "is_timestamp": false,
+          "is_boolean": false,
+          "is_json": false
+        },
+        {
+          "name": "full_name",
+          "data_type": "text",
+          "naming_pattern": "snake_case",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "is_timestamp": false,
+          "is_boolean": false,
+          "is_json": false
+        },
+        {
+          "name": "created_at",
+          "data_type": "timestamp",
+          "naming_pattern": "timestamp",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "is_timestamp": true,
+          "is_boolean": false,
+          "is_json": false
+        },
+        {
+          "name": "updated_at",
+          "data_type": "timestamp",
+          "naming_pattern": "timestamp",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "is_timestamp": true,
+          "is_boolean": false,
+          "is_json": false
+        }
+      ],
+      "total_columns": 5,
+      "naming_consistency": "consistent",
+      "issues": []
+    },
+    {
+      "table_name": "patients",
+      "naming_pattern": "simples_minuscula",
+      "columns_analysis": [
+        {
+          "name": "id",
+          "data_type": "uuid",
+          "naming_pattern": "simple_lower",
+          "is_primary_key": true,
+          "is_foreign_key": false,
+          "is_timestamp": false,
+          "is_boolean": false,
+          "is_json": false
+        },
+        {
+          "name": "user_id",
+          "data_type": "uuid",
+          "naming_pattern": "foreign_key",
+          "is_primary_key": true,
+          "is_foreign_key": true,
+          "is_timestamp": false,
+          "is_boolean": false,
+          "is_json": false
+        },
+        {
+          "name": "full_name",
+          "data_type": "text",
+          "naming_pattern": "snake_case",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "is_timestamp": false,
+          "is_boolean": false,
+          "is_json": false
+        },
+        {
+          "name": "birth_date",
+          "data_type": "date",
+          "naming_pattern": "snake_case",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "is_timestamp": true,
+          "is_boolean": false,
+          "is_json": false
+        },
+        {
+          "name": "is_active",
+          "data_type": "boolean",
+          "naming_pattern": "boolean_flag",
+          "is_primary_key": false,
+          "is_foreign_key": false,
+          "is_timestamp": false,
+          "is_boolean": true,
+          "is_json": false
+        }
+      ],
+      "total_columns": 5,
+      "naming_consistency": "consistent",
+      "issues": []
+    }
+  ],
+  "recommendations": [
+    "🐍 Considere usar snake_case para nomes de tabelas",
+    "🗑️ Considere implementar soft delete com campo 'deleted_at'"
+  ]
+}

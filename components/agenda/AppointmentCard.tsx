@@ -77,7 +77,30 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
   };
 
   return (
-    <TooltipProvider>
+    <Tooltip
+      content={
+        <div className="space-y-1">
+          <p className="font-semibold">{appointment.patientName || 'Sem nome'}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            {appointment.therapistName || 'Sem terapeuta'}
+          </p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            {format(appointment.startTime, 'HH:mm', { locale: ptBR })} - {format(appointment.endTime, 'HH:mm', { locale: ptBR })}
+          </p>
+          {appointment.observations && (
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              {appointment.observations}
+            </p>
+          )}
+          {appointment.hasConflict && (
+            <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+              ⚠️ {appointment.conflictReason}
+            </p>
+          )}
+        </div>
+      }
+      side="top"
+    >
       <motion.div
         variants={appointmentCardVariants}
         initial="initial"
@@ -88,111 +111,85 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         onClick={onClick}
         draggable={draggable}
       >
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Card
-              className={cn(
-                'p-md border-2 transition-all duration-200',
-                'bg-white shadow-card hover:shadow-cardHover',
-                'hover:scale-[1.02]',
-                appointment.hasConflict && 'border-error border-opacity-75 animate-pulse',
-                !appointment.hasConflict && 'border-neutral-border'
-              )}
-              style={{
-                borderLeftColor: appointment.hasConflict ? undefined : therapistColor,
-                borderLeftWidth: '4px',
-              }}
-            >
-              {/* Header with patient name and status */}
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <Avatar className="w-8 h-8 border-2" style={{ borderColor: therapistColor }}>
-                    <AvatarFallback className="text-xs font-semibold" style={{ backgroundColor: `${therapistColor}20`, color: therapistColor }}>
-                      {getInitials(appointment.patientName)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-small text-neutral-text truncate">
-                      {appointment.patientName ? (appointment.patientName.split(' ')[0] || appointment.patientName) : 'Sem nome'}
-                    </p>
-                    {!compact && (
-                      <p className="text-xs text-neutral-textSecondary truncate">
-                        {appointment.therapistName || 'Sem terapeuta'}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Status badges */}
-                <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                  {appointment.hasConflict && (
-                    <Badge variant="destructive" className="text-xs">
-                      <AlertCircle className="w-3 h-3 mr-1" />
-                      Conflito
-                    </Badge>
-                  )}
-                  {getPaymentBadge()}
-                  <CalendarStatusBadge calendarLink={(appointment as any).calendar_link} />
-                </div>
-              </div>
-
-              {/* Time and type */}
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-1 text-xs text-neutral-textSecondary">
-                  <Clock className="w-3 h-3" />
-                  <span className="font-mono font-semibold">
-                    {format(appointment.startTime, 'HH:mm', { locale: ptBR })}
-                  </span>
-                  {!compact && (
-                    <>
-                      <span>•</span>
-                      <span>{format(appointment.endTime, 'HH:mm', { locale: ptBR })}</span>
-                    </>
-                  )}
-                </div>
-                
+        <Card
+          className={cn(
+            'p-md border-2 transition-all duration-200',
+            'bg-white shadow-card hover:shadow-cardHover',
+            'hover:scale-[1.02]',
+            appointment.hasConflict && 'border-error border-opacity-75 animate-pulse',
+            !appointment.hasConflict && 'border-neutral-border'
+          )}
+          style={{
+            borderLeftColor: appointment.hasConflict ? undefined : therapistColor,
+            borderLeftWidth: '4px',
+          }}
+        >
+          {/* Header with patient name and status */}
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              <Avatar className="w-8 h-8 border-2" style={{ borderColor: therapistColor }}>
+                <AvatarFallback className="text-xs font-semibold" style={{ backgroundColor: `${therapistColor}20`, color: therapistColor }}>
+                  {getInitials(appointment.patientName)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-small text-neutral-text truncate">
+                  {appointment.patientName ? (appointment.patientName.split(' ')[0] || appointment.patientName) : 'Sem nome'}
+                </p>
                 {!compact && (
-                  <Badge variant="outline" className={cn('text-xs', getStatusColor(appointment.status))}>
-                    {appointment.type || 'Não definido'}
-                  </Badge>
+                  <p className="text-xs text-neutral-textSecondary truncate">
+                    {appointment.therapistName || 'Sem terapeuta'}
+                  </p>
                 )}
               </div>
-
-              {/* Price (if not compact) */}
-              {!compact && appointment.price !== undefined && appointment.price > 0 && (
-                <div className="mt-sm pt-sm border-t border-neutral-border">
-                  <p className="text-xs font-semibold text-neutral-text">
-                    R$ {appointment.price.toFixed(2)}
-                  </p>
-                </div>
-              )}
-            </Card>
-          </TooltipTrigger>
-          
-          <TooltipContent side="top" className="max-w-xs">
-            <div className="space-y-1">
-              <p className="font-semibold">{appointment.patientName || 'Sem nome'}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">
-                {appointment.therapistName || 'Sem terapeuta'}
-              </p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">
-                {format(appointment.startTime, 'HH:mm', { locale: ptBR })} - {format(appointment.endTime, 'HH:mm', { locale: ptBR })}
-              </p>
-              {appointment.observations && (
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  {appointment.observations}
-                </p>
-              )}
+            </div>
+            
+            {/* Status badges */}
+            <div className="flex flex-col items-end gap-1 flex-shrink-0">
               {appointment.hasConflict && (
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                  ⚠️ {appointment.conflictReason}
-                </p>
+                <Badge variant="error" className="text-xs">
+                  <AlertCircle className="w-3 h-3 mr-1" />
+                  Conflito
+                </Badge>
+              )}
+              {getPaymentBadge()}
+              <CalendarStatusBadge calendarLink={(appointment as any).calendar_link} />
+            </div>
+          </div>
+
+          {/* Time and type */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1 text-xs text-neutral-textSecondary">
+              <Clock className="w-3 h-3" />
+              <span className="font-mono font-semibold">
+                {format(appointment.startTime, 'HH:mm', { locale: ptBR })}
+              </span>
+              {!compact && (
+                <>
+                  <span>•</span>
+                  <span>{format(appointment.endTime, 'HH:mm', { locale: ptBR })}</span>
+                </>
               )}
             </div>
-          </TooltipContent>
-        </Tooltip>
+            
+            {!compact && (
+              <Badge variant="outline" className={cn('text-xs', getStatusColor(appointment.status))}>
+                {appointment.type || 'Não definido'}
+              </Badge>
+            )}
+          </div>
+
+          {/* Price (if not compact) */}
+          {!compact && appointment.price !== undefined && appointment.price > 0 && (
+            <div className="mt-sm pt-sm border-t border-neutral-border">
+              <p className="text-xs font-semibold text-neutral-text">
+                R$ {appointment.price.toFixed(2)}
+              </p>
+            </div>
+          )}
+        </Card>
       </motion.div>
-    </TooltipProvider>
+    </Tooltip>
   );
 };
 

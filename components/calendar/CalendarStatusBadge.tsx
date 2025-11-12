@@ -31,7 +31,7 @@ export function CalendarStatusBadge({ calendarLink, compact = false }: CalendarS
   // Link foi enviado mas não acessado
   if (calendarLink.sent_via && calendarLink.sent_via.length > 0) {
     return (
-      <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+      <Badge variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
         <Clock className="w-3 h-3 mr-1" />
         {!compact && 'Convite enviado'}
       </Badge>

@@ -128,7 +128,7 @@ const MobileAgendaView: React.FC<MobileAgendaViewProps> = ({
 
       {/* Main Content with Gestures */}
       <motion.div
-        {...bind()}
+        {...(bind() as any)}
         className="flex-1 overflow-y-auto"
         style={{
           touchAction: 'pan-y',

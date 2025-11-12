@@ -69,7 +69,7 @@ const PatientInfoCard: React.FC<PatientInfoCardProps> = ({
               {patient.name}
             </h4>
             <Badge 
-              variant="secondary" 
+              variant="outline" 
               className={cn("text-xs flex-shrink-0", getStatusColor(patient.status))}
             >
               {patient.status}

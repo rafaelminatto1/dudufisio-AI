@@ -255,7 +255,7 @@ const SmartSearch: React.FC<SmartSearchProps> = ({
                                 <p className="font-medium text-sm text-slate-900">
                                   {result.appointment.patientName}
                                 </p>
-                                <Badge variant="secondary" className="text-xs">
+                                <Badge variant="outline" className="text-xs">
                                   {result.appointment.type}
                                 </Badge>
                               </div>

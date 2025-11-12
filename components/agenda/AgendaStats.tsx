@@ -206,7 +206,7 @@ const AgendaStats: React.FC<AgendaStatsProps> = ({ appointments, therapists, cla
             {Object.entries(appointmentsByType).map(([type, count]) => (
               <div key={type} className="flex items-center justify-between">
                 <span className="text-sm text-slate-700">{type}</span>
-                <Badge variant="secondary">{count}</Badge>
+                <Badge variant="outline">{count}</Badge>
               </div>
             ))}
           </div>

@@ -44,8 +44,8 @@ const QuickAddPatientDialog: React.FC<QuickAddPatientDialogProps> = ({
         name: formData.name,
         cpf: formData.cpf,
         phone: formData.phone,
-        email: formData.email || undefined,
-        birthDate: formData.birthDate || undefined,
+        email: formData.email || '',
+        birthDate: formData.birthDate || '',
         address: {
           street: '',
           city: '',

@@ -98,6 +98,7 @@ export function preloadRoute(routePath: string) {
     '/legal': () => import('../pages/LegalPage').then(() => {}),
     '/admin-dashboard': () => import('../pages/AdminDashboardPage').then(() => {}),
     '/therapist-dashboard': () => import('../pages/TherapistDashboard').then(() => {}),
+    '/edge-functions-performance': () => import('../pages/EdgeFunctionsPerformanceDashboard').then(() => {}),
   };
   
   routeMap[routePath]?.();

@@ -108,33 +108,52 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
 
   return (
     <TooltipProvider>
-      <motion.div
-        variants={appointmentCardVariants}
-        initial="initial"
-        animate="animate"
-        whileHover="hover"
-        whileTap="tap"
-        className={cn('cursor-pointer relative group', className)}
-        onClick={onClick}
-        onMouseEnter={() => setShowActions(true)}
-        onMouseLeave={() => setShowActions(false)}
-        draggable={draggable}
-      >
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Card
-              className={cn(
-                'p-3 border-2 transition-all duration-200',
-                'bg-white',
-                'hover:shadow-lg hover:scale-[1.02]',
-                appointment.hasConflict && 'border-red-500 border-opacity-75 animate-pulse',
-                !appointment.hasConflict && 'border-slate-200'
-              )}
-              style={{
-                borderLeftColor: appointment.hasConflict ? undefined : therapistColor,
-                borderLeftWidth: '4px',
-              }}
-            >
+      <Tooltip content={
+        <div className="space-y-1">
+          <p className="font-semibold">{appointment.patientName}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            {appointment.therapistName}
+          </p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            {format(appointment.startTime, 'HH:mm', { locale: ptBR })} - {format(appointment.endTime, 'HH:mm', { locale: ptBR })}
+          </p>
+          {appointment.observations && (
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+              {appointment.observations}
+            </p>
+          )}
+          {appointment.hasConflict && (
+            <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+              ⚠️ {appointment.conflictReason}
+            </p>
+          )}
+        </div>
+      }>
+        <motion.div
+          variants={appointmentCardVariants}
+          initial="initial"
+          animate="animate"
+          whileHover="hover"
+          whileTap="tap"
+          className={cn('cursor-pointer relative group', className)}
+          onClick={onClick}
+          onMouseEnter={() => setShowActions(true)}
+          onMouseLeave={() => setShowActions(false)}
+          draggable={draggable}
+        >
+          <Card
+            className={cn(
+              'p-3 border-2 transition-all duration-200',
+              'bg-white',
+              'hover:shadow-lg hover:scale-[1.02]',
+              appointment.hasConflict && 'border-red-500 border-opacity-75 animate-pulse',
+              !appointment.hasConflict && 'border-slate-200'
+            )}
+            style={{
+              borderLeftColor: appointment.hasConflict ? undefined : therapistColor,
+              borderLeftWidth: '4px',
+            }}
+          >
               {/* Header with patient name and status */}
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -149,27 +168,18 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
                         {appointment.patientName.split(' ')[0] || appointment.patientName}
                       </p>
                       {isFirstVisit && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                          </TooltipTrigger>
-                          <TooltipContent>Primeira consulta</TooltipContent>
+                        <Tooltip content="Primeira consulta">
+                          <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                         </Tooltip>
                       )}
                       {hasMedicalAlerts && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <AlertTriangle className="w-3 h-3 text-red-500" />
-                          </TooltipTrigger>
-                          <TooltipContent>Restrições médicas</TooltipContent>
+                        <Tooltip content="Restrições médicas">
+                          <AlertTriangle className="w-3 h-3 text-red-500" />
                         </Tooltip>
                       )}
                       {isRecurring && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <CalendarIcon className="w-3 h-3 text-blue-500" />
-                          </TooltipTrigger>
-                          <TooltipContent>Sessão recorrente</TooltipContent>
+                        <Tooltip content="Sessão recorrente">
+                          <CalendarIcon className="w-3 h-3 text-blue-500" />
                         </Tooltip>
                       )}
                     </div>
@@ -184,7 +194,7 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
                 {/* Status badges */}
                 <div className="flex flex-col items-end gap-1 flex-shrink-0">
                   {appointment.hasConflict && (
-                    <Badge variant="destructive" className="text-xs">
+                    <Badge variant="error" className="text-xs">
                       <AlertCircle className="w-3 h-3 mr-1" />
                       Conflito
                     </Badge>
@@ -245,108 +255,70 @@ export const AppointmentCardWithActions: React.FC<AppointmentCardWithActionsProp
                   className="absolute top-2 right-2 flex gap-1 bg-white dark:bg-slate-800 rounded-lg shadow-lg p-1 border border-slate-200 dark:border-slate-700 z-10"
                 >
                   {/* Mark as Completed */}
-                  {appointment.status !== 'completed' && onStatusChange && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={(e) => handleMarkAsCompleted(e)}
-                          className="p-1.5 rounded hover:bg-green-100 dark:hover:bg-green-900 text-green-600 dark:text-green-400 transition"
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>Marcar como concluído</TooltipContent>
+                  {appointment.status !== AppointmentStatus.Completed && onStatusChange && (
+                    <Tooltip content="Marcar como concluído">
+                      <button
+                        onClick={(e) => handleMarkAsCompleted(e)}
+                        className="p-1.5 rounded hover:bg-green-100 dark:hover:bg-green-900 text-green-600 dark:text-green-400 transition"
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                      </button>
                     </Tooltip>
                   )}
 
                   {/* Mark as Paid */}
                   {appointment.paymentStatus === 'pending' && onPaymentChange && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={(e) => handleMarkAsPaid(e)}
-                          className="p-1.5 rounded hover:bg-emerald-100 dark:hover:bg-emerald-900 text-emerald-600 dark:text-emerald-400 transition"
-                        >
-                          <DollarSign className="w-4 h-4" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>Marcar como pago</TooltipContent>
+                    <Tooltip content="Marcar como pago">
+                      <button
+                        onClick={(e) => handleMarkAsPaid(e)}
+                        className="p-1.5 rounded hover:bg-emerald-100 dark:hover:bg-emerald-900 text-emerald-600 dark:text-emerald-400 transition"
+                      >
+                        <DollarSign className="w-4 h-4" />
+                      </button>
                     </Tooltip>
                   )}
 
                   {/* Call */}
                   {onCall && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={(e) => handleQuickAction(e, onCall)}
-                          className="p-1.5 rounded hover:bg-blue-100 dark:hover:bg-blue-900 text-blue-600 dark:text-blue-400 transition"
-                        >
-                          <Phone className="w-4 h-4" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>Ligar para paciente</TooltipContent>
+                    <Tooltip content="Ligar para paciente">
+                      <button
+                        onClick={(e) => handleQuickAction(e, onCall)}
+                        className="p-1.5 rounded hover:bg-blue-100 dark:hover:bg-blue-900 text-blue-600 dark:text-blue-400 transition"
+                      >
+                        <Phone className="w-4 h-4" />
+                      </button>
                     </Tooltip>
                   )}
 
                   {/* Edit */}
                   {onEdit && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={(e) => handleQuickAction(e, onEdit)}
-                          className="p-1.5 rounded hover:bg-sky-100 dark:hover:bg-sky-900 text-sky-600 dark:text-sky-400 transition"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>Editar agendamento</TooltipContent>
+                    <Tooltip content="Editar agendamento">
+                      <button
+                        onClick={(e) => handleQuickAction(e, onEdit)}
+                        className="p-1.5 rounded hover:bg-sky-100 dark:hover:bg-sky-900 text-sky-600 dark:text-sky-400 transition"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
                     </Tooltip>
                   )}
 
                   {/* Delete */}
                   {onDelete && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={(e) => handleQuickAction(e, onDelete)}
-                          className="p-1.5 rounded hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 transition"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>Excluir agendamento</TooltipContent>
+                    <Tooltip content="Excluir agendamento">
+                      <button
+                        onClick={(e) => handleQuickAction(e, onDelete)}
+                        className="p-1.5 rounded hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 transition"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </Tooltip>
                   )}
                 </motion.div>
               )}
             </Card>
-          </TooltipTrigger>
-          
-          <TooltipContent side="top" className="max-w-xs">
-            <div className="space-y-1">
-              <p className="font-semibold">{appointment.patientName}</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">
-                {appointment.therapistName}
-              </p>
-              <p className="text-xs text-slate-600 dark:text-slate-400">
-                {format(appointment.startTime, 'HH:mm', { locale: ptBR })} - {format(appointment.endTime, 'HH:mm', { locale: ptBR })}
-              </p>
-              {appointment.observations && (
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                  {appointment.observations}
-                </p>
-              )}
-              {appointment.hasConflict && (
-                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                  ⚠️ {appointment.conflictReason}
-                </p>
-              )}
-            </div>
-          </TooltipContent>
+          </motion.div>
         </Tooltip>
-      </motion.div>
-    </TooltipProvider>
+      </TooltipProvider>
   );
 };
 

@@ -201,7 +201,7 @@ const ExportAgendaDialog: React.FC<ExportAgendaDialogProps> = ({
                     <div className="flex-1">
                       <h4 className="font-semibold text-slate-900 mb-1">{option.title}</h4>
                       <p className="text-xs text-slate-600 mb-2">{option.description}</p>
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant="outline" className="text-xs">
                         {option.format}
                       </Badge>
                     </div>

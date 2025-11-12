@@ -4,7 +4,7 @@ import { cn } from '../../lib/utils';
 import { Repeat, Clock } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Card, CardContent } from '../ui/card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { Tooltip } from '../ui/tooltip';
 
 interface ImprovedAppointmentCardProps {
   appointment: EnrichedAppointment;
@@ -34,14 +34,14 @@ const getAppointmentStyle = (color: string) => {
 const getStatusBadgeVariant = (status: AppointmentStatus) => {
   switch (status) {
     case AppointmentStatus.Scheduled:
-      return 'secondary';
+      return 'outline';
     case AppointmentStatus.Completed:
       return 'default';
     case AppointmentStatus.Canceled:
     case AppointmentStatus.NoShow:
-      return 'destructive';
+      return 'error';
     default:
-      return 'secondary';
+      return 'outline';
   }
 };
 
@@ -136,110 +136,103 @@ const ImprovedAppointmentCard: React.FC<ImprovedAppointmentCardProps> = ({
   }
 
   if (viewMode === 'detailed') {
+    const tooltipContent = (
+      <div className="space-y-1">
+        <p className="font-semibold">{appointment.patientName}</p>
+        <p className="text-xs">{appointment.type}</p>
+        <p className="text-xs">
+          {formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}
+        </p>
+        <p className="text-xs">Duração: {getDuration()}</p>
+      </div>
+    );
+
     return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div
-              onClick={(e) => { e.stopPropagation(); onClick(); }}
-              draggable="true"
-              onDragStart={onDragStart}
-              onDragEnd={onDragEnd}
-              className={cn(
-                "absolute left-1 right-1 rounded-lg text-white z-10 cursor-pointer transition-all overflow-hidden border-l-4 shadow-sm",
-                style,
-                (isCompleted || isCancelled) && 'opacity-60 hover:opacity-100',
-                isBeingDragged && 'opacity-50 ring-2 ring-sky-400'
-              )}
-              style={{ top: `${top}px`, height: `${height}px`, minHeight: '60px' }}
-            >
-              <div className="p-3 h-full flex flex-col">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1 min-w-0">
-                    <h4 className={cn("font-bold text-sm leading-tight", isCancelled && "line-through")}>
-                      {appointment.patientName}
-                    </h4>
-                    <p className="text-xs opacity-90 mt-1">{appointment.type}</p>
-                  </div>
-                  <Badge 
-                    variant={getStatusBadgeVariant(appointment.status)}
-                    className="text-xs ml-2 flex-shrink-0"
-                  >
-                    {getStatusText(appointment.status)}
-                  </Badge>
-                </div>
-                
-                <div className="flex items-center justify-between text-xs opacity-90 mt-auto">
-                  <div className="flex items-center space-x-1">
-                    <Clock className="w-3 h-3" />
-                    <span>{getDuration()}</span>
-                  </div>
-                  {appointment.seriesId && (
-                    <Repeat className="w-3 h-3" />
-                  )}
-                </div>
+      <Tooltip content={tooltipContent}>
+        <div
+          onClick={(e) => { e.stopPropagation(); onClick(); }}
+          draggable="true"
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          className={cn(
+            "absolute left-1 right-1 rounded-lg text-white z-10 cursor-pointer transition-all overflow-hidden border-l-4 shadow-sm",
+            style,
+            (isCompleted || isCancelled) && 'opacity-60 hover:opacity-100',
+            isBeingDragged && 'opacity-50 ring-2 ring-sky-400'
+          )}
+          style={{ top: `${top}px`, height: `${height}px`, minHeight: '60px' }}
+        >
+          <div className="p-3 h-full flex flex-col">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex-1 min-w-0">
+                <h4 className={cn("font-bold text-sm leading-tight", isCancelled && "line-through")}>
+                  {appointment.patientName}
+                </h4>
+                <p className="text-xs opacity-90 mt-1">{appointment.type}</p>
               </div>
+              <Badge 
+                variant={getStatusBadgeVariant(appointment.status)}
+                className="text-xs ml-2 flex-shrink-0"
+              >
+                {getStatusText(appointment.status)}
+              </Badge>
             </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <div className="space-y-1">
-              <p className="font-semibold">{appointment.patientName}</p>
-              <p className="text-xs">{appointment.type}</p>
-              <p className="text-xs">
-                {formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}
-              </p>
-              <p className="text-xs">Duração: {getDuration()}</p>
+            
+            <div className="flex items-center justify-between text-xs opacity-90 mt-auto">
+              <div className="flex items-center space-x-1">
+                <Clock className="w-3 h-3" />
+                <span>{getDuration()}</span>
+              </div>
+              {appointment.seriesId && (
+                <Repeat className="w-3 h-3" />
+              )}
             </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+          </div>
+        </div>
+      </Tooltip>
     );
   }
 
-  // Compact view (default)
+  // Compact view - shows only patient name and time
+  const tooltipContent = (
+    <div className="space-y-1">
+      <p className="font-semibold">{appointment.patientName}</p>
+      <p className="text-xs">{appointment.type}</p>
+      <p className="text-xs">
+        {formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}
+      </p>
+      <p className="text-xs">Duração: {getDuration()}</p>
+    </div>
+  );
+
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            onClick={(e) => { e.stopPropagation(); onClick(); }}
-            draggable="true"
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
-            className={cn(
-              "absolute left-1 right-1 p-2 rounded-lg text-white z-10 cursor-pointer transition-all overflow-hidden flex flex-col group border-l-4 shadow-md font-semibold",
-              style,
-              (isCompleted || isCancelled) && 'bg-gray-600 hover:bg-gray-700',
-              isBeingDragged && 'opacity-50 ring-2 ring-sky-400'
-            )}
-            style={{ top: `${top}px`, height: `${height}px`, minHeight: '32px' }}
+    <Tooltip content={tooltipContent}>
+      <div
+        onClick={(e) => { e.stopPropagation(); onClick(); }}
+        draggable="true"
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        className={cn(
+          "absolute left-1 right-1 rounded text-xs p-1 text-white cursor-pointer transition-all overflow-hidden border-l-2 shadow-sm",
+          style,
+          (isCompleted || isCancelled) && 'opacity-60 hover:opacity-100',
+          isBeingDragged && 'opacity-50 ring-1 ring-sky-400'
+        )}
+        style={{ top: `${top}px`, height: `${height}px`, minHeight: '30px' }}
+      >
+        <div className="flex items-center justify-between h-full">
+          <span className={cn("font-medium truncate", isCancelled && "line-through")}>
+            {appointment.patientName}
+          </span>
+          <Badge 
+            variant={getStatusBadgeVariant(appointment.status)}
+            className="text-[10px] px-1 py-0 h-4 ml-1 flex-shrink-0"
           >
-            <div className="flex-grow min-h-0">
-              <p className={cn("font-bold text-sm leading-tight", isCancelled && "line-through")}>
-                {appointment.patientName}
-              </p>
-              <p className="text-xs text-white font-medium truncate">{appointment.type}</p>
-            </div>
-            {appointment.seriesId && (
-              <div className="flex-shrink-0 mt-auto text-right">
-                <Repeat className="w-3 h-3 text-white" />
-              </div>
-            )}
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <div className="space-y-1">
-            <p className="font-semibold">{appointment.patientName}</p>
-            <p className="text-xs">{appointment.type}</p>
-            <p className="text-xs">
-              {formatTime(appointment.startTime)} - {formatTime(appointment.endTime)}
-            </p>
-            <p className="text-xs">Duração: {getDuration()}</p>
-            <p className="text-xs">Status: {getStatusText(appointment.status)}</p>
-          </div>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+            {getStatusText(appointment.status)}
+          </Badge>
+        </div>
+      </div>
+    </Tooltip>
   );
 };
 

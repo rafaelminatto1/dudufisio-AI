@@ -31,9 +31,7 @@ const CompactModeToggle: React.FC<CompactModeToggleProps> = ({
             )}
           </Button>
         </TooltipTrigger>
-        <TooltipContent>
-          {isCompact ? 'Modo Expandido' : 'Modo Compacto'}
-        </TooltipContent>
+        <TooltipContent content={isCompact ? 'Modo Expandido' : 'Modo Compacto'} />
       </Tooltip>
     </TooltipProvider>
   );

@@ -70,7 +70,7 @@ const PerformanceDashboard: React.FC = () => {
         </div>
         
         <div className="flex items-center gap-3">
-          <Badge variant={isMonitoring ? 'default' : 'secondary'}>
+          <Badge variant={isMonitoring ? 'default' : 'outline'}>
             {isMonitoring ? '🟢 Ativo' : '🔴 Pausado'}
           </Badge>
           

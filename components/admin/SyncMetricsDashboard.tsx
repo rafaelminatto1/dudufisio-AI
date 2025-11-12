@@ -208,7 +208,7 @@ export const SyncMetricsDashboard: React.FC<SyncMetricsDashboardProps> = ({ clas
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Taxa de Sucesso</h3>
           <Badge
-            variant={isHealthy ? 'default' : 'destructive'}
+            variant={isHealthy ? 'default' : 'error'}
             className={cn(
               'text-sm',
               isHealthy && 'bg-green-500'
@@ -266,7 +266,7 @@ export const SyncMetricsDashboard: React.FC<SyncMetricsDashboardProps> = ({ clas
                       />
                     </div>
                     
-                    <Badge variant="secondary" className="min-w-[60px] justify-center">
+                    <Badge variant="outline" className="min-w-[60px] justify-center">
                       {count}
                     </Badge>
                   </div>

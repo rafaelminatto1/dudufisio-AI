@@ -199,7 +199,7 @@ const AppointmentTemplatesDialog: React.FC<AppointmentTemplatesDialogProps> = ({
 
                           {/* Info Badges */}
                           <div className="flex flex-wrap gap-2 mb-2">
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge variant="outline" className="text-xs">
                               {template.type}
                             </Badge>
                             <Badge variant="outline" className="text-xs gap-1">

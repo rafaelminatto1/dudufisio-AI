@@ -72,14 +72,15 @@ const CurrentTimeIndicator: React.FC = () => {
 
 // Função para agrupar agendamentos que se sobrepõem por terapeuta
 const groupOverlappingAppointments = (appointments: EnrichedAppointment[]) => {
-  const groupedByTherapist: { [therapistId: string]: EnrichedAppointment[] } = {};
+  const groupedByTherapist: Record<string, EnrichedAppointment[]> = {};
 
   // Agrupar por terapeuta
   appointments.forEach(app => {
-    if (!groupedByTherapist[app.therapistId]) {
-      groupedByTherapist[app.therapistId] = [];
+    const therapistId = app.therapistId as string;
+    if (!groupedByTherapist[therapistId]) {
+      groupedByTherapist[therapistId] = [];
     }
-    groupedByTherapist[app.therapistId]!.push(app);
+    groupedByTherapist[therapistId].push(app);
   });
 
   const result: Array<{

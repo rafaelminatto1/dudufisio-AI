@@ -88,7 +88,7 @@ export function ExerciseCard({
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
           <Button
             size="icon"
-            variant="secondary"
+            variant="outline"
             className="h-12 w-12 rounded-full"
             onClick={(e) => {
               e.stopPropagation();
@@ -155,7 +155,7 @@ export function ExerciseCard({
         {/* Metadata */}
         <div className="space-y-2">
           <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary" className="text-xs">
+            <Badge variant="outline" className="text-xs">
               {exercise.category}
             </Badge>
             <Badge className={cn('text-xs', getDifficultyColor(exercise.difficulty))}>
