@@ -1,6 +1,9 @@
 # Vercel Ignore - Otimizado
 # Apenas arquivos essenciais são enviados para o build
 
+# 🔧 IMPORTANTE: package-lock.json DEVE ser enviado
+!package-lock.json
+
 # Node modules (gerenciados pelo npm install na Vercel)
 node_modules/
 
