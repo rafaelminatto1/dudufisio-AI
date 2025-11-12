@@ -30,6 +30,8 @@ const compressionVendorPattern = /[/\\]node_modules[/\\](?:pako|brotli)[/\\]/;
 const sentryReplayPattern = /[/\\]node_modules[/\\]@sentry-internal[/\\]replay[/\\]/;
 
 export default defineConfig({
+  // Reutiliza cache entre builds do Vercel
+  cacheDir: '.vercel/cache/vite',
   plugins: [
     react({
       jsxRuntime: 'automatic',
@@ -585,6 +587,31 @@ export default defineConfig({
               return 'comp-reports';
             }
 
+            // 🚀 OTIMIZAÇÃO: Subdivisão adicional de comp-common (Jan 2025)
+            if (normalizedId.includes('/components/agenda/')) {
+              return 'comp-agenda';
+            }
+            if (normalizedId.includes('/components/patients/')) {
+              return 'comp-patients';
+            }
+            if (normalizedId.includes('/components/exercises/') ||
+                normalizedId.includes('/components/exercise/')) {
+              return 'comp-exercises';
+            }
+            if (normalizedId.includes('/components/alerts/') ||
+                normalizedId.includes('/components/notifications/')) {
+              return 'comp-alerts';
+            }
+            if (normalizedId.includes('/components/layout/')) {
+              return 'comp-layout';
+            }
+            if (normalizedId.includes('/components/offline/')) {
+              return 'comp-offline';
+            }
+            if (normalizedId.includes('/components/settings/')) {
+              return 'comp-settings';
+            }
+
             // Categorias existentes
             if (normalizedId.includes('dashboard') || normalizedId.includes('widgets')) {
               return 'comp-dashboard';
@@ -596,6 +623,34 @@ export default defineConfig({
               return 'comp-features';
             }
             return 'comp-common';
+          }
+
+          // 🚀 OTIMIZAÇÃO FASE 2: Subdividir vendor-misc (Jan 2025)
+          // 📅 CHUNK: Date/Time libraries
+          if (normalizedId.includes('node_modules/dayjs/') ||
+              normalizedId.includes('node_modules/moment/')) {
+            return 'vendor-datetime';
+          }
+
+          // 📝 CHUNK: Markdown libraries
+          if (normalizedId.includes('node_modules/marked/') ||
+              normalizedId.includes('node_modules/remark/') ||
+              normalizedId.includes('node_modules/rehype/')) {
+            return 'vendor-markdown';
+          }
+
+          // 🎨 CHUNK: Color libraries
+          if (normalizedId.includes('node_modules/color/') ||
+              normalizedId.includes('node_modules/tinycolor2/') ||
+              normalizedId.includes('node_modules/chroma-js/')) {
+            return 'vendor-color';
+          }
+
+          // ✨ CHUNK: Animation libraries (not framer-motion)
+          if (normalizedId.includes('node_modules/animejs/') ||
+              normalizedId.includes('node_modules/gsap/') ||
+              normalizedId.includes('node_modules/@react-spring/')) {
+            return 'vendor-animation';
           }
 
           // ⚡ RESTO: Vendor comum (minimizar este chunk)

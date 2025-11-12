@@ -15,6 +15,7 @@ concurrency:
 
 jobs:
   deploy-preview:
+    if: false # Desativado: Vercel Git Integration gerencia previews
     name: Deploy Preview to Vercel
     runs-on: ubuntu-latest
     

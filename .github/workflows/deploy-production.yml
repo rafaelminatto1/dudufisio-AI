@@ -13,6 +13,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: false # Desativado: Vercel Git Integration gerencia produção
     name: Deploy to Vercel
     runs-on: ubuntu-latest
     

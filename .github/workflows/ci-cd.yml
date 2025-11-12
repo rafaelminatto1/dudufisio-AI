@@ -51,10 +51,10 @@ jobs:
         fail_ci_if_error: false
 
   deploy-preview:
+    if: false # Desativado: Vercel Git Integration gerencia previews
     runs-on: ubuntu-latest
     name: 🚀 Deploy Preview (PR)
     needs: test
-    if: github.event_name == 'pull_request'
     
     steps:
     - name: 📥 Checkout código
@@ -69,10 +69,10 @@ jobs:
         working-directory: ./
 
   deploy-production:
+    if: false # Desativado: Vercel Git Integration gerencia produção
     runs-on: ubuntu-latest
     name: 🚀 Deploy Produção
     needs: test
-    if: github.ref == 'refs/heads/main'
     
     steps:
     - name: 📥 Checkout código

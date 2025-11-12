@@ -3,15 +3,12 @@
   "name": "dudufisio-ai",
   "alias": ["app.dudufisio.com"],
   "regions": ["gru1", "iad1"],
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
   "framework": "vite",
   "outputDirectory": "dist",
-  
-  "env": {
-    "NODE_ENV": "production"
-  },
+  "installCommand": "npm ci",
+  "buildCommand": "cross-env NODE_OPTIONS=--max_old_space_size=4096 npm run vercel-build",
+  "devCommand": "npm run dev",
+  "ignoreCommand": "node scripts/vercel-ignore.js",
   "headers": [
     {
       "source": "/(.*)",
