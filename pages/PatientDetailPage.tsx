@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import Section from '../components/layout/Section';
 import { clinicalContentService } from '../services/clinicalContentService';
 import type { ClinicalProtocol } from '../types/clinicalContent';
 import { supabasePatientService } from '../services/supabase/patientServiceSupabase';
@@ -182,63 +183,38 @@ const PatientDetailPage: React.FC = () => {
   // Loading state
   if (patientLoading) {
     return (
-      <div className="min-h-screen bg-neutral-bgAlt py-4xl">
-        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl">
-          <div className="flex items-center justify-center py-5xl">
-            <div className="text-center space-y-md">
-              <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-              <p className="text-neutral-textSecondary">Carregando dados do paciente...</p>
-            </div>
+      <Section variant="gray" paddingY="4xl">
+        <div className="flex items-center justify-center py-5xl">
+          <div className="text-center space-y-md">
+            <div className="w-16 h-16 border-4 border-primary dark:border-blue-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p className="text-neutral-textSecondary dark:text-gray-400">Carregando dados do paciente...</p>
           </div>
         </div>
-      </div>
+      </Section>
     );
   }
 
   // Error state
   if (patientError) {
     return (
-      <div className="min-h-screen bg-neutral-bgAlt py-4xl">
-        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl">
-          <div className="flex items-center justify-center py-5xl">
-            <div className="text-center space-y-md">
-              <div className="text-error font-semibold mb-sm">
-                ⚠️ {patientError}
-              </div>
-              <div className="flex gap-md justify-center">
-                <Button 
-                  onClick={() => {
-                    setPatientError(null);
-                    setPatientLoading(true);
-                    window.location.reload();
-                  }}
-                  variant="default"
-                >
-                  Tentar Novamente
-                </Button>
-                <Button 
-                  onClick={() => navigate('/patients')}
-                  variant="outline"
-                >
-                  Voltar para Lista de Pacientes
-                </Button>
-              </div>
+      <Section variant="gray" paddingY="4xl">
+        <div className="flex items-center justify-center py-5xl">
+          <div className="text-center space-y-md">
+            <div className="text-error dark:text-red-400 font-semibold mb-sm">
+              ⚠️ {patientError}
             </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // No patient data
-  if (!patient) {
-    return (
-      <div className="min-h-screen bg-neutral-bgAlt py-4xl">
-        <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl">
-          <div className="flex items-center justify-center py-5xl">
-            <div className="text-center space-y-md">
-              <p className="text-neutral-textSecondary">Paciente não encontrado</p>
-              <Button 
+            <div className="flex gap-md justify-center">
+              <Button
+                onClick={() => {
+                  setPatientError(null);
+                  setPatientLoading(true);
+                  window.location.reload();
+                }}
+                variant="default"
+              >
+                Tentar Novamente
+              </Button>
+              <Button
                 onClick={() => navigate('/patients')}
                 variant="outline"
               >
@@ -247,15 +223,33 @@ const PatientDetailPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Section>
+    );
+  }
+
+  // No patient data
+  if (!patient) {
+    return (
+      <Section variant="gray" paddingY="4xl">
+        <div className="flex items-center justify-center py-5xl">
+          <div className="text-center space-y-md">
+            <p className="text-neutral-textSecondary dark:text-gray-400">Paciente não encontrado</p>
+            <Button
+              onClick={() => navigate('/patients')}
+              variant="outline"
+            >
+              Voltar para Lista de Pacientes
+            </Button>
+          </div>
+        </div>
+      </Section>
     );
   }
 
   return (
-    <div className="min-h-screen bg-neutral-bgAlt py-4xl">
-      <div className="max-w-7xl mx-auto px-md sm:px-lg lg:px-4xl">
-        {/* Header */}
-        <div className="flex items-center gap-md mb-3xl">
+    <Section variant="gray" paddingY="4xl" maxWidth="7xl">
+      {/* Header */}
+      <div className="flex items-center gap-md mb-3xl">
           <Button variant="outline" size="sm" onClick={() => navigate('/patients')}>
             <ArrowLeft className="w-4 h-4 mr-sm" />
             Voltar
@@ -343,54 +337,54 @@ const PatientDetailPage: React.FC = () => {
           <CardContent>
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                <span className="ml-2 text-slate-600">Carregando protocolos...</span>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 dark:border-blue-400"></div>
+                <span className="ml-2 text-slate-600 dark:text-gray-400">Carregando protocolos...</span>
               </div>
             ) : assignedProtocols.length === 0 ? (
               <div className="text-center py-8">
-                <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-600 mb-2">Nenhum protocolo atribuído</p>
-                <p className="text-sm text-slate-500">
+                <FileText className="w-12 h-12 text-slate-300 dark:text-gray-600 mx-auto mb-4" />
+                <p className="text-slate-600 dark:text-gray-400 mb-2">Nenhum protocolo atribuído</p>
+                <p className="text-sm text-slate-500 dark:text-gray-500">
                   Os protocolos podem ser atribuídos na página de Conteúdo Clínico
                 </p>
               </div>
             ) : (
               <div className="space-y-4">
                 {assignedProtocols.map(protocol => (
-                  <div key={protocol.id} className="border border-slate-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div key={protocol.id} className="border border-slate-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow bg-white dark:bg-gray-800">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-slate-900 mb-2">{protocol.title}</h4>
+                        <h4 className="font-semibold text-slate-900 dark:text-gray-100 mb-2">{protocol.title}</h4>
                         <div className="flex items-center gap-4 mb-3">
                           <Badge variant="outline" className="text-xs">
                             {protocol.specialty}
                           </Badge>
-                          <div className="flex items-center gap-1 text-sm text-slate-600">
+                          <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-gray-400">
                             <Clock className="w-4 h-4" />
                             {protocol.duration}
                           </div>
-                          <div className="flex items-center gap-1 text-sm text-slate-600">
+                          <div className="flex items-center gap-1 text-sm text-slate-600 dark:text-gray-400">
                             <Target className="w-4 h-4" />
                             {protocol.frequency}
                           </div>
-                          <div className="text-sm text-slate-600">
+                          <div className="text-sm text-slate-600 dark:text-gray-400">
                             Evidência: <span className="font-medium">{protocol.evidenceLevel}</span>
                           </div>
                         </div>
-                        <p className="text-sm text-slate-600 mb-3">{protocol.summary}</p>
-                        
+                        <p className="text-sm text-slate-600 dark:text-gray-400 mb-3">{protocol.summary}</p>
+
                         {protocol.objectives.length > 0 && (
                           <div>
-                            <h5 className="text-sm font-medium text-slate-700 mb-2">Objetivos:</h5>
-                            <ul className="text-sm text-slate-600 space-y-1">
+                            <h5 className="text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">Objetivos:</h5>
+                            <ul className="text-sm text-slate-600 dark:text-gray-400 space-y-1">
                               {protocol.objectives.slice(0, 3).map((objective, index) => (
                                 <li key={index} className="flex items-start gap-2">
-                                  <span className="text-blue-500 mt-1">•</span>
+                                  <span className="text-blue-500 dark:text-blue-400 mt-1">•</span>
                                   <span>{objective}</span>
                                 </li>
                               ))}
                               {protocol.objectives.length > 3 && (
-                                <li className="text-slate-500 text-xs">
+                                <li className="text-slate-500 dark:text-gray-500 text-xs">
                                   +{protocol.objectives.length - 3} objetivos adicionais
                                 </li>
                               )}
@@ -399,12 +393,12 @@ const PatientDetailPage: React.FC = () => {
                         )}
                       </div>
                     </div>
-                    
+
                     {protocol.tags.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-slate-100">
+                      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-gray-700">
                         <div className="flex flex-wrap gap-1">
                           {protocol.tags.map(tag => (
-                            <span key={tag} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
+                            <span key={tag} className="text-xs bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-gray-300 px-2 py-1 rounded">
                               #{tag}
                             </span>
                           ))}
@@ -426,21 +420,21 @@ const PatientDetailPage: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">{assignedProtocols.length}</div>
-                  <div className="text-sm text-blue-600">Protocolos Ativos</div>
+                <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{assignedProtocols.length}</div>
+                  <div className="text-sm text-blue-600 dark:text-blue-400">Protocolos Ativos</div>
                 </div>
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">
+                <div className="text-center p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                     {assignedProtocols.filter(p => p.evidenceLevel === 'A').length}
                   </div>
-                  <div className="text-sm text-green-600">Nível A (Alta Evidência)</div>
+                  <div className="text-sm text-green-600 dark:text-green-400">Nível A (Alta Evidência)</div>
                 </div>
-                <div className="text-center p-4 bg-purple-50 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600">
+                <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/30 rounded-lg">
+                  <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                     {new Set(assignedProtocols.map(p => p.specialty)).size}
                   </div>
-                  <div className="text-sm text-purple-600">Especialidades Diferentes</div>
+                  <div className="text-sm text-purple-600 dark:text-purple-400">Especialidades Diferentes</div>
                 </div>
               </div>
             </CardContent>
@@ -617,20 +611,20 @@ const PatientDetailPage: React.FC = () => {
             {bodyMapLoading && (
               <div className="flex items-center justify-center py-12">
                 <div className="text-center space-y-4">
-                  <div className="w-16 h-16 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                  <p className="text-slate-600">Carregando mapa corporal...</p>
+                  <div className="w-16 h-16 border-4 border-sky-600 dark:border-sky-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  <p className="text-slate-600 dark:text-gray-400">Carregando mapa corporal...</p>
                 </div>
               </div>
             )}
 
             {/* Estado de Erro */}
             {bodyMapError && !bodyMapLoading && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                <div className="text-red-600 font-semibold mb-2">
+              <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+                <div className="text-red-600 dark:text-red-400 font-semibold mb-2">
                   ⚠️ Erro ao Carregar Mapa Corporal
                 </div>
-                <p className="text-slate-700 mb-4">{bodyMapError}</p>
-                <Button 
+                <p className="text-slate-700 dark:text-gray-300 mb-4">{bodyMapError}</p>
+                <Button
                   onClick={() => {
                     setBodyMapError(null);
                     setActiveTab('overview');
@@ -669,10 +663,10 @@ const PatientDetailPage: React.FC = () => {
                 {/* Histórico de Evolução da Dor */}
                 {bodyMapSessions.length > 0 && (
                   <div className="mt-8">
-                    <h2 className="text-xl font-bold text-slate-800 mb-4">
+                    <h2 className="text-xl font-bold text-slate-800 dark:text-gray-100 mb-4">
                       Histórico de Evolução ({bodyMapSessions.length} sessões)
                     </h2>
-                    <PainHistoryTimeline 
+                    <PainHistoryTimeline
                       sessions={bodyMapSessions}
                       showTrend={true}
                     />
@@ -681,11 +675,11 @@ const PatientDetailPage: React.FC = () => {
 
                 {/* Mensagem quando não há histórico */}
                 {bodyMapSessions.length === 0 && (
-                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
-                    <p className="text-slate-600 mb-2">
+                  <div className="bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-lg p-8 text-center">
+                    <p className="text-slate-600 dark:text-gray-400 mb-2">
                       📊 Nenhuma sessão de mapa corporal registrada ainda
                     </p>
-                    <p className="text-slate-500 text-sm">
+                    <p className="text-slate-500 dark:text-gray-500 text-sm">
                       Use o formulário acima para criar a primeira sessão
                     </p>
                   </div>
@@ -761,9 +755,8 @@ const PatientDetailPage: React.FC = () => {
             navigate('/patients');
           }}
         />
-      </div>
-    </div>
-    );
+    </Section>
+  );
 };
 
 export default memo(PatientDetailPage);

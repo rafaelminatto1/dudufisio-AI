@@ -39,22 +39,21 @@ export default defineConfig({
     // Visualizer para análise de bundle
     visualizer({
       filename: './dist/stats.html',
-      open: false,
+      open: true,
       gzipSize: true,
       brotliSize: true,
     }),
-    // Sentry plugin DESABILITADO - Causava erro em deploy Vercel
-    // process.env.SENTRY_AUTH_TOKEN && sentryVitePlugin({
-    //   org: process.env.SENTRY_ORG || "activity-fisioterapia",
-    //   project: process.env.SENTRY_PROJECT || "dudu-aiok",
-    //   authToken: process.env.SENTRY_AUTH_TOKEN,
-    //   sourcemaps: {
-    //     assets: './dist/assets/**',
-    //     filesToDeleteAfterUpload: './dist/assets/**/*.map'
-    //   },
-    //   telemetry: false,
-    //   silent: !process.env.CI, // Verbose em CI, silencioso localmente
-    // }),
+    process.env.SENTRY_AUTH_TOKEN && sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      sourcemaps: {
+        assets: './dist/assets/**',
+        filesToDeleteAfterUpload: './dist/assets/**/*.map'
+      },
+      telemetry: false,
+      silent: !process.env.CI
+    }),
   ].filter(Boolean), // Remove plugins undefined
   esbuild: {
     // Mantém console logs para debugging
@@ -109,7 +108,8 @@ export default defineConfig({
       '@/contexts': path.resolve(__dirname, './contexts'),
       '@/types': path.resolve(__dirname, './types'),
       '@/lib': path.resolve(__dirname, './lib'),
-      '@/design-system': path.resolve(__dirname, './design-system')
+      '@/design-system': path.resolve(__dirname, './design-system'),
+      'base64-js': path.resolve(__dirname, './lib/polyfills/base64js.ts')
     }
   },
   optimizeDeps: {
@@ -182,7 +182,7 @@ export default defineConfig({
   build: {
     // ✅ FASE 3: Build Ultra-Otimizado para Deploy Rápido
     target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
-    sourcemap: false, // 🚀 CRÍTICO: Desabilitar sourcemaps em produção
+    sourcemap: Boolean(process.env.SENTRY_AUTH_TOKEN),
     minify: 'esbuild', // 🚀 Mais rápido que terser
     cssMinify: 'esbuild',
     reportCompressedSize: false, // 🚀 Acelera o build

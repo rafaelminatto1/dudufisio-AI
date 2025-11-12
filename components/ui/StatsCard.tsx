@@ -59,35 +59,35 @@ export default function StatsCard({
 }: StatsCardProps) {
   const variantStyles = {
     primary: {
-      bg: 'bg-primary-light',
-      icon: 'text-primary',
+      bg: 'bg-primary-light dark:bg-blue-900/30',
+      icon: 'text-primary dark:text-blue-400',
     },
     secondary: {
-      bg: 'bg-secondary-light',
-      icon: 'text-secondary',
+      bg: 'bg-secondary-light dark:bg-green-900/30',
+      icon: 'text-secondary dark:text-green-400',
     },
     success: {
-      bg: 'bg-success-light',
-      icon: 'text-success',
+      bg: 'bg-success-light dark:bg-green-900/30',
+      icon: 'text-success dark:text-green-400',
     },
     warning: {
-      bg: 'bg-warning-light',
-      icon: 'text-warning',
+      bg: 'bg-warning-light dark:bg-yellow-900/30',
+      icon: 'text-warning dark:text-yellow-400',
     },
     error: {
-      bg: 'bg-error-light',
-      icon: 'text-error',
+      bg: 'bg-error-light dark:bg-red-900/30',
+      icon: 'text-error dark:text-red-400',
     },
     info: {
-      bg: 'bg-info-light',
-      icon: 'text-info',
+      bg: 'bg-info-light dark:bg-sky-900/30',
+      icon: 'text-info dark:text-sky-400',
     },
   };
 
   const comparisonStyles = {
-    positive: 'text-success',
-    negative: 'text-error',
-    neutral: 'text-neutral-textSecondary',
+    positive: 'text-success dark:text-green-400',
+    negative: 'text-error dark:text-red-400',
+    neutral: 'text-neutral-textSecondary dark:text-gray-400',
   };
 
   const styles = variantStyles[variant];

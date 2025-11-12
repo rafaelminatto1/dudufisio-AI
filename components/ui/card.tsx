@@ -10,7 +10,7 @@ const Card = ({ className, ref, ...props }: CardProps) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border border-slate-200 bg-white text-slate-900 shadow-md hover:shadow-lg transition-all duration-200",
+      "rounded-lg border border-slate-200 bg-white text-slate-900 shadow-md hover:shadow-lg transition-all duration-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100",
       className
     )}
     {...props}
@@ -39,7 +39,7 @@ const CardTitle = ({ className, ref, ...props }: CardTitleProps) => (
   <h3
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
+      "text-2xl font-semibold leading-none tracking-tight dark:text-gray-100",
       className
     )}
     {...props}
@@ -54,7 +54,7 @@ interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement
 const CardDescription = ({ className, ref, ...props }: CardDescriptionProps) => (
   <p
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-sm text-muted-foreground dark:text-gray-400", className)}
     {...props}
   />
 )

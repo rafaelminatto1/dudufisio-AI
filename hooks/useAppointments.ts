@@ -1,4 +1,4 @@
-// hooks/useAppointments.js
+// hooks/useAppointments.ts
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppointmentTypeColors } from '../types';
 import * as appointmentService from '../services/appointmentService';
@@ -7,26 +7,27 @@ import { eventService } from '../services/eventService';
 import { AppointmentType } from '../types';
 import { getCachedOrFetch, deleteCache, DEFAULT_CACHE_TTL_MS } from '../packages/agenda-pacientes/src/lib/cache';
 import { apmService } from '../services/monitoring/apmService';
+import { Appointment, Patient, Therapist } from '../types';
 
-export const useAppointments = (startDate, endDate) => {
-  const [appointments, setAppointments] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+export const useAppointments = (startDate: Date | null, endDate: Date | null) => {
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
   
   const { patients, therapists } = useData();
   
-  const makeCacheKey = useCallback(() => {
+  const makeCacheKey = useCallback((): string => {
     if (!startDate || !endDate) return '';
     return `appointments:${startDate.toISOString()}:${endDate.toISOString()}`;
   }, [startDate, endDate]);
 
-  const clearCache = useCallback(() => {
+  const clearCache = useCallback((): void => {
       const key = makeCacheKey();
       if (!key) return;
       deleteCache(key);
   }, [makeCacheKey]);
 
-  const fetchAppointments = useCallback(async () => {
+  const fetchAppointments = useCallback(async (): Promise<void> => {
       if (!startDate || !endDate) {
           setIsLoading(false);
           setAppointments([]);
@@ -41,7 +42,7 @@ export const useAppointments = (startDate, endDate) => {
             cacheKey,
             async () => {
               const t0 = performance.now();
-              const data = await appointmentService.getAppointments(startDate, endDate);
+              const data = await appointmentService.getAppointments(startDate!, endDate!);
               const t1 = performance.now();
               apmService.trackMetric({
                 type: 'api_request',
@@ -55,7 +56,7 @@ export const useAppointments = (startDate, endDate) => {
             DEFAULT_CACHE_TTL_MS
           );
 
-          setAppointments(fetchedAppointments);
+          setAppointments(fetchedAppointments as Appointment[]);
           setError(null);
       } catch (err) {
           setError(err);
@@ -85,7 +86,7 @@ export const useAppointments = (startDate, endDate) => {
     const patientMap = new Map(patients.map(p => [p.id, p]));
     const therapistMap = new Map(therapists.map(t => [t.id, t]));
 
-    return appointments.map(app => {
+    return appointments.map((app: Appointment) => {
         const patient = patientMap.get(app.patientId);
         
         return {

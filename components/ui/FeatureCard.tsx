@@ -59,34 +59,34 @@ export default function FeatureCard({
 }: FeatureCardProps) {
   const variantStyles = {
     primary: {
-      bg: 'bg-primary-light',
-      icon: 'text-primary',
-      border: 'hover:border-primary',
+      bg: 'bg-primary-light dark:bg-blue-900/30',
+      icon: 'text-primary dark:text-blue-400',
+      border: 'hover:border-primary dark:hover:border-blue-500',
     },
     secondary: {
-      bg: 'bg-secondary-light',
-      icon: 'text-secondary',
-      border: 'hover:border-secondary',
+      bg: 'bg-secondary-light dark:bg-green-900/30',
+      icon: 'text-secondary dark:text-green-400',
+      border: 'hover:border-secondary dark:hover:border-green-500',
     },
     'accent-orange': {
-      bg: 'bg-accent-orange-light',
-      icon: 'text-accent-orange',
-      border: 'hover:border-accent-orange',
+      bg: 'bg-accent-orange-light dark:bg-orange-900/30',
+      icon: 'text-accent-orange dark:text-orange-400',
+      border: 'hover:border-accent-orange dark:hover:border-orange-500',
     },
     'accent-pink': {
-      bg: 'bg-accent-pink-light',
-      icon: 'text-accent-pink',
-      border: 'hover:border-accent-pink',
+      bg: 'bg-accent-pink-light dark:bg-pink-900/30',
+      icon: 'text-accent-pink dark:text-pink-400',
+      border: 'hover:border-accent-pink dark:hover:border-pink-500',
     },
     'accent-blue': {
-      bg: 'bg-accent-blue-light',
-      icon: 'text-accent-blue',
-      border: 'hover:border-accent-blue',
+      bg: 'bg-accent-blue-light dark:bg-sky-900/30',
+      icon: 'text-accent-blue dark:text-sky-400',
+      border: 'hover:border-accent-blue dark:hover:border-sky-500',
     },
     'accent-purple': {
-      bg: 'bg-accent-purple-light',
-      icon: 'text-accent-purple',
-      border: 'hover:border-accent-purple',
+      bg: 'bg-accent-purple-light dark:bg-purple-900/30',
+      icon: 'text-accent-purple dark:text-purple-400',
+      border: 'hover:border-accent-purple dark:hover:border-purple-500',
     },
   };
 
@@ -113,7 +113,7 @@ export default function FeatureCard({
         <CardContent className="pt-md">
           <ul className="space-y-sm">
             {features.map((feature, index) => (
-              <li key={index} className="flex items-start gap-sm text-neutral-textSecondary text-small">
+              <li key={index} className="flex items-start gap-sm text-neutral-textSecondary dark:text-gray-400 text-small">
                 <span className={cn('mt-1 flex-shrink-0', styles.icon)}>•</span>
                 <span>{feature}</span>
               </li>

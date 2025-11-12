@@ -1,419 +1,157 @@
-# 📦 Plano de Otimização de Bundle - Fase 2
+# 📦 Bundle Optimization Plan - DuduFisio AI
 
-**Data:** 4 de Novembro de 2025
-**Status:** 🟡 Em Progresso
-**Objetivo:** Reduzir vendor-misc de 792KB para < 400KB
+**Data**: 11 de Janeiro de 2025
+**Status**: 🔄 Em Progresso
 
 ---
 
-## 🔍 Análise Atual (Baseline)
+## 📊 Status Atual do Bundle
 
-### Métricas Atuais
+### Build Metrics (Último Build)
 ```
-Total Bundles: 26
-Vendor Bundles: 11
-Page Bundles: 0 ⚠️ (code splitting não funcionando)
-Tamanho Total: 6.49 MB
+Total Bundle: 8.89MB / 12.00MB (74.1%)
+Chunks: 66
+Build Time: 1min 15s
 ```
 
-### Bundles Problemáticos
+### ⚠️ Chunks Problemáticos
 
-#### 🔴 CRÍTICO: vendor-misc (792KB)
-**Tamanho:** 792.06 KB (11.9% do total)
-**Budget:** 400 KB
-**Excesso:** 392 KB (98% acima do budget)
-
-**Conteúdo Provável:**
-- Bibliotecas diversas não categorizadas
-- Possíveis duplicações
-- Dependências não tree-shaked corretamente
+| Chunk | Tamanho | Crítico | Descrição |
+|-------|---------|---------|-----------|
+| **vendor-pdf** | 1.16MB | ❌ | Ecossistema PDF (jspdf, @react-pdf, pdfkit, etc.) |
+| **comp-common** | 1.06MB | ❌ | Componentes não categorizados |
+| **index** | 864KB | ⚠️ | Entry point principal |
+| **vendor-misc** | 643KB | ⚠️ | Vendors não categorizados |
 
 ---
 
-#### 🔴 CRÍTICO: Main Bundle (index) (1.01 MB)
-**Tamanho:** 1.01 MB
-**Budget:** 200 KB
-**Excesso:** 837 KB (419% acima do budget)
+## ✅ O Que Já Está Otimizado
 
-**Problema:** Bundle principal muito grande, indica que code splitting não está funcionando adequadamente.
+### 1. Lazy Loading ✅
+- **MainDashboard**: Todas as 60+ páginas usando `createLazyComponent`
+- **PatientPortalDashboard**: Todas as páginas lazy
+- **PartnerPortalDashboard**: Todas as páginas lazy
 
----
+### 2. Code Splitting no vite.config.ts ✅
+- React core separado (vendor-react-core)
+- UI frameworks separados (radix, framer-motion)
+- Features pesadas separadas (charts, editor, pdf, ai)
+- Vendors específicos categorizados (50+ categorias)
 
-#### ⚠️ WARNING: Code Splitting Não Funcional
-**Problema:** Nenhum page bundle identificado.
-
-**Bundles Encontrados:**
-- `comp-common-CGZJUt_B.js` - 1.6 MB
-- `comp-dashboard-B6WBRMcy.js` - 36 KB
-- `comp-features-BQktpx9g.js` - 48 KB
-- `comp-ui-BNiBLvdN.js` - 95 KB
-- `feature-ai-C1iPy19T.js` - 2.8 KB
-- `feature-capture-BILt7_IL.js` - 198 KB
-- `feature-charts-J2vJoRSQ.js` - 300 KB
-- `feature-editor-Kt_B-CdG.js` - 379 KB
-- `feature-pdf-DysNpOxN.js` - 333 KB
-- `page-business-CACIReoA.js` - 76 KB
-- `page-clinical-CE_Pp6-6.js` - 71 KB
-- `page-dashboard-BcqISCs5.js` - 158 KB
-- `page-other-DK8kCSb6.js` - 637 KB
-- `page-settings-XCCWE9kd.js` - 51 KB
-
-**Nota:** O sistema de naming está funcionando, mas o script de análise não os reconhece como "page bundles" pois procura por "Page" com maiúsculo.
+### 3. Dynamic Imports para Libraries Pesadas ✅
+- **PDF**: `lib/heavyLibrariesLazy.ts` com hooks lazy
+- **Firebase**: Dynamic imports implementados
+- **html2canvas**: Dynamic imports implementados
 
 ---
 
-## 🎯 Objetivos de Otimização
+## 🎯 Plano de Ação (Prioridade 1)
 
-### Metas Fase 2
+### Fase 1: Subdividir comp-common (1.06MB → < 500KB)
 
-| Bundle | Atual | Target | Redução Necessária |
-|--------|-------|--------|--------------------|
-| vendor-misc | 792 KB | < 400 KB | -392 KB (49%) |
-| Main (index) | 1.01 MB | < 200 KB | -837 KB (82%) |
-| comp-common | 1.6 MB | < 500 KB | -1.1 MB (69%) |
-| feature-charts | 300 KB | < 200 KB | -100 KB (33%) |
-| feature-editor | 379 KB | < 250 KB | -129 KB (34%) |
-| feature-pdf | 333 KB | < 250 KB | -83 KB (25%) |
-| page-other | 637 KB | < 300 KB | -337 KB (53%) |
-| **Total** | **6.49 MB** | **< 4 MB** | **-2.49 MB (38%)** |
+#### Adicionar ao vite.config.ts:
 
----
-
-## 🛠️ Estratégias de Otimização
-
-### Estratégia 1: Otimizar vendor-misc (Prioridade ALTA)
-
-#### 1.1. Identificar Conteúdo
-```bash
-# Analisar vendor-misc no stats.html
-npm run build:analyze
-
-# Procurar por vendor-misc no visualizador
-```
-
-#### 1.2. Split Manual em vite.config.ts
 ```typescript
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          // Atual (preservar)
-          'vendor-react-core': ['react', 'react-dom', 'react/jsx-runtime'],
-          'vendor-router': ['react-router-dom'],
-          'vendor-ui-radix': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            // ... outros Radix
-          ],
-          'vendor-ui-framer': ['framer-motion'],
-          'vendor-forms': ['react-hook-form', 'zod', '@hookform/resolvers'],
-          'vendor-date': ['date-fns'],
-          'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-icons': ['lucide-react', 'react-icons'],
-          'vendor-notifications': ['sonner', 'react-toastify'],
+// Após linha 556 (dentro do bloco if (normalizedId.includes('/components/')))
 
-          // NOVO: Split vendor-misc
-          'vendor-charts': ['recharts'],
-          'vendor-ai': ['@google/generative-ai', '@anthropic-ai/sdk'],
-          'vendor-table': ['@tanstack/react-table', '@tanstack/react-virtual'],
-          'vendor-editor': [
-            '@tiptap/react',
-            '@tiptap/starter-kit',
-            '@tiptap/extension-link',
-            // ... outros Tiptap
-          ],
-          'vendor-pdf': ['jspdf', 'jspdf-autotable', 'html2pdf.js'],
-          'vendor-stripe': ['@stripe/stripe-js', '@stripe/react-stripe-js'],
-          'vendor-analytics': [
-            '@vercel/analytics',
-            '@vercel/speed-insights',
-            '@sentry/react'
-          ],
-        }
-      }
-    }
-  }
-});
-```
+// Componentes de Agenda
+if (normalizedId.includes('/components/agenda/')) {
+  return 'comp-agenda';
+}
 
-**Resultado Esperado:**
-- vendor-misc reduzido de 792KB para < 100KB
-- Novos bundles criados (charts, ai, table, editor, pdf, stripe, analytics)
-- Cada novo bundle < 200KB
+// Componentes de Patients
+if (normalizedId.includes('/components/patients/') ||
+    normalizedId.includes('/components/patient/')) {
+  return 'comp-patients';
+}
 
----
+// Componentes de Exercises
+if (normalizedId.includes('/components/exercises/') ||
+    normalizedId.includes('/components/exercise/')) {
+  return 'comp-exercises';
+}
 
-### Estratégia 2: Reduzir Main Bundle (Prioridade ALTA)
+// Componentes de Alerts/Notifications
+if (normalizedId.includes('/components/alerts/') ||
+    normalizedId.includes('/components/notifications/')) {
+  return 'comp-alerts';
+}
 
-#### 2.1. Problema
-Main bundle está com 1.01MB porque está incluindo código que deveria estar em chunks separados.
+// Componentes de Layout
+if (normalizedId.includes('/components/layout/')) {
+  return 'comp-layout';
+}
 
-#### 2.2. Solução: Configurar Thresholds
-```typescript
-export default defineConfig({
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          // ... (splits acima)
-        },
-        // NOVO: Configurar thresholds
-        experimentalMinChunkSize: 20000, // 20KB mínimo
-        chunkSizeWarningLimit: 500, // Warning para chunks > 500KB
-      }
-    },
-    // NOVO: Configurações de chunking
-    chunkSizeWarningLimit: 500,
-    cssCodeSplit: true, // Split CSS por chunk
-  }
-});
-```
+// Componentes de Offline
+if (normalizedId.includes('/components/offline/')) {
+  return 'comp-offline';
+}
 
-**Resultado Esperado:**
-- Main bundle reduzido para < 200KB
-- Melhor distribuição de código entre chunks
-
----
-
-### Estratégia 3: Otimizar comp-common (1.6MB)
-
-#### 3.1. Problema
-comp-common está gigante (1.6MB) porque contém muitos componentes compartilhados.
-
-#### 3.2. Solução: Split por Categoria
-```typescript
-manualChunks(id) {
-  // Vendor splits (já existentes)
-  if (id.includes('node_modules')) {
-    // ... (lógica vendor)
-  }
-
-  // NOVO: Component splits
-  if (id.includes('src/components')) {
-    // UI Components
-    if (id.includes('components/ui/')) {
-      return 'comp-ui';
-    }
-    // Dashboard Components
-    if (id.includes('components/dashboard/')) {
-      return 'comp-dashboard';
-    }
-    // Agenda Components
-    if (id.includes('components/agenda/')) {
-      return 'comp-agenda';
-    }
-    // Shared Components
-    return 'comp-common';
-  }
-
-  // Feature splits
-  if (id.includes('src/services')) {
-    if (id.includes('services/ai')) {
-      return 'feature-ai';
-    }
-    if (id.includes('services/charts') || id.includes('services/dashboard')) {
-      return 'feature-charts';
-    }
-    if (id.includes('services/editor')) {
-      return 'feature-editor';
-    }
-    if (id.includes('services/pdf')) {
-      return 'feature-pdf';
-    }
-    if (id.includes('services/capture')) {
-      return 'feature-capture';
-    }
-  }
-
-  // Page splits
-  if (id.includes('src/pages')) {
-    if (id.includes('pages/dashboard') || id.includes('pages/Dashboard')) {
-      return 'page-dashboard';
-    }
-    if (id.includes('pages/agenda') || id.includes('pages/Agenda')) {
-      return 'page-business';
-    }
-    if (id.includes('pages/patient') || id.includes('pages/treatment')) {
-      return 'page-clinical';
-    }
-    if (id.includes('pages/settings') || id.includes('pages/profile')) {
-      return 'page-settings';
-    }
-    return 'page-other';
-  }
+// Componentes de Settings
+if (normalizedId.includes('/components/settings/')) {
+  return 'comp-settings';
 }
 ```
 
-**Resultado Esperado:**
-- comp-common reduzido para < 500KB
-- Componentes distribuídos em chunks apropriados
+**Impact Esperado**: comp-common reduzido para ~400-500KB
 
 ---
 
-### Estratégia 4: Lazy Loading Agressivo
+### Fase 2: Categorizar vendor-misc (643KB → < 300KB)
 
-#### 4.1. Charts sob Demanda
+#### Adicionar ao vite.config.ts (após linha 603):
+
 ```typescript
-// Antes:
-import { BarChart, LineChart, PieChart } from 'recharts';
+// Bibliotecas de data/time
+if (normalizedId.includes('node_modules/dayjs/')) {
+  return 'vendor-datetime';
+}
 
-// Depois:
-const BarChart = lazy(() => import('recharts').then(m => ({ default: m.BarChart })));
-const LineChart = lazy(() => import('recharts').then(m => ({ default: m.LineChart })));
+// Bibliotecas de markdown
+if (normalizedId.includes('node_modules/marked/') ||
+    normalizedId.includes('node_modules/remark/')) {
+  return 'vendor-markdown';
+}
+
+// Bibliotecas de color
+if (normalizedId.includes('node_modules/color/') ||
+    normalizedId.includes('node_modules/tinycolor2/')) {
+  return 'vendor-color';
+}
+
+// Bibliotecas de animation (não framer-motion)
+if (normalizedId.includes('node_modules/animejs/') ||
+    normalizedId.includes('node_modules/gsap/')) {
+  return 'vendor-animation';
+}
 ```
 
-#### 4.2. Editor sob Demanda
-```typescript
-// Antes:
-import { Editor } from '@tiptap/react';
-
-// Depois:
-const Editor = lazy(() => import('./components/editor/Editor'));
-```
-
-#### 4.3. PDF Generation sob Demanda
-```typescript
-// Antes:
-import { generatePDF } from './services/pdf';
-
-// Depois:
-const generatePDF = async () => {
-  const { generatePDF } = await import('./services/pdf');
-  return generatePDF();
-};
-```
+**Impact Esperado**: vendor-misc reduzido para ~250-300KB
 
 ---
 
-### Estratégia 5: Tree-Shaking Agressivo
+## 📈 Targets Pós-Otimização
 
-#### 5.1. date-fns
-```typescript
-// Antes:
-import * as dateFns from 'date-fns';
+| Métrica | Atual | Target | Melhoria |
+|---------|-------|--------|----------|
+| **Total Bundle** | 8.89MB | 7.50MB | -15% |
+| **comp-common** | 1.06MB | 0.50MB | -53% |
+| **vendor-misc** | 643KB | 300KB | -53% |
+| **Largest Chunk** | 1.16MB | 1.16MB | 0% |
 
-// Depois:
-import { format, parseISO, addDays } from 'date-fns';
-```
-
-#### 5.2. lodash
-```typescript
-// Antes:
-import _ from 'lodash';
-
-// Depois:
-import debounce from 'lodash/debounce';
-import throttle from 'lodash/throttle';
-```
-
-#### 5.3. Radix UI
-```typescript
-// Verificar se todos os imports são diretos:
-// ✅ BOM
-import { Dialog } from '@radix-ui/react-dialog';
-
-// ❌ RUIM
-import { Dialog } from '@radix-ui/react';
-```
+**Total Economia Esperada**: ~1.39MB (~15% do bundle)
 
 ---
 
-## 📅 Plano de Implementação
+## 🛠️ Próximos Passos
 
-### Fase 2.1: Análise e Split de vendor-misc (2h)
-- [x] Executar `npm run build:analyze`
-- [ ] Identificar componentes do vendor-misc
-- [ ] Criar splits específicos no vite.config.ts
-- [ ] Build e validar tamanhos
-- [ ] Commit: "chore: split vendor-misc into categorized bundles"
-
-### Fase 2.2: Reduzir Main Bundle (1h)
-- [ ] Configurar thresholds de chunking
-- [ ] Ajustar manualChunks para melhor distribuição
-- [ ] Build e validar < 200KB
-- [ ] Commit: "perf: reduce main bundle to < 200KB"
-
-### Fase 2.3: Otimizar comp-common (2h)
-- [ ] Implementar manualChunks por categoria
-- [ ] Mover componentes para chunks apropriados
-- [ ] Build e validar < 500KB
-- [ ] Commit: "perf: split comp-common by category"
-
-### Fase 2.4: Lazy Loading (1.5h)
-- [ ] Implementar lazy loading para charts
-- [ ] Implementar lazy loading para editor
-- [ ] Implementar lazy loading para PDF
-- [ ] Adicionar Suspense boundaries
-- [ ] Commit: "perf: implement aggressive lazy loading"
-
-### Fase 2.5: Tree-Shaking (1h)
-- [ ] Revisar imports de date-fns
-- [ ] Revisar imports de lodash (se usado)
-- [ ] Verificar imports de Radix UI
-- [ ] Build e validar redução
-- [ ] Commit: "perf: improve tree-shaking with direct imports"
-
-### Fase 2.6: Validação Final (30min)
-- [ ] Executar `npm run bundle:analyze:size`
-- [ ] Verificar todos os targets atingidos
-- [ ] Validar performance em produção
-- [ ] Documentar resultados
-
-**Tempo Total Estimado:** 8 horas
+1. [ ] Implementar Fase 1 (subdividir comp-common)
+2. [ ] Implementar Fase 2 (categorizar vendor-misc)
+3. [ ] Rodar build e validar
+4. [ ] Atualizar documentação
+5. [ ] Deploy para staging
 
 ---
 
-## 📊 Métricas de Sucesso
-
-### Targets Finais
-
-| Métrica | Antes | Target | Status |
-|---------|-------|--------|--------|
-| vendor-misc | 792 KB | < 400 KB | 🟡 Pendente |
-| Main Bundle | 1.01 MB | < 200 KB | 🟡 Pendente |
-| comp-common | 1.6 MB | < 500 KB | 🟡 Pendente |
-| Total Size | 6.49 MB | < 4 MB | 🟡 Pendente |
-| Num Bundles | 26 | ~35-40 | 🟡 Pendente |
-
-### KPIs de Performance
-
-- **FCP (First Contentful Paint):** < 1.5s
-- **LCP (Largest Contentful Paint):** < 2.5s
-- **TTI (Time to Interactive):** < 3.5s
-- **Bundle Load Time:** < 2s (3G)
-
----
-
-## 🔧 Scripts e Ferramentas
-
-```bash
-# Análise de bundle
-npm run bundle:analyze:size
-
-# Build com análise visual
-npm run build:analyze
-
-# Validar após otimizações
-npm run build && npm run bundle:analyze:size
-
-# Performance test
-npm run perf:local
-```
-
----
-
-## 📚 Referências
-
-**Documentação:**
-- [Vite Manual Chunks](https://vitejs.dev/guide/build.html#chunking-strategy)
-- [Rollup Output Options](https://rollupjs.org/configuration-options/#output-manualchunks)
-- [React Lazy Loading](https://react.dev/reference/react/lazy)
-
-**Ferramentas:**
-- [Rollup Visualizer](https://www.npmjs.com/package/rollup-plugin-visualizer)
-- [Bundle Analyzer](https://www.npmjs.com/package/webpack-bundle-analyzer)
-
----
-
-**🤖 Generated with [Claude Code](https://claude.com/claude-code)**
+**Última Atualização**: 11 de Janeiro de 2025
+**Gerado com ❤️ usando Claude Code**
