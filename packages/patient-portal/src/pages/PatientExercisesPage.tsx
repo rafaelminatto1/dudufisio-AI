@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { getExercises, Exercise } from '../services/patientExerciseService';
 import PatientLayout from '../components/PatientLayout';
-import Card from '../components/ui/Card';
+import Card from '../components/ui/card';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import ExerciseCard from '../components/ExerciseCard';
 import ExerciseModal from '../components/ExerciseModal';

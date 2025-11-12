@@ -6,9 +6,9 @@ import { useDashboardLayout } from '@/hooks/useDashboardLayout';
 import { useApp } from '@/contexts/AppContext';
 import { useOptimizedPatients, useOptimizedAppointments } from '@/hooks/useOptimizedData';
 import useDashboardStats from '@/hooks/useDashboardStats';
-import { Button } from '../components/ui/Button.tsx';
-import { Card } from '../components/ui/Card.tsx';
-import Section from '../components/layout/Section.tsx';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import Section from '@/components/layout/Section';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +21,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { startOfMonth, endOfMonth } from 'date-fns';
 import { NotificationPermissionPrompt } from '@/components/notifications/NotificationPermissionPrompt';
-import { H1, Body, Small } from '../components/ui/Typography.tsx';
+import { H1, Body, Small } from '@/components/ui/Typography';
 
 const DashboardPageV2: React.FC = () => {
   const { user } = useApp();

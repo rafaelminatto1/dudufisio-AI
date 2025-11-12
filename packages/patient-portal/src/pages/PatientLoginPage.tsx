@@ -6,8 +6,8 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { login } from '../services/patientAuthService';
-import Button from '../components/ui/Button';
-import Card from '../components/ui/Card';
+import Button from '../components/ui/button';
+import Card from '../components/ui/card';
 import Input from '../components/ui/Input';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { Lock } from 'lucide-react';

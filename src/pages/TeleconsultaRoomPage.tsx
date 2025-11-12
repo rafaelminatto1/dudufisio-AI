@@ -4,8 +4,8 @@ import { JitsiMeeting } from '../components/teleconsulta/JitsiMeeting.tsx';
 import { supabase } from '@/lib/supabaseClient';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card.tsx';
-import { Button } from '../components/ui/Button.tsx';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card.tsx';
+import { Button } from '../components/ui/button.tsx';
 import { H2, Body, Small } from '../components/ui/Typography.tsx';
 import { Loader2, AlertCircle, Video, ArrowLeft, Wifi, WifiOff } from 'lucide-react';
 

@@ -21,8 +21,8 @@ import {
 import { H1, H2, Body, Small, Caption } from '../../../../components/ui/Typography.tsx';
 import Section from '../../../../components/layout/Section.tsx';
 import StatsCard from '../../../../components/ui/StatsCard.tsx';
-import { Button } from '../../../../components/ui/Button.tsx';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card.tsx';
+import { Button } from '../../../../components/ui/button.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card.tsx';
 import PageHeader from '../components/PageHeader';
 import { FinancialTransaction } from '../types';
 import MetricCard from '../components/MetricCard';

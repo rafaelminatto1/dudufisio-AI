@@ -8,7 +8,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { getStats, StatsResponse } from '../services/patientStatsService';
 import { getPatientData } from '../services/patientAuthService';
 import PatientLayout from '../components/PatientLayout';
-import Card from '../components/ui/Card';
+import Card from '../components/ui/card';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import ProgressChart from '../components/ProgressChart';
 import { Activity, Calendar, TrendingUp, Target, ChevronRight } from 'lucide-react';

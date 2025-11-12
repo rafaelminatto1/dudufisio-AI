@@ -11,7 +11,7 @@ import setMinutes from 'date-fns/setMinutes';
 import { ptBR } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Calendar as CalendarIcon, ArrowLeft } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
-import { Button } from '../../../../components/ui/Button.tsx';
+import { Button } from '../../../../components/ui/button.tsx';
 import { H1, H2, Body, Small } from '../../../../components/ui/Typography.tsx';
 import Section from '../../../../components/layout/Section.tsx';
 import { useAppointments } from '../hooks/useAppointments';

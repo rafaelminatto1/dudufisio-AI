@@ -1,7 +1,7 @@
 import React from 'react';
 import Section from '../components/layout/Section';
 import { H1, H2, H3, Body, Small, Caption } from '../components/ui/Typography';
-import Button from '../components/ui/Button';
+import Button from '../components/ui/button';
 import StatsCard from '../components/ui/StatsCard';
 import FeatureCard from '../components/ui/FeatureCard';
 import {

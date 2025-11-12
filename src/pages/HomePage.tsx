@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
 import Section from '../components/layout/Section';
 import { H1, H2, Body, Small, Caption } from '../components/ui/Typography';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import StatsCard from '../components/ui/StatsCard';
 import FeatureCard from '../components/ui/FeatureCard';
 import {

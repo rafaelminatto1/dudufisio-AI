@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit, Calendar, Phone, Mail, User, FileText, Clock, Target, MessageCircle, Activity, BarChart, MapPin } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/Card.tsx';
-import { Button } from '../../../../components/ui/Button.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card.tsx';
+import { Button } from '../../../../components/ui/button.tsx';
 import { H1, H2, Body, Small } from '../../../../components/ui/Typography.tsx';
 import Section from '../../../../components/layout/Section.tsx';
 import { Badge } from '../components/ui/badge';

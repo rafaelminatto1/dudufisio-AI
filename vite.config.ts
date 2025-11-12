@@ -340,8 +340,11 @@ export default defineConfig({
           if (pdfVendorPattern.test(normalizedId)) {
             return 'vendor-pdf';
           }
+          // 🔧 FIX: Agrupar compression com vendor-pdf para evitar circular dependency
+          // Issue: vendor-compression separado causava "Cannot access 'Un' before initialization"
+          // Data: 11 Jan 2025
           if (compressionVendorPattern.test(normalizedId)) {
-            return 'vendor-compression';
+            return 'vendor-pdf'; // Agrupado com vendor-pdf ao invés de chunk separado
           }
           if (sentryReplayPattern.test(normalizedId)) {
             return 'vendor-sentry-replay';

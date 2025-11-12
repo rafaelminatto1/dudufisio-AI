@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '../../../../components/ui/Card.tsx';
+import { Card, CardContent } from '../../../../components/ui/card.tsx';
 import Section from '../../../../components/layout/Section.tsx';
 import StatsCard from '../../../../components/ui/StatsCard.tsx';
 import ResponsiveContainer from '@/components/ui/ResponsiveContainer';

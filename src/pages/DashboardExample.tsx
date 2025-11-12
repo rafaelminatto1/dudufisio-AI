@@ -1,8 +1,8 @@
 import React from 'react';
 import Section from '../components/layout/Section';
 import { H1, H2, H3, Body, Small, Caption } from '../components/ui/Typography';
-import Button from '../components/ui/Button';
-import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
+import Button from '../components/ui/button';
+import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/card';
 import StatsCard from '../components/ui/StatsCard';
 import {
   TrendingUp,

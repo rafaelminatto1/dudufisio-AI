@@ -6,8 +6,8 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getPatientData, logout } from '../services/patientAuthService';
 import PatientLayout from '../components/PatientLayout';
-import Card from '../components/ui/Card';
-import Button from '../components/ui/Button';
+import Card from '../components/ui/card';
+import Button from '../components/ui/button';
 import { User, Mail, Phone, Calendar, LogOut } from 'lucide-react';
 import { formatDate } from '../lib/utils';
 
