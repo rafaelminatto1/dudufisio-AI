@@ -683,17 +683,26 @@ export default defineConfig({
           if (id.includes('css') || id.includes('.css')) return true;
           if (id.includes('supabase') && id.includes('auth')) return true;
           if (id.includes('react-dom') && id.includes('client')) return true;
-          
+
+          // 🔧 FIX: Preservar side effects de compression libraries para evitar circular dependency
+          // Issue: Circular dependency "Cannot access 'z8' before initialization" em vendor-pdf
+          // Date: 12 Jan 2025
+          // Compression libraries (pako, brotli, fflate) precisam de side effects preservados
+          if (id.includes('pako') ||
+              id.includes('brotli') ||
+              id.includes('fflate') ||
+              id.includes('zlib')) return true;
+
           // 🔥 AGRESSIVO: Remover side effects de bibliotecas UI
-          if (id.includes('@radix-ui/') || 
+          if (id.includes('@radix-ui/') ||
               id.includes('framer-motion/') ||
               id.includes('lucide-react/')) return false;
-          
+
           // 🔥 AGRESSIVO: Remover side effects de utilitários
-          if (id.includes('clsx') || 
+          if (id.includes('clsx') ||
               id.includes('tailwind-merge') ||
               id.includes('class-variance-authority')) return false;
-          
+
           return false; // Default: sem side effects
         },
         propertyReadSideEffects: false,
