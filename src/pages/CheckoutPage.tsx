@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { StripeCheckout } from '../components/payments/StripeCheckout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card.tsx';
-import { Alert, AlertDescription } from '../components/ui/alert.tsx';
-import { Button } from '../components/ui/button.tsx';
-import StatsCard from '../components/ui/StatsCard.tsx';
-import Section from '../components/layout/Section.tsx';
-import { H1, H2, Body, Small } from '../components/ui/Typography.tsx';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { Button } from '../components/ui/button';
+import StatsCard from '../components/ui/StatsCard';
+import Section from '../components/layout/Section';
+import { H1, H2, Body, Small } from '../components/ui/Typography';
 import { ArrowLeft, Loader2, XCircle, CreditCard, DollarSign, Shield, CheckCircle2 } from 'lucide-react';
 
 interface PaymentDetails {
