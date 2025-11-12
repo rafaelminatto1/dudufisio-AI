@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent } from '../../../../components/ui/card.tsx';
-import Section from '../../../../components/layout/Section.tsx';
-import StatsCard from '../../../../components/ui/StatsCard.tsx';
+import { Card, CardContent } from '../../../../components/ui/card';
+import Section from '../../../../components/layout/Section';
+import StatsCard from '../../../../components/ui/StatsCard';
 import ResponsiveContainer from '@/components/ui/ResponsiveContainer';
 import { PatientTable } from '@/components/patients/PatientTable';
 import { usePatient } from '@/contexts/PatientContext';
@@ -10,7 +10,7 @@ import LoadingState from '@/components/ui/LoadingState';
 import ErrorState from '@/components/ui/ErrorState';
 import EmptyState from '@/components/ui/EmptyState';
 import { handleError } from '@/lib/middleware/errorHandler';
-import { H1, Body, Small, NumericValue } from '../../../../components/ui/Typography.tsx';
+import { H1, Body, Small, NumericValue } from '../../../../components/ui/Typography';
 import { Users, UserCheck, UserX, CheckCircle2 } from 'lucide-react';
 
 const PatientListPage: React.FC = () => {

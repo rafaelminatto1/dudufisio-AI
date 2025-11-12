@@ -18,11 +18,11 @@ import {
   PieChart as PieChartIcon, BarChart3, Target, Wallet,
   ArrowUpRight, ArrowDownRight, Activity, Bell, Star
 } from 'lucide-react';
-import { H1, H2, Body, Small, Caption } from '../../../../components/ui/Typography.tsx';
-import Section from '../../../../components/layout/Section.tsx';
-import StatsCard from '../../../../components/ui/StatsCard.tsx';
-import { Button } from '../../../../components/ui/button.tsx';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card.tsx';
+import { H1, H2, Body, Small, Caption } from '../../../../components/ui/Typography';
+import Section from '../../../../components/layout/Section';
+import StatsCard from '../../../../components/ui/StatsCard';
+import { Button } from '../../../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../../components/ui/card';
 import PageHeader from '../components/PageHeader';
 import { FinancialTransaction } from '../types';
 import MetricCard from '../components/MetricCard';

@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card.tsx';
-import { Button } from '../components/ui/button.tsx';
-import StatsCard from '../components/ui/StatsCard.tsx';
-import Section from '../components/layout/Section.tsx';
-import { H1, H2, Body, Small } from '../components/ui/Typography.tsx';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import StatsCard from '../components/ui/StatsCard';
+import Section from '../components/layout/Section';
+import { H1, H2, Body, Small } from '../components/ui/Typography';
 import {
   Video,
   Calendar,

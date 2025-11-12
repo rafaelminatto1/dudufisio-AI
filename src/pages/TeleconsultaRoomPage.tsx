@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { JitsiMeeting } from '../components/teleconsulta/JitsiMeeting.tsx';
+import { JitsiMeeting } from '../components/teleconsulta/JitsiMeeting';
 import { supabase } from '@/lib/supabaseClient';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card.tsx';
-import { Button } from '../components/ui/button.tsx';
-import { H2, Body, Small } from '../components/ui/Typography.tsx';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { H2, Body, Small } from '../components/ui/Typography';
 import { Loader2, AlertCircle, Video, ArrowLeft, Wifi, WifiOff } from 'lucide-react';
 
 interface TeleconsultaData {
