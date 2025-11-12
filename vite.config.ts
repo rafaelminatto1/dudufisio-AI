@@ -170,7 +170,25 @@ export default defineConfig({
       '@tiptap/extension-table-cell',
       '@tiptap/extension-table-header'
     ],
-    exclude: ['@playwright/test'],
+    // 🔧 FIX: SOLUTION 4 - Lazy Load completo de PDF/compression libs
+    // Issue: Circular dependency "Cannot access 'z8' before initialization" em vendor-pdf
+    // Date: 12 Jan 2025
+    // Excluir completamente PDF e compression libs do bundle inicial
+    // Estas libs serão carregadas dinamicamente via lib/heavyLibrariesLazy.ts
+    exclude: [
+      '@playwright/test',
+      // PDF Libraries (~1.37MB total)
+      'jspdf',
+      'jspdf-autotable',
+      '@react-pdf/renderer',
+      'pdfjs-dist',
+      'html2canvas',
+      // Compression Libraries (circular dependency source)
+      'pako',
+      'fflate',
+      'brotli',
+      'zlib'
+    ],
     // Otimização forçada apenas quando necessário
     force: false,
     esbuildOptions: {
@@ -330,16 +348,22 @@ export default defineConfig({
             return 'feature-editor';
           }
 
-          // 📄 CHUNK ESPECÍFICO: PDF Generation (lazy load)
-          if (normalizedId.includes('node_modules/jspdf/') ||
-              normalizedId.includes('node_modules/html2pdf.js/')) {
-            return 'feature-pdf';
-          }
+          // 🔧 FIX: SOLUTION 4 - REMOVER PDF libs do bundle inicial
+          // Issue: Circular dependency em compression libs + bundle size (1.37MB)
+          // Date: 12 Jan 2025
+          // PDF libs agora são completamente excluídas via optimizeDeps.exclude
+          // e carregadas dinamicamente via lib/heavyLibrariesLazy.ts
+          // 📄 CHUNK ESPECÍFICO: PDF Generation (lazy load) - DESATIVADO
+          // if (normalizedId.includes('node_modules/jspdf/') ||
+          //     normalizedId.includes('node_modules/html2pdf.js/')) {
+          //   return 'feature-pdf';
+          // }
 
-          // 🧾 CHUNK ESPECÍFICO: Ecossistema React-PDF
-          if (pdfVendorPattern.test(normalizedId)) {
-            return 'vendor-pdf';
-          }
+          // 🧾 CHUNK ESPECÍFICO: Ecossistema React-PDF - DESATIVADO
+          // if (pdfVendorPattern.test(normalizedId)) {
+          //   return 'vendor-pdf';
+          // }
+
           // 🔧 FIX: REMOVER agrupamento de compression - deixar Vite decidir
           // Issue: Mesmo agrupado com vendor-pdf, circular dependency persiste
           // Solution: Não forçar chunk específico para compression libs
