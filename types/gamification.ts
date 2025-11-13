@@ -208,32 +208,36 @@ export const RANK_LEVELS = [
   { level: 6, name: 'Mestre', minPoints: 30000, color: '#ff6ec7', icon: '👑' }
 ];
 
-export function getRankByPoints(points: number): typeof RANK_LEVELS[0] {
+export function getRankByPoints(points: number): typeof RANK_LEVELS[number] {
   for (let i = RANK_LEVELS.length - 1; i >= 0; i--) {
-    if (points >= RANK_LEVELS[i].minPoints) {
-      return RANK_LEVELS[i];
+    const rank = RANK_LEVELS[i]
+    if (rank && points >= rank.minPoints) {
+      return rank
     }
   }
-  return RANK_LEVELS[0];
+  if (RANK_LEVELS.length === 0) {
+    throw new Error('RANK_LEVELS configuration is empty')
+  }
+  return RANK_LEVELS[0]
 }
 
 export function getProgressToNextRank(points: number): {
-  current: typeof RANK_LEVELS[0];
-  next: typeof RANK_LEVELS[0] | null;
-  progress: number; // 0-100
+  current: typeof RANK_LEVELS[number]
+  next: typeof RANK_LEVELS[number] | null
+  progress: number // 0-100
 } {
-  const current = getRankByPoints(points);
-  const currentIndex = RANK_LEVELS.findIndex(r => r.level === current.level);
-  const next = currentIndex < RANK_LEVELS.length - 1 ? RANK_LEVELS[currentIndex + 1] : null;
+  const current = getRankByPoints(points)
+  const currentIndex = RANK_LEVELS.findIndex(r => r.level === current.level)
+  const next = currentIndex >= 0 && currentIndex < RANK_LEVELS.length - 1 ? RANK_LEVELS[currentIndex + 1] : null
 
   if (!next) {
-    return { current, next: null, progress: 100 };
+    return { current, next: null, progress: 100 }
   }
 
-  const pointsInCurrentRank = points - current.minPoints;
-  const pointsNeededForNext = next.minPoints - current.minPoints;
-  const progress = Math.min(100, (pointsInCurrentRank / pointsNeededForNext) * 100);
+  const pointsInCurrentRank = points - current.minPoints
+  const pointsNeededForNext = next.minPoints - current.minPoints
+  const progress = Math.min(100, (pointsInCurrentRank / pointsNeededForNext) * 100)
 
-  return { current, next, progress };
+  return { current, next, progress }
 }
 

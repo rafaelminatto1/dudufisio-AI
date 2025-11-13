@@ -18,7 +18,11 @@ import {
 } from 'lucide-react';
 import MedicalRecordsDashboard from './MedicalRecordsDashboard';
 import { ClinicalTemplatesManager } from './ClinicalTemplatesManager';
-import { DigitalSignatureManager } from './DigitalSignatureManager';
+const DigitalSignatureManager = React.lazy(() =>
+  import('./DigitalSignatureManager').then((module) => ({
+    default: module.DigitalSignatureManager,
+  }))
+);
 
 const ClinicalReportsGenerator = React.lazy(() =>
   import('./ClinicalReportsGenerator').then((module) => ({
@@ -99,7 +103,18 @@ export function MedicalRecordsSystem() {
         name: 'Assinaturas Digitais',
         description: 'Gerenciar certificados e assinaturas',
         icon: <Shield className="h-5 w-5" />,
-        component: <DigitalSignatureManager />,
+        component: (
+          <Suspense
+            fallback={
+              <div className="flex min-h-[200px] flex-col items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Shield className="h-6 w-6 animate-pulse" />
+                Carregando gerenciamento de assinaturas...
+              </div>
+            }
+          >
+            <DigitalSignatureManager />
+          </Suspense>
+        ),
       },
       {
         id: 'reports',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './card';
+import { Card, CardHeader, CardTitle, CardContent } from './Card'
 import { NumericValue, Small, Caption } from './Typography';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '../../lib/utils';

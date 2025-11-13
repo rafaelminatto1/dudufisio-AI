@@ -70,6 +70,18 @@ npm run dev
 # http://localhost:3000
 ```
 
+#### Alternativa com pnpm
+
+O projeto já inclui `pnpm-workspace.yaml`. Para usar pnpm:
+
+```bash
+corepack enable pnpm
+pnpm install
+pnpm run dev
+```
+
+> Sempre que precisar limpar dependências antes de um build, execute `npm run clean:deps` (ou `pnpm clean:deps`).
+
 ### Testes
 
 ```bash

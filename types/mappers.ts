@@ -110,13 +110,14 @@ export function mapSupabaseExerciseToExercise(supabaseExercise: SupabaseExercise
     difficultyLevel: supabaseExercise.difficulty_level,
     benefits: supabaseExercise.benefits as string[] | null,
     contraindications: supabaseExercise.contraindications as string[] | null,
-    instructions: Array.isArray(supabaseExercise.instructions) 
-      ? supabaseExercise.instructions.join('\n') 
-      : supabaseExercise.instructions,
-    videoUrl: supabaseExercise.video_url,
-    imageUrl: Array.isArray(supabaseExercise.image_urls) && supabaseExercise.image_urls.length > 0
-      ? supabaseExercise.image_urls[0]
-      : null,
+    instructions: Array.isArray(supabaseExercise.instructions)
+      ? supabaseExercise.instructions.join('\n')
+      : supabaseExercise.instructions ?? null,
+    videoUrl: supabaseExercise.video_url ?? null,
+    imageUrl:
+      Array.isArray(supabaseExercise.image_urls) && supabaseExercise.image_urls.length > 0
+        ? supabaseExercise.image_urls[0] ?? null
+        : null,
     createdAt: supabaseExercise.created_at,
     updatedAt: supabaseExercise.updated_at,
     createdBy: supabaseExercise.created_by,

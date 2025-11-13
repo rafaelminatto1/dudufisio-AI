@@ -7,7 +7,11 @@
         "paths": [
           {
             "name": "lodash",
-            "message": "Use lodash-es ou import específico: import debounce from 'lodash/debounce'"
+            "message": "Evite o pacote CJS do lodash; prefira utilidades próprias ou importes específicos via lodash-es."
+          },
+          {
+            "name": "lodash/*",
+            "message": "Substitua por importes equivalentes de lodash-es (ex.: import debounce from 'lodash-es/debounce')."
           },
           {
             "name": "date-fns",

@@ -50,7 +50,9 @@
       "Bash(npx vercel:*)",
       "Bash(npx vite build)",
       "Bash(git ls-tree:*)",
-      "Bash(timeout /t 15 /nobreak)"
+      "Bash(timeout /t 15 /nobreak)",
+      "Bash($env:NODE_OPTIONS=\"--max-old-space-size=4096\")",
+      "Bash(timeout /t 30 /nobreak)"
     ],
     "deny": [],
     "ask": []

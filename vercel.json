@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "name": "dudufisio-ai",
   "alias": ["app.dudufisio.com"],
   "regions": ["gru1", "iad1"],
   "framework": "vite",
   "outputDirectory": "dist",
-  "installCommand": "rm -rf node_modules && npm ci --no-audit --prefer-offline",
+  "installCommand": "npm run clean:deps && npm ci --no-audit --prefer-offline",
   "buildCommand": "npx cross-env NODE_OPTIONS=--max_old_space_size=4096 npm run vercel-build",
   "devCommand": "npm run dev",
   "ignoreCommand": "node scripts/vercel-ignore.cjs",

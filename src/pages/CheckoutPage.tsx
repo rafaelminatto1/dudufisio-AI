@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { StripeCheckout } from '../components/payments/StripeCheckout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import Card, { CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/Card'
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { Button } from '../components/ui/button';
+import { Button } from '../components/ui/Button'
 import StatsCard from '../components/ui/StatsCard';
 import Section from '../components/layout/Section';
 import { H1, H2, Body, Small } from '../components/ui/Typography';
@@ -39,6 +39,10 @@ export default function CheckoutPage() {
   }, [paymentId]);
 
   const fetchPaymentDetails = async () => {
+    if (!paymentId) {
+      return
+    }
+
     try {
       const { data, error: fetchError } = await supabase
         .from('payments')
@@ -86,8 +90,8 @@ export default function CheckoutPage() {
     }, 2000);
   };
 
-  const handleError = (errorMessage: string) => {
-    setError(errorMessage);
+  const handleError = (error: Error) => {
+    setError(error.message);
   };
 
   if (loading) {

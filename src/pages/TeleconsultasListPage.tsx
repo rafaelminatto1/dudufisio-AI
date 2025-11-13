@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import Card, { CardHeader, CardTitle, CardContent } from '../components/ui/card'
-import Button from '../components/ui/button'
+import Card, { CardHeader, CardTitle, CardContent } from '../components/ui/Card'
+import { Button } from '../components/ui/Button'
 import StatsCard from '../components/ui/StatsCard'
 import Section from '../components/layout/Section'
 import { H1, H2, Body, Small } from '../components/ui/Typography'
@@ -109,11 +109,9 @@ export default function TeleconsultasListPage() {
             ? ['completed', 'cancelled', 'no_show']
             : null
 
-        const statusFilterParam: string[] | null = statusFilter ?? null
-
         const { data, error } = await supabase.rpc('get_user_teleconsultas', {
           p_user_id: user.id,
-          p_status: statusFilterParam,
+          p_status: null,
           p_limit: 50,
         })
 
