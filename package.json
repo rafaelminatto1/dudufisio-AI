@@ -8,7 +8,8 @@
     "shared"
   ],
   "scripts": {
-    "dev": "node scripts/check-env.js && vite",
+    "dev": "node scripts/check-env.js && npm run start:patient-app",
+    "dev:host-only": "node scripts/check-env.js && vite",
     "dev:host": "cd packages/host && npm run dev",
     "dev:agenda": "cd packages/agenda-pacientes && npm run dev",
     "dev:tratamentos": "cd packages/tratamentos && npm run dev",

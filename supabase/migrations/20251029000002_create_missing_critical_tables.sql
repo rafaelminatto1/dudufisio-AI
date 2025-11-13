@@ -234,6 +234,28 @@ CREATE TABLE IF NOT EXISTS schedule_blocks (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ
 );
+
+ALTER TABLE schedule_blocks
+  ADD COLUMN IF NOT EXISTS title TEXT,
+  ADD COLUMN IF NOT EXISTS description TEXT,
+  ADD COLUMN IF NOT EXISTS block_type TEXT,
+  ADD COLUMN IF NOT EXISTS start_time TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS end_time TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS is_recurring BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS recurrence_pattern TEXT,
+  ADD COLUMN IF NOT EXISTS recurrence_end_date DATE,
+  ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE,
+  ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW(),
+  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW(),
+  ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
+ALTER TABLE schedule_blocks
+  ALTER COLUMN block_type SET DEFAULT 'unavailable',
+  ALTER COLUMN is_recurring SET DEFAULT FALSE,
+  ALTER COLUMN is_active SET DEFAULT TRUE,
+  ALTER COLUMN created_at SET DEFAULT NOW(),
+  ALTER COLUMN updated_at SET DEFAULT NOW();
+
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_schedule_blocks_therapist ON schedule_blocks(therapist_id) WHERE deleted_at IS NULL;
 CREATE INDEX IF NOT EXISTS idx_schedule_blocks_start_time ON schedule_blocks(start_time);

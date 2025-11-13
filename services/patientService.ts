@@ -8,6 +8,10 @@ import { withSupabaseQuery, withSupabaseMutation, withSupabaseCritical } from '.
 import { supabase } from '../lib/supabaseClient';
 import { handleError } from '../lib/middleware/errorHandler';
 
+const forceMockSupabase = (
+  typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_FORCE_MOCK_SUPABASE === 'true'
+) || (typeof process !== 'undefined' && process.env?.VITE_FORCE_MOCK_SUPABASE === 'true');
+
 // Mock data para desenvolvimento
 const MOCK_PATIENT_TRACKING_DATA = {
   'patient_001': {
@@ -49,7 +53,7 @@ const MOCK_PATIENT_TRACKING_DATA = {
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 // Usar exclusivamente Supabase - sem fallback para mock
-const isSupabaseEnabled = true;
+const isSupabaseEnabled = !forceMockSupabase;
 
 export const getRecentPatients = withSupabaseQuery(
     async (): Promise<Patient[]> => {

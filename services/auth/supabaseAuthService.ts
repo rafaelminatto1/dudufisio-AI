@@ -6,6 +6,10 @@ import { Role } from '../../types/enums';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { secureLogger } from '../../lib/secureLogger';
 
+const isForceMockAuth = (
+  typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_FORCE_MOCK_AUTH === 'true'
+) || (typeof process !== 'undefined' && process.env?.VITE_FORCE_MOCK_AUTH === 'true');
+
 export interface AuthState {
   user: User | null;
   session: any;
@@ -241,11 +245,11 @@ class SupabaseAuthService {
   }
 
   private shouldUseMockAuth(credentials: LoginCredentials): boolean {
-    // ⚠️ ATUALIZAÇÃO: admin@moocafisio.com.br agora usa autenticação REAL no Supabase
-    // Removido admin@ da lista de mock credentials
-    // Use mock auth apenas para outros usuários demo (se necessário)
+    if (isForceMockAuth) {
+      return credentials.email.toLowerCase() === 'admin@dudufisio.com' && credentials.password === 'DuduFisio2024!';
+    }
+
     const demoCredentials = [
-      // 'admin@moocafisio.com.br', // ❌ REMOVIDO - agora usa auth real do Supabase
       'therapist@moocafisio.com.br',
       'terapeuta@moocafisio.com.br',
       'patient@moocafisio.com.br',
@@ -264,6 +268,22 @@ class SupabaseAuthService {
 
     // ⚠️ IMPORTANTE: admin@moocafisio.com.br foi REMOVIDO daqui
     // Agora usa autenticação REAL no Supabase
+    const forcedMockUsers: Record<string, User> = isForceMockAuth
+      ? {
+          'admin@dudufisio.com': {
+            id: 'mock-admin-dudufisio',
+            email: 'admin@dudufisio.com',
+            fullName: 'Administrador DuduFisio',
+            name: 'Administrador DuduFisio',
+            role: Role.Admin,
+            avatarUrl: '',
+            phone: '+55 11 99999-0000',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }
+        }
+      : {};
+
     const mockUsers: Record<string, User> = {
       // 'admin@moocafisio.com.br': REMOVIDO - usa auth real ✅
       'therapist@moocafisio.com.br': {
@@ -312,6 +332,8 @@ class SupabaseAuthService {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
+    ,
+      ...forcedMockUsers
     };
 
     const user = mockUsers[credentials.email];

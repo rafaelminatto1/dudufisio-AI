@@ -63,11 +63,13 @@ cp .env.example .env.local
 # 4. Execute migrations
 npm run supabase:push
 
-# 5. Inicie o servidor de desenvolvimento
+# 5. Inicie o servidor de desenvolvimento (host + micro-frontends)
+# Isso sobe o host em http://localhost:5173 e os remotos (agenda, tratamentos, financeiro, patient portal)
 npm run dev
 
 # 6. Abra no navegador
-# http://localhost:3000
+# http://localhost:5173
+# (Para usar apenas o host isolado: npm run dev:host-only)
 ```
 
 #### Alternativa com pnpm
@@ -78,6 +80,7 @@ O projeto já inclui `pnpm-workspace.yaml`. Para usar pnpm:
 corepack enable pnpm
 pnpm install
 pnpm run dev
+pnpm run dev:host-only
 ```
 
 > Sempre que precisar limpar dependências antes de um build, execute `npm run clean:deps` (ou `pnpm clean:deps`).
@@ -224,7 +227,8 @@ npm run test:watch
 
 ```bash
 # Desenvolvimento
-npm run dev              # Servidor de desenvolvimento
+npm run dev              # Host + micro-frontends em modo desenvolvimento
+npm run dev:host-only    # Somente o host principal
 npm run build            # Build para produção
 npm run start            # Inicia servidor produção
 npm run lint             # Executar linter

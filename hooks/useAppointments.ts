@@ -150,7 +150,7 @@ export const useAppointments = (startDate: Date | null, endDate: Date | null) =>
         const patient = patientMap.get(app.patientId);
         const confirmationState = getConfirmationState(app);
         const { history: reminderHistory, last } = buildReminderHistory(app);
-
+        
         return {
             ...app,
             // Defaults seguros

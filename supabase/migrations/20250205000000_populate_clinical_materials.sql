@@ -33,6 +33,18 @@ CREATE TABLE IF NOT EXISTS clinical_materials (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Garantir que as colunas necessárias existam mesmo que a tabela já tenha sido criada em versões anteriores
+ALTER TABLE clinical_materials
+  ADD COLUMN IF NOT EXISTS file_url TEXT,
+  ADD COLUMN IF NOT EXISTS file_type TEXT,
+  ADD COLUMN IF NOT EXISTS is_fillable BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS download_count INTEGER DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS published_at TIMESTAMPTZ;
+
+ALTER TABLE clinical_materials
+  ALTER COLUMN is_fillable SET DEFAULT FALSE,
+  ALTER COLUMN download_count SET DEFAULT 0;
 -- Criar tabela de categorias se não existir
 CREATE TABLE IF NOT EXISTS clinical_material_categories (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

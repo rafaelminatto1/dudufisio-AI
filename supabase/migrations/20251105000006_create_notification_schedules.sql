@@ -55,44 +55,86 @@ CREATE POLICY "Service role can manage all notification schedules"
   FOR ALL
   USING (auth.role() = 'service_role');
 -- Authenticated users with proper permissions can insert schedules
-CREATE POLICY "Authenticated users can create notification schedules"
-  ON public.notification_schedules
-  FOR INSERT
-  WITH CHECK (
-    auth.role() = 'authenticated'
-    AND (
-      auth.uid() = user_id
-      OR EXISTS (
-        SELECT 1 FROM public.user_roles
-        WHERE user_id = auth.uid()
-        AND role IN ('admin', 'terapeuta')
-      )
-    )
-  );
--- Users with proper permissions can update their schedules
-CREATE POLICY "Users can update their own notification schedules"
-  ON public.notification_schedules
-  FOR UPDATE
-  USING (
-    auth.uid() = user_id
-    OR EXISTS (
-      SELECT 1 FROM public.user_roles
-      WHERE user_id = auth.uid()
-      AND role IN ('admin', 'terapeuta')
-    )
-  );
--- Users with proper permissions can delete their schedules
-CREATE POLICY "Users can delete their own notification schedules"
-  ON public.notification_schedules
-  FOR DELETE
-  USING (
-    auth.uid() = user_id
-    OR EXISTS (
-      SELECT 1 FROM public.user_roles
-      WHERE user_id = auth.uid()
-      AND role IN ('admin', 'terapeuta')
-    )
-  );
+DROP POLICY IF EXISTS "Authenticated users can create notification schedules" ON public.notification_schedules;
+DROP POLICY IF EXISTS "Users can update their own notification schedules" ON public.notification_schedules;
+DROP POLICY IF EXISTS "Users can delete their own notification schedules" ON public.notification_schedules;
+
+DO $policies$
+DECLARE
+  has_user_roles boolean := to_regclass('public.user_roles') IS NOT NULL;
+BEGIN
+  IF has_user_roles THEN
+    EXECUTE $policy$
+      CREATE POLICY "Authenticated users can create notification schedules"
+      ON public.notification_schedules
+      FOR INSERT
+      WITH CHECK (
+        auth.role() = 'authenticated'
+        AND (
+          auth.uid() = user_id
+          OR EXISTS (
+            SELECT 1 FROM public.user_roles
+            WHERE user_id = auth.uid()
+            AND role IN ('admin', 'terapeuta')
+          )
+        )
+      );
+    $policy$;
+
+    EXECUTE $policy$
+      CREATE POLICY "Users can update their own notification schedules"
+      ON public.notification_schedules
+      FOR UPDATE
+      USING (
+        auth.uid() = user_id
+        OR EXISTS (
+          SELECT 1 FROM public.user_roles
+          WHERE user_id = auth.uid()
+          AND role IN ('admin', 'terapeuta')
+        )
+      );
+    $policy$;
+
+    EXECUTE $policy$
+      CREATE POLICY "Users can delete their own notification schedules"
+      ON public.notification_schedules
+      FOR DELETE
+      USING (
+        auth.uid() = user_id
+        OR EXISTS (
+          SELECT 1 FROM public.user_roles
+          WHERE user_id = auth.uid()
+          AND role IN ('admin', 'terapeuta')
+        )
+      );
+    $policy$;
+  ELSE
+    EXECUTE $policy$
+      CREATE POLICY "Authenticated users can create notification schedules"
+      ON public.notification_schedules
+      FOR INSERT
+      WITH CHECK (
+        auth.role() = 'authenticated'
+        AND auth.uid() = user_id
+      );
+    $policy$;
+
+    EXECUTE $policy$
+      CREATE POLICY "Users can update their own notification schedules"
+      ON public.notification_schedules
+      FOR UPDATE
+      USING (auth.uid() = user_id);
+    $policy$;
+
+    EXECUTE $policy$
+      CREATE POLICY "Users can delete their own notification schedules"
+      ON public.notification_schedules
+      FOR DELETE
+      USING (auth.uid() = user_id);
+    $policy$;
+  END IF;
+END
+$policies$;
 -- Add comments for documentation
 COMMENT ON TABLE public.notification_schedules IS 'Agendamento de lembretes automáticos de consultas (24h e 2h antes)';
 COMMENT ON COLUMN public.notification_schedules.appointment_id IS 'ID do agendamento relacionado';

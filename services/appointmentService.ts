@@ -5,6 +5,43 @@ import { secureLogger } from '../lib/secureLogger';
 import { withSupabaseQuery, withSupabaseMutation } from '../lib/supabase/errorHandler';
 import { appointmentRepository } from './repositories/AppointmentRepository';
 import { supabase } from '../lib/supabaseClient';
+import { db } from './mockDb';
+
+const forceMockSupabase = (
+  typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_FORCE_MOCK_SUPABASE === 'true'
+) || (typeof process !== 'undefined' && process.env?.VITE_FORCE_MOCK_SUPABASE === 'true');
+
+const isSupabaseEnabled = !forceMockSupabase;
+
+function filterMockAppointments(
+  appointments: Appointment[],
+  startDate?: Date,
+  endDate?: Date
+): Appointment[] {
+  const startMs = startDate?.getTime();
+  const endMs = endDate?.getTime();
+
+  return appointments
+    .filter((appointment) => {
+      const startTime = appointment.startTime instanceof Date
+        ? appointment.startTime
+        : new Date(appointment.startTime as any);
+
+      if (startMs && startTime.getTime() < startMs) {
+        return false;
+      }
+
+      if (endMs && startTime.getTime() > endMs) {
+        return false;
+      }
+
+      return true;
+    })
+    .map((appointment) => ({
+      ...appointment,
+      confirmed: Boolean(appointment.confirmed),
+    }));
+}
 
 /**
  * Helper: Converte string ISO ou null para Date ou undefined
@@ -131,7 +168,6 @@ function rowToAppointment(row: any): Appointment {
     sessionNumber: row.session_number,
     
     // Campos de confirmação (se existirem)
-    confirmed: row.confirmed,
     confirmationSentAt: toDateOrUndefined(row.confirmation_sent_at),
     completedAt: toDateOrUndefined(row.completed_at),
     completed_at: row.completed_at,
@@ -221,6 +257,11 @@ function appointmentToRow(appointment: Appointment): any {
 
 export const getAppointments = withSupabaseQuery(
     async (startDate?: Date, endDate?: Date): Promise<Appointment[]> => {
+        if (!isSupabaseEnabled) {
+            const mockData = db.getAppointments();
+            return filterMockAppointments(mockData, startDate, endDate);
+        }
+
         const filters: any = {};
         
         if (startDate) {
@@ -244,6 +285,11 @@ export const getAppointments = withSupabaseQuery(
 
 export const getAppointmentById = withSupabaseQuery(
     async (id: string): Promise<Appointment | undefined> => {
+        if (!isSupabaseEnabled) {
+            const mockAppointment = db.getAppointments().find((appointment) => appointment.id === id);
+            return mockAppointment;
+        }
+
         const row = await appointmentRepository.findById(id);
         return row ? rowToAppointment(row) : undefined;
     },
@@ -255,6 +301,13 @@ export const getAppointmentById = withSupabaseQuery(
 
 export const getAppointmentsByPatientId = withSupabaseQuery(
     async (patientId: string): Promise<Appointment[]> => {
+        if (!isSupabaseEnabled) {
+            const mockAppointments = db
+                .getAppointments()
+                .filter((appointment) => appointment.patientId === patientId);
+            return mockAppointments;
+        }
+
         const rows = await appointmentRepository.findByPatientId(patientId, {
             sort: { field: 'start_time', ascending: false }
         });

@@ -9,19 +9,15 @@ ALTER TABLE public.appointments
   ADD COLUMN IF NOT EXISTS reminder_sent_24h TIMESTAMPTZ,
   ADD COLUMN IF NOT EXISTS reminder_sent_2h TIMESTAMPTZ,
   ADD COLUMN IF NOT EXISTS whatsapp_conversation_id TEXT;
-
 ALTER TABLE public.appointments
   ALTER COLUMN confirmed SET DEFAULT FALSE;
-
 ALTER TABLE public.appointments
   ALTER COLUMN confirmed SET NOT NULL;
-
 CREATE INDEX IF NOT EXISTS idx_appointments_confirmed ON public.appointments (confirmed);
 CREATE INDEX IF NOT EXISTS idx_appointments_confirmed_at ON public.appointments (confirmed_at DESC NULLS LAST);
 CREATE INDEX IF NOT EXISTS idx_appointments_reminder_7d ON public.appointments (reminder_sent_7d);
 CREATE INDEX IF NOT EXISTS idx_appointments_reminder_24h ON public.appointments (reminder_sent_24h);
 CREATE INDEX IF NOT EXISTS idx_appointments_reminder_2h ON public.appointments (reminder_sent_2h);
-
 -- 2) Padronização do log de mensagens WhatsApp
 DO $$
 BEGIN
@@ -89,57 +85,40 @@ BEGIN
     END IF;
   END IF;
 END $$;
-
 ALTER TABLE public.whatsapp_messages
   ADD COLUMN IF NOT EXISTS channel TEXT DEFAULT 'whatsapp';
-
 ALTER TABLE public.whatsapp_messages
   ADD COLUMN IF NOT EXISTS message_type TEXT;
-
 ALTER TABLE public.whatsapp_messages
   ADD COLUMN IF NOT EXISTS message TEXT;
-
 ALTER TABLE public.whatsapp_messages
   ADD COLUMN IF NOT EXISTS payload JSONB DEFAULT '{}'::JSONB;
-
 ALTER TABLE public.whatsapp_messages
   ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending';
-
 ALTER TABLE public.whatsapp_messages
   ADD COLUMN IF NOT EXISTS message_id TEXT;
-
 ALTER TABLE public.whatsapp_messages
   ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
-
 UPDATE public.whatsapp_messages SET channel = 'whatsapp' WHERE channel IS NULL;
 UPDATE public.whatsapp_messages SET payload = '{}'::JSONB WHERE payload IS NULL;
 UPDATE public.whatsapp_messages SET updated_at = NOW() WHERE updated_at IS NULL;
 UPDATE public.whatsapp_messages SET message_type = 'info' WHERE message_type IS NULL;
-
 ALTER TABLE public.whatsapp_messages
   ALTER COLUMN channel SET DEFAULT 'whatsapp';
-
 ALTER TABLE public.whatsapp_messages
   ALTER COLUMN channel SET NOT NULL;
-
 ALTER TABLE public.whatsapp_messages
   ALTER COLUMN message SET NOT NULL;
-
 ALTER TABLE public.whatsapp_messages
   ALTER COLUMN message_type SET NOT NULL;
-
 ALTER TABLE public.whatsapp_messages
   ALTER COLUMN status SET NOT NULL;
-
 ALTER TABLE public.whatsapp_messages
   ALTER COLUMN updated_at SET NOT NULL;
-
 ALTER TABLE public.whatsapp_messages
   ALTER COLUMN updated_at SET DEFAULT NOW();
-
 ALTER TABLE public.whatsapp_messages
   ALTER COLUMN sent_at SET DEFAULT NOW();
-
 DO $$
 BEGIN
   IF EXISTS (
@@ -150,7 +129,6 @@ BEGIN
     ALTER TABLE public.whatsapp_messages DROP CONSTRAINT whatsapp_messages_status_check;
   END IF;
 END $$;
-
 DO $$
 BEGIN
   IF EXISTS (
@@ -161,23 +139,18 @@ BEGIN
     ALTER TABLE public.whatsapp_messages DROP CONSTRAINT whatsapp_messages_message_category_check;
   END IF;
 END $$;
-
 ALTER TABLE public.whatsapp_messages
   ADD CONSTRAINT whatsapp_messages_message_type_check
   CHECK (message_type IN ('reminder', 'confirmation', 'cancellation', 'reschedule', 'info'));
-
 ALTER TABLE public.whatsapp_messages
   ADD CONSTRAINT whatsapp_messages_status_check
   CHECK (status IN ('pending', 'sent', 'delivered', 'read', 'failed', 'processed'));
-
 CREATE INDEX IF NOT EXISTS idx_whatsapp_messages_patient ON public.whatsapp_messages(patient_id);
 CREATE INDEX IF NOT EXISTS idx_whatsapp_messages_appointment ON public.whatsapp_messages(appointment_id);
 CREATE INDEX IF NOT EXISTS idx_whatsapp_messages_status ON public.whatsapp_messages(status);
 CREATE INDEX IF NOT EXISTS idx_whatsapp_messages_created ON public.whatsapp_messages(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_whatsapp_messages_message_id ON public.whatsapp_messages(message_id) WHERE message_id IS NOT NULL;
-
 ALTER TABLE public.whatsapp_messages ENABLE ROW LEVEL SECURITY;
-
 DROP POLICY IF EXISTS "Staff can view whatsapp messages" ON public.whatsapp_messages;
 CREATE POLICY "Staff can view whatsapp messages"
   ON public.whatsapp_messages
@@ -189,7 +162,6 @@ CREATE POLICY "Staff can view whatsapp messages"
         AND auth.users.raw_user_meta_data->>'role' IN ('admin', 'therapist')
     )
   );
-
 DROP POLICY IF EXISTS "Staff can insert whatsapp messages" ON public.whatsapp_messages;
 CREATE POLICY "Staff can insert whatsapp messages"
   ON public.whatsapp_messages
@@ -201,13 +173,11 @@ CREATE POLICY "Staff can insert whatsapp messages"
         AND auth.users.raw_user_meta_data->>'role' IN ('admin', 'therapist')
     )
   );
-
 DROP POLICY IF EXISTS "System can update whatsapp messages" ON public.whatsapp_messages;
 CREATE POLICY "System can update whatsapp messages"
   ON public.whatsapp_messages
   FOR UPDATE
   USING (true);
-
 COMMENT ON TABLE public.whatsapp_messages IS 'Log estruturado de mensagens trocadas via WhatsApp com pacientes';
 COMMENT ON COLUMN public.whatsapp_messages.direction IS 'Sentido da mensagem (outbound = enviada, inbound = recebida)';
 COMMENT ON COLUMN public.whatsapp_messages.channel IS 'Canal utilizado para o envio (ex.: whatsapp)';

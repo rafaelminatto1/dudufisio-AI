@@ -276,7 +276,7 @@ const getFutureDate = (days: number, hours: number, minutes: number = 0) => {
 
 
 export const mockAppointments: Appointment[] = [
-    { id: 'app1', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(0, 9), endTime: getFutureDate(0, 10), title: 'Avaliação de joelho', type: AppointmentType.Evaluation, status: AppointmentStatus.Scheduled, value: 150, paymentStatus: 'pending', sessionNumber: 1, totalSessions: 10 },
+    { id: 'app1', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(0, 9), endTime: getFutureDate(0, 10), title: 'Avaliação de joelho', type: AppointmentType.Evaluation, status: AppointmentStatus.Scheduled, value: 150, paymentStatus: 'pending', sessionNumber: 1, totalSessions: 10, confirmed: false, reminderSent7d: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), reminderSent24h: new Date(Date.now() - 24 * 60 * 60 * 1000), reminderSent2h: new Date(Date.now() - 2 * 60 * 60 * 1000), whatsappConversationId: 'mock-conv-app1' },
     { id: 'app2', patientId: '2', patientName: 'Bruno Gomes', patientAvatarUrl: mockPatients[1]?.avatarUrl || '', therapistId: 'therapist_2', startTime: getFutureDate(0, 10), endTime: getFutureDate(0, 11), title: 'Tratamento de lombar', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending', sessionNumber: 3, totalSessions: 8 },
     { id: 'app3', patientId: '1', patientName: 'Ana Beatriz Costa', patientAvatarUrl: mockPatients[0]?.avatarUrl || '', therapistId: 'therapist_1', startTime: getFutureDate(1, 14), endTime: getFutureDate(1, 15), title: 'Sessão de fortalecimento', type: AppointmentType.Session, status: AppointmentStatus.Scheduled, value: 120, paymentStatus: 'pending', sessionNumber: 2, totalSessions: 10 },
     { id: 'app4', patientId: '3', patientName: 'Carla Dias', patientAvatarUrl: mockPatients[2]?.avatarUrl || '', therapistId: 'therapist_3', startTime: getFutureDate(2, 11), endTime: getFutureDate(2, 12), title: 'Consulta de retorno', type: AppointmentType.Return, status: AppointmentStatus.Scheduled, value: 100, paymentStatus: 'paid' },
@@ -1052,7 +1052,7 @@ export const mockGamificationOverview = {
     recentActivities: [
         { label: 'Sessão concluída', timestamp: new Date(new Date().setDate(new Date().getDate() - 1)), points: 50 },
         { label: 'Registro de dor adicionado', timestamp: new Date(new Date().setHours(new Date().getHours() - 8)), points: 10 },
-        { label: 'Desafio “Sequência de 5 dias” concluído', timestamp: new Date(new Date().setDate(new Date().getDate() - 2)), points: 200 },
+        { label: 'Desafio "Sequência de 5 dias" concluído', timestamp: new Date(new Date().setDate(new Date().getDate() - 2)), points: 200 },
     ],
 };
 
