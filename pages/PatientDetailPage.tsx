@@ -41,7 +41,8 @@ import { StrengthChart } from '../components/charts/StrengthChart';
 import { YBalanceChart } from '../components/charts/YBalanceChart';
 import { FunctionalityChart } from '../components/charts/FunctionalityChart';
 // Componente de relatórios
-import { ReportGeneratorDialog } from '../components/reports/ReportGeneratorDialog';
+// FIXME: Temporarily commented out - module resolution error on Vercel build
+// import { ReportGeneratorDialog } from '../components/reports/ReportGeneratorDialog';
 // Componente de feedback/satisfação
 import { RatingHistory } from '../components/patient/RatingHistory';
 
@@ -712,6 +713,7 @@ const PatientDetailPage: React.FC = () => {
             />
 
             {/* Gerador de Relatórios Avançado */}
+            {/* FIXME: Temporarily commented out - module resolution error on Vercel build
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Gerador de Relatórios Avançado</CardTitle>
@@ -720,6 +722,7 @@ const PatientDetailPage: React.FC = () => {
                 <ReportGeneratorDialog patientId={patient.id} />
               </CardContent>
             </Card>
+            */}
           </TabsContent>
         </Tabs>
 
