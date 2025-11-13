@@ -72,6 +72,7 @@
   },
   "include": [
     "components",
+    "src",
     "pages",
     "services",
     "hooks",

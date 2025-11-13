@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { X, Edit, Trash2, Play, DollarSign, Save, Repeat, Video, User, Clock, Calendar, AlertTriangle, History, CreditCard } from 'lucide-react';
+import { X, Edit, Trash2, Play, DollarSign, Save, Repeat, Video, User, Clock, Calendar, AlertTriangle, History, CreditCard, CheckCircle2, AlertCircle, RefreshCw, XCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Appointment, Patient, Therapist, AppointmentStatus, AppointmentType, EnrichedAppointment } from '../types';
+import { Appointment, Patient, Therapist, AppointmentStatus, AppointmentType, EnrichedAppointment } from '@/shared/types';
 import { useToast } from '../contexts/ToastContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import format from 'date-fns/format';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { ptBR } from 'date-fns/locale';
 import PatientInfoCard from './agenda/PatientInfoCard';
 import * as appointmentService from '../services/appointmentService';
-import { formatCurrencyBR, displayAppointmentType } from '../lib/format';
+import { formatCurrencyBR, displayAppointmentType } from '@/shared/format';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import { useSupabaseAuth } from '../contexts/SupabaseAuthContext';
+import { eventService } from '@/services/eventService';
+import { cn } from '@/shared/utils';
 
 interface AppointmentDetailModalProps {
   appointment: EnrichedAppointment | null;
@@ -52,7 +57,9 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
   const [activeTab, setActiveTab] = useState('details');
   const [historyAppointments, setHistoryAppointments] = useState<Appointment[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [isSendingReminder, setIsSendingReminder] = useState(false);
   const navigate = useNavigate();
+  const { session } = useSupabaseAuth();
 
   useEffect(() => {
     const nextValue = appointment && appointment.value && appointment.value > 0
@@ -121,6 +128,45 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
     }
   };
 
+  const handleResendReminder = async (reminderType: '7d' | '24h' | '2h') => {
+    if (!appointment) return;
+    const accessToken = session?.access_token;
+    if (!accessToken) {
+      showToast('Sessão expirada. Faça login novamente.', 'error');
+      return;
+    }
+
+    try {
+      setIsSendingReminder(true);
+      const response = await fetch('/api/whatsapp/reminder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          appointmentId: appointment.id,
+          reminderType,
+          force: true,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorPayload = await response.json().catch(() => ({ error: 'Erro desconhecido' }));
+        throw new Error(errorPayload.error || 'Falha ao reenviar lembrete');
+      }
+
+      showToast('Lembrete reenviado com sucesso!', 'success');
+      eventService.emit('appointments:changed');
+    } catch (error) {
+      console.error('Erro ao reenviar lembrete WhatsApp:', error);
+      const message = error instanceof Error ? error.message : 'Falha ao reenviar lembrete';
+      showToast(message, 'error');
+    } finally {
+      setIsSendingReminder(false);
+    }
+  };
+
   const isTeleconsulta = appointment.type === AppointmentType.Teleconsulta;
   const sessionButtonText = isTeleconsulta ? 'Iniciar Teleconsulta' : 'Iniciar Atendimento';
   const SessionIcon = isTeleconsulta ? Video : Play;
@@ -139,8 +185,16 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+      data-testid="appointment-detail-overlay"
+    >
+      <div
+        className="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col"
+        onClick={e => e.stopPropagation()}
+        data-testid="appointment-detail-modal"
+      >
         {/* Header */}
         <header className="flex items-center justify-between p-4 border-b border-slate-200 bg-slate-50 rounded-t-lg">
           <div className="flex-1">
@@ -192,6 +246,96 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
                 <div className="p-3 bg-slate-50 rounded-lg">
                   <div className="text-xs text-slate-600 mb-1">Tipo</div>
                   <div className="font-semibold text-slate-900">{appointment.type}</div>
+                </div>
+              </div>
+
+              <div className="p-3 bg-white border border-slate-200 rounded-lg">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="text-xs text-slate-600 mb-1">Confirmação de Presença</div>
+                    <Badge
+                      variant="outline"
+                      className={cn('text-xs flex items-center gap-1', appointment.confirmationBadgeClass)}
+                      data-testid="appointment-confirmation-badge"
+                    >
+                      {appointment.confirmationState === 'confirmed' && <CheckCircle2 className="w-3 h-3" />}
+                      {appointment.confirmationState === 'pending' && <AlertCircle className="w-3 h-3" />}
+                      {appointment.confirmationState === 'rescheduled' && <RefreshCw className="w-3 h-3" />}
+                      {appointment.confirmationState === 'cancelled' && <XCircle className="w-3 h-3" />}
+                      {appointment.confirmationLabel}
+                    </Badge>
+                    {appointment.confirmedAt && (
+                      <p className="text-xs text-emerald-600 mt-2" data-testid="appointment-confirmed-at">
+                        Confirmado em {format(appointment.confirmedAt, "dd/MM 'às' HH:mm", { locale: ptBR })}
+                      </p>
+                    )}
+                    {!appointment.confirmedAt && appointment.isAwaitingConfirmation && (
+                      <p className="text-xs text-slate-600 mt-2" data-testid="appointment-last-reminder">
+                        Último lembrete{' '}
+                        {appointment.lastReminderAt
+                          ? formatDistanceToNow(appointment.lastReminderAt, { locale: ptBR, addSuffix: true })
+                          : 'não enviado'}
+                        {appointment.lastReminderType ? ` • ${appointment.lastReminderType.toUpperCase()}` : ''}
+                      </p>
+                    )}
+                    {appointment.reminderHistory && appointment.reminderHistory.length > 0 && (
+                      <ul className="mt-2 space-y-1 text-xs text-slate-500">
+                        {appointment.reminderHistory
+                          .slice()
+                          .reverse()
+                          .map((entry, index) => (
+                            <li key={`${entry.type}-${entry.sentAt.getTime()}-${index}`}>
+                              {entry.type.toUpperCase()} • {format(entry.sentAt, "dd/MM 'às' HH:mm", { locale: ptBR })}
+                            </li>
+                          ))}
+                      </ul>
+                    )}
+                    {!appointment.reminderHistory || appointment.reminderHistory.length === 0 ? (
+                      <p className="mt-2 text-xs text-slate-500" data-testid="appointment-reminder-empty">
+                        Nenhum lembrete enviado até o momento.
+                      </p>
+                    ) : null}
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={isSendingReminder}
+                        className="flex items-center gap-2"
+                        data-testid="btn-whatsapp-resend"
+                      >
+                        {isSendingReminder ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Enviando...
+                          </>
+                        ) : (
+                          'Reenviar Lembrete'
+                        )}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onSelect={() => handleResendReminder('24h')}
+                        data-testid="whatsapp-reminder-24h"
+                      >
+                        Lembrete 24h antes
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onSelect={() => handleResendReminder('2h')}
+                        data-testid="whatsapp-reminder-2h"
+                      >
+                        Lembrete 2h antes
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onSelect={() => handleResendReminder('7d')}
+                        data-testid="whatsapp-reminder-7d"
+                      >
+                        Lembrete 7 dias antes
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
 

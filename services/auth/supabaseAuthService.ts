@@ -52,24 +52,25 @@ class SupabaseAuthService {
         action: 'initializeAuth'
       });
 
-      // Set a timeout for initialization to prevent infinite loading
-      // Aumentado para 30 segundos para permitir que Supabase complete a verificação de sessão
-      const initTimeout = setTimeout(() => {
-        secureLogger.warn('Auth initialization timeout após 30s, fallback ativado', {
-          component: 'supabaseAuthService'
-        });
-        this.switchToFallbackAuth();
-      }, 30000); // 30 segundos - tempo suficiente para Supabase verificar sessão persistida
-
-      // Fast-path: se nada responder rapidamente, finalize loading para liberar a UI do login
-      const earlyFinishTimer = setTimeout(() => {
-        if (this.currentState.loading && !this.currentState.user) {
-          secureLogger.info('Finalizando loading cedo (200ms) para exibir login imediatamente', {
+      // 🔧 FIX: Garantir que SEMPRE sairemos do loading, mesmo se tudo falhar
+      const maxInitTimeout = setTimeout(() => {
+        if (this.currentState.loading) {
+          secureLogger.error('⚠️ FALLBACK DE EMERGÊNCIA: Loading infinito detectado após 5s', {
             component: 'supabaseAuthService'
           });
-          this.updateState({ loading: false });
+          this.switchToFallbackAuth();
         }
-      }, 200);
+      }, 5000); // 5 segundos - timeout de emergência
+
+      // Set a timeout for initialization to prevent infinite loading
+      const initTimeout = setTimeout(() => {
+        if (this.currentState.loading) {
+          secureLogger.warn('Auth initialization timeout após 3s, fallback ativado', {
+            component: 'supabaseAuthService'
+          });
+          this.switchToFallbackAuth();
+        }
+      }, 3000); // Reduzido para 3 segundos para melhor UX
 
       try {
         // Get initial session with retry
@@ -79,19 +80,31 @@ class SupabaseAuthService {
         });
 
         const supa = await this.getSupabase();
-        const { data: { session }, error: sessionError } = await retryApiCall(
+
+        // 🔧 FIX: Usar Promise.race para garantir que não travará
+        const sessionPromise = retryApiCall(
           () => supa.auth.getSession(),
           'getSession',
           2 // Apenas 2 tentativas para inicialização
         );
+
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Timeout ao buscar sessão')), 2000);
+        });
+
+        const result = await Promise.race([sessionPromise, timeoutPromise]) as any;
+        const { data: { session }, error: sessionError } = result;
+
+        // Limpar timeout principal já que obtivemos resultado
+        clearTimeout(initTimeout);
 
         if (sessionError) {
           secureLogger.warn('Session error, switching to fallback auth', {
             component: 'supabaseAuthService',
             error: sessionError.message
           });
-          clearTimeout(initTimeout);
           this.switchToFallbackAuth();
+          clearTimeout(maxInitTimeout);
           return;
         }
 
@@ -112,9 +125,8 @@ class SupabaseAuthService {
           this.updateState({ user: null, session: null, loading: false });
         }
 
-        // Clear the timeouts since we completed successfully
-        clearTimeout(initTimeout);
-        clearTimeout(earlyFinishTimer);
+        // Clear all timeouts since we completed successfully
+        clearTimeout(maxInitTimeout);
 
         // Listen for auth changes
         supa.auth.onAuthStateChange(async (event, session) => {
@@ -145,7 +157,7 @@ class SupabaseAuthService {
 
       } catch (error) {
         clearTimeout(initTimeout);
-        clearTimeout(earlyFinishTimer);
+        clearTimeout(maxInitTimeout);
         secureLogger.error('Supabase auth failed, switching to fallback', error, {
           component: 'supabaseAuthService'
         });

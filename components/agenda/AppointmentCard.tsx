@@ -103,6 +103,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
       <Badge
         variant="outline"
         className={cn('text-xs flex items-center gap-1', appointment.confirmationBadgeClass)}
+        data-testid="appointment-confirmation-badge"
       >
         <Icon className="w-3 h-3" />
         {appointment.confirmationLabel}
@@ -144,6 +145,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         className={cn('cursor-pointer', className)}
         onClick={onClick}
         draggable={draggable}
+        data-testid={`appointment-card-${appointment.id}`}
       >
         <Card
           className={cn(
@@ -224,7 +226,10 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           )}
 
           {!compact && appointment.lastReminderAt && (
-            <div className="mt-sm text-[10px] text-neutral-textSecondary">
+            <div
+              className="mt-sm text-[10px] text-neutral-textSecondary"
+              data-testid="appointment-last-reminder"
+            >
               Último lembrete {formatDistanceToNow(appointment.lastReminderAt, { locale: ptBR, addSuffix: true })}
               {appointment.lastReminderType ? ` • ${appointment.lastReminderType.toUpperCase()}` : ''}
             </div>

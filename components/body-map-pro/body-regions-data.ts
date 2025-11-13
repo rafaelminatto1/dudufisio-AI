@@ -756,11 +756,12 @@ export const GROUP_COLORS: Record<BodyGroup, string> = {
  * Função para obter cor baseada em intensidade de dor (0-10)
  */
 export function getPainColor(intensity: number): string {
-  if (intensity === 0) return '#f1f5f9'; // Sem dor - cinza claro
-  if (intensity <= 3) return '#22c55e';  // Leve - verde
-  if (intensity <= 6) return '#eab308';  // Moderada - amarelo
-  if (intensity <= 8) return '#f97316';  // Intensa - laranja
-  return '#ef4444';                       // Severa - vermelho
+  if (intensity <= 0) return 'transparent'; // Sem dor
+  if (intensity <= 2) return 'rgba(16, 185, 129, 0.3)'; // Dor muito leve
+  if (intensity <= 4) return 'rgba(251, 191, 36, 0.5)'; // Dor leve
+  if (intensity <= 7) return 'rgba(249, 115, 22, 0.7)'; // Dor moderada
+  if (intensity <= 9) return 'rgba(239, 68, 68, 0.85)'; // Dor intensa
+  return 'rgba(153, 27, 27, 1)'; // Dor muito intensa
 }
 
 /**

@@ -3,6 +3,12 @@ import { motion } from 'framer-motion';
 import type { BodyRegion } from './body-regions-data';
 import { getPainColor } from './body-regions-data';
 
+const BASE_REGION_COLOR = 'rgba(96, 165, 250, 0.35)'; // Azul claro base
+const BASE_REGION_COLOR_HOVER = 'rgba(96, 165, 250, 0.55)';
+const BASE_STROKE_COLOR = '#2563EB';
+const SELECTED_STROKE_COLOR = '#1D4ED8';
+const HOVER_STROKE_COLOR = '#1E3A8A';
+
 interface BodyRegionPolygonProps {
   region: BodyRegion;
   painIntensity?: number;  // 0-10, undefined = sem dor registrada
@@ -34,32 +40,33 @@ const BodyRegionPolygon: React.FC<BodyRegionPolygonProps> = ({
   showLabel = false
 }) => {
   // Cor baseada em intensidade de dor, ou cor base da região
-  const fillColor = painIntensity !== undefined && painIntensity > 0
+  const hasPain = painIntensity !== undefined && painIntensity > 0;
+  const fillColor = hasPain
     ? getPainColor(painIntensity)
-    : region.color;
+    : (isHovered ? BASE_REGION_COLOR_HOVER : BASE_REGION_COLOR);
 
   // Opacidade baseada no estado
   const getOpacity = () => {
-    if (isSelected) return 0.9;
-    if (isHovered) return 0.8;
-    if (painIntensity !== undefined && painIntensity > 0) return 0.85;
-    return 0.5; // Opacidade padrão para regiões sem dor
+    if (isSelected) return 0.95;
+    if (isHovered) return 0.9;
+    if (hasPain) return 0.95;
+    return 0.8; // Opacidade padrão para regiões sem dor
   };
 
   // Stroke (borda) baseada no estado
   const getStroke = () => {
-    if (isSelected) return '#1e40af'; // Azul escuro
-    if (isHovered) return '#3b82f6'; // Azul
-    if (painIntensity !== undefined && painIntensity > 0) {
-      return '#991b1b'; // Vermelho escuro se tem dor
+    if (isSelected) return SELECTED_STROKE_COLOR;
+    if (isHovered) return HOVER_STROKE_COLOR;
+    if (hasPain) {
+      return '#7F1D1D'; // Vermelho escuro quando há dor
     }
-    return '#64748b'; // Cinza padrão
+    return BASE_STROKE_COLOR;
   };
 
   const getStrokeWidth = () => {
     if (isSelected) return '3';
     if (isHovered) return '2.5';
-    return '1.5';
+    return '1.8';
   };
 
   return (

@@ -5,11 +5,11 @@ import { ptBR } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
-import { cn } from '../../lib/utils';
+import { EnrichedAppointment, Therapist, AppointmentStatus } from '@/shared/types';
+import { cn } from '@/shared/utils';
 import { Filter, Calendar, Clock, User, DollarSign, ArrowUpDown, ArrowUp, ArrowDown, CheckCircle2, AlertCircle, XCircle, RefreshCw } from 'lucide-react';
 import Tooltip from '../ui/tooltip';
-import { formatCurrencyBR, displayAppointmentType } from '../../lib/format';
+import { formatCurrencyBR, displayAppointmentType } from '@/shared/format';
 
 interface ListViewProps {
   appointments: EnrichedAppointment[];
@@ -154,7 +154,11 @@ const ListView: React.FC<ListViewProps> = ({
     }
 
     return (
-      <Badge variant="outline" className={cn('text-xs flex items-center gap-1', appointment.confirmationBadgeClass)}>
+      <Badge
+        variant="outline"
+        className={cn('text-xs flex items-center gap-1', appointment.confirmationBadgeClass)}
+        data-testid="appointment-confirmation-badge"
+      >
         <Icon className="w-3 h-3" />
         {appointment.confirmationLabel}
       </Badge>
@@ -288,6 +292,7 @@ const ListView: React.FC<ListViewProps> = ({
               className="cursor-pointer hover:shadow-lg transition-all duration-200 border-l-4"
               style={{ borderLeftColor: getTherapistColor(appointment.therapistColor) }}
               onClick={() => onAppointmentClick(appointment)}
+              data-testid={`appointment-card-${appointment.id}`}
             >
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
@@ -344,7 +349,10 @@ const ListView: React.FC<ListViewProps> = ({
                         </div>
                       )}
                       {appointment.lastReminderAt && (
-                        <div className="mt-1 text-xs text-slate-500">
+                        <div
+                          className="mt-1 text-xs text-slate-500"
+                          data-testid="appointment-last-reminder"
+                        >
                           Último lembrete {formatDistanceToNow(appointment.lastReminderAt, { locale: ptBR, addSuffix: true })}
                           {appointment.lastReminderType ? ` • ${appointment.lastReminderType.toUpperCase()}` : ''}
                         </div>

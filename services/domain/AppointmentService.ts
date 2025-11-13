@@ -322,6 +322,19 @@ export class AppointmentService {
       parentAppointmentId: row.parent_appointment_id || undefined,
       createdAt: row.created_at || new Date().toISOString(),
       updatedAt: row.updated_at || new Date().toISOString(),
+      confirmed: row.confirmed ?? undefined,
+      confirmedAt: row.confirmed_at ?? undefined,
+      confirmed_at: row.confirmed_at ?? undefined,
+      reminderSent: row.reminder_sent ?? undefined,
+      reminderSentAt: row.reminder_sent_at ?? undefined,
+      reminderSent7d: row.reminder_sent_7d ?? undefined,
+      reminderSent24h: row.reminder_sent_24h ?? undefined,
+      reminderSent2h: row.reminder_sent_2h ?? undefined,
+      reminder_sent_7d: row.reminder_sent_7d ?? undefined,
+      reminder_sent_24h: row.reminder_sent_24h ?? undefined,
+      reminder_sent_2h: row.reminder_sent_2h ?? undefined,
+      whatsappConversationId: row.whatsapp_conversation_id ?? undefined,
+      whatsapp_conversation_id: row.whatsapp_conversation_id ?? undefined,
     };
   }
 
@@ -344,6 +357,15 @@ export class AppointmentService {
       is_recurring: appointment.isRecurring || false,
       recurrence_rule: appointment.recurrenceRule || null,
       parent_appointment_id: appointment.parentAppointmentId || null,
+      confirmed: appointment.confirmed ?? null,
+      confirmed_at: appointment.confirmedAt ?? appointment.confirmed_at ?? null,
+      reminder_sent: appointment.reminderSent ?? null,
+      reminder_sent_at: appointment.reminderSentAt ?? appointment.reminder_sent_at ?? null,
+      reminder_sent_7d: appointment.reminderSent7d ?? appointment.reminder_sent_7d ?? null,
+      reminder_sent_24h: appointment.reminderSent24h ?? appointment.reminder_sent_24h ?? null,
+      reminder_sent_2h: appointment.reminderSent2h ?? appointment.reminder_sent_2h ?? null,
+      whatsapp_conversation_id:
+        appointment.whatsappConversationId ?? appointment.whatsapp_conversation_id ?? null,
     };
   }
 

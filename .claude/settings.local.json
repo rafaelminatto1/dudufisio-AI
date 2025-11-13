@@ -52,7 +52,10 @@
       "Bash(git ls-tree:*)",
       "Bash(timeout /t 15 /nobreak)",
       "Bash($env:NODE_OPTIONS=\"--max-old-space-size=4096\")",
-      "Bash(timeout /t 30 /nobreak)"
+      "Bash(timeout /t 30 /nobreak)",
+      "Bash(Get-Process)",
+      "Bash(Where-Object {$_rocessName -match \"node|vite|eslint\"})",
+      "Bash(Select-String -Pattern \"MoocaFisio|Carregando\" -Context 0,0)"
     ],
     "deny": [],
     "ask": []

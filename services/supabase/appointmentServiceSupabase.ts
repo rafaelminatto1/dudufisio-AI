@@ -32,6 +32,7 @@ type AppointmentRow = {
   cancelled_at: string | null;
   cancellation_reason: string | null;
   cancelled_by: string | null;
+  confirmed: boolean | null;
   confirmed_at: string | null;
   confirmation_method: string | null;
   checked_in_at: string | null;
@@ -39,6 +40,12 @@ type AppointmentRow = {
   payment_status: string | null;
   payment_amount: number | null;
   payment_method: string | null;
+  reminder_sent: string | null;
+  reminder_sent_at: string | null;
+  reminder_sent_7d: string | null;
+  reminder_sent_24h: string | null;
+  reminder_sent_2h: string | null;
+  whatsapp_conversation_id: string | null;
   tags: string[] | null;
   color: string | null;
   priority: number | null;
@@ -112,8 +119,16 @@ class SupabaseAppointmentService {
       cancelledBy: row.cancelled_by || undefined,
 
       // Confirmation
+      confirmed: Boolean(row.confirmed),
       confirmedAt: row.confirmed_at || undefined,
       confirmationMethod: row.confirmation_method || undefined,
+      reminderSent: row.reminder_sent || undefined,
+      reminderSentAt: row.reminder_sent_at || undefined,
+      reminderSent7d: row.reminder_sent_7d || undefined,
+      reminderSent24h: row.reminder_sent_24h || undefined,
+      reminderSent2h: row.reminder_sent_2h || undefined,
+      whatsappConversationId: row.whatsapp_conversation_id || undefined,
+      whatsapp_conversation_id: row.whatsapp_conversation_id || undefined,
 
       // Check-in/out
       checkedInAt: row.checked_in_at || undefined,
@@ -229,7 +244,17 @@ class SupabaseAppointmentService {
     insert.duration = appointment.duration; // 🔧 CORREÇÃO: Mudado de duration_minutes para duration
 
     // Status should always be set (default to 'scheduled')
-    insert.status = appointment.status ? this.mapStatusToDB(appointment.status) : 'scheduled';
+    if (appointment.status) {
+      insert.status = this.mapStatusToDB(appointment.status);
+    }
+
+    if (appointment.confirmed !== undefined) {
+      insert.confirmed = appointment.confirmed;
+    }
+
+    if (appointment.type) {
+      insert.appointment_type = this.mapTypeToDB(appointment.type as string);
+    }
 
     // Optional fields
     if (appointment.therapistId) insert.therapist_id = appointment.therapistId;
@@ -244,23 +269,33 @@ class SupabaseAppointmentService {
     if (appointment.is_virtual !== undefined) insert.is_virtual = appointment.is_virtual;
     if (appointment.meetingUrl) insert.meeting_url = appointment.meetingUrl;
 
-    if (appointment.chiefComplaint) insert.chief_complaint = appointment.chiefComplaint;
-    if (appointment.notes) insert.notes = appointment.notes;
-    if (appointment.privateNotes) insert.private_notes = appointment.privateNotes;
+    if (appointment.chiefComplaint) insert.chief_complaint = appointment.chiefComplaint ?? appointment.chief_complaint ?? null;
+    if (appointment.notes) insert.notes = appointment.notes ?? null;
+    if (appointment.privateNotes) insert.private_notes = appointment.privateNotes ?? appointment.private_notes ?? null;
 
     if (appointment.isRecurring !== undefined) insert.is_recurring = appointment.isRecurring;
     if (appointment.recurrencePattern) insert.recurrence_pattern = appointment.recurrencePattern;
     if (appointment.parentAppointmentId) insert.parent_appointment_id = appointment.parentAppointmentId;
 
     if (appointment.cancelledAt) insert.cancelled_at = appointment.cancelledAt;
-    if (appointment.cancellation_reason) insert.cancellation_reason = appointment.cancellation_reason;
-    if (appointment.cancelledBy) insert.cancelled_by = appointment.cancelledBy;
+    if (appointment.cancellation_reason) insert.cancellation_reason = appointment.cancellationReason ?? appointment.cancellation_reason ?? null;
+    if (appointment.cancelledBy) insert.cancelled_by = appointment.cancelledBy ?? appointment.cancelled_by ?? null;
 
-    if (appointment.confirmedAt) insert.confirmed_at = appointment.confirmedAt;
-    if (appointment.confirmationMethod) insert.confirmation_method = appointment.confirmationMethod;
+    // Confirmation
+    insert.confirmed = appointment.confirmed ?? null;
+    insert.confirmed_at = appointment.confirmedAt ?? appointment.confirmed_at ?? null;
+    insert.confirmation_method = appointment.confirmationMethod ?? appointment.confirmation_method ?? null;
+    insert.reminder_sent = appointment.reminderSent ?? null;
+    insert.reminder_sent_at = appointment.reminderSentAt ?? appointment.reminder_sent_at ?? null;
+    insert.reminder_sent_7d = appointment.reminderSent7d ?? appointment.reminder_sent_7d ?? null;
+    insert.reminder_sent_24h = appointment.reminderSent24h ?? appointment.reminder_sent_24h ?? null;
+    insert.reminder_sent_2h = appointment.reminderSent2h ?? appointment.reminder_sent_2h ?? null;
+    insert.whatsapp_conversation_id =
+      appointment.whatsappConversationId ?? appointment.whatsapp_conversation_id ?? null;
 
-    if (appointment.checkedInAt) insert.checked_in_at = appointment.checkedInAt;
-    if (appointment.checkedOutAt) insert.checked_out_at = appointment.checkedOutAt;
+    // Check-in/out
+    insert.checked_in_at = appointment.checkedInAt ?? appointment.checked_in_at ?? null;
+    insert.checked_out_at = appointment.checkedOutAt ?? appointment.checked_out_at ?? null;
 
     // 🔧 CORREÇÃO: Schema usa 'price' e 'paid', não 'payment_amount' e 'payment_status'
     if (appointment.value !== undefined) insert.price = appointment.value;
