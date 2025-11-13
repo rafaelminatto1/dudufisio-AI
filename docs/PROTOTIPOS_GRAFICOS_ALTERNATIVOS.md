@@ -13,6 +13,11 @@ Explorar opções de gráficos React sem dependência de `lodash`, identificando
 
 > ℹ️ Os valores acima representam o tamanho do pacote descompactado publicado no npm, não refletindo o gzip final (tipicamente ~5x menor após tree-shaking).
 
+## Adoção Fase 2 (2025-11-13)
+- `components/patient/RatingChart` e `packages/patient-portal/src/components/ProgressChart` foram migrados para `@nivo/line`, reutilizando o tema e padrões mostrados nos protótipos abaixo.
+- Apesar da inclusão de Nivo aumentar levemente o `vendor-misc`, o `vendor-lodash` permanece concentrado no dashboard principal, indicando que a remoção total do Recharts continua sendo o maior ganho potencial.
+- `src/pages/EdgeFunctionsPerformanceDashboard.tsx` agora combina `@nivo/line`, `@nivo/bar` e `@nivo/pie`, confirmando viabilidade para dashboards com múltiplos gráficos simultâneos.
+
 ## Protótipos (snippet conceitual)
 
 Os exemplos abaixo traduzem o cenário atual (`LineChart`, `BarChart`, `PieChart`) para cada biblioteca, demonstrando como replicar tooltips customizados e responsividade. Eles não estão conectados ao build principal; servem como referência para migrações futuras.

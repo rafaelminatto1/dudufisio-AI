@@ -5,7 +5,8 @@
 
 -- Enable required extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pg_trgm"; -- For full-text search
+CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+-- For full-text search
 
 -- =====================================================
 -- MAIN TABLES
@@ -41,7 +42,6 @@ CREATE TABLE IF NOT EXISTS clinical_materials (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Material Categories
 CREATE TABLE IF NOT EXISTS clinical_material_categories (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -52,7 +52,6 @@ CREATE TABLE IF NOT EXISTS clinical_material_categories (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Material Versions (history)
 CREATE TABLE IF NOT EXISTS clinical_material_versions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -63,7 +62,6 @@ CREATE TABLE IF NOT EXISTS clinical_material_versions (
   created_by UUID REFERENCES auth.users(id),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Material Mentions (for @user mentions)
 CREATE TABLE IF NOT EXISTS clinical_material_mentions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -76,7 +74,6 @@ CREATE TABLE IF NOT EXISTS clinical_material_mentions (
   task_id UUID,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Material Links (wiki-style links between materials)
 CREATE TABLE IF NOT EXISTS clinical_material_links (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -87,7 +84,6 @@ CREATE TABLE IF NOT EXISTS clinical_material_links (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(from_material_id, to_material_id)
 );
-
 -- Material Tasks (tasks created from mentions)
 CREATE TABLE IF NOT EXISTS clinical_material_tasks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -103,7 +99,6 @@ CREATE TABLE IF NOT EXISTS clinical_material_tasks (
   assigned_at TIMESTAMPTZ DEFAULT NOW(),
   completed_at TIMESTAMPTZ
 );
-
 -- Media Attachments
 CREATE TABLE IF NOT EXISTS clinical_material_media (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -118,7 +113,6 @@ CREATE TABLE IF NOT EXISTS clinical_material_media (
   position INTEGER, -- Position in text
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- =====================================================
 -- INDEXES FOR PERFORMANCE
 -- =====================================================
@@ -130,21 +124,17 @@ CREATE INDEX IF NOT EXISTS idx_clinical_materials_created_by ON clinical_materia
 CREATE INDEX IF NOT EXISTS idx_clinical_materials_updated_at ON clinical_materials(updated_at DESC);
 CREATE INDEX IF NOT EXISTS idx_clinical_materials_tags ON clinical_materials USING GIN(tags);
 CREATE INDEX IF NOT EXISTS idx_clinical_materials_name_search ON clinical_materials USING GIN(to_tsvector('portuguese', name || ' ' || COALESCE(description, '')));
-
 -- Mentions indexes
 CREATE INDEX IF NOT EXISTS idx_mentions_user ON clinical_material_mentions(user_id);
 CREATE INDEX IF NOT EXISTS idx_mentions_status ON clinical_material_mentions(status);
 CREATE INDEX IF NOT EXISTS idx_mentions_material ON clinical_material_mentions(material_id);
-
 -- Tasks indexes
 CREATE INDEX IF NOT EXISTS idx_tasks_user ON clinical_material_tasks(user_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON clinical_material_tasks(status);
 CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON clinical_material_tasks(due_date);
-
 -- Links indexes
 CREATE INDEX IF NOT EXISTS idx_links_from ON clinical_material_links(from_material_id);
 CREATE INDEX IF NOT EXISTS idx_links_to ON clinical_material_links(to_material_id);
-
 -- =====================================================
 -- ROW LEVEL SECURITY (RLS)
 -- =====================================================
@@ -157,24 +147,18 @@ ALTER TABLE clinical_material_mentions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE clinical_material_links ENABLE ROW LEVEL SECURITY;
 ALTER TABLE clinical_material_tasks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE clinical_material_media ENABLE ROW LEVEL SECURITY;
-
 -- Policies for clinical_materials
 CREATE POLICY "Users can view published materials" ON clinical_materials
   FOR SELECT USING (status = 'published' OR created_by = auth.uid() OR auth.uid() = ANY(collaborators));
-
 CREATE POLICY "Users can create materials" ON clinical_materials
   FOR INSERT WITH CHECK (auth.uid() = created_by);
-
 CREATE POLICY "Users can update own materials or if collaborator" ON clinical_materials
   FOR UPDATE USING (created_by = auth.uid() OR auth.uid() = ANY(collaborators));
-
 CREATE POLICY "Users can delete own materials" ON clinical_materials
   FOR DELETE USING (created_by = auth.uid());
-
 -- Policies for categories (everyone can read, only admins can modify)
 CREATE POLICY "Everyone can view categories" ON clinical_material_categories
   FOR SELECT USING (true);
-
 CREATE POLICY "Admins can manage categories" ON clinical_material_categories
   FOR ALL USING (
     EXISTS (
@@ -183,7 +167,6 @@ CREATE POLICY "Admins can manage categories" ON clinical_material_categories
       AND auth.users.raw_user_meta_data->>'role' = 'Admin'
     )
   );
-
 -- Policies for versions
 CREATE POLICY "Users can view versions of accessible materials" ON clinical_material_versions
   FOR SELECT USING (
@@ -193,7 +176,6 @@ CREATE POLICY "Users can view versions of accessible materials" ON clinical_mate
       AND (status = 'published' OR created_by = auth.uid() OR auth.uid() = ANY(collaborators))
     )
   );
-
 CREATE POLICY "Users can create versions for accessible materials" ON clinical_material_versions
   FOR INSERT WITH CHECK (
     EXISTS (
@@ -202,7 +184,6 @@ CREATE POLICY "Users can create versions for accessible materials" ON clinical_m
       AND (created_by = auth.uid() OR auth.uid() = ANY(collaborators))
     )
   );
-
 -- Policies for mentions
 CREATE POLICY "Users can view mentions in accessible materials" ON clinical_material_mentions
   FOR SELECT USING (
@@ -212,7 +193,6 @@ CREATE POLICY "Users can view mentions in accessible materials" ON clinical_mate
       AND (status = 'published' OR created_by = auth.uid() OR auth.uid() = ANY(collaborators))
     )
   );
-
 CREATE POLICY "Users can create mentions in accessible materials" ON clinical_material_mentions
   FOR INSERT WITH CHECK (
     EXISTS (
@@ -221,14 +201,11 @@ CREATE POLICY "Users can create mentions in accessible materials" ON clinical_ma
       AND (created_by = auth.uid() OR auth.uid() = ANY(collaborators))
     )
   );
-
 -- Policies for tasks
 CREATE POLICY "Users can view their own tasks" ON clinical_material_tasks
   FOR SELECT USING (user_id = auth.uid());
-
 CREATE POLICY "Users can update their own tasks" ON clinical_material_tasks
   FOR UPDATE USING (user_id = auth.uid());
-
 CREATE POLICY "Users can create tasks for accessible materials" ON clinical_material_tasks
   FOR INSERT WITH CHECK (
     EXISTS (
@@ -237,7 +214,6 @@ CREATE POLICY "Users can create tasks for accessible materials" ON clinical_mate
       AND (created_by = auth.uid() OR auth.uid() = ANY(collaborators))
     )
   );
-
 -- Policies for links
 CREATE POLICY "Users can view links in accessible materials" ON clinical_material_links
   FOR SELECT USING (
@@ -247,7 +223,6 @@ CREATE POLICY "Users can view links in accessible materials" ON clinical_materia
       AND (status = 'published' OR created_by = auth.uid() OR auth.uid() = ANY(collaborators))
     )
   );
-
 -- Policies for media
 CREATE POLICY "Users can view media in accessible materials" ON clinical_material_media
   FOR SELECT USING (
@@ -257,7 +232,6 @@ CREATE POLICY "Users can view media in accessible materials" ON clinical_materia
       AND (status = 'published' OR created_by = auth.uid() OR auth.uid() = ANY(collaborators))
     )
   );
-
 CREATE POLICY "Users can manage media in accessible materials" ON clinical_material_media
   FOR ALL USING (
     EXISTS (
@@ -266,7 +240,6 @@ CREATE POLICY "Users can manage media in accessible materials" ON clinical_mater
       AND (created_by = auth.uid() OR auth.uid() = ANY(collaborators))
     )
   );
-
 -- =====================================================
 -- TRIGGERS AND FUNCTIONS
 -- =====================================================
@@ -279,16 +252,13 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Apply updated_at triggers
 CREATE TRIGGER update_clinical_materials_updated_at 
   BEFORE UPDATE ON clinical_materials 
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_clinical_material_categories_updated_at 
   BEFORE UPDATE ON clinical_material_categories 
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 -- Function to auto-increment version
 CREATE OR REPLACE FUNCTION increment_material_version()
 RETURNS TRIGGER AS $$
@@ -301,11 +271,9 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER increment_clinical_materials_version 
   BEFORE UPDATE ON clinical_materials 
   FOR EACH ROW EXECUTE FUNCTION increment_material_version();
-
 -- Function to create version history
 CREATE OR REPLACE FUNCTION create_material_version()
 RETURNS TRIGGER AS $$
@@ -317,11 +285,9 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER create_clinical_material_version 
   AFTER UPDATE ON clinical_materials 
   FOR EACH ROW EXECUTE FUNCTION create_material_version();
-
 -- =====================================================
 -- HELPER FUNCTIONS
 -- =====================================================
@@ -367,7 +333,6 @@ BEGIN
   ORDER BY rank DESC, cm.updated_at DESC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Function to get related materials
 CREATE OR REPLACE FUNCTION get_related_materials(material_id UUID)
 RETURNS TABLE (
@@ -391,7 +356,6 @@ BEGIN
   ORDER BY link_count DESC, cm.name;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- =====================================================
 -- INITIAL DATA
 -- =====================================================
@@ -405,7 +369,6 @@ INSERT INTO clinical_material_categories (id, name, description, color, icon) VA
   (gen_random_uuid(), 'Técnicas de Terapia Manual', 'Protocolos de terapia manual', '#ef4444', 'hand'),
   (gen_random_uuid(), 'Eletroterapia e Recursos Físicos', 'Protocolos de eletroterapia e recursos físicos', '#06b6d4', 'zap')
 ON CONFLICT (name) DO NOTHING;
-
 -- =====================================================
 -- COMMENTS
 -- =====================================================
@@ -416,6 +379,5 @@ COMMENT ON TABLE clinical_material_mentions IS 'User mentions (@user) in materia
 COMMENT ON TABLE clinical_material_tasks IS 'Tasks created from material mentions';
 COMMENT ON TABLE clinical_material_links IS 'Wiki-style links between materials';
 COMMENT ON TABLE clinical_material_media IS 'Media attachments for materials';
-
 COMMENT ON FUNCTION search_materials IS 'Full-text search function for clinical materials';
 COMMENT ON FUNCTION get_related_materials IS 'Get materials related to a given material through links';

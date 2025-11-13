@@ -35,7 +35,6 @@ CREATE TABLE IF NOT EXISTS session_evolutions (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   created_by TEXT
 );
-
 -- Adicionar colunas de rating (usar DO para evitar erro se já existirem)
 DO $$
 BEGIN
@@ -69,7 +68,6 @@ BEGIN
     ADD COLUMN rating_comment TEXT;
   END IF;
 END $$;
-
 -- ============================================================================
 -- 2. Criar índices para melhor performance
 -- ============================================================================
@@ -78,19 +76,16 @@ END $$;
 CREATE INDEX IF NOT EXISTS idx_session_evolutions_patient_ratings 
 ON session_evolutions(patient_id) 
 WHERE patient_rating IS NOT NULL OR professional_rating IS NOT NULL;
-
 -- Índice para buscar ratings por data
 CREATE INDEX IF NOT EXISTS idx_session_evolutions_date_ratings 
 ON session_evolutions(session_date) 
 WHERE patient_rating IS NOT NULL OR professional_rating IS NOT NULL;
-
 -- ============================================================================
 -- 3. Criar view para estatísticas de ratings
 -- ============================================================================
 
 -- Drop view se existir
 DROP VIEW IF EXISTS patient_rating_stats;
-
 -- Criar view com estatísticas agregadas
 CREATE VIEW patient_rating_stats AS
 SELECT 
@@ -110,17 +105,14 @@ SELECT
 FROM session_evolutions
 WHERE patient_rating IS NOT NULL OR professional_rating IS NOT NULL
 GROUP BY patient_id;
-
 -- Comentários na view
 COMMENT ON VIEW patient_rating_stats IS 'Estatísticas agregadas de avaliações por paciente';
-
 -- ============================================================================
 -- 4. Criar view para tendências de rating
 -- ============================================================================
 
 -- Drop view se existir
 DROP VIEW IF EXISTS patient_rating_trends;
-
 -- View para análise de tendências
 CREATE VIEW patient_rating_trends AS
 WITH ranked_ratings AS (
@@ -158,17 +150,14 @@ SELECT
   END as professional_trend
 FROM ranked_ratings
 WHERE recent_rank = 1;
-
 -- Comentários na view
 COMMENT ON VIEW patient_rating_trends IS 'Tendências de avaliação comparando última sessão com anterior';
-
 -- ============================================================================
 -- 5. Criar função para obter média de ratings em período
 -- ============================================================================
 
 -- Drop function se existir
 DROP FUNCTION IF EXISTS get_average_ratings_by_period(TEXT, TIMESTAMPTZ, TIMESTAMPTZ);
-
 -- Criar função
 CREATE OR REPLACE FUNCTION get_average_ratings_by_period(
   p_patient_id TEXT,
@@ -193,10 +182,8 @@ BEGIN
     AND (patient_rating IS NOT NULL OR professional_rating IS NOT NULL);
 END;
 $$ LANGUAGE plpgsql;
-
 -- Comentários na função
 COMMENT ON FUNCTION get_average_ratings_by_period IS 'Calcula média de avaliações para um paciente em um período específico';
-
 -- ============================================================================
 -- 6. Criar trigger para atualizar updated_at
 -- ============================================================================
@@ -209,25 +196,20 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Trigger
 DROP TRIGGER IF EXISTS trigger_update_session_evolution_timestamp ON session_evolutions;
-
 CREATE TRIGGER trigger_update_session_evolution_timestamp
   BEFORE UPDATE ON session_evolutions
   FOR EACH ROW
   EXECUTE FUNCTION update_session_evolution_updated_at();
-
 -- ============================================================================
 -- 7. Permissões RLS (Row Level Security)
 -- ============================================================================
 
 -- Habilitar RLS se ainda não estiver
 ALTER TABLE session_evolutions ENABLE ROW LEVEL SECURITY;
-
 -- Policy para leitura (usuários autenticados podem ler seus próprios dados)
 DROP POLICY IF EXISTS "Users can read their own session evolutions" ON session_evolutions;
-
 CREATE POLICY "Users can read their own session evolutions"
   ON session_evolutions
   FOR SELECT
@@ -238,26 +220,21 @@ CREATE POLICY "Users can read their own session evolutions"
       SELECT id FROM patients WHERE therapist_id = auth.uid()::text
     )
   );
-
 -- Policy para inserção
 DROP POLICY IF EXISTS "Users can insert their own session evolutions" ON session_evolutions;
-
 CREATE POLICY "Users can insert their own session evolutions"
   ON session_evolutions
   FOR INSERT
   TO authenticated
   WITH CHECK (therapist_id = auth.uid()::text);
-
 -- Policy para atualização
 DROP POLICY IF EXISTS "Users can update their own session evolutions" ON session_evolutions;
-
 CREATE POLICY "Users can update their own session evolutions"
   ON session_evolutions
   FOR UPDATE
   TO authenticated
   USING (therapist_id = auth.uid()::text)
   WITH CHECK (therapist_id = auth.uid()::text);
-
 -- ============================================================================
 -- 8. Dados de exemplo (opcional - comentado por padrão)
 -- ============================================================================
@@ -318,4 +295,3 @@ BEGIN
   RAISE NOTICE 'Função criada: get_average_ratings_by_period';
   RAISE NOTICE 'Triggers e RLS policies configurados';
 END $$;
-

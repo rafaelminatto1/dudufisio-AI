@@ -7,7 +7,6 @@
 -- Enable required extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
 -- =====================================================
 -- 1. ENUMS
 -- =====================================================
@@ -25,7 +24,6 @@ DO $$ BEGIN
 EXCEPTION
   WHEN duplicate_object THEN null;
 END $$;
-
 -- User status enum
 DO $$ BEGIN
   CREATE TYPE user_status AS ENUM (
@@ -37,14 +35,12 @@ DO $$ BEGIN
 EXCEPTION
   WHEN duplicate_object THEN null;
 END $$;
-
 -- =====================================================
 -- 2. USERS TABLE (Enhanced)
 -- =====================================================
 
 -- Drop existing users table if exists (backup first in production!)
 DROP TABLE IF EXISTS users CASCADE;
-
 -- Create enhanced users table
 CREATE TABLE users (
   -- Primary Key
@@ -100,7 +96,6 @@ CREATE TABLE users (
   deleted_at TIMESTAMPTZ,
   deleted_by UUID REFERENCES users(id)
 );
-
 -- =====================================================
 -- 3. INDEXES for Performance
 -- =====================================================
@@ -112,30 +107,25 @@ CREATE INDEX idx_users_status ON users(status) WHERE deleted_at IS NULL;
 CREATE INDEX idx_users_is_active ON users(is_active) WHERE deleted_at IS NULL;
 CREATE INDEX idx_users_created_at ON users(created_at);
 CREATE INDEX idx_users_last_login ON users(last_login_at);
-
 -- GIN index for JSONB fields
 CREATE INDEX idx_users_permissions ON users USING GIN(permissions);
 CREATE INDEX idx_users_profile_settings ON users USING GIN(profile_settings);
-
 -- =====================================================
 -- 4. ROW LEVEL SECURITY (RLS)
 -- =====================================================
 
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-
 -- Policy: Users can view their own profile
 CREATE POLICY "Users can view own profile"
   ON users
   FOR SELECT
   USING (auth.uid() = auth_id);
-
 -- Policy: Users can update their own profile
 CREATE POLICY "Users can update own profile"
   ON users
   FOR UPDATE
   USING (auth.uid() = auth_id)
   WITH CHECK (auth.uid() = auth_id);
-
 -- Policy: Admins can view all users
 CREATE POLICY "Admins can view all users"
   ON users
@@ -148,7 +138,6 @@ CREATE POLICY "Admins can view all users"
       AND is_active = TRUE
     )
   );
-
 -- Policy: Admins can manage all users
 CREATE POLICY "Admins can manage users"
   ON users
@@ -161,7 +150,6 @@ CREATE POLICY "Admins can manage users"
       AND is_active = TRUE
     )
   );
-
 -- Policy: Therapists can view their patients
 CREATE POLICY "Therapists can view patients"
   ON users
@@ -175,7 +163,6 @@ CREATE POLICY "Therapists can view patients"
       AND is_active = TRUE
     )
   );
-
 -- =====================================================
 -- 5. FUNCTIONS
 -- =====================================================
@@ -188,7 +175,6 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Function: Create user profile on auth signup
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
@@ -204,7 +190,6 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Function: Update last login timestamp
 CREATE OR REPLACE FUNCTION update_last_login()
 RETURNS TRIGGER AS $$
@@ -218,7 +203,6 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Function: Soft delete user
 CREATE OR REPLACE FUNCTION soft_delete_user(user_id UUID)
 RETURNS VOID AS $$
@@ -232,7 +216,6 @@ BEGIN
   WHERE id = user_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Function: Check user permissions
 CREATE OR REPLACE FUNCTION has_permission(user_id UUID, permission TEXT)
 RETURNS BOOLEAN AS $$
@@ -246,7 +229,6 @@ BEGIN
   RETURN user_permissions ? permission;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- =====================================================
 -- 6. TRIGGERS
 -- =====================================================
@@ -256,14 +238,12 @@ CREATE TRIGGER update_users_updated_at
   BEFORE UPDATE ON users
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- Trigger: Create user profile on auth signup
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW
   EXECUTE FUNCTION handle_new_user();
-
 -- Trigger: Update last login on successful auth
 DROP TRIGGER IF EXISTS on_auth_user_login ON auth.users;
 CREATE TRIGGER on_auth_user_login
@@ -271,7 +251,6 @@ CREATE TRIGGER on_auth_user_login
   FOR EACH ROW
   WHEN (NEW.last_sign_in_at IS DISTINCT FROM OLD.last_sign_in_at)
   EXECUTE FUNCTION update_last_login();
-
 -- =====================================================
 -- 7. SEED DEFAULT ADMIN USER
 -- =====================================================
@@ -286,11 +265,9 @@ CREATE TRIGGER on_auth_user_login
 -- Grant usage on custom types
 GRANT USAGE ON TYPE user_role TO authenticated;
 GRANT USAGE ON TYPE user_status TO authenticated;
-
 -- Grant access to functions
 GRANT EXECUTE ON FUNCTION soft_delete_user TO authenticated;
 GRANT EXECUTE ON FUNCTION has_permission TO authenticated;
-
 -- =====================================================
 -- END OF MIGRATION
 -- =====================================================

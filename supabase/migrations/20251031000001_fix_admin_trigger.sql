@@ -7,10 +7,8 @@
 -- Drop the problematic trigger
 DROP TRIGGER IF EXISTS auto_setup_admin_user ON public.users;
 DROP FUNCTION IF EXISTS setup_admin_user();
-
 -- Temporarily disable triggers to avoid recursion
 SET session_replication_role = replica;
-
 -- Create or update admin user in public.users
 INSERT INTO public.users (
   auth_id,
@@ -51,13 +49,10 @@ SET
   full_name = 'Rafael Minatto',
   permissions = '["*"]'::jsonb,
   updated_at = NOW();
-
 -- Re-enable triggers
 SET session_replication_role = DEFAULT;
-
 -- =====================================================
 -- END OF MIGRATION
 -- =====================================================
 
 COMMENT ON TABLE public.users IS 'Admin user rafael.minatto@yahoo.com.br created successfully';
-

@@ -5,23 +5,6 @@ import { Card } from '../components/ui/card';
 import { Badge } from '../ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Cell
-} from '@/components/charts/ChartsLazyOptimized';
-import {
   Calendar,
   TrendingUp,
   DollarSign,
@@ -36,6 +19,12 @@ import { useNavigate } from 'react-router-dom';
 import { format, subDays, startOfMonth, endOfMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { formatCurrencyBR } from '../lib/format';
+import {
+  NivoLineChart,
+  NivoBarChart,
+  NivoPieChart,
+  TooltipCard,
+} from '../components/charts/nivo';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
@@ -100,6 +89,83 @@ const AnalyticsDashboardPage: React.FC = () => {
 
     return { last30Days, typeData, byTherapist };
   }, [appointments, therapists]);
+
+  const trendScale = useMemo(() => {
+    const maxConsultas = Math.max(...chartData.last30Days.map((d) => d.consultas), 0);
+    const maxReceita = Math.max(...chartData.last30Days.map((d) => d.receita), 0);
+    if (maxReceita === 0 || maxConsultas === 0) {
+      return 1;
+    }
+    const scale = maxReceita / maxConsultas;
+    return scale === 0 ? 1 : scale;
+  }, [chartData.last30Days]);
+
+  type TrendDatum = {
+    x: string;
+    y: number;
+    raw: {
+      consultas: number;
+      receita: number;
+    };
+    serie: 'consultas' | 'receita';
+  };
+
+  const trendSeries = useMemo(() => {
+    return [
+      {
+        id: 'Consultas',
+        color: '#3b82f6',
+        data: chartData.last30Days.map<TrendDatum>((point) => ({
+          x: point.date,
+          y: point.consultas,
+          raw: { consultas: point.consultas, receita: point.receita },
+          serie: 'consultas',
+        })),
+      },
+      {
+        id: 'Receita (R$)',
+        color: '#10b981',
+        data: chartData.last30Days.map<TrendDatum>((point) => ({
+          x: point.date,
+          y: trendScale ? point.receita / trendScale : 0,
+          raw: { consultas: point.consultas, receita: point.receita },
+          serie: 'receita',
+        })),
+      },
+    ];
+  }, [chartData.last30Days, trendScale]);
+
+  const pieChartData = useMemo(
+    () =>
+      chartData.typeData.map((entry, index) => ({
+        id: entry.name,
+        label: entry.name,
+        value: entry.value,
+        color: COLORS[index % COLORS.length],
+      })),
+    [chartData.typeData]
+  );
+
+  const therapistScale = useMemo(() => {
+    const maxConsultas = Math.max(...chartData.byTherapist.map((d) => d.consultas), 0);
+    const maxReceita = Math.max(...chartData.byTherapist.map((d) => d.receita), 0);
+    if (maxReceita === 0 || maxConsultas === 0) {
+      return 1;
+    }
+    const scale = maxReceita / maxConsultas;
+    return scale === 0 ? 1 : scale;
+  }, [chartData.byTherapist]);
+
+  const therapistChartData = useMemo(
+    () =>
+      chartData.byTherapist.map((item) => ({
+        name: item.name,
+        consultas: item.consultas,
+        receita: therapistScale ? item.receita / therapistScale : 0,
+        receitaReal: item.receita,
+      })),
+    [chartData.byTherapist, therapistScale]
+  );
 
   return (
     <div className="min-h-screen bg-neutral-bgAlt">
@@ -212,77 +278,161 @@ const AnalyticsDashboardPage: React.FC = () => {
           <TabsContent value="trend" className="space-y-md">
             <Card className="p-lg">
               <h3 className="font-semibold mb-md">Últimos 30 Dias</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={chartData.last30Days}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip />
-                  <Legend />
-                  <Area
-                    yAxisId="left"
-                    type="monotone"
-                    dataKey="consultas"
-                    stroke="#3b82f6"
-                    fill="#3b82f6"
-                    fillOpacity={0.3}
-                    name="Consultas"
+              <NivoLineChart<TrendDatum>
+                height={300}
+                data={trendSeries}
+                curve="monotoneX"
+                margin={{ top: 24, right: 60, bottom: 48, left: 60 }}
+                xScale={{ type: 'point' }}
+                yScale={{ type: 'linear', min: 0, stacked: false }}
+                axisBottom={{
+                  tickPadding: 10,
+                  tickRotation: -30,
+                }}
+                axisLeft={{
+                  tickPadding: 8,
+                  legend: 'Consultas',
+                  legendOffset: -48,
+                  legendPosition: 'middle',
+                }}
+                axisRight={{
+                  tickPadding: 8,
+                  legend: 'Receita (R$)',
+                  legendPosition: 'middle',
+                  legendOffset: 48,
+                  format: (value) => formatCurrencyBR(Number(value) * trendScale),
+                }}
+                colors={['#3b82f6', '#10b981']}
+                enableArea
+                areaOpacity={0.2}
+                pointSize={8}
+                pointColor={{ from: 'color' }}
+                pointBorderWidth={2}
+                pointBorderColor={{ from: 'serieColor' }}
+                legends={[
+                  {
+                    anchor: 'bottom',
+                    direction: 'row',
+                    translateY: 36,
+                    itemWidth: 160,
+                    itemHeight: 16,
+                    itemsSpacing: 16,
+                    symbolSize: 14,
+                    symbolShape: 'circle',
+                  },
+                ]}
+                sliceTooltip={({ slice }) => (
+                  <TooltipCard
+                    title={slice.points[0]?.data.xFormatted}
+                    rows={slice.points.map((point) => {
+                      const datum = point.data as TrendDatum;
+                      const isConsultas = datum.serie === 'consultas';
+                      return {
+                        id: point.id,
+                        label: isConsultas ? 'Consultas' : 'Receita',
+                        value: isConsultas
+                          ? datum.raw.consultas
+                          : formatCurrencyBR(datum.raw.receita),
+                        color: point.serieColor,
+                      };
+                    })}
                   />
-                  <Area
-                    yAxisId="right"
-                    type="monotone"
-                    dataKey="receita"
-                    stroke="#10b981"
-                    fill="#10b981"
-                    fillOpacity={0.3}
-                    name="Receita (R$)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+                )}
+              />
             </Card>
           </TabsContent>
 
           <TabsContent value="types">
             <Card className="p-lg">
               <h3 className="font-semibold mb-md">Distribuição por Tipo</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={chartData.typeData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {chartData.typeData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <NivoPieChart
+                height={300}
+                data={pieChartData}
+                colors={{ datum: 'data.color' }}
+                enableArcLinkLabels={false}
+                arcLabelsRadiusOffset={0.6}
+                arcLinkLabelsSkipAngle={12}
+                arcLabel={(datum) => `${datum.value}`}
+                tooltip={({ datum }) => (
+                  <TooltipCard
+                    title={datum.label}
+                    rows={[
+                      {
+                        id: String(datum.id),
+                        label: 'Quantidade',
+                        value: datum.value,
+                        color: datum.color as string,
+                      },
+                    ]}
+                  />
+                )}
+              />
             </Card>
           </TabsContent>
 
           <TabsContent value="therapists">
             <Card className="p-lg">
               <h3 className="font-semibold mb-md">Performance por Terapeuta</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData.byTherapist}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis yAxisId="left" />
-                  <YAxis yAxisId="right" orientation="right" />
-                  <Tooltip />
-                  <Legend />
-                  <Bar yAxisId="left" dataKey="consultas" fill="#3b82f6" name="Consultas" />
-                  <Bar yAxisId="right" dataKey="receita" fill="#10b981" name="Receita (R$)" />
-                </BarChart>
-              </ResponsiveContainer>
+              <NivoBarChart
+                height={300}
+                data={therapistChartData}
+                keys={['consultas', 'receita']}
+                indexBy="name"
+                groupMode="grouped"
+                padding={0.4}
+                colors={({ id }) => (id === 'consultas' ? '#3b82f6' : '#10b981')}
+                axisBottom={{
+                  tickPadding: 10,
+                }}
+                axisLeft={{
+                  tickPadding: 8,
+                  legend: 'Consultas',
+                  legendOffset: -48,
+                  legendPosition: 'middle',
+                }}
+                axisRight={{
+                  tickPadding: 8,
+                  legend: 'Receita (R$)',
+                  legendPosition: 'middle',
+                  legendOffset: 48,
+                  format: (value) => formatCurrencyBR(Number(value) * therapistScale),
+                }}
+                legends={[
+                  {
+                    dataFrom: 'keys',
+                    anchor: 'bottom',
+                    direction: 'row',
+                    translateY: 36,
+                    itemWidth: 140,
+                    itemHeight: 16,
+                    itemsSpacing: 16,
+                    symbolSize: 14,
+                    symbolShape: 'circle',
+                  },
+                ]}
+                tooltip={({ indexValue, data }) => {
+                  const datum = data as (typeof therapistChartData)[number];
+                  return (
+                    <TooltipCard
+                      title={indexValue}
+                      rows={[
+                        {
+                          id: 'consultas',
+                          label: 'Consultas',
+                          value: datum.consultas,
+                          color: '#3b82f6',
+                        },
+                        {
+                          id: 'receita',
+                          label: 'Receita',
+                          value: formatCurrencyBR(datum.receitaReal),
+                          color: '#10b981',
+                        },
+                      ]}
+                    />
+                  );
+                }}
+              />
             </Card>
           </TabsContent>
         </Tabs>

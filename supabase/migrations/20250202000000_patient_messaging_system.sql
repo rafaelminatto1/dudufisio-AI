@@ -43,14 +43,12 @@ CREATE TABLE IF NOT EXISTS patient_messages (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_messages_sender ON patient_messages(sender_id);
 CREATE INDEX IF NOT EXISTS idx_messages_recipient ON patient_messages(recipient_id);
 CREATE INDEX IF NOT EXISTS idx_messages_thread ON patient_messages(thread_id);
 CREATE INDEX IF NOT EXISTS idx_messages_status ON patient_messages(status);
 CREATE INDEX IF NOT EXISTS idx_messages_created ON patient_messages(created_at DESC);
-
 -- Trigger updated_at
 CREATE OR REPLACE FUNCTION update_patient_messages_updated_at()
 RETURNS TRIGGER AS $$
@@ -59,12 +57,10 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER patient_messages_updated_at
   BEFORE UPDATE ON patient_messages
   FOR EACH ROW
   EXECUTE FUNCTION update_patient_messages_updated_at();
-
 -- =====================================================
 -- MELHORIAS NO SISTEMA DE AGENDAMENTO
 -- Sistema de SOLICITAÇÃO (não auto-agendamento)
@@ -103,11 +99,9 @@ CREATE TABLE IF NOT EXISTS appointment_requests (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 CREATE INDEX IF NOT EXISTS idx_appointment_requests_patient ON appointment_requests(patient_id);
 CREATE INDEX IF NOT EXISTS idx_appointment_requests_therapist ON appointment_requests(therapist_id);
 CREATE INDEX IF NOT EXISTS idx_appointment_requests_status ON appointment_requests(status);
-
 -- =====================================================
 -- RPC FUNCTIONS
 -- =====================================================
@@ -170,7 +164,6 @@ BEGIN
   RETURN v_message_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Marcar mensagem como lida
 CREATE OR REPLACE FUNCTION mark_message_read(p_message_id UUID)
 RETURNS BOOLEAN AS $$
@@ -186,7 +179,6 @@ BEGIN
   RETURN FOUND;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Obter mensagens do usuário
 CREATE OR REPLACE FUNCTION get_user_messages(
   p_folder TEXT DEFAULT 'inbox', -- 'inbox', 'sent', 'archived'
@@ -239,7 +231,6 @@ BEGIN
   LIMIT p_limit;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Solicitar agendamento (paciente envia SOLICITAÇÃO)
 CREATE OR REPLACE FUNCTION request_appointment(
   p_therapist_id UUID,
@@ -303,7 +294,6 @@ BEGIN
   RETURN v_request_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Aprovar/Rejeitar solicitação (terapeuta decide)
 CREATE OR REPLACE FUNCTION respond_appointment_request(
   p_request_id UUID,
@@ -399,13 +389,11 @@ BEGIN
   RETURN v_appointment_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- =====================================================
 -- RLS POLICIES
 -- =====================================================
 
 ALTER TABLE patient_messages ENABLE ROW LEVEL SECURITY;
-
 -- Usuários podem ver mensagens que enviaram ou receberam
 CREATE POLICY "Users can view their messages"
   ON patient_messages FOR SELECT
@@ -413,20 +401,16 @@ CREATE POLICY "Users can view their messages"
     auth.uid() = sender_id OR
     auth.uid() = recipient_id
   );
-
 -- Usuários podem enviar mensagens
 CREATE POLICY "Users can send messages"
   ON patient_messages FOR INSERT
   WITH CHECK (auth.uid() = sender_id);
-
 -- Usuários podem atualizar suas mensagens recebidas
 CREATE POLICY "Users can update received messages"
   ON patient_messages FOR UPDATE
   USING (auth.uid() = recipient_id);
-
 -- RLS para appointment_requests
 ALTER TABLE appointment_requests ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Users can view their appointment requests"
   ON appointment_requests FOR SELECT
   USING (
@@ -434,21 +418,18 @@ CREATE POLICY "Users can view their appointment requests"
     auth.uid() = therapist_id OR
     EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
   );
-
 CREATE POLICY "Patients can create appointment requests"
   ON appointment_requests FOR INSERT
   WITH CHECK (
     auth.uid() = patient_id AND
     EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'patient')
   );
-
 CREATE POLICY "Therapists can update appointment requests"
   ON appointment_requests FOR UPDATE
   USING (
     auth.uid() = therapist_id OR
     EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
   );
-
 -- =====================================================
 -- COMENTÁRIOS
 -- =====================================================

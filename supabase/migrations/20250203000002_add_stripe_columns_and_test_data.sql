@@ -2,7 +2,6 @@
 -- and create test users
 
 BEGIN;
-
 -- 1. Add missing columns to payments table (if they don't exist)
 DO $$
 BEGIN
@@ -27,7 +26,6 @@ BEGIN
         ALTER TABLE payments ADD COLUMN paid_at TIMESTAMPTZ;
     END IF;
 END $$;
-
 -- 2. Create test users if they don't exist
 
 -- Create therapist user
@@ -48,7 +46,6 @@ VALUES (
     NOW()
 )
 ON CONFLICT (id) DO NOTHING;
-
 -- Create patient user
 INSERT INTO users (
     id,
@@ -67,7 +64,6 @@ VALUES (
     NOW()
 )
 ON CONFLICT (id) DO NOTHING;
-
 -- Create admin user
 INSERT INTO users (
     id,
@@ -86,5 +82,4 @@ VALUES (
     NOW()
 )
 ON CONFLICT (id) DO NOTHING;
-
 COMMIT;

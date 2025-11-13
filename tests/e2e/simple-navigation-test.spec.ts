@@ -9,22 +9,77 @@ import { test, expect } from '@playwright/test';
 
 interface ProfileConfig {
   name: string;
+  role: 'Admin' | 'Therapist' | 'Intern' | 'Patient' | 'Educator';
   email: string;
-  password: string;
+  expectedLanding: '/agenda' | '/dashboard';
+  routes: string[];
 }
 
 const PROFILES: ProfileConfig[] = [
-  { name: 'Admin', email: 'admin@dudufisio.com', password: 'demo123456' },
-  { name: 'Fisioterapeuta', email: 'therapist@dudufisio.com', password: 'demo123456' },
-  { name: 'Paciente', email: 'patient@dudufisio.com', password: 'demo123456' },
-  { name: 'Educador Físico', email: 'educator@dudufisio.com', password: 'demo123456' }
+  {
+    name: 'Admin',
+    role: 'Admin',
+    email: 'admin@dudufisio.com',
+    expectedLanding: '/agenda',
+    routes: ['/agenda', '/dashboard', '/patients', '/settings'],
+  },
+  {
+    name: 'Fisioterapeuta',
+    role: 'Therapist',
+    email: 'therapist@dudufisio.com',
+    expectedLanding: '/agenda',
+    routes: ['/agenda', '/dashboard', '/patients', '/sessions'],
+  },
+  {
+    name: 'Estagiário',
+    role: 'Intern',
+    email: 'intern@dudufisio.com',
+    expectedLanding: '/agenda',
+    routes: ['/agenda', '/dashboard', '/patients'],
+  },
+  {
+    name: 'Paciente',
+    role: 'Patient',
+    email: 'patient@dudufisio.com',
+    expectedLanding: '/dashboard',
+    routes: ['/dashboard', '/my-appointments', '/my-exercises'],
+  },
+  {
+    name: 'Educador Físico',
+    role: 'Educator',
+    email: 'educator@dudufisio.com',
+    expectedLanding: '/dashboard',
+    routes: ['/dashboard', '/clients', '/financials'],
+  },
 ];
 
-const ROUTES_BY_PROFILE: Record<string, string[]> = {
-  'Admin': ['/dashboard', '/patients', '/agenda', '/settings'],
-  'Fisioterapeuta': ['/dashboard', '/patients', '/agenda', '/sessions'],
-  'Paciente': ['/dashboard', '/my-appointments', '/my-exercises'],
-  'Educador Físico': ['/dashboard', '/clients', '/financials']
+const buildFallbackSession = (profile: ProfileConfig) => {
+  const issuedAt = Date.now();
+
+  const user = {
+    id: `fallback-${profile.role.toLowerCase()}-1`,
+    email: profile.email,
+    name: `${profile.name} (Demo)`,
+    role: profile.role.toLowerCase(),
+    avatarUrl: '',
+    phone: undefined,
+    createdAt: new Date(issuedAt).toISOString(),
+    emailVerified: true,
+    mfaEnabled: false,
+  };
+
+  const session = {
+    access_token: 'fallback-token',
+    refresh_token: 'fallback-refresh',
+    expires_at: Math.floor((issuedAt + 60 * 60 * 1000) / 1000),
+    user,
+  };
+
+  return {
+    user,
+    session,
+    expiresAt: issuedAt + 8 * 60 * 60 * 1000,
+  };
 };
 
 test.describe('Teste Simples de Navegação', () => {
@@ -33,32 +88,24 @@ test.describe('Teste Simples de Navegação', () => {
     test.describe(`Perfil: ${profile.name}`, () => {
       
       test.beforeEach(async ({ page }) => {
-        // Fazer login
         await page.goto('/');
-        
-        // Aguardar página de login
-        await page.waitForSelector('button:has-text("Contas de Demonstração")', { timeout: 10000 });
-        
-        // Clicar em "Contas de Demonstração"
-        await page.click('button:has-text("Contas de Demonstração")');
-        await page.waitForTimeout(500);
-        
-        // Selecionar perfil
-        await page.click(`button:has-text("${profile.email}")`);
-        await page.waitForTimeout(500);
-        
-        // Clicar em Login
-        await page.click('button[type="submit"]');
-        
-        // Aguardar redirecionamento para dashboard
-        await page.waitForURL('**/dashboard', { timeout: 15000 });
-        
-        console.log(`✅ Login realizado como ${profile.name}`);
+
+        const fallbackSession = buildFallbackSession(profile);
+        await page.evaluate(([session]) => {
+          localStorage.setItem('fallback_session', JSON.stringify(session));
+        }, [fallbackSession]);
+
+        await page.reload();
+
+        await page.waitForURL((url) => {
+          const { pathname } = new URL(url);
+          return pathname.startsWith(profile.expectedLanding);
+        }, { timeout: 15000 });
+
+        console.log(`✅ Sessão mock aplicada para ${profile.name} → rota inicial: ${profile.expectedLanding}`);
       });
       
-      const routes = ROUTES_BY_PROFILE[profile.name] || [];
-      
-      for (const route of routes) {
+      for (const route of profile.routes) {
         test(`Navegar para ${route}`, async ({ page }) => {
           console.log(`  📄 Testando: ${route}`);
           

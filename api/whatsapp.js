@@ -125,7 +125,7 @@ async function handleMetaMessage(message, metadata) {
     const whatsappService = getMetaWhatsAppService();
     
     // Obter clinic_id (pode vir do metadata ou configuração)
-    const clinicId = process.env.DEFAULT_CLINIC_ID || '1';
+    const clinicId = process.env.DEFAULT_CLINIC_ID || 'default-clinic';
     
     // Processar mensagem
     await whatsappService.processIncomingMessage(message, metadata, clinicId);

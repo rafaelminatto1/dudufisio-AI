@@ -28,19 +28,15 @@ CREATE TABLE IF NOT EXISTS evolution_templates (
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
-
 -- Índice para busca por terapeuta
 CREATE INDEX idx_evolution_templates_therapist ON evolution_templates(therapist_id);
-
 -- Índice para busca por uso mais frequente
 CREATE INDEX idx_evolution_templates_usage ON evolution_templates(usage_count DESC);
-
 -- Comentários na tabela
 COMMENT ON TABLE evolution_templates IS 'Templates reutilizáveis de evolução para agilizar registro de sessões';
 COMMENT ON COLUMN evolution_templates.conducts IS 'Array JSON de condutas estruturadas (categoria, nome, detalhes, etc)';
 COMMENT ON COLUMN evolution_templates.exercises IS 'Array JSON de exercícios prescritos com parâmetros';
 COMMENT ON COLUMN evolution_templates.usage_count IS 'Contador de quantas vezes o template foi usado';
-
 -- Trigger para atualizar updated_at automaticamente
 CREATE OR REPLACE FUNCTION update_evolution_templates_updated_at()
 RETURNS TRIGGER AS $$
@@ -49,12 +45,10 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER trigger_update_evolution_templates_updated_at
   BEFORE UPDATE ON evolution_templates
   FOR EACH ROW
   EXECUTE FUNCTION update_evolution_templates_updated_at();
-
 -- Função para incrementar usage_count
 CREATE OR REPLACE FUNCTION increment_template_usage(template_id UUID)
 RETURNS VOID AS $$
@@ -66,7 +60,6 @@ BEGIN
   WHERE id = template_id;
 END;
 $$ LANGUAGE plpgsql;
-
 -- ============================================================================
 -- Estender tabela session_evolutions para incluir novos campos
 -- ============================================================================
@@ -124,21 +117,18 @@ BEGIN
     ADD COLUMN plan_general_notes TEXT;
   END IF;
 END $$;
-
 -- Comentários nas novas colunas
 COMMENT ON COLUMN session_evolutions.prescribed_exercises IS 'Array JSON de exercícios prescritos com séries, reps, carga, etc';
 COMMENT ON COLUMN session_evolutions.progress_photos IS 'Array JSON de fotos de progresso com URLs e legendas';
 COMMENT ON COLUMN session_evolutions.session_timer IS 'Objeto JSON com startTime, endTime e duration da sessão';
 COMMENT ON COLUMN session_evolutions.conducts IS 'Array JSON de condutas estruturadas por categoria';
 COMMENT ON COLUMN session_evolutions.plan_general_notes IS 'Observações gerais do plano de tratamento';
-
 -- ============================================================================
 -- Políticas RLS (Row Level Security) para evolution_templates
 -- ============================================================================
 
 -- Habilitar RLS
 ALTER TABLE evolution_templates ENABLE ROW LEVEL SECURITY;
-
 -- Política: Terapeutas podem ver apenas seus próprios templates
 CREATE POLICY evolution_templates_select_own 
   ON evolution_templates
@@ -151,7 +141,6 @@ CREATE POLICY evolution_templates_select_own
       WHERE therapists.id = auth.uid()
     )
   );
-
 -- Política: Terapeutas podem inserir templates
 CREATE POLICY evolution_templates_insert_own 
   ON evolution_templates
@@ -164,7 +153,6 @@ CREATE POLICY evolution_templates_insert_own
       WHERE therapists.id = auth.uid()
     )
   );
-
 -- Política: Terapeutas podem atualizar apenas seus próprios templates
 CREATE POLICY evolution_templates_update_own 
   ON evolution_templates
@@ -175,7 +163,6 @@ CREATE POLICY evolution_templates_update_own
   WITH CHECK (
     therapist_id = auth.uid()
   );
-
 -- Política: Terapeutas podem deletar apenas seus próprios templates
 CREATE POLICY evolution_templates_delete_own 
   ON evolution_templates
@@ -183,7 +170,6 @@ CREATE POLICY evolution_templates_delete_own
   USING (
     therapist_id = auth.uid()
   );
-
 -- ============================================================================
 -- Dados de exemplo (opcional - remover em produção)
 -- ============================================================================
@@ -234,4 +220,3 @@ BEGIN
     ON CONFLICT DO NOTHING;
   END IF;
 END $$;
-

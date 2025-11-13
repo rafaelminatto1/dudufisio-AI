@@ -6,7 +6,6 @@
 
 -- Garantir que uuid-ossp está habilitado
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- ============================================================================
 -- TABELA: assessment_compliance_log
 -- ============================================================================
@@ -40,27 +39,20 @@ CREATE TABLE IF NOT EXISTS assessment_compliance_log (
   notes TEXT,
   metadata JSONB DEFAULT '{}'
 );
-
 -- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_assessment_compliance_log_patient 
   ON assessment_compliance_log(patient_id);
-
 CREATE INDEX IF NOT EXISTS idx_assessment_compliance_log_session 
   ON assessment_compliance_log(session_id);
-
 CREATE INDEX IF NOT EXISTS idx_assessment_compliance_log_test_config 
   ON assessment_compliance_log(test_config_id);
-
 CREATE INDEX IF NOT EXISTS idx_assessment_compliance_log_recorded_at 
   ON assessment_compliance_log(recorded_at);
-
 CREATE INDEX IF NOT EXISTS idx_assessment_compliance_log_was_measured 
   ON assessment_compliance_log(was_measured);
-
 -- Índice composto para consultas frequentes
 CREATE INDEX IF NOT EXISTS idx_assessment_compliance_log_patient_session 
   ON assessment_compliance_log(patient_id, session_id);
-
 -- ============================================================================
 -- FUNÇÃO: Calcular taxa de conformidade por paciente
 -- ============================================================================
@@ -92,7 +84,6 @@ BEGIN
     AND (p_end_date IS NULL OR recorded_at <= p_end_date);
 END;
 $$ LANGUAGE plpgsql;
-
 -- ============================================================================
 -- FUNÇÃO: Relatório de conformidade por período
 -- ============================================================================
@@ -132,7 +123,6 @@ BEGIN
   ORDER BY compliance_rate ASC, total_required DESC;
 END;
 $$ LANGUAGE plpgsql;
-
 -- ============================================================================
 -- VIEW: Vista consolidada de conformidade
 -- ============================================================================
@@ -153,7 +143,6 @@ SELECT
   MIN(recorded_at) as first_attempt_at
 FROM assessment_compliance_log
 GROUP BY patient_id, test_name, test_type;
-
 -- ============================================================================
 -- TRIGGER: Atualizar estatísticas de conformidade
 -- ============================================================================
@@ -167,12 +156,10 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER trigger_update_compliance_stats
   AFTER INSERT OR UPDATE OR DELETE ON assessment_compliance_log
   FOR EACH ROW
   EXECUTE FUNCTION update_compliance_stats();
-
 -- ============================================================================
 -- COMENTÁRIOS
 -- ============================================================================
@@ -182,7 +169,6 @@ COMMENT ON COLUMN assessment_compliance_log.was_measured IS 'Indica se a mediç�
 COMMENT ON COLUMN assessment_compliance_log.skip_reason IS 'Razão para não realizar a medição (ex: paciente não compareceu, equipamento quebrado)';
 COMMENT ON COLUMN assessment_compliance_log.measured_value IS 'Valor da medição em formato JSONB (ex: {"value": 120, "unit": "degrees"})';
 COMMENT ON COLUMN assessment_compliance_log.timing IS 'Quando a medição deveria ser feita: before, during, after, independent';
-
 -- ============================================================================
 -- DADOS DE EXEMPLO (para testes)
 -- ============================================================================
@@ -214,5 +200,4 @@ COMMENT ON COLUMN assessment_compliance_log.timing IS 'Quando a medição deveri
 
 -- ============================================================================
 -- FIM DA MIGRATION
--- ============================================================================
-
+-- ============================================================================;

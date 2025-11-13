@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS notification_templates (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   created_by UUID REFERENCES users(id)
 );
-
 -- Seed templates
 INSERT INTO notification_templates (name, type, subject_template, email_template, sms_template, push_template, variables) VALUES
 (
@@ -53,7 +52,6 @@ INSERT INTO notification_templates (name, type, subject_template, email_template
   ARRAY['patientName', 'date', 'time', 'reason']
 )
 ON CONFLICT (name) DO NOTHING;
-
 -- =====================================================
 -- 2. NOTIFICATION LOGS TABLE
 -- =====================================================
@@ -73,10 +71,8 @@ CREATE TABLE IF NOT EXISTS notification_logs (
   delivered_at TIMESTAMPTZ,
   failed_at TIMESTAMPTZ
 );
-
 CREATE INDEX IF NOT EXISTS idx_notification_logs_notification ON notification_logs(notification_id);
 CREATE INDEX IF NOT EXISTS idx_notification_logs_status ON notification_logs(status, channel);
-
 -- =====================================================
 -- 3. NOTIFICATION PREFERENCES (on users table)
 -- =====================================================
@@ -99,9 +95,7 @@ DO $$ BEGIN
 EXCEPTION
   WHEN duplicate_column THEN null;
 END $$;
-
 CREATE INDEX IF NOT EXISTS idx_users_notification_prefs ON users((notification_preferences));
-
 -- =====================================================
 -- 4. FUNCTIONS
 -- =====================================================
@@ -138,7 +132,6 @@ BEGIN
   RETURN v_notification_id;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Function: Marcar como lida
 CREATE OR REPLACE FUNCTION mark_notification_read(
   p_notification_id UUID,
@@ -152,7 +145,6 @@ BEGIN
   RETURN FOUND;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Function: Marcar todas como lidas
 CREATE OR REPLACE FUNCTION mark_all_notifications_read(p_user_id UUID)
 RETURNS INTEGER AS $$
@@ -165,7 +157,6 @@ BEGIN
   RETURN v_count;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Function: Limpar antigas
 CREATE OR REPLACE FUNCTION cleanup_old_notifications()
 RETURNS INTEGER AS $$
@@ -178,7 +169,6 @@ BEGIN
   RETURN v_count;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Function: Contagem de não lidas
 CREATE OR REPLACE FUNCTION get_unread_count(p_user_id UUID)
 RETURNS INTEGER AS $$
@@ -190,29 +180,24 @@ BEGIN
   RETURN v_count;
 END;
 $$ LANGUAGE plpgsql;
-
 -- =====================================================
 -- 5. RLS POLICIES
 -- =====================================================
 
 ALTER TABLE notification_templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notification_logs ENABLE ROW LEVEL SECURITY;
-
 DROP POLICY IF EXISTS "Anyone can view active templates" ON notification_templates;
 CREATE POLICY "Anyone can view active templates"
   ON notification_templates FOR SELECT
   USING (is_active = TRUE);
-
 DROP POLICY IF EXISTS "Admins can manage templates" ON notification_templates;
 CREATE POLICY "Admins can manage templates"
   ON notification_templates FOR ALL
   USING (EXISTS (SELECT 1 FROM users WHERE auth_id = auth.uid() AND role = 'admin'));
-
 DROP POLICY IF EXISTS "Admins can view logs" ON notification_logs;
 CREATE POLICY "Admins can view logs"
   ON notification_logs FOR SELECT
   USING (EXISTS (SELECT 1 FROM users WHERE auth_id = auth.uid() AND role = 'admin'));
-
 -- =====================================================
 -- 6. GRANTS
 -- =====================================================

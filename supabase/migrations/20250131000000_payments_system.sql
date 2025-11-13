@@ -5,7 +5,6 @@
 
 -- Extension para UUID se não existir
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- =====================================================
 -- 1. TABELA DE PAGAMENTOS
 -- =====================================================
@@ -67,20 +66,17 @@ CREATE TABLE IF NOT EXISTS payments (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Índices
 CREATE INDEX idx_payments_patient ON payments(patient_id);
 CREATE INDEX idx_payments_appointment ON payments(appointment_id);
 CREATE INDEX idx_payments_status ON payments(status);
 CREATE INDEX idx_payments_provider_id ON payments(provider, provider_payment_id);
 CREATE INDEX idx_payments_created ON payments(created_at DESC);
-
 -- Comentários
 COMMENT ON TABLE payments IS 'Pagamentos de consultas e serviços';
 COMMENT ON COLUMN payments.provider IS 'stripe, mercadopago ou manual';
 COMMENT ON COLUMN payments.pix_qr_code IS 'Código QR do PIX em base64 ou string';
 COMMENT ON COLUMN payments.boleto_url IS 'URL para visualizar/baixar o boleto';
-
 -- =====================================================
 -- 2. TABELA DE TRANSAÇÕES (LOG DE EVENTOS)
 -- =====================================================
@@ -111,12 +107,9 @@ CREATE TABLE IF NOT EXISTS payment_transactions (
 
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 CREATE INDEX idx_payment_transactions_payment ON payment_transactions(payment_id);
 CREATE INDEX idx_payment_transactions_created ON payment_transactions(created_at DESC);
-
 COMMENT ON TABLE payment_transactions IS 'Log de eventos de pagamentos';
-
 -- =====================================================
 -- 3. TABELA DE CONFIGURAÇÕES DE PAGAMENTO
 -- =====================================================
@@ -155,13 +148,10 @@ CREATE TABLE IF NOT EXISTS payment_settings (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Inserir configuração padrão
 INSERT INTO payment_settings (id) VALUES ('00000000-0000-0000-0000-000000000001')
 ON CONFLICT DO NOTHING;
-
 COMMENT ON TABLE payment_settings IS 'Configurações globais do sistema de pagamentos';
-
 -- =====================================================
 -- 4. FUNÇÕES
 -- =====================================================
@@ -215,7 +205,6 @@ BEGIN
   RETURN v_payment_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Função para atualizar status do pagamento
 CREATE OR REPLACE FUNCTION update_payment_status(
   p_payment_id UUID,
@@ -258,7 +247,6 @@ BEGIN
   RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Função para processar reembolso
 CREATE OR REPLACE FUNCTION process_refund(
   p_payment_id UUID,
@@ -316,7 +304,6 @@ BEGIN
   RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- =====================================================
 -- 5. RLS POLICIES
 -- =====================================================
@@ -325,7 +312,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payment_transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payment_settings ENABLE ROW LEVEL SECURITY;
-
 -- Patients veem apenas seus pagamentos
 CREATE POLICY payments_select_own ON payments
   FOR SELECT
@@ -338,7 +324,6 @@ CREATE POLICY payments_select_own ON payments
       AND role IN ('admin', 'therapist')
     )
   );
-
 -- Admins podem tudo
 CREATE POLICY payments_all_admin ON payments
   FOR ALL
@@ -349,7 +334,6 @@ CREATE POLICY payments_all_admin ON payments
       AND role = 'admin'
     )
   );
-
 -- Transactions seguem mesma lógica
 CREATE POLICY payment_transactions_select ON payment_transactions
   FOR SELECT
@@ -368,7 +352,6 @@ CREATE POLICY payment_transactions_select ON payment_transactions
       )
     )
   );
-
 -- Settings apenas admins
 CREATE POLICY payment_settings_admin ON payment_settings
   FOR ALL
@@ -379,16 +362,13 @@ CREATE POLICY payment_settings_admin ON payment_settings
       AND role = 'admin'
     )
   );
-
 -- Service role pode tudo (para webhooks)
 CREATE POLICY payments_service_role ON payments
   FOR ALL
   USING (auth.jwt() ->> 'role' = 'service_role');
-
 CREATE POLICY payment_transactions_service_role ON payment_transactions
   FOR ALL
   USING (auth.jwt() ->> 'role' = 'service_role');
-
 -- =====================================================
 -- 6. TRIGGERS
 -- =====================================================
@@ -401,17 +381,14 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER payments_updated_at
   BEFORE UPDATE ON payments
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER payment_settings_updated_at
   BEFORE UPDATE ON payment_settings
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- =====================================================
 -- FIM DA MIGRATION
--- =====================================================
+-- =====================================================;

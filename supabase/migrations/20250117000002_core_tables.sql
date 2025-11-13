@@ -40,19 +40,15 @@ CREATE TABLE IF NOT EXISTS therapists (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ
 );
-
 -- Indexes
 CREATE INDEX idx_therapists_user_id ON therapists(user_id);
 CREATE INDEX idx_therapists_license ON therapists(license_number);
 CREATE INDEX idx_therapists_specialties ON therapists USING GIN(specialties);
-
 -- RLS
 ALTER TABLE therapists ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Therapists can view own profile"
   ON therapists FOR SELECT
   USING (user_id IN (SELECT id FROM users WHERE auth_id = auth.uid()));
-
 CREATE POLICY "Admins can manage therapists"
   ON therapists FOR ALL
   USING (
@@ -61,13 +57,11 @@ CREATE POLICY "Admins can manage therapists"
       WHERE auth_id = auth.uid() AND role = 'admin'
     )
   );
-
 -- =====================================================
 -- 2. PATIENTS TABLE (Enhanced)
 -- =====================================================
 
 DROP TABLE IF EXISTS patients CASCADE;
-
 CREATE TABLE patients (
   -- Primary Key
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -115,7 +109,6 @@ CREATE TABLE patients (
   updated_by UUID REFERENCES users(id),
   deleted_at TIMESTAMPTZ
 );
-
 -- Indexes
 CREATE INDEX idx_patients_user_id ON patients(user_id);
 CREATE INDEX idx_patients_full_name ON patients(full_name);
@@ -126,14 +119,11 @@ CREATE INDEX idx_patients_status ON patients(status);
 CREATE INDEX idx_patients_therapist ON patients(assigned_therapist_id);
 CREATE INDEX idx_patients_tags ON patients USING GIN(tags);
 CREATE INDEX idx_patients_created_at ON patients(created_at DESC);
-
 -- RLS
 ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Patients can view own data"
   ON patients FOR SELECT
   USING (user_id IN (SELECT id FROM users WHERE auth_id = auth.uid()));
-
 CREATE POLICY "Therapists can view assigned patients"
   ON patients FOR SELECT
   USING (
@@ -142,7 +132,6 @@ CREATE POLICY "Therapists can view assigned patients"
       WHERE user_id IN (SELECT id FROM users WHERE auth_id = auth.uid())
     )
   );
-
 CREATE POLICY "Staff can manage patients"
   ON patients FOR ALL
   USING (
@@ -153,13 +142,11 @@ CREATE POLICY "Staff can manage patients"
       AND is_active = TRUE
     )
   );
-
 -- =====================================================
 -- 3. APPOINTMENTS TABLE (Enhanced)
 -- =====================================================
 
 DROP TABLE IF EXISTS appointments CASCADE;
-
 CREATE TABLE appointments (
   -- Primary Key
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -228,7 +215,6 @@ CREATE TABLE appointments (
   CONSTRAINT valid_time_range CHECK (end_time > start_time),
   CONSTRAINT valid_duration CHECK (duration > 0 AND duration <= 480)
 );
-
 -- Indexes
 CREATE INDEX idx_appointments_patient ON appointments(patient_id);
 CREATE INDEX idx_appointments_therapist ON appointments(therapist_id);
@@ -246,10 +232,8 @@ CREATE INDEX idx_appointments_conflict ON appointments(
   start_time,
   end_time
 ) WHERE status NOT IN ('cancelled', 'no_show') AND deleted_at IS NULL;
-
 -- RLS
 ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Patients can view own appointments"
   ON appointments FOR SELECT
   USING (
@@ -259,7 +243,6 @@ CREATE POLICY "Patients can view own appointments"
       )
     )
   );
-
 CREATE POLICY "Therapists can view own appointments"
   ON appointments FOR SELECT
   USING (
@@ -269,7 +252,6 @@ CREATE POLICY "Therapists can view own appointments"
       )
     )
   );
-
 CREATE POLICY "Staff can manage appointments"
   ON appointments FOR ALL
   USING (
@@ -280,7 +262,6 @@ CREATE POLICY "Staff can manage appointments"
       AND is_active = TRUE
     )
   );
-
 -- =====================================================
 -- 4. FUNCTIONS
 -- =====================================================
@@ -309,7 +290,6 @@ BEGIN
   RETURN conflict_count > 0;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Function: Get therapist availability for date
 CREATE OR REPLACE FUNCTION get_therapist_availability(
   p_therapist_id UUID,
@@ -351,7 +331,6 @@ BEGIN
     ) AS is_available;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Function: Auto-update patient last activity
 CREATE OR REPLACE FUNCTION update_patient_activity()
 RETURNS TRIGGER AS $$
@@ -362,7 +341,6 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 -- =====================================================
 -- 5. TRIGGERS
 -- =====================================================
@@ -372,25 +350,21 @@ CREATE TRIGGER update_therapists_updated_at
   BEFORE UPDATE ON therapists
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- Trigger: Update updated_at on patients
 CREATE TRIGGER update_patients_updated_at
   BEFORE UPDATE ON patients
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- Trigger: Update updated_at on appointments
 CREATE TRIGGER update_appointments_updated_at
   BEFORE UPDATE ON appointments
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- Trigger: Update patient activity when appointment is created/updated
 CREATE TRIGGER update_patient_on_appointment
   AFTER INSERT OR UPDATE ON appointments
   FOR EACH ROW
   EXECUTE FUNCTION update_patient_activity();
-
 -- =====================================================
 -- END OF MIGRATION
 -- =====================================================

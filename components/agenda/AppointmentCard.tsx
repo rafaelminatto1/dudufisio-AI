@@ -8,8 +8,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import format from 'date-fns/format';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { ptBR } from 'date-fns/locale';
-import { Clock, User, AlertCircle, CheckCircle2, Circle } from 'lucide-react';
+import { Clock, User, AlertCircle, CheckCircle2, Circle, XCircle, RefreshCw } from 'lucide-react';
 import { Card } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback } from '../ui/avatar';
@@ -72,6 +73,39 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
       <Badge variant="outline" className="bg-warning-light text-warning border-warning">
         <Circle className="w-3 h-3 mr-1" />
         Pendente
+      </Badge>
+    );
+  };
+
+  const renderConfirmationBadge = () => {
+    if (!appointment.confirmationState) {
+      return null;
+    }
+
+    let Icon = Circle;
+    switch (appointment.confirmationState) {
+      case 'confirmed':
+        Icon = CheckCircle2;
+        break;
+      case 'cancelled':
+        Icon = XCircle;
+        break;
+      case 'rescheduled':
+        Icon = RefreshCw;
+        break;
+      case 'pending':
+      default:
+        Icon = AlertCircle;
+        break;
+    }
+
+    return (
+      <Badge
+        variant="outline"
+        className={cn('text-xs flex items-center gap-1', appointment.confirmationBadgeClass)}
+      >
+        <Icon className="w-3 h-3" />
+        {appointment.confirmationLabel}
       </Badge>
     );
   };
@@ -152,6 +186,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
                   Conflito
                 </Badge>
               )}
+              {renderConfirmationBadge()}
               {getPaymentBadge()}
               <CalendarStatusBadge calendarLink={(appointment as any).calendar_link} />
             </div>
@@ -185,6 +220,13 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
               <p className="text-xs font-semibold text-neutral-text">
                 R$ {appointment.price.toFixed(2)}
               </p>
+            </div>
+          )}
+
+          {!compact && appointment.lastReminderAt && (
+            <div className="mt-sm text-[10px] text-neutral-textSecondary">
+              Último lembrete {formatDistanceToNow(appointment.lastReminderAt, { locale: ptBR, addSuffix: true })}
+              {appointment.lastReminderType ? ` • ${appointment.lastReminderType.toUpperCase()}` : ''}
             </div>
           )}
         </Card>

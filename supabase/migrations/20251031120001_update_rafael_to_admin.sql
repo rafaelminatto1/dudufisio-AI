@@ -16,7 +16,6 @@ SET
   permissions = '["*"]'::jsonb,
   updated_at = NOW()
 WHERE email = 'rafael.minatto@yahoo.com.br';
-
 -- If user doesn't exist in public.users but exists in auth.users, create it
 INSERT INTO public.users (
   auth_id,
@@ -54,7 +53,6 @@ SET
   full_name = 'Rafael Minatto',
   permissions = '["*"]'::jsonb,
   updated_at = NOW();
-
 -- Verify the update
 DO $$
 DECLARE
@@ -74,10 +72,8 @@ BEGIN
     RAISE WARNING 'User not found in public.users';
   END IF;
 END $$;
-
 -- =====================================================
 -- END OF MIGRATION
 -- =====================================================
 
 COMMENT ON TABLE public.users IS 'Users table - rafael.minatto@yahoo.com.br configured as admin with full privileges';
-

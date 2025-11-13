@@ -18,21 +18,21 @@ Reduzir a dependência indireta de `lodash` eliminando o uso do `recharts` nas r
    - Status: `ChartsLazyOptimized` agora encapsula todos os pontos críticos com `React.lazy`, mantendo `recharts` fora do bundle inicial.
 
 ## Fase 2 — Migração de componentes reutilizáveis
-1. **Migrar `RatingChart` para `@nivo/line`**  
-   - Garantir equivalência de tooltip customizado e escala discreta.  
-   - Avaliar necessidade de polyfills para SSR.
-2. **Migrar `ProgressChart` (portal do paciente)**  
-   - Opção 1: `@nivo/line` (mesmo stack).  
-   - Opção 2: `@visx/xychart` para máxima leveza caso bundle do app paciente exija.
-3. **Criar camada de abstração**  
-   - Introduzir `components/charts/LineChartAdapter.tsx` expondo interface comum (`data`, `series`, `tooltipRenderer`), facilitando troca futura.
+1. **Migrar `RatingChart` para `@nivo/line`** ✅ (2025-11-13)  
+   - Tooltip customizado replicado com `sliceTooltip`; eixo Y mantém emojis das notas.  
+2. **Migrar `ProgressChart` (portal do paciente)** ✅ (2025-11-13)  
+   - Usa `@nivo/line` com área preenchida e labels locais; mantém filtro dos últimos 14 dias.  
+3. **Criar camada de abstração** ⏳  
+   - Próxima etapa: consolidar utilidades comuns (tema, formatação de datas) em um adapter para Nivo, evitando duplicação entre charts migrados.
 
 ## Fase 3 — Dashboards complexos
-1. **EdgeFunctionsPerformanceDashboard**  
-   - Migrar gradualmente: linha → barras → pizza.  
-   - Reaproveitar componentes adapters da fase 2.  
-   - Considerar dividir dashboard em tabs com carregamento adiado.
-2. **Refino de UX**  
+1. **EdgeFunctionsPerformanceDashboard** ✅ (2025-11-13)  
+   - Gráficos reimplementados com `@nivo/line`, `@nivo/bar` e `@nivo/pie`, preservando cores e tooltips.  
+   - Próximo passo: criar adapter comum para compartilhar tema e padrões com demais dashboards.  
+2. **AnalyticsDashboardPage** ✅ (2025-11-13)  
+   - Uso dos adapters Nivo com normalização interna para múltiplas escalas (consultas vs. receita).  
+   - Pie e barras agrupadas migradas, eliminando dependência direta de `ChartsLazyOptimized`.  
+3. **Refino de UX** ⏳  
    - Validar animações, tooltips e acessibilidade nas novas libs.  
    - Ajustar tema (cores Tailwind) para manter consistência.
 

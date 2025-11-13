@@ -10,12 +10,9 @@
 -- Remover a constraint NOT NULL do campo therapist_id
 ALTER TABLE appointments 
   ALTER COLUMN therapist_id DROP NOT NULL;
-
 -- Adicionar comentário explicativo
 COMMENT ON COLUMN appointments.therapist_id IS 
   'ID do terapeuta responsável. Pode ser NULL quando agendado por admin/estagiário e definido posteriormente na evolução.';
-
 -- ============================================================================
 -- FIM DA MIGRAÇÃO
--- ============================================================================
-
+-- ============================================================================;

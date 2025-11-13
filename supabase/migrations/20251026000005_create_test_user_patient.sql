@@ -18,7 +18,6 @@ VALUES (
   NOW()
 )
 ON CONFLICT (id) DO NOTHING;
-
 -- Criar mais alguns usuários de teste se necessário
 INSERT INTO users (email, full_name, role, is_active, created_at)
 SELECT 
@@ -31,8 +30,6 @@ FROM generate_series(1, 5) AS i
 WHERE NOT EXISTS (
   SELECT 1 FROM users WHERE role = 'patient' AND email LIKE 'paciente%@teste.com' LIMIT 5
 );
-
 -- ============================================================================
 -- FIM DA MIGRAÇÃO
--- ============================================================================
-
+-- ============================================================================;

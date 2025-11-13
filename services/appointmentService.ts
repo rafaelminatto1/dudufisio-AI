@@ -82,7 +82,20 @@ function rowToAppointment(row: any): Appointment {
     cancelled_at: row.cancelled_at,
     cancelled_by: row.cancelled_by,
     cancellationReason: row.cancellation_reason,
-    
+
+    // Campos da tabela - Confirmação & WhatsApp
+    confirmed: Boolean(row.confirmed),
+    confirmedAt: toDateOrUndefined(row.confirmed_at),
+    confirmed_at: row.confirmed_at,
+    whatsappConversationId: row.whatsapp_conversation_id,
+    whatsapp_conversation_id: row.whatsapp_conversation_id,
+    reminderSent7d: toDateOrUndefined(row.reminder_sent_7d),
+    reminderSent24h: toDateOrUndefined(row.reminder_sent_24h),
+    reminderSent2h: toDateOrUndefined(row.reminder_sent_2h),
+    reminder_sent_7d: row.reminder_sent_7d,
+    reminder_sent_24h: row.reminder_sent_24h,
+    reminder_sent_2h: row.reminder_sent_2h,
+ 
     // Campos da tabela - Check-in/out
     checkedInAt: toDateOrUndefined(row.checked_in_at),
     checked_in_at: row.checked_in_at,
@@ -180,7 +193,14 @@ function appointmentToRow(appointment: Appointment): any {
     // Lembretes
     reminder_sent: appointment.reminderSent,
     reminder_sent_at: toISOStringOrUndefined(appointment.reminderSentAt || appointment.reminder_sent_at),
-    
+    reminder_sent_7d: toISOStringOrUndefined(appointment.reminderSent7d || appointment.reminder_sent_7d),
+    reminder_sent_24h: toISOStringOrUndefined(appointment.reminderSent24h || appointment.reminder_sent_24h),
+    reminder_sent_2h: toISOStringOrUndefined(appointment.reminderSent2h || appointment.reminder_sent_2h),
+    confirmed: appointment.confirmed,
+    confirmed_at: toISOStringOrUndefined(appointment.confirmedAt || appointment.confirmed_at),
+    whatsapp_conversation_id:
+      appointment.whatsappConversationId ?? appointment.whatsapp_conversation_id,
+ 
     // Metadata
     created_by: appointment.created_by,
     updated_by: appointment.updated_by,

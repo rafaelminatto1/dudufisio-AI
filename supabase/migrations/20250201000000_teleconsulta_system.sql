@@ -51,7 +51,6 @@ CREATE TABLE IF NOT EXISTS teleconsultas (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Índices para Performance
 CREATE INDEX IF NOT EXISTS idx_teleconsultas_patient ON teleconsultas(patient_id);
 CREATE INDEX IF NOT EXISTS idx_teleconsultas_therapist ON teleconsultas(therapist_id);
@@ -59,7 +58,6 @@ CREATE INDEX IF NOT EXISTS idx_teleconsultas_appointment ON teleconsultas(appoin
 CREATE INDEX IF NOT EXISTS idx_teleconsultas_scheduled_start ON teleconsultas(scheduled_start);
 CREATE INDEX IF NOT EXISTS idx_teleconsultas_status ON teleconsultas(status);
 CREATE INDEX IF NOT EXISTS idx_teleconsultas_room ON teleconsultas(room_name);
-
 -- Trigger para updated_at
 CREATE OR REPLACE FUNCTION update_teleconsultas_updated_at()
 RETURNS TRIGGER AS $$
@@ -68,12 +66,10 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER teleconsultas_updated_at
   BEFORE UPDATE ON teleconsultas
   FOR EACH ROW
   EXECUTE FUNCTION update_teleconsultas_updated_at();
-
 -- =====================================================
 -- RPC FUNCTIONS
 -- =====================================================
@@ -139,7 +135,6 @@ BEGIN
     v_part_password;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Iniciar teleconsulta (quando participante entra)
 CREATE OR REPLACE FUNCTION start_teleconsulta(
   p_teleconsulta_id UUID,
@@ -195,7 +190,6 @@ BEGIN
   RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Finalizar teleconsulta
 CREATE OR REPLACE FUNCTION end_teleconsulta(
   p_teleconsulta_id UUID,
@@ -244,7 +238,6 @@ BEGIN
   RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Cancelar teleconsulta
 CREATE OR REPLACE FUNCTION cancel_teleconsulta(
   p_teleconsulta_id UUID,
@@ -296,7 +289,6 @@ BEGIN
   RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Obter teleconsultas do usuário
 CREATE OR REPLACE FUNCTION get_user_teleconsultas(
   p_user_id UUID,
@@ -335,13 +327,11 @@ BEGIN
   LIMIT p_limit;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- =====================================================
 -- RLS POLICIES
 -- =====================================================
 
 ALTER TABLE teleconsultas ENABLE ROW LEVEL SECURITY;
-
 -- Política de leitura: pacientes e terapeutas podem ver suas próprias teleconsultas
 CREATE POLICY "Users can view their own teleconsultas"
   ON teleconsultas FOR SELECT
@@ -354,7 +344,6 @@ CREATE POLICY "Users can view their own teleconsultas"
       AND role IN ('admin', 'therapist')
     )
   );
-
 -- Política de criação: apenas terapeutas e admins
 CREATE POLICY "Therapists can create teleconsultas"
   ON teleconsultas FOR INSERT
@@ -365,7 +354,6 @@ CREATE POLICY "Therapists can create teleconsultas"
       AND role IN ('admin', 'therapist')
     )
   );
-
 -- Política de atualização: participantes podem atualizar
 CREATE POLICY "Participants can update teleconsultas"
   ON teleconsultas FOR UPDATE
@@ -373,7 +361,6 @@ CREATE POLICY "Participants can update teleconsultas"
     auth.uid() = patient_id OR
     auth.uid() = therapist_id
   );
-
 -- =====================================================
 -- COMENTÁRIOS
 -- =====================================================

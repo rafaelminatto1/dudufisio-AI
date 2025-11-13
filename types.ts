@@ -461,6 +461,25 @@ export interface Appointment {
   reminderSent?: boolean;
   confirmationReceived?: boolean;
   
+  // === Confirmação & WhatsApp ===
+  confirmed?: boolean;
+  confirmedAt?: Date;
+  confirmed_at?: string | null;
+  whatsappConversationId?: string | null;
+  whatsapp_conversation_id?: string | null;
+  reminderSent7d?: Date;
+  reminderSent24h?: Date;
+  reminderSent2h?: Date;
+  reminder_sent_7d?: string | null;
+  reminder_sent_24h?: string | null;
+  reminder_sent_2h?: string | null;
+  lastReminderType?: '7d' | '24h' | '2h';
+  lastReminderAt?: Date;
+  reminderHistory?: Array<{
+    type: '7d' | '24h' | '2h';
+    sentAt: Date;
+  }>;
+  
   // === Conflitos ===
   hasConflict?: boolean;
   conflictReason?: string;
@@ -480,6 +499,13 @@ export interface EnrichedAppointment extends Appointment {
     patientMedicalAlerts?: string | undefined;
     therapistName: string;
     notes?: string;
+    confirmationState: 'pending' | 'confirmed' | 'cancelled' | 'rescheduled';
+    confirmationLabel: string;
+    confirmationBadgeClass: string;
+    isAwaitingConfirmation: boolean;
+    lastReminderAt?: Date;
+    lastReminderType?: '7d' | '24h' | '2h';
+    reminderHistory?: Array<{ type: '7d' | '24h' | '2h'; sentAt: Date }>;
 }
 
 export interface AvailabilityBlock {

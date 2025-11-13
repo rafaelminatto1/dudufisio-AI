@@ -22,7 +22,6 @@ ALTER TABLE task_type_supply_templates DISABLE ROW LEVEL SECURITY;
 ALTER TABLE supply_batches DISABLE ROW LEVEL SECURITY;
 ALTER TABLE purchase_approvals DISABLE ROW LEVEL SECURITY;
 ALTER TABLE auto_replenishment_rules DISABLE ROW LEVEL SECURITY;
-
 -- ============================================================================
 -- COMENTÁRIO DE AVISO
 -- ============================================================================
@@ -31,7 +30,6 @@ COMMENT ON TABLE suppliers IS '⚠️ RLS DESABILITADO PARA DESENVOLVIMENTO - HA
 COMMENT ON TABLE supplies IS '⚠️ RLS DESABILITADO PARA DESENVOLVIMENTO - HABILITAR EM PRODUÇÃO';
 COMMENT ON TABLE stock_movements IS '⚠️ RLS DESABILITADO PARA DESENVOLVIMENTO - HABILITAR EM PRODUÇÃO';
 COMMENT ON TABLE purchase_orders IS '⚠️ RLS DESABILITADO PARA DESENVOLVIMENTO - HABILITAR EM PRODUÇÃO';
-
 -- ============================================================================
 -- FIM DA MIGRAÇÃO 004
--- ============================================================================
+-- ============================================================================;

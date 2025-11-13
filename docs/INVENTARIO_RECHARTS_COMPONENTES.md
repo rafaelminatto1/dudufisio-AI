@@ -5,46 +5,54 @@ Levantamento realizado em 2025-11-13 após execução de `rg "from 'recharts'"` 
 
 ## Componentes/Rotas identificados
 
-1. `src/pages/EdgeFunctionsPerformanceDashboard.tsx`
-   - **Uso atual**: importa diretamente `LineChart`, `Line`, `XAxis`, `YAxis`, `CartesianGrid`, `Tooltip`, `ResponsiveContainer`, `BarChart`, `Bar`, `PieChart`, `Cell`, `Pie` do pacote raiz.
-   - **Recursos críticos**:
-     - Gráfico de linha para séries horárias (`LineChart`, `Line`).
-     - Gráfico de barras (`BarChart`, `Bar`).
-     - Gráfico de pizza com múltiplas cores (`PieChart`, `Pie`, `Cell`).
-     - `ResponsiveContainer` para ajuste automático de largura/altura.
-     - `Tooltip` customizado via `contentStyle`.
-   - **Observações**:
-     - Página de dashboard com múltiplos gráficos renderizados simultaneamente.
-     - Uso de dados mockados; possível migração gradual por gráfico.
+- Não há mais importações diretas de `recharts` nos pacotes analisados.  
+  > ℹ️ O consumo remanescente acontece exclusivamente via wrappers (`ChartsLazyOptimized` e derivados), utilizados por dashboards legados que ainda não foram migrados.
 
-2. `components/patient/RatingChart.tsx`
-   - **Uso atual**: importa `LineChart`, `Line`, `XAxis`, `YAxis`, `CartesianGrid`, `Tooltip`, `Legend`, `ResponsiveContainer` e tipagem `TooltipProps`.
-   - **Recursos críticos**:
-     - Tooltip customizado com payload tipado (`TooltipProps`).
-     - Formatação de ticks de eixo com `renderYAxisTick`.
-     - Legend configurável (`Legend`).
-   - **Observações**:
-     - Componente reutilizado (versão mini).
-     - Excelente candidato à migração para wrapper lazy (`ChartsLazyOptimized`) ou biblioteca alternativa com suporte a tooltips customizados.
+## Componentes migrados na Fase 2
 
-3. `packages/patient-portal/src/components/ProgressChart.tsx`
-   - **Uso atual**: importa `LineChart`, `Line`, `XAxis`, `YAxis`, `CartesianGrid`, `Tooltip`, `ResponsiveContainer`.
-   - **Recursos críticos**:
-     - Exibição de tendência temporal simples (últimos 14 dias).
-     - Tooltip padrão com customização básica de rótulo (`formatter`).
-   - **Observações**:
-     - Cenário simples; pode ser migrado rapidamente para biblioteca mais enxuta ou componente customizado.
+- `components/patient/RatingChart.tsx`
+  - Agora utiliza `@nivo/line` com tooltip customizado reproduzindo emojis e legendas condicionais.
+  - Repositório de dados convertido para `ResponsiveLine`, mantendo escala 1-5 e rótulos formatados com `date-fns`.
+
+- `packages/patient-portal/src/components/ProgressChart.tsx`
+  - Migrado para `@nivo/line` com `sliceTooltip` personalizado e área preenchida.
+  - Mantém exibição dos últimos 14 dias, com labels amigáveis e fallback para ausência de dados.
+
+## Componentes migrados na Fase 3
+
+- `src/pages/EdgeFunctionsPerformanceDashboard.tsx`
+  - Gráficos de linha, barra e pizza reescritos com `@nivo/line`, `@nivo/bar` e `@nivo/pie`.
+  - Tooltips customizados para preservar mensagens anteriores e paleta de cores original.
+  - Removeu a dependência direta do wrapper `ChartsLazyOptimized` nesta rota.
+- `pages/AnalyticsDashboardPage.tsx`
+  - Área (duplo eixo), pizza e barras agrupadas convertidas para os adapters Nivo.
+  - Implementada normalização interna para representar múltiplas escalas (consultas vs. receita) utilizando tooltips padronizados.
+
+## Componentes migrados na Fase 4
+
+- `pages/AdvancedAnalyticsDashboard.tsx`
+  - Previsão de demanda reescrita com `NivoAreaLineChart`, preservando a combinação área + linha e tooltips contextuais.
+  - Wrapper `ChartsLazyOptimized` removido da rota; os dados agora são transformados em séries Nivo com `sliceTooltip`.
 
 ## Utilização indireta / wrappers
 - `components/charts/ChartsLazyOptimized.tsx` e `components/charts/ChartsLazy.tsx` encapsulam lazy loading completo do Recharts, expondo todos os componentes via `React.lazy`.
 - Diversos pacotes (`packages/*/components/React19AssetLoader.tsx`) preparam o preload de `recharts.min.js`, sugerindo intenção de carregamento diferido.
+
+### Principais consumidores restantes (via wrappers)
+
+| Categoria | Exemplos | Observações |
+|-----------|----------|-------------|
+| **Dashboards core (app principal)** | `pages/ProgressDashboardPage.tsx`, `pages/PopulationHealthDashboardPage.tsx`, `pages/AdvancedReportsPage.tsx`, `pages/QualityAssuranceDashboardPage.tsx`, `pages/ExerciseAnalyticsPage.tsx`, `pages/ResponsiveDashboardPage.tsx` | Alto impacto: rotas completas ainda carregam múltiplos gráficos via wrapper; ideais para próxima migração. |
+| **Widgets reutilizáveis** | `components/dashboard/*`, `components/monitoring/*`, `components/charts/*` | Utilizados em diversos painéis; conversão para Nivo com adapter compartilhado reduz duplicação. |
+| **Portal Agenda/Tratamentos/Financeiro (packages)** | `packages/agenda-pacientes/src/components/**`, `packages/financeiro/src/components/**`, `packages/tratamentos/src/components/**` | Grande volume de gráficos; considerar migrar módulos mais acessados (ex.: dashboards de pacientes e financeiros) após consolidar adapter. |
+| **Material clínico / relatórios** | `components/clinical-materials/MaterialAnalyticsDashboard.tsx`, `components/reports/**`, equivalentes em `packages/*` | Gráficos agregados para exportação/relatórios; revisar requisitos de impressão antes da migração. |
 
 ## Dependências relacionadas a lodash
 - Recharts mantém dependências internas em `lodash`/`lodash-es`; portanto, cada ponto listado herda esse custo indiretamente.
 - Não há utilidades de `lodash` importadas diretamente nesses componentes além da biblioteca de gráficos.
 
 ## Próximos passos recomendados
-- Substituir imports diretos por `@/components/charts/ChartsLazyOptimized` para validar redução imediata.
-- Priorizar migração da página `EdgeFunctionsPerformanceDashboard` (maior concentração de gráficos).
-- Selecionar uma biblioteca alternativa (ex.: `visx`, `nivo`, `react-chartjs-2`) e prototipar equivalentes para cada necessidade listada acima.
+- Mapear dashboards e widgets que consomem `ChartsLazyOptimized` e definir prioridade de migração (foco em rotas mais acessadas).
+- Remover `recharts` e suas tipagens após a migração total, eliminando também scripts de preload (`React19AssetLoader`) e wrappers legados.
+- Criar um adapter compartilhado (tema + helpers) para `@nivo/*`, evitando duplicação de configurações entre gráficos migrados.
 

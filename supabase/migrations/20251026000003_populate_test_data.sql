@@ -20,7 +20,6 @@ VALUES (
   NOW()
 )
 ON CONFLICT (id) DO NOTHING;
-
 -- Popular outros pacientes de teste (se a tabela estiver vazia)
 INSERT INTO patients (full_name, email, phone, cpf, birth_date, status, created_at)
 SELECT 
@@ -33,13 +32,10 @@ SELECT
   NOW()
 FROM generate_series(1, 5) AS i
 WHERE NOT EXISTS (SELECT 1 FROM patients LIMIT 5);
-
 -- ============================================================================
 -- COMENTÁRIO
 -- ============================================================================
 COMMENT ON TABLE patients IS 'Tabela de pacientes com dados de teste populados para desenvolvimento';
-
 -- ============================================================================
 -- FIM DA MIGRAÇÃO
--- ============================================================================
-
+-- ============================================================================;

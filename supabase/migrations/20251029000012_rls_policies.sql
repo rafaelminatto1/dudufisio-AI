@@ -6,14 +6,12 @@
 DROP POLICY IF EXISTS "Therapists can view session evolutions" ON public.session_evolutions;
 DROP POLICY IF EXISTS "Therapists can create session evolutions" ON public.session_evolutions;
 DROP POLICY IF EXISTS "Therapists can update session evolutions" ON public.session_evolutions;
-
 -- Habilitar RLS em todas as tabelas públicas
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.patients ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.session_evolutions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.exercises ENABLE ROW LEVEL SECURITY;
-
 -- ============================================================================
 -- POLICIES PARA TABELA users
 -- ============================================================================
@@ -22,12 +20,10 @@ ALTER TABLE public.exercises ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own profile"
   ON public.users FOR SELECT
   USING (auth.uid() = auth_id);
-
 -- Usuários podem atualizar seu próprio perfil
 CREATE POLICY "Users can update their own profile"
   ON public.users FOR UPDATE
   USING (auth.uid() = auth_id);
-
 -- Administradores e managers podem ver todos os usuários
 CREATE POLICY "Admins can view all users"
   ON public.users FOR SELECT
@@ -38,7 +34,6 @@ CREATE POLICY "Admins can view all users"
       AND users.role IN ('admin', 'manager')
     )
   );
-
 -- ============================================================================
 -- POLICIES PARA TABELA patients
 -- ============================================================================
@@ -53,7 +48,6 @@ CREATE POLICY "Healthcare staff can view all patients"
       AND users.role IN ('therapist', 'admin', 'manager', 'educator')
     )
   );
-
 -- Terapeutas podem criar pacientes
 CREATE POLICY "Healthcare staff can create patients"
   ON public.patients FOR INSERT
@@ -64,7 +58,6 @@ CREATE POLICY "Healthcare staff can create patients"
       AND users.role IN ('therapist', 'admin', 'manager', 'educator')
     )
   );
-
 -- Terapeutas podem atualizar pacientes
 CREATE POLICY "Healthcare staff can update patients"
   ON public.patients FOR UPDATE
@@ -75,7 +68,6 @@ CREATE POLICY "Healthcare staff can update patients"
       AND users.role IN ('therapist', 'admin', 'manager', 'educator')
     )
   );
-
 -- Admins podem deletar pacientes
 CREATE POLICY "Admins can delete patients"
   ON public.patients FOR DELETE
@@ -86,7 +78,6 @@ CREATE POLICY "Admins can delete patients"
       AND users.role IN ('admin', 'manager')
     )
   );
-
 -- ============================================================================
 -- POLICIES PARA TABELA appointments
 -- ============================================================================
@@ -104,7 +95,6 @@ CREATE POLICY "Therapists can view their appointments"
       AND users.role IN ('admin', 'manager', 'receptionist')
     )
   );
-
 -- Terapeutas podem criar agendamentos
 CREATE POLICY "Healthcare staff can create appointments"
   ON public.appointments FOR INSERT
@@ -115,7 +105,6 @@ CREATE POLICY "Healthcare staff can create appointments"
       AND users.role IN ('therapist', 'admin', 'manager', 'receptionist', 'educator')
     )
   );
-
 -- Terapeutas podem atualizar seus agendamentos
 CREATE POLICY "Healthcare staff can update appointments"
   ON public.appointments FOR UPDATE
@@ -126,7 +115,6 @@ CREATE POLICY "Healthcare staff can update appointments"
       AND users.role IN ('therapist', 'admin', 'manager', 'receptionist', 'educator')
     )
   );
-
 -- Terapeutas e recepcionistas podem deletar agendamentos
 CREATE POLICY "Staff can delete appointments"
   ON public.appointments FOR DELETE
@@ -137,7 +125,6 @@ CREATE POLICY "Staff can delete appointments"
       AND users.role IN ('therapist', 'admin', 'manager', 'receptionist')
     )
   );
-
 -- ============================================================================
 -- POLICIES PARA TABELA session_evolutions
 -- ============================================================================
@@ -158,7 +145,6 @@ CREATE POLICY "Therapists can view session evolutions"
       AND users.role IN ('admin', 'manager')
     )
   );
-
 -- Terapeutas podem criar evoluções de sessão
 CREATE POLICY "Therapists can create session evolutions"
   ON public.session_evolutions FOR INSERT
@@ -175,7 +161,6 @@ CREATE POLICY "Therapists can create session evolutions"
       AND users.role IN ('admin', 'manager', 'educator')
     )
   );
-
 -- Terapeutas podem atualizar evoluções
 CREATE POLICY "Therapists can update session evolutions"
   ON public.session_evolutions FOR UPDATE
@@ -186,7 +171,6 @@ CREATE POLICY "Therapists can update session evolutions"
       AND users.role IN ('therapist', 'admin', 'manager', 'educator')
     )
   );
-
 -- ============================================================================
 -- POLICIES PARA TABELA exercises
 -- ============================================================================
@@ -201,7 +185,6 @@ CREATE POLICY "Staff can view exercises"
       AND users.role IN ('therapist', 'admin', 'manager', 'educator', 'receptionist')
     )
   );
-
 -- Terapeutas e educadores podem criar exercícios
 CREATE POLICY "Healthcare staff can create exercises"
   ON public.exercises FOR INSERT
@@ -212,7 +195,6 @@ CREATE POLICY "Healthcare staff can create exercises"
       AND users.role IN ('therapist', 'admin', 'manager', 'educator')
     )
   );
-
 -- Terapeutas e educadores podem atualizar exercícios
 CREATE POLICY "Healthcare staff can update exercises"
   ON public.exercises FOR UPDATE
@@ -223,7 +205,6 @@ CREATE POLICY "Healthcare staff can update exercises"
       AND users.role IN ('therapist', 'admin', 'manager', 'educator')
     )
   );
-
 -- Admins podem deletar exercícios
 CREATE POLICY "Admins can delete exercises"
   ON public.exercises FOR DELETE
@@ -234,17 +215,13 @@ CREATE POLICY "Admins can delete exercises"
       AND users.role IN ('admin', 'manager')
     )
   );
-
 -- ============================================================================
 -- COMENTÁRIOS
 -- ============================================================================
 
 COMMENT ON POLICY "Users can view their own profile" ON public.users IS 
 'Permite que usuários vejam seu próprio perfil';
-
 COMMENT ON POLICY "Healthcare staff can view all patients" ON public.patients IS 
 'Permite que terapeutas, admins, managers e educadores vejam todos os pacientes';
-
 COMMENT ON POLICY "Therapists can view their appointments" ON public.appointments IS 
 'Permite que terapeutas vejam seus próprios agendamentos';
-

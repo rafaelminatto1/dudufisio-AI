@@ -60,7 +60,6 @@ CREATE TABLE IF NOT EXISTS exercises (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ
 );
-
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_exercises_name ON exercises(name);
 CREATE INDEX IF NOT EXISTS idx_exercises_category ON exercises(category);
@@ -69,14 +68,11 @@ CREATE INDEX IF NOT EXISTS idx_exercises_muscle_groups ON exercises USING GIN(mu
 CREATE INDEX IF NOT EXISTS idx_exercises_tags ON exercises USING GIN(tags);
 CREATE INDEX IF NOT EXISTS idx_exercises_equipment ON exercises USING GIN(equipment);
 CREATE INDEX IF NOT EXISTS idx_exercises_active ON exercises(is_active) WHERE is_active = TRUE;
-
 -- RLS
 ALTER TABLE exercises ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Anyone can view active exercises"
   ON exercises FOR SELECT
   USING (is_active = TRUE AND deleted_at IS NULL);
-
 CREATE POLICY "Therapists can create exercises"
   ON exercises FOR INSERT
   WITH CHECK (
@@ -87,7 +83,6 @@ CREATE POLICY "Therapists can create exercises"
       AND is_active = TRUE
     )
   );
-
 CREATE POLICY "Therapists can update own exercises"
   ON exercises FOR UPDATE
   USING (
@@ -97,7 +92,6 @@ CREATE POLICY "Therapists can update own exercises"
       WHERE auth_id = auth.uid() AND role = 'admin'
     )
   );
-
 -- =====================================================
 -- 2. EXERCISE PROTOCOLS TABLE
 -- =====================================================
@@ -132,16 +126,13 @@ CREATE TABLE IF NOT EXISTS exercise_protocols (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ
 );
-
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_protocols_pathology ON exercise_protocols(pathology);
 CREATE INDEX IF NOT EXISTS idx_protocols_phase ON exercise_protocols(phase);
 CREATE INDEX IF NOT EXISTS idx_protocols_category ON exercise_protocols(category);
 CREATE INDEX IF NOT EXISTS idx_protocols_active ON exercise_protocols(is_active) WHERE is_active = TRUE;
-
 -- RLS
 ALTER TABLE exercise_protocols ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Therapists can view protocols"
   ON exercise_protocols FOR SELECT
   USING (
@@ -152,7 +143,6 @@ CREATE POLICY "Therapists can view protocols"
       AND role IN ('admin', 'therapist', 'manager')
     )
   );
-
 CREATE POLICY "Therapists can create protocols"
   ON exercise_protocols FOR INSERT
   WITH CHECK (
@@ -163,7 +153,6 @@ CREATE POLICY "Therapists can create protocols"
       AND is_active = TRUE
     )
   );
-
 CREATE POLICY "Therapists can update own protocols"
   ON exercise_protocols FOR UPDATE
   USING (
@@ -173,7 +162,6 @@ CREATE POLICY "Therapists can update own protocols"
       WHERE auth_id = auth.uid() AND role = 'admin'
     )
   );
-
 -- =====================================================
 -- 3. PATIENT EXERCISE PRESCRIPTIONS TABLE
 -- =====================================================
@@ -216,17 +204,14 @@ CREATE TABLE IF NOT EXISTS patient_exercise_prescriptions (
   created_by UUID REFERENCES users(id),
   deleted_at TIMESTAMPTZ
 );
-
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_prescriptions_patient ON patient_exercise_prescriptions(patient_id);
 CREATE INDEX IF NOT EXISTS idx_prescriptions_therapist ON patient_exercise_prescriptions(therapist_id);
 CREATE INDEX IF NOT EXISTS idx_prescriptions_protocol ON patient_exercise_prescriptions(protocol_id);
 CREATE INDEX IF NOT EXISTS idx_prescriptions_status ON patient_exercise_prescriptions(status);
 CREATE INDEX IF NOT EXISTS idx_prescriptions_dates ON patient_exercise_prescriptions(start_date, end_date);
-
 -- RLS
 ALTER TABLE patient_exercise_prescriptions ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Patients can view own prescriptions"
   ON patient_exercise_prescriptions FOR SELECT
   USING (
@@ -236,7 +221,6 @@ CREATE POLICY "Patients can view own prescriptions"
       )
     )
   );
-
 CREATE POLICY "Therapists can manage prescriptions"
   ON patient_exercise_prescriptions FOR ALL
   USING (
@@ -250,7 +234,6 @@ CREATE POLICY "Therapists can manage prescriptions"
       WHERE auth_id = auth.uid() AND role IN ('admin', 'manager')
     )
   );
-
 -- =====================================================
 -- 4. FINANCIAL TRANSACTIONS TABLE
 -- =====================================================
@@ -305,7 +288,6 @@ CREATE TABLE IF NOT EXISTS financial_transactions (
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   deleted_at TIMESTAMPTZ
 );
-
 -- Add columns if they don't exist (for existing table)
 DO $$ BEGIN
   ALTER TABLE financial_transactions ADD COLUMN IF NOT EXISTS therapist_id UUID REFERENCES therapists(id);
@@ -327,7 +309,6 @@ DO $$ BEGIN
 EXCEPTION
   WHEN duplicate_column THEN null;
 END $$;
-
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_transactions_type ON financial_transactions(type);
 CREATE INDEX IF NOT EXISTS idx_transactions_patient ON financial_transactions(patient_id);
@@ -337,10 +318,8 @@ CREATE INDEX IF NOT EXISTS idx_transactions_payment_status ON financial_transact
 CREATE INDEX IF NOT EXISTS idx_transactions_payment_date ON financial_transactions(payment_date DESC);
 CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON financial_transactions(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_transactions_category ON financial_transactions(category);
-
 -- RLS
 ALTER TABLE financial_transactions ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Staff can view all transactions"
   ON financial_transactions FOR SELECT
   USING (
@@ -351,7 +330,6 @@ CREATE POLICY "Staff can view all transactions"
       AND is_active = TRUE
     )
   );
-
 CREATE POLICY "Therapists can view own transactions"
   ON financial_transactions FOR SELECT
   USING (
@@ -361,7 +339,6 @@ CREATE POLICY "Therapists can view own transactions"
       )
     )
   );
-
 CREATE POLICY "Staff can manage transactions"
   ON financial_transactions FOR ALL
   USING (
@@ -372,7 +349,6 @@ CREATE POLICY "Staff can manage transactions"
       AND is_active = TRUE
     )
   );
-
 -- =====================================================
 -- 5. EXPENSE CATEGORIES TABLE
 -- =====================================================
@@ -397,7 +373,6 @@ CREATE TABLE IF NOT EXISTS expense_categories (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Insert default categories
 INSERT INTO expense_categories (name, description, icon, color) VALUES
   ('Aluguel', 'Aluguel do espaço', 'home', '#ef4444'),
@@ -409,14 +384,11 @@ INSERT INTO expense_categories (name, description, icon, color) VALUES
   ('Software', 'Assinaturas e software', 'laptop', '#ec4899'),
   ('Outros', 'Outras despesas', 'more-horizontal', '#64748b')
 ON CONFLICT (name) DO NOTHING;
-
 -- RLS
 ALTER TABLE expense_categories ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Anyone can view categories"
   ON expense_categories FOR SELECT
   USING (is_active = TRUE);
-
 CREATE POLICY "Admins can manage categories"
   ON expense_categories FOR ALL
   USING (
@@ -425,7 +397,6 @@ CREATE POLICY "Admins can manage categories"
       WHERE auth_id = auth.uid() AND role = 'admin'
     )
   );
-
 -- =====================================================
 -- 6. FUNCTIONS
 -- =====================================================
@@ -457,7 +428,6 @@ BEGIN
     AND (p_therapist_id IS NULL OR therapist_id = p_therapist_id);
 END;
 $$ LANGUAGE plpgsql;
-
 -- Function: Get exercise statistics
 CREATE OR REPLACE FUNCTION get_exercise_statistics()
 RETURNS TABLE(
@@ -493,7 +463,6 @@ BEGIN
   ) ex;
 END;
 $$ LANGUAGE plpgsql;
-
 -- =====================================================
 -- 7. TRIGGERS
 -- =====================================================
@@ -504,35 +473,30 @@ CREATE TRIGGER update_exercises_updated_at
   BEFORE UPDATE ON exercises
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- Trigger: Update updated_at on exercise_protocols
 DROP TRIGGER IF EXISTS update_protocols_updated_at ON exercise_protocols;
 CREATE TRIGGER update_protocols_updated_at
   BEFORE UPDATE ON exercise_protocols
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- Trigger: Update updated_at on patient_exercise_prescriptions
 DROP TRIGGER IF EXISTS update_prescriptions_updated_at ON patient_exercise_prescriptions;
 CREATE TRIGGER update_prescriptions_updated_at
   BEFORE UPDATE ON patient_exercise_prescriptions
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- Trigger: Update updated_at on financial_transactions
 DROP TRIGGER IF EXISTS update_transactions_updated_at ON financial_transactions;
 CREATE TRIGGER update_transactions_updated_at
   BEFORE UPDATE ON financial_transactions
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- Trigger: Update updated_at on expense_categories
 DROP TRIGGER IF EXISTS update_categories_updated_at ON expense_categories;
 CREATE TRIGGER update_categories_updated_at
   BEFORE UPDATE ON expense_categories
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
-
 -- =====================================================
 -- 8. VIEWS
 -- =====================================================
@@ -549,7 +513,6 @@ FROM financial_transactions
 WHERE status = 'completed' AND deleted_at IS NULL
 GROUP BY DATE_TRUNC('month', payment_date)
 ORDER BY month DESC;
-
 -- View: Active exercise prescriptions
 CREATE OR REPLACE VIEW v_active_prescriptions AS
 SELECT
@@ -564,7 +527,6 @@ JOIN users u ON u.id = t.user_id
 WHERE pep.status = 'active'
   AND pep.deleted_at IS NULL
   AND (pep.end_date IS NULL OR pep.end_date >= CURRENT_DATE);
-
 -- =====================================================
 -- END OF MIGRATION
 -- =====================================================

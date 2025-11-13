@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS clinical_materials (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Criar tabela de categorias se não existir
 CREATE TABLE IF NOT EXISTS clinical_material_categories (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -44,7 +43,6 @@ CREATE TABLE IF NOT EXISTS clinical_material_categories (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- =====================================================
 -- TABELA DE FAVORITOS
 -- =====================================================
@@ -57,29 +55,22 @@ CREATE TABLE IF NOT EXISTS material_favorites (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(user_id, material_id)
 );
-
 -- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_material_favorites_user ON material_favorites(user_id);
 CREATE INDEX IF NOT EXISTS idx_material_favorites_material ON material_favorites(material_id);
-
 -- RLS para favoritos
 ALTER TABLE material_favorites ENABLE ROW LEVEL SECURITY;
-
 -- Drop policies if they exist (para evitar erro de duplicação)
 DROP POLICY IF EXISTS "Users can view own favorites" ON material_favorites;
 DROP POLICY IF EXISTS "Users can create own favorites" ON material_favorites;
 DROP POLICY IF EXISTS "Users can delete own favorites" ON material_favorites;
-
 -- Policy: usuário só vê próprios favoritos
 CREATE POLICY "Users can view own favorites" ON material_favorites
   FOR SELECT USING (user_id = auth.uid());
-
 CREATE POLICY "Users can create own favorites" ON material_favorites
   FOR INSERT WITH CHECK (user_id = auth.uid());
-
 CREATE POLICY "Users can delete own favorites" ON material_favorites
   FOR DELETE USING (user_id = auth.uid());
-
 -- =====================================================
 -- FUNÇÃO RPC PARA INCREMENTAR DOWNLOADS
 -- =====================================================
@@ -95,7 +86,6 @@ BEGIN
   WHERE id = p_material_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- =====================================================
 -- POPULAR MATERIAIS INICIAIS
 -- =====================================================
@@ -356,14 +346,12 @@ BEGIN
   ON CONFLICT DO NOTHING;
 
 END $$;
-
 -- =====================================================
 -- COMENTÁRIOS
 -- =====================================================
 
 COMMENT ON TABLE material_favorites IS 'Favoritos de materiais clínicos por usuário';
 COMMENT ON FUNCTION increment_material_download IS 'Incrementa contador de downloads de um material';
-
 -- =====================================================
 -- LOG
 -- =====================================================
@@ -376,4 +364,3 @@ BEGIN
   RAISE NOTICE 'Tabela material_favorites criada com RLS configurado';
   RAISE NOTICE 'Função increment_material_download criada';
 END $$;
-

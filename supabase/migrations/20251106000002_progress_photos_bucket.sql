@@ -72,11 +72,9 @@ BEGIN
   END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Comentário na função
 COMMENT ON FUNCTION create_progress_photos_bucket IS 
   'Cria o bucket progress-photos para armazenar fotos de progresso dos pacientes';
-
 -- ============================================================================
 -- Executar criação do bucket (descomente se quiser criar via SQL)
 -- ============================================================================
@@ -88,5 +86,4 @@ COMMENT ON FUNCTION create_progress_photos_bucket IS
 
 -- NOTA: Não é possível adicionar comentários na tabela storage.buckets sem permissões especiais
 -- O bucket progress-photos armazena fotos de progresso dos pacientes 
--- organizadas por patientId/sessionId/filename
-
+-- organizadas por patientId/sessionId/filename;

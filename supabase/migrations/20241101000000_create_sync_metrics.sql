@@ -16,14 +16,11 @@ CREATE TABLE IF NOT EXISTS sync_metrics (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 -- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_sync_metrics_date ON sync_metrics(date DESC);
 CREATE INDEX IF NOT EXISTS idx_sync_metrics_created_at ON sync_metrics(created_at DESC);
-
 -- RLS (Row Level Security)
 ALTER TABLE sync_metrics ENABLE ROW LEVEL SECURITY;
-
 -- Policy: Admins podem ver tudo
 CREATE POLICY "Admins can view all sync metrics"
   ON sync_metrics
@@ -36,14 +33,12 @@ CREATE POLICY "Admins can view all sync metrics"
       AND raw_user_meta_data->>'role' = 'admin'
     )
   );
-
 -- Policy: Sistema pode inserir
 CREATE POLICY "System can insert sync metrics"
   ON sync_metrics
   FOR INSERT
   TO authenticated
   WITH CHECK (true);
-
 -- Trigger para updated_at
 CREATE OR REPLACE FUNCTION update_sync_metrics_updated_at()
 RETURNS TRIGGER AS $$
@@ -52,14 +47,11 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER sync_metrics_updated_at
   BEFORE UPDATE ON sync_metrics
   FOR EACH ROW
   EXECUTE FUNCTION update_sync_metrics_updated_at();
-
 -- Comentários
 COMMENT ON TABLE sync_metrics IS 'Métricas de sincronização offline do sistema';
 COMMENT ON COLUMN sync_metrics.date IS 'Data das métricas agregadas';
 COMMENT ON COLUMN sync_metrics.metrics_data IS 'Dados detalhados em JSON (itemsByType, successRate, etc)';
-

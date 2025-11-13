@@ -43,14 +43,29 @@ export class WhatsAppSchedulingService {
           phone,
           '😔 Desculpe, não temos horários disponíveis nos próximos 7 dias.\n\n' +
           'Por favor, entre em contato pelo telefone (11) 5874-9885 para verificar outras opções.',
-          clinicId
+          clinicId,
+          {
+            clinicId,
+            category: 'reschedule',
+            metadata: {
+              source: 'whatsapp_reschedule_unavailable',
+            },
+          }
         );
         return;
       }
 
       // Enviar opções de horários
       const message = this.formatAvailableSlotsMessage(patientName, availableSlots);
-      await this.whatsappService.sendTextMessage(phone, message, clinicId);
+      const slotsPayload = availableSlots.slice(0, 5);
+      await this.whatsappService.sendTextMessage(phone, message, clinicId, {
+        clinicId,
+        category: 'reschedule',
+        metadata: {
+          source: 'whatsapp_reschedule_options',
+          available_slots: slotsPayload,
+        },
+      });
 
     } catch (error) {
       console.error('Erro ao iniciar processo de agendamento:', error);
@@ -155,7 +170,15 @@ export class WhatsAppSchedulingService {
         await this.whatsappService.sendTextMessage(
           phone,
           '❌ Opção inválida. Por favor, responda com um número de 1 a 5.',
-          clinicId
+          clinicId,
+          {
+            clinicId,
+            category: 'reschedule',
+            metadata: {
+              source: 'whatsapp_slot_invalid',
+              selection,
+            },
+          }
         );
         return;
       }
@@ -169,7 +192,15 @@ export class WhatsAppSchedulingService {
           phone,
           '❌ Desculpe, esse horário não está mais disponível.\n\n' +
           'Digite *AGENDAR* para ver novos horários disponíveis.',
-          clinicId
+          clinicId,
+          {
+            clinicId,
+            category: 'reschedule',
+            metadata: {
+              source: 'whatsapp_slot_unavailable',
+              selection,
+            },
+          }
         );
         return;
       }
@@ -189,7 +220,15 @@ export class WhatsAppSchedulingService {
         `Sua solicitação foi enviada para nossa equipe.\n` +
         `Em breve entraremos em contato para confirmar! 📞\n\n` +
         `Obrigado! 😊`,
-        clinicId
+        clinicId,
+        {
+          clinicId,
+          category: 'reschedule',
+          metadata: {
+            source: 'whatsapp_slot_selection',
+            selected_slot: selectedSlot,
+          },
+        }
       );
 
       // Notificar equipe
@@ -411,7 +450,15 @@ export class WhatsAppSchedulingService {
           `Motivo: ${reason}\n\n` +
           `Para reagendar, digite *AGENDAR* ou entre em contato pelo telefone (11) 5874-9885.\n\n` +
           `Desculpe o transtorno!`,
-          clinicId
+          clinicId,
+          {
+            clinicId,
+            category: 'cancellation',
+            metadata: {
+              source: 'manual_cancellation',
+              appointment_id: appointmentId,
+            },
+          }
         );
       }
 

@@ -4,6 +4,8 @@
 - Não há importações diretas de `lodash` ou `lodash-es` nos pacotes do aplicativo (checagem via `rg "lodash"`).
 - O bundle ainda contém um chunk `vendor-lodash` (~45 KB) proveniente de dependências de terceiros, com destaque para `recharts`.
 - `vite.config.ts` já define `manualChunks` para isolar `vendor-lodash`, facilitando o monitoramento do tamanho.
+- Após a migração inicial para `@nivo/line`, o chunk `vendor-lodash` oscilou para ~49 KB, reforçando que a eliminação definitiva depende da retirada do `recharts` e de ajustar dependências transitivas.
+- Mesmo após migrar o dashboard de Edge Functions (Fase 3), o valor permaneceu estável (~48.8 KB) porque os demais dashboards ainda utilizam os wrappers `ChartsLazyOptimized`.
 
 ## Ações implementadas
 - Atualização do lint de otimização (`.eslintrc-bundle-optimization.json`) para bloquear importações do pacote CommonJS (`lodash` e `lodash/*`), incentivando o uso de:

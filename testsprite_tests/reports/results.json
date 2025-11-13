@@ -69,98 +69,607 @@
   },
   "suites": [
     {
-      "title": "e2e\\production-console.spec.ts",
-      "file": "e2e/production-console.spec.ts",
+      "title": "e2e\\simple-navigation-test.spec.ts",
+      "file": "e2e/simple-navigation-test.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Produção – Console limpo",
-          "file": "e2e/production-console.spec.ts",
-          "line": 8,
+          "title": "Teste Simples de Navegação",
+          "file": "e2e/simple-navigation-test.spec.ts",
+          "line": 85,
           "column": 6,
-          "specs": [
+          "specs": [],
+          "suites": [
             {
-              "title": "carrega home sem erros no console",
-              "ok": false,
-              "tags": [],
-              "tests": [
+              "title": "Perfil: Admin",
+              "file": "e2e/simple-navigation-test.spec.ts",
+              "line": 88,
+              "column": 10,
+              "specs": [
                 {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
+                  "title": "Navegar para /agenda",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 11747,
-                      "error": {
-                        "message": "Error: Erros no console não esperados\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 6\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 401 ()\",\u001b[39m\n\u001b[31m+   \"Provider's accounts list is empty.\",\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 403 ()\",\u001b[39m\n\u001b[31m+   \"[GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
-                        "stack": "Error: Erros no console não esperados\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 6\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 401 ()\",\u001b[39m\n\u001b[31m+   \"Provider's accounts list is empty.\",\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 403 ()\",\u001b[39m\n\u001b[31m+   \"[GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts:32:61",
-                        "location": {
-                          "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts",
-                          "column": 61,
-                          "line": 32
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 30 |\u001b[39m     }\n \u001b[90m 31 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     expect(consoleErrors\u001b[33m,\u001b[39m \u001b[32m'Erros no console não esperados'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m     expect(pageErrors\u001b[33m,\u001b[39m \u001b[32m'Erros de página não esperados'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m 34 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts",
-                            "column": 61,
-                            "line": 32
-                          },
-                          "message": "Error: Erros no console não esperados\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 6\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 401 ()\",\u001b[39m\n\u001b[31m+   \"Provider's accounts list is empty.\",\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 403 ()\",\u001b[39m\n\u001b[31m+   \"[GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n\u001b[0m \u001b[90m 30 |\u001b[39m     }\n \u001b[90m 31 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     expect(consoleErrors\u001b[33m,\u001b[39m \u001b[32m'Erros no console não esperados'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m     expect(pageErrors\u001b[33m,\u001b[39m \u001b[32m'Erros de página não esperados'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m 34 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts:32:61\u001b[22m"
-                        }
-                      ],
-                      "stdout": [
-                        {
-                          "text": "Console Errors capturados: [\n  \u001b[32m'Failed to load resource: the server responded with a status of 401 ()'\u001b[39m,\n  \u001b[32m\"Provider's accounts list is empty.\"\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 403 ()'\u001b[39m,\n  \u001b[32m'[GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token.'\u001b[39m\n]\n"
-                        },
-                        {
-                          "text": "Page Errors capturados: []\n"
-                        }
-                      ],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-11-12T17:23:49.217Z",
+                      "timeout": 30000,
                       "annotations": [],
-                      "attachments": [
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
                         {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-production-console-Pro-93135-a-home-sem-erros-no-console-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-production-console-Pro-93135-a-home-sem-erros-no-console-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-production-console-Pro-93135-a-home-sem-erros-no-console-chromium\\error-context.md"
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "timedOut",
+                          "duration": 37553,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:90:12",
+                            "location": {
+                              "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                              "column": 12,
+                              "line": 90
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 88 |\u001b[39m     test\u001b[33m.\u001b[39mdescribe(\u001b[32m`Perfil: ${profile.name}`\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 89 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 90 |\u001b[39m       test\u001b[33m.\u001b[39mbeforeEach(\u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m    |\u001b[39m            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 91 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 92 |\u001b[39m\n \u001b[90m 93 |\u001b[39m         \u001b[36mconst\u001b[39m fallbackSession \u001b[33m=\u001b[39m buildFallbackSession(profile)\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                                "column": 12,
+                                "line": 90
+                              },
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n\u001b[0m \u001b[90m 88 |\u001b[39m     test\u001b[33m.\u001b[39mdescribe(\u001b[32m`Perfil: ${profile.name}`\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 89 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 90 |\u001b[39m       test\u001b[33m.\u001b[39mbeforeEach(\u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m    |\u001b[39m            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 91 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 92 |\u001b[39m\n \u001b[90m 93 |\u001b[39m         \u001b[36mconst\u001b[39m fallbackSession \u001b[33m=\u001b[39m buildFallbackSession(profile)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:90:12\u001b[22m"
+                            },
+                            {
+                              "location": {
+                                "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                                "column": 20,
+                                "line": 91
+                              },
+                              "message": "TimeoutError: page.goto: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:5173/\", waiting until \"load\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 89 |\u001b[39m       \n \u001b[90m 90 |\u001b[39m       test\u001b[33m.\u001b[39mbeforeEach(\u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 91 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 92 |\u001b[39m\n \u001b[90m 93 |\u001b[39m         \u001b[36mconst\u001b[39m fallbackSession \u001b[33m=\u001b[39m buildFallbackSession(profile)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(([session]) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:91:20\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-13T04:51:48.356Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-simple-navigation-test-fcd51-l-Admin-Navegar-para-agenda-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-simple-navigation-test-fcd51-l-Admin-Navegar-para-agenda-chromium\\error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                            "column": 12,
+                            "line": 90
+                          }
                         }
                       ],
-                      "errorLocation": {
-                        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts",
-                        "column": 61,
-                        "line": 32
-                      }
+                      "status": "unexpected"
                     }
                   ],
-                  "status": "unexpected"
+                  "id": "929eeecc81a363c7cd26-107482c6809ee8eb0984",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /dashboard",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 0,
+                          "status": "timedOut",
+                          "duration": 35360,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:90:12",
+                            "location": {
+                              "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                              "column": 12,
+                              "line": 90
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 88 |\u001b[39m     test\u001b[33m.\u001b[39mdescribe(\u001b[32m`Perfil: ${profile.name}`\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 89 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 90 |\u001b[39m       test\u001b[33m.\u001b[39mbeforeEach(\u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m    |\u001b[39m            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 91 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 92 |\u001b[39m\n \u001b[90m 93 |\u001b[39m         \u001b[36mconst\u001b[39m fallbackSession \u001b[33m=\u001b[39m buildFallbackSession(profile)\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                                "column": 12,
+                                "line": 90
+                              },
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded while running \"beforeEach\" hook.\u001b[39m\n\n\u001b[0m \u001b[90m 88 |\u001b[39m     test\u001b[33m.\u001b[39mdescribe(\u001b[32m`Perfil: ${profile.name}`\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 89 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 90 |\u001b[39m       test\u001b[33m.\u001b[39mbeforeEach(\u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m    |\u001b[39m            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 91 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 92 |\u001b[39m\n \u001b[90m 93 |\u001b[39m         \u001b[36mconst\u001b[39m fallbackSession \u001b[33m=\u001b[39m buildFallbackSession(profile)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:90:12\u001b[22m"
+                            },
+                            {
+                              "location": {
+                                "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                                "column": 20,
+                                "line": 100
+                              },
+                              "message": "Error: page.waitForURL: Test timeout of 30000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n\n\u001b[0m \u001b[90m  98 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mreload()\u001b[33m;\u001b[39m\n \u001b[90m  99 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 100 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL((url) \u001b[33m=>\u001b[39m {\n \u001b[90m     |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 101 |\u001b[39m           \u001b[36mconst\u001b[39m { pathname } \u001b[33m=\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mURL\u001b[39m(url)\u001b[33m;\u001b[39m\n \u001b[90m 102 |\u001b[39m           \u001b[36mreturn\u001b[39m pathname\u001b[33m.\u001b[39mstartsWith(profile\u001b[33m.\u001b[39mexpectedLanding)\u001b[33m;\u001b[39m\n \u001b[90m 103 |\u001b[39m         }\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:100:20\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-13T04:52:27.733Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-simple-navigation-test-50889-dmin-Navegar-para-dashboard-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-simple-navigation-test-50889-dmin-Navegar-para-dashboard-chromium\\error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                            "column": 12,
+                            "line": 90
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-2b06df154d601aa6beee",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /patients",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 16653,
+                          "error": {
+                            "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+                            "stack": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:100:20",
+                            "location": {
+                              "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                              "column": 20,
+                              "line": 100
+                            },
+                            "snippet": "\u001b[0m \u001b[90m  98 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mreload()\u001b[33m;\u001b[39m\n \u001b[90m  99 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 100 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL((url) \u001b[33m=>\u001b[39m {\n \u001b[90m     |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 101 |\u001b[39m           \u001b[36mconst\u001b[39m { pathname } \u001b[33m=\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mURL\u001b[39m(url)\u001b[33m;\u001b[39m\n \u001b[90m 102 |\u001b[39m           \u001b[36mreturn\u001b[39m pathname\u001b[33m.\u001b[39mstartsWith(profile\u001b[33m.\u001b[39mexpectedLanding)\u001b[33m;\u001b[39m\n \u001b[90m 103 |\u001b[39m         }\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                                "column": 20,
+                                "line": 100
+                              },
+                              "message": "TimeoutError: page.waitForURL: Timeout 15000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n\n\u001b[0m \u001b[90m  98 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mreload()\u001b[33m;\u001b[39m\n \u001b[90m  99 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 100 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL((url) \u001b[33m=>\u001b[39m {\n \u001b[90m     |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 101 |\u001b[39m           \u001b[36mconst\u001b[39m { pathname } \u001b[33m=\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mURL\u001b[39m(url)\u001b[33m;\u001b[39m\n \u001b[90m 102 |\u001b[39m           \u001b[36mreturn\u001b[39m pathname\u001b[33m.\u001b[39mstartsWith(profile\u001b[33m.\u001b[39mexpectedLanding)\u001b[33m;\u001b[39m\n \u001b[90m 103 |\u001b[39m         }\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:100:20\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-13T04:53:04.662Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-simple-navigation-test-327d4-Admin-Navegar-para-patients-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-simple-navigation-test-327d4-Admin-Navegar-para-patients-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-simple-navigation-test-327d4-Admin-Navegar-para-patients-chromium\\error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                            "column": 20,
+                            "line": 100
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-db9c6b7e4a8bf4ee08a9",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /settings",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 7861,
+                          "error": {
+                            "message": "Error: page.waitForURL: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+                            "stack": "Error: page.waitForURL: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:100:20",
+                            "location": {
+                              "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                              "column": 20,
+                              "line": 100
+                            },
+                            "snippet": "\u001b[0m \u001b[90m  98 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mreload()\u001b[33m;\u001b[39m\n \u001b[90m  99 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 100 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL((url) \u001b[33m=>\u001b[39m {\n \u001b[90m     |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 101 |\u001b[39m           \u001b[36mconst\u001b[39m { pathname } \u001b[33m=\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mURL\u001b[39m(url)\u001b[33m;\u001b[39m\n \u001b[90m 102 |\u001b[39m           \u001b[36mreturn\u001b[39m pathname\u001b[33m.\u001b[39mstartsWith(profile\u001b[33m.\u001b[39mexpectedLanding)\u001b[33m;\u001b[39m\n \u001b[90m 103 |\u001b[39m         }\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                                "column": 20,
+                                "line": 100
+                              },
+                              "message": "Error: page.waitForURL: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n\n\u001b[0m \u001b[90m  98 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mreload()\u001b[33m;\u001b[39m\n \u001b[90m  99 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 100 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL((url) \u001b[33m=>\u001b[39m {\n \u001b[90m     |\u001b[39m                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 101 |\u001b[39m           \u001b[36mconst\u001b[39m { pathname } \u001b[33m=\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mURL\u001b[39m(url)\u001b[33m;\u001b[39m\n \u001b[90m 102 |\u001b[39m           \u001b[36mreturn\u001b[39m pathname\u001b[33m.\u001b[39mstartsWith(profile\u001b[33m.\u001b[39mexpectedLanding)\u001b[33m;\u001b[39m\n \u001b[90m 103 |\u001b[39m         }\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m15000\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts:100:20\u001b[22m"
+                            },
+                            {
+                              "message": "Error: browserContext.close: Target page, context or browser has been closed"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-11-13T04:53:22.792Z",
+                          "annotations": [],
+                          "attachments": [],
+                          "errorLocation": {
+                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\simple-navigation-test.spec.ts",
+                            "column": 20,
+                            "line": 100
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-5aef8510a64303ef6e20",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
                 }
-              ],
-              "id": "81d1e32b71d7b4e94430-3517431e9ffecbc5d4ec",
-              "file": "e2e/production-console.spec.ts",
-              "line": 9,
-              "column": 3
+              ]
+            },
+            {
+              "title": "Perfil: Fisioterapeuta",
+              "file": "e2e/simple-navigation-test.spec.ts",
+              "line": 88,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "Navegar para /agenda",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-801c383d53e12cc6c6a9",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /dashboard",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-e98043136766a4fad6b5",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /patients",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-25e1de4ecf5ad821f76a",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /sessions",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-2d72e30f15ab1f3dd3fc",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Perfil: Estagiário",
+              "file": "e2e/simple-navigation-test.spec.ts",
+              "line": 88,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "Navegar para /agenda",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-94084d8c1192bcf69264",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /dashboard",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-86c12d97eb85e402d3b2",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /patients",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-36ea3ba6fc8c6715b579",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Perfil: Paciente",
+              "file": "e2e/simple-navigation-test.spec.ts",
+              "line": 88,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "Navegar para /dashboard",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-6aac346cce485c179d76",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /my-appointments",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-8e66f62d57d2fe79ffcd",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /my-exercises",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-47755dc4be9e8a7861e5",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Perfil: Educador Físico",
+              "file": "e2e/simple-navigation-test.spec.ts",
+              "line": 88,
+              "column": 10,
+              "specs": [
+                {
+                  "title": "Navegar para /dashboard",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-01f28fbe0e30d2eb9a72",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /clients",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-ef7f29d881ba80a01f98",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                },
+                {
+                  "title": "Navegar para /financials",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "929eeecc81a363c7cd26-987e173164abd94d9d91",
+                  "file": "e2e/simple-navigation-test.spec.ts",
+                  "line": 109,
+                  "column": 9
+                }
+              ]
             }
           ]
         }
@@ -169,11 +678,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-11-12T17:23:42.402Z",
-    "duration": 20257.681999999997,
+    "startTime": "2025-11-13T04:51:40.655Z",
+    "duration": 111116.091,
     "expected": 0,
-    "skipped": 0,
-    "unexpected": 1,
+    "skipped": 13,
+    "unexpected": 4,
     "flaky": 0
   }
 }

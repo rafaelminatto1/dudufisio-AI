@@ -21,7 +21,6 @@ VALUES (
   ]
 )
 ON CONFLICT (id) DO NOTHING;
-
 -- RLS Policies for storage.objects
 
 -- Policy: Authenticated users can upload attachments
@@ -31,7 +30,6 @@ CREATE POLICY "Authenticated users can upload attachments"
     bucket_id = 'attachments' AND
     auth.role() = 'authenticated'
   );
-
 -- Policy: Users can view their own attachments
 -- Files are stored as: attachments/{user_id}/{filename}
 CREATE POLICY "Users can view their own attachments"
@@ -40,7 +38,6 @@ CREATE POLICY "Users can view their own attachments"
     bucket_id = 'attachments' AND
     auth.uid()::text = (storage.foldername(name))[1]
   );
-
 -- Policy: Users can delete their own attachments
 CREATE POLICY "Users can delete their own attachments"
   ON storage.objects FOR DELETE
@@ -48,7 +45,6 @@ CREATE POLICY "Users can delete their own attachments"
     bucket_id = 'attachments' AND
     auth.uid()::text = (storage.foldername(name))[1]
   );
-
 -- Policy: Users can update their own attachments (optional, for metadata updates)
 CREATE POLICY "Users can update their own attachments"
   ON storage.objects FOR UPDATE
@@ -56,4 +52,3 @@ CREATE POLICY "Users can update their own attachments"
     bucket_id = 'attachments' AND
     auth.uid()::text = (storage.foldername(name))[1]
   );
-

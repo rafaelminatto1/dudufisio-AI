@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import format from 'date-fns/format';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { ptBR } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { EnrichedAppointment, Therapist, AppointmentStatus } from '../../types';
 import { cn } from '../../lib/utils';
-import { Filter, Calendar, Clock, User, DollarSign, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Filter, Calendar, Clock, User, DollarSign, ArrowUpDown, ArrowUp, ArrowDown, CheckCircle2, AlertCircle, XCircle, RefreshCw } from 'lucide-react';
 import Tooltip from '../ui/tooltip';
 import { formatCurrencyBR, displayAppointmentType } from '../../lib/format';
 
@@ -128,6 +129,36 @@ const ListView: React.FC<ListViewProps> = ({
       default:
         return status;
     }
+  };
+
+  const renderConfirmationBadge = (appointment: EnrichedAppointment) => {
+    if (!appointment.confirmationState) {
+      return null;
+    }
+
+    let Icon = AlertCircle;
+    switch (appointment.confirmationState) {
+      case 'confirmed':
+        Icon = CheckCircle2;
+        break;
+      case 'cancelled':
+        Icon = XCircle;
+        break;
+      case 'rescheduled':
+        Icon = RefreshCw;
+        break;
+      case 'pending':
+      default:
+        Icon = AlertCircle;
+        break;
+    }
+
+    return (
+      <Badge variant="outline" className={cn('text-xs flex items-center gap-1', appointment.confirmationBadgeClass)}>
+        <Icon className="w-3 h-3" />
+        {appointment.confirmationLabel}
+      </Badge>
+    );
   };
 
   return (
@@ -261,7 +292,7 @@ const ListView: React.FC<ListViewProps> = ({
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-2 mb-2">
                       <Tooltip 
                         content={`${appointment.patientName}${appointment.therapistName ? ` - ${appointment.therapistName}` : ''}`}
                         side="top"
@@ -276,6 +307,7 @@ const ListView: React.FC<ListViewProps> = ({
                       <Badge className={cn("text-xs", getStatusColor(appointment.status))}>
                         {getStatusLabel(appointment.status)}
                       </Badge>
+                      {renderConfirmationBadge(appointment)}
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-sm text-slate-600">
@@ -309,6 +341,12 @@ const ListView: React.FC<ListViewProps> = ({
                       {appointment.notes && (
                         <div className="mt-1">
                           <strong>Observações:</strong> {appointment.notes}
+                        </div>
+                      )}
+                      {appointment.lastReminderAt && (
+                        <div className="mt-1 text-xs text-slate-500">
+                          Último lembrete {formatDistanceToNow(appointment.lastReminderAt, { locale: ptBR, addSuffix: true })}
+                          {appointment.lastReminderType ? ` • ${appointment.lastReminderType.toUpperCase()}` : ''}
                         </div>
                       )}
                     </div>

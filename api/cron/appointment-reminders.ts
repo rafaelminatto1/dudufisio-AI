@@ -11,9 +11,10 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { logger } from '../_lib/logger';
+import { getMetaWhatsAppService } from '../../services/whatsapp/MetaWhatsAppService';
 
 // Tipos
-interface Appointment {
+export interface Appointment {
   id: string;
   patient_id: string;
   therapist_id: string;
@@ -21,6 +22,21 @@ interface Appointment {
   duration: number;
   appointment_type: string;
   status: string;
+  reminder_sent_7d?: string | null;
+  reminder_sent_24h?: string | null;
+  reminder_sent_2h?: string | null;
+  whatsapp_conversation_id?: string | null;
+  confirmed?: boolean | null;
+}
+
+export type ReminderType = '7d' | '24h' | '2h';
+
+interface CronResults {
+  processed_7d: number;
+  processed_24h: number;
+  processed_2h: number;
+  sent_notifications: number;
+  errors: string[];
 }
 
 // User interface removida (não utilizada)
@@ -43,69 +59,87 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Buscar consultas nas próximas 24 horas e próximas 2 horas
+    const whatsappService = getMetaWhatsAppService();
+
+    // Buscar consultas nas janelas configuradas
     const now = new Date();
+    const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const in8Days = new Date(now.getTime() + 8 * 24 * 60 * 60 * 1000);
     const in24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-    const in2Hours = new Date(now.getTime() + 2 * 60 * 60 * 1000);
     const in25Hours = new Date(now.getTime() + 25 * 60 * 60 * 1000);
+    const in2Hours = new Date(now.getTime() + 2 * 60 * 60 * 1000);
     const in3Hours = new Date(now.getTime() + 3 * 60 * 60 * 1000);
 
-    // Consultas para lembrete de 24h (entre 24h e 25h no futuro)
+    const { data: appointments7d, error: error7d } = await supabase
+      .from('appointments')
+      .select(
+        'id, patient_id, therapist_id, start_time, status, confirmed, reminder_sent_7d, reminder_sent_24h, reminder_sent_2h, whatsapp_conversation_id'
+      )
+      .gte('start_time', in7Days.toISOString())
+      .lt('start_time', in8Days.toISOString())
+      .in('status', ['scheduled', 'confirmed'])
+      .is('reminder_sent_7d', null)
+      .order('start_time');
+
     const { data: appointments24h, error: error24h } = await supabase
       .from('appointments')
-      .select('*')
+      .select(
+        'id, patient_id, therapist_id, start_time, status, confirmed, reminder_sent_7d, reminder_sent_24h, reminder_sent_2h, whatsapp_conversation_id'
+      )
       .gte('start_time', in24Hours.toISOString())
       .lt('start_time', in25Hours.toISOString())
-      .eq('status', 'scheduled')
+      .in('status', ['scheduled', 'confirmed'])
+      .is('reminder_sent_24h', null)
       .order('start_time');
 
-    // Consultas para lembrete de 2h (entre 2h e 3h no futuro)
     const { data: appointments2h, error: error2h } = await supabase
       .from('appointments')
-      .select('*')
+      .select(
+        'id, patient_id, therapist_id, start_time, status, confirmed, reminder_sent_7d, reminder_sent_24h, reminder_sent_2h, whatsapp_conversation_id'
+      )
       .gte('start_time', in2Hours.toISOString())
       .lt('start_time', in3Hours.toISOString())
-      .eq('status', 'scheduled')
+      .in('status', ['scheduled', 'confirmed'])
+      .is('reminder_sent_2h', null)
       .order('start_time');
 
-    if (error24h || error2h) {
-      throw new Error(error24h?.message || error2h?.message);
+    if (error7d || error24h || error2h) {
+      throw new Error(
+        error7d?.message || error24h?.message || error2h?.message || 'Unknown Supabase error'
+      );
     }
 
-    const results = {
+    const results: CronResults = {
+      processed_7d: 0,
       processed_24h: 0,
       processed_2h: 0,
       sent_notifications: 0,
-      errors: [] as string[],
+      errors: [],
     };
 
-    // Processar lembretes de 24h
-    if (appointments24h && appointments24h.length > 0) {
-      for (const appointment of appointments24h as Appointment[]) {
-        try {
-          await sendReminder(supabase, appointment, '24h');
-          results.processed_24h++;
-          results.sent_notifications++;
-    } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : String(error);
-          results.errors.push(`24h reminder failed for ${appointment.id}: ${message}`);
-        }
-      }
-    }
+    await processReminderBatch(
+      supabase,
+      whatsappService,
+      (appointments7d as Appointment[]) ?? [],
+      '7d',
+      results
+    );
 
-    // Processar lembretes de 2h
-    if (appointments2h && appointments2h.length > 0) {
-      for (const appointment of appointments2h as Appointment[]) {
-        try {
-          await sendReminder(supabase, appointment, '2h');
-          results.processed_2h++;
-          results.sent_notifications++;
-        } catch (error: unknown) {
-          const message = error instanceof Error ? error.message : String(error);
-          results.errors.push(`2h reminder failed for ${appointment.id}: ${message}`);
-        }
-      }
-    }
+    await processReminderBatch(
+      supabase,
+      whatsappService,
+      (appointments24h as Appointment[]) ?? [],
+      '24h',
+      results
+    );
+
+    await processReminderBatch(
+      supabase,
+      whatsappService,
+      (appointments2h as Appointment[]) ?? [],
+      '2h',
+      results
+    );
 
     return res.status(200).json({
       success: true,
@@ -121,163 +155,245 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 }
 
-// Helper function para enviar lembrete
-async function sendReminder(
+async function processReminderBatch(
   supabase: SupabaseClient,
-  appointment: Appointment,
-  reminderType: '24h' | '2h'
+  whatsappService: ReturnType<typeof getMetaWhatsAppService>,
+  appointments: Appointment[],
+  reminderType: ReminderType,
+  results: CronResults
 ) {
-  // Buscar dados do paciente
-  const { data: patient, error: patientError } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', appointment.patient_id)
-    .single();
-
-  if (patientError || !patient) {
-    throw new Error(`Patient not found: ${appointment.patient_id}`);
-  }
-
-  // Buscar dados do terapeuta
-  const { data: therapist, error: therapistError } = await supabase
-    .from('therapists')
-    .select('*')
-    .eq('id', appointment.therapist_id)
-    .single();
-
-  if (therapistError || !therapist) {
-    throw new Error(`Therapist not found: ${appointment.therapist_id}`);
-  }
-
-  // Verificar preferências de notificação do paciente
-  const prefs = (patient.notification_preferences as Record<string, unknown>) || {};
-  const notificationType = reminderType === '24h'
-    ? 'appointment_reminder_24h'
-    : 'appointment_reminder_2h';
-
-  if (prefs[notificationType] === false) {
-    return; // Paciente não quer receber este tipo de notificação
-  }
-
-  // Formatar data e hora
-  const appointmentDate = new Date(appointment.start_time);
-  const dateStr = appointmentDate.toLocaleDateString('pt-BR');
-  const timeStr = appointmentDate.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  // Criar título e mensagem
-  const title = reminderType === '24h'
-    ? `Lembrete: Consulta amanhã às ${timeStr}`
-    : `Lembrete: Consulta em 2 horas (${timeStr})`;
-
-  const message = `Olá ${patient.full_name}! Você tem uma consulta agendada para ${dateStr} às ${timeStr} com ${therapist.name}.`;
-
-  // Determinar canais baseado nas preferências
-  const channels: string[] = ['in_app'];
-  if (prefs.email !== false && patient.email) channels.push('email');
-  if (prefs.sms !== false && patient.phone) channels.push('sms');
-  if (prefs.whatsapp === true && patient.phone) channels.push('whatsapp');
-
-  // Criar notificação usando a função do banco
-  const { data: notificationId, error: notifError } = await supabase
-    .rpc('create_notification', {
-      p_user_id: patient.id,
-      p_type: notificationType,
-      p_title: title,
-      p_message: message,
-      p_data: {
-        appointment_id: appointment.id,
-        therapist_name: therapist.name,
-        date: dateStr,
-        time: timeStr,
-        location: therapist.clinic_address || 'Clínica DuduFisio',
-      },
-      p_scheduled_for: new Date().toISOString(),
-      p_channels: channels,
-    });
-
-  if (notifError) {
-    throw new Error(`Failed to create notification: ${notifError.message}`);
-  }
-
-  // Se a função retornou NULL, significa que o usuário optou por não receber
-  if (!notificationId) {
+  if (!appointments || appointments.length === 0) {
     return;
   }
 
-  // Enviar email se necessário
-  if (channels.includes('email') && patient.email) {
-    const emailHtml = `
-      <h1>Lembrete de Consulta</h1>
-      <p>Olá ${patient.full_name}!</p>
-      <p>Este é um lembrete sobre sua consulta agendada:</p>
-      <ul>
-        <li><strong>Data:</strong> ${dateStr}</li>
-        <li><strong>Hora:</strong> ${timeStr}</li>
-        <li><strong>Profissional:</strong> ${therapist.name}</li>
-        <li><strong>Local:</strong> ${therapist.clinic_address || 'Clínica DuduFisio'}</li>
-      </ul>
-      <p>Aguardamos você!</p>
-      <p><em>DuduFisio - Sua saúde em movimento</em></p>
-    `;
+  const resultKey =
+    reminderType === '7d'
+      ? 'processed_7d'
+      : reminderType === '24h'
+      ? 'processed_24h'
+      : 'processed_2h';
 
+  for (const appointment of appointments) {
     try {
-      await callEdgeFunction(supabase, 'send-email', {
-        to: patient.email,
-        subject: title,
-        html: emailHtml,
-        text: message,
-        notification_id: notificationId,
-      });
-    } catch (emailError: unknown) {
-      logger.error('Failed to send email:', { data: emailError as Error });
-    }
-  }
+      const messageId = await sendReminderForAppointment(
+        supabase,
+        whatsappService,
+        appointment,
+        reminderType
+      );
 
-  // Enviar SMS se necessário
-  if (channels.includes('sms') && patient.phone) {
-    try {
-      await callEdgeFunction(supabase, 'send-sms', {
-        to: patient.phone,
-        message: `${message} DuduFisio`,
-        type: 'sms',
-        notification_id: notificationId,
-      });
-    } catch (smsError: unknown) {
-      logger.error('Failed to send SMS:', { data: smsError as Error });
-    }
-  }
-
-  // Enviar WhatsApp se necessário
-  if (channels.includes('whatsapp') && patient.phone) {
-    try {
-      await callEdgeFunction(supabase, 'send-sms', {
-        to: patient.phone,
-        message: message,
-        type: 'whatsapp',
-        notification_id: notificationId,
-      });
-    } catch (whatsappError: unknown) {
-      logger.error('Failed to send WhatsApp:', { data: whatsappError as Error });
+      if (messageId) {
+        (results as Record<string, number>)[resultKey]++;
+        results.sent_notifications++;
+      }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      results.errors.push(`${reminderType} reminder failed for ${appointment.id}: ${message}`);
     }
   }
 }
 
-// Helper para chamar Edge Functions
-async function callEdgeFunction(
+export async function sendReminderForAppointment(
   supabase: SupabaseClient,
-  functionName: string,
-  payload: Record<string, unknown>
-) {
-  const { data, error } = await supabase.functions.invoke(functionName, {
-    body: payload,
-  });
+  whatsappService: ReturnType<typeof getMetaWhatsAppService>,
+  appointment: Appointment,
+  reminderType: ReminderType,
+  options: { force?: boolean } = {}
+): Promise<string | null> {
+  const { force = false } = options;
+  const reminderColumn =
+    reminderType === '7d'
+      ? 'reminder_sent_7d'
+      : reminderType === '24h'
+      ? 'reminder_sent_24h'
+      : 'reminder_sent_2h';
 
-  if (error) {
-    throw error;
+  if (!force && (appointment as Record<string, unknown>)[reminderColumn]) {
+    return null;
   }
 
-  return data;
+  if (!force && appointment.confirmed && reminderType !== '2h') {
+    return null;
+  }
+
+  const patient = await loadPatientContext(supabase, appointment.patient_id);
+  if (!patient) {
+    throw new Error(`Patient not found: ${appointment.patient_id}`);
+  }
+
+  if (!patient.phone) {
+    throw new Error(`Patient ${patient.id} has no phone configured`);
+  }
+
+  const notificationType =
+    reminderType === '7d'
+      ? 'appointment_reminder_7d'
+      : reminderType === '24h'
+      ? 'appointment_reminder_24h'
+      : 'appointment_reminder_2h';
+
+  const preference = patient.notificationPreferences?.[notificationType] as boolean | undefined;
+
+  if (preference === false) {
+    return null;
+  }
+
+  const therapistName = await loadTherapistName(supabase, appointment.therapist_id);
+
+  const appointmentDate = new Date(appointment.start_time);
+  const dateStr = formatDatePt(appointmentDate);
+  const timeStr = formatTimePt(appointmentDate);
+
+  const messageId = await whatsappService.sendAppointmentReminder(
+    patient.phone,
+    {
+      patientName: patient.name,
+      date: dateStr,
+      time: timeStr,
+      therapistName,
+      clinicName: patient.clinicName,
+      clinicAddress: patient.clinicAddress,
+      reminderType,
+    },
+    patient.clinicId ?? undefined,
+    {
+      category: 'reminder',
+      appointmentId: appointment.id,
+      patientId: patient.id,
+      clinicId: patient.clinicId,
+      metadata: {
+        reminder_type: reminderType,
+      },
+    }
+  );
+
+  const timestamp = new Date().toISOString();
+  const updatePayload: Record<string, unknown> = {
+    [reminderColumn]: timestamp,
+    reminder_sent: true,
+    reminder_sent_at: timestamp,
+  };
+
+  if (!appointment.whatsapp_conversation_id && messageId) {
+    updatePayload.whatsapp_conversation_id = messageId;
+  }
+
+  await supabase.from('appointments').update(updatePayload).eq('id', appointment.id);
+
+  return messageId;
+}
+
+interface PatientContext {
+  id: string;
+  name: string;
+  phone: string | null;
+  notificationPreferences?: Record<string, unknown>;
+  clinicId?: string | null;
+  clinicName?: string;
+  clinicAddress?: string;
+}
+
+const patientCache = new Map<string, PatientContext>();
+
+async function loadPatientContext(
+  supabase: SupabaseClient,
+  patientId: string
+): Promise<PatientContext | null> {
+  if (patientCache.has(patientId)) {
+    return patientCache.get(patientId) ?? null;
+  }
+
+  const { data: patientRow, error } = await supabase
+    .from('patients')
+    .select('id, full_name, phone, user_id')
+    .eq('id', patientId)
+    .single();
+
+  if (error || !patientRow) {
+    return null;
+  }
+
+  let name = patientRow.full_name ?? 'Paciente';
+  let notificationPreferences: Record<string, unknown> | undefined;
+  const clinicId: string | null = process.env.DEFAULT_CLINIC_ID ?? 'default-clinic';
+  const clinicName = process.env.DEFAULT_CLINIC_NAME ?? 'Clínica DuduFisio';
+  const clinicAddress = process.env.DEFAULT_CLINIC_ADDRESS ?? 'Clínica DuduFisio';
+
+  if (patientRow.user_id) {
+    const { data: userRow } = await supabase
+      .from('users')
+      .select('full_name, notification_preferences')
+      .eq('id', patientRow.user_id)
+      .single();
+
+    if (userRow?.full_name) {
+      name = userRow.full_name;
+    }
+
+    notificationPreferences = userRow?.notification_preferences as
+      | Record<string, unknown>
+      | undefined;
+
+  }
+
+  const context: PatientContext = {
+    id: patientRow.id,
+    name,
+    phone: patientRow.phone,
+    notificationPreferences,
+    clinicId,
+    clinicName,
+    clinicAddress,
+  };
+
+  patientCache.set(patientId, context);
+  return context;
+}
+
+const therapistNameCache = new Map<string, string>();
+
+async function loadTherapistName(
+  supabase: SupabaseClient,
+  therapistId: string
+): Promise<string> {
+  if (therapistNameCache.has(therapistId)) {
+    return therapistNameCache.get(therapistId)!;
+  }
+
+  const { data: therapistRow } = await supabase
+    .from('therapists')
+    .select('user_id')
+    .eq('id', therapistId)
+    .single();
+
+  if (therapistRow?.user_id) {
+    const { data: userRow } = await supabase
+      .from('users')
+      .select('full_name')
+      .eq('id', therapistRow.user_id)
+      .single();
+
+    if (userRow?.full_name) {
+      therapistNameCache.set(therapistId, userRow.full_name);
+      return userRow.full_name;
+    }
+  }
+
+  therapistNameCache.set(therapistId, 'Profissional da equipe');
+  return 'Profissional da equipe';
+}
+
+function formatDatePt(date: Date): string {
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+}
+
+function formatTimePt(date: Date): string {
+  return date.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }

@@ -32,30 +32,23 @@ CREATE TABLE IF NOT EXISTS public.notifications (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id
   ON public.notifications(user_id);
-
 CREATE INDEX IF NOT EXISTS idx_notifications_read
   ON public.notifications(read);
-
 CREATE INDEX IF NOT EXISTS idx_notifications_type
   ON public.notifications(type);
-
 CREATE INDEX IF NOT EXISTS idx_notifications_created_at
   ON public.notifications(created_at DESC);
-
 -- Index composto para buscar não lidas por usuário (query mais comum)
 CREATE INDEX IF NOT EXISTS idx_notifications_user_unread
   ON public.notifications(user_id, read, created_at DESC)
   WHERE read = false;
-
 -- Index para limpar notificações expiradas
 CREATE INDEX IF NOT EXISTS idx_notifications_expired
   ON public.notifications(expires_at)
   WHERE expires_at IS NOT NULL;
-
 -- Add updated_at trigger
 CREATE OR REPLACE FUNCTION public.handle_notifications_updated_at()
 RETURNS TRIGGER AS $$
@@ -64,12 +57,10 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER notifications_updated_at
   BEFORE UPDATE ON public.notifications
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_notifications_updated_at();
-
 -- Function to auto-mark as read when read_at is set
 CREATE OR REPLACE FUNCTION public.handle_notification_read()
 RETURNS TRIGGER AS $$
@@ -80,12 +71,10 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER notification_auto_read
   BEFORE UPDATE ON public.notifications
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_notification_read();
-
 -- Function to clean up expired notifications (can be called by cron)
 CREATE OR REPLACE FUNCTION public.cleanup_expired_notifications()
 RETURNS INTEGER AS $$
@@ -100,10 +89,8 @@ BEGIN
   RETURN deleted_count;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Enable Row Level Security
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
-
 -- RLS Policies
 
 -- Users can view their own notifications
@@ -111,25 +98,21 @@ CREATE POLICY "Users can view their own notifications"
   ON public.notifications
   FOR SELECT
   USING (auth.uid() = user_id);
-
 -- Users can update their own notifications (mark as read)
 CREATE POLICY "Users can update their own notifications"
   ON public.notifications
   FOR UPDATE
   USING (auth.uid() = user_id);
-
 -- Users can delete their own notifications
 CREATE POLICY "Users can delete their own notifications"
   ON public.notifications
   FOR DELETE
   USING (auth.uid() = user_id);
-
 -- Service role can insert notifications
 CREATE POLICY "Service role can insert notifications"
   ON public.notifications
   FOR INSERT
   WITH CHECK (auth.role() = 'service_role');
-
 -- Authenticated users with proper permissions can insert notifications
 CREATE POLICY "Admins and therapists can create notifications"
   ON public.notifications
@@ -142,7 +125,6 @@ CREATE POLICY "Admins and therapists can create notifications"
       AND role IN ('admin', 'terapeuta')
     )
   );
-
 -- Create view for notification statistics per user
 CREATE OR REPLACE VIEW public.notification_stats AS
 SELECT
@@ -156,10 +138,8 @@ SELECT
   MAX(created_at) as last_notification_at
 FROM public.notifications
 GROUP BY user_id;
-
 -- Grant access to view
 GRANT SELECT ON public.notification_stats TO authenticated;
-
 -- Add comments for documentation
 COMMENT ON TABLE public.notifications IS 'Tabela central de notificações - armazena todas as notificações enviadas aos usuários';
 COMMENT ON COLUMN public.notifications.user_id IS 'ID do usuário que recebe a notificação';
@@ -174,7 +154,6 @@ COMMENT ON COLUMN public.notifications.read_at IS 'Data/hora em que foi lida';
 COMMENT ON COLUMN public.notifications.sent_via IS 'Canais pelos quais a notificação foi enviada (push, email, whatsapp)';
 COMMENT ON COLUMN public.notifications.priority IS 'Prioridade da notificação (low, normal, high, urgent)';
 COMMENT ON COLUMN public.notifications.expires_at IS 'Data/hora de expiração (para limpeza automática)';
-
 -- Insert initial test notification for admin (optional)
 -- Uncomment to create a test notification
 /*
@@ -189,4 +168,4 @@ SELECT
 FROM auth.users
 WHERE email = 'admin@dudufisio.com'
 LIMIT 1;
-*/
+*/;

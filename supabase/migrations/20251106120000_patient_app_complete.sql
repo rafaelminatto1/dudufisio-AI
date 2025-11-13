@@ -6,7 +6,6 @@
 -- Extensões necessárias
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
 -- =====================================================
 -- IMPORTANTE: Criar tabela patients PRIMEIRO
 -- =====================================================
@@ -46,7 +45,6 @@ BEGIN
     END IF;
   END IF;
 END $$;
-
 -- =====================================================
 -- TABELAS DO APP DE PACIENTES
 -- =====================================================
@@ -63,11 +61,9 @@ CREATE TABLE IF NOT EXISTS patient_access_codes (
   use_count INTEGER DEFAULT 0,
   CONSTRAINT valid_access_code CHECK (LENGTH(access_code) = 6)
 );
-
 CREATE INDEX IF NOT EXISTS idx_patient_access_codes_patient_id ON patient_access_codes(patient_id);
 CREATE INDEX IF NOT EXISTS idx_patient_access_codes_code ON patient_access_codes(access_code) WHERE is_active = TRUE;
 CREATE INDEX IF NOT EXISTS idx_patient_access_codes_expires_at ON patient_access_codes(expires_at);
-
 CREATE TABLE IF NOT EXISTS exercise_videos (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title TEXT NOT NULL,
@@ -84,11 +80,9 @@ CREATE TABLE IF NOT EXISTS exercise_videos (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   is_active BOOLEAN DEFAULT TRUE
 );
-
 CREATE INDEX IF NOT EXISTS idx_exercise_videos_category ON exercise_videos(category);
 CREATE INDEX IF NOT EXISTS idx_exercise_videos_active ON exercise_videos(is_active);
 CREATE INDEX IF NOT EXISTS idx_exercise_videos_created_by ON exercise_videos(created_by);
-
 CREATE TABLE IF NOT EXISTS patient_exercises (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
@@ -109,13 +103,11 @@ CREATE TABLE IF NOT EXISTS patient_exercises (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 CREATE INDEX IF NOT EXISTS idx_patient_exercises_patient_id ON patient_exercises(patient_id);
 CREATE INDEX IF NOT EXISTS idx_patient_exercises_video_id ON patient_exercises(exercise_video_id);
 CREATE INDEX IF NOT EXISTS idx_patient_exercises_active ON patient_exercises(is_active);
 CREATE INDEX IF NOT EXISTS idx_patient_exercises_dates ON patient_exercises(start_date, end_date);
 CREATE INDEX IF NOT EXISTS idx_patient_exercises_patient_active ON patient_exercises(patient_id, is_active) WHERE is_active = TRUE;
-
 CREATE TABLE IF NOT EXISTS exercise_completions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   patient_exercise_id UUID NOT NULL REFERENCES patient_exercises(id) ON DELETE CASCADE,
@@ -131,13 +123,11 @@ CREATE TABLE IF NOT EXISTS exercise_completions (
   location_lat DECIMAL(10, 8),
   location_lng DECIMAL(11, 8)
 );
-
 CREATE INDEX IF NOT EXISTS idx_exercise_completions_patient_exercise ON exercise_completions(patient_exercise_id);
 CREATE INDEX IF NOT EXISTS idx_exercise_completions_patient_id ON exercise_completions(patient_id);
 CREATE INDEX IF NOT EXISTS idx_exercise_completions_date ON exercise_completions(completed_date);
 CREATE INDEX IF NOT EXISTS idx_exercise_completions_timestamp ON exercise_completions(completed_at);
 CREATE INDEX IF NOT EXISTS idx_exercise_completions_patient_date ON exercise_completions(patient_id, completed_date DESC);
-
 CREATE TABLE IF NOT EXISTS patient_stats (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   patient_id UUID UNIQUE NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
@@ -153,9 +143,7 @@ CREATE TABLE IF NOT EXISTS patient_stats (
   last_login_at TIMESTAMP WITH TIME ZONE,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 CREATE INDEX IF NOT EXISTS idx_patient_stats_patient_id ON patient_stats(patient_id);
-
 CREATE TABLE IF NOT EXISTS patient_messages (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
@@ -168,12 +156,10 @@ CREATE TABLE IF NOT EXISTS patient_messages (
   read_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 CREATE INDEX IF NOT EXISTS idx_patient_messages_patient_id ON patient_messages(patient_id);
 CREATE INDEX IF NOT EXISTS idx_patient_messages_sender_id ON patient_messages(sender_id);
 CREATE INDEX IF NOT EXISTS idx_patient_messages_created_at ON patient_messages(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_patient_messages_unread ON patient_messages(is_read) WHERE is_read = FALSE;
-
 CREATE TABLE IF NOT EXISTS patient_access_logs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
@@ -186,10 +172,8 @@ CREATE TABLE IF NOT EXISTS patient_access_logs (
   error_message TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 CREATE INDEX IF NOT EXISTS idx_patient_access_logs_patient_id ON patient_access_logs(patient_id);
 CREATE INDEX IF NOT EXISTS idx_patient_access_logs_created_at ON patient_access_logs(created_at DESC);
-
 -- =====================================================
 -- FUNCTIONS
 -- =====================================================
@@ -209,7 +193,6 @@ BEGIN
   END LOOP;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 CREATE OR REPLACE FUNCTION create_patient_access_code(
   p_patient_id UUID,
   p_created_by UUID DEFAULT NULL,
@@ -227,7 +210,6 @@ BEGIN
   RETURN QUERY SELECT new_code, expiration;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 CREATE OR REPLACE FUNCTION update_patient_stats(p_patient_id UUID)
 RETURNS VOID AS $$
 DECLARE
@@ -254,7 +236,6 @@ BEGIN
     updated_at = NOW();
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 CREATE OR REPLACE FUNCTION validate_access_code(p_access_code TEXT)
 RETURNS TABLE(is_valid BOOLEAN, patient_id UUID, patient_name TEXT, code_id UUID) AS $$
 BEGIN
@@ -273,7 +254,6 @@ BEGIN
   WHERE access_code = p_access_code AND is_active = TRUE AND expires_at > NOW();
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- =====================================================
 -- TRIGGERS
 -- =====================================================
@@ -285,13 +265,10 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 DROP TRIGGER IF EXISTS update_exercise_videos_updated_at ON exercise_videos;
 CREATE TRIGGER update_exercise_videos_updated_at BEFORE UPDATE ON exercise_videos FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 DROP TRIGGER IF EXISTS update_patient_exercises_updated_at ON patient_exercises;
 CREATE TRIGGER update_patient_exercises_updated_at BEFORE UPDATE ON patient_exercises FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE OR REPLACE FUNCTION trigger_update_patient_stats()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -299,10 +276,8 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 DROP TRIGGER IF EXISTS after_exercise_completion ON exercise_completions;
 CREATE TRIGGER after_exercise_completion AFTER INSERT ON exercise_completions FOR EACH ROW EXECUTE FUNCTION trigger_update_patient_stats();
-
 -- =====================================================
 -- RLS POLICIES
 -- =====================================================
@@ -314,80 +289,59 @@ ALTER TABLE exercise_completions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE patient_stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE patient_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE patient_access_logs ENABLE ROW LEVEL SECURITY;
-
 DROP POLICY IF EXISTS "Therapists can create access codes for their patients" ON patient_access_codes;
 CREATE POLICY "Therapists can create access codes for their patients" ON patient_access_codes FOR INSERT TO authenticated
 WITH CHECK (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Therapists can view access codes" ON patient_access_codes;
 CREATE POLICY "Therapists can view access codes" ON patient_access_codes FOR SELECT TO authenticated
 USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Service role can validate codes" ON patient_access_codes;
 CREATE POLICY "Service role can validate codes" ON patient_access_codes FOR ALL TO service_role USING (TRUE);
-
 DROP POLICY IF EXISTS "Therapists can create videos" ON exercise_videos;
 CREATE POLICY "Therapists can create videos" ON exercise_videos FOR INSERT TO authenticated
 WITH CHECK (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Therapists can view all videos" ON exercise_videos;
 CREATE POLICY "Therapists can view all videos" ON exercise_videos FOR SELECT TO authenticated
 USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Therapists can update their videos" ON exercise_videos;
 CREATE POLICY "Therapists can update their videos" ON exercise_videos FOR UPDATE TO authenticated
 USING (created_by = auth.uid()) WITH CHECK (created_by = auth.uid());
-
 DROP POLICY IF EXISTS "Service role can read videos" ON exercise_videos;
 CREATE POLICY "Service role can read videos" ON exercise_videos FOR SELECT TO service_role USING (TRUE);
-
 DROP POLICY IF EXISTS "Therapists can prescribe exercises" ON patient_exercises;
 CREATE POLICY "Therapists can prescribe exercises" ON patient_exercises FOR INSERT TO authenticated
 WITH CHECK (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Therapists can view exercises they prescribed" ON patient_exercises;
 CREATE POLICY "Therapists can view exercises they prescribed" ON patient_exercises FOR SELECT TO authenticated
 USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Therapists can update their prescriptions" ON patient_exercises;
 CREATE POLICY "Therapists can update their prescriptions" ON patient_exercises FOR UPDATE TO authenticated
 USING (prescribed_by = auth.uid()) WITH CHECK (prescribed_by = auth.uid());
-
 DROP POLICY IF EXISTS "Service role can read exercises" ON patient_exercises;
 CREATE POLICY "Service role can read exercises" ON patient_exercises FOR SELECT TO service_role USING (TRUE);
-
 DROP POLICY IF EXISTS "Therapists can view exercise completions" ON exercise_completions;
 CREATE POLICY "Therapists can view exercise completions" ON exercise_completions FOR SELECT TO authenticated
 USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Service role can manage completions" ON exercise_completions;
 CREATE POLICY "Service role can manage completions" ON exercise_completions FOR ALL TO service_role USING (TRUE);
-
 DROP POLICY IF EXISTS "Therapists can view patient stats" ON patient_stats;
 CREATE POLICY "Therapists can view patient stats" ON patient_stats FOR SELECT TO authenticated
 USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Service role can manage stats" ON patient_stats;
 CREATE POLICY "Service role can manage stats" ON patient_stats FOR ALL TO service_role USING (TRUE);
-
 DROP POLICY IF EXISTS "Therapists can view messages" ON patient_messages;
 CREATE POLICY "Therapists can view messages" ON patient_messages FOR SELECT TO authenticated
 USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Therapists can send messages" ON patient_messages;
 CREATE POLICY "Therapists can send messages" ON patient_messages FOR INSERT TO authenticated
 WITH CHECK (sender_id = auth.uid() AND EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Service role can manage messages" ON patient_messages;
 CREATE POLICY "Service role can manage messages" ON patient_messages FOR ALL TO service_role USING (TRUE);
-
 DROP POLICY IF EXISTS "Service role can manage access logs" ON patient_access_logs;
 CREATE POLICY "Service role can manage access logs" ON patient_access_logs FOR ALL TO service_role USING (TRUE);
-
 DROP POLICY IF EXISTS "Admins can view access logs" ON patient_access_logs;
 CREATE POLICY "Admins can view access logs" ON patient_access_logs FOR SELECT TO authenticated
 USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role = 'admin'));
-
 -- =====================================================
 -- STORAGE
 -- =====================================================
@@ -395,22 +349,16 @@ USING (EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role = 'admin
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES ('exercise-videos', 'exercise-videos', TRUE, 524288000, ARRAY['video/mp4', 'video/webm', 'video/quicktime', 'image/jpeg', 'image/png', 'image/webp']::text[])
 ON CONFLICT (id) DO UPDATE SET public = TRUE, file_size_limit = 524288000;
-
 DROP POLICY IF EXISTS "Therapists can upload videos" ON storage.objects;
 CREATE POLICY "Therapists can upload videos" ON storage.objects FOR INSERT TO authenticated
 WITH CHECK (bucket_id = 'exercise-videos' AND EXISTS (SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Anyone can view videos" ON storage.objects;
 CREATE POLICY "Anyone can view videos" ON storage.objects FOR SELECT TO public USING (bucket_id = 'exercise-videos');
-
 DROP POLICY IF EXISTS "Service role can manage videos" ON storage.objects;
 CREATE POLICY "Service role can manage videos" ON storage.objects FOR ALL TO service_role USING (bucket_id = 'exercise-videos');
-
 DROP POLICY IF EXISTS "Therapists can update their videos" ON storage.objects;
 CREATE POLICY "Therapists can update their videos" ON storage.objects FOR UPDATE TO authenticated
 USING (bucket_id = 'exercise-videos' AND (owner_id = auth.uid() OR auth.jwt() ->> 'role' IN ('admin', 'therapist')));
-
 DROP POLICY IF EXISTS "Therapists can delete their videos" ON storage.objects;
 CREATE POLICY "Therapists can delete their videos" ON storage.objects FOR DELETE TO authenticated
 USING (bucket_id = 'exercise-videos' AND (owner_id = auth.uid() OR auth.jwt() ->> 'role' IN ('admin', 'therapist')));
-

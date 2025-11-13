@@ -23,11 +23,9 @@ CREATE TABLE IF NOT EXISTS suppliers (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 -- Índices para fornecedores
 CREATE INDEX idx_suppliers_active ON suppliers(is_active);
 CREATE INDEX idx_suppliers_name ON suppliers(name);
-
 -- ============================================================================
 -- 2. TABELA DE INSUMOS
 -- ============================================================================
@@ -61,13 +59,11 @@ CREATE TABLE IF NOT EXISTS supplies (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 -- Índices para insumos
 CREATE INDEX idx_supplies_category_active ON supplies(category, is_active);
 CREATE INDEX idx_supplies_supplier ON supplies(supplier_id);
 CREATE INDEX idx_supplies_expiration ON supplies(expiration_date) WHERE expiration_date IS NOT NULL;
 CREATE INDEX idx_supplies_low_stock ON supplies(id) WHERE current_stock <= minimum_stock;
-
 -- ============================================================================
 -- 3. TABELA DE MOVIMENTAÇÕES DE ESTOQUE
 -- ============================================================================
@@ -85,13 +81,11 @@ CREATE TABLE IF NOT EXISTS stock_movements (
   task_id UUID, -- Referência à tarefa se aplicável
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 -- Índices para movimentações
 CREATE INDEX idx_stock_movements_supply_date ON stock_movements(supply_id, created_at);
 CREATE INDEX idx_stock_movements_type ON stock_movements(movement_type);
 CREATE INDEX idx_stock_movements_task ON stock_movements(task_id) WHERE task_id IS NOT NULL;
 CREATE INDEX idx_stock_movements_patient ON stock_movements(patient_id) WHERE patient_id IS NOT NULL;
-
 -- ============================================================================
 -- 4. TABELA DE PEDIDOS DE COMPRA
 -- ============================================================================
@@ -111,12 +105,10 @@ CREATE TABLE IF NOT EXISTS purchase_orders (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 -- Índices para pedidos de compra
 CREATE INDEX idx_purchase_orders_status ON purchase_orders(status);
 CREATE INDEX idx_purchase_orders_supplier ON purchase_orders(supplier_id);
 CREATE INDEX idx_purchase_orders_date ON purchase_orders(order_date);
-
 -- ============================================================================
 -- 5. TABELA DE ITENS DO PEDIDO DE COMPRA
 -- ============================================================================
@@ -130,11 +122,9 @@ CREATE TABLE IF NOT EXISTS purchase_order_items (
   total_cost DECIMAL(10,2) CHECK (total_cost >= 0),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 -- Índices para itens do pedido
 CREATE INDEX idx_purchase_order_items_order ON purchase_order_items(purchase_order_id);
 CREATE INDEX idx_purchase_order_items_supply ON purchase_order_items(supply_id);
-
 -- ============================================================================
 -- 6. TABELA DE ALERTAS DE INSUMOS
 -- ============================================================================
@@ -150,12 +140,10 @@ CREATE TABLE IF NOT EXISTS supply_alerts (
   resolved_at TIMESTAMP WITH TIME ZONE,
   resolved_by UUID REFERENCES auth.users(id)
 );
-
 -- Índices para alertas
 CREATE INDEX idx_supply_alerts_type_resolved ON supply_alerts(alert_type, is_resolved);
 CREATE INDEX idx_supply_alerts_supply ON supply_alerts(supply_id);
 CREATE INDEX idx_supply_alerts_unread ON supply_alerts(is_read) WHERE is_read = false;
-
 -- ============================================================================
 -- 7. TABELA DE INSUMOS UTILIZADOS EM TAREFAS
 -- ============================================================================
@@ -171,13 +159,11 @@ CREATE TABLE IF NOT EXISTS task_supplies_used (
   usage_date TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   notes TEXT
 );
-
 -- Índices para insumos de tarefas
 CREATE INDEX idx_task_supplies_task ON task_supplies_used(task_id);
 CREATE INDEX idx_task_supplies_supply ON task_supplies_used(supply_id);
 CREATE INDEX idx_task_supplies_patient ON task_supplies_used(patient_id);
 CREATE INDEX idx_task_supplies_date ON task_supplies_used(usage_date);
-
 -- ============================================================================
 -- 8. TABELA DE TEMPLATES DE INSUMOS POR TIPO DE TAREFA
 -- ============================================================================
@@ -191,11 +177,9 @@ CREATE TABLE IF NOT EXISTS task_type_supply_templates (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 -- Índices para templates
 CREATE INDEX idx_task_supply_templates_type ON task_type_supply_templates(task_type);
 CREATE INDEX idx_task_supply_templates_supply ON task_type_supply_templates(supply_id);
-
 -- ============================================================================
 -- 9. TABELA DE LOTES DE PRODUTOS (RASTREABILIDADE)
 -- ============================================================================
@@ -216,13 +200,11 @@ CREATE TABLE IF NOT EXISTS supply_batches (
   received_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'quarantine', 'expired', 'recalled'))
 );
-
 -- Índices para lotes
 CREATE INDEX idx_supply_batches_supply ON supply_batches(supply_id);
 CREATE INDEX idx_supply_batches_expiration ON supply_batches(expiration_date);
 CREATE INDEX idx_supply_batches_status ON supply_batches(status);
 CREATE UNIQUE INDEX idx_supply_batches_unique ON supply_batches(supply_id, batch_number);
-
 -- ============================================================================
 -- 10. TABELA DE APROVAÇÕES DE PEDIDOS
 -- ============================================================================
@@ -236,12 +218,10 @@ CREATE TABLE IF NOT EXISTS purchase_approvals (
   approved_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 -- Índices para aprovações
 CREATE INDEX idx_purchase_approvals_order ON purchase_approvals(purchase_order_id);
 CREATE INDEX idx_purchase_approvals_status ON purchase_approvals(status);
 CREATE INDEX idx_purchase_approvals_approver ON purchase_approvals(approver_id);
-
 -- ============================================================================
 -- 11. TABELA DE CONFIGURAÇÕES DE REPOSIÇÃO AUTOMÁTICA
 -- ============================================================================
@@ -258,11 +238,9 @@ CREATE TABLE IF NOT EXISTS auto_replenishment_rules (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
 -- Índices para regras de reposição
 CREATE INDEX idx_auto_replenishment_enabled ON auto_replenishment_rules(is_enabled);
 CREATE INDEX idx_auto_replenishment_supply ON auto_replenishment_rules(supply_id);
-
 -- ============================================================================
 -- FUNÇÕES E TRIGGERS
 -- ============================================================================
@@ -275,23 +253,17 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Triggers para atualizar updated_at
 CREATE TRIGGER update_suppliers_updated_at BEFORE UPDATE ON suppliers
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_supplies_updated_at BEFORE UPDATE ON supplies
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_purchase_orders_updated_at BEFORE UPDATE ON purchase_orders
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_task_type_supply_templates_updated_at BEFORE UPDATE ON task_type_supply_templates
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 CREATE TRIGGER update_auto_replenishment_rules_updated_at BEFORE UPDATE ON auto_replenishment_rules
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 -- ============================================================================
 -- Função para atualizar estoque após movimentação
 -- ============================================================================
@@ -316,11 +288,9 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER update_stock_on_movement
 AFTER INSERT ON stock_movements
 FOR EACH ROW EXECUTE FUNCTION update_stock_after_movement();
-
 -- ============================================================================
 -- Função para criar alertas de estoque baixo
 -- ============================================================================
@@ -368,11 +338,9 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER check_low_stock
 AFTER UPDATE OF current_stock ON supplies
 FOR EACH ROW EXECUTE FUNCTION check_and_create_low_stock_alert();
-
 -- ============================================================================
 -- Função para gerar número de pedido automático
 -- ============================================================================
@@ -384,13 +352,11 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER generate_purchase_order_number
 BEFORE INSERT ON purchase_orders
 FOR EACH ROW 
 WHEN (NEW.order_number IS NULL)
 EXECUTE FUNCTION generate_order_number();
-
 -- ============================================================================
 -- RLS (Row Level Security) POLICIES
 -- ============================================================================
@@ -402,37 +368,28 @@ ALTER TABLE stock_movements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE purchase_orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE supply_alerts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE task_supplies_used ENABLE ROW LEVEL SECURITY;
-
 -- Política para fornecedores (todos podem ler, apenas admin pode modificar)
 CREATE POLICY "Fornecedores visíveis para todos" ON suppliers
   FOR SELECT USING (true);
-
 CREATE POLICY "Apenas admin pode gerenciar fornecedores" ON suppliers
   FOR ALL USING (auth.uid() IN (SELECT id FROM auth.users WHERE role = 'admin'));
-
 -- Política para insumos (todos podem ler, apenas autorizados podem modificar)
 CREATE POLICY "Insumos visíveis para todos" ON supplies
   FOR SELECT USING (true);
-
 CREATE POLICY "Usuários autorizados podem gerenciar insumos" ON supplies
   FOR ALL USING (auth.uid() IS NOT NULL);
-
 -- Política para movimentações (apenas usuários autenticados)
 CREATE POLICY "Movimentações para usuários autenticados" ON stock_movements
   FOR ALL USING (auth.uid() IS NOT NULL);
-
 -- Política para pedidos de compra (apenas autorizados)
 CREATE POLICY "Pedidos para usuários autorizados" ON purchase_orders
   FOR ALL USING (auth.uid() IS NOT NULL);
-
 -- Política para alertas (todos autenticados podem ver)
 CREATE POLICY "Alertas para usuários autenticados" ON supply_alerts
   FOR ALL USING (auth.uid() IS NOT NULL);
-
 -- Política para insumos de tarefas (todos autenticados)
 CREATE POLICY "Insumos de tarefas para usuários autenticados" ON task_supplies_used
   FOR ALL USING (auth.uid() IS NOT NULL);
-
 -- ============================================================================
 -- DADOS INICIAIS DE EXEMPLO
 -- ============================================================================
@@ -444,7 +401,6 @@ VALUES
   ('FisioEquip Brasil', 'Maria Santos', 'vendas@fisioequip.com.br', '(21) 9876-5432', '98.765.432/0001-10', '15 dias', 5, true),
   ('Produtos Hospitalares SA', 'Carlos Oliveira', 'comercial@prodhospitalar.com.br', '(31) 2345-6789', '11.222.333/0001-44', '45 dias', 10, true)
 ON CONFLICT DO NOTHING;
-
 -- Inserir categorias de insumos de exemplo
 INSERT INTO supplies (name, description, category, unit_of_measure, current_stock, minimum_stock, supplier_id, is_active)
 SELECT 
@@ -457,7 +413,6 @@ SELECT
   (SELECT id FROM suppliers WHERE name = 'FisioEquip Brasil' LIMIT 1),
   true
 WHERE NOT EXISTS (SELECT 1 FROM supplies WHERE name = 'Theraband Verde');
-
 INSERT INTO supplies (name, description, category, unit_of_measure, current_stock, minimum_stock, supplier_id, is_active)
 SELECT 
   'Eletrodos Autoadesivos', 
@@ -469,7 +424,6 @@ SELECT
   (SELECT id FROM suppliers WHERE name = 'MedSupplies Ltda' LIMIT 1),
   true
 WHERE NOT EXISTS (SELECT 1 FROM supplies WHERE name = 'Eletrodos Autoadesivos');
-
 INSERT INTO supplies (name, description, category, unit_of_measure, current_stock, minimum_stock, supplier_id, is_active)
 SELECT 
   'Gel Condutor', 
@@ -481,7 +435,6 @@ SELECT
   (SELECT id FROM suppliers WHERE name = 'MedSupplies Ltda' LIMIT 1),
   true
 WHERE NOT EXISTS (SELECT 1 FROM supplies WHERE name = 'Gel Condutor');
-
 -- ============================================================================
 -- COMENTÁRIOS NAS TABELAS E COLUNAS
 -- ============================================================================
@@ -496,7 +449,6 @@ COMMENT ON TABLE task_supplies_used IS 'Registro de insumos utilizados em tarefa
 COMMENT ON TABLE task_type_supply_templates IS 'Templates de insumos padrão por tipo de tarefa';
 COMMENT ON TABLE supply_batches IS 'Controle de lotes para rastreabilidade';
 COMMENT ON TABLE auto_replenishment_rules IS 'Configurações para reposição automática de estoque';
-
 -- ============================================================================
 -- FIM DA MIGRAÇÃO 001
--- ============================================================================
+-- ============================================================================;

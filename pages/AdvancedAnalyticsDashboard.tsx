@@ -21,20 +21,7 @@ import {
   Users,
   ArrowRight
 } from 'lucide-react';
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
-} from '@/components/charts/ChartsLazyOptimized';
+import { NivoAreaLineChart, type AreaLineSerie } from '@/components/charts/nivo';
 import { format, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '../lib/utils';
@@ -113,12 +100,30 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
   };
 
   // Chart data
-  const forecastChartData = useMemo(() => {
-    return demandForecast.slice(0, 14).map(f => ({
-      date: format(f.date, 'dd/MM', { locale: ptBR }),
-      previsto: f.predictedAppointments,
-      confiança: f.confidence
+  const forecastSeries = useMemo<AreaLineSerie[]>(() => {
+    const dates = demandForecast.slice(0, 14).map(f => ({
+      label: format(f.date, 'dd/MM', { locale: ptBR }),
+      predicted: f.predictedAppointments,
+      confidence: f.confidence,
     }));
+
+    const seriesList: AreaLineSerie[] = [
+      {
+        id: 'previsto',
+        label: 'Consultas previstas',
+        color: '#2563eb',
+        data: dates.map(entry => ({ x: entry.label, y: entry.predicted })),
+        area: { enabled: true, opacity: 0.35, fill: '#93c5fd' },
+      },
+      {
+        id: 'confiança',
+        label: 'Confiança (%)',
+        color: '#10b981',
+        data: dates.map(entry => ({ x: entry.label, y: entry.confidence })),
+      },
+    ];
+
+    return seriesList;
   }, [demandForecast]);
 
   const kpis = useMemo(() => {
@@ -231,28 +236,13 @@ const AdvancedAnalyticsDashboard: React.FC = () => {
         <TabsContent value="predictions" className="space-y-md">
           <Card className="p-lg">
             <h3 className="font-semibold text-lg mb-md">Previsão de Demanda (Próximos 14 dias)</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={forecastChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="previsto"
-                  stroke="#3b82f6"
-                  fill="#93c5fd"
-                  fillOpacity={0.6}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="confiança"
-                  stroke="#10b981"
-                  strokeDasharray="5 5"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            <NivoAreaLineChart
+              series={forecastSeries}
+              height={320}
+              yFormat={value =>
+                typeof value === 'number' ? value.toLocaleString('pt-BR', { maximumFractionDigits: 0 }) : `${value}`
+              }
+            />
           </Card>
         </TabsContent>
 

@@ -10,7 +10,6 @@ SELECT
   created_at      AS criado_em,
   updated_at      AS atualizado_em
 FROM patients;
-
 CREATE OR REPLACE VIEW agendamento_status AS
 SELECT 
   id,
@@ -19,7 +18,6 @@ SELECT
   reason          AS motivo,
   changed_at      AS alterado_em
 FROM appointment_status;
-
 CREATE OR REPLACE VIEW prescricoes_exercicios AS
 SELECT 
   id,
@@ -31,8 +29,6 @@ SELECT
   notes           AS observacoes,
   created_at      AS criado_em
 FROM exercise_prescriptions;
-
 COMMENT ON VIEW paciente_registros IS 'View padronizada para pacientes (pt-BR snake_case)';
 COMMENT ON VIEW agendamento_status IS 'View padronizada para status de agendamentos';
 COMMENT ON VIEW prescricoes_exercicios IS 'View padronizada para prescrições de exercícios';
-

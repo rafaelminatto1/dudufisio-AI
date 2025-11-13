@@ -1,7 +1,6 @@
 -- Fix schema issues found in tests
 
 BEGIN;
-
 -- 1. Fix payments status check constraint
 -- Allow 'completed' status
 DO $$
@@ -13,7 +12,6 @@ BEGIN
     ALTER TABLE payments ADD CONSTRAINT payments_status_check
     CHECK (status IN ('pending', 'processing', 'completed', 'failed', 'refunded', 'cancelled'));
 END $$;
-
 -- 2. Add missing columns to patient_messages
 DO $$
 BEGIN
@@ -45,11 +43,8 @@ BEGIN
         ALTER TABLE patient_messages ADD COLUMN parent_message_id UUID REFERENCES patient_messages(id);
     END IF;
 END $$;
-
 -- 3. Make appointments.duration nullable (not all appointments have duration until they're completed)
 ALTER TABLE appointments ALTER COLUMN duration DROP NOT NULL;
-
 -- 4. Set default duration to 60 minutes for new appointments
 ALTER TABLE appointments ALTER COLUMN duration SET DEFAULT 60;
-
 COMMIT;

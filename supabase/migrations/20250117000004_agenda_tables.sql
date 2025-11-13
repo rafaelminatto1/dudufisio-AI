@@ -45,17 +45,14 @@ CREATE TABLE IF NOT EXISTS public.waitlist_entries (
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     created_by UUID REFERENCES public.users(id)
 );
-
 -- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_waitlist_entries_patient_id ON public.waitlist_entries(patient_id);
 CREATE INDEX IF NOT EXISTS idx_waitlist_entries_therapist_id ON public.waitlist_entries(therapist_id);
 CREATE INDEX IF NOT EXISTS idx_waitlist_entries_status ON public.waitlist_entries(status);
 CREATE INDEX IF NOT EXISTS idx_waitlist_entries_urgency ON public.waitlist_entries(urgency DESC);
 CREATE INDEX IF NOT EXISTS idx_waitlist_entries_created_at ON public.waitlist_entries(created_at DESC);
-
 -- Índice GIN para busca em arrays
 CREATE INDEX IF NOT EXISTS idx_waitlist_entries_preferred_days ON public.waitlist_entries USING GIN(preferred_days);
-
 -- =============================================
 -- SCHEDULE BLOCKS TABLE
 -- =============================================
@@ -88,23 +85,19 @@ CREATE TABLE IF NOT EXISTS public.schedule_blocks (
     -- Constraints
     CONSTRAINT schedule_blocks_time_check CHECK (end_time > start_time)
 );
-
 -- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_schedule_blocks_therapist_id ON public.schedule_blocks(therapist_id);
 CREATE INDEX IF NOT EXISTS idx_schedule_blocks_start_time ON public.schedule_blocks(start_time);
 CREATE INDEX IF NOT EXISTS idx_schedule_blocks_end_time ON public.schedule_blocks(end_time);
 CREATE INDEX IF NOT EXISTS idx_schedule_blocks_type ON public.schedule_blocks(block_type);
-
 -- Índice composto para queries de conflito
 CREATE INDEX IF NOT EXISTS idx_schedule_blocks_time_range ON public.schedule_blocks(therapist_id, start_time, end_time);
-
 -- =============================================
 -- RLS POLICIES - WAITLIST ENTRIES
 -- =============================================
 
 -- Habilitar RLS
 ALTER TABLE public.waitlist_entries ENABLE ROW LEVEL SECURITY;
-
 -- Políticas para waitlist_entries
 
 -- Admin pode ver tudo
@@ -117,7 +110,6 @@ CREATE POLICY "Admins can view all waitlist entries"
             AND users.role = 'admin'
         )
     );
-
 -- Terapeutas podem ver suas próprias entradas
 CREATE POLICY "Therapists can view their waitlist entries"
     ON public.waitlist_entries FOR SELECT
@@ -129,7 +121,6 @@ CREATE POLICY "Therapists can view their waitlist entries"
             AND users.role IN ('admin', 'therapist')
         )
     );
-
 -- Admin e terapeutas podem criar entradas
 CREATE POLICY "Admins and therapists can create waitlist entries"
     ON public.waitlist_entries FOR INSERT
@@ -140,7 +131,6 @@ CREATE POLICY "Admins and therapists can create waitlist entries"
             AND users.role IN ('admin', 'therapist')
         )
     );
-
 -- Admin e terapeutas podem atualizar entradas
 CREATE POLICY "Admins and therapists can update waitlist entries"
     ON public.waitlist_entries FOR UPDATE
@@ -151,7 +141,6 @@ CREATE POLICY "Admins and therapists can update waitlist entries"
             AND users.role IN ('admin', 'therapist')
         )
     );
-
 -- Admin pode deletar entradas
 CREATE POLICY "Admins can delete waitlist entries"
     ON public.waitlist_entries FOR DELETE
@@ -162,14 +151,12 @@ CREATE POLICY "Admins can delete waitlist entries"
             AND users.role = 'admin'
         )
     );
-
 -- =============================================
 -- RLS POLICIES - SCHEDULE BLOCKS
 -- =============================================
 
 -- Habilitar RLS
 ALTER TABLE public.schedule_blocks ENABLE ROW LEVEL SECURITY;
-
 -- Políticas para schedule_blocks
 
 -- Admin pode ver tudo
@@ -182,7 +169,6 @@ CREATE POLICY "Admins can view all schedule blocks"
             AND users.role = 'admin'
         )
     );
-
 -- Terapeutas podem ver seus próprios bloqueios
 CREATE POLICY "Therapists can view their schedule blocks"
     ON public.schedule_blocks FOR SELECT
@@ -194,7 +180,6 @@ CREATE POLICY "Therapists can view their schedule blocks"
             AND users.role IN ('admin', 'therapist')
         )
     );
-
 -- Admin e terapeutas podem criar bloqueios
 CREATE POLICY "Admins and therapists can create schedule blocks"
     ON public.schedule_blocks FOR INSERT
@@ -205,7 +190,6 @@ CREATE POLICY "Admins and therapists can create schedule blocks"
             AND users.role IN ('admin', 'therapist')
         )
     );
-
 -- Admin e terapeutas podem atualizar bloqueios
 CREATE POLICY "Admins and therapists can update schedule blocks"
     ON public.schedule_blocks FOR UPDATE
@@ -216,7 +200,6 @@ CREATE POLICY "Admins and therapists can update schedule blocks"
             AND users.role IN ('admin', 'therapist')
         )
     );
-
 -- Admin pode deletar bloqueios
 CREATE POLICY "Admins can delete schedule blocks"
     ON public.schedule_blocks FOR DELETE
@@ -227,7 +210,6 @@ CREATE POLICY "Admins can delete schedule blocks"
             AND users.role = 'admin'
         )
     );
-
 -- =============================================
 -- TRIGGERS - UPDATED_AT
 -- =============================================
@@ -240,21 +222,18 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 -- Aplicar trigger em waitlist_entries
 DROP TRIGGER IF EXISTS update_waitlist_entries_updated_at ON public.waitlist_entries;
 CREATE TRIGGER update_waitlist_entries_updated_at
     BEFORE UPDATE ON public.waitlist_entries
     FOR EACH ROW
     EXECUTE FUNCTION public.update_updated_at_column();
-
 -- Aplicar trigger em schedule_blocks
 DROP TRIGGER IF EXISTS update_schedule_blocks_updated_at ON public.schedule_blocks;
 CREATE TRIGGER update_schedule_blocks_updated_at
     BEFORE UPDATE ON public.schedule_blocks
     FOR EACH ROW
     EXECUTE FUNCTION public.update_updated_at_column();
-
 -- =============================================
 -- VIEWS ÚTEIS
 -- =============================================
@@ -270,7 +249,6 @@ SELECT
 FROM public.waitlist_entries w
 LEFT JOIN public.patients p ON w.patient_id = p.id
 LEFT JOIN public.users u ON w.therapist_id = u.id;
-
 -- View para bloqueios com informações do terapeuta
 CREATE OR REPLACE VIEW public.schedule_blocks_with_therapist AS
 SELECT 
@@ -279,7 +257,6 @@ SELECT
     u.email as therapist_email
 FROM public.schedule_blocks s
 LEFT JOIN public.users u ON s.therapist_id = u.id;
-
 -- =============================================
 -- FUNCTIONS ÚTEIS
 -- =============================================
@@ -304,23 +281,18 @@ BEGIN
         p_start_date + (p_duration_minutes || ' minutes')::INTERVAL as available_end;
 END;
 $$ LANGUAGE plpgsql;
-
 -- =============================================
 -- COMMENTS
 -- =============================================
 
 COMMENT ON TABLE public.waitlist_entries IS 'Lista de espera de pacientes aguardando por agendamento';
 COMMENT ON TABLE public.schedule_blocks IS 'Bloqueios de agenda (férias, almoço, ausências, etc)';
-
 COMMENT ON COLUMN public.waitlist_entries.urgency IS 'Urgência de 1 a 5, onde 5 é crítico';
 COMMENT ON COLUMN public.waitlist_entries.no_show_risk IS 'Risco de faltar de 0 a 10, onde 10 é muito alto';
 COMMENT ON COLUMN public.waitlist_entries.preferred_days IS 'Array de dias da semana (0=Dom, 1=Seg, 2=Ter, etc)';
 COMMENT ON COLUMN public.waitlist_entries.preferred_time_ranges IS 'Array de horários preferidos [{start: "08:00", end: "12:00"}]';
-
 COMMENT ON COLUMN public.schedule_blocks.block_type IS 'Tipo de bloqueio: ferias, almoco, ausencia, feriado, treinamento, outro';
 COMMENT ON COLUMN public.schedule_blocks.recurrence_rule IS 'Regra de recorrência JSON: {frequency: "daily|weekly|monthly", days: [], until: date}';
-
 -- =============================================
 -- MIGRATION COMPLETE
--- =============================================
-
+-- =============================================;

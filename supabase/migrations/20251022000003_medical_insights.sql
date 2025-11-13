@@ -33,22 +33,17 @@ CREATE TABLE IF NOT EXISTS medical_insights (
   -- Timestamps
   generated_at TIMESTAMP DEFAULT NOW()
 );
-
 -- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_medical_insights_patient_id ON medical_insights(patient_id);
 CREATE INDEX IF NOT EXISTS idx_medical_insights_type ON medical_insights(type);
 CREATE INDEX IF NOT EXISTS idx_medical_insights_severity ON medical_insights(severity);
 CREATE INDEX IF NOT EXISTS idx_medical_insights_generated_at ON medical_insights(generated_at DESC);
-
 -- Índice composto para buscar insights recentes de um paciente
 CREATE INDEX IF NOT EXISTS idx_medical_insights_patient_recent ON medical_insights(patient_id, generated_at DESC);
-
 -- Índice GIN para busca no JSONB data
 CREATE INDEX IF NOT EXISTS idx_medical_insights_data ON medical_insights USING gin(data);
-
 -- RLS (Row Level Security)
 ALTER TABLE medical_insights ENABLE ROW LEVEL SECURITY;
-
 -- Policy: Terapeutas podem ver insights dos seus pacientes
 CREATE POLICY "Therapists can view insights of their patients"
   ON medical_insights
@@ -59,7 +54,6 @@ CREATE POLICY "Therapists can view insights of their patients"
     )
     OR auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
-
 -- Policy: Sistema pode criar insights (via service account ou authenticated users)
 CREATE POLICY "System can create medical insights"
   ON medical_insights
@@ -67,7 +61,6 @@ CREATE POLICY "System can create medical insights"
   WITH CHECK (
     auth.uid() IS NOT NULL
   );
-
 -- Policy: Apenas Admin pode deletar insights
 CREATE POLICY "Only admins can delete medical insights"
   ON medical_insights
@@ -75,7 +68,6 @@ CREATE POLICY "Only admins can delete medical insights"
   USING (
     auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
-
 -- View para insights agregados por paciente
 CREATE OR REPLACE VIEW patient_insights_summary AS
 SELECT 
@@ -89,10 +81,8 @@ SELECT
   MAX(generated_at) as last_insight_date
 FROM medical_insights
 GROUP BY patient_id;
-
 -- Comentários na tabela
 COMMENT ON TABLE medical_insights IS 'Cache de insights médicos gerados automaticamente para uso em relatórios e laudos';
 COMMENT ON COLUMN medical_insights.data IS 'Dados estruturados do insight (valores iniciais, finais, melhora, etc)';
 COMMENT ON COLUMN medical_insights.suggested_text IS 'Texto formatado e pronto para copiar no laudo médico';
 COMMENT ON VIEW patient_insights_summary IS 'Resumo agregado de insights por paciente';
-

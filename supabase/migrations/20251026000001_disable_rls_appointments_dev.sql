@@ -10,11 +10,8 @@
 
 -- Desabilitar Row Level Security na tabela appointments
 ALTER TABLE appointments DISABLE ROW LEVEL SECURITY;
-
 -- Adicionar comentário de aviso
 COMMENT ON TABLE appointments IS '⚠️ RLS DESABILITADO PARA DESENVOLVIMENTO - HABILITAR EM PRODUÇÃO';
-
 -- ============================================================================
 -- FIM DA MIGRAÇÃO
--- ============================================================================
-
+-- ============================================================================;

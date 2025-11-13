@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Section from '../components/layout/Section';
 import { H1, H2, H3, Body, Small, Caption } from '../components/ui/Typography';
 import Button from '../components/ui/button';
@@ -23,20 +23,7 @@ import {
   LineChart,
   PieChart,
 } from 'lucide-react';
-import {
-  LineChart as RechartsLineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart as RechartsPieChart,
-  Cell,
-  Pie
-} from '../components/charts/ChartsLazyOptimized';
+import { NivoLineChart, NivoBarChart, NivoPieChart, TooltipCard } from '../components/charts/nivo';
 
 interface EdgeFunctionMetric {
   name: string;
@@ -128,6 +115,40 @@ const EdgeFunctionsPerformanceDashboard: React.FC = () => {
     { name: 'Warning', value: 1, color: '#f59e0b' },
     { name: 'Error', value: 0, color: '#ef4444' }
   ];
+
+  const lineSeriesData = useMemo(
+    () => [
+      {
+        id: 'Tempo de resposta',
+        color: '#3b82f6',
+        data: chartData.map((point) => ({
+          x: point.time,
+          y: point.responseTime
+        }))
+      }
+    ],
+    [chartData]
+  );
+
+  const barData = useMemo(
+    () =>
+      chartData.map((point) => ({
+        time: point.time,
+        requests: point.requests
+      })),
+    [chartData]
+  );
+
+  const pieData = useMemo(
+    () =>
+      statusDistribution.map((item) => ({
+        id: item.name,
+        label: item.name,
+        value: item.value,
+        color: item.color
+      })),
+    [statusDistribution]
+  );
 
   useEffect(() => {
     // Simulate loading data
@@ -312,29 +333,45 @@ const EdgeFunctionsPerformanceDashboard: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <RechartsLineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="time" stroke="#64748b" fontSize={12} />
-                  <YAxis stroke="#64748b" fontSize={12} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'white', 
-                      border: '1px solid #e2e8f0', 
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }} 
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="responseTime" 
-                    stroke="#3b82f6" 
-                    strokeWidth={2}
-                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                    activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2 }}
-                  />
-                </RechartsLineChart>
-              </ResponsiveContainer>
+              <NivoLineChart
+                height={300}
+                data={lineSeriesData}
+                curve="monotoneX"
+                xScale={{ type: 'point' }}
+                yScale={{ type: 'linear', min: 'auto', max: 'auto', stacked: false }}
+                axisBottom={{
+                  tickRotation: -30,
+                  tickPadding: 10,
+                }}
+                axisLeft={{
+                  tickPadding: 8,
+                }}
+                colors={['#3b82f6']}
+                enableArea
+                areaOpacity={0.12}
+                pointSize={8}
+                pointBorderWidth={2}
+                pointColor={{ from: 'color' }}
+                pointBorderColor={{ from: 'serieColor' }}
+                sliceTooltip={({ slice }) => {
+                  const point = slice.points[0];
+                  if (!point) return null;
+
+                  return (
+                    <TooltipCard
+                      title={point.data.xFormatted}
+                      rows={[
+                        {
+                          id: 'response-time',
+                          label: 'Tempo de resposta',
+                          value: `${point.data.yFormatted} ms`,
+                          color: point.serieColor,
+                        },
+                      ]}
+                    />
+                  );
+                }}
+              />
             </CardContent>
           </Card>
 
@@ -350,22 +387,34 @@ const EdgeFunctionsPerformanceDashboard: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="time" stroke="#64748b" fontSize={12} />
-                  <YAxis stroke="#64748b" fontSize={12} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'white', 
-                      border: '1px solid #e2e8f0', 
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }} 
+              <NivoBarChart
+                height={300}
+                data={barData}
+                keys={['requests']}
+                indexBy="time"
+                colors={['#10b981']}
+                borderRadius={4}
+                axisBottom={{
+                  tickRotation: -30,
+                  tickPadding: 10,
+                }}
+                axisLeft={{
+                  tickPadding: 8,
+                }}
+                tooltip={({ value, indexValue, color }) => (
+                  <TooltipCard
+                    title={indexValue}
+                    rows={[
+                      {
+                        id: 'requests',
+                        label: 'Solicitações',
+                        value: value,
+                        color,
+                      },
+                    ]}
                   />
-                  <Bar dataKey="requests" fill="#10b981" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+                )}
+              />
             </CardContent>
           </Card>
         </div>
@@ -441,24 +490,28 @@ const EdgeFunctionsPerformanceDashboard: React.FC = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <RechartsPieChart>
-                  <Pie
-                    data={statusDistribution}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {statusDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </RechartsPieChart>
-              </ResponsiveContainer>
+              <NivoPieChart
+                height={250}
+                data={pieData}
+                colors={{ datum: 'data.color' }}
+                enableArcLinkLabels={false}
+                arcLinkLabelsSkipAngle={10}
+                arcLabelsRadiusOffset={0.55}
+                arcLabel={(datum) => `${datum.value}`}
+                tooltip={({ datum }) => (
+                  <TooltipCard
+                    title={datum.label}
+                    rows={[
+                      {
+                        id: String(datum.id),
+                        label: 'Funções',
+                        value: datum.value,
+                        color: datum.color as string,
+                      },
+                    ]}
+                  />
+                )}
+              />
               <div className="flex justify-center gap-lg mt-md">
                 {statusDistribution.map((item, index) => (
                   <div key={index} className="flex items-center gap-xs">

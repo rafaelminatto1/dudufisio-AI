@@ -15,25 +15,19 @@ CREATE TABLE IF NOT EXISTS public.notification_schedules (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_notification_schedules_appointment_id
   ON public.notification_schedules(appointment_id);
-
 CREATE INDEX IF NOT EXISTS idx_notification_schedules_user_id
   ON public.notification_schedules(user_id);
-
 CREATE INDEX IF NOT EXISTS idx_notification_schedules_scheduled_for
   ON public.notification_schedules(scheduled_for);
-
 CREATE INDEX IF NOT EXISTS idx_notification_schedules_sent
   ON public.notification_schedules(sent);
-
 -- Index composto para buscar lembretes pendentes
 CREATE INDEX IF NOT EXISTS idx_notification_schedules_pending
   ON public.notification_schedules(sent, scheduled_for)
   WHERE sent = false;
-
 -- Add updated_at trigger
 CREATE OR REPLACE FUNCTION public.handle_notification_schedules_updated_at()
 RETURNS TRIGGER AS $$
@@ -42,15 +36,12 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER notification_schedules_updated_at
   BEFORE UPDATE ON public.notification_schedules
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_notification_schedules_updated_at();
-
 -- Enable Row Level Security
 ALTER TABLE public.notification_schedules ENABLE ROW LEVEL SECURITY;
-
 -- RLS Policies
 
 -- Users can view their own notification schedules
@@ -58,13 +49,11 @@ CREATE POLICY "Users can view their own notification schedules"
   ON public.notification_schedules
   FOR SELECT
   USING (auth.uid() = user_id);
-
 -- System/Service role can manage all notification schedules
 CREATE POLICY "Service role can manage all notification schedules"
   ON public.notification_schedules
   FOR ALL
   USING (auth.role() = 'service_role');
-
 -- Authenticated users with proper permissions can insert schedules
 CREATE POLICY "Authenticated users can create notification schedules"
   ON public.notification_schedules
@@ -80,7 +69,6 @@ CREATE POLICY "Authenticated users can create notification schedules"
       )
     )
   );
-
 -- Users with proper permissions can update their schedules
 CREATE POLICY "Users can update their own notification schedules"
   ON public.notification_schedules
@@ -93,7 +81,6 @@ CREATE POLICY "Users can update their own notification schedules"
       AND role IN ('admin', 'terapeuta')
     )
   );
-
 -- Users with proper permissions can delete their schedules
 CREATE POLICY "Users can delete their own notification schedules"
   ON public.notification_schedules
@@ -106,7 +93,6 @@ CREATE POLICY "Users can delete their own notification schedules"
       AND role IN ('admin', 'terapeuta')
     )
   );
-
 -- Add comments for documentation
 COMMENT ON TABLE public.notification_schedules IS 'Agendamento de lembretes automáticos de consultas (24h e 2h antes)';
 COMMENT ON COLUMN public.notification_schedules.appointment_id IS 'ID do agendamento relacionado';

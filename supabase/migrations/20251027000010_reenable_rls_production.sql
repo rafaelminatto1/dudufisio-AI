@@ -22,7 +22,6 @@ ALTER TABLE task_type_supply_templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE supply_batches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE purchase_approvals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE auto_replenishment_rules ENABLE ROW LEVEL SECURITY;
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - SUPPLIERS
 -- ============================================================================
@@ -38,7 +37,6 @@ USING (
     AND users.role IN ('admin', 'therapist')
   )
 );
-
 -- Apenas Admins podem inserir/atualizar/deletar fornecedores
 CREATE POLICY "Only admins can manage suppliers"
 ON suppliers FOR ALL
@@ -50,7 +48,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - SUPPLIES
 -- ============================================================================
@@ -66,7 +63,6 @@ USING (
     AND users.role IN ('admin', 'therapist')
   )
 );
-
 -- Admins e Therapists podem inserir novos insumos
 CREATE POLICY "Admins and therapists can create supplies"
 ON supplies FOR INSERT
@@ -78,7 +74,6 @@ WITH CHECK (
     AND users.role IN ('admin', 'therapist')
   )
 );
-
 -- Apenas Admins podem atualizar insumos
 CREATE POLICY "Only admins can update supplies"
 ON supplies FOR UPDATE
@@ -90,7 +85,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- Apenas Admins podem deletar insumos
 CREATE POLICY "Only admins can delete supplies"
 ON supplies FOR DELETE
@@ -102,7 +96,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - STOCK_MOVEMENTS
 -- ============================================================================
@@ -118,7 +111,6 @@ USING (
     AND users.role IN ('admin', 'therapist')
   )
 );
-
 -- Admins e Therapists podem registrar movimentações
 CREATE POLICY "Admins and therapists can create stock movements"
 ON stock_movements FOR INSERT
@@ -131,7 +123,6 @@ WITH CHECK (
   )
   AND moved_by = auth.uid()
 );
-
 -- Apenas Admins podem deletar movimentações
 CREATE POLICY "Only admins can delete stock movements"
 ON stock_movements FOR DELETE
@@ -143,7 +134,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - PURCHASE_ORDERS
 -- ============================================================================
@@ -159,7 +149,6 @@ USING (
     AND users.role IN ('admin', 'therapist')
   )
 );
-
 -- Admins e Therapists podem criar pedidos
 CREATE POLICY "Admins and therapists can create purchase orders"
 ON purchase_orders FOR INSERT
@@ -172,7 +161,6 @@ WITH CHECK (
   )
   AND requested_by = auth.uid()
 );
-
 -- Apenas Admins podem aprovar/atualizar pedidos
 CREATE POLICY "Only admins can update purchase orders"
 ON purchase_orders FOR UPDATE
@@ -184,7 +172,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - PURCHASE_ORDER_ITEMS
 -- ============================================================================
@@ -201,7 +188,6 @@ USING (
     AND u.role IN ('admin', 'therapist')
   )
 );
-
 CREATE POLICY "Create purchase order items with parent permission"
 ON purchase_order_items FOR INSERT
 TO authenticated
@@ -213,7 +199,6 @@ WITH CHECK (
     AND u.role IN ('admin', 'therapist')
   )
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - SUPPLY_ALERTS
 -- ============================================================================
@@ -229,7 +214,6 @@ USING (
     AND users.role IN ('admin', 'therapist')
   )
 );
-
 -- Sistema pode criar alertas (via service_role)
 -- Admins podem resolver alertas
 CREATE POLICY "Admins can resolve supply alerts"
@@ -242,7 +226,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - TASK_SUPPLIES_USED
 -- ============================================================================
@@ -258,7 +241,6 @@ USING (
     AND users.role IN ('admin', 'therapist')
   )
 );
-
 -- Therapists podem registrar uso de insumos
 CREATE POLICY "Therapists can record supply usage"
 ON task_supplies_used FOR INSERT
@@ -271,7 +253,6 @@ WITH CHECK (
   )
   AND used_by = auth.uid()
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - TASK_TYPE_SUPPLY_TEMPLATES
 -- ============================================================================
@@ -281,7 +262,6 @@ CREATE POLICY "Authenticated users can view supply templates"
 ON task_type_supply_templates FOR SELECT
 TO authenticated
 USING (true);
-
 -- Apenas Admins podem criar templates
 CREATE POLICY "Only admins can insert supply templates"
 ON task_type_supply_templates FOR INSERT
@@ -293,7 +273,6 @@ WITH CHECK (
     AND users.role = 'admin'
   )
 );
-
 -- Apenas Admins podem atualizar templates
 CREATE POLICY "Only admins can update supply templates"
 ON task_type_supply_templates FOR UPDATE
@@ -305,7 +284,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- Apenas Admins podem deletar templates
 CREATE POLICY "Only admins can delete supply templates"
 ON task_type_supply_templates FOR DELETE
@@ -317,7 +295,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - SUPPLY_BATCHES
 -- ============================================================================
@@ -333,7 +310,6 @@ USING (
     AND users.role IN ('admin', 'therapist')
   )
 );
-
 -- Apenas Admins podem criar lotes
 CREATE POLICY "Only admins can insert supply batches"
 ON supply_batches FOR INSERT
@@ -345,7 +321,6 @@ WITH CHECK (
     AND users.role = 'admin'
   )
 );
-
 -- Apenas Admins podem atualizar lotes
 CREATE POLICY "Only admins can update supply batches"
 ON supply_batches FOR UPDATE
@@ -357,7 +332,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- Apenas Admins podem deletar lotes
 CREATE POLICY "Only admins can delete supply batches"
 ON supply_batches FOR DELETE
@@ -369,7 +343,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - PURCHASE_APPROVALS
 -- ============================================================================
@@ -385,7 +358,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- ============================================================================
 -- POLÍTICAS DE SEGURANÇA - AUTO_REPLENISHMENT_RULES
 -- ============================================================================
@@ -401,7 +373,6 @@ USING (
     AND users.role = 'admin'
   )
 );
-
 -- ============================================================================
 -- ATUALIZAR COMENTÁRIOS
 -- ============================================================================
@@ -410,8 +381,6 @@ COMMENT ON TABLE suppliers IS 'Fornecedores - RLS HABILITADO com políticas por 
 COMMENT ON TABLE supplies IS 'Insumos - RLS HABILITADO com políticas por role';
 COMMENT ON TABLE stock_movements IS 'Movimentações de estoque - RLS HABILITADO';
 COMMENT ON TABLE purchase_orders IS 'Pedidos de compra - RLS HABILITADO';
-
 -- ============================================================================
 -- FIM DA MIGRAÇÃO
--- ============================================================================
-
+-- ============================================================================;

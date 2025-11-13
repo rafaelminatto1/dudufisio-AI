@@ -35,16 +35,13 @@ CREATE TABLE IF NOT EXISTS session_evolutions (
   updated_at TIMESTAMP DEFAULT NOW(),
   created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
-
 -- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_session_evolutions_patient_id ON session_evolutions(patient_id);
 CREATE INDEX IF NOT EXISTS idx_session_evolutions_session_id ON session_evolutions(session_id);
 CREATE INDEX IF NOT EXISTS idx_session_evolutions_session_date ON session_evolutions(session_date);
 CREATE INDEX IF NOT EXISTS idx_session_evolutions_therapist_id ON session_evolutions(therapist_id);
-
 -- Índice para buscar por session_number
 CREATE INDEX IF NOT EXISTS idx_session_evolutions_patient_session_number ON session_evolutions(patient_id, session_number);
-
 -- Trigger para atualizar updated_at automaticamente
 CREATE OR REPLACE FUNCTION update_session_evolutions_updated_at()
 RETURNS TRIGGER AS $$
@@ -53,15 +50,12 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER trigger_session_evolutions_updated_at
   BEFORE UPDATE ON session_evolutions
   FOR EACH ROW
   EXECUTE FUNCTION update_session_evolutions_updated_at();
-
 -- RLS (Row Level Security)
 ALTER TABLE session_evolutions ENABLE ROW LEVEL SECURITY;
-
 -- Policy: Usuários podem ver evoluções dos seus pacientes
 CREATE POLICY "Users can view session evolutions of their patients"
   ON session_evolutions
@@ -70,7 +64,6 @@ CREATE POLICY "Users can view session evolutions of their patients"
     auth.uid() = therapist_id
     OR auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
-
 -- Policy: Terapeutas podem criar evoluções
 CREATE POLICY "Therapists can create session evolutions"
   ON session_evolutions
@@ -79,7 +72,6 @@ CREATE POLICY "Therapists can create session evolutions"
     auth.uid() = therapist_id
     OR auth.uid() IN (SELECT id FROM users WHERE role IN ('admin', 'therapist', 'manager'))
   );
-
 -- Policy: Terapeutas podem atualizar suas próprias evoluções
 CREATE POLICY "Therapists can update their own session evolutions"
   ON session_evolutions
@@ -88,7 +80,6 @@ CREATE POLICY "Therapists can update their own session evolutions"
     auth.uid() = therapist_id
     OR auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
-
 -- Policy: Apenas Admin pode deletar
 CREATE POLICY "Only admins can delete session evolutions"
   ON session_evolutions
@@ -96,9 +87,7 @@ CREATE POLICY "Only admins can delete session evolutions"
   USING (
     auth.uid() IN (SELECT id FROM users WHERE role = 'admin')
   );
-
 -- Comentários na tabela
 COMMENT ON TABLE session_evolutions IS 'Armazena evoluções completas de cada sessão de atendimento fisioterapêutico';
 COMMENT ON COLUMN session_evolutions.tests_performed IS 'Array JSON de TestResult com todos os testes realizados na sessão';
 COMMENT ON COLUMN session_evolutions.tags IS 'Tags para categorização e busca (ex: melhora, progresso, estável)';
-
