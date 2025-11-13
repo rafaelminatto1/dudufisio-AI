@@ -52,7 +52,7 @@ const isCI = Boolean(process.env.CI || process.env.VERCEL);
 const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === 'true';
 
 const pdfVendorPattern =
-  /[/\\]node_modules[/\\](?:@react-pdf|pdfkit|fontkit|png-js|yoga-layout|linebreak|textkit|canvg|jspdf(?:-autotable)?|fast-png|pako|brotli|hyphen|bidi-js|linkifyjs|decimal\.js-light|unicode-trie|unicode-properties|fastestsmallesttextencoderdecoder)[/\\]/;
+  /[/\\]node_modules[/\\](?:@react-pdf|pdfkit|fontkit|png-js|yoga-layout|linebreak|textkit|canvg|jspdf(?:-autotable)?|fast-png|pako|brotli|hyphen|bidi-js|linkifyjs|decimal\.js-light|unicode-trie|unicode-properties|fastestsmallesttextencoderdecoder|restructure)[/\\]/;
 const compressionVendorPattern = /[/\\]node_modules[/\\](?:pako|brotli)[/\\]/;
 const sentryReplayPattern = /[/\\]node_modules[/\\]@sentry-internal[/\\]replay[/\\]/;
 
@@ -198,24 +198,13 @@ export default defineConfig({
       '@tiptap/extension-table-cell',
       '@tiptap/extension-table-header'
     ],
-    // 🔧 FIX: SOLUTION 4 - Lazy Load completo de PDF/compression libs
-    // Issue: Circular dependency "Cannot access 'z8' before initialization" em vendor-pdf
-    // Date: 12 Jan 2025
-    // Excluir completamente PDF e compression libs do bundle inicial
-    // Estas libs serão carregadas dinamicamente via lib/heavyLibrariesLazy.ts
+    // 🔧 FIX: SOLUTION 5 - Remover chunking de PDF libs (reverte Solution 4)
+    // Issue: Conflito entre optimizeDeps.exclude e manualChunks causando circular dependency
+    // Date: 13 Jan 2025
+    // Estratégia: Deixar Vite/Rollup decidir como bundlar PDF libs naturalmente
+    // PDF libs serão carregadas dinamicamente via lib/heavyLibrariesLazy.ts QUANDO NECESSÁRIO
     exclude: [
       '@playwright/test',
-      // PDF Libraries (~1.37MB total)
-      'jspdf',
-      'jspdf-autotable',
-      '@react-pdf/renderer',
-      'pdfjs-dist',
-      'html2canvas',
-      // Compression Libraries (circular dependency source)
-      'pako',
-      'fflate',
-      'brotli',
-      'zlib'
     ],
     // Otimização forçada apenas quando necessário
     force: false,
@@ -364,6 +353,14 @@ export default defineConfig({
           if (normalizedId.includes('node_modules/recharts/')) {
             return 'feature-charts';
           }
+          if (normalizedId.includes('node_modules/d3-') ||
+              normalizedId.includes('node_modules/d3/')) {
+            return 'feature-charts';
+          }
+          if (normalizedId.includes('node_modules/react-smooth/') ||
+              normalizedId.includes('node_modules/react-smooth.es/')) {
+            return 'feature-charts';
+          }
 
           // 📅 CHUNK ESPECÍFICO: Date picker
           if (normalizedId.includes('node_modules/react-day-picker/')) {
@@ -376,10 +373,14 @@ export default defineConfig({
             return 'feature-editor';
           }
 
-          // 🧾 CHUNK ESPECÍFICO: Ecossistema de PDF (lazy load)
-          if (pdfVendorPattern.test(normalizedId)) {
-            return 'vendor-pdf';
-          }
+          // 🔧 FIX: SOLUTION 5 - REMOVER vendor-pdf chunk
+          // Issue: Conflito entre optimizeDeps.exclude e manualChunks causando circular dependency
+          // Date: 13 Jan 2025
+          // PDF libs agora carregam dinamicamente via lazy loading, SEM chunk manual
+          // if (pdfVendorPattern.test(normalizedId)) {
+          //   return 'vendor-pdf';
+          // }
+
           if (sentryReplayPattern.test(normalizedId)) {
             return 'vendor-sentry-replay';
           }
@@ -414,6 +415,10 @@ export default defineConfig({
           // 📅 CHUNK: Date utilities
           if (normalizedId.includes('node_modules/date-fns/')) {
             return 'vendor-date';
+          }
+
+          if (normalizedId.includes('node_modules/lodash/')) {
+            return 'vendor-lodash';
           }
 
           // 🛠️ CHUNK: Utils (pequenos, podem ser agrupados)
