@@ -36,7 +36,8 @@ const PRELOADABLE_COMPONENTS = {
   'pages/SettingsPage': () => import('../pages/SettingsPage'),
   'components/ui/OptimizedLoader': () => import('../components/ui/OptimizedLoader'),
   'components/ErrorBoundary': () => import('../components/ErrorBoundary'),
-  'components/reports/ReportsDashboard': () => import('../components/reports/ReportsDashboard'),
+  // FIXME: Temporarily commented out - module resolution error on Vercel build
+  // 'components/reports/ReportsDashboard': () => import('../components/reports/ReportsDashboard'),
   'components/financial/FinancialDashboard': () => import('../components/financial/FinancialDashboard'),
 };
 
@@ -48,8 +49,6 @@ const ROLE_PRELOAD_CONFIG: Record<Role, string[]> = {
     'pages/AdminDashboardPage',
     'pages/UserManagementPage',
     'pages/ReportsPage',
-    'components/reports/ReportsDashboard',
-    'components/financial/FinancialDashboard',
   ],
   [Role.Therapist]: [
     'pages/DashboardPage',
@@ -254,6 +253,8 @@ export async function initializeIntelligentPreloading(userRole?: Role): Promise<
     await preloadForRole(userRole);
   }
 
+  scheduleDeferredRolePreload(userRole);
+
   // 3. Setup hover preloading
   setupHoverPreloading();
 
@@ -263,6 +264,42 @@ export async function initializeIntelligentPreloading(userRole?: Role): Promise<
   logger.debug('Intelligent preloading initialized', {
     context: 'intelligentPreloading',
   });
+}
+
+function scheduleDeferredRolePreload(role?: Role): void {
+  if (typeof window === 'undefined') return;
+  if (!role) return;
+
+  const deferredByRole: Partial<Record<Role, string[]>> = {
+    [Role.Admin]: [
+      // FIXME: Temporarily commented out - module resolution error on Vercel build
+      // 'components/reports/ReportsDashboard',
+      'components/financial/FinancialDashboard',
+    ],
+    [Role.Therapist]: [
+      'components/financial/FinancialDashboard',
+    ],
+  };
+
+  const components = deferredByRole[role];
+  if (!components || components.length === 0) {
+    return;
+  }
+
+  const executePreload = () => {
+    preloadComponents(components).catch(error => {
+      logger.debug('Deferred preload failed', {
+        context: 'intelligentPreloading',
+        data: error as Error,
+      });
+    });
+  };
+
+  if (typeof (window as any).requestIdleCallback === 'function') {
+    (window as any).requestIdleCallback(executePreload, { timeout: 5000 });
+  } else {
+    window.setTimeout(executePreload, 4000);
+  }
 }
 
 /**
@@ -294,7 +331,6 @@ export function setupIdlePreloading(delay: number = 3000): void {
       preloadComponents([
         'pages/SettingsPage',
         'pages/ReportsPage',
-        'components/reports/ReportsDashboard',
       ]);
     }, delay);
   };
