@@ -17,7 +17,7 @@
     "build:all": "npm run build --workspace=packages/host && npm run build --workspace=packages/agenda-pacientes && npm run build --workspace=packages/tratamentos && npm run build --workspace=packages/financeiro",
     "clean": "rimraf --glob \"packages/*/node_modules\" \"packages/*/dist\" shared/node_modules",
     "clean:deps": "node scripts/clean-node-modules.cjs",
-    "prevercel-build": "npm run clean:deps",
+    "build:local": "npm run clean:deps && npm ci && npm run build:fast",
     "dev:clean": "kill-port 5176 && vite",
     "dev:skip-check": "vite",
     "kill:servers": "kill-port 5176 5177 5178 5179 5180 3000 3001 3002 4173 4174",
