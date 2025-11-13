@@ -47,7 +47,10 @@
       "Bash(Select-String -Pattern \"(dayjs|moment|marked|remark|color|tinycolor|chroma|animejs|gsap|react-spring)\" -Context 0,0)",
       "Bash(Select-Object -First 100)",
       "Bash(timeout 120 npm run build:analyze:*)",
-      "Bash(npx vercel:*)"
+      "Bash(npx vercel:*)",
+      "Bash(npx vite build)",
+      "Bash(git ls-tree:*)",
+      "Bash(timeout /t 15 /nobreak)"
     ],
     "deny": [],
     "ask": []

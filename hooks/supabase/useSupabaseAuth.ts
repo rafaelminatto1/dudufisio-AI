@@ -1,213 +1,205 @@
-import { useState, useEffect, useCallback } from 'react';
-import { User } from '@supabase/supabase-js';
-import authService, { UserProfile, LoginCredentials, SignUpData } from '../../services/auth/authService';
-import { supabase } from '../../lib/supabaseClient';
+import { useState, useEffect, useCallback } from 'react'
+import type { User } from '@supabase/supabase-js'
+import authService, {
+  type LoginCredentials,
+  type SignUpData,
+} from '../../services/auth/authService'
+import { supabase } from '../../lib/supabaseClient'
 
-export interface AuthState {
-  user: User | null;
-  profile: UserProfile | null;
-  loading: boolean;
-  error: string | null;
+type AuthProfile = Awaited<ReturnType<typeof authService.getUserProfile>>
+type UpdateProfileData = Parameters<typeof authService.updateProfile>[1]
+type AuthActionResult =
+  | { success: true }
+  | { success: false; error: string }
+
+interface AuthState {
+  user: User | null
+  profile: AuthProfile
+  loading: boolean
+  error: string | null
 }
 
-export const useSupabaseAuth = () => {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    profile: null,
-    loading: true,
-    error: null,
-  });
+export interface UseSupabaseAuthResult extends AuthState {
+  signIn: (credentials: LoginCredentials) => Promise<AuthActionResult>
+  signUp: (data: SignUpData) => Promise<AuthActionResult>
+  signOut: () => Promise<AuthActionResult>
+  updateProfile: (updates: UpdateProfileData) => Promise<AuthActionResult>
+  resetPassword: (email: string) => Promise<AuthActionResult>
+  updatePassword: (newPassword: string) => Promise<AuthActionResult>
+  hasRole: (requiredRoles: string[]) => boolean
+  isAuthenticated: () => boolean
+}
 
-  // Initialize auth state
+const initialState: AuthState = {
+  user: null,
+  profile: null,
+  loading: true,
+  error: null,
+}
+
+export const useSupabaseAuth = (): UseSupabaseAuthResult => {
+  const [authState, setAuthState] = useState<AuthState>(initialState)
+
   useEffect(() => {
+    let isMounted = true
+
     const initAuth = async () => {
       try {
-        const user = await authService.getCurrentUser();
+        const user = await authService.getCurrentUser()
+        if (!isMounted) return
+
         if (user) {
-          const profile = await authService.getUserProfile(user.id);
-          setAuthState({
-            user,
-            profile: profile as unknown as UserProfile,
-            loading: false,
-            error: null,
-          });
+          const profile = await authService.getUserProfile(user.id)
+          if (!isMounted) return
+          setAuthState({ user, profile, loading: false, error: null })
         } else {
-          setAuthState({
-            user: null,
-            profile: null,
-            loading: false,
-            error: null,
-          });
+          setAuthState({ user: null, profile: null, loading: false, error: null })
         }
       } catch (error) {
-        setAuthState({
-          user: null,
-          profile: null,
-          loading: false,
-          error: error instanceof Error ? error.message : 'Erro ao carregar autenticação',
-        });
+        if (!isMounted) return
+        const message =
+          error instanceof Error ? error.message : 'Erro ao carregar autenticação'
+        setAuthState({ user: null, profile: null, loading: false, error: message })
       }
-    };
+    }
 
-    initAuth();
+    initAuth()
 
-    // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!isMounted) return
+
       if (session?.user) {
-        const profile = await authService.getUserProfile(session.user.id);
-        setAuthState({
-          user: session.user,
-          profile: profile as unknown as UserProfile,
-          loading: false,
-          error: null,
-        });
+        const profile = await authService.getUserProfile(session.user.id)
+        if (!isMounted) return
+        setAuthState({ user: session.user, profile, loading: false, error: null })
       } else {
-        setAuthState({
-          user: null,
-          profile: null,
-          loading: false,
-          error: null,
-        });
+        setAuthState({ user: null, profile: null, loading: false, error: null })
       }
-    });
+    })
 
     return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+      isMounted = false
+      subscription.unsubscribe()
+    }
+  }, [])
 
-  // Sign in
-  const signIn = useCallback(async (credentials: LoginCredentials) => {
-    setAuthState(prev => ({ ...prev, loading: true, error: null }));
-    
+  const signIn = useCallback(
+    async (credentials: LoginCredentials): Promise<AuthActionResult> => {
+      setAuthState(prev => ({ ...prev, loading: true, error: null }))
+      try {
+        const { user, profile } = await authService.signIn(credentials)
+        setAuthState({ user, profile, loading: false, error: null })
+        return { success: true }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro ao fazer login'
+        setAuthState(prev => ({ ...prev, loading: false, error: errorMessage }))
+        return { success: false, error: errorMessage }
+      }
+    },
+    []
+  )
+
+  const signUp = useCallback(
+    async (data: SignUpData): Promise<AuthActionResult> => {
+      setAuthState(prev => ({ ...prev, loading: true, error: null }))
+      try {
+        const { user, profile } = await authService.signUp(data)
+        setAuthState({ user, profile, loading: false, error: null })
+        return { success: true }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro ao criar conta'
+        setAuthState(prev => ({ ...prev, loading: false, error: errorMessage }))
+        return { success: false, error: errorMessage }
+      }
+    },
+    []
+  )
+
+  const signOut = useCallback(async (): Promise<AuthActionResult> => {
+    setAuthState(prev => ({ ...prev, loading: true, error: null }))
     try {
-      const { user, profile } = await authService.signIn(credentials);
-      setAuthState({
-        user,
-        profile,
-        loading: false,
-        error: null,
-      });
-      return { success: true };
+      await authService.signOut()
+      setAuthState(initialState)
+      return { success: true }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao fazer login';
-      setAuthState(prev => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      return { success: false, error: errorMessage };
+      const errorMessage =
+        error instanceof Error ? error.message : 'Erro ao sair'
+      setAuthState(prev => ({ ...prev, loading: false, error: errorMessage }))
+      return { success: false, error: errorMessage }
     }
-  }, []);
+  }, [])
 
-  // Sign up
-  const signUp = useCallback(async (data: SignUpData) => {
-    setAuthState(prev => ({ ...prev, loading: true, error: null }));
-    
-    try {
-      const { user, profile } = await authService.signUp(data);
-      setAuthState({
-        user,
-        profile: profile as unknown as UserProfile,
-        loading: false,
-        error: null,
-      });
-      return { success: true };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar conta';
-      setAuthState(prev => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      return { success: false, error: errorMessage };
-    }
-  }, []);
+  const updateProfile = useCallback(
+    async (updates: UpdateProfileData): Promise<AuthActionResult> => {
+      const userId = authState.user?.id
+      if (!userId) {
+        return { success: false, error: 'Usuário não autenticado' }
+      }
 
-  // Sign out
-  const signOut = useCallback(async () => {
-    setAuthState(prev => ({ ...prev, loading: true, error: null }));
-    
-    try {
-      await authService.signOut();
-      setAuthState({
-        user: null,
-        profile: null,
-        loading: false,
-        error: null,
-      });
-      return { success: true };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao sair';
-      setAuthState(prev => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      return { success: false, error: errorMessage };
-    }
-  }, []);
+      setAuthState(prev => ({ ...prev, loading: true, error: null }))
+      try {
+        const updatedProfile = await authService.updateProfile(userId, updates)
+        setAuthState(prev => ({
+          ...prev,
+          profile: updatedProfile,
+          loading: false,
+          error: null,
+        }))
+        return { success: true }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro ao atualizar perfil'
+        setAuthState(prev => ({ ...prev, loading: false, error: errorMessage }))
+        return { success: false, error: errorMessage }
+      }
+    },
+    [authState.user]
+  )
 
-  // Update profile
-  const updateProfile = useCallback(async (updates: Partial<UserProfile>) => {
-    if (!authState.user) {
-      return { success: false, error: 'Usuário não autenticado' };
-    }
+  const resetPassword = useCallback(
+    async (email: string): Promise<AuthActionResult> => {
+      try {
+        await authService.resetPassword(email)
+        return { success: true }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro ao resetar senha'
+        return { success: false, error: errorMessage }
+      }
+    },
+    []
+  )
 
-    setAuthState(prev => ({ ...prev, loading: true, error: null }));
-    
-    try {
-      const updatedProfile = await authService.updateProfile(authState.user.id, updates);
-      setAuthState(prev => ({
-        ...prev,
-        profile: updatedProfile as unknown as UserProfile,
-        loading: false,
-        error: null,
-      }));
-      return { success: true };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar perfil';
-      setAuthState(prev => ({
-        ...prev,
-        loading: false,
-        error: errorMessage,
-      }));
-      return { success: false, error: errorMessage };
-    }
-  }, [authState.user]);
+  const updatePassword = useCallback(
+    async (newPassword: string): Promise<AuthActionResult> => {
+      try {
+        await authService.updatePassword(newPassword)
+        return { success: true }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Erro ao atualizar senha'
+        return { success: false, error: errorMessage }
+      }
+    },
+    []
+  )
 
-  // Reset password
-  const resetPassword = useCallback(async (email: string) => {
-    try {
-      await authService.resetPassword(email);
-      return { success: true };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao resetar senha';
-      return { success: false, error: errorMessage };
-    }
-  }, []);
+  const hasRole = useCallback(
+    (requiredRoles: string[]): boolean => {
+      const profile = authState.profile
+      if (!profile?.role) return false
+      return requiredRoles.includes(profile.role)
+    },
+    [authState.profile]
+  )
 
-  // Update password
-  const updatePassword = useCallback(async (newPassword: string) => {
-    try {
-      await authService.updatePassword(newPassword);
-      return { success: true };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar senha';
-      return { success: false, error: errorMessage };
-    }
-  }, []);
-
-  // Check if user has role
-  const hasRole = useCallback((requiredRoles: string[]) => {
-    if (!authState.profile) return false;
-    return requiredRoles.includes(authState.profile.role);
-  }, [authState.profile]);
-
-  // Check if user is authenticated
-  const isAuthenticated = useCallback(() => {
-    return !!authState.user;
-  }, [authState.user]);
+  const isAuthenticated = useCallback((): boolean => {
+    return Boolean(authState.user)
+  }, [authState.user])
 
   return {
     ...authState,
@@ -219,7 +211,7 @@ export const useSupabaseAuth = () => {
     updatePassword,
     hasRole,
     isAuthenticated,
-  };
-};
+  }
+}
 
-export default useSupabaseAuth;
+export default useSupabaseAuth

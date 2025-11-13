@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabaseClient';
 import { useSupabaseAuth } from '@/contexts/SupabaseAuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import StatsCard from '../components/ui/StatsCard';
-import Section from '../components/layout/Section';
-import { H1, H2, Body, Small } from '../components/ui/Typography';
+import Card, { CardHeader, CardTitle, CardContent } from '../components/ui/card'
+import Button from '../components/ui/button'
+import StatsCard from '../components/ui/StatsCard'
+import Section from '../components/layout/Section'
+import { H1, H2, Body, Small } from '../components/ui/Typography'
 import {
   Video,
   Calendar,
@@ -25,26 +25,67 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+type TeleconsultaStatus = 'scheduled' | 'waiting' | 'in_progress' | 'completed' | 'cancelled' | 'no_show'
+
 interface Teleconsulta {
-  id: string;
-  room_name: string;
-  scheduled_start: string;
-  scheduled_end: string;
-  status: 'scheduled' | 'waiting' | 'in_progress' | 'completed' | 'cancelled' | 'no_show';
-  patient_name: string;
-  therapist_name: string;
-  duration_minutes: number | null;
-  patient_rating: number | null;
+  id: string
+  room_name: string
+  scheduled_start: string
+  scheduled_end: string
+  status: TeleconsultaStatus
+  patient_name: string
+  therapist_name: string
+  duration_minutes: number | null
+  patient_rating: number | null
 }
 
-const statusConfig = {
+interface SupabaseTeleconsultaRecord {
+  id?: string | null
+  room_name?: string | null
+  scheduled_start?: string | null
+  scheduled_end?: string | null
+  status?: string | null
+  patient_name?: string | null
+  therapist_name?: string | null
+  duration_minutes?: number | null
+  patient_rating?: number | null
+}
+
+const sanitizeTeleconsultaStatus = (status: string | null | undefined): TeleconsultaStatus => {
+  const validStatuses: TeleconsultaStatus[] = [
+    'scheduled',
+    'waiting',
+    'in_progress',
+    'completed',
+    'cancelled',
+    'no_show',
+  ]
+  return validStatuses.includes(status as TeleconsultaStatus) ? (status as TeleconsultaStatus) : 'scheduled'
+}
+
+const mapSupabaseTeleconsulta = (row: SupabaseTeleconsultaRecord): Teleconsulta => ({
+  id: row.id ?? '',
+  room_name: row.room_name ?? '',
+  scheduled_start: row.scheduled_start ?? new Date().toISOString(),
+  scheduled_end: row.scheduled_end ?? new Date().toISOString(),
+  status: sanitizeTeleconsultaStatus(row.status),
+  patient_name: row.patient_name ?? 'Paciente',
+  therapist_name: row.therapist_name ?? 'Profissional',
+  duration_minutes: row.duration_minutes ?? null,
+  patient_rating: row.patient_rating ?? null,
+})
+
+const statusConfig: Record<
+  TeleconsultaStatus,
+  { label: string; color: string; icon: typeof Calendar }
+> = {
   scheduled: { label: 'Agendada', color: 'bg-info-light text-info', icon: Calendar },
   waiting: { label: 'Aguardando', color: 'bg-warning-light text-warning', icon: Clock },
   in_progress: { label: 'Em Andamento', color: 'bg-success-light text-success', icon: Video },
   completed: { label: 'Concluída', color: 'bg-neutral-bgAlt text-neutral-text', icon: Check },
   cancelled: { label: 'Cancelada', color: 'bg-error-light text-error', icon: X },
   no_show: { label: 'Não Compareceu', color: 'bg-accent-orange-light text-accent-orange', icon: X },
-};
+}
 
 export default function TeleconsultasListPage() {
   const navigate = useNavigate();
@@ -61,30 +102,30 @@ export default function TeleconsultasListPage() {
       if (!user) return;
 
       try {
-        const statusFilter =
+        const statusFilter: TeleconsultaStatus[] | null =
           filter === 'upcoming'
             ? ['scheduled', 'waiting', 'in_progress']
             : filter === 'completed'
             ? ['completed', 'cancelled', 'no_show']
-            : null;
+            : null
+
+        const statusFilterParam: string[] | null = statusFilter ?? null
 
         const { data, error } = await supabase.rpc('get_user_teleconsultas', {
           p_user_id: user.id,
-          p_status: statusFilter ? null : null,
+          p_status: statusFilterParam,
           p_limit: 50,
-        });
+        })
 
         if (error) throw error;
 
-        // Filtrar no cliente se necessário
-        let filteredData = data || [];
-        if (statusFilter) {
-          filteredData = filteredData.filter((t: Teleconsulta) =>
-            statusFilter.includes(t.status)
-          );
-        }
+        const normalizedData = ((data ?? []) as SupabaseTeleconsultaRecord[]).map(mapSupabaseTeleconsulta)
 
-        setTeleconsultas(filteredData);
+        const filteredData = statusFilter
+          ? normalizedData.filter(teleconsulta => statusFilter.includes(teleconsulta.status))
+          : normalizedData
+
+        setTeleconsultas(filteredData)
       } catch (err) {
         console.error('Erro ao buscar teleconsultas:', err);
         showToast('Erro ao carregar teleconsultas.', 'error');

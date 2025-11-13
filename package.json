@@ -15,7 +15,9 @@
     "dev:financeiro": "cd packages/financeiro && npm run dev",
     "dev:patient": "cd packages/patient-portal && npm run dev",
     "build:all": "npm run build --workspace=packages/host && npm run build --workspace=packages/agenda-pacientes && npm run build --workspace=packages/tratamentos && npm run build --workspace=packages/financeiro",
-    "clean": "rimraf packages/*/node_modules packages/*/dist shared/node_modules",
+    "clean": "rimraf --glob \"packages/*/node_modules\" \"packages/*/dist\" shared/node_modules",
+    "clean:deps": "node scripts/clean-node-modules.cjs",
+    "prevercel-build": "npm run clean:deps",
     "dev:clean": "kill-port 5176 && vite",
     "dev:skip-check": "vite",
     "kill:servers": "kill-port 5176 5177 5178 5179 5180 3000 3001 3002 4173 4174",
@@ -27,7 +29,7 @@
     "build:incremental": "vite build --mode production --incremental",
     "vercel-build": "npm run build:fast",
     "validate:api": "tsc --project api/tsconfig.json --noEmit || true",
-    "build:analyze": "vite build && open-cli dist/stats.html",
+    "build:analyze": "cross-env ANALYZE_BUNDLE=true vite build && open-cli dist/stats.html",
     "build:check": "node scripts/check-bundle-size.cjs",
     "validate": "tsx scripts/validate-build.ts",
     "clean:cache": "rimraf node_modules/.vite dist .vercel/cache && npm cache clean --force",
@@ -35,6 +37,8 @@
     "check:performance": "tsx scripts/check-performance-budget.ts",
     "track:bundle": "tsx scripts/track-bundle-size.ts",
     "test:perf:calc-rating": "tsx scripts/test-calculate-rating.ts",
+    "ci:e2e": "npx playwright test",
+    "ci:install-browsers": "npx playwright install --with-deps",
     "lighthouse": "lhci autorun",
     "start": "vite preview",
     "vercel:deploy": "vercel --prod",
@@ -90,7 +94,7 @@
     "security": "npm audit --audit-level=moderate",
     "deps:check": "npm outdated",
     "deps:update": "npm update",
-    "bundle:analyze": "npm run build && open-cli dist/stats.html",
+    "bundle:analyze": "npm run build:analyze",
     "bundle:analyze:size": "node scripts/analyze-bundle-size.cjs",
     "bundle:analyze:advanced": "tsx scripts/analyze-bundle-advanced.ts",
     "bundle:size": "npm run build && du -sh dist && du -sh dist/assets/*.js | sort -hr | head -20",
@@ -101,6 +105,8 @@
     "supabase:db:push": "npx supabase db push",
     "supabase:db:reset": "npx supabase db reset --include-roles --db-url $env:DATABASE_URL",
     "supabase:sql:crud": "tsx scripts/supabase-run-sql.ts supabase/sql/crud_examples.sql",
+    "perf:webhook:benchmark": "tsx scripts/benchmark-webhook.ts",
+    "supabase:crud:http": "tsx scripts/supabase-crud-http.ts",
     "activity:test": "node scripts/test-activity-integration.js",
     "whatsapp:notifications": "node scripts/whatsapp-daily-notifications.js",
     "whatsapp:test-webhook": "node scripts/test-whatsapp-webhook.js",
@@ -289,7 +295,10 @@
     "kill-port": "^2.0.1",
     "lighthouse": "^12.0.0",
     "open-cli": "^8.0.0",
+    "playwright": "^1.56.1",
     "pnpm": "^10.20.0",
+    "rimraf": "^5.0.5",
+    "rollup": "4.24.0",
     "rollup-plugin-visualizer": "^6.0.5",
     "shadcn": "^3.4.0",
     "sharp": "^0.34.4",
@@ -308,6 +317,10 @@
   },
   "overrides": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "@lhci/cli": {
+      "chrome-launcher": "0.14.2",
+      "tmp": "0.2.5"
+    }
   }
 }

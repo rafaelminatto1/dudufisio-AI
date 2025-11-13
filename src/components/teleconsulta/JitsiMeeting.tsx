@@ -1,11 +1,18 @@
 import React from 'react';
 
 interface JitsiMeetingProps {
-  roomName: string;
-  displayName?: string;
-  onReady?: () => void;
-  onClose?: () => void;
-  onQualityChange?: (quality: string) => void;
+  roomName: string
+  displayName?: string
+  userEmail?: string
+  userRole?: 'moderator' | 'participant'
+  password?: string | null
+  onReady?: () => void
+  onClose?: () => void
+  onMeetingEnd?: () => void
+  onParticipantJoined?: (participantId: string) => void
+  onParticipantLeft?: (participantId: string) => void
+  onConnectionQualityChanged?: (quality: 'excellent' | 'good' | 'fair' | 'poor') => void
+  onQualityChange?: (quality: string) => void
 }
 
 /**
@@ -18,13 +25,23 @@ export const JitsiMeeting: React.FC<JitsiMeetingProps> = ({
   roomName,
   displayName = 'Participante',
   onReady,
-  onClose
+  onClose,
+  onMeetingEnd,
 }) => {
   React.useEffect(() => {
     if (onReady) {
       onReady();
     }
   }, [onReady]);
+
+  const handleClose = () => {
+    if (onMeetingEnd) {
+      onMeetingEnd()
+    }
+    if (onClose) {
+      onClose()
+    }
+  }
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-900">
@@ -42,9 +59,9 @@ export const JitsiMeeting: React.FC<JitsiMeetingProps> = ({
             configure os componentes em /components/teleconsulta
           </p>
         </div>
-        {onClose && (
+        {(onClose || onMeetingEnd) && (
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
           >
             Fechar

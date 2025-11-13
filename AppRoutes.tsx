@@ -10,6 +10,7 @@ import React, {
   useState,
 } from 'react';
 import { PerformanceProfiler } from './lib/performanceOptimizations';
+import { recordMetric } from './services/performanceMonitoring';
 import { initializeMobileOptimizations, getAdaptiveConfig } from './lib/mobileOptimizations';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { SupabaseAuthProvider, useSupabaseAuth } from './contexts/SupabaseAuthContext';
@@ -28,6 +29,7 @@ import { ThemeProvider } from './src/contexts/ThemeContext';
 const MainDashboard = React.lazy(() => import('./pages/MainDashboard'));
 const PatientPortalDashboard = React.lazy(() => import('./pages/PatientPortalDashboard'));
 const PartnerPortalDashboard = React.lazy(() => import('./pages/PartnerPortalDashboard'));
+const PerformanceDashboardPage = React.lazy(() => import('./pages/PerformanceDashboardPage'));
 
 // Indicador offline unificado
 import UnifiedOfflineIndicator from './components/offline/UnifiedOfflineIndicator';
@@ -366,6 +368,7 @@ const AppContent: React.FC = memo(() => {
       <Suspense fallback={dashboardLoadingScreen}>
         <Routes>
           <Route path="/*" element={dashboard} />
+          <Route path="/performance" element={<PerformanceDashboardPage />} />
         </Routes>
       </Suspense>
     );
@@ -433,6 +436,7 @@ const AppRoutes: React.FC = () => {
                             id="AppRoutes"
                             onRender={(id, _phase, actualDuration) => {
                               logger.performance(id, actualDuration, 100);
+                              recordMetric(`render:${id}`, actualDuration);
                             }}
                           >
                             <ToastProvider>

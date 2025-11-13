@@ -3,6 +3,7 @@ import { handleSupabaseError } from '../../lib/middleware/errorHandler';
 import { Patient, PatientStatus } from '../../types';
 import type { SupabaseRealtimePayload } from '../../types/realtime';
 import type { Database } from '../../types/database';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 type PatientRow = Database['public']['Tables']['patients']['Row'];
 type PatientInsert = Database['public']['Tables']['patients']['Insert'];
@@ -26,9 +27,17 @@ type ListParams = {
   offset?: number;
 };
 
+export interface PatientStatistics {
+  totalAppointments: number;
+  completedSessions: number;
+  activePainPoints: number;
+  financialBalance: number;
+}
+
 class SupabasePatientService {
   // Expor instância para casos legados que acessam diretamente
   public supabase = supabase;
+  private useViews = true;
   private mapRowToPatient(row: PatientRow): Patient {
     const status = (row.status || 'active').toLowerCase();
 
@@ -87,6 +96,44 @@ class SupabasePatientService {
       tags: row.tags,
       observations: row.notes,
     };
+  }
+
+  private mapViewRowToPatient(row: any): Patient {
+    const name = row.nome_completo ?? row.full_name ?? row.name ?? ''
+    const birth = row.data_nascimento ?? row.birth_date ?? ''
+    const phone = row.telefone_contato ?? row.phone ?? ''
+    const created = row.criado_em ?? row.created_at ?? new Date().toISOString()
+    const updated = row.atualizado_em ?? row.updated_at ?? created
+
+    return {
+      id: row.id,
+      name,
+      cpf: row.cpf ?? '',
+      birthDate: birth,
+      phone,
+      email: row.email ?? '',
+      emergencyContact: { name: '', phone: '' },
+      address: { street: '', city: '', state: '', zip: '' },
+      status: PatientStatus.Active,
+      lastVisit: updated,
+      registrationDate: created,
+      avatarUrl: '',
+      consentGiven: true,
+      whatsappConsent: 'opt-out',
+      allergies: undefined,
+      medicalAlerts: undefined,
+      surgeries: undefined,
+      conditions: [],
+      attachments: undefined,
+      trackedMetrics: undefined,
+      communicationLogs: undefined,
+      painPoints: undefined,
+      blood_type: undefined,
+      insurance: undefined as any,
+      insuranceType: 'none' as any,
+      tags: undefined,
+      observations: undefined,
+    }
   }
 
   private mapPatientStatus(status: PatientStatus | undefined): string | null {
@@ -203,6 +250,13 @@ class SupabasePatientService {
 
   async getAllPatients(): Promise<Patient[]> {
     try {
+      if (this.useViews) {
+        const { data, error } = await supabase
+          .from('paciente_registros')
+          .select('*')
+          .order('criado_em', { ascending: false })
+        if (!error && data) return (data ?? []).map(this.mapViewRowToPatient.bind(this))
+      }
       const { data, error } = await supabase
         .from('patients')
         .select('*')
@@ -227,6 +281,22 @@ class SupabasePatientService {
         offset = 0,
       } = params;
 
+      if (this.useViews) {
+        let vq = (supabase as any)
+          .from('paciente_registros')
+          .select('*', { count: 'exact' })
+          .order(sort === 'created_at' ? 'criado_em' : sort, { ascending: dir === 'asc' })
+        if (q && q.trim()) {
+          const term = q.trim()
+          vq = vq.or(
+            `nome_completo.ilike.%${term}%,email.ilike.%${term}%,telefone_contato.ilike.%${term}%`
+          )
+        }
+        const { data, error, count } = await (vq as any).range(offset, offset + limit - 1)
+        if (!error && data) {
+          return { patients: (data ?? []).map(this.mapViewRowToPatient.bind(this)), total: count ?? (data?.length ?? 0) }
+        }
+      }
       let query = (supabase as any)
         .from('patients')
         .select('*', { count: 'exact' })
@@ -300,6 +370,15 @@ class SupabasePatientService {
         return [];
       }
       
+      if (this.useViews) {
+        const { data, error } = await supabase
+          .from('paciente_registros')
+          .select('*')
+          .or(`nome_completo.ilike.%${sanitizedQuery}%,email.ilike.%${sanitizedQuery}%,telefone_contato.ilike.%${sanitizedQuery}%,cpf.ilike.%${sanitizedQuery}%`)
+          .order('nome_completo', { ascending: true })
+          .limit(50)
+        if (!error && data) return (data ?? []).map(this.mapViewRowToPatient.bind(this))
+      }
       const { data, error } = await supabase
         .from('patients')
         .select('*')
@@ -444,6 +523,68 @@ class SupabasePatientService {
     }
   }
 
+  async getPatientStatistics(patientId: string): Promise<PatientStatistics> {
+    try {
+      const [
+        appointmentsResult,
+        completedSessionsResult,
+        activePainPointsResult,
+        financialTransactionsResult,
+      ] = await Promise.all([
+        (supabase as any)
+          .from('appointments')
+          .select('id', { count: 'exact', head: true })
+          .eq('patient_id', patientId),
+        (supabase as any)
+          .from('sessions')
+          .select('id', { count: 'exact', head: true })
+          .eq('patient_id', patientId)
+          .eq('status', 'completed'),
+        (supabase as any)
+          .from('body_map_pain_regions')
+          .select('id', { count: 'exact', head: true })
+          .eq('patient_id', patientId)
+          .is('deleted_at', null)
+          .eq('is_active', true),
+        supabase
+          .from('financial_transactions')
+          .select('amount, transaction_type, type')
+          .eq('patient_id', patientId),
+      ]);
+
+      const totalAppointments = appointmentsResult?.count ?? 0;
+      const completedSessions = completedSessionsResult?.count ?? 0;
+      const activePainPoints = activePainPointsResult?.count ?? 0;
+
+      const financialBalance =
+        financialTransactionsResult?.data?.reduce((acc: number, transaction: Database['public']['Tables']['financial_transactions']['Row']) => {
+          const amount = transaction.amount ?? 0;
+          const normalizedType = (transaction.transaction_type ?? transaction.type ?? '').toLowerCase();
+          const isCredit =
+            normalizedType.includes('receita') ||
+            normalizedType.includes('credit') ||
+            normalizedType.includes('income');
+          const isDebit =
+            normalizedType.includes('despesa') ||
+            normalizedType.includes('debit') ||
+            normalizedType.includes('expense');
+
+          if (isCredit) return acc + amount;
+          if (isDebit) return acc - amount;
+          return acc + amount;
+        }, 0) ?? 0;
+
+      return {
+        totalAppointments,
+        completedSessions,
+        activePainPoints,
+        financialBalance,
+      };
+    } catch (error: unknown) {
+      throw new Error(handleSupabaseError(error));
+    }
+  }
+
   // Real-time subscriptions
   subscribeToPatients(callback: (payload: SupabaseRealtimePayload<PatientRow> & { patient: Patient | null }) => void) {
     return supabase
@@ -454,6 +595,32 @@ class SupabasePatientService {
           event: '*',
           schema: 'public',
           table: 'patients',
+        },
+        (payload) => {
+          const enrichedPayload: SupabaseRealtimePayload<PatientRow> & { patient: Patient | null } = {
+            ...(payload as SupabaseRealtimePayload<PatientRow>),
+            patient: payload.new ? this.mapRowToPatient(payload.new as PatientRow) : null,
+          };
+
+          callback(enrichedPayload);
+        }
+      )
+      .subscribe();
+  }
+
+  subscribeToPatientById(
+    patientId: string,
+    callback: (payload: SupabaseRealtimePayload<PatientRow> & { patient: Patient | null }) => void
+  ): RealtimeChannel {
+    return supabase
+      .channel(`patient_changes_${patientId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'patients',
+          filter: `id=eq.${patientId}`,
         },
         (payload) => {
           const enrichedPayload: SupabaseRealtimePayload<PatientRow> & { patient: Patient | null } = {

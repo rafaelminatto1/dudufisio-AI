@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 // Environment variable type declarations for Vite
 // This fixes "Property comes from an index signature" errors
 

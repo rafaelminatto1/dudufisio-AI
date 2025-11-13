@@ -6,6 +6,7 @@
 
 import { getMetaWhatsAppService } from './MetaWhatsAppService';
 import { supabase } from '@/lib/supabaseClient';
+import { format } from 'date-fns';
 
 export interface AutomationRule {
   id: string;
@@ -222,12 +223,12 @@ export class WhatsAppAutomation {
     }
 
     // Buscar automações personalizadas no banco de dados
-    try {
-      const { data: customAutomations } = await supabase
-        .from('whatsapp_automations')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .eq('trigger_type', 'keyword')
+      try {
+        const { data: customAutomations } = await (supabase as any)
+          .from('whatsapp_automations')
+          .select('*')
+          .eq('clinic_id', clinicId)
+          .eq('trigger_type', 'keyword')
         .eq('is_active', true) as { data: AutomationRule[] | null };
 
       if (customAutomations) {
@@ -252,9 +253,9 @@ export class WhatsAppAutomation {
       // Buscar consultas para amanhã
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      const tomorrowStr = format(tomorrow, 'yyyy-MM-dd');
 
-      const { data: appointments } = await supabase
+      const { data: appointmentsData } = await supabase
         .from('appointments')
         .select(`
           id,
@@ -267,7 +268,9 @@ export class WhatsAppAutomation {
         .eq('date', tomorrowStr)
         .eq('status', 'confirmed') as { data: AppointmentWithPatient[] | null };
 
-      if (appointments?.length === 0) {
+      const appointments = appointmentsData ?? [];
+
+      if (appointments.length === 0) {
         
         return;
       }
@@ -302,9 +305,9 @@ export class WhatsAppAutomation {
       // Buscar consultas para daqui a 2 dias
       const targetDate = new Date();
       targetDate.setDate(targetDate.getDate() + 2);
-      const targetDateStr = targetDate.toISOString().split('T')[0];
+      const targetDateStr = format(targetDate, 'yyyy-MM-dd');
 
-      const { data: appointments } = await supabase
+      const { data: appointmentsData } = await supabase
         .from('appointments')
         .select(`
           id,
@@ -316,7 +319,9 @@ export class WhatsAppAutomation {
         .eq('date', targetDateStr)
         .eq('status', 'scheduled') as { data: AppointmentWithPatient[] | null };
 
-      if (appointments?.length === 0) {
+      const appointments = appointmentsData ?? [];
+
+      if (appointments.length === 0) {
         
         return;
       }
@@ -357,7 +362,7 @@ export class WhatsAppAutomation {
       try {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
-        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+        const tomorrowStr = format(tomorrow, 'yyyy-MM-dd');
 
         // Primeiro, buscar o paciente pelo telefone
         const { data: patient } = await supabase

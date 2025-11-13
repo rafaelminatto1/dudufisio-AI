@@ -14,6 +14,8 @@ node_modules/
 
 # Testes completos
 tests/
+__tests__/
+__mocks__/
 testsprite_tests/
 **/*.test.ts
 **/*.test.tsx
@@ -21,6 +23,11 @@ testsprite_tests/
 **/*.spec.tsx
 coverage/
 playwright-report/
+bundle-analysis/
+logs/
+reports/
+reports/**
+logs/**
 test-results/
 
 # Build artifacts locais
@@ -71,7 +78,9 @@ supabase/migrations/
 # Arquivos de configuração desnecessários
 .husky/
 checkly/
+mcp-server/
 workers/
+mobile-app/
 
 # Source maps já gerados (incluídos no build se necessário)
 **/*.map

@@ -100,19 +100,19 @@ Qual seu convênio?`,
 
     // Variações comuns
     if (message.includes('valor') || message.includes('quanto custa')) {
-      return triggers['preço'];
+      return triggers['preço'] ?? null;
     }
 
     if (message.includes('onde') || message.includes('local') || message.includes('endereço')) {
-      return triggers['endereço'];
+      return triggers['endereço'] ?? null;
     }
 
     if (message.includes('horário') || message.includes('funciona')) {
-      return triggers['horário'];
+      return triggers['horário'] ?? null;
     }
 
     if (message.includes('convênio') || message.includes('plano')) {
-      return triggers['convênio'];
+      return triggers['convênio'] ?? null;
     }
 
     return null;
@@ -312,7 +312,8 @@ Pratica corrida há quanto tempo?`,
 Nossos especialistas podem ajudar com diversos problemas. Me conta um pouco mais sobre o que você sente que agendarei com o profissional ideal!`,
     };
 
-    return intros[service] || intros['outros'];
+    const intro = intros[service];
+    return intro ?? intros['outros'];
   }
 
   /**

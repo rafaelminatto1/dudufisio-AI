@@ -10,7 +10,9 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {},
+    "metadata": {
+      "actualWorkers": 1
+    },
     "preserveOutput": "always",
     "reporter": [
       [
@@ -40,7 +42,9 @@
         "outputDir": "C:/Users/rafal/cursor/dudufisio-ai/dudufisio-AI/test-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 1
+        },
         "id": "chromium",
         "name": "chromium",
         "testDir": "C:/Users/rafal/cursor/dudufisio-ai/dudufisio-AI/tests",
@@ -63,457 +67,113 @@
       "timeout": 120000
     }
   },
-  "suites": [],
-  "errors": [
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\AutomationEngine.test.ts",
-      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\AutomationEngine.test.ts"
-    },
-    {
-      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\index.test.ts",
-      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\index.test.ts"
-    },
-    {
-      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\MessageBus.test.ts",
-      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\MessageBus.test.ts"
-    },
-    {
-      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\TemplateEngine.test.ts",
-      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\communication\\TemplateEngine.test.ts"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_appointments_post.test.ts",
-      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_appointments_post.test.ts"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_body_map_post.test.ts",
-      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_body_map_post.test.ts"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_patients_post.test.ts",
-      "stack": "Error: Cannot find package '@jest/globals' imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\contract\\test_patients_post.test.ts"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "ReferenceError: jest is not defined",
-      "stack": "ReferenceError: jest is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\application\\services\\BillingService.test.ts:8:26",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\application\\services\\BillingService.test.ts",
-        "column": 26,
-        "line": 8
-      },
-      "snippet": "   at financial\\application\\services\\BillingService.test.ts:8\n\n   6 | // Mock repository\n   7 | const mockRepository: jest.Mocked<IFinancialRepository> = {\n>  8 |   findPackagesByPatient: jest.fn(),\n     |                          ^\n   9 |   findTransactionsByPatient: jest.fn(),\n  10 |   saveInvoice: jest.fn(),\n  11 |   generateInvoiceNumber: jest.fn(),"
-    },
-    {
-      "message": "ReferenceError: jest is not defined",
-      "stack": "ReferenceError: jest is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\application\\use-cases\\CreatePackageUseCase.test.ts:12:32",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\application\\use-cases\\CreatePackageUseCase.test.ts",
-        "column": 32,
-        "line": 12
-      },
-      "snippet": "   at financial\\application\\use-cases\\CreatePackageUseCase.test.ts:12\n\n  10 | // Mock dependencies\n  11 | const mockRepository: jest.Mocked<IFinancialRepository> = {\n> 12 |   findActivePackagesByPatient: jest.fn(),\n     |                                ^\n  13 |   findTransactionsByPatient: jest.fn(),\n  14 |   withTransaction: jest.fn(),\n  15 |   // Add other required methods as empty mocks"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Package.test.ts: Unexpected reserved word 'package'. (63:12)\n\n  61 |   describe('Package Creation', () => {\n  62 |     it('should create package with valid data', () => {\n> 63 |       const package = Package.create(validPackageData);\n     |             ^\n  64 |       \n  65 |       expect(package.getPatientId()).toBe('patient-123');\n  66 |       expect(package.getTransactionId()).toBe('transaction-123');",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Package.test.ts: Unexpected reserved word 'package'. (63:12)\n\n  61 |   describe('Package Creation', () => {\n  62 |     it('should create package with valid data', () => {\n> 63 |       const package = Package.create(validPackageData);\n     |             ^\n  64 |       \n  65 |       expect(package.getPatientId()).toBe('patient-123');\n  66 |       expect(package.getTransactionId()).toBe('transaction-123');",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Package.test.ts",
-        "line": 63,
-        "column": 12
-      },
-      "snippet": "   at financial\\domain\\entities\\Package.test.ts:63\n\n  61 |   describe('Package Creation', () => {\n  62 |     it('should create package with valid data', () => {\n> 63 |       const package = Package.create(validPackageData);\n     |            ^\n  64 |       \n  65 |       expect(package.getPatientId()).toBe('patient-123');\n  66 |       expect(package.getTransactionId()).toBe('transaction-123');"
-    },
-    {
-      "message": "ReferenceError: describe is not defined",
-      "stack": "ReferenceError: describe is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Transaction.test.ts:6:1",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\entities\\Transaction.test.ts",
-        "column": 1,
-        "line": 6
-      },
-      "snippet": "   at financial\\domain\\entities\\Transaction.test.ts:6\n\n  4 | import { DomainError, BusinessRuleError } from '../../../../lib/financial/domain/errors/DomainError';\n  5 |\n> 6 | describe('Transaction Entity', () => {\n    | ^\n  7 |   const mockPaymentMethod = PaymentMethod.creditCard(\n  8 |     'visa',\n  9 |     '1234',"
-    },
-    {
-      "message": "ReferenceError: describe is not defined",
-      "stack": "ReferenceError: describe is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\value-objects\\Money.test.ts:4:1",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\domain\\value-objects\\Money.test.ts",
-        "column": 1,
-        "line": 4
-      },
-      "snippet": "   at financial\\domain\\value-objects\\Money.test.ts:4\n\n  2 | import { DomainError } from '../../../../lib/financial/domain/errors/DomainError';\n  3 |\n> 4 | describe('Money Value Object', () => {\n    | ^\n  5 |   describe('Construction', () => {\n  6 |     it('should create money with valid amount and currency', () => {\n  7 |       const money = new Money(100, 'BRL');"
-    },
-    {
-      "message": "ReferenceError: jest is not defined",
-      "stack": "ReferenceError: jest is not defined\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\infrastructure\\gateways\\StripeGateway.test.ts:8:1",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\financial\\infrastructure\\gateways\\StripeGateway.test.ts",
-        "column": 1,
-        "line": 8
-      },
-      "snippet": "   at financial\\infrastructure\\gateways\\StripeGateway.test.ts:8\n\n   6 |\n   7 | // Mock Stripe\n>  8 | jest.mock('stripe');\n     | ^\n   9 |\n  10 | const mockStripe = {\n  11 |   paymentIntents: {"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\inventory.test.ts: Unexpected token, expected \",\" (59:31)\n\n  57 |     const user = userEvent.setup();\n  58 |     \n> 59 |     render(<InventoryDashboard />);\n     |                                ^\n  60 |\n  61 |     // Cadastrar item com estoque mínimo\n  62 |     await user.click(screen.getByRole('button', { name: /adicionar item/i }));",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\inventory.test.ts: Unexpected token, expected \",\" (59:31)\n\n  57 |     const user = userEvent.setup();\n  58 |     \n> 59 |     render(<InventoryDashboard />);\n     |                                ^\n  60 |\n  61 |     // Cadastrar item com estoque mínimo\n  62 |     await user.click(screen.getByRole('button', { name: /adicionar item/i }));",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\inventory.test.ts",
-        "line": 59,
-        "column": 31
-      },
-      "snippet": "   at integration\\inventory.test.ts:59\n\n  57 |     const user = userEvent.setup();\n  58 |     \n> 59 |     render(<InventoryDashboard />);\n     |                               ^\n  60 |\n  61 |     // Cadastrar item com estoque mínimo\n  62 |     await user.click(screen.getByRole('button', { name: /adicionar item/i }));"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\kanban.test.ts: Unexpected token, expected \",\" (61:23)\n\n  59 |     const user = userEvent.setup();\n  60 |     \n> 61 |     render(<KanbanPage />);\n     |                        ^\n  62 |\n  63 |     // 1. Criar nova tarefa\n  64 |     await user.click(screen.getByRole('button', { name: /nova tarefa/i }));",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\kanban.test.ts: Unexpected token, expected \",\" (61:23)\n\n  59 |     const user = userEvent.setup();\n  60 |     \n> 61 |     render(<KanbanPage />);\n     |                        ^\n  62 |\n  63 |     // 1. Criar nova tarefa\n  64 |     await user.click(screen.getByRole('button', { name: /nova tarefa/i }));",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\kanban.test.ts",
-        "line": 61,
-        "column": 23
-      },
-      "snippet": "   at integration\\kanban.test.ts:61\n\n  59 |     const user = userEvent.setup();\n  60 |     \n> 61 |     render(<KanbanPage />);\n     |                       ^\n  62 |\n  63 |     // 1. Criar nova tarefa\n  64 |     await user.click(screen.getByRole('button', { name: /nova tarefa/i }));"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\notifications.test.ts: Unexpected token, expected \",\" (48:35)\n\n  46 |     const user = userEvent.setup();\n  47 |     \n> 48 |     render(<NotificationCenterPage />);\n     |                                    ^\n  49 |\n  50 |     // Criar agendamento com notificação\n  51 |     await user.click(screen.getByRole('button', { name: /criar agendamento/i }));",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\notifications.test.ts: Unexpected token, expected \",\" (48:35)\n\n  46 |     const user = userEvent.setup();\n  47 |     \n> 48 |     render(<NotificationCenterPage />);\n     |                                    ^\n  49 |\n  50 |     // Criar agendamento com notificação\n  51 |     await user.click(screen.getByRole('button', { name: /criar agendamento/i }));",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\notifications.test.ts",
-        "line": 48,
-        "column": 35
-      },
-      "snippet": "   at integration\\notifications.test.ts:48\n\n  46 |     const user = userEvent.setup();\n  47 |     \n> 48 |     render(<NotificationCenterPage />);\n     |                                   ^\n  49 |\n  50 |     // Criar agendamento com notificação\n  51 |     await user.click(screen.getByRole('button', { name: /criar agendamento/i }));"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\patient-portal.test.ts: Unexpected token, expected \",\" (56:32)\n\n  54 |     const user = userEvent.setup();\n  55 |     \n> 56 |     render(<PatientPortalLayout patientId=\"1\" />);\n     |                                 ^\n  57 |\n  58 |     // Acessar área de comunicação\n  59 |     await user.click(screen.getByRole('button', { name: /mensagens/i }));",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\patient-portal.test.ts: Unexpected token, expected \",\" (56:32)\n\n  54 |     const user = userEvent.setup();\n  55 |     \n> 56 |     render(<PatientPortalLayout patientId=\"1\" />);\n     |                                 ^\n  57 |\n  58 |     // Acessar área de comunicação\n  59 |     await user.click(screen.getByRole('button', { name: /mensagens/i }));",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\patient-portal.test.ts",
-        "line": 56,
-        "column": 32
-      },
-      "snippet": "   at integration\\patient-portal.test.ts:56\n\n  54 |     const user = userEvent.setup();\n  55 |     \n> 56 |     render(<PatientPortalLayout patientId=\"1\" />);\n     |                                ^\n  57 |\n  58 |     // Acessar área de comunicação\n  59 |     await user.click(screen.getByRole('button', { name: /mensagens/i }));"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\reports.test.ts: Unexpected token, expected \",\" (32:24)\n\n  30 |     const user = userEvent.setup();\n  31 |     \n> 32 |     render(<ReportsPage />);\n     |                         ^\n  33 |\n  34 |     // Gerar relatório clínico\n  35 |     await user.click(screen.getByRole('button', { name: /gerar relatório clínico/i }));",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\reports.test.ts: Unexpected token, expected \",\" (32:24)\n\n  30 |     const user = userEvent.setup();\n  31 |     \n> 32 |     render(<ReportsPage />);\n     |                         ^\n  33 |\n  34 |     // Gerar relatório clínico\n  35 |     await user.click(screen.getByRole('button', { name: /gerar relatório clínico/i }));",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\reports.test.ts",
-        "line": 32,
-        "column": 24
-      },
-      "snippet": "   at integration\\reports.test.ts:32\n\n  30 |     const user = userEvent.setup();\n  31 |     \n> 32 |     render(<ReportsPage />);\n     |                        ^\n  33 |\n  34 |     // Gerar relatório clínico\n  35 |     await user.click(screen.getByRole('button', { name: /gerar relatório clínico/i }));"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_admin_workflow.test.ts: Unterminated string constant. (6:53)\n\n  4 |\n  5 | // Mock components that don't exist yet - THIS TEST MUST FAIL\n> 6 | import { AuthProvider } from \"../contexts/AppContext\"';\n    |                                                      ^\n  7 | import { AdminDashboard } from '@/pages/AdminDashboard';\n  8 | import { UserManagement } from '@/components/admin/UserManagement';\n  9 |",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_admin_workflow.test.ts: Unterminated string constant. (6:53)\n\n  4 |\n  5 | // Mock components that don't exist yet - THIS TEST MUST FAIL\n> 6 | import { AuthProvider } from \"../contexts/AppContext\"';\n    |                                                      ^\n  7 | import { AdminDashboard } from '@/pages/AdminDashboard';\n  8 | import { UserManagement } from '@/components/admin/UserManagement';\n  9 |",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_admin_workflow.test.ts",
-        "line": 6,
-        "column": 53
-      },
-      "snippet": "   at integration\\test_admin_workflow.test.ts:6\n\n  4 |\n  5 | // Mock components that don't exist yet - THIS TEST MUST FAIL\n> 6 | import { AuthProvider } from \"../contexts/AppContext\"';\n    |                                                     ^\n  7 | import { AdminDashboard } from '@/pages/AdminDashboard';\n  8 | import { UserManagement } from '@/components/admin/UserManagement';\n  9 |"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_patient_portal.test.ts: Unexpected token, expected \",\" (40:38)\n\n  38 | vi.mock('react-router-dom', () => ({\n  39 |   useNavigate: () => mockNavigate,\n> 40 |   Link: ({ children, to }: any) => <a href={to}>{children}</a>,\n     |                                       ^\n  41 |   useParams: () => ({ id: 'patient-123' })\n  42 | }));\n  43 |",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_patient_portal.test.ts: Unexpected token, expected \",\" (40:38)\n\n  38 | vi.mock('react-router-dom', () => ({\n  39 |   useNavigate: () => mockNavigate,\n> 40 |   Link: ({ children, to }: any) => <a href={to}>{children}</a>,\n     |                                       ^\n  41 |   useParams: () => ({ id: 'patient-123' })\n  42 | }));\n  43 |",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_patient_portal.test.ts",
-        "line": 40,
-        "column": 38
-      },
-      "snippet": "   at integration\\test_patient_portal.test.ts:40\n\n  38 | vi.mock('react-router-dom', () => ({\n  39 |   useNavigate: () => mockNavigate,\n> 40 |   Link: ({ children, to }: any) => <a href={to}>{children}</a>,\n     |                                      ^\n  41 |   useParams: () => ({ id: 'patient-123' })\n  42 | }));\n  43 |"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_therapist_workflow.test.ts: Unexpected token, expected \",\" (37:38)\n\n  35 | vi.mock('react-router-dom', () => ({\n  36 |   useNavigate: () => mockNavigate,\n> 37 |   Link: ({ children, to }: any) => <a href={to}>{children}</a>,\n     |                                       ^\n  38 |   useParams: () => ({ id: 'patient-123' })\n  39 | }));\n  40 |",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_therapist_workflow.test.ts: Unexpected token, expected \",\" (37:38)\n\n  35 | vi.mock('react-router-dom', () => ({\n  36 |   useNavigate: () => mockNavigate,\n> 37 |   Link: ({ children, to }: any) => <a href={to}>{children}</a>,\n     |                                       ^\n  38 |   useParams: () => ({ id: 'patient-123' })\n  39 | }));\n  40 |",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\integration\\test_therapist_workflow.test.ts",
-        "line": 37,
-        "column": 38
-      },
-      "snippet": "   at integration\\test_therapist_workflow.test.ts:37\n\n  35 | vi.mock('react-router-dom', () => ({\n  36 |   useNavigate: () => mockNavigate,\n> 37 |   Link: ({ children, to }: any) => <a href={to}>{children}</a>,\n     |                                      ^\n  38 |   useParams: () => ({ id: 'patient-123' })\n  39 | }));\n  40 |"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: The requested module '@/lib/utils' does not provide an export named 'formatDate'",
-      "stack": "SyntaxError: The requested module '@/lib/utils' does not provide an export named 'formatDate'"
-    },
-    {
-      "message": "Error: Directory import 'C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\date-fns\\locale' is not supported resolving ES modules imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\components\\patients\\PatientTable.tsx\nDid you mean to import \"date-fns/locale/index.js\"?",
-      "stack": "Error: Directory import 'C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\date-fns\\locale' is not supported resolving ES modules imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\components\\patients\\PatientTable.tsx\nDid you mean to import \"date-fns/locale/index.js\"?"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot read properties of undefined (reading 'VITE_SUPABASE_URL')",
-      "stack": "TypeError: Cannot read properties of undefined (reading 'VITE_SUPABASE_URL')\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\lib\\supabaseClient.ts:16:37",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\lib\\supabaseClient.ts",
-        "column": 37,
-        "line": 16
-      },
-      "snippet": "   at ..\\lib\\supabaseClient.ts:16\n\n  14 |\n  15 | // Validar variáveis de ambiente (VITE syntax)\n> 16 | const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;\n     |                                     ^\n  17 | const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;\n  18 |\n  19 | if (!supabaseUrl) {"
-    },
-    {
-      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
-      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
-    },
-    {
-      "message": "SyntaxError: The requested module '../../services/supabase/patientService' does not provide an export named 'default'",
-      "stack": "SyntaxError: The requested module '../../services/supabase/patientService' does not provide an export named 'default'"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\ai.test.ts: Unexpected token, expected \",\" (36:24)\n\n  34 |     const user = userEvent.setup();\n  35 |     \n> 36 |     render(<AiAssistant patientId=\"1\" />);\n     |                         ^\n  37 |\n  38 |     // Iniciar geração de laudo\n  39 |     await user.click(screen.getByRole('button', { name: /gerar laudo/i }));",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\ai.test.ts: Unexpected token, expected \",\" (36:24)\n\n  34 |     const user = userEvent.setup();\n  35 |     \n> 36 |     render(<AiAssistant patientId=\"1\" />);\n     |                         ^\n  37 |\n  38 |     // Iniciar geração de laudo\n  39 |     await user.click(screen.getByRole('button', { name: /gerar laudo/i }));",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\ai.test.ts",
-        "line": 36,
-        "column": 24
-      },
-      "snippet": "   at unit\\ai.test.ts:36\n\n  34 |     const user = userEvent.setup();\n  35 |     \n> 36 |     render(<AiAssistant patientId=\"1\" />);\n     |                        ^\n  37 |\n  38 |     // Iniciar geração de laudo\n  39 |     await user.click(screen.getByRole('button', { name: /gerar laudo/i }));"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\appointment.test.ts: Unexpected token, expected \",\" (45:33)\n\n  43 |     const user = userEvent.setup();\n  44 |     \n> 45 |     render(<AppointmentFormModal isOpen={true} onClose={jest.fn()} />);\n     |                                  ^\n  46 |\n  47 |     // Primeiro agendamento\n  48 |     await user.selectOptions(screen.getByLabelText(/paciente/i), '1');",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\appointment.test.ts: Unexpected token, expected \",\" (45:33)\n\n  43 |     const user = userEvent.setup();\n  44 |     \n> 45 |     render(<AppointmentFormModal isOpen={true} onClose={jest.fn()} />);\n     |                                  ^\n  46 |\n  47 |     // Primeiro agendamento\n  48 |     await user.selectOptions(screen.getByLabelText(/paciente/i), '1');",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\appointment.test.ts",
-        "line": 45,
-        "column": 33
-      },
-      "snippet": "   at unit\\appointment.test.ts:45\n\n  43 |     const user = userEvent.setup();\n  44 |     \n> 45 |     render(<AppointmentFormModal isOpen={true} onClose={jest.fn()} />);\n     |                                 ^\n  46 |\n  47 |     // Primeiro agendamento\n  48 |     await user.selectOptions(screen.getByLabelText(/paciente/i), '1');"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\auth.test.ts: Unterminated string constant. (3:53)\n\n  1 | import { render, screen, fireEvent, waitFor } from '@testing-library/react';\n  2 | import userEvent from '@testing-library/user-event';\n> 3 | import { AuthProvider } from \"../contexts/AppContext\"';\n    |                                                      ^\n  4 | import { authService } from '@/services/authService';\n  5 |\n  6 | // Mock do authService",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\auth.test.ts: Unterminated string constant. (3:53)\n\n  1 | import { render, screen, fireEvent, waitFor } from '@testing-library/react';\n  2 | import userEvent from '@testing-library/user-event';\n> 3 | import { AuthProvider } from \"../contexts/AppContext\"';\n    |                                                      ^\n  4 | import { authService } from '@/services/authService';\n  5 |\n  6 | // Mock do authService",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\auth.test.ts",
-        "line": 3,
-        "column": 53
-      },
-      "snippet": "   at unit\\auth.test.ts:3\n\n  1 | import { render, screen, fireEvent, waitFor } from '@testing-library/react';\n  2 | import userEvent from '@testing-library/user-event';\n> 3 | import { AuthProvider } from \"../contexts/AppContext\"';\n    |                                                     ^\n  4 | import { authService } from '@/services/authService';\n  5 |\n  6 | // Mock do authService"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "Error: Directory import 'C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\date-fns\\locale' is not supported resolving ES modules imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\components\\dashboard\\widgets\\RevenueWidget.tsx\nDid you mean to import \"date-fns/locale/index.js\"?",
-      "stack": "Error: Directory import 'C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\date-fns\\locale' is not supported resolving ES modules imported from C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\components\\dashboard\\widgets\\RevenueWidget.tsx\nDid you mean to import \"date-fns/locale/index.js\"?"
-    },
-    {
-      "message": "SyntaxError: The requested module '../../../hooks/useOnlineStatus' does not provide an export named 'usePushNotifications'",
-      "stack": "SyntaxError: The requested module '../../../hooks/useOnlineStatus' does not provide an export named 'usePushNotifications'"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\patient.test.ts: Unexpected token, expected \",\" (47:29)\n\n  45 |     const user = userEvent.setup();\n  46 |     \n> 47 |     render(<PatientFormModal isOpen={true} onClose={jest.fn()} />);\n     |                              ^\n  48 |\n  49 |     // Preencher formulário\n  50 |     await user.type(screen.getByLabelText(/nome/i), 'João Silva');",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\patient.test.ts: Unexpected token, expected \",\" (47:29)\n\n  45 |     const user = userEvent.setup();\n  46 |     \n> 47 |     render(<PatientFormModal isOpen={true} onClose={jest.fn()} />);\n     |                              ^\n  48 |\n  49 |     // Preencher formulário\n  50 |     await user.type(screen.getByLabelText(/nome/i), 'João Silva');",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\patient.test.ts",
-        "line": 47,
-        "column": 29
-      },
-      "snippet": "   at unit\\patient.test.ts:47\n\n  45 |     const user = userEvent.setup();\n  46 |     \n> 47 |     render(<PatientFormModal isOpen={true} onClose={jest.fn()} />);\n     |                             ^\n  48 |\n  49 |     // Preencher formulário\n  50 |     await user.type(screen.getByLabelText(/nome/i), 'João Silva');"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\performance.test.ts: Unexpected token, expected \",\" (32:48)\n\n  30 |       .mockReturnValueOnce(endTime);\n  31 |\n> 32 |     const { container } = render(<DashboardPage />);\n     |                                                 ^\n  33 |\n  34 |     // Simular carregamento completo\n  35 |     await new Promise(resolve => setTimeout(resolve, 100));",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\performance.test.ts: Unexpected token, expected \",\" (32:48)\n\n  30 |       .mockReturnValueOnce(endTime);\n  31 |\n> 32 |     const { container } = render(<DashboardPage />);\n     |                                                 ^\n  33 |\n  34 |     // Simular carregamento completo\n  35 |     await new Promise(resolve => setTimeout(resolve, 100));",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\performance.test.ts",
-        "line": 32,
-        "column": 48
-      },
-      "snippet": "   at unit\\performance.test.ts:32\n\n  30 |       .mockReturnValueOnce(endTime);\n  31 |\n> 32 |     const { container } = render(<DashboardPage />);\n     |                                                ^\n  33 |\n  34 |     // Simular carregamento completo\n  35 |     await new Promise(resolve => setTimeout(resolve, 100));"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\responsive.test.ts: Unexpected token, expected \",\" (47:26)\n\n  45 |     });\n  46 |\n> 47 |     render(<DashboardPage />);\n     |                           ^\n  48 |\n  49 |     // Verificar se elementos responsivos estão presentes\n  50 |     expect(screen.getByTestId('mobile-menu')).toBeInTheDocument();",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\responsive.test.ts: Unexpected token, expected \",\" (47:26)\n\n  45 |     });\n  46 |\n> 47 |     render(<DashboardPage />);\n     |                           ^\n  48 |\n  49 |     // Verificar se elementos responsivos estão presentes\n  50 |     expect(screen.getByTestId('mobile-menu')).toBeInTheDocument();",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\responsive.test.ts",
-        "line": 47,
-        "column": 26
-      },
-      "snippet": "   at unit\\responsive.test.ts:47\n\n  45 |     });\n  46 |\n> 47 |     render(<DashboardPage />);\n     |                          ^\n  48 |\n  49 |     // Verificar se elementos responsivos estão presentes\n  50 |     expect(screen.getByTestId('mobile-menu')).toBeInTheDocument();"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\security.test.ts: Unexpected token, expected \",\" (37:22)\n\n  35 |\n  36 |     render(\n> 37 |       <ProtectedRoute requiredRole=\"patient\">\n     |                       ^\n  38 |         <PatientPortalLayout patientId=\"2\" />\n  39 |       </ProtectedRoute>\n  40 |     );",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\security.test.ts: Unexpected token, expected \",\" (37:22)\n\n  35 |\n  36 |     render(\n> 37 |       <ProtectedRoute requiredRole=\"patient\">\n     |                       ^\n  38 |         <PatientPortalLayout patientId=\"2\" />\n  39 |       </ProtectedRoute>\n  40 |     );",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\security.test.ts",
-        "line": 37,
-        "column": 22
-      },
-      "snippet": "   at unit\\security.test.ts:37\n\n  35 |\n  36 |     render(\n> 37 |       <ProtectedRoute requiredRole=\"patient\">\n     |                      ^\n  38 |         <PatientPortalLayout patientId=\"2\" />\n  39 |       </ProtectedRoute>\n  40 |     );"
-    },
-    {
-      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
-      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
-    },
-    {
-      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
-      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
-      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
-      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
-      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
-      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
-    },
-    {
-      "message": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'",
-      "stack": "SyntaxError: The requested module '../types' does not provide an export named 'MovementType'"
-    },
-    {
-      "message": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)",
-      "stack": "TypeError: Cannot redefine property: Symbol($$jest-matchers-object)\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\node_modules\\@vitest\\expect\\dist\\index.js:667:9"
-    },
-    {
-      "message": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\soap.test.ts: Unexpected token, expected \",\" (70:29)\n\n  68 |     const user = userEvent.setup();\n  69 |     \n> 70 |     render(<NewSoapNoteModal isOpen={true} onClose={jest.fn()} patientId=\"1\" />);\n     |                              ^\n  71 |\n  72 |     // Inserir texto na seção Subjetivo\n  73 |     const subjectiveField = screen.getByLabelText(/subjetivo/i);",
-      "stack": "SyntaxError: C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\soap.test.ts: Unexpected token, expected \",\" (70:29)\n\n  68 |     const user = userEvent.setup();\n  69 |     \n> 70 |     render(<NewSoapNoteModal isOpen={true} onClose={jest.fn()} patientId=\"1\" />);\n     |                              ^\n  71 |\n  72 |     // Inserir texto na seção Subjetivo\n  73 |     const subjectiveField = screen.getByLabelText(/subjetivo/i);",
-      "location": {
-        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\unit\\soap.test.ts",
-        "line": 70,
-        "column": 29
-      },
-      "snippet": "   at unit\\soap.test.ts:70\n\n  68 |     const user = userEvent.setup();\n  69 |     \n> 70 |     render(<NewSoapNoteModal isOpen={true} onClose={jest.fn()} patientId=\"1\" />);\n     |                             ^\n  71 |\n  72 |     // Inserir texto na seção Subjetivo\n  73 |     const subjectiveField = screen.getByLabelText(/subjetivo/i);"
+  "suites": [
+    {
+      "title": "e2e\\production-console.spec.ts",
+      "file": "e2e/production-console.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Produção – Console limpo",
+          "file": "e2e/production-console.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "carrega home sem erros no console",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 11747,
+                      "error": {
+                        "message": "Error: Erros no console não esperados\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 6\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 401 ()\",\u001b[39m\n\u001b[31m+   \"Provider's accounts list is empty.\",\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 403 ()\",\u001b[39m\n\u001b[31m+   \"[GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                        "stack": "Error: Erros no console não esperados\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 6\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 401 ()\",\u001b[39m\n\u001b[31m+   \"Provider's accounts list is empty.\",\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 403 ()\",\u001b[39m\n\u001b[31m+   \"[GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts:32:61",
+                        "location": {
+                          "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts",
+                          "column": 61,
+                          "line": 32
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 30 |\u001b[39m     }\n \u001b[90m 31 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     expect(consoleErrors\u001b[33m,\u001b[39m \u001b[32m'Erros no console não esperados'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m     expect(pageErrors\u001b[33m,\u001b[39m \u001b[32m'Erros de página não esperados'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m 34 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts",
+                            "column": 61,
+                            "line": 32
+                          },
+                          "message": "Error: Erros no console não esperados\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 6\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 401 ()\",\u001b[39m\n\u001b[31m+   \"Provider's accounts list is empty.\",\u001b[39m\n\u001b[31m+   \"Failed to load resource: the server responded with a status of 403 ()\",\u001b[39m\n\u001b[31m+   \"[GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n\u001b[0m \u001b[90m 30 |\u001b[39m     }\n \u001b[90m 31 |\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     expect(consoleErrors\u001b[33m,\u001b[39m \u001b[32m'Erros no console não esperados'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m     expect(pageErrors\u001b[33m,\u001b[39m \u001b[32m'Erros de página não esperados'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m 34 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 35 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts:32:61\u001b[22m"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "Console Errors capturados: [\n  \u001b[32m'Failed to load resource: the server responded with a status of 401 ()'\u001b[39m,\n  \u001b[32m\"Provider's accounts list is empty.\"\u001b[39m,\n  \u001b[32m'Failed to load resource: the server responded with a status of 403 ()'\u001b[39m,\n  \u001b[32m'[GSI_LOGGER]: FedCM get() rejects with NetworkError: Error retrieving a token.'\u001b[39m\n]\n"
+                        },
+                        {
+                          "text": "Page Errors capturados: []\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-11-12T17:23:49.217Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-production-console-Pro-93135-a-home-sem-erros-no-console-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-production-console-Pro-93135-a-home-sem-erros-no-console-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\test-results\\e2e-production-console-Pro-93135-a-home-sem-erros-no-console-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\tests\\e2e\\production-console.spec.ts",
+                        "column": 61,
+                        "line": 32
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "81d1e32b71d7b4e94430-3517431e9ffecbc5d4ec",
+              "file": "e2e/production-console.spec.ts",
+              "line": 9,
+              "column": 3
+            }
+          ]
+        }
+      ]
     }
   ],
+  "errors": [],
   "stats": {
-    "startTime": "2025-11-11T20:59:22.255Z",
-    "duration": 30240.400999999998,
+    "startTime": "2025-11-12T17:23:42.402Z",
+    "duration": 20257.681999999997,
     "expected": 0,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }

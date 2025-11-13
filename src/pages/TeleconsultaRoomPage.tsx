@@ -9,24 +9,77 @@ import { Button } from '../components/ui/button';
 import { H2, Body, Small } from '../components/ui/Typography';
 import { Loader2, AlertCircle, Video, ArrowLeft, Wifi, WifiOff } from 'lucide-react';
 
+type TeleconsultaStatus =
+  | 'waiting'
+  | 'scheduled'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
+  | 'no_show'
+  | 'unknown'
+
 interface TeleconsultaData {
-  id: string;
-  room_name: string;
-  scheduled_start: string;
-  scheduled_end: string;
-  status: string;
-  patient_id: string;
-  therapist_id: string;
-  moderator_password?: string;
-  participant_password?: string;
+  id: string
+  room_name: string
+  scheduled_start: string
+  scheduled_end: string
+  status: TeleconsultaStatus
+  patient_id: string
+  therapist_id: string
+  moderator_password?: string | null
+  participant_password?: string | null
   patient: {
-    full_name: string;
-    email: string;
-  };
+    full_name: string
+    email: string
+  }
   therapist: {
-    full_name: string;
-    email: string;
-  };
+    full_name: string
+    email: string
+  }
+}
+
+const sanitizeTeleconsultaStatus = (status: unknown): TeleconsultaStatus => {
+  const validStatuses: TeleconsultaStatus[] = [
+    'waiting',
+    'scheduled',
+    'in_progress',
+    'completed',
+    'cancelled',
+    'no_show',
+  ]
+
+  if (typeof status === 'string' && validStatuses.includes(status as TeleconsultaStatus)) {
+    return status as TeleconsultaStatus
+  }
+
+  return 'unknown'
+}
+
+const mapSupabaseTeleconsulta = (raw: Record<string, any>): TeleconsultaData => {
+  const patientFullName = raw.patient?.full_name ?? 'Paciente'
+  const patientEmail = raw.patient?.email ?? ''
+  const therapistFullName = raw.therapist?.full_name ?? 'Profissional'
+  const therapistEmail = raw.therapist?.email ?? ''
+
+  return {
+    id: raw.id ?? '',
+    room_name: raw.room_name ?? '',
+    scheduled_start: raw.scheduled_start ?? new Date().toISOString(),
+    scheduled_end: raw.scheduled_end ?? new Date().toISOString(),
+    status: sanitizeTeleconsultaStatus(raw.status),
+    patient_id: raw.patient_id ?? '',
+    therapist_id: raw.therapist_id ?? '',
+    moderator_password: raw.moderator_password ?? null,
+    participant_password: raw.participant_password ?? null,
+    patient: {
+      full_name: patientFullName,
+      email: patientEmail,
+    },
+    therapist: {
+      full_name: therapistFullName,
+      email: therapistEmail,
+    },
+  }
 }
 
 export default function TeleconsultaRoomPage() {
@@ -86,7 +139,7 @@ export default function TeleconsultaRoomPage() {
         const isTherapist = data.therapist_id === user.id;
         setUserRole(isTherapist ? 'moderator' : 'participant');
 
-        setTeleconsulta(data);
+        setTeleconsulta(mapSupabaseTeleconsulta(data));
         setLoading(false);
 
         // Marcar entrada na teleconsulta
@@ -144,7 +197,7 @@ export default function TeleconsultaRoomPage() {
 
       // Alertar se conexão estiver ruim
       if (quality === 'poor') {
-        showToast('Qualidade de conexão ruim. Verifique sua internet.', 'warning');
+        showToast('Qualidade de conexão ruim. Verifique sua internet.', 'error');
       }
     },
     [showToast]

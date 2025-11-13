@@ -1,33 +1,50 @@
-// hooks/useExerciseLibrary.ts
-import { useState, useEffect } from 'react';
-import { Protocol, ExerciseCategory } from '../types';
-import * as exerciseLibraryService from '../services/exerciseLibraryService';
-import { useToast } from '../contexts/ToastContext';
+import { useEffect, useState } from 'react'
+import { useToast } from '../contexts/ToastContext'
+import * as exerciseLibraryService from '../services/exerciseLibraryService'
+import type { ExerciseCategory, Protocol } from '../types'
 
-const useExerciseLibrary = () => {
-    const [protocols, setProtocols] = useState<Protocol[]>([]);
-    const [exerciseGroups, setExerciseGroups] = useState<ExerciseCategory[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const { showToast } = useToast();
+interface UseExerciseLibraryResult {
+  protocols: Protocol[]
+  exerciseGroups: ExerciseCategory[]
+  isLoading: boolean
+}
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const { protocols, exerciseGroups } = await exerciseLibraryService.getExerciseLibraryData();
-                setProtocols(protocols);
-                setExerciseGroups(exerciseGroups);
-            } catch (error) {
-                console.error("Failed to fetch exercise library data", error);
-                showToast('Falha ao carregar a biblioteca de exercícios.', 'error');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchData();
-    }, [showToast]);
+const useExerciseLibrary = (): UseExerciseLibraryResult => {
+  const [protocols, setProtocols] = useState<Protocol[]>([])
+  const [exerciseGroups, setExerciseGroups] = useState<ExerciseCategory[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { showToast } = useToast()
 
-    return { protocols, exerciseGroups, isLoading };
-};
+  useEffect(() => {
+    let isMounted = true
 
-export default useExerciseLibrary;
+    const fetchData = async () => {
+      setIsLoading(true)
+      try {
+        const { protocols: fetchedProtocols, exerciseGroups: fetchedGroups } =
+          await exerciseLibraryService.getExerciseLibraryData()
+
+        if (!isMounted) return
+        setProtocols(fetchedProtocols)
+        setExerciseGroups(fetchedGroups)
+      } catch {
+        if (!isMounted) return
+        showToast('Falha ao carregar a biblioteca de exercícios.', 'error')
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void fetchData()
+
+    return () => {
+      isMounted = false
+    }
+  }, [showToast])
+
+  return { protocols, exerciseGroups, isLoading }
+}
+
+export default useExerciseLibrary

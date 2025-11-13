@@ -30,7 +30,7 @@ export class WhatsAppNotificationService {
 
       
 
-      const { data: appointments } = await supabase
+      const { data: appointmentsData } = await supabase
         .from('appointments')
         .select(`
           id,
@@ -44,7 +44,9 @@ export class WhatsAppNotificationService {
         .in('status', ['confirmed', 'scheduled'])
         .order('time') as { data: AppointmentWithPatient[] | null };
 
-      if (appointments?.length === 0) {
+      const appointments = appointmentsData ?? [];
+
+      if (appointments.length === 0) {
         
         return;
       }
@@ -103,7 +105,7 @@ export class WhatsAppNotificationService {
 
       
 
-      const { data: appointments } = await supabase
+      const { data: appointmentsData } = await supabase
         .from('appointments')
         .select(`
           id,
@@ -116,7 +118,9 @@ export class WhatsAppNotificationService {
         .eq('status', 'scheduled')
         .order('time') as { data: AppointmentWithPatient[] | null };
 
-      if (appointments?.length === 0) {
+      const appointments = appointmentsData ?? [];
+
+      if (appointments.length === 0) {
         
         return;
       }
@@ -171,7 +175,7 @@ export class WhatsAppNotificationService {
 
       
 
-      const { data: inactivePatients } = await supabase
+      const { data: inactivePatientsData } = await supabase
         .from('patients')
         .select(`
           id,
@@ -189,7 +193,9 @@ export class WhatsAppNotificationService {
           last_appointment: { date: string } | null;
         }> | null };
 
-      if (inactivePatients?.length === 0) {
+      const inactivePatients = inactivePatientsData ?? [];
+
+      if (inactivePatients.length === 0) {
         
         return;
       }
@@ -242,7 +248,7 @@ export class WhatsAppNotificationService {
     try {
       
 
-      const { data: pendingPayments } = await supabase
+      const { data: pendingPaymentsData } = await supabase
         .from('financial_transactions')
         .select(`
           id,
@@ -255,7 +261,9 @@ export class WhatsAppNotificationService {
         .lte('due_date', format(new Date(), 'yyyy-MM-dd'))
         .limit(50) as { data: PaymentWithPatient[] | null };
 
-      if (pendingPayments?.length === 0) {
+      const pendingPayments = pendingPaymentsData ?? [];
+
+      if (pendingPayments.length === 0) {
         
         return;
       }
@@ -322,7 +330,7 @@ export class WhatsAppNotificationService {
         metadata: { notification_type: type },
       };
       
-      await supabase
+      await (supabase as any)
         .from('whatsapp_messages')
         .insert(messageData as any);
     } catch (error) {

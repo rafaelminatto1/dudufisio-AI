@@ -1,183 +1,165 @@
-/**
- * Real-time Notifications Hook
- * Sistema de notificações em tempo real integrado com React Query
- */
+import { toast } from 'react-toastify'
+import { useQueryClient } from '@tanstack/react-query'
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
+import { useRealtimeSubscription } from './useRealtimeSubscription'
+import type { Database } from '../types/database'
 
-import { useEffect } from 'react';
-import { toast } from 'react-toastify';
-import { useRealtimeSubscription } from './useRealtimeSubscription';
-import { useQueryClient } from '@tanstack/react-query';
+type NotificationRow = Database['public']['Tables']['notifications']['Row']
+type NotificationPayload = RealtimePostgresChangesPayload<NotificationRow>
 
-export interface Notification {
-  id: string;
-  user_id: string;
-  type: string;
-  title: string;
-  message: string;
-  action_url?: string;
-  is_read: boolean;
-  created_at: string;
+interface FamilyNotificationRow {
+  id: string
+  family_member_id?: string | null
+  title?: string | null
+  message?: string | null
 }
 
-/**
- * Hook para notificações real-time do usuário
- * 
- * @example
- * ```tsx
- * function App() {
- *   const userId = useCurrentUser()?.id;
- *   useRealtimeNotifications(userId);
- *   
- *   return <YourApp />;
- * }
- * ```
- */
-export function useRealtimeNotifications(userId: string | undefined) {
-  const queryClient = useQueryClient();
+type FamilyNotificationPayload = RealtimePostgresChangesPayload<FamilyNotificationRow>
 
-  useRealtimeSubscription({
+interface RiskAlertRow {
+  id: string
+  patient_id?: string | null
+  patient_name?: string | null
+  risk_level?: string | null
+  score?: number | null
+}
+
+type RiskAlertPayload = RealtimePostgresChangesPayload<RiskAlertRow>
+
+interface FamilyMessageRow {
+  id: string
+  patient_id?: string | null
+  sender_type?: string | null
+  sender_name?: string | null
+}
+
+type FamilyMessagePayload = RealtimePostgresChangesPayload<FamilyMessageRow>
+
+interface SafetyEventRow {
+  id: string
+  severity?: string | null
+  description?: string | null
+}
+
+type SafetyEventPayload = RealtimePostgresChangesPayload<SafetyEventRow>
+
+export function useRealtimeNotifications(userId?: string) {
+  const queryClient = useQueryClient()
+
+  useRealtimeSubscription<NotificationPayload>({
     table: 'notifications',
     filter: userId ? `user_id=eq.${userId}` : undefined,
     queryKey: ['notifications', userId],
-    
-    onInsert: (payload) => {
-      const notification = payload.new as Notification;
-      
-      // Mostrar toast com a notificação
+    onInsert: payload => {
+      const notification = payload.new
+      if (!notification) return
+
       toast.info(notification.title, {
         description: notification.message,
-        action: notification.action_url ? {
-          label: 'Ver',
-          onClick: () => {
-            if (notification.action_url) {
-              window.location.href = notification.action_url;
+        action: notification.action_url
+          ? {
+              label: notification.action_label ?? 'Ver',
+              onClick: () => {
+                if (notification.action_url) {
+                  window.location.href = notification.action_url
+                }
+              },
             }
-          },
-        } : undefined,
+          : undefined,
         duration: 5000,
-      });
+      } as any)
 
-      // Invalidar queries de notificações
-      queryClient.invalidateQueries({ queryKey: ['notifications', userId] });
+      queryClient.invalidateQueries({ queryKey: ['notifications', userId] })
     },
-  });
+  })
 }
 
-/**
- * Hook para notificações da família em tempo real
- */
-export function useFamilyRealtimeNotifications(memberId: string | undefined) {
-  const queryClient = useQueryClient();
+export function useFamilyRealtimeNotifications(memberId?: string) {
+  const queryClient = useQueryClient()
 
-  useRealtimeSubscription({
+  useRealtimeSubscription<FamilyNotificationPayload>({
     table: 'family_notifications',
     filter: memberId ? `family_member_id=eq.${memberId}` : undefined,
     queryKey: ['family-notifications', memberId],
-    
-    onInsert: (payload) => {
-      const notification = payload.new;
-      
-      toast.info(notification.title, {
-        description: notification.message,
+    onInsert: payload => {
+      const notification = payload.new
+      if (!notification) return
+      toast.info(notification.title ?? 'Notificação', {
+        description: notification.message ?? '',
         duration: 5000,
-      });
-
-      queryClient.invalidateQueries({ 
-        queryKey: ['family-portal', 'notifications', memberId] 
-      });
+      } as any)
+      queryClient.invalidateQueries({ queryKey: ['family-portal', 'notifications', memberId] })
     },
-  });
+  })
 }
 
-/**
- * Hook para alertas de risco em tempo real
- */
-export function useRealtimeRiskAlerts(patientId: string | undefined) {
-  const queryClient = useQueryClient();
+export function useRealtimeRiskAlerts(patientId?: string) {
+  const queryClient = useQueryClient()
 
-  useRealtimeSubscription({
+  useRealtimeSubscription<RiskAlertPayload>({
     table: 'risk_alerts',
     filter: patientId ? `patient_id=eq.${patientId}` : undefined,
     queryKey: ['risk-alerts', patientId],
-    
-    onInsert: (payload) => {
-      const alert = payload.new;
-      
-      // Alerta de alto risco em vermelho
-      if (alert.risk_level === 'high' || alert.risk_level === 'critical') {
-        toast.error(`⚠️ Alerta de Risco ${alert.risk_level.toUpperCase()}`, {
-          description: `Paciente: ${alert.patient_name} - Score: ${alert.score}`,
-          duration: 10000, // 10 segundos para alertas críticos
-        });
+    onInsert: payload => {
+      const alert = payload.new
+      if (!alert) return
+      const level = alert.risk_level?.toLowerCase()
+      if (level === 'high' || level === 'critical') {
+        toast.error(`⚠️ Alerta de Risco ${(alert.risk_level ?? '').toUpperCase()}`, {
+          description: `Paciente: ${alert.patient_name ?? 'Desconhecido'} - Score: ${alert.score ?? '-'}`,
+          duration: 10000,
+        } as any)
       }
-
-      queryClient.invalidateQueries({ queryKey: ['risk-alerts', patientId] });
-      queryClient.invalidateQueries({ queryKey: ['risk-profile', patientId] });
+      queryClient.invalidateQueries({ queryKey: ['risk-alerts', patientId] })
+      queryClient.invalidateQueries({ queryKey: ['risk-profile', patientId] })
     },
-  });
+  })
 }
 
-/**
- * Hook para mensagens da família em tempo real
- */
-export function useRealtimeFamilyMessages(patientId: string | undefined) {
-  const queryClient = useQueryClient();
+export function useRealtimeFamilyMessages(patientId?: string) {
+  const queryClient = useQueryClient()
 
-  useRealtimeSubscription({
+  useRealtimeSubscription<FamilyMessagePayload>({
     table: 'family_messages',
     filter: patientId ? `patient_id=eq.${patientId}` : undefined,
     queryKey: ['family-portal', 'messages', patientId],
-    
-    onInsert: (payload) => {
-      const message = payload.new;
-      
-      // Apenas notificar se for mensagem da família para terapeuta
+    onInsert: payload => {
+      const message = payload.new
+      if (!message) return
       if (message.sender_type === 'family') {
         toast.info('💬 Nova mensagem da família', {
-          description: `De: ${message.sender_name}`,
+          description: message.sender_name ? `De: ${message.sender_name}` : undefined,
           action: {
             label: 'Ver',
             onClick: () => {
-              window.location.href = `/family-portal/${patientId}#messages`;
+              window.location.href = `/family-portal/${patientId}#messages`
             },
           },
-        });
+        } as any)
       }
-
-      queryClient.invalidateQueries({ 
-        queryKey: ['family-portal', 'messages', patientId] 
-      });
+      queryClient.invalidateQueries({ queryKey: ['family-portal', 'messages', patientId] })
     },
-  });
+  })
 }
 
-/**
- * Hook para eventos de segurança em tempo real
- */
 export function useRealtimeSafetyEvents() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
-  useRealtimeSubscription({
+  useRealtimeSubscription<SafetyEventPayload>({
     table: 'patient_safety_events',
     event: 'INSERT',
     queryKey: ['quality-assurance', 'safety-events'],
-    
-    onInsert: (payload) => {
-      const event = payload.new;
-      
-      // Notificação urgente para eventos de segurança
-      if (event.severity === 'critical' || event.severity === 'high') {
+    onInsert: payload => {
+      const event = payload.new
+      if (!event) return
+      const severity = event.severity?.toLowerCase()
+      if (severity === 'critical' || severity === 'high') {
         toast.error('🚨 Evento de Segurança Crítico', {
-          description: event.description,
-          duration: 15000, // 15 segundos
-        });
+          description: event.description ?? '',
+          duration: 15000,
+        } as any)
       }
-
-      queryClient.invalidateQueries({ 
-        queryKey: ['quality-assurance', 'safety-events'] 
-      });
+      queryClient.invalidateQueries({ queryKey: ['quality-assurance', 'safety-events'] })
     },
-  });
+  })
 }
-
-

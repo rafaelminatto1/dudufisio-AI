@@ -9,23 +9,50 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const pageChunkGroups = [
-  { name: 'page-ai-analytics', test: /[/\\]pages[/\\]AiAnalyticsPage\.[tj]sx?$/i },
-  { name: 'page-clinical-analytics', test: /[/\\]pages[/\\]ClinicalAnalyticsPage\.[tj]sx?$/i },
-  { name: 'page-protocols', test: /[/\\]pages[/\\](EnhancedProtocolsPage|ProtocolEditPage)\.[tj]sx?$/i },
-  { name: 'page-exercise-edit', test: /[/\\]pages[/\\]ExerciseEditPage\.[tj]sx?$/i },
-  { name: 'page-exercise-library', test: /[/\\]pages[/\\]EnhancedExerciseLibraryPage\.[tj]sx?$/i },
-  { name: 'page-clinical-content', test: /[/\\]pages[/\\]ClinicalContentPage\.[tj]sx?$/i },
-  { name: 'page-session-evolution', test: /[/\\]pages[/\\]SessionEvolutionPage\.[tj]sx?$/i },
-  { name: 'page-ai-lab', test: /[/\\]pages[/\\]AiAnalyticsLabPage\.[tj]sx?$/i },
-  { name: 'page-agenda', test: /[/\\]pages[/\\]AgendaPage\.[tj]sx?$/i },
-  { name: 'page-atendimento', test: /[/\\]pages[/\\](AtendimentoPage|AtendimentoPageDemo)\.[tj]sx?$/i },
-  { name: 'page-bi-integration', test: /[/\\]pages[/\\]BIIntegrationTestPage\.[tj]sx?$/i },
-  { name: 'page-free-video', test: /[/\\]pages[/\\]FreeVideoGeneratorReal\.[tj]sx?$/i },
-  { name: 'page-inventory', test: /[/\\]pages[/\\]InventoryPage\.[tj]sx?$/i },
-];
+const PAGE_EXTENSIONS = ['.tsx', '.ts', '.jsx', '.js'] as const;
 
-const pdfVendorPattern = /[/\\]node_modules[/\\](?:@react-pdf|pdfkit|fontkit|png-js|yoga-layout|linebreak|textkit|canvg)[/\\]/;
+type PageChunkGroup = {
+  name: string;
+  matchers: string[];
+};
+
+const pageChunkDefinitions = [
+  { name: 'page-ai-analytics', matchers: ['pages/AiAnalyticsPage'] },
+  { name: 'page-clinical-analytics', matchers: ['pages/ClinicalAnalyticsPage'] },
+  { name: 'page-protocols', matchers: ['pages/EnhancedProtocolsPage', 'pages/ProtocolEditPage'] },
+  { name: 'page-exercise-edit', matchers: ['pages/ExerciseEditPage'] },
+  { name: 'page-exercise-library', matchers: ['pages/EnhancedExerciseLibraryPage'] },
+  { name: 'page-clinical-content', matchers: ['pages/ClinicalContentPage'] },
+  { name: 'page-session-evolution', matchers: ['pages/SessionEvolutionPage'] },
+  { name: 'page-ai-lab', matchers: ['pages/AiAnalyticsLabPage'] },
+  { name: 'page-agenda', matchers: ['pages/AgendaPage'] },
+  { name: 'page-atendimento', matchers: ['pages/AtendimentoPage', 'pages/AtendimentoPageDemo', 'pages/AtendimentoPageV2'] },
+  { name: 'page-bi-integration', matchers: ['pages/BIIntegrationTestPage'] },
+  { name: 'page-free-video', matchers: ['pages/FreeVideoGeneratorReal'] },
+  { name: 'page-inventory', matchers: ['pages/InventoryPage'] },
+] as const;
+
+const pageChunkGroups: PageChunkGroup[] = pageChunkDefinitions
+  .map(({ name, matchers }) => {
+    const existingMatchers = matchers
+      .map((matcher) => matcher.replace(/\\/g, '/'))
+      .filter((matcher) =>
+        PAGE_EXTENSIONS.some((ext) => fs.existsSync(path.resolve(__dirname, `${matcher}${ext}`))),
+      );
+
+    if (existingMatchers.length === 0) {
+      return null;
+    }
+
+    return { name, matchers: existingMatchers };
+  })
+  .filter((group): group is PageChunkGroup => group !== null);
+
+const isCI = Boolean(process.env.CI || process.env.VERCEL);
+const shouldAnalyzeBundle = process.env.ANALYZE_BUNDLE === 'true';
+
+const pdfVendorPattern =
+  /[/\\]node_modules[/\\](?:@react-pdf|pdfkit|fontkit|png-js|yoga-layout|linebreak|textkit|canvg|jspdf(?:-autotable)?|fast-png|pako|brotli|hyphen|bidi-js|linkifyjs|decimal\.js-light|unicode-trie|unicode-properties|fastestsmallesttextencoderdecoder)[/\\]/;
 const compressionVendorPattern = /[/\\]node_modules[/\\](?:pako|brotli)[/\\]/;
 const sentryReplayPattern = /[/\\]node_modules[/\\]@sentry-internal[/\\]replay[/\\]/;
 
@@ -36,13 +63,14 @@ export default defineConfig({
     react({
       jsxRuntime: 'automatic',
     }),
-    // Visualizer para análise de bundle
-    visualizer({
-      filename: './dist/stats.html',
-      open: true,
-      gzipSize: true,
-      brotliSize: true,
-    }),
+    // Visualizer para análise de bundle (ativado apenas quando necessário)
+    shouldAnalyzeBundle &&
+      visualizer({
+        filename: './dist/stats.html',
+        open: !isCI,
+        gzipSize: true,
+        brotliSize: true,
+      }),
     process.env.SENTRY_AUTH_TOKEN && sentryVitePlugin({
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
@@ -348,29 +376,10 @@ export default defineConfig({
             return 'feature-editor';
           }
 
-          // 🔧 FIX: SOLUTION 4 - REMOVER PDF libs do bundle inicial
-          // Issue: Circular dependency em compression libs + bundle size (1.37MB)
-          // Date: 12 Jan 2025
-          // PDF libs agora são completamente excluídas via optimizeDeps.exclude
-          // e carregadas dinamicamente via lib/heavyLibrariesLazy.ts
-          // 📄 CHUNK ESPECÍFICO: PDF Generation (lazy load) - DESATIVADO
-          // if (normalizedId.includes('node_modules/jspdf/') ||
-          //     normalizedId.includes('node_modules/html2pdf.js/')) {
-          //   return 'feature-pdf';
-          // }
-
-          // 🧾 CHUNK ESPECÍFICO: Ecossistema React-PDF - DESATIVADO
-          // if (pdfVendorPattern.test(normalizedId)) {
-          //   return 'vendor-pdf';
-          // }
-
-          // 🔧 FIX: REMOVER agrupamento de compression - deixar Vite decidir
-          // Issue: Mesmo agrupado com vendor-pdf, circular dependency persiste
-          // Solution: Não forçar chunk específico para compression libs
-          // Data: 12 Jan 2025
-          // if (compressionVendorPattern.test(normalizedId)) {
-          //   return 'vendor-pdf';
-          // }
+          // 🧾 CHUNK ESPECÍFICO: Ecossistema de PDF (lazy load)
+          if (pdfVendorPattern.test(normalizedId)) {
+            return 'vendor-pdf';
+          }
           if (sentryReplayPattern.test(normalizedId)) {
             return 'vendor-sentry-replay';
           }
@@ -459,8 +468,16 @@ export default defineConfig({
             return 'vendor-stripe';
           }
 
+          // 🔒 CHUNK: Criptografia e assinaturas
+          if (normalizedId.includes('node_modules/crypto-js/') ||
+              normalizedId.includes('node_modules/node-forge/')) {
+            return 'vendor-security';
+          }
+
           // 📊 CHUNK: Analytics & Monitoring
           if (normalizedId.includes('node_modules/@sentry/') ||
+              normalizedId.includes('node_modules/@sentry-internal/') ||
+              normalizedId.includes('node_modules/@opentelemetry/') ||
               normalizedId.includes('node_modules/@vercel/analytics') ||
               normalizedId.includes('node_modules/@vercel/speed-insights')) {
             return 'vendor-analytics';
@@ -475,7 +492,8 @@ export default defineConfig({
           }
 
           // 🔥 CHUNK: Firebase
-          if (normalizedId.includes('node_modules/firebase/')) {
+          if (normalizedId.includes('node_modules/firebase/') ||
+              normalizedId.includes('node_modules/@firebase/')) {
             return 'vendor-firebase';
           }
 
@@ -503,7 +521,9 @@ export default defineConfig({
 
           // 🏠 CHUNK: Páginas principais (agrupadas por funcionalidade)
           if (normalizedId.includes('/pages/')) {
-            const matchedPageGroup = pageChunkGroups.find(({ test }) => test.test(normalizedId));
+            const matchedPageGroup = pageChunkGroups.find(({ matchers }) =>
+              matchers.some((matcher) => normalizedId.includes(matcher)),
+            );
             if (matchedPageGroup) {
               return matchedPageGroup.name;
             }
