@@ -44,7 +44,8 @@ export function preloadRoute(routePath: string) {
     '/clinical-analytics': () => import('../pages/ClinicalAnalyticsPage').then(() => {}),
     '/ai-analytics': () => import('../pages/AiAnalyticsPage').then(() => {}),
     '/financial-dashboard': () => import('../pages/FinancialDashboardPage').then(() => {}),
-    '/reports-consolidated': () => import('../pages/reports/ConsolidatedReportsDashboard').then(() => {}),
+    // FIXME: Temporarily commented out - module resolution error on Vercel build
+    // '/reports-consolidated': () => import('../pages/reports/ConsolidatedReportsDashboard').then(() => {}),
     '/reports-advanced': () => import('../pages/AdvancedReportsPage').then(() => {}),
     '/reports-performance': () => import('../pages/PerformanceDashboard').then(() => {}),
     '/population-health': () => import('../pages/PopulationHealthDashboardPage').then(() => {}),

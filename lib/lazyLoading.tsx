@@ -101,7 +101,7 @@ export const LazyComponents = {
   CommunicationDashboard: createLazyComponent(() => import('../components/communication/CommunicationDashboard')),
   // FIXME: Temporarily commented out - module resolution error on Vercel build
   // ReportsDashboard: createLazyComponent(() => import('../components/reports/ReportsDashboard')),
-  ConsolidatedReportsDashboard: createLazyComponent(() => import('../components/reports/ConsolidatedReportsDashboard')),
+  // ConsolidatedReportsDashboard: createLazyComponent(() => import('../components/reports/ConsolidatedReportsDashboard')),
   
   // Componentes de Agenda
   EnhancedAgendaPage: createLazyComponent(() => import('../components/agenda/EnhancedAgendaPage')),
