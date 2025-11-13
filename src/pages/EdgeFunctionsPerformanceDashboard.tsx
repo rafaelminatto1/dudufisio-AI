@@ -23,7 +23,20 @@ import {
   LineChart,
   PieChart,
 } from 'lucide-react';
-import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart as RechartsPieChart, Cell, Pie } from 'recharts';
+import {
+  LineChart as RechartsLineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart as RechartsPieChart,
+  Cell,
+  Pie
+} from '../components/charts/ChartsLazyOptimized';
 
 interface EdgeFunctionMetric {
   name: string;
@@ -300,7 +313,7 @@ const EdgeFunctionsPerformanceDashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartData}>
+                <RechartsLineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="time" stroke="#64748b" fontSize={12} />
                   <YAxis stroke="#64748b" fontSize={12} />
@@ -320,7 +333,7 @@ const EdgeFunctionsPerformanceDashboard: React.FC = () => {
                     dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
                     activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2 }}
                   />
-                </LineChart>
+                </RechartsLineChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>

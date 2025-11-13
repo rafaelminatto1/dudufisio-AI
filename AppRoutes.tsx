@@ -24,6 +24,7 @@ import { ProviderErrorBoundary } from './components/ProviderErrorBoundary';
 import AuthRoutes from './pages/auth/AuthRoutes';
 import { Role } from './types/enums';
 import { ThemeProvider } from './src/contexts/ThemeContext';
+import { getDefaultLandingRoute } from './lib/navigationDefaults';
 
 // Lazy load dos dashboards específicos por role
 const MainDashboard = React.lazy(() => import('./pages/MainDashboard'));
@@ -288,6 +289,9 @@ const AppContent: React.FC = memo(() => {
   const loadingScreen = useMemo(() => buildLoadingScreen('Carregando...'), []);
   const dashboardLoadingScreen = useMemo(() => buildLoadingScreen('Carregando dashboard...'), []);
 
+  const userRole = user?.role as string | undefined;
+  const defaultLanding = useMemo(() => getDefaultLandingRoute(userRole), [userRole]);
+
   const dashboard = useMemo(() => {
     if (!user) {
       return null;
@@ -341,7 +345,7 @@ const AppContent: React.FC = memo(() => {
     // Se está na raiz, redireciona para /dashboard
     // Caso contrário, preserva a URL atual e deixa o dashboard gerenciar
     if (location.pathname === '/') {
-      return <Navigate to="/dashboard" replace />;
+      return <Navigate to={defaultLanding} replace />;
     }
     
     // Prefetch em idle de alguns chunks de dashboard após autenticação

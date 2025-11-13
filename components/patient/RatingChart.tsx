@@ -8,8 +8,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  TooltipProps,
-} from 'recharts';
+} from '../charts/ChartsLazyOptimized';
+import type { TooltipProps } from 'recharts';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { SessionRating } from '../../services/ratingService';

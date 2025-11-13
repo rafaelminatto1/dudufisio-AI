@@ -10,6 +10,7 @@ import { PageSkeleton, DashboardSkeleton } from '../components/ui/PageSkeleton';
 import { LazyPages, LazyComponents, createLazyComponent } from '../lib/lazyLoading';
 import { DashboardToggle } from '../components/dashboard/DashboardToggle';
 import { ModernDashboard } from '../components/dashboard/ModernDashboard';
+import { getDefaultLandingRoute } from '../lib/navigationDefaults';
 
 // ✅ IMPORTANTE: Todos os lazy imports agora vêm de LazyPages/LazyComponents centralizados
 // Isso evita múltiplas instâncias do React e erros "Cannot read properties of null"
@@ -382,9 +383,8 @@ const SessionRoute: React.FC<{ mode?: 'view' | 'form' }> = ({ mode = 'view' }) =
 const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout }) => {
     // ✅ Estado para controlar dashboard moderno vs clássico
     const [isModernDashboard, setIsModernDashboard] = useState(false);
-    
-    
-    
+    const landingPath = getDefaultLandingRoute(user?.role as string | undefined);
+
     return (
         <ErrorBoundary>
             <Layout user={user} onLogout={onLogout}>
@@ -392,7 +392,7 @@ const CompleteDashboard: React.FC<CompleteDashboardProps> = ({ user, onLogout })
                 <DashboardToggle onChange={setIsModernDashboard} />
                 
                 <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/" element={<Navigate to={landingPath} replace />} />
                 <Route path="/dashboard" element={
                     <PageErrorBoundary pageName="Dashboard">
                         <Suspense fallback={<DashboardSkeleton />}>

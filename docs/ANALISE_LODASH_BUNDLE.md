@@ -19,6 +19,14 @@
 - O peso de `lodash` isolado é modesto, porém seu carregamento antecipado em vendor bundle aumenta o tempo de parse. Remover dependências indiretas via `recharts` pode permitir eliminação completa.
 - A ausência de bundles de página indica que os gráficos podem estar sempre presentes no bundle principal; reforça o benefício de migração para bibliotecas carregadas sob demanda.
 
+## Atualização pós-Fase 1 (2025-11-13)
+- Script executado novamente após apontar todos os componentes críticos para `ChartsLazyOptimized`.
+- Diferenças observadas:
+  - Total de bundles caiu para 72 (antes: 73) devido à consolidação dos imports.
+  - `vendor-lodash` permanece em ~45 KB, confirmando dependência indireta via Recharts.
+  - `feature-charts-*` segue acima de 400 KB, reforçando necessidade de migrar gráficos para bibliotecas alternativas.
+- Próximo passo: repetir a análise após cada migração de componente para validar redução efetiva de `vendor-lodash`.
+
 ## Próximas ações sugeridas
 1. Revisar `vite.config.*` para garantir `manualChunks` separados (`vendor-charts`, `vendor-utils`) e habilitar code splitting por rota.
 2. Mapear componentes que importam `recharts` e avaliar lazy loading por rota ou componente.

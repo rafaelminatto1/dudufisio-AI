@@ -5,6 +5,7 @@ import { createLazyComponent } from '../lib/lazyLoading';
 import { PageSkeleton } from '../components/ui/PageSkeleton';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { ThemeProvider } from '../src/contexts/ThemeContext';
+import { getDefaultLandingRoute } from '../lib/navigationDefaults';
 
 // ✅ Lazy load de todas as páginas principais
 const DashboardPage = createLazyComponent(() => import('./DashboardPageV2'));
@@ -88,13 +89,16 @@ interface MainDashboardProps {
 }
 
 const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
+  const userRole = user?.role as string | undefined;
+  const landingPath = getDefaultLandingRoute(userRole);
+
   return (
     <ResponsiveLayoutV2 user={user} onLogout={onLogout}>
       <ErrorBoundary>
         <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* Dashboard Principal */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<Navigate to={landingPath} replace />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             
             {/* Dashboards Específicos */}
@@ -196,7 +200,7 @@ const MainDashboard: React.FC<MainDashboardProps> = ({ user, onLogout }) => {
             <Route path="/design-system" element={<ThemeProvider><DesignSystemPage /></ThemeProvider>} />
             
             {/* 404 - Redireciona para dashboard */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<Navigate to={landingPath} replace />} />
           </Routes>
         </Suspense>
       </ErrorBoundary>

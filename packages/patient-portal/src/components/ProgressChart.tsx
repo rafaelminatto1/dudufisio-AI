@@ -3,7 +3,15 @@
  * MoocaFisio - App para Pacientes
  */
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from '../../../components/charts/ChartsLazyOptimized';
 import { ProgressDataPoint } from '../services/patientStatsService';
 
 interface ProgressChartProps {

@@ -10,11 +10,12 @@ Reduzir a dependência indireta de `lodash` eliminando o uso do `recharts` nas r
 - Reforço de lint para bloquear importações de `lodash`/`lodash/*`.
 
 ## Fase 1 — Ações rápidas
-1. **Substituir imports diretos pelo wrapper lazy**  
+1. **Substituir imports diretos pelo wrapper lazy** ✅ (2025-11-13)  
    - Atualizar `EdgeFunctionsPerformanceDashboard`, `RatingChart` e `ProgressChart` para consumir `@/components/charts/ChartsLazyOptimized`.  
    - Medir impacto (`npm run bundle:analyze:size`) e registrar em `docs/ANALISE_LODASH_BUNDLE.md`.
 2. **Code splitting por rota**  
-   - Garantir que o carregamento dos gráficos esteja atrasado via `React.lazy()` ou rotas dinâmicas (seção `vendor-charts` separada).
+   - Garantir que o carregamento dos gráficos esteja atrasado via `React.lazy()` ou rotas dinâmicas (seção `vendor-charts` separada).  
+   - Status: `ChartsLazyOptimized` agora encapsula todos os pontos críticos com `React.lazy`, mantendo `recharts` fora do bundle inicial.
 
 ## Fase 2 — Migração de componentes reutilizáveis
 1. **Migrar `RatingChart` para `@nivo/line`**  
