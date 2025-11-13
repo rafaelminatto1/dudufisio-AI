@@ -99,7 +99,8 @@ export const LazyComponents = {
   // Componentes de Analytics
   FinancialDashboard: createLazyComponent(() => import('../components/financial/FinancialDashboard')),
   CommunicationDashboard: createLazyComponent(() => import('../components/communication/CommunicationDashboard')),
-  ReportsDashboard: createLazyComponent(() => import('../components/reports/ReportsDashboard')),
+  // FIXME: Temporarily commented out - module resolution error on Vercel build
+  // ReportsDashboard: createLazyComponent(() => import('../components/reports/ReportsDashboard')),
   ConsolidatedReportsDashboard: createLazyComponent(() => import('../components/reports/ConsolidatedReportsDashboard')),
   
   // Componentes de Agenda

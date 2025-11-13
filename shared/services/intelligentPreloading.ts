@@ -36,7 +36,8 @@ const PRELOADABLE_COMPONENTS = {
   'pages/SettingsPage': () => import('../pages/SettingsPage'),
   'components/ui/OptimizedLoader': () => import('../components/ui/OptimizedLoader'),
   'components/ErrorBoundary': () => import('../components/ErrorBoundary'),
-  'components/reports/ReportsDashboard': () => import('../components/reports/ReportsDashboard'),
+  // FIXME: Temporarily commented out - module resolution error on Vercel build
+  // 'components/reports/ReportsDashboard': () => import('../components/reports/ReportsDashboard'),
   'components/financial/FinancialDashboard': () => import('../components/financial/FinancialDashboard'),
 };
 
@@ -48,7 +49,8 @@ const ROLE_PRELOAD_CONFIG: Record<Role, string[]> = {
     'pages/AdminDashboardPage',
     'pages/UserManagementPage',
     'pages/ReportsPage',
-    'components/reports/ReportsDashboard',
+    // FIXME: Temporarily commented out - module resolution error on Vercel build
+    // 'components/reports/ReportsDashboard',
     'components/financial/FinancialDashboard',
   ],
   [Role.Therapist]: [
@@ -294,7 +296,8 @@ export function setupIdlePreloading(delay: number = 3000): void {
       preloadComponents([
         'pages/SettingsPage',
         'pages/ReportsPage',
-        'components/reports/ReportsDashboard',
+        // FIXME: Temporarily commented out - module resolution error on Vercel build
+        // 'components/reports/ReportsDashboard',
       ]);
     }, delay);
   };
