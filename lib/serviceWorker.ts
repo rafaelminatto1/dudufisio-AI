@@ -113,7 +113,20 @@ export async function registerServiceWorker(
   try {
     logger.info('🔄 Registrando Service Worker...', { context: LOG_CONTEXT });
 
-    registration = await navigator.serviceWorker.register('/service-worker.js', {
+    const buildId =
+      __APP_BUILD_ID__ ||
+      import.meta.env.VITE_APP_VERSION ||
+      import.meta.env.VERCEL_GIT_COMMIT_SHA ||
+      import.meta.env.VERCEL_DEPLOYMENT_ID ||
+      'dev';
+    const serviceWorkerUrl = `/service-worker.js?v=${encodeURIComponent(buildId)}`;
+
+    logger.debug('Registrando Service Worker com buildId', {
+      context: LOG_CONTEXT,
+      data: { buildId, serviceWorkerUrl },
+    });
+
+    registration = await navigator.serviceWorker.register(serviceWorkerUrl, {
       scope: '/',
       updateViaCache: 'none', // Sempre verificar atualizações
     });

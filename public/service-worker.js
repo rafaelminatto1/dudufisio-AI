@@ -7,7 +7,7 @@
  * - Stale-While-Revalidate: UI components
  */
 
-const CACHE_VERSION = 'v1.1.0';
+const CACHE_VERSION = 'v1.1.1';
 const STATIC_CACHE = `fisioflow-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `fisioflow-dynamic-${CACHE_VERSION}`;
 const API_CACHE = `fisioflow-api-${CACHE_VERSION}`;

@@ -16,6 +16,14 @@ type PageChunkGroup = {
   matchers: string[];
 };
 
+const APP_BUILD_ID =
+  process.env.VITE_APP_VERSION ||
+  process.env.VERCEL_GIT_COMMIT_SHA ||
+  process.env.GITHUB_SHA ||
+  process.env.VERCEL_DEPLOYMENT_ID ||
+  process.env.BUILD_ID ||
+  Date.now().toString();
+
 const pageChunkDefinitions = [
   { name: 'page-ai-analytics', matchers: ['pages/AiAnalyticsPage'] },
   { name: 'page-clinical-analytics', matchers: ['pages/ClinicalAnalyticsPage'] },
@@ -94,7 +102,8 @@ export default defineConfig({
   define: {
     'process.env': 'import.meta.env',
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-    '__DEV__': process.env.NODE_ENV !== 'production'
+    '__DEV__': process.env.NODE_ENV !== 'production',
+    '__APP_BUILD_ID__': JSON.stringify(APP_BUILD_ID)
   },
   server: {
     port: 5173,
@@ -137,7 +146,7 @@ export default defineConfig({
       '@/types': path.resolve(__dirname, './types'),
       '@/lib': path.resolve(__dirname, './lib'),
       '@/design-system': path.resolve(__dirname, './design-system'),
-      'base64-js': path.resolve(__dirname, './lib/polyfills/base64js.ts')
+      'base64-js': path.resolve(__dirname, './node_modules/base64-js/index.js')
     }
   },
   optimizeDeps: {
@@ -226,10 +235,18 @@ export default defineConfig({
     // Configurar ordem de carregamento dos chunks - CRÍTICO para evitar erros
     modulePreload: {
       polyfill: true,
-      resolveDependencies: (filename, deps, { hostId, hostType }) => {
+      resolveDependencies: (filename, deps) => {
+        // ✅ Remover preloads pesados que podem ser carregados sob demanda
+        const filteredDeps = deps.filter(dep => {
+          if (dep.includes('feature-charts') || dep.includes('comp-charts')) {
+            return false;
+          }
+          return true;
+        });
+
         // ✅ OTIMIZADO: Garantir ordem de carregamento correta dos vendors
         // React PRIMEIRO, depois UI, depois resto
-        const sortedDeps = deps.sort((a, b) => {
+        const sortedDeps = filteredDeps.sort((a, b) => {
           // React core tem prioridade máxima
           if (a.includes('vendor-react')) return -1;
           if (b.includes('vendor-react')) return 1;

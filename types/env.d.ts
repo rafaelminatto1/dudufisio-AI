@@ -56,6 +56,9 @@ interface ImportMetaEnv {
   readonly VITE_APP_ENV: 'development' | 'production' | 'test';
   readonly VITE_APP_URL: string;
   readonly VITE_APP_VERSION?: string;
+  readonly VERCEL_GIT_COMMIT_SHA?: string;
+  readonly VERCEL_DEPLOYMENT_ID?: string;
+  readonly GITHUB_SHA?: string;
 
   // Development/Runtime
   readonly NODE_ENV: 'development' | 'production' | 'test';
@@ -72,6 +75,8 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+declare const __APP_BUILD_ID__: string;
 
 // Global process.env for Node.js environments
 declare namespace NodeJS {
