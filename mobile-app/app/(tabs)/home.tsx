@@ -1,12 +1,28 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef } from 'react';
 import { Colors } from '../../constants/Colors';
 import { useAuth } from '../../hooks/useAuth';
 import { useAppointments } from '../../hooks/useAppointments';
 import { AppointmentCard } from '../../components/AppointmentCard';
+import { registerPushTokenForUser } from '../../services/notification.service';
 
 export default function HomeScreen() {
   const { user } = useAuth();
   const { appointments } = useAppointments();
+  const hasRegisteredPush = useRef(false);
+
+  useEffect(() => {
+    if (!user?.id || hasRegisteredPush.current) {
+      return;
+    }
+
+    hasRegisteredPush.current = true;
+
+    registerPushTokenForUser(user.id).catch((error) => {
+      console.warn('[HomeScreen] Falha ao registrar push token', error);
+      hasRegisteredPush.current = false;
+    });
+  }, [user?.id]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

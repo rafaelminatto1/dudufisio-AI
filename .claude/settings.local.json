@@ -55,7 +55,9 @@
       "Bash(timeout /t 30 /nobreak)",
       "Bash(Get-Process)",
       "Bash(Where-Object {$_rocessName -match \"node|vite|eslint\"})",
-      "Bash(Select-String -Pattern \"MoocaFisio|Carregando\" -Context 0,0)"
+      "Bash(Select-String -Pattern \"MoocaFisio|Carregando\" -Context 0,0)",
+      "Bash(npx tsx:*)",
+      "mcp__supabase__execute_sql"
     ],
     "deny": [],
     "ask": []
@@ -67,7 +69,7 @@
   "mcpServers": {
     "supabase": {
       "transport": "http",
-      "url": "https://mcp.supabase.com/mcp"
+      "url": "https://mcp.supabase.com/mcp?project_ref=urfxniitfbbvsaskicfo"
     }
   }
 }

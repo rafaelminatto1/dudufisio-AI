@@ -30,43 +30,24 @@
       "type": "image/png"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshots/desktop-1.png",
-      "sizes": "1920x1080",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Dashboard Principal"
-    },
-    {
-      "src": "/screenshots/mobile-1.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Agenda Mobile"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Agendar Consulta",
       "short_name": "Agendar",
       "description": "Criar novo agendamento rapidamente",
-      "url": "/agenda?action=new",
-      "icons": [{ "src": "/icons/calendar.png", "sizes": "96x96" }]
+      "url": "/agenda?action=new"
     },
     {
       "name": "Ver Agenda",
       "short_name": "Agenda",
       "description": "Visualizar agenda do dia",
-      "url": "/agenda",
-      "icons": [{ "src": "/icons/agenda.png", "sizes": "96x96" }]
+      "url": "/agenda"
     },
     {
       "name": "Pacientes",
       "short_name": "Pacientes",
       "description": "Lista de pacientes",
-      "url": "/patients",
-      "icons": [{ "src": "/icons/users.png", "sizes": "96x96" }]
+      "url": "/patients"
     }
   ],
   "share_target": {

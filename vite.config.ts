@@ -760,6 +760,14 @@ export default defineConfig({
               id.includes('fflate') ||
               id.includes('zlib')) return true;
 
+          // 📊 Recharts e D3 dependem da ordem de avaliação dos módulos
+          // Marcar como side-effectful evita reordenação que causava ReferenceError (Nj)
+          if (id.includes('node_modules/recharts') ||
+              id.includes('node_modules/d3') ||
+              id.includes('/d3-')) {
+            return true;
+          }
+
           // 🔥 AGRESSIVO: Remover side effects de bibliotecas UI
           if (id.includes('@radix-ui/') ||
               id.includes('framer-motion/') ||

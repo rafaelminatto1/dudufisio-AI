@@ -10,13 +10,15 @@ import * as ReactRouterDOM from 'react-router-dom';
 import useMaterialCategories from '../hooks/useMaterialCategories';
 import PageLoader from '../components/ui/PageLoader';
 import PageHeader from '../components/PageHeader';
-import { MaterialCategory } from '../types';
+import type { MaterialCategory, Material } from '../types';
 
 interface AccordionItemProps {
     category: MaterialCategory;
     isOpen: boolean;
     onToggle: () => void;
 }
+
+type MaterialWithFile = Material & { fileUrl?: string; fileType?: string };
 
 const AccordionItem: React.FC<AccordionItemProps> = ({ category, isOpen, onToggle }) => (
     <div className="border border-neutral-border rounded-lg overflow-hidden bg-white shadow-card">
@@ -30,30 +32,82 @@ const AccordionItem: React.FC<AccordionItemProps> = ({ category, isOpen, onToggl
             <ChevronDown className={`transform transition-transform duration-300 text-teal-600 ${isOpen ? 'rotate-180' : ''}`} />
         </button>
         {isOpen && (
-            <ul
+            <>
+              {category.description && (
+                <div className="px-md py-sm bg-neutral-bgAlt text-sm text-neutral-textSecondary border-b border-neutral-border">
+                  {category.description}
+                </div>
+              )}
+              <ul
                 id={`category-panel-${category.id}`}
                 role="region"
                 className="p-md bg-white"
-            >
-                {category.materials.map(material => (
-                    <li key={material.id}>
+              >
+                {category.materials.map(material => {
+                    const typedMaterial = material as MaterialWithFile;
+                    const updatedAt = material.updatedAt
+                        ? new Date(material.updatedAt).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        })
+                        : null;
+
+                    return (
+                    <li key={material.id} className="mb-sm last:mb-0">
                         <ReactRouterDOM.Link
                             to={`/materials/${material.id}`}
-                            className="flex items-center p-md hover:bg-neutral-bgAlt rounded-md cursor-pointer transition-colors duration-200 w-full"
+                            className="flex flex-col gap-2 md:gap-3 md:flex-row md:items-center md:justify-between p-md hover:bg-neutral-bgAlt rounded-md cursor-pointer transition-colors duration-200 w-full"
                         >
-                            <CheckCircle2 className="text-teal-500 mr-3 flex-shrink-0" />
-                            <span className="text-neutral-text">{material.name}</span>
+                            <div className="flex items-start gap-3">
+                                <CheckCircle2 className="text-teal-500 mt-0.5 flex-shrink-0" />
+                                <div>
+                                    <span className="text-neutral-text font-medium block">{material.name}</span>
+                                    {material.description && (
+                                        <p className="text-sm text-neutral-textSecondary mt-1 line-clamp-2">
+                                            {material.description}
+                                        </p>
+                                    )}
+                                    <div className="mt-2 flex items-center gap-3 text-xs text-neutral-textTertiary">
+                                        <span className="uppercase tracking-wide font-semibold text-teal-600">
+                                            {material.type}
+                                        </span>
+                                        {updatedAt && (
+                                            <span>{`Atualizado em ${updatedAt}`}</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                {typedMaterial.fileType && (
+                                    <span className="text-xs uppercase tracking-wide text-neutral-textTertiary bg-neutral-bgAlt px-2 py-1 rounded-md">
+                                        {typedMaterial.fileType}
+                                    </span>
+                                )}
+                                {typedMaterial.fileUrl && (
+                                    <a
+                                        href={typedMaterial.fileUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm text-teal-600 hover:text-teal-700 font-medium"
+                                        onClick={(event) => event.stopPropagation()}
+                                    >
+                                        Baixar
+                                    </a>
+                                )}
+                            </div>
                         </ReactRouterDOM.Link>
                     </li>
-                ))}
-            </ul>
+                )})}
+              </ul>
+            </>
         )}
     </div>
 );
 
 
 const ClinicalLibraryPage: React.FC = () => {
-  const { categories, isLoading } = useMaterialCategories();
+  const { categories, isLoading, error } = useMaterialCategories();
   const [searchTerm, setSearchTerm] = useState('');
   const [openCategoryId, setOpenCategoryId] = useState<string | null>(null);
 
@@ -105,6 +159,17 @@ const ClinicalLibraryPage: React.FC = () => {
         title="Biblioteca de Materiais"
         subtitle="Seu centro de conhecimento clínico. Encontre protocolos, escalas e materiais para otimizar seus atendimentos."
       />
+
+      {error && (
+        <div className="mb-lg border border-warning bg-warning-50 text-warning-dark rounded-cardLarge p-md">
+          <p className="font-medium">
+            Não foi possível carregar os materiais diretamente do Supabase. Exibindo biblioteca offline.
+          </p>
+          <p className="text-sm mt-1 opacity-80">
+            Detalhes: {error}
+          </p>
+        </div>
+      )}
       
       <div className="mb-xl bg-white p-md rounded-cardLarge shadow-card">
         <div className="relative">

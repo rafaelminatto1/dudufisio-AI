@@ -207,6 +207,15 @@ npm run supabase:types
 # Executar queries de validação
 ```
 
+## ⚙️ NOTIFICATION WORKERS
+- Garantir que o wrapper pgmq está habilitado antes do deploy.
+- Utilizar `deploy-notification-worker.ps1` para publicar `process-notification-tasks`.
+- Após o deploy, rodar `SELECT * FROM public.read_notification_tasks();` para validar acesso.
+- Smoke test:
+  1. `SELECT public.enqueue_notification_task('<user-id>', jsonb_build_object('title','Ping','body','Teste'));`
+  2. `curl https://<project>.functions.supabase.co/process-notification-tasks -H "Authorization: Bearer <service-key>" -d '{}'`.
+  3. Conferir `notification_logs` e se a fila ficou vazia (`SELECT public.complete_notification_task(<message_id>)` não deve retornar pendências).
+
 ---
 
 ## 📊 MONITORAMENTO

@@ -5,7 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
  * Testa as funcionalidades avançadas do módulo de evolução
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: './tests/e2e',
+  testMatch: ['**/*.spec.ts'],
   
   // Timeout para cada teste
   timeout: 30 * 1000,

@@ -68,6 +68,69 @@ DATABASE_URL=postgresql://postgres.urfxniitfbbvsaskicfo:[PASSWORD]@aws-0-sa-east
 
 > **Nota**: Substitua `[PASSWORD]` pela senha real e verifique a região correta no dashboard
 
+### 7. 🔐 Segredos para WhatsApp + Firebase (sem SMS)
+
+- [ ] Regra permanente: **não habilitar canal SMS**. Todos os envs devem operar apenas com Push, WhatsApp e Email.
+- [ ] Via CLI, aplicar credenciais reais (exemplo abaixo considera projeto `urfxniitfbbvsaskicfo`):
+
+```bash
+supabase secrets set \
+  WHATSAPP_API_URL="https://graph.facebook.com/v20.0" \
+  WHATSAPP_PHONE_NUMBER_ID="XXXXXX" \
+  WHATSAPP_ACCESS_TOKEN="EAA..." \
+  FIREBASE_SERVICE_ACCOUNT="$(cat firebase-service-account.json)" \
+  FIREBASE_PROJECT_ID="seu-projeto-firebase" \
+  --project-ref urfxniitfbbvsaskicfo
+```
+
+- [ ] Confirmar no Dashboard → Project Settings → API → Secrets que `send-whatsapp` não está mais em modo mock (logs devem mostrar `sent > 0`).
+- [ ] Registrar o comando utilizado neste checklist para facilitar futuros replays.
+
+### 8. ⏱️ Cron + Settings remotos
+
+- [ ] Validar se o job do pg_cron está ativo:
+
+```sql
+SELECT * FROM cron.job WHERE jobname = 'process_appointment_reminders_every_5m';
+```
+
+- [ ] Confirmar que `app.settings.functions_base_url` e `app.supabase_service_role_key` apontam para o ambiente correto:
+
+```sql
+SELECT current_setting('app.settings.functions_base_url', true);
+SELECT current_setting('app.supabase_service_role_key', true);
+```
+
+- [ ] Ajustar se necessário:
+
+```sql
+ALTER DATABASE postgres SET app.settings.functions_base_url = 'https://<novo-ref>.functions.supabase.co';
+ALTER DATABASE postgres SET app.supabase_service_role_key = '<service-role-key-do-ambiente>';
+```
+
+### 9. 💳 Stripe, Resend e demais integrações
+
+- [ ] Verificar se as variáveis `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY` e `WHATSAPP_*` estão cadastradas no Supabase e Vercel.
+- [ ] Após atualizar credenciais, executar:
+
+```bash
+supabase db push --project-ref urfxniitfbbvsaskicfo
+```
+
+- [ ] Testar o wrapper chamando o serviço diretamente:
+
+```ts
+await fetchStripeCustomerPayments({ patientId: '<uuid>' });
+```
+
+- [ ] Conferir resultados na view `vw_stripe_customer_payments`:
+
+```sql
+SELECT * FROM vw_stripe_customer_payments LIMIT 20;
+```
+
+- [ ] Documentar eventuais ajustes na migration se o schema do wrapper não for `stripe`.
+
 ## 🔧 Comandos Úteis
 
 ```bash

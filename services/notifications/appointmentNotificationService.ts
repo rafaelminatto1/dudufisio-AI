@@ -12,6 +12,7 @@
 
 import { supabase } from '../../lib/supabaseClient';
 import type { Appointment } from '../../types';
+import { sendOmniNotification } from './omniNotificationService';
 
 export interface NotificationSchedule {
   appointmentId: string;
@@ -52,26 +53,42 @@ export class AppointmentNotificationService {
         minute: '2-digit'
       });
 
-      const { error } = await supabase.functions.invoke('send-push-notification', {
-        body: {
+      const omniResult = await sendOmniNotification({
+        target: {
           userId: patient.user_id,
-          title: '✅ Consulta Confirmada!',
-          body: `Sua consulta está agendada para ${formattedDate} às ${formattedTime}${appointment.therapistName ? ` com ${appointment.therapistName}` : ''}`,
-          url: `/agenda?highlight=${appointment.id}`,
-          icon: '/logo.png',
-          data: {
-            type: 'appointment_confirmation',
-            appointmentId: appointment.id,
-            patientId: appointment.patientId,
-            therapistId: appointment.therapistId,
-            startTime: appointment.startTime.toISOString(),
-            createdAt: new Date().toISOString()
-          }
-        }
+          patientId: appointment.patientId,
+        },
+        title: '✅ Consulta Confirmada!',
+        body: `Sua consulta está agendada para ${formattedDate} às ${formattedTime}${appointment.therapistName ? ` com ${appointment.therapistName}` : ''}`,
+        url: `/agenda?highlight=${appointment.id}`,
+        icon: '/logo.png',
+        data: {
+          type: 'appointment_confirmation',
+          appointmentId: appointment.id,
+          patientId: appointment.patientId,
+          therapistId: appointment.therapistId,
+          startTime: appointment.startTime.toISOString(),
+          createdAt: new Date().toISOString()
+        },
+        sms: {
+          message: `MoocaFisio: sua consulta está confirmada para ${formattedDate} às ${formattedTime}${appointment.therapistName ? ` com ${appointment.therapistName}` : ''}.`,
+        },
+        whatsapp: {
+          message: `Olá${appointment.patientName ? ` ${appointment.patientName}` : ''}! Sua consulta está confirmada para ${formattedDate} às ${formattedTime}${appointment.therapistName ? ` com ${appointment.therapistName}` : ''}. Qualquer mudança, é só responder por aqui.`,
+        },
+        channels: {
+          push: true,
+          sms: true,
+          whatsapp: true,
+        },
       });
 
-      if (error) {
-        console.error('[AppointmentNotification] Error sending confirmation:', error);
+      const pushSuccess = omniResult.push?.success ?? false;
+      const fallbackSuccess =
+        (omniResult.sms?.success ?? false) || (omniResult.whatsapp?.success ?? false);
+
+      if (!pushSuccess && !fallbackSuccess) {
+        console.error('[AppointmentNotification] Falha ao enviar confirmação em todos os canais', omniResult);
         return false;
       }
 

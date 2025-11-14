@@ -1288,6 +1288,8 @@ export interface Material {
   // Campos avançados
   content?: string; // HTML do Tiptap
   tags?: string[];
+  fileUrl?: string;
+  fileType?: string;
   linkedMaterials?: string[]; // IDs de materiais relacionados
   mentions?: MaterialMention[];
   mediaAttachments?: MediaAttachment[];
@@ -1306,6 +1308,9 @@ export interface MaterialCategory {
   id: string;
   name: string;
   materials: Material[];
+  description?: string | null;
+  color?: string | null;
+  icon?: string | null;
 }
 
 export interface MaterialMention {

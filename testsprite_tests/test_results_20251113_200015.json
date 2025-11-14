@@ -1,0 +1,140 @@
+{
+  "timestamp": "2025-11-13T20:00:11.121597",
+  "total_tests": 10,
+  "passed": 0,
+  "failed": 10,
+  "errors": [
+    {
+      "test_id": "TC001",
+      "error": "    assert False, \"Response is not valid JSON\"\nAssertionError: Response is not valid JSON"
+    },
+    {
+      "test_id": "TC002",
+      "error": "    assert response.status_code == 201, f\"Expected status code 201, got {response.status_code}\"\nAssertionError: Expected status code 201, got 404"
+    },
+    {
+      "test_id": "TC003",
+      "error": "    assert create_response.status_code == 201, f\"Expected status code 201 on patient creation, got {create_response.status_code}\"\nAssertionError: Expected status code 201 on patient creation, got 404"
+    },
+    {
+      "test_id": "TC004",
+      "error": "    assert response.status_code == 200, f\"Expected status code 200, got {response.status_code}\"\nAssertionError: Expected status code 200, got 404"
+    },
+    {
+      "test_id": "TC005",
+      "error": "    assert patient_response.status_code == 201, f\"Failed to create patient, status code: {patient_response.status_code}\"\nAssertionError: Failed to create patient, status code: 404"
+    },
+    {
+      "test_id": "TC006",
+      "error": "    assert response.status_code == 200, f\"Expected status code 200 but got {response.status_code}\"\nAssertionError: Expected status code 200 but got 404"
+    },
+    {
+      "test_id": "TC007",
+      "error": "    assert create_patient_resp.status_code == 201, f\"Failed to create patient: {create_patient_resp.text}\"\nAssertionError: Failed to create patient: "
+    },
+    {
+      "test_id": "TC008",
+      "error": "    assert patient_resp.status_code == 201, f\"Failed to create patient, status: {patient_resp.status_code}, response: {patient_resp.text}\"\nAssertionError: Failed to create patient, status: 404, response: "
+    },
+    {
+      "test_id": "TC009",
+      "error": "    assert response.status_code == 200, f\"Expected status code 200 but got {response.status_code}\"\nAssertionError: Expected status code 200 but got 404"
+    },
+    {
+      "test_id": "TC010",
+      "error": "    assert response.status_code == 200, f\"Expected status code 200, got {response.status_code}\"\nAssertionError: Expected status code 200, got 404"
+    }
+  ],
+  "test_details": [
+    {
+      "test_id": "TC001",
+      "test_file": "TC001_get_all_patients_endpoint_should_return_list_of_patients.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\requests\\models.py\", line 976, in json\n    return complexjson.loads(self.text, **kwargs)\n           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\rafal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\json\\__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ~~~~~~~~~~~~~~~~~~~~~~~^^^\n  File \"C:\\Users\\rafal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\json\\decoder.py\", line 345, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\rafal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\json\\decoder.py\", line 363, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC001_get_all_patients_endpoint_should_return_list_of_patients.py\", line 20, in test_get_all_patients_returns_list_with_correct_structure\n    patients = response.json()\n  File \"C:\\Users\\rafal\\AppData\\Local\\Programs\\Python\\Python314\\Lib\\site-packages\\requests\\models.py\", line 980, in json\n    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\nrequests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC001_get_all_patients_endpoint_should_return_list_of_patients.py\", line 45, in <module>\n    test_get_all_patients_returns_list_with_correct_structure()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC001_get_all_patients_endpoint_should_return_list_of_patients.py\", line 22, in test_get_all_patients_returns_list_with_correct_structure\n    assert False, \"Response is not valid JSON\"\n           ^^^^^\nAssertionError: Response is not valid JSON\n",
+      "error_summary": "    assert False, \"Response is not valid JSON\"\nAssertionError: Response is not valid JSON"
+    },
+    {
+      "test_id": "TC002",
+      "test_file": "TC002_create_new_patient_endpoint_should_create_patient_successfully.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC002_create_new_patient_endpoint_should_create_patient_successfully.py\", line 85, in <module>\n    test_create_new_patient_should_create_successfully()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC002_create_new_patient_endpoint_should_create_patient_successfully.py\", line 36, in test_create_new_patient_should_create_successfully\n    assert response.status_code == 201, f\"Expected status code 201, got {response.status_code}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Expected status code 201, got 404\n",
+      "error_summary": "    assert response.status_code == 201, f\"Expected status code 201, got {response.status_code}\"\nAssertionError: Expected status code 201, got 404"
+    },
+    {
+      "test_id": "TC003",
+      "test_file": "TC003_get_patient_by_id_endpoint_should_return_patient_details.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC003_get_patient_by_id_endpoint_should_return_patient_details.py\", line 77, in <module>\n    test_get_patient_by_id_returns_patient_details()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC003_get_patient_by_id_endpoint_should_return_patient_details.py\", line 30, in test_get_patient_by_id_returns_patient_details\n    assert create_response.status_code == 201, f\"Expected status code 201 on patient creation, got {create_response.status_code}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Expected status code 201 on patient creation, got 404\n",
+      "error_summary": "    assert create_response.status_code == 201, f\"Expected status code 201 on patient creation, got {create_response.status_code}\"\nAssertionError: Expected status code 201 on patient creation, got 404"
+    },
+    {
+      "test_id": "TC004",
+      "test_file": "TC004_get_appointments_endpoint_should_return_filtered_appointments.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC004_get_appointments_endpoint_should_return_filtered_appointments.py\", line 33, in <module>\n    test_get_appointments_filtered_by_date()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC004_get_appointments_endpoint_should_return_filtered_appointments.py\", line 18, in test_get_appointments_filtered_by_date\n    assert response.status_code == 200, f\"Expected status code 200, got {response.status_code}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Expected status code 200, got 404\n",
+      "error_summary": "    assert response.status_code == 200, f\"Expected status code 200, got {response.status_code}\"\nAssertionError: Expected status code 200, got 404"
+    },
+    {
+      "test_id": "TC005",
+      "test_file": "TC005_create_new_appointment_endpoint_should_create_appointment_successfully.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC005_create_new_appointment_endpoint_should_create_appointment_successfully.py\", line 112, in <module>\n    test_create_new_appointment()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC005_create_new_appointment_endpoint_should_create_appointment_successfully.py\", line 35, in test_create_new_appointment\n    assert patient_response.status_code == 201, f\"Failed to create patient, status code: {patient_response.status_code}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Failed to create patient, status code: 404\n",
+      "error_summary": "    assert patient_response.status_code == 201, f\"Failed to create patient, status code: {patient_response.status_code}\"\nAssertionError: Failed to create patient, status code: 404"
+    },
+    {
+      "test_id": "TC006",
+      "test_file": "TC006_get_medical_records_endpoint_should_return_list_of_records.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC006_get_medical_records_endpoint_should_return_list_of_records.py\", line 31, in <module>\n    test_get_medical_records_returns_list()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC006_get_medical_records_endpoint_should_return_list_of_records.py\", line 17, in test_get_medical_records_returns_list\n    assert response.status_code == 200, f\"Expected status code 200 but got {response.status_code}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Expected status code 200 but got 404\n",
+      "error_summary": "    assert response.status_code == 200, f\"Expected status code 200 but got {response.status_code}\"\nAssertionError: Expected status code 200 but got 404"
+    },
+    {
+      "test_id": "TC007",
+      "test_file": "TC007_generate_clinical_report_endpoint_should_return_generated_report.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC007_generate_clinical_report_endpoint_should_return_generated_report.py\", line 89, in <module>\n    test_generate_clinical_report_should_return_generated_report()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC007_generate_clinical_report_endpoint_should_return_generated_report.py\", line 30, in test_generate_clinical_report_should_return_generated_report\n    assert create_patient_resp.status_code == 201, f\"Failed to create patient: {create_patient_resp.text}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Failed to create patient: \n",
+      "error_summary": "    assert create_patient_resp.status_code == 201, f\"Failed to create patient: {create_patient_resp.text}\"\nAssertionError: Failed to create patient: "
+    },
+    {
+      "test_id": "TC008",
+      "test_file": "TC008_add_pain_point_endpoint_should_add_pain_point_successfully.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC008_add_pain_point_endpoint_should_add_pain_point_successfully.py\", line 59, in <module>\n    test_add_pain_point_should_add_pain_point_successfully()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC008_add_pain_point_endpoint_should_add_pain_point_successfully.py\", line 27, in test_add_pain_point_should_add_pain_point_successfully\n    assert patient_resp.status_code == 201, f\"Failed to create patient, status: {patient_resp.status_code}, response: {patient_resp.text}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Failed to create patient, status: 404, response: \n",
+      "error_summary": "    assert patient_resp.status_code == 201, f\"Failed to create patient, status: {patient_resp.status_code}, response: {patient_resp.text}\"\nAssertionError: Failed to create patient, status: 404, response: "
+    },
+    {
+      "test_id": "TC009",
+      "test_file": "TC009_get_exercises_endpoint_should_return_filtered_exercises.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC009_get_exercises_endpoint_should_return_filtered_exercises.py\", line 44, in <module>\n    test_get_exercises_filtered()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC009_get_exercises_endpoint_should_return_filtered_exercises.py\", line 25, in test_get_exercises_filtered\n    assert response.status_code == 200, f\"Expected status code 200 but got {response.status_code}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Expected status code 200 but got 404\n",
+      "error_summary": "    assert response.status_code == 200, f\"Expected status code 200 but got {response.status_code}\"\nAssertionError: Expected status code 200 but got 404"
+    },
+    {
+      "test_id": "TC010",
+      "test_file": "TC010_user_login_endpoint_should_authenticate_user_successfully.py",
+      "status": "FAILED",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC010_user_login_endpoint_should_authenticate_user_successfully.py\", line 43, in <module>\n    test_user_login_endpoint_should_authenticate_user_successfully()\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI\\testsprite_tests\\TC010_user_login_endpoint_should_authenticate_user_successfully.py\", line 23, in test_user_login_endpoint_should_authenticate_user_successfully\n    assert response.status_code == 200, f\"Expected status code 200, got {response.status_code}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Expected status code 200, got 404\n",
+      "error_summary": "    assert response.status_code == 200, f\"Expected status code 200, got {response.status_code}\"\nAssertionError: Expected status code 200, got 404"
+    }
+  ]
+}
