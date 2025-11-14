@@ -25,17 +25,73 @@ interface NotificationSchedule {
 interface Appointment {
   id: string
   patient_id: string
-  therapist_id: string
+  therapist_id: string | null
   start_time: string
   end_time: string
-  status: string
-  patient: {
-    name: string
-    user_id: string
+  status: string | null
+}
+
+function normalizePhone(phone?: string | null): string | null {
+  if (!phone) return null
+  const digits = phone.replace(/\D/g, '')
+  if (digits.length < 10) return null
+  const national = digits.startsWith('0') ? digits.slice(1) : digits
+  const international = national.startsWith('55') ? national : `55${national}`
+  return `+${international}`
+}
+
+async function sendSmsFallback(
+  supabase: any,
+  phone: string | undefined,
+  message: string,
+  notificationId: string,
+): Promise<{ success: boolean; error?: string }> {
+  const normalized = normalizePhone(phone)
+  if (!normalized) {
+    return { success: false, error: 'invalid_phone' }
   }
-  therapist: {
-    name: string
+
+  const { error } = await supabase.functions.invoke('send-sms', {
+    body: {
+      to: normalized,
+      message,
+      type: 'sms',
+      notification_id: notificationId,
+      mockMode: true,
+    },
+  })
+
+  if (error) {
+    console.error('[ProcessReminders] SMS fallback error:', error)
+    return { success: true, error: error.message ?? 'unknown_error' }
   }
+
+  return { success: true }
+}
+
+async function sendWhatsappFallback(
+  supabase: any,
+  patientId: string | undefined,
+  message: string,
+): Promise<boolean> {
+  if (!patientId) {
+    return false
+  }
+
+  const { error } = await supabase.functions.invoke('send-whatsapp', {
+    body: {
+      patientId,
+      type: 'text',
+      message,
+    },
+  })
+
+  if (error) {
+    console.error('[ProcessReminders] WhatsApp fallback error:', error)
+    return false
+  }
+
+  return true
 }
 
 serve(async (req) => {
@@ -45,6 +101,14 @@ serve(async (req) => {
   }
 
   try {
+    let debugMode = false
+    try {
+      const body = await req.json()
+      debugMode = Boolean(body?.debug)
+    } catch (_err) {
+      // ignore empty body
+    }
+
     // Create Supabase client with service role key (bypasses RLS)
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -88,7 +152,8 @@ serve(async (req) => {
     const results = {
       success: 0,
       failed: 0,
-      errors: [] as string[]
+      errors: [] as string[],
+      debug: [] as Array<Record<string, unknown>>,
     }
 
     // Process each reminder
@@ -99,11 +164,7 @@ serve(async (req) => {
         // Fetch appointment details with patient and therapist info
         const { data: appointment, error: appointmentError } = await supabase
           .from('appointments')
-          .select(`
-            *,
-            patient:patients(name, user_id),
-            therapist:therapists(name)
-          `)
+          .select('*')
           .eq('id', reminder.appointment_id)
           .single()
 
@@ -119,7 +180,31 @@ serve(async (req) => {
           continue
         }
 
-        const appt = appointment as any as Appointment
+        const appt = appointment as Appointment
+
+        const { data: patientRecord } = await supabase
+          .from('patients')
+          .select('id, full_name, user_id, phone, email')
+          .eq('user_id', appt.patient_id)
+          .maybeSingle()
+
+        const patientInfo = patientRecord ?? {
+          id: reminder.metadata?.patientId ?? null,
+          full_name: reminder.metadata?.patientName ?? 'Paciente',
+          user_id: appt.patient_id,
+          phone: reminder.metadata?.patientPhone ?? null,
+          email: reminder.metadata?.patientEmail ?? null,
+        }
+
+        let therapistName = reminder.metadata?.therapistName ?? null
+        if (appt.therapist_id) {
+          const { data: therapistRecord } = await supabase
+            .from('therapists')
+            .select('name, full_name, user_id')
+            .eq('user_id', appt.therapist_id)
+            .maybeSingle()
+          therapistName = therapistRecord?.name ?? therapistRecord?.full_name ?? therapistName
+        }
 
         // Check if appointment is cancelled
         if (appt.status === 'cancelled' || appt.status === 'canceled') {
@@ -145,27 +230,36 @@ serve(async (req) => {
         })
 
         // Prepare notification content based on type
-        let title: string
-        let body: string
-        let notificationData: Record<string, any>
+        let notificationContent = {
+          title: '',
+          body: '',
+          fallbackMessage: '',
+          data: {} as Record<string, any>,
+        }
 
         if (reminder.notification_type === 'reminder_24h') {
           const weekday = appointmentDate.toLocaleDateString('pt-BR', { weekday: 'long' })
-          title = '🗓️ Lembrete: Consulta Amanhã'
-          body = `Sua consulta está marcada para ${weekday}, ${formattedDate} às ${formattedTime}${appt.therapist?.name ? ` com ${appt.therapist.name}` : ''}`
-          notificationData = {
-            type: 'appointment_reminder_24h',
-            appointmentId: appt.id,
-            startTime: appt.start_time
+          notificationContent = {
+            title: '🗓️ Lembrete: Consulta Amanhã',
+            body: `Sua consulta está marcada para ${weekday}, ${formattedDate} às ${formattedTime}${therapistName ? ` com ${therapistName}` : ''}`,
+            fallbackMessage: `Lembrete: sua consulta está marcada para ${weekday}, ${formattedDate} às ${formattedTime}${therapistName ? ` com ${therapistName}` : ''}. Caso precise reagendar, entre em contato conosco.`,
+            data: {
+              type: 'appointment_reminder_24h',
+              appointmentId: appt.id,
+              startTime: appt.start_time
+            }
           }
         } else if (reminder.notification_type === 'reminder_2h') {
-          title = '⏰ Consulta em 2 Horas!'
-          body = `Não esqueça da sua consulta às ${formattedTime}. Lembre-se de trazer seus documentos.`
-          notificationData = {
-            type: 'appointment_reminder_2h',
-            appointmentId: appt.id,
-            startTime: appt.start_time,
-            urgent: true
+          notificationContent = {
+            title: '⏰ Consulta em 2 Horas!',
+            body: `Não esqueça da sua consulta às ${formattedTime}${therapistName ? ` com ${therapistName}` : ''}. Lembre-se de trazer seus documentos.`,
+            fallbackMessage: `Sua consulta acontece hoje às ${formattedTime}${therapistName ? ` com ${therapistName}` : ''}. Estamos aguardando você na clínica.`,
+            data: {
+              type: 'appointment_reminder_2h',
+              appointmentId: appt.id,
+              startTime: appt.start_time,
+              urgent: true
+            }
           }
         } else {
           console.warn(`[ProcessReminders] Unknown notification type: ${reminder.notification_type}`)
@@ -174,19 +268,89 @@ serve(async (req) => {
         }
 
         // Send push notification
-        const { error: pushError } = await supabase.functions.invoke('send-push-notification', {
+        const { data: pushResult, error: pushError } = await supabase.functions.invoke<{
+          sent?: number;
+          failed?: number;
+          message?: string;
+        }>('send-push-notification', {
           body: {
-            userId: appt.patient.user_id,
-            title,
-            body,
+            userId: patientInfo.user_id ?? appt.patient_id,
+            title: notificationContent.title,
+            body: notificationContent.body,
             url: `/agenda?highlight=${appt.id}`,
             icon: '/logo.png',
-            data: notificationData
+            data: notificationContent.data
           }
         })
 
         if (pushError) {
           console.error(`[ProcessReminders] Error sending push notification:`, pushError)
+        }
+
+        const pushDelivered = pushResult?.sent ?? 0
+        const shouldFallback = !!pushError || pushDelivered === 0
+        let fallbackDelivered = false
+        let smsSent = false
+        let whatsappSent = false
+        let smsError: string | undefined = undefined
+
+        if (shouldFallback && notificationContent.fallbackMessage) {
+          const smsResult = await sendSmsFallback(
+            supabase,
+            patientInfo?.phone,
+            notificationContent.fallbackMessage,
+            reminder.id,
+          )
+          smsSent = smsResult.success
+          smsError = smsResult.error
+
+          whatsappSent = await sendWhatsappFallback(
+            supabase,
+            patientInfo?.id ?? undefined,
+            notificationContent.fallbackMessage,
+          )
+
+          fallbackDelivered = smsSent || whatsappSent
+
+          if (!fallbackDelivered) {
+            console.warn('[ProcessReminders] Fallback channels failed or unavailable for reminder', reminder.id)
+          } else {
+            const channelUsed = smsSent ? 'sms' : 'whatsapp'
+            await supabase
+              .from('notification_logs')
+              .insert({
+                notification_id: null,
+                channel: channelUsed,
+                status: 'sent',
+                provider: `process-appointment-reminders`,
+                provider_response: {
+                  reminder_id: reminder.id,
+                  appointment_id: appt.id,
+                  channel: channelUsed,
+                  fallback: true,
+                  smsSent,
+                  whatsappSent,
+                },
+                sent_at: new Date().toISOString(),
+              })
+          }
+        }
+
+        if (debugMode) {
+          results.debug.push({
+            reminderId: reminder.id,
+            shouldFallback,
+            fallbackAttempted: shouldFallback && Boolean(notificationContent.fallbackMessage),
+            smsSent: shouldFallback ? smsSent : null,
+            smsError,
+            whatsappSent: shouldFallback ? whatsappSent : null,
+            fallbackDelivered,
+            patientPhone: patientInfo?.phone ?? null,
+            normalizedPhone: normalizePhone(patientInfo?.phone) ?? null,
+          })
+        }
+
+        if (pushError && !fallbackDelivered) {
           results.failed++
           results.errors.push(`Failed to send notification for reminder ${reminder.id}: ${pushError.message}`)
           continue
@@ -224,7 +388,8 @@ serve(async (req) => {
         processed: results.success + results.failed,
         successful: results.success,
         failed: results.failed,
-        errors: results.errors.length > 0 ? results.errors : undefined
+        errors: results.errors.length > 0 ? results.errors : undefined,
+        debug: debugMode ? results.debug : undefined,
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

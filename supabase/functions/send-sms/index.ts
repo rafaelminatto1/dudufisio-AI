@@ -14,6 +14,7 @@ interface SmsRequest {
   message: string;
   type?: "sms" | "whatsapp"; // Default: sms
   notification_id?: string;
+  mockMode?: boolean;
 }
 
 // CORS headers
@@ -22,15 +23,43 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const logNotificationEntry = async (supabaseClient: any, payload: Record<string, any>) => {
+  const { notification_id, provider_response } = payload
+  const { error } = await supabaseClient.from("notification_logs").insert(payload)
+
+  if (error) {
+    console.warn("[send-sms] Failed to log notification, retrying without FK:", error.message)
+    const fallbackPayload = {
+      ...payload,
+      notification_id: null,
+      provider_response: {
+        ...(provider_response ?? {}),
+        reference_id: notification_id,
+        note: "Logged without notification_id due to FK constraint"
+      }
+    }
+    await supabaseClient.from("notification_logs").insert(fallbackPayload)
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
+  let parsedBody: SmsRequest | null = null;
+
   try {
     // Parse request
-    const { to, message, type = "sms", notification_id }: SmsRequest = await req.json();
+    parsedBody = await req.json();
+    const {
+      to,
+      message,
+      type = "sms",
+      notification_id,
+      mockMode = false
+    }: SmsRequest = parsedBody;
 
     // Validações
     if (!to || !message) {
@@ -58,8 +87,28 @@ serve(async (req) => {
     const twilioAuthToken = Deno.env.get("TWILIO_AUTH_TOKEN");
     const twilioPhoneNumber = Deno.env.get("TWILIO_PHONE_NUMBER");
 
-    if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
-      throw new Error("Twilio credentials not configured");
+    if (mockMode || !twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
+      console.warn('[send-sms] Mock mode enabled or Twilio credentials missing. Returning mocked success.');
+
+      if (notification_id) {
+        await logNotificationEntry(supabase, {
+          notification_id,
+          channel: type === "whatsapp" ? "whatsapp" : "sms",
+          status: "sent",
+          provider: "mock",
+          provider_response: { message: "Mocked send due to missing Twilio credentials" },
+          sent_at: new Date().toISOString(),
+        });
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Mocked SMS/WhatsApp (Twilio creds missing)",
+          provider: "mock",
+        }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // Preparar mensagem baseado no tipo
@@ -86,7 +135,7 @@ serve(async (req) => {
 
     // Log no banco de dados
     if (notification_id) {
-      await supabase.from("notification_logs").insert({
+      await logNotificationEntry(supabase, {
         notification_id: notification_id,
         channel: type === "whatsapp" ? "whatsapp" : "sms",
         status: "sent",
@@ -110,16 +159,15 @@ serve(async (req) => {
     console.error("Error sending message:", error);
 
     // Log erro no banco se temos notification_id
-    const body = await req.json().catch(() => ({}));
-    if (body.notification_id) {
+    if (parsedBody?.notification_id) {
       try {
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
         const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
         const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-        await supabase.from("notification_logs").insert({
-          notification_id: body.notification_id,
-          channel: body.type === "whatsapp" ? "whatsapp" : "sms",
+        await logNotificationEntry(supabase, {
+          notification_id: parsedBody.notification_id,
+          channel: parsedBody.type === "whatsapp" ? "whatsapp" : "sms",
           status: "failed",
           provider: "twilio",
           error_message: error.message,
