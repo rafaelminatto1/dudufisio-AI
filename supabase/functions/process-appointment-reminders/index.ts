@@ -40,58 +40,34 @@ function normalizePhone(phone?: string | null): string | null {
   return `+${international}`
 }
 
-async function sendSmsFallback(
-  supabase: any,
-  phone: string | undefined,
-  message: string,
-  notificationId: string,
-): Promise<{ success: boolean; error?: string }> {
-  const normalized = normalizePhone(phone)
-  if (!normalized) {
-    return { success: false, error: 'invalid_phone' }
-  }
-
-  const { error } = await supabase.functions.invoke('send-sms', {
-    body: {
-      to: normalized,
-      message,
-      type: 'sms',
-      notification_id: notificationId,
-      mockMode: true,
-    },
-  })
-
-  if (error) {
-    console.error('[ProcessReminders] SMS fallback error:', error)
-    return { success: true, error: error.message ?? 'unknown_error' }
-  }
-
-  return { success: true }
-}
-
 async function sendWhatsappFallback(
   supabase: any,
-  patientId: string | undefined,
+  options: { patientId?: string; phone?: string | null },
   message: string,
-): Promise<boolean> {
-  if (!patientId) {
-    return false
+): Promise<{ success: boolean; error?: string }> {
+  const payload: Record<string, any> = {
+    type: 'text',
+    message,
+  }
+
+  if (options.phone) {
+    payload.phoneNumber = options.phone
+  } else if (options.patientId) {
+    payload.patientId = options.patientId
+  } else {
+    return { success: false, error: 'missing_recipient' }
   }
 
   const { error } = await supabase.functions.invoke('send-whatsapp', {
-    body: {
-      patientId,
-      type: 'text',
-      message,
-    },
+    body: payload,
   })
 
   if (error) {
     console.error('[ProcessReminders] WhatsApp fallback error:', error)
-    return false
+    return { success: false, error: error.message }
   }
 
-  return true
+  return { success: true }
 }
 
 serve(async (req) => {
@@ -290,49 +266,49 @@ serve(async (req) => {
         const pushDelivered = pushResult?.sent ?? 0
         const shouldFallback = !!pushError || pushDelivered === 0
         let fallbackDelivered = false
-        let smsSent = false
         let whatsappSent = false
-        let smsError: string | undefined = undefined
+        let whatsappError: string | undefined = undefined
 
         if (shouldFallback && notificationContent.fallbackMessage) {
-          const smsResult = await sendSmsFallback(
+          const normalizedPhone = normalizePhone(patientInfo?.phone)
+          const whatsappResult = await sendWhatsappFallback(
             supabase,
-            patientInfo?.phone,
-            notificationContent.fallbackMessage,
-            reminder.id,
-          )
-          smsSent = smsResult.success
-          smsError = smsResult.error
-
-          whatsappSent = await sendWhatsappFallback(
-            supabase,
-            patientInfo?.id ?? undefined,
+            {
+              patientId: patientInfo?.id ?? undefined,
+              phone: normalizedPhone,
+            },
             notificationContent.fallbackMessage,
           )
+          whatsappSent = whatsappResult.success
+          whatsappError = whatsappResult.error
 
-          fallbackDelivered = smsSent || whatsappSent
+          fallbackDelivered = whatsappSent
+
+          const { error: logError } = await supabase
+            .from('notification_logs')
+            .insert({
+              notification_id: null,
+              channel: 'whatsapp',
+              status: whatsappSent ? 'sent' : 'failed',
+              provider: `process-appointment-reminders`,
+              provider_response: {
+                reminder_id: reminder.id,
+                appointment_id: appt.id,
+                channel: 'whatsapp',
+                fallback: true,
+                whatsappSent,
+                error: whatsappError,
+              },
+              sent_at: whatsappSent ? new Date().toISOString() : null,
+              failed_at: whatsappSent ? null : new Date().toISOString(),
+            })
+
+          if (logError) {
+            console.error('[ProcessReminders] Falha ao registrar notification_logs:', logError)
+          }
 
           if (!fallbackDelivered) {
-            console.warn('[ProcessReminders] Fallback channels failed or unavailable for reminder', reminder.id)
-          } else {
-            const channelUsed = smsSent ? 'sms' : 'whatsapp'
-            await supabase
-              .from('notification_logs')
-              .insert({
-                notification_id: null,
-                channel: channelUsed,
-                status: 'sent',
-                provider: `process-appointment-reminders`,
-                provider_response: {
-                  reminder_id: reminder.id,
-                  appointment_id: appt.id,
-                  channel: channelUsed,
-                  fallback: true,
-                  smsSent,
-                  whatsappSent,
-                },
-                sent_at: new Date().toISOString(),
-              })
+            console.warn('[ProcessReminders] WhatsApp fallback falhou ou não está disponível', reminder.id, whatsappError)
           }
         }
 
@@ -341,9 +317,8 @@ serve(async (req) => {
             reminderId: reminder.id,
             shouldFallback,
             fallbackAttempted: shouldFallback && Boolean(notificationContent.fallbackMessage),
-            smsSent: shouldFallback ? smsSent : null,
-            smsError,
             whatsappSent: shouldFallback ? whatsappSent : null,
+            whatsappError,
             fallbackDelivered,
             patientPhone: patientInfo?.phone ?? null,
             normalizedPhone: normalizePhone(patientInfo?.phone) ?? null,

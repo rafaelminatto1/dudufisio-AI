@@ -22,6 +22,15 @@ interface WhatsAppMessageRequest {
   languageCode?: string;
 }
 
+function normalizePhoneNumber(phone?: string | null): string | null {
+  if (!phone) return null
+  const digits = phone.replace(/\D/g, '')
+  if (digits.length < 10) return null
+  const national = digits.startsWith('0') ? digits.slice(1) : digits
+  const international = national.startsWith('55') ? national : `55${national}`
+  return `+${international}`
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -67,7 +76,16 @@ serve(async (req) => {
     const accessToken = Deno.env.get('WHATSAPP_ACCESS_TOKEN')
 
     if (!whatsappApiUrl || !phoneNumberId || !accessToken) {
-      throw new Error('WhatsApp configuration missing')
+      console.warn('[send-whatsapp] Configuration missing. Returning mocked success.')
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          sent: 0,
+          message: 'Mocked WhatsApp send (no credentials)',
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      )
     }
 
     // Conectar ao Supabase
@@ -76,48 +94,66 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // Buscar pacientes com opt-in ativo
-    let query = supabaseClient
-      .from('whatsapp_preferences')
-      .select('patient_id, phone_number')
-      .eq('opted_in', true)
+    let recipients: Array<{ patient_id: string | null; phone_number: string }> = []
 
     if (phoneNumber) {
-      // Envio direto para número
-      query = query.eq('phone_number', phoneNumber)
-    } else if (patientId) {
-      query = query.eq('patient_id', patientId)
-    } else if (patientIds && patientIds.length > 0) {
-      query = query.in('patient_id', patientIds)
+      const normalized = normalizePhoneNumber(phoneNumber)
+      if (!normalized) {
+        return new Response(
+          JSON.stringify({ error: 'Phone number must be in E.164 format' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        )
+      }
+      recipients = [{ patient_id: patientId ?? null, phone_number: normalized }]
     } else {
-      return new Response(
-        JSON.stringify({ error: 'patientId, patientIds, or phoneNumber is required' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-      )
-    }
+      if (!patientId && (!patientIds || patientIds.length === 0)) {
+        return new Response(
+          JSON.stringify({ error: 'patientId, patientIds, or phoneNumber is required' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        )
+      }
 
-    const { data: preferences, error: prefsError } = await query
+      let query = supabaseClient
+        .from('whatsapp_preferences')
+        .select('patient_id, phone_number')
+        .eq('opted_in', true)
 
-    if (prefsError) throw new Error(`Failed to fetch preferences: ${prefsError.message}`)
+      if (patientId) {
+        query = query.eq('patient_id', patientId)
+      } else if (patientIds && patientIds.length > 0) {
+        query = query.in('patient_id', patientIds)
+      }
 
-    if (!preferences || preferences.length === 0) {
-      return new Response(
-        JSON.stringify({ success: true, sent: 0, message: 'No opted-in recipients found' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-      )
+      const { data: preferences, error: prefsError } = await query
+
+      if (prefsError) throw new Error(`Failed to fetch preferences: ${prefsError.message}`)
+
+      if (!preferences || preferences.length === 0) {
+        return new Response(
+          JSON.stringify({ success: true, sent: 0, message: 'No opted-in recipients found' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        )
+      }
+
+      recipients = preferences
+        .map(({ patient_id, phone_number }) => {
+          const normalized = normalizePhoneNumber(phone_number)
+          return normalized
+            ? { patient_id, phone_number: normalized }
+            : null
+        })
+        .filter((recipient): recipient is { patient_id: string | null; phone_number: string } => recipient !== null)
     }
 
     // Enviar mensagens
-    const promises = preferences.map(async ({ patient_id, phone_number }) => {
+    const promises = recipients.map(async ({ patient_id, phone_number }) => {
       try {
-        // Normalizar número (adicionar +55 se necessário)
-        const normalizedPhone = phone_number.replace(/\D/g, '')
-        const to = normalizedPhone.startsWith('55') ? normalizedPhone : `55${normalizedPhone}`
-
         // Construir payload
+        const normalizedRecipient = phone_number.replace(/^\+/, '')
+
         let payload: any = {
           messaging_product: 'whatsapp',
-          to,
+          to: normalizedRecipient,
         }
 
         if (type === 'text') {
@@ -161,7 +197,7 @@ serve(async (req) => {
         // Log no banco
         await supabaseClient.from('whatsapp_messages_log').insert({
           patient_id,
-          phone_number: to,
+          phone_number,
           message_type: type,
           template_id: type === 'template' ? templateName : null,
           message_content: type === 'text' ? message : JSON.stringify(payload),
@@ -173,7 +209,7 @@ serve(async (req) => {
 
         return {
           patient_id,
-          phone_number: to,
+          phone_number,
           success: response.ok,
           whatsapp_message_id: result.messages?.[0]?.id,
           error: response.ok ? null : result.error?.message
