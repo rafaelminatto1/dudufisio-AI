@@ -18,9 +18,6 @@ const MAX_BUNDLE_SIZE = 12 * 1024 * 1024; // 12MB
 const MAX_CHUNK_SIZE = 500 * 1024; // 500KB
 const WARNING_CHUNK_SIZE = 300 * 1024; // 300KB
 
-const distPath = path.join(__dirname, '../dist');
-const assetsPath = path.join(distPath, 'assets');
-
 /**
  * Calcula o tamanho total apenas dos arquivos JS e CSS (sem source maps)
  */
@@ -62,36 +59,57 @@ function formatBytes(bytes) {
 /**
  * Obtém lista de chunks JavaScript
  */
-function getJavaScriptChunks() {
-  if (!fs.existsSync(assetsPath)) {
-    console.warn(`⚠️  Diretório ${assetsPath} não encontrado`);
+function getJavaScriptChunks(assetsDir) {
+  if (!fs.existsSync(assetsDir)) {
+    console.warn(`⚠️  Diretório ${assetsDir} não encontrado`);
     return [];
   }
 
-  return fs.readdirSync(assetsPath)
+  return fs.readdirSync(assetsDir)
     .filter(f => f.endsWith('.js'))
     .map(f => ({
       name: f,
-      size: fs.statSync(path.join(assetsPath, f)).size
+      size: fs.statSync(path.join(assetsDir, f)).size
     }))
     .sort((a, b) => b.size - a.size); // Maior para menor
+}
+
+function resolveTargets() {
+  const args = process.argv.slice(2);
+  const targetFlagIndex = args.indexOf('--target');
+  const explicitTarget = targetFlagIndex !== -1 ? args[targetFlagIndex + 1] : undefined;
+  const envTargets = process.env.BUNDLE_SCOPE || process.env.BUNDLE_TARGETS;
+
+  const targetList = explicitTarget || envTargets;
+
+  if (!targetList) {
+    return ['dist'];
+  }
+
+  return targetList
+    .split(',')
+    .map(target => target.trim())
+    .filter(Boolean);
 }
 
 /**
  * Análise principal
  */
-function analyzeBundleSize() {
+function analyzeBundleSizeForTarget(targetDir) {
+  const distPath = path.isAbsolute(targetDir) ? targetDir : path.join(__dirname, '..', targetDir);
+  const assetsPath = path.join(distPath, 'assets');
+
   console.log('');
   console.log('═══════════════════════════════════════════════════════════');
-  console.log('          📊 ANÁLISE DE TAMANHO DO BUNDLE');
+  console.log(`📊 ANÁLISE DE TAMANHO DO BUNDLE (${targetDir})`);
   console.log('═══════════════════════════════════════════════════════════');
   console.log('');
 
-  // Verificar se dist existe
   if (!fs.existsSync(distPath)) {
-    console.error('❌ Diretório dist/ não encontrado!');
+    console.error(`❌ Diretório ${distPath} não encontrado!`);
     console.error('   Execute `npm run build` primeiro.');
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   // 1. Tamanho total (sem source maps)
@@ -117,7 +135,7 @@ function analyzeBundleSize() {
   }
 
   // 2. Chunks JavaScript
-  const chunks = getJavaScriptChunks();
+  const chunks = getJavaScriptChunks(assetsPath);
 
   if (chunks.length === 0) {
     console.warn('⚠️  Nenhum chunk JavaScript encontrado');
@@ -193,6 +211,11 @@ function analyzeBundleSize() {
     console.log('   3. Implemente lazy loading agressivo');
     console.log('');
   }
+}
+
+function analyzeBundleSize() {
+  const targets = resolveTargets();
+  targets.forEach(analyzeBundleSizeForTarget);
 }
 
 // Executar análise

@@ -12,6 +12,24 @@ const forceMockSupabase = (
   typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_FORCE_MOCK_SUPABASE === 'true'
 ) || (typeof process !== 'undefined' && process.env?.VITE_FORCE_MOCK_SUPABASE === 'true');
 
+const isTestEnv = typeof process !== 'undefined' && process.env?.NODE_ENV === 'test';
+
+let supabaseManager: SupabaseConfigManager | null = null;
+try {
+  supabaseManager = SupabaseConfigManager.getInstance();
+} catch (error) {
+  if (secureLogger?.warn) {
+    secureLogger.warn('Falha ao carregar SupabaseConfigManager para detectar credenciais', {
+      component: 'patientService',
+      error
+    });
+  } else {
+    console.warn('[patientService] Falha ao carregar SupabaseConfigManager', error);
+  }
+}
+
+const hasSupabaseCredentials = supabaseManager?.hasValidCredentials?.() ?? false;
+
 // Mock data para desenvolvimento
 const MOCK_PATIENT_TRACKING_DATA = {
   'patient_001': {
@@ -53,7 +71,38 @@ const MOCK_PATIENT_TRACKING_DATA = {
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 // Usar exclusivamente Supabase - sem fallback para mock
-const isSupabaseEnabled = !forceMockSupabase;
+const isSupabaseEnabled = !forceMockSupabase && !isTestEnv && hasSupabaseCredentials;
+
+const buildPatientPayload = (data: Partial<Patient> & { name: string }): Omit<Patient, 'id' | 'lastVisit'> => {
+    const timestamp = data.registrationDate ?? new Date().toISOString();
+    return {
+        name: data.name.trim(),
+        cpf: data.cpf ?? '',
+        birthDate: data.birthDate ?? '',
+        phone: data.phone ?? '',
+        email: data.email ?? '',
+        emergencyContact: data.emergencyContact ?? { name: '', phone: '' },
+        address: data.address ?? { street: '', city: '', state: '', zip: '' },
+        status: data.status ?? PatientStatus.Active,
+        registrationDate: timestamp,
+        avatarUrl: data.avatarUrl ?? '',
+        consentGiven: data.consentGiven ?? true,
+        whatsappConsent: data.whatsappConsent ?? 'opt-out',
+        medicalAlerts: data.medicalAlerts,
+        observations: data.observations,
+        allergies: data.allergies,
+        conditions: data.conditions,
+        trackedMetrics: data.trackedMetrics,
+        communicationLogs: data.communicationLogs,
+        attachments: data.attachments,
+        insurance: data.insurance,
+        insuranceType: data.insuranceType,
+        blood_type: data.blood_type,
+        painPoints: data.painPoints,
+        tags: data.tags,
+        surgeries: data.surgeries,
+    };
+};
 
 export const getRecentPatients = withSupabaseQuery(
     async (): Promise<Patient[]> => {
@@ -369,6 +418,14 @@ export const addPatient = withSupabaseMutation(
         }
 
         await delay(400);
+
+    if (patientData.cpf) {
+        const duplicate = db.getPatients().some(existing => existing.cpf === patientData.cpf);
+        if (duplicate) {
+            throw new Error('CPF já cadastrado');
+        }
+    }
+
         const newPatient: Patient = {
             id: `patient_${Date.now()}`,
             ...patientData,
@@ -384,22 +441,57 @@ export const addPatient = withSupabaseMutation(
     }
 );
 
+export const createPatient = (patientData: Partial<Patient> & { name: string }): Promise<Patient> => {
+    const payload = buildPatientPayload(patientData);
+    return addPatient(payload);
+};
+
 export const updatePatient = withSupabaseMutation(
-    async (updatedPatient: Patient): Promise<Patient> => {
+    async (patientOrId: Patient | string, updates?: Partial<Patient>): Promise<Patient> => {
+        const normalized = await (async () => {
+            if (typeof patientOrId === 'string') {
+                if (!updates) {
+                    throw new Error('É necessário fornecer os campos a atualizar quando o ID é utilizado.');
+                }
+                const existing = await getPatientById(patientOrId);
+                if (!existing) {
+                    throw new Error('Paciente não encontrado');
+                }
+                return { ...existing, ...updates };
+            }
+            return patientOrId;
+        })();
+
         if (isSupabaseEnabled) {
-            const updated = await supabasePatientService.updatePatient(updatedPatient.id, updatedPatient);
+            const updated = await supabasePatientService.updatePatient(normalized.id, normalized);
             eventService.emit('patients:changed');
             return updated;
         }
 
         await delay(400);
-        db.updatePatient(updatedPatient);
+        db.updatePatient(normalized);
         eventService.emit('patients:changed');
-        return updatedPatient;
+        return normalized;
     },
     {
         operation: 'updatePatient',
         fallbackMessage: 'Erro ao atualizar paciente'
+    }
+);
+
+export const deletePatient = withSupabaseMutation(
+    async (patientId: string): Promise<void> => {
+        if (isSupabaseEnabled) {
+            await supabasePatientService.deletePatient(patientId);
+        } else {
+            await delay(300);
+            db.deletePatient(patientId);
+        }
+        eventService.emit('patients:changed');
+    },
+    {
+        operation: 'deletePatient',
+        fallbackMessage: 'Erro ao remover paciente'
     }
 );
 

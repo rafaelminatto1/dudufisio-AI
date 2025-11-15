@@ -7,44 +7,68 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as reportService from '@/services/reportService';
 import { MedicalReport } from '@/types';
 
-// Mock data - definir inline para evitar hoisting issues
-vi.mock('@/data/mockData', () => {
+const { mockReports, mockPatientsData, mockSoapNotesData } = vi.hoisted(() => {
   const mockDate = new Date('2025-01-15');
-  return {
-    mockMedicalReports: [
-      {
-        id: 1,
-        patientId: 'patient-1',
-        therapistId: 'user-1',
-        title: 'Relatório Médico - João Silva',
-        aiGeneratedContent: 'Conteúdo gerado',
-        content: '<h3>Identificação</h3><p>Conteúdo</p>',
-        status: 'draft',
-        recipientDoctor: 'Dr. Carlos',
-        recipientCrm: 'CRM 12345',
-        generatedAt: mockDate,
-      },
-    ],
-    mockPatients: [{
-      id: 'patient-1',
-      name: 'João Silva',
-      conditions: [{ name: 'Tendinite' }],
-      medicalAlerts: 'Hipertensão',
-    }],
-    mockSoapNotes: [{
-      id: 'note-1',
+  const reports: MedicalReport[] = [
+    {
+      id: 1,
       patientId: 'patient-1',
-      date: '15/01/2025',
-      subjective: 'Dor no ombro',
-      objective: 'ADM limitada',
-      assessment: 'Tendinite',
-      plan: 'Exercícios',
-    }],
-    mockUsers: [{ id: 'user-1', role: 'Fisioterapeuta' }],
-    mockClinicInfo: { name: 'Clínica Teste' },
-    mockTherapists: [],
+      therapistId: 'user-1',
+      title: 'Relatório Médico - João Silva',
+      aiGeneratedContent: 'Conteúdo gerado',
+      content: '<h3>Identificação</h3><p>Conteúdo</p>',
+      status: 'draft',
+      recipientDoctor: 'Dr. Carlos',
+      recipientCrm: 'CRM 12345',
+      generatedAt: mockDate,
+    },
+    {
+      id: 2,
+      patientId: 'patient-1',
+      therapistId: 'user-1',
+      title: 'Relatório Médico - João Silva (Enviado)',
+      aiGeneratedContent: 'Conteúdo gerado',
+      content: '<h3>Identificação</h3><p>Conteúdo</p>',
+      status: 'sent',
+      recipientDoctor: 'Dr. Ana',
+      recipientCrm: 'CRM 67890',
+      generatedAt: new Date('2025-01-10'),
+    },
+  ];
+
+  const patients = [{
+    id: 'patient-1',
+    name: 'João Silva',
+    conditions: [{ name: 'Tendinite' }],
+    medicalAlerts: 'Hipertensão',
+  }];
+
+  const soapNotes = [{
+    id: 'note-1',
+    patientId: 'patient-1',
+    date: '15/01/2025',
+    subjective: 'Dor no ombro',
+    objective: 'ADM limitada',
+    assessment: 'Tendinite',
+    plan: 'Exercícios',
+  }];
+
+  return {
+    mockReports: reports,
+    mockPatientsData: patients,
+    mockSoapNotesData: soapNotes,
   };
 });
+
+// Mock data - definir inline para evitar hoisting issues
+vi.mock('@/data/mockData', () => ({
+  mockMedicalReports: mockReports,
+  mockPatients: mockPatientsData,
+  mockSoapNotes: mockSoapNotesData,
+  mockUsers: [{ id: 'user-1', role: 'Fisioterapeuta' }],
+  mockClinicInfo: { name: 'Clínica Teste' },
+  mockTherapists: [],
+}));
 
 vi.mock('html2pdf.js', () => ({
   default: vi.fn(() => ({
@@ -56,7 +80,6 @@ vi.mock('html2pdf.js', () => ({
 describe('ReportService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    reportsArray = [...mockReports];
   });
 
   describe('getReportsByPatientId', () => {
@@ -188,6 +211,7 @@ describe('ReportService', () => {
 
   describe('sendReport', () => {
     it('deve enviar relatório', async () => {
+      await reportService.updateReport(1, { status: 'finalized' });
       const sent = await reportService.sendReport(1);
       
       expect(sent).toBeTruthy();
@@ -195,12 +219,14 @@ describe('ReportService', () => {
     });
 
     it('deve atualizar status para sent', async () => {
+      await reportService.updateReport(1, { status: 'finalized' });
       const sent = await reportService.sendReport(1);
       
       expect(sent.status).toBe('sent');
     });
 
     it('deve retornar relatório atualizado', async () => {
+      await reportService.updateReport(1, { status: 'finalized' });
       const report = await reportService.sendReport(1);
       
       expect(report).toHaveProperty('id');

@@ -245,10 +245,8 @@ describe('Transaction Entity', () => {
       
       transaction.updateGatewayResponse(response);
       
-      expect(transaction.getMetadata()).toMatchObject({
-        ...transaction.getMetadata(),
-        ...response
-      });
+      expect(transaction.getGatewayResponse()).toMatchObject(response);
+      expect(transaction.getMetadata().gatewayResponse).toMatchObject(response);
     });
   });
 

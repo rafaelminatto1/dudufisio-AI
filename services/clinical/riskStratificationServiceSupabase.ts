@@ -371,6 +371,69 @@ class RiskStratificationServiceSupabase {
   }
 
   /**
+   * APIs simplificadas utilizadas em testes unitários
+   */
+  async getAssessments(patientId: string): Promise<RiskAssessment[]> {
+    return this.getPatientAssessments(patientId);
+  }
+
+  async createAssessment(assessment: Omit<RiskAssessment, 'id'>): Promise<RiskAssessment> {
+    this.validateAssessmentInput(assessment);
+    return this.saveRiskAssessment(assessment);
+  }
+
+  async updateAssessment(id: string, updates: Partial<RiskAssessment>): Promise<RiskAssessment> {
+    const payload: Record<string, unknown> = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (updates.patientId) payload.patient_id = updates.patientId;
+    if (updates.patientName) payload.patient_name = updates.patientName;
+    if (updates.riskType) payload.risk_type = updates.riskType;
+    if (updates.riskLevel) payload.risk_level = updates.riskLevel;
+    if (typeof updates.score === 'number') payload.score = updates.score;
+    if (typeof updates.confidence === 'number') payload.confidence = updates.confidence;
+    if (updates.assessedBy) payload.assessed_by = updates.assessedBy;
+    if (updates.validUntil) payload.valid_until = updates.validUntil.toISOString();
+    if (updates.notes !== undefined) payload.notes = updates.notes;
+
+    const { data, error } = await supabase
+      .from('risk_assessments')
+      .update(payload)
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Erro ao atualizar avaliação de risco:', error);
+      throw error;
+    }
+
+    return this.mapDatabaseToAssessment(data);
+  }
+
+  async deleteAssessment(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('risk_assessments')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erro ao deletar avaliação de risco:', error);
+      throw error;
+    }
+  }
+
+  private validateAssessmentInput(assessment: Partial<RiskAssessment>): void {
+    if (!assessment.patientId || !assessment.riskType || !assessment.riskLevel) {
+      throw new Error('Paciente, tipo e nível de risco são obrigatórios');
+    }
+    if (typeof assessment.score !== 'number' || assessment.score < 0 || assessment.score > 100) {
+      throw new Error('Score deve estar entre 0 e 100');
+    }
+  }
+
+  /**
    * Mapeia dados do banco para RiskAssessment
    */
   private mapDatabaseToAssessment(data: any): RiskAssessment {

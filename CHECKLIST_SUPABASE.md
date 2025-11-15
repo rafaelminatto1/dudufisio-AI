@@ -88,20 +88,20 @@ supabase secrets set \
 
 ### 8. ⏱️ Cron + Settings remotos
 
-- [ ] Validar se o job do pg_cron está ativo:
+- [x] Validar se o job do pg_cron está ativo (job `process_appointment_reminders_every_5m` recriado localmente em 15/11/2025):
 
 ```sql
 SELECT * FROM cron.job WHERE jobname = 'process_appointment_reminders_every_5m';
 ```
 
-- [ ] Confirmar que `app.settings.functions_base_url` e `app.supabase_service_role_key` apontam para o ambiente correto:
+- [x] Confirmar que `app.settings.functions_base_url` e `app.supabase_service_role_key` apontam para o ambiente correto:
 
 ```sql
 SELECT current_setting('app.settings.functions_base_url', true);
 SELECT current_setting('app.supabase_service_role_key', true);
 ```
 
-- [ ] Ajustar se necessário:
+- [x] Ajustar se necessário:
 
 ```sql
 ALTER DATABASE postgres SET app.settings.functions_base_url = 'https://<novo-ref>.functions.supabase.co';
@@ -111,6 +111,7 @@ ALTER DATABASE postgres SET app.supabase_service_role_key = '<service-role-key-d
 ### 9. 💳 Stripe, Resend e demais integrações
 
 - [ ] Verificar se as variáveis `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY` e `WHATSAPP_*` estão cadastradas no Supabase e Vercel.
+- [x] `npm run check:integrations` executado em 15/11/2025 – faltam `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` e `WHATSAPP_METRICS_BYPASS_TOKEN`. Demais chaves (`RESEND_API_KEY`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_ACCESS_TOKEN`) presentes no `.env.local`.
 - [ ] Após atualizar credenciais, executar:
 
 ```bash

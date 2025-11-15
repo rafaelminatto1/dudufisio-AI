@@ -13,6 +13,17 @@
 ## ✨ Principais Features
 
 ### 🧠 Inteligência Artificial
+
+#### 🆕 Base de Conhecimento com RAG (NEW!)
+- **📚 Knowledge Base** - 9 PDFs científicos indexados com pgvector
+- **💬 AI Chat** - GPT-4 responde perguntas com citação de fontes
+- **🔍 Semantic Search** - Busca inteligente em toda literatura científica
+- **📊 Evidence-Based** - Respostas baseadas em evidências científicas
+- **🎯 Source Attribution** - Todas respostas citam fontes automaticamente
+
+👉 **[Ver Guia de Instalação](./COMECE_AQUI.md)**
+
+#### Outras Funcionalidades IA
 - **AI Insights Dashboard** - Previsões de cancelamentos e análise de churn em tempo real
 - **Voice Notes com IA** - Transcrição e estruturação automática em SOAP (70% economia de tempo)
 - **Smart Scheduler** - Otimização automática da agenda (+25% ocupação, -40% no-shows)
@@ -39,14 +50,40 @@
 
 ## 🚀 Quick Start
 
+### 🆕 Novo: Base de Conhecimento RAG
+
+Para instalar e configurar a Base de Conhecimento com RAG:
+
+👉 **[COMECE AQUI - Quick Start](./COMECE_AQUI.md)** (10 minutos)  
+📋 **[Checklist Completo](./CHECKLIST_INSTALACAO.md)** (25 minutos)  
+📚 **[Documentação Completa](./INDICE_DOCUMENTACAO.md)**
+
+#### Instalação Rápida:
+```bash
+# 1. Configure .env.local com suas chaves (OpenAI + Supabase)
+# 2. Aplique migration no Supabase (SQL Editor)
+# 3. Processe PDFs
+npm run kb:populate
+
+# 4. Teste
+npm run kb:test
+
+# 5. Veja funcionando
+npm run dev
+# → http://localhost:3000/knowledge
+```
+
+---
+
 ### Pré-requisitos
 - Node.js 18+
 - npm ou yarn
-- Conta Supabase
-- Conta Vercel (opcional)
+- Conta Supabase Pro (para pgvector)
+- Conta Vercel Pro (opcional)
+- OpenAI API Key (para RAG)
 - Google Gemini API Key
 
-### Instalação
+### Instalação Principal
 
 ```bash
 # 1. Clone o repositório

@@ -5,6 +5,7 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { createTestPatient, createTestAppointment } from './__helpers__/testFixtures';
+import * as whatsappService from '@/services/whatsappService';
 
 // Mock de dependencies
 vi.mock('@/services/treatmentService', () => ({

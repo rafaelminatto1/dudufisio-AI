@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Package, PackageType, PackageStatus, SessionCount } from '../../../../lib/financial/domain/entities/Package';
 import { Money } from '../../../../lib/financial/domain/value-objects/Money';
 import { DomainError, BusinessRuleError } from '../../../../lib/financial/domain/errors/DomainError';
@@ -10,7 +11,7 @@ describe('Package Entity', () => {
     totalSessions: 10,
     price: new Money(800, 'BRL'),
     purchaseDate: new Date('2024-01-01'),
-    expiryDate: new Date('2024-07-01')
+    expiryDate: new Date('2099-07-01')
   };
 
   describe('SessionCount Value Object', () => {
@@ -221,7 +222,8 @@ describe('Package Entity', () => {
       // Create package with past expiry date
       const expiredPackage = Package.create({
         ...validPackageData,
-        expiryDate: new Date('2023-01-01')
+        purchaseDate: new Date('2023-01-01'),
+        expiryDate: new Date('2023-06-01')
       });
       
       expiredPackage.suspend();
@@ -295,9 +297,8 @@ describe('Package Entity', () => {
     });
 
     it('should calculate days since purchase correctly', () => {
-      // Mock current date
       const originalNow = Date.now;
-      Date.now = jest.fn(() => new Date('2024-01-15').getTime());
+      Date.now = vi.fn(() => new Date('2024-01-15').getTime());
       
       expect(package.getDaysSincePurchase()).toBe(14);
       
@@ -305,9 +306,8 @@ describe('Package Entity', () => {
     });
 
     it('should calculate days until expiry correctly', () => {
-      // Mock current date
       const originalNow = Date.now;
-      Date.now = jest.fn(() => new Date('2024-06-15').getTime());
+      Date.now = vi.fn(() => new Date('2024-06-15').getTime());
       
       expect(package.getDaysUntilExpiry()).toBe(16);
       
@@ -315,9 +315,8 @@ describe('Package Entity', () => {
     });
 
     it('should return 0 days until expiry when expired', () => {
-      // Mock current date to after expiry
       const originalNow = Date.now;
-      Date.now = jest.fn(() => new Date('2024-08-01').getTime());
+      Date.now = vi.fn(() => new Date('2024-08-01').getTime());
       
       expect(package.getDaysUntilExpiry()).toBe(0);
       
@@ -325,9 +324,8 @@ describe('Package Entity', () => {
     });
 
     it('should detect expiry based on current date', () => {
-      // Mock current date to after expiry
       const originalNow = Date.now;
-      Date.now = jest.fn(() => new Date('2024-08-01').getTime());
+      Date.now = vi.fn(() => new Date('2024-08-01').getTime());
       
       expect(package.isExpired()).toBe(true);
       

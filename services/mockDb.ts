@@ -43,6 +43,9 @@ export const db = {
   updatePatient: (updatedPatient: Patient): void => {
     patients = patients.map(p => p.id === updatedPatient.id ? updatedPatient : p);
   },
+  deletePatient: (id: string): void => {
+    patients = patients.filter(p => p.id !== id);
+  },
 
   // Appointments
   getAppointments: (): Appointment[] => {

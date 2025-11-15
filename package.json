@@ -45,6 +45,7 @@
     "vercel:deploy": "vercel --prod",
     "setup": "node scripts/setup-env.js",
     "check:env": "node scripts/check-env.js",
+    "check:integrations": "tsx scripts/check-integrations.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "lint:bundle": "eslint . --ext ts,tsx -c .eslintrc-bundle-optimization.json",
@@ -150,7 +151,11 @@
     "design-system:build": "vite build --config vite.config.design-system.ts",
     "design-system:preview": "vite preview --config vite.config.design-system.ts --port 3001",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "kb:apply-migration": "tsx scripts/apply-migration.ts",
+    "kb:populate": "tsx scripts/populate-knowledge-base.ts",
+    "kb:populate:clear": "tsx scripts/populate-knowledge-base.ts clear",
+    "kb:test": "tsx scripts/test-knowledge-base.ts"
   },
   "dependencies": {
     "@ai-sdk/groq": "^2.0.25",
@@ -233,6 +238,7 @@
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.545.0",
     "next-themes": "^0.4.6",
+    "pdf-parse": "^2.4.5",
     "react": "^18.3.1",
     "react-day-picker": "^9.11.0",
     "react-dom": "^18.3.1",
