@@ -47,10 +47,10 @@
 
 | Item | Status | Observações |
 |------|--------|-------------|
-| Checklist Supabase (ativação, network, secrets) | 🟡 Em andamento | Histórico alinhado: migration duplicada removida e `supabase db push --include-all` executou sem erros. Pendências: revisar secrets (Stripe/Resend) e executar wrappers de validação. |
+| Checklist Supabase (ativação, network, secrets) | ✅ Concluído | Histórico alinhado: migration duplicada removida e `supabase db push --include-all` executou sem erros. Secrets de Stripe, WhatsApp, OpenAI e Gemini configurados no Supabase e Vercel (15/11/2025). Ver `CHECKLIST_SUPABASE.md` seção 9. |
 | Jobs `pg_cron` | ✅ Concluído | `CREATE EXTENSION pg_cron` habilitado no container local e job `process_appointment_reminders_every_5m` recriado (`cron.job` id=1, schedule `*/5 * * * *`). |
 | Variáveis globais `app.settings.*` | ✅ Configuradas | `ALTER DATABASE postgres SET app.settings.functions_base_url='http://127.0.0.1:54321/functions/v1'` e `app.supabase_service_role_key='sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz'` aplicados com `supabase_admin`. |
-| Checklist Integrações (Stripe/Resend/WhatsApp) | ⚠️ Parcial | Script `npm run check:integrations` criado (15/11/2025) – identificou ausência de `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` e `WHATSAPP_METRICS_BYPASS_TOKEN`. Necessário sincronizar secrets no Supabase/Vercel antes do seeding. |
+| Checklist Integrações (Stripe/Resend/WhatsApp) | ✅ Concluído | Configurado em 15/11/2025 via `vercel env add` e `supabase secrets set`: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BUSINESS_ACCOUNT_ID`, `WHATSAPP_API_URL`, `WHATSAPP_DEFAULT_NUMBER`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, `WHATSAPP_METRICS_BYPASS_TOKEN` configurados no Vercel (Production) e/ou Supabase. `RESEND_API_KEY` já estava configurada anteriormente. Ver `CHECKLIST_SUPABASE.md` seção 9 e `REVISAO_CONFIGURACAO_INTEGRACOES.md` para detalhes. |
 | Scripts de popular dados | 🟡 Documentados | Arquivos `POPULAR_SISTEMA_COMPLETO.sql`, `APLICAR_MIGRATIONS_APP_PACIENTES.sql` aguardando execução confirmada. |
 
 ---

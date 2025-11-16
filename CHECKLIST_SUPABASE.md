@@ -110,8 +110,19 @@ ALTER DATABASE postgres SET app.supabase_service_role_key = '<service-role-key-d
 
 ### 9. 💳 Stripe, Resend e demais integrações
 
-- [ ] Verificar se as variáveis `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY` e `WHATSAPP_*` estão cadastradas no Supabase e Vercel.
-- [x] `npm run check:integrations` executado em 15/11/2025 – faltam `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` e `WHATSAPP_METRICS_BYPASS_TOKEN`. Demais chaves (`RESEND_API_KEY`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_ACCESS_TOKEN`) presentes no `.env.local`.
+- [x] Verificar se as variáveis `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY` e `WHATSAPP_*` estão cadastradas no Supabase e Vercel.
+- [x] Configurado em 15/11/2025 via `vercel env add` e `supabase secrets set`:
+  - ✅ `STRIPE_SECRET_KEY` configurado no Vercel (Production) e Supabase
+  - ✅ `STRIPE_WEBHOOK_SECRET` configurado no Vercel (Production) e Supabase
+  - ✅ `WHATSAPP_ACCESS_TOKEN` configurado no Vercel (Production) e Supabase
+  - ✅ `WHATSAPP_PHONE_NUMBER_ID` configurado no Supabase
+  - ✅ `WHATSAPP_BUSINESS_ACCOUNT_ID` configurado no Supabase
+  - ✅ `WHATSAPP_API_URL` configurado no Supabase
+  - ✅ `WHATSAPP_DEFAULT_NUMBER` configurado no Vercel (Production) e Supabase
+  - ✅ `OPENAI_API_KEY` configurado no Vercel (Production) e Supabase
+  - ✅ `GEMINI_API_KEY` configurado no Vercel (Production) e Supabase
+  - ✅ `WHATSAPP_METRICS_BYPASS_TOKEN` configurado no Vercel (Production)
+  - ℹ️ `RESEND_API_KEY` já estava configurada anteriormente no Vercel (Production, Preview, Development) e Supabase (52 dias atrás)
 - [ ] Após atualizar credenciais, executar:
 
 ```bash

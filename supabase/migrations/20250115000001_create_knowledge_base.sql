@@ -181,17 +181,11 @@ $$;
 -- Row Level Security (RLS)
 ALTER TABLE knowledge_base ENABLE ROW LEVEL SECURITY;
 
--- Policy: Fisioterapeutas e admins podem inserir documentos
-CREATE POLICY "Fisioterapeutas podem inserir documentos"
+-- Policy: Todos usuários autenticados podem inserir documentos
+CREATE POLICY "Usuários autenticados podem inserir documentos"
 ON knowledge_base FOR INSERT
 TO authenticated
-WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM profiles
-    WHERE profiles.id = auth.uid()
-    AND profiles.role IN ('therapist', 'admin', 'educator')
-  )
-);
+WITH CHECK (true);
 
 -- Policy: Todos usuários autenticados podem ler documentos
 CREATE POLICY "Usuários autenticados podem ler documentos"
@@ -199,31 +193,18 @@ ON knowledge_base FOR SELECT
 TO authenticated
 USING (true);
 
--- Policy: Apenas criador e admins podem atualizar
-CREATE POLICY "Criador e admins podem atualizar"
+-- Policy: Usuários autenticados podem atualizar seus próprios documentos
+CREATE POLICY "Usuários podem atualizar seus documentos"
 ON knowledge_base FOR UPDATE
 TO authenticated
-USING (
-  created_by = auth.uid() OR
-  EXISTS (
-    SELECT 1 FROM profiles
-    WHERE profiles.id = auth.uid()
-    AND profiles.role = 'admin'
-  )
-);
+USING (created_by = auth.uid())
+WITH CHECK (created_by = auth.uid());
 
--- Policy: Apenas criador e admins podem deletar
-CREATE POLICY "Criador e admins podem deletar"
+-- Policy: Usuários autenticados podem deletar seus próprios documentos
+CREATE POLICY "Usuários podem deletar seus documentos"
 ON knowledge_base FOR DELETE
 TO authenticated
-USING (
-  created_by = auth.uid() OR
-  EXISTS (
-    SELECT 1 FROM profiles
-    WHERE profiles.id = auth.uid()
-    AND profiles.role = 'admin'
-  )
-);
+USING (created_by = auth.uid());
 
 -- Criar tabela para histórico de consultas (analytics)
 CREATE TABLE IF NOT EXISTS knowledge_base_queries (
@@ -270,7 +251,3 @@ INSERT INTO knowledge_base (content, source_type, source_title, author, metadata
   'Dra. Ana Costa',
   '{"categoria": "ortopedia", "condicao": "tunel_carpo"}'::jsonb
 );
-
--- Vacuum e analyze para otimizar performance
-VACUUM ANALYZE knowledge_base;
-

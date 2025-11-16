@@ -1,0 +1,47 @@
+{
+  "timestamp": "2025-10-24T23:19:27.563Z",
+  "checks": [
+    {
+      "name": "Bundle Size",
+      "status": "PASS",
+      "details": {
+        "total": "5.90 MB",
+        "limit": "12.00 MB",
+        "percentUsed": "49.2%",
+        "totalChunks": 256
+      }
+    },
+    {
+      "name": "Supabase",
+      "status": "WARN",
+      "details": {
+        "status": "NOT_CONFIGURED",
+        "message": "Variáveis de ambiente não configuradas"
+      }
+    },
+    {
+      "name": "Critical Dependencies",
+      "status": "INFO",
+      "details": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "@supabase/supabase-js": "^2.75.0",
+        "@vercel/node": "^5.4.1",
+        "vite": "^7.1.9",
+        "typescript": "^5.7.2"
+      }
+    },
+    {
+      "name": "Environment Variables",
+      "status": "FAIL",
+      "details": {
+        "required": 2,
+        "present": 0,
+        "missing": [
+          "VITE_SUPABASE_URL",
+          "VITE_SUPABASE_ANON_KEY"
+        ]
+      }
+    }
+  ]
+}
