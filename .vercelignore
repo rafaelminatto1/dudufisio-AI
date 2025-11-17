@@ -60,6 +60,9 @@ temp/
 _OLD_PROJECT/
 _OLD_PROJECT/**
 **/_OLD_PROJECT/**
+fisioflow-next/
+fisioflow-next/**
+**/fisioflow-next/**
 
 # Documentação (opcional - pode ser útil manter README.md)
 # docs/
