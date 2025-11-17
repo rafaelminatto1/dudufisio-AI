@@ -1,8 +1,15 @@
 # Vercel Ignore - Otimizado
 # Apenas arquivos essenciais são enviados para o build
 
-# 🔧 IMPORTANTE: package-lock.json DEVE ser enviado
+# 🔧 IMPORTANTE: Arquivos essenciais do Next.js NÃO devem ser ignorados
+!package.json
 !package-lock.json
+!next.config.ts
+!next.config.js
+!tsconfig.json
+!tailwind.config.ts
+!postcss.config.js
+!components.json
 
 # Node modules (gerenciados pelo npm install na Vercel)
 node_modules/
