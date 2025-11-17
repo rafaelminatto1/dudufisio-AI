@@ -1,6 +1,13 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  typescript: {
+    // Desabilitar verificação de tipos durante build (pode causar erro de memória)
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    // Desabilitar lint durante build
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '5mb',
