@@ -56,8 +56,10 @@ temp/
 # Arquivos de configuração local do Vercel
 .vercel/
 
-# Projeto antigo (backup)
+# Projeto antigo (backup) - CRÍTICO: Deve ser ignorado completamente
 _OLD_PROJECT/
+_OLD_PROJECT/**
+**/_OLD_PROJECT/**
 
 # Documentação (opcional - pode ser útil manter README.md)
 # docs/
