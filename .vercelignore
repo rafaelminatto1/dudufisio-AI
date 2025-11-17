@@ -1,25 +1,21 @@
-# Vercel Ignore - Otimizado
-# Apenas arquivos essenciais são enviados para o build
-
-# 🔧 IMPORTANTE: Arquivos essenciais do Next.js NÃO devem ser ignorados
-!package.json
-!package-lock.json
-!next.config.ts
-!next.config.js
-!tsconfig.json
-!tailwind.config.ts
-!postcss.config.js
-!components.json
+# Vercel Ignore - Simplificado para Next.js
+# Apenas ignore o que realmente não é necessário no build
 
 # Node modules (gerenciados pelo npm install na Vercel)
 node_modules/
+
+# Build artifacts locais (serão gerados durante o build)
+.next/
+out/
+dist/
+build/
 
 # Ambiente de desenvolvimento
 .env.local
 .env.development
 .env.test
 
-# Testes completos
+# Testes (não necessários no build)
 tests/
 __tests__/
 __mocks__/
@@ -30,19 +26,7 @@ testsprite_tests/
 **/*.spec.tsx
 coverage/
 playwright-report/
-bundle-analysis/
-logs/
-reports/
-reports/**
-logs/**
 test-results/
-
-# Build artifacts locais
-.vite/
-dist/
-build/
-.next/
-out/
 
 # IDE e editores
 .vscode/
@@ -53,52 +37,15 @@ out/
 .DS_Store
 Thumbs.db
 
-# Git
+# Git (não necessário no build)
 .git/
 .github/
-.gitignore
-.gitattributes
-
-# Documentação (não necessária no deploy)
-docs/
-*.md
-!README.md
-*.plan.md
-
-# Garantir que scripts críticos sejam enviados
-!scripts/
-!scripts/**/*
-
-# Scripts de desenvolvimento (mantemos scripts necessários para validação de build)
-playwright.config.ts
-playwright.config.performance.ts
-vitest.config.ts
-.eslintrc*.json
-.prettierrc*
-
-# Database e migrations locais (não usadas no build)
-database/
-prisma/
-supabase/seed.sql
-supabase/migrations/
-
-# Arquivos de configuração desnecessários
-.husky/
-checkly/
-mcp-server/
-workers/
-mobile-app/
-
-# Source maps já gerados (incluídos no build se necessário)
-**/*.map
 
 # Logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
 # Arquivos temporários e cache
 .turbo/
@@ -106,17 +53,13 @@ lerna-debug.log*
 tmp/
 temp/
 
-# Arquivos de configuração local
-.env*.local
+# Arquivos de configuração local do Vercel
 .vercel/
 
-# Arquivos grandes de mídia não otimizada
-**/*.psd
-**/*.ai
-**/*.sketch
+# Projeto antigo (backup)
+_OLD_PROJECT/
 
-# Arquivos de backup
-**/*.bak
-**/*.backup
-**/*.old
-
+# Documentação (opcional - pode ser útil manter README.md)
+# docs/
+# *.md
+# !README.md
