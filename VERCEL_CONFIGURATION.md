@@ -11,12 +11,17 @@ O projeto precisa ser reconfigurado no painel da Vercel para usar Next.js ao inv
 
 ### Passo 2: Configurar Framework
 
-1. Em **Framework Preset**, selecione: **Next.js**
+1. Em **Framework Preset**, selecione: **Next.js** ✅ (já está correto)
 2. Em **Root Directory**, deixe vazio (raiz do projeto)
-3. Em **Build Command**, verifique se está: `npm run build`
-4. Em **Output Directory**, deixe vazio (Next.js usa `.next` por padrão)
-5. Em **Install Command**, verifique se está: `npm install`
-6. Em **Node.js Version**, selecione: **22.x** (já está configurado)
+3. Em **Build Command**, verifique se está: `npm run build` ✅ (já está correto)
+4. ⚠️ **IMPORTANTE:** Em **Output Directory**, você precisa:
+   - **Desligar o toggle "Override"** (deixar OFF/cinza)
+   - OU deixar o campo **vazio** se o toggle estiver ON
+   - ❌ **NÃO** deixe como `dist` (isso é do Vite antigo)
+   - ✅ Next.js usa `.next` automaticamente quando o campo está vazio
+5. Em **Install Command**, verifique se está: `npm install` ✅ (já está correto)
+6. Em **Development Command**, verifique se está: `next dev` ou `npm run dev` ✅
+7. Em **Node.js Version**, selecione: **22.x** (já está configurado)
 
 ### Passo 3: Configurar Variáveis de Ambiente
 
