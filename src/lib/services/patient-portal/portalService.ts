@@ -3,7 +3,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export class PortalService {
   static async getDashboardData(patientId: string) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
 
       const { data: patient } = await supabase
         .from('patients')

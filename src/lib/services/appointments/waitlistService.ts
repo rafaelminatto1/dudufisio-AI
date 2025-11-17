@@ -3,7 +3,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export class WaitlistService {
   static async addToWaitlist(data: any) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data: waitlistEntry, error } = await supabase
         .from('waitlist')
         .insert(data)
@@ -19,7 +19,7 @@ export class WaitlistService {
 
   static async getWaitlist(filters?: { status?: string; therapistId?: string }) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       let query = supabase.from('waitlist').select('*, patient:patients(*)');
       if (filters?.status) query = query.eq('status', filters.status);
       if (filters?.therapistId) query = query.eq('therapist_id', filters.therapistId);

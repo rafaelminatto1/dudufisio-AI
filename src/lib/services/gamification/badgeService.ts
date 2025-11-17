@@ -3,7 +3,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export class BadgeService {
   static async awardBadge(params: { patientId: string; badgeId: string }) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data: existing } = await supabase
         .from('patient_badges')
         .select('*')
@@ -34,7 +34,7 @@ export class BadgeService {
 
   static async getPatientBadges(patientId: string) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data, error } = await supabase
         .from('patient_badges')
         .select('*, badge:badges(*)')

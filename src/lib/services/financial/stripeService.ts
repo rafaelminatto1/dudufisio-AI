@@ -69,7 +69,7 @@ export class StripeService {
   }
 
   static async processStripeEvent(event: Stripe.Event) {
-    const supabase = createServerComponentClient();
+    const supabase = await createServerComponentClient();
 
     switch (event.type) {
       case 'payment_intent.succeeded': {

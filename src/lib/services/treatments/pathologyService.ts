@@ -3,7 +3,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export class PathologyService {
   static async create(data: any) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data: pathology, error } = await supabase
         .from('pathologies')
         .insert(data)
@@ -19,7 +19,7 @@ export class PathologyService {
 
   static async getByPatient(patientId: string) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data, error } = await supabase
         .from('pathologies')
         .select('*')

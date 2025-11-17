@@ -16,7 +16,7 @@ export class RecurrenceService {
     pattern: RecurrencePattern
   ) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const recurrenceGroupId = uuidv4();
       const dates = this.generateRecurrenceDates(new Date(baseAppointment.start_time), pattern);
       

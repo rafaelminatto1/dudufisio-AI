@@ -6,7 +6,7 @@ import { Loading } from '~/components/ui/loading';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 
 async function getFinancialData() {
-  const supabase = createServerComponentClient();
+  const supabase = await createServerComponentClient();
   const today = new Date();
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 

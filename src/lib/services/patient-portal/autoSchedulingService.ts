@@ -9,7 +9,7 @@ export class AutoSchedulingService {
     daysAhead?: number;
   }) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const daysAhead = params.daysAhead || 30;
       const startDate = params.date || new Date();
       const availableSlots: any[] = [];

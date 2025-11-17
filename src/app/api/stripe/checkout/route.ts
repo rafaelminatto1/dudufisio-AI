@@ -5,7 +5,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerComponentClient();
+    const supabase = await createServerComponentClient();
     const {
       data: { session: authSession },
     } = await supabase.auth.getSession();

@@ -196,9 +196,14 @@ O projeto utiliza shadcn/ui como base do design system:
 
 ## 📚 Documentação Adicional
 
+- **`CONSOLIDACAO_PROJETO.md`** - Resumo completo da consolidação do projeto
+- **`MIGRACAO_SERVICES.md`** - Guia detalhado de migração de services
+- **`RESUMO_MIGRACAO.md`** - Resumo do progresso da migração
+- **`PROGRESSO_FINAL.md`** - Status final e conclusões
 - **`MIGRATION_COMPLETED.md`** - Detalhes completos da migração
 - **`VERCEL_CONFIGURATION.md`** - Instruções de configuração do Vercel
 - **`_OLD_PROJECT/README.md`** - Informações sobre código legado
+- **`fisioflow-next/`** - Versão incompleta do projeto (backup)
 
 ## 🔒 Segurança
 

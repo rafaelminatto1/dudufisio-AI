@@ -6,7 +6,7 @@ import { QuickActionsPanel } from './_components/quick-actions-panel';
 import { Loading } from '~/components/ui/loading';
 
 async function getAgendaData() {
-  const supabase = createServerComponentClient();
+  const supabase = await createServerComponentClient();
   const today = new Date();
   const startOfWeek = new Date(today);
   startOfWeek.setDate(today.getDate() - today.getDay());

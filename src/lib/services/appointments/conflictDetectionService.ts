@@ -32,7 +32,7 @@ export class ConflictDetectionService {
 
   private static async checkScheduleBlocks(appointmentData: any): Promise<Conflict | null> {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data: blocks } = await supabase
         .from('schedule_blocks')
         .select('*')
@@ -53,7 +53,7 @@ export class ConflictDetectionService {
 
   private static async checkPatientOverlap(appointmentData: any): Promise<Conflict | null> {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       let query = supabase
         .from('appointments')
         .select('*')
@@ -78,7 +78,7 @@ export class ConflictDetectionService {
 
   private static async checkTherapistOverlap(appointmentData: any): Promise<Conflict | null> {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       let query = supabase
         .from('appointments')
         .select('*')

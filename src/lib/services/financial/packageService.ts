@@ -3,7 +3,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export class PackageService {
   static async create(data: any) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data: pkg, error } = await supabase
         .from('patient_packages')
         .insert(data)
@@ -19,7 +19,7 @@ export class PackageService {
 
   static async getByPatient(patientId: string) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data, error } = await supabase
         .from('patient_packages')
         .select('*')
@@ -35,7 +35,7 @@ export class PackageService {
 
   static async useSession(packageId: string) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data, error } = await supabase
         .from('patient_packages')
         .select('*')

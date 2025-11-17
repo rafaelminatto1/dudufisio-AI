@@ -3,7 +3,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 import { LoginForm } from './_components/login-form';
 
 export default async function LoginPage() {
-  const supabase = createServerComponentClient();
+  const supabase = await createServerComponentClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();

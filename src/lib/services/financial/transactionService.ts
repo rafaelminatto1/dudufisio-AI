@@ -7,7 +7,7 @@ type TransactionInsert = Database['public']['Tables']['financial_transactions'][
 export class TransactionService {
   static async create(data: TransactionInsert) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data: transaction, error } = await supabase
         .from('financial_transactions')
         .insert(data)
@@ -27,7 +27,7 @@ export class TransactionService {
     endDate?: string;
   }) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       let query = supabase
         .from('financial_transactions')
         .select('*')
@@ -48,7 +48,7 @@ export class TransactionService {
 
   static async getStats(startDate?: string, endDate?: string) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       let query = supabase.from('financial_transactions').select('transaction_type, amount, payment_status');
       if (startDate) query = query.gte('created_at', startDate);
       if (endDate) query = query.lte('created_at', endDate);

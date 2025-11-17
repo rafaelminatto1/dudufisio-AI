@@ -4,7 +4,7 @@ import { TreatmentsLayout } from './_components/treatments-layout';
 import { Loading } from '~/components/ui/loading';
 
 async function getTreatmentsData() {
-  const supabase = createServerComponentClient();
+  const supabase = await createServerComponentClient();
 
   const { data: treatments } = await supabase
     .from('treatments')

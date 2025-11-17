@@ -7,7 +7,7 @@ type SessionEvolutionInsert = Database['public']['Tables']['session_evolutions']
 export class SessionEvolutionService {
   static async createEvolution(data: SessionEvolutionInsert) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data: evolution, error } = await supabase
         .from('session_evolutions')
         .insert(data)
@@ -23,7 +23,7 @@ export class SessionEvolutionService {
 
   static async getEvolutionsByTreatment(treatmentId: string) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data, error } = await supabase
         .from('session_evolutions')
         .select('*')
@@ -39,7 +39,7 @@ export class SessionEvolutionService {
 
   static async updateEvolution(id: string, updates: any) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data, error } = await supabase
         .from('session_evolutions')
         .update(updates)

@@ -63,7 +63,12 @@ export async function GET(request: NextRequest) {
       type: 'incremental' as const,
       status: 'running' as const,
       start_time: new Date().toISOString(),
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      metadata: {
+        source: 'cron_job',
+        schedule: 'daily',
+        timestamp: new Date().toISOString()
+      }
     };
 
     try {
@@ -76,11 +81,7 @@ export async function GET(request: NextRequest) {
             type: backupMetadata.type,
             status: backupMetadata.status,
             start_time: backupMetadata.start_time,
-            metadata: {
-              source: 'cron_job',
-              schedule: 'daily',
-              timestamp: new Date().toISOString()
-            }
+            metadata: backupMetadata.metadata
           });
 
         if (insertError) {

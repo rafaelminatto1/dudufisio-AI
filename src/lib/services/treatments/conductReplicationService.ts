@@ -3,7 +3,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export class ConductReplicationService {
   static async replicateFullSession(sourceSessionId: string, targetData: any) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data: sourceSession } = await supabase
         .from('session_evolutions')
         .select('*')

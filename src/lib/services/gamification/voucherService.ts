@@ -3,7 +3,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export class VoucherService {
   static async redeemVoucher(params: { patientId: string; voucherId: string }) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       
       const { data: voucher } = await supabase
         .from('vouchers')

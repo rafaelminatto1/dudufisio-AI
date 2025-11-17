@@ -18,7 +18,7 @@ export class XPService {
     description: string;
   }) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const pointsEarned = params.points || this.POINTS_CONFIG[params.pointsType] || 0;
 
       const { data, error } = await supabase
@@ -57,7 +57,7 @@ export class XPService {
 
   static async getPatientXP(patientId: string) {
     try {
-      const supabase = createServerComponentClient();
+      const supabase = await createServerComponentClient();
       const { data: patient, error } = await supabase
         .from('patients')
         .select('xp_points, level')

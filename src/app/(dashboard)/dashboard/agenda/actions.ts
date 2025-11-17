@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { ConflictDetectionService } from '~/lib/services/appointments/conflictDetectionService';
 
 export async function createAppointment(formData: FormData) {
-  const supabase = createServerActionClient();
+  const supabase = await createServerActionClient();
 
   const appointmentData = {
     patient_id: formData.get('patient_id') as string,
@@ -45,7 +45,7 @@ export async function createAppointment(formData: FormData) {
 }
 
 export async function updateAppointment(id: string, formData: FormData) {
-  const supabase = createServerActionClient();
+  const supabase = await createServerActionClient();
 
   const appointmentData = {
     patient_id: formData.get('patient_id') as string,
@@ -87,7 +87,7 @@ export async function updateAppointment(id: string, formData: FormData) {
 }
 
 export async function deleteAppointment(id: string) {
-  const supabase = createServerActionClient();
+  const supabase = await createServerActionClient();
 
   const { error } = await supabase.from('appointments').delete().eq('id', id);
 
