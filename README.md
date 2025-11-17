@@ -1,364 +1,222 @@
-# 🏥 dudufisio-AI
+# FisioFlow Next.js
 
-> Sistema completo de gestão de clínicas de fisioterapia com Inteligência Artificial
+Sistema de gestão completo para clínicas de fisioterapia, construído com Next.js 16, Supabase e shadcn/ui.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com)
-[![Progress](https://img.shields.io/badge/progress-85%25-success.svg)](https://github.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue.svg)](https://www.typescriptlang.org/)
-[![Tests](https://img.shields.io/badge/tests-40+-green.svg)](https://jestjs.io/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+> **📌 Migração Completa:** Este projeto foi migrado de React 18 + Vite para Next.js 16 em Novembro de 2025.  
+> O código antigo está em `_OLD_PROJECT/` para referência.
 
----
+## 🚀 Tecnologias
 
-## ✨ Principais Features
+- **Framework:** Next.js 16 (App Router)
+- **React:** React 19
+- **Backend:** Supabase (PostgreSQL + Auth + Storage + Edge Functions)
+- **UI:** shadcn/ui + Tailwind CSS 3.4 + Radix UI
+- **TypeScript:** Modo strict habilitado
+- **Deploy:** Vercel (CI/CD automático)
+- **IA:** OpenAI, Anthropic (Vercel AI SDK)
+- **Análise de Movimento:** MediaPipe
 
-### 🧠 Inteligência Artificial
-
-#### 🆕 Base de Conhecimento com RAG (NEW!)
-- **📚 Knowledge Base** - 9 PDFs científicos indexados com pgvector
-- **💬 AI Chat** - GPT-4 responde perguntas com citação de fontes
-- **🔍 Semantic Search** - Busca inteligente em toda literatura científica
-- **📊 Evidence-Based** - Respostas baseadas em evidências científicas
-- **🎯 Source Attribution** - Todas respostas citam fontes automaticamente
-
-👉 **[Ver Guia de Instalação](./COMECE_AQUI.md)**
-
-#### Outras Funcionalidades IA
-- **AI Insights Dashboard** - Previsões de cancelamentos e análise de churn em tempo real
-- **Voice Notes com IA** - Transcrição e estruturação automática em SOAP (70% economia de tempo)
-- **Smart Scheduler** - Otimização automática da agenda (+25% ocupação, -40% no-shows)
-- **Movement Analysis** - Análise de postura com visão computacional (PoseNet)
-- **Churn Prediction** - Modelo preditivo de abandono de tratamento
-- **Treatment Plans Generator** - Geração automática de planos personalizados
-- **Business Intelligence** - Análises e projeções avançadas
-
-### 💼 Gestão Completa
-- Cadastro e prontuário eletrônico de pacientes
-- Agendamento inteligente de consultas
-- Registro de evoluções SOAP
-- Biblioteca de exercícios terapêuticos
-- Protocolos e prescrições
-- Controle financeiro
-
-### ⚡ Performance
-- **Edge Functions** - 50% mais rápido, 50% mais barato
-- **Query Optimizations** - 32 índices SQL (50-90% mais rápido)
-- **Bundle Optimization** - Carregamento otimizado
-- **Monitoring** - Lighthouse CI + Supabase Insights
-
----
-
-## 🚀 Quick Start
-
-### 🆕 Novo: Base de Conhecimento RAG
-
-Para instalar e configurar a Base de Conhecimento com RAG:
-
-👉 **[COMECE AQUI - Quick Start](./COMECE_AQUI.md)** (10 minutos)  
-📋 **[Checklist Completo](./CHECKLIST_INSTALACAO.md)** (25 minutos)  
-📚 **[Documentação Completa](./INDICE_DOCUMENTACAO.md)**
-
-#### Instalação Rápida:
-```bash
-# 1. Configure .env.local com suas chaves (OpenAI + Supabase)
-# 2. Aplique migration no Supabase (SQL Editor)
-# 3. Processe PDFs
-npm run kb:populate
-
-# 4. Teste
-npm run kb:test
-
-# 5. Veja funcionando
-npm run dev
-# → http://localhost:3000/knowledge
-```
-
----
-
-### Pré-requisitos
-- Node.js 18+
-- npm ou yarn
-- Conta Supabase Pro (para pgvector)
-- Conta Vercel Pro (opcional)
-- OpenAI API Key (para RAG)
-- Google Gemini API Key
-
-### Instalação Principal
+## 📦 Instalação
 
 ```bash
-# 1. Clone o repositório
-git clone https://github.com/seu-usuario/dudufisio-ai.git
-cd dudufisio-ai
-
-# 2. Instale dependências
+# Instalar dependências
 npm install
 
-# 3. Configure environment variables
+# Configurar variáveis de ambiente
 cp .env.example .env.local
-# Edite .env.local com suas credenciais
+# Editar .env.local com suas credenciais do Supabase
 
-# 4. Execute migrations
-npm run supabase:push
-
-# 5. Inicie o servidor de desenvolvimento (host + micro-frontends)
-# Isso sobe o host em http://localhost:5173 e os remotos (agenda, tratamentos, financeiro, patient portal)
+# Rodar em desenvolvimento
 npm run dev
 
-# 6. Abra no navegador
-# http://localhost:5173
-# (Para usar apenas o host isolado: npm run dev:host-only)
+# Build para produção
+npm run build
+npm start
 ```
 
-#### Alternativa com pnpm
+## 🏗️ Estrutura do Projeto
 
-O projeto já inclui `pnpm-workspace.yaml`. Para usar pnpm:
+```
+.
+├── src/
+│   ├── app/                    # App Router (Next.js 16)
+│   │   ├── (auth)/            # Rotas públicas (login, signup)
+│   │   ├── (dashboard)/       # Dashboard principal
+│   │   ├── (portal)/          # Portal do paciente
+│   │   └── api/               # API Routes + Cron Jobs
+│   ├── components/
+│   │   ├── ui/                # shadcn/ui components
+│   │   └── features/          # Componentes de negócio
+│   ├── lib/
+│   │   ├── supabase/          # Clientes Supabase (SSR)
+│   │   ├── ai/                # Providers de IA
+│   │   └── utils.ts           # Utilitários
+│   └── types/
+│       └── database.types.ts  # Types do Supabase
+├── supabase/
+│   └── migrations/            # Migrations do banco
+├── _OLD_PROJECT/              # Código legado (Vite) - apenas referência
+├── next.config.ts             # Configuração Next.js
+├── vercel.json                # Configuração de deploy
+└── package.json
+
+## 🎯 Funcionalidades Principais
+
+### Gestão de Pacientes
+- Cadastro completo com validação
+- Histórico médico
+- Documentos e anexos
+
+### Agenda
+- Visualização de calendário semanal
+- Criação e gestão de agendamentos
+- Sistema de notificações
+
+### Tratamentos
+- Planos de tratamento personalizados
+- Evolução de sessões
+- Análise de progresso
+
+### Financeiro
+- Dashboard com métricas
+- Gestão de pagamentos
+- Relatórios
+
+### Portal do Paciente
+- Área exclusiva para pacientes
+- Visualização de tratamentos
+- Próximas consultas
+
+### Inovações com IA
+
+#### Análise de Movimento em Tempo Real
+- Detecção de pose com MediaPipe
+- Feedback visual sobre execução de exercícios
+- Métricas de ângulos articulares
+
+#### Assistente de IA
+- Geração de relatórios clínicos
+- Sugestões de planos de tratamento
+- Análise preditiva
+
+#### Gamificação
+- Sistema de pontos e níveis
+- Conquistas e badges
+- Ranking de engajamento
+
+## 🔐 Autenticação e Segurança
+
+- Autenticação via Supabase Auth
+- Row Level Security (RLS) no banco de dados
+- Middleware de proteção de rotas
+- TypeScript em modo strict
+
+## 🚀 Deploy na Vercel
+
+### ⚠️ Configuração Inicial Necessária
+
+**IMPORTANTE:** Após a migração, você precisa reconfigurar o projeto no painel da Vercel:
+
+1. Acesse: https://vercel.com/rafael-minattos-projects/dudufisio-ai/settings
+2. Altere **Framework Preset** de "vite" para **"Next.js"**
+3. Configure as variáveis de ambiente (veja `VERCEL_CONFIGURATION.md`)
+
+### Variáveis de Ambiente na Vercel
+
+Configure as seguintes variáveis no dashboard da Vercel:
+
+- `NEXT_PUBLIC_SUPABASE_URL` - URL do projeto Supabase
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Chave anônima do Supabase
+- `SUPABASE_SERVICE_ROLE_KEY` - Chave de serviço (obter no painel Supabase)
+- `OPENAI_API_KEY` - Chave da OpenAI
+- `ANTHROPIC_API_KEY` - Chave da Anthropic
+- `CRON_SECRET` - String aleatória para proteger cron jobs
+
+**📖 Instruções completas:** Veja `VERCEL_CONFIGURATION.md`
+
+### Deploy Automático
+
+Após configurar, o deploy é automático via Git:
 
 ```bash
-corepack enable pnpm
-pnpm install
-pnpm run dev
-pnpm run dev:host-only
+git push origin main
 ```
 
-> Sempre que precisar limpar dependências antes de um build, execute `npm run clean:deps` (ou `pnpm clean:deps`).
-
-### Testes
+Ou deploy manual:
 
 ```bash
-# Executar todos os testes
-npm test
-
-# Com coverage
-npm run test:coverage
-
-# Watch mode
-npm run test:watch
+vercel --prod
 ```
 
----
+## 📊 Monitoramento
 
-## 📚 Documentação
+- **Vercel Analytics:** Métricas de usuários e performance
+- **Vercel Speed Insights:** Core Web Vitals
+- **Supabase Logs:** Logs de API, Auth e Edge Functions
 
-### Guias Principais
-- **[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)** - Guia completo de deploy
-- **[PRODUCTION_CHECKLIST.md](PRODUCTION_CHECKLIST.md)** - Checklist de produção
-- **[minatto_gemini.md](minatto_gemini.md)** - Roadmap completo do projeto
+## 🧪 Testes
 
-### Documentação Técnica (pasta `/docs`)
-- Migração JSONB → Junction Tables
-- Query Optimization Guide
-- TypeScript Migration Strategy
-- Monitoring Setup
-- Bundle Analyzer Setup
-- Edge Functions Migration
-- Database Nomenclature Guide
+```bash
+# Executar validação de dados
+npm run validate
 
-### Relatórios
-- Relatório Final Completo
-- Revisão Técnica Completa
-- Resumo Executivo
+# Testes E2E (quando configurados)
+npm run test:e2e
+```
 
----
+## 📝 Scripts Úteis
 
-## 🛠️ Stack Tecnológica
+```bash
+# Validar integridade de dados
+npm run validate
 
-### Frontend
-- **Next.js 14** - React framework
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Lucide React** - Icons
-- **React Hook Form** - Forms
-- **Zod** - Validation
+# Verificar advisors de segurança
+# (usar MCPs do Supabase)
 
-### Backend & Database
-- **Supabase** - Backend as a Service
-  - PostgreSQL database
-  - Row Level Security
-  - Real-time subscriptions
-  - Storage
-  - Edge Functions
+# Ver logs do Supabase
+# (usar MCPs do Supabase)
+```
 
-### IA & ML
-- **Google Gemini** - LLM para análises
-- **TensorFlow.js** - Movement analysis
-- **PoseNet** - Pose detection
+## 🎨 Design System
 
-### DevOps
-- **Vercel** - Hosting e deploy
-- **GitHub Actions** - CI/CD
-- **Jest** - Testing
-- **Lighthouse CI** - Performance monitoring
+O projeto utiliza shadcn/ui como base do design system:
 
----
-
-## 📊 Performance
-
-| Métrica | Antes | Depois | Melhoria |
-|---------|-------|--------|----------|
-| Dashboard Loading | 3.0s | 0.3s | **-90%** |
-| Query Pacientes | 2.5s | 0.2s | **-92%** |
-| Full-text Search | 3.2s | 0.3s | **-90%** |
-| API Response | 800ms | 150ms | **-81%** |
-
----
-
-## 💰 ROI Estimado
-
-### Receita Adicional
-- Smart Scheduler: **+R$ 10k-15k/mês**
-- Voice Notes (produtividade): **+R$ 15k/mês**
-- AI Insights (retenção): **+R$ 5k-8k/mês**
-
-### Economia de Custos
-- Performance otimizada: **-R$ 500-1k/mês**
-- Tempo economizado: **-R$ 20k/mês**
-
-### Total
-**R$ 50k-59k/mês** em impacto positivo
-
----
-
-## 🎯 Roadmap
-
-### ✅ Fase 1: Estrutura (100%)
-- [x] Schema consolidado
-- [x] JSONB normalizado
-- [x] Nomenclatura padronizada
-
-### ✅ Fase 2: Performance (100%)
-- [x] Edge Functions
-- [x] Query Optimizations
-- [x] Monitoring configurado
-
-### ✅ Fase 3: IA (100%)
-- [x] Dashboard IA
-- [x] Churn Prediction
-- [x] Treatment Plans
-- [x] Business Intelligence
-- [x] AI Insights
-- [x] Voice Notes
-- [x] Smart Scheduler
-- [x] Movement Analysis MVP
-
-### 📅 Fase 4: Futuro (2026)
-- [ ] Telemedicina avançada
-- [ ] Mobile app React Native
-- [ ] Marketplace de profissionais
-- [ ] Análise de movimento full (vídeo)
-
-**Progresso Total:** 85% 🚀
-
----
+- Componentes acessíveis (Radix UI)
+- Totalmente customizável
+- Dark mode suportado
+- Responsivo por padrão
 
 ## 🤝 Contribuindo
 
 1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/AmazingFeature`)
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
 3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
----
+## 📚 Documentação Adicional
 
-## 📝 Scripts Disponíveis
+- **`MIGRATION_COMPLETED.md`** - Detalhes completos da migração
+- **`VERCEL_CONFIGURATION.md`** - Instruções de configuração do Vercel
+- **`_OLD_PROJECT/README.md`** - Informações sobre código legado
 
-```bash
-# Desenvolvimento
-npm run dev              # Host + micro-frontends em modo desenvolvimento
-npm run dev:host-only    # Somente o host principal
-npm run build            # Build para produção
-npm run start            # Inicia servidor produção
-npm run lint             # Executar linter
-npm run type-check       # Verificar tipos TypeScript
+## 🔒 Segurança
 
-# Testes
-npm test                 # Executar testes
-npm run test:watch       # Testes em watch mode
-npm run test:coverage    # Testes com coverage
-
-# Database
-npm run supabase:types   # Regenerar tipos TypeScript
-npm run supabase:push    # Aplicar migrations
-
-# Deploy
-./scripts/deploy-staging.sh    # Deploy staging
-./scripts/production-deploy.sh # Deploy production
-
-# Análise
-npm run build:analyze    # Analisar bundle size
-npm run check:performance # Verificar performance
-```
-
----
+- ✅ **0 erros de segurança** nos advisors do Supabase
+- ✅ RLS habilitado em todas as tabelas críticas
+- ✅ Funções com `search_path` fixo
+- ✅ Headers de segurança configurados no Next.js
+- ✅ Views sem `SECURITY DEFINER`
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto é privado e proprietário.
+
+## 🆘 Suporte
+
+Para suporte, entre em contato através do email: suporte@fisioflow.com.br
 
 ---
 
-## 👥 Time
-
-**Desenvolvido com 💜 pela equipe dudufisio-AI**
-
-- Product Owner: [Nome]
-- Tech Lead: [Nome]
-- AI Engineer: [Nome]
-- Full Stack Developer: [Nome]
-
----
-
-## 📞 Suporte
-
-- **Documentação:** `/docs`
-- **Issues:** GitHub Issues
-- **Email:** suporte@dudufisio.com
-- **Website:** https://dudufisio.com
-
----
-
-## 🌟 Diferenciais
-
-### Por que escolher dudufisio-AI?
-
-✨ **Features únicas no mercado brasileiro**
-- Voice Notes com estruturação SOAP automática
-- Smart Scheduler com IA
-- Movement Analysis com visão computacional
-
-📈 **Resultados comprovados**
-- +25% ocupação da agenda
-- -40% no-shows
-- 70% economia de tempo na documentação
-
-⚡ **Performance excepcional**
-- 10x mais rápido que concorrentes
-- 90% redução no tempo de carregamento
-
-💎 **Código profissional**
-- 100% TypeScript
-- Testes automatizados
-- Documentação completa
-- Production-ready
-
----
-
-## 🎉 Status do Projeto
-
-```
-██████████████████████████████████████████████████████░░░░░  85%
-```
-
-**3 de 4 fases completas!**
-
-- ✅ Fase 1: Estrutura - **100%**
-- ✅ Fase 2: Performance - **100%**
-- ✅ Fase 3: IA - **100%**
-- 📅 Fase 4: Futuro - **0%** (2026)
-
----
-
-**Última atualização:** 06/11/2025  
-**Versão:** 1.0.0  
-**Status:** Production Ready 🚀
-
+**Versão:** v2.0.0-nextjs  
+**Última Atualização:** Novembro 2025

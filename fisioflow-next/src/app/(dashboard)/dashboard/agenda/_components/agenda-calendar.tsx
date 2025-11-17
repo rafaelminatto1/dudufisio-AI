@@ -1,133 +1,224 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { format, startOfWeek, addDays, isSameDay } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { Button } from '@/components/ui/button'
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react'
+import { useState } from 'react';
+import { Calendar, CalendarDays, List, Calendar as CalendarIcon } from 'lucide-react';
+import { Button } from '~/components/ui/button';
+import { Card } from '~/components/ui/card';
+import { DailyView } from './daily-view';
+import { WeeklyView } from './weekly-view';
+import { MonthlyView } from './monthly-view';
+import { ListView } from './list-view';
+import { AppointmentFormModal } from './appointment-form-modal';
+import { ConflictWarningDialog } from './conflict-warning-dialog';
 
-type Appointment = {
-  id: string
-  data_hora: string
-  tipo: string | null
-  status: string | null
-  pacientes: {
-    nome: string
-    telefone: string | null
-  } | null
+export type ViewType = 'daily' | 'weekly' | 'monthly' | 'list';
+
+interface AgendaCalendarProps {
+  initialAppointments: any[];
+  patients: any[];
+  therapists: any[];
 }
 
-export function AgendaCalendar({ appointments }: { appointments: Appointment[] }) {
-  const [currentWeek, setCurrentWeek] = useState(new Date())
+export function AgendaCalendar({ initialAppointments, patients, therapists }: AgendaCalendarProps) {
+  const [view, setView] = useState<ViewType>('weekly');
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [appointments, setAppointments] = useState(initialAppointments);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
+  const [conflictWarning, setConflictWarning] = useState<any>(null);
 
-  const weekStart = startOfWeek(currentWeek, { locale: ptBR })
-  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
+  const handleCreateAppointment = () => {
+    setSelectedAppointment(null);
+    setIsFormOpen(true);
+  };
 
-  const hours = Array.from({ length: 13 }, (_, i) => i + 8) // 8h às 20h
+  const handleEditAppointment = (appointment: any) => {
+    setSelectedAppointment(appointment);
+    setIsFormOpen(true);
+  };
 
-  const getAppointmentsForDay = (day: Date, hour: number) => {
-    return appointments.filter((apt) => {
-      const aptDate = new Date(apt.data_hora)
-      return isSameDay(aptDate, day) && aptDate.getHours() === hour
-    })
-  }
+  const handleSaveAppointment = async (formData: FormData) => {
+    const { createAppointment, updateAppointment } = await import('../actions');
+    
+    let result;
+    if (selectedAppointment) {
+      result = await updateAppointment(selectedAppointment.id, formData);
+    } else {
+      result = await createAppointment(formData);
+    }
 
-  const previousWeek = () => {
-    setCurrentWeek(addDays(currentWeek, -7))
-  }
+    if (!result.success) {
+      if (result.conflicts) {
+        setConflictWarning(result.conflicts);
+        return;
+      }
+      alert(result.error || 'Erro ao salvar agendamento');
+      return;
+    }
 
-  const nextWeek = () => {
-    setCurrentWeek(addDays(currentWeek, 7))
-  }
+    setIsFormOpen(false);
+    setSelectedAppointment(null);
+    window.location.reload(); // TODO: Usar router.refresh() quando disponível
+  };
 
-  const goToToday = () => {
-    setCurrentWeek(new Date())
-  }
+  const handleDeleteAppointment = async (id: string) => {
+    if (!confirm('Tem certeza que deseja excluir este agendamento?')) return;
+
+    const { deleteAppointment } = await import('../actions');
+    const result = await deleteAppointment(id);
+
+    if (!result.success) {
+      alert(result.error || 'Erro ao excluir agendamento');
+      return;
+    }
+
+    setAppointments(appointments.filter((a) => a.id !== id));
+  };
+
+  const handleAppointmentMove = async (appointmentId: string, newDate: Date, newTime: string) => {
+    const appointment = appointments.find((a) => a.id === appointmentId);
+    if (!appointment) return;
+
+    const [hour, minute] = newTime.split(':').map(Number);
+    const endTime = new Date(newDate);
+    endTime.setHours(hour + 1, minute, 0, 0);
+
+    const formData = new FormData();
+    formData.append('patient_id', appointment.patient_id);
+    formData.append('therapist_id', appointment.therapist_id);
+    formData.append('start_time', newDate.toISOString());
+    formData.append('end_time', endTime.toISOString());
+    formData.append('status', appointment.status);
+
+    const { updateAppointment } = await import('../actions');
+    const result = await updateAppointment(appointmentId, formData);
+
+    if (!result.success) {
+      if (result.conflicts) {
+        setConflictWarning(result.conflicts);
+      } else {
+        alert(result.error || 'Erro ao mover agendamento');
+      }
+      return;
+    }
+
+    // Atualizar lista local
+    setAppointments(
+      appointments.map((a) =>
+        a.id === appointmentId
+          ? { ...a, start_time: newDate.toISOString(), end_time: endTime.toISOString() }
+          : a
+      )
+    );
+  };
+
+  const renderView = () => {
+    switch (view) {
+      case 'daily':
+        return (
+          <DailyView
+            date={currentDate}
+            appointments={appointments}
+            onAppointmentClick={handleEditAppointment}
+            onSlotClick={handleCreateAppointment}
+          />
+        );
+      case 'weekly':
+        return (
+          <WeeklyView
+            startDate={currentDate}
+            appointments={appointments}
+            onAppointmentClick={handleEditAppointment}
+            onSlotClick={handleCreateAppointment}
+            onAppointmentMove={handleAppointmentMove}
+          />
+        );
+      case 'monthly':
+        return (
+          <MonthlyView
+            month={currentDate}
+            appointments={appointments}
+            onAppointmentClick={handleEditAppointment}
+            onDateClick={(date) => {
+              setCurrentDate(date);
+              setView('daily');
+            }}
+          />
+        );
+      case 'list':
+        return (
+          <ListView
+            appointments={appointments}
+            onAppointmentClick={handleEditAppointment}
+            onDelete={handleDeleteAppointment}
+          />
+        );
+    }
+  };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <CalendarIcon className="h-5 w-5" />
-            {format(weekStart, 'dd/MM/yyyy', { locale: ptBR })} -{' '}
-            {format(addDays(weekStart, 6), 'dd/MM/yyyy', { locale: ptBR })}
-          </CardTitle>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={previousWeek}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm" onClick={goToToday}>
-              Hoje
-            </Button>
-            <Button variant="outline" size="sm" onClick={nextWeek}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
-          <div className="grid grid-cols-8 gap-1 min-w-[900px]">
-            {/* Header */}
-            <div className="sticky left-0 bg-card p-2 font-medium">Horário</div>
-            {weekDays.map((day) => (
-              <div
-                key={day.toISOString()}
-                className={`p-2 text-center font-medium ${
-                  isSameDay(day, new Date()) ? 'bg-primary/10 rounded-t-lg' : ''
-                }`}
+    <>
+      <Card className="h-full">
+        <div className="border-b p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              <Button
+                variant={view === 'daily' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setView('daily')}
               >
-                <div className="text-sm">
-                  {format(day, 'EEE', { locale: ptBR })}
-                </div>
-                <div className="text-lg">{format(day, 'dd', { locale: ptBR })}</div>
-              </div>
-            ))}
-
-            {/* Time slots */}
-            {hours.map((hour) => (
-              <>
-                <div
-                  key={`hour-${hour}`}
-                  className="sticky left-0 bg-card p-2 text-sm font-medium"
-                >
-                  {hour}:00
-                </div>
-                {weekDays.map((day) => {
-                  const dayAppointments = getAppointmentsForDay(day, hour)
-                  return (
-                    <div
-                      key={`${day.toISOString()}-${hour}`}
-                      className={`min-h-[60px] border p-1 ${
-                        isSameDay(day, new Date()) ? 'bg-primary/5' : 'bg-card'
-                      }`}
-                    >
-                      {dayAppointments.map((apt) => (
-                        <div
-                          key={apt.id}
-                          className="rounded bg-primary p-1 text-xs text-primary-foreground"
-                        >
-                          <div className="font-medium truncate">
-                            {apt.pacientes?.nome || 'Sem nome'}
-                          </div>
-                          <div className="opacity-90">
-                            {format(new Date(apt.data_hora), 'HH:mm', {
-                              locale: ptBR,
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )
-                })}
-              </>
-            ))}
+                <Calendar className="mr-2 h-4 w-4" />
+                Diária
+              </Button>
+              <Button
+                variant={view === 'weekly' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setView('weekly')}
+              >
+                <CalendarDays className="mr-2 h-4 w-4" />
+                Semanal
+              </Button>
+              <Button
+                variant={view === 'monthly' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setView('monthly')}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                Mensal
+              </Button>
+              <Button
+                variant={view === 'list' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setView('list')}
+              >
+                <List className="mr-2 h-4 w-4" />
+                Lista
+              </Button>
+            </div>
+            <Button onClick={handleCreateAppointment}>Novo Agendamento</Button>
           </div>
         </div>
-      </CardContent>
-    </Card>
-  )
+        <div className="h-[calc(100vh-300px)] overflow-auto">{renderView()}</div>
+      </Card>
+
+      <AppointmentFormModal
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        appointment={selectedAppointment}
+        patients={patients}
+        therapists={therapists}
+        onSave={handleSaveAppointment}
+        onConflict={setConflictWarning}
+      />
+
+      {conflictWarning && (
+        <ConflictWarningDialog
+          open={!!conflictWarning}
+          onOpenChange={() => setConflictWarning(null)}
+          conflicts={conflictWarning}
+        />
+      )}
+    </>
+  );
 }
 

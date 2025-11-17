@@ -1,5 +1,16 @@
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation';
+import { createServerComponentClient } from '~/lib/supabase/server';
 
-export default function Home() {
-  redirect('/dashboard')
+export default async function HomePage() {
+  const supabase = createServerComponentClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session) {
+    redirect('/dashboard');
+  } else {
+    redirect('/login');
+  }
 }
+

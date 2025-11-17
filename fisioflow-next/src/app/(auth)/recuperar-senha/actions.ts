@@ -1,21 +1,19 @@
-'use server'
+'use server';
 
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
+import { createServerActionClient } from '~/lib/supabase/server';
 
 export async function resetPassword(formData: FormData) {
-  const supabase = await createClient()
-
-  const email = formData.get('email') as string
+  const supabase = createServerActionClient();
+  const email = formData.get('email') as string;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-  })
+    redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/reset-password`,
+  });
 
   if (error) {
-    redirect('/recuperar-senha?error=erro-ao-enviar-email')
+    return { error: error.message };
   }
 
-  redirect('/login?message=email-enviado')
+  return { success: true, message: 'Email de recuperação enviado!' };
 }
 

@@ -1,34 +1,46 @@
-import { ReactNode } from 'react'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { DashboardNav } from '@/components/features/dashboard-nav'
-import { DashboardHeader } from '@/components/features/dashboard-header'
+import { Suspense } from 'react';
+import { createServerComponentClient } from '~/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import { DashboardSidebar } from '~/components/layout/dashboard-sidebar';
+import { DashboardHeader } from '~/components/layout/dashboard-header';
+import { MobileNav } from '~/components/layout/mobile-nav';
+import { Loading } from '~/components/ui/loading';
+import { Toaster } from '~/components/ui/sonner';
 
 export default async function DashboardLayout({
   children,
 }: {
-  children: ReactNode
+  children: React.ReactNode;
 }) {
-  const supabase = await createClient()
-
+  const supabase = createServerComponentClient();
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!user) {
-    redirect('/login')
+  if (!session) {
+    redirect('/login');
   }
 
+  const { data: user } = await supabase
+    .from('users')
+    .select('email, full_name, avatar_url')
+    .eq('id', session.user.id)
+    .single();
+
   return (
-    <div className="flex min-h-screen">
-      <DashboardNav />
-      <div className="flex flex-1 flex-col">
-        <DashboardHeader user={user} />
-        <main className="flex-1 overflow-y-auto bg-muted/10 p-6">
+    <div className="flex h-screen overflow-hidden">
+      <DashboardSidebar />
+      <div className="flex flex-1 flex-col overflow-hidden lg:pl-64">
+        <Suspense fallback={<Loading />}>
+          <DashboardHeader user={user || undefined} />
+        </Suspense>
+        <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
           {children}
         </main>
+        <MobileNav />
       </div>
+      <Toaster />
     </div>
-  )
+  );
 }
 

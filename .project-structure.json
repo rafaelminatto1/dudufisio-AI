@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-11-16T21:54:39.798Z",
+  "structure": {
+    "type": "nextjs",
+    "activeSystem": "fisioflow-next",
+    "archivedSystems": [
+      "_OLD_PROJECT",
+      "_OLD_PROJECT/packages"
+    ],
+    "microservices": [],
+    "nextjs": "fisioflow-next",
+    "hasPackages": false,
+    "hasOldProject": true
+  },
+  "activeSystem": {
+    "system": "fisioflow-next",
+    "confidence": "HIGH",
+    "reason": "Modificado há 0 hora(s)"
+  },
+  "recommendation": {
+    "workIn": "fisioflow-next",
+    "confidence": "HIGH",
+    "shouldConfirm": false
+  }
+}

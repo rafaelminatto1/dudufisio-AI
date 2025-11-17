@@ -1,47 +1,59 @@
-import { createClient } from '@/lib/supabase/server'
-import { FinancialDashboard } from './_components/financial-dashboard'
+import { Suspense } from 'react';
+import { createServerComponentClient } from '~/lib/supabase/server';
+import { FinancialDashboard } from './_components/financial-dashboard';
+import { PackagesManager } from './_components/packages-manager';
+import { Loading } from '~/components/ui/loading';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+
+async function getFinancialData() {
+  const supabase = createServerComponentClient();
+  const today = new Date();
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  const { data: transactions } = await supabase
+    .from('financial_transactions')
+    .select('*')
+    .gte('created_at', startOfMonth.toISOString())
+    .order('created_at', { ascending: false });
+
+  return {
+    transactions: transactions || [],
+  };
+}
 
 export default async function FinanceiroPage() {
-  const supabase = await createClient()
-  
-  const { data: pagamentos } = await supabase
-    .from('pagamentos')
-    .select('*')
-    .order('created_at', { ascending: false })
-
-  // Calcular estatísticas
-  const total = pagamentos?.reduce((acc, p) => {
-    if (p.status === 'pago') {
-      return acc + (p.valor || 0)
-    }
-    return acc
-  }, 0) || 0
-
-  const pendente = pagamentos?.reduce((acc, p) => {
-    if (p.status === 'pendente') {
-      return acc + (p.valor || 0)
-    }
-    return acc
-  }, 0) || 0
-
-  const stats = {
-    total,
-    pendente,
-    recebido: total,
-    totalTransacoes: pagamentos?.length || 0,
-  }
+  const { transactions } = await getFinancialData();
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Financeiro</h1>
-        <p className="text-muted-foreground">
-          Acompanhe receitas, despesas e relatórios financeiros
-        </p>
+    <div className="flex h-full flex-col">
+      <div className="border-b bg-background p-4">
+        <div>
+          <h1 className="text-2xl font-bold">Financeiro</h1>
+          <p className="text-sm text-muted-foreground">Gerencie receitas, despesas e pagamentos</p>
+        </div>
       </div>
 
-      <FinancialDashboard stats={stats} payments={pagamentos || []} />
+      <div className="flex-1 overflow-auto p-4">
+        <Tabs defaultValue="dashboard" className="w-full">
+          <TabsList>
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="packages">Pacotes</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="dashboard" className="mt-4">
+            <Suspense fallback={<Loading />}>
+              <FinancialDashboard transactions={transactions} />
+            </Suspense>
+          </TabsContent>
+
+          <TabsContent value="packages" className="mt-4">
+            <Suspense fallback={<Loading />}>
+              <PackagesManager />
+            </Suspense>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
-  )
+  );
 }
 

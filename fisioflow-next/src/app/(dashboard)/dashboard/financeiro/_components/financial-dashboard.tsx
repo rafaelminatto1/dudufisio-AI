@@ -1,224 +1,115 @@
-'use client'
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import { DollarSign, TrendingUp, TrendingDown, CreditCard } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Button } from '~/components/ui/button';
+import { DollarSign, TrendingUp, TrendingDown, CreditCard, Plus } from 'lucide-react';
+import { formatCurrency } from '~/lib/utils';
+import { TransactionsTable } from './transactions-table';
+import { AddTransactionModal } from './add-transaction-modal';
+import { useState } from 'react';
 
-type Stats = {
-  total: number
-  pendente: number
-  recebido: number
-  totalTransacoes: number
+interface FinancialDashboardProps {
+  transactions: any[];
 }
 
-type Payment = {
-  id: string
-  valor: number | null
-  status: string | null
-  descricao: string | null
-  created_at: string
-}
+export function FinancialDashboard({ transactions }: FinancialDashboardProps) {
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value)
-}
+  const stats = useMemo(() => {
+    const receita = transactions
+      .filter((t) => t.transaction_type === 'receita')
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
-export function FinancialDashboard({
-  stats,
-  payments,
-}: {
-  stats: Stats
-  payments: Payment[]
-}) {
+    const despesa = transactions
+      .filter((t) => t.transaction_type === 'despesa')
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+    const pago = transactions
+      .filter((t) => t.payment_status === 'pago')
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+    const pendente = transactions
+      .filter((t) => t.payment_status === 'pendente')
+      .reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+    return {
+      receita,
+      despesa,
+      saldo: receita - despesa,
+      pago,
+      pendente,
+    };
+  }, [transactions]);
+
   return (
     <div className="space-y-6">
-      {/* Cards de Estatísticas */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Receita Total</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.total)}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.totalTransacoes} transações
-            </p>
+            <div className="text-2xl font-bold text-green-600">{formatCurrency(stats.receita)}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Recebido</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-500" />
+            <CardTitle className="text-sm font-medium">Despesas</CardTitle>
+            <TrendingDown className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-500">
-              {formatCurrency(stats.recebido)}
+            <div className="text-2xl font-bold text-red-600">{formatCurrency(stats.despesa)}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Saldo</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${stats.saldo >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {formatCurrency(stats.saldo)}
             </div>
-            <p className="text-xs text-muted-foreground">Valores confirmados</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pendente</CardTitle>
-            <TrendingDown className="h-4 w-4 text-yellow-500" />
+            <CreditCard className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-500">
-              {formatCurrency(stats.pendente)}
-            </div>
-            <p className="text-xs text-muted-foreground">Aguardando pagamento</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taxa de Conversão</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {stats.total > 0
-                ? ((stats.recebido / stats.total) * 100).toFixed(1)
-                : '0'}
-              %
-            </div>
-            <p className="text-xs text-muted-foreground">Pagamentos efetivados</p>
+            <div className="text-2xl font-bold text-yellow-600">{formatCurrency(stats.pendente)}</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Tabs de Transações */}
-      <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">Todas</TabsTrigger>
-          <TabsTrigger value="paid">Pagas</TabsTrigger>
-          <TabsTrigger value="pending">Pendentes</TabsTrigger>
-        </TabsList>
+      {/* Transactions Table */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Transações Recentes</CardTitle>
+            <Button onClick={() => setAddModalOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Nova Transação
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <TransactionsTable transactions={transactions} />
+        </CardContent>
+      </Card>
 
-        <TabsContent value="all" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Transações Recentes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {payments.slice(0, 10).map((payment) => (
-                  <div
-                    key={payment.id}
-                    className="flex items-center justify-between border-b pb-3 last:border-0 last:pb-0"
-                  >
-                    <div>
-                      <p className="font-medium">
-                        {payment.descricao || 'Sem descrição'}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {format(new Date(payment.created_at), 'dd/MM/yyyy HH:mm', {
-                          locale: ptBR,
-                        })}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold">
-                        {formatCurrency(payment.valor || 0)}
-                      </span>
-                      <Badge
-                        variant={payment.status === 'pago' ? 'default' : 'secondary'}
-                      >
-                        {payment.status || 'indefinido'}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-                {payments.length === 0 && (
-                  <p className="text-center text-sm text-muted-foreground py-8">
-                    Nenhuma transação encontrada
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="paid" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pagamentos Recebidos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {payments
-                  .filter((p) => p.status === 'pago')
-                  .slice(0, 10)
-                  .map((payment) => (
-                    <div
-                      key={payment.id}
-                      className="flex items-center justify-between border-b pb-3 last:border-0 last:pb-0"
-                    >
-                      <div>
-                        <p className="font-medium">
-                          {payment.descricao || 'Sem descrição'}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {format(new Date(payment.created_at), 'dd/MM/yyyy HH:mm', {
-                            locale: ptBR,
-                          })}
-                        </p>
-                      </div>
-                      <span className="font-bold text-green-500">
-                        {formatCurrency(payment.valor || 0)}
-                      </span>
-                    </div>
-                  ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="pending" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Pagamentos Pendentes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {payments
-                  .filter((p) => p.status === 'pendente')
-                  .slice(0, 10)
-                  .map((payment) => (
-                    <div
-                      key={payment.id}
-                      className="flex items-center justify-between border-b pb-3 last:border-0 last:pb-0"
-                    >
-                      <div>
-                        <p className="font-medium">
-                          {payment.descricao || 'Sem descrição'}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {format(new Date(payment.created_at), 'dd/MM/yyyy HH:mm', {
-                            locale: ptBR,
-                          })}
-                        </p>
-                      </div>
-                      <span className="font-bold text-yellow-500">
-                        {formatCurrency(payment.valor || 0)}
-                      </span>
-                    </div>
-                  ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <AddTransactionModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+      />
     </div>
-  )
+  );
 }
 

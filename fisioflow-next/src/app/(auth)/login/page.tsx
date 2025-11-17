@@ -1,61 +1,25 @@
-import { login, signup } from './actions'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { redirect } from 'next/navigation';
+import { createServerComponentClient } from '~/lib/supabase/server';
+import { LoginForm } from './_components/login-form';
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const supabase = createServerComponentClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session) {
+    redirect('/dashboard');
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">FisioFlow</CardTitle>
-          <CardDescription>
-            Entre com suas credenciais para acessar o sistema
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="seu@email.com"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Button formAction={login} className="w-full">
-                Entrar
-              </Button>
-              <Button formAction={signup} variant="outline" className="w-full">
-                Criar conta
-              </Button>
-            </div>
-          </form>
-          <div className="mt-4 text-center">
-            <a
-              href="/recuperar-senha"
-              className="text-sm text-muted-foreground hover:text-primary"
-            >
-              Esqueceu sua senha?
-            </a>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="rounded-lg border bg-card p-8 shadow-sm">
+      <div className="mb-6 text-center">
+        <h1 className="text-3xl font-bold">FisioFlow</h1>
+        <p className="mt-2 text-muted-foreground">Entre na sua conta</p>
+      </div>
+      <LoginForm />
     </div>
-  )
+  );
 }
 
