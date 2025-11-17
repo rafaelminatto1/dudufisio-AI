@@ -42,34 +42,22 @@
 - Cria registro de backup
 - Calcula tamanho estimado do backup
 
-## 🔐 Configuração Necessária
+## 🔐 Configuração
 
 ### Variável de Ambiente
 
-Certifique-se de que `CRON_SECRET` está configurado no Vercel:
+✅ **CRON_SECRET já está configurado no Vercel**
 
-1. Acesse: https://vercel.com/rafael-minattos-projects/dudufisio-ai/settings/environment-variables
-2. Adicione ou verifique:
-   - **Nome:** `CRON_SECRET`
-   - **Valor:** Uma string aleatória segura (ex: gerada com `openssl rand -hex 32`)
-   - **Ambientes:** Production, Preview, Development
-
-### Gerar CRON_SECRET
-
-```bash
-# Linux/Mac
-openssl rand -hex 32
-
-# Windows (PowerShell)
--join ((48..57) + (65..90) + (97..122) | Get-Random -Count 32 | % {[char]$_})
-```
+- **Nome:** `CRON_SECRET`
+- **Status:** ✅ Configurado
+- **Ambientes:** Production, Preview, Development
 
 ## ✅ Status
 
 - ✅ Endpoint `/api/cron/lembretes-diarios` criado
 - ✅ Endpoint `/api/cron/backup-database` criado
 - ✅ Configuração no `vercel.json` já existe
-- ⚠️ Verificar se `CRON_SECRET` está configurado no Vercel
+- ✅ `CRON_SECRET` configurado no Vercel
 
 ## 🧪 Testar Manualmente
 
