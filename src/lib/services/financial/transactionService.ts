@@ -32,7 +32,7 @@ export class TransactionService {
       return { data: transaction, error: null };
     } catch (error) {
       console.error('Error creating transaction:', error);
-      return { data: null, error };
+      return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
     }
   }
 
@@ -57,7 +57,7 @@ export class TransactionService {
       return { data, error: null };
     } catch (error) {
       console.error('Error fetching transactions:', error);
-      return { data: null, error };
+      return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
     }
   }
 
@@ -93,7 +93,7 @@ export class TransactionService {
       return { data: stats, error: null };
     } catch (error) {
       console.error('Error fetching stats:', error);
-      return { data: null, error };
+      return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
     }
   }
 }
