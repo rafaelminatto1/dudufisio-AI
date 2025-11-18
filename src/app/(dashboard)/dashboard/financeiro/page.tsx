@@ -11,7 +11,7 @@ async function getFinancialData() {
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
   const { data: transactions } = await supabase
-    .from('financial_transactions')
+    .from('payment_transactions')
     .select('*')
     .gte('created_at', startOfMonth.toISOString())
     .order('created_at', { ascending: false });

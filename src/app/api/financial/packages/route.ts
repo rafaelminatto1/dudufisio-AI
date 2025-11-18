@@ -60,10 +60,14 @@ export async function GET(request: NextRequest) {
 
     // Se não houver patientId, buscar todos com join em patients
     const { data, error } = await supabase
-      .from('patient_packages')
+      .from('patient_package_purchases')
       .select(`
-        *,
-        patient:patients(id, full_name)
+        id,
+        purchase_date,
+        sessions_remaining,
+        status,
+        patient:patients(id, full_name),
+        package:financial_packages(name, price)
       `)
       .order('created_at', { ascending: false });
 

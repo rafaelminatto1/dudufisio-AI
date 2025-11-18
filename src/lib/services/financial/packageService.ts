@@ -5,7 +5,7 @@ export class PackageService {
     try {
       const supabase = await createServerComponentClient();
       const { data: pkg, error } = await supabase
-        .from('patient_packages')
+        .from('patient_package_purchases')
         .insert(data)
         .select()
         .single();
@@ -21,7 +21,7 @@ export class PackageService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('patient_packages')
+        .from('patient_package_purchases')
         .select('*')
         .eq('patient_id', patientId)
         .order('created_at', { ascending: false });
@@ -37,19 +37,19 @@ export class PackageService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('patient_packages')
+        .from('patient_package_purchases')
         .select('*')
         .eq('id', packageId)
         .single();
       
       if (error) throw error;
-      if (!data || data.used_sessions >= data.total_sessions) {
+      if (!data || data.sessions_remaining <= 0) {
         throw new Error('Package has no remaining sessions');
       }
 
       const { data: updated, error: updateError } = await supabase
-        .from('patient_packages')
-        .update({ used_sessions: data.used_sessions + 1 })
+        .from('patient_package_purchases')
+        .update({ sessions_remaining: data.sessions_remaining - 1 })
         .eq('id', packageId)
         .select()
         .single();

@@ -327,7 +327,7 @@ export class AppointmentExportService {
   private static generateAppointmentHTML(appointment: EnrichedAppointment): string {
     const startTime = new Date(appointment.start_time);
     const endTime = new Date(appointment.end_time);
-    const statusClass = `status-${appointment.status.toLowerCase()}`;
+    const statusClass = `status-${appointment.status?.toLowerCase() || 'desconhecido'}`;
 
     return `
       <div class="appointment">
@@ -339,7 +339,7 @@ export class AppointmentExportService {
         </div>
         <div class="details">
           <span class="therapist">${appointment.therapistName || 'N/A'}</span>
-          <span class="status ${statusClass}">${appointment.status}</span>
+          <span class="status ${statusClass}">${appointment.status || 'Desconhecido'}</span>
         </div>
       </div>
     `;

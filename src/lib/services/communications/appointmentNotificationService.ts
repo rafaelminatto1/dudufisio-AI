@@ -60,7 +60,6 @@ export class AppointmentNotificationService {
           patientId: params.patientId,
           startTime: params.startTime,
         },
-        priority: 'normal',
       });
 
       // Enviar WhatsApp se disponível
@@ -173,7 +172,6 @@ export class AppointmentNotificationService {
         message: `Sua consulta está marcada para ${formattedDate} às ${formattedTime}`,
         type: 'appointment_reminder_24h',
         url: `/dashboard/agenda?highlight=${schedule.appointmentId}`,
-        priority: 'normal',
       });
 
       await this.markReminderAsSent(schedule.appointmentId, 'reminder_24h');
@@ -210,7 +208,6 @@ export class AppointmentNotificationService {
         message: `Não esqueça da sua consulta às ${formattedTime}. Lembre-se de trazer seus documentos.`,
         type: 'appointment_reminder_2h',
         url: `/dashboard/agenda?highlight=${schedule.appointmentId}`,
-        priority: 'urgent',
       });
 
       await this.markReminderAsSent(schedule.appointmentId, 'reminder_2h');
@@ -254,7 +251,6 @@ export class AppointmentNotificationService {
         message: `Sua consulta do dia ${formattedDate} às ${formattedTime} foi cancelada.${params.reason ? ` Motivo: ${params.reason}` : ''} Entre em contato para reagendar.`,
         type: 'appointment_cancellation',
         url: '/dashboard/agenda',
-        priority: 'high',
       });
 
       // Enviar WhatsApp
@@ -286,13 +282,13 @@ export class AppointmentNotificationService {
   private static async createReminderSchedule(schedule: NotificationSchedule) {
     try {
       const supabase = await createServerComponentClient();
-      await supabase.from('notification_schedules').insert({
-        appointment_id: schedule.appointmentId,
+      await supabase.from('notifications').insert({
         user_id: schedule.userId,
         scheduled_for: schedule.scheduledFor,
-        notification_type: schedule.type,
-        sent: schedule.sent,
-        metadata: schedule.metadata,
+        type: schedule.type,
+        data: schedule.metadata,
+        message: '', // Add a default value for message
+        title: '', // Add a default value for title
       });
     } catch (error) {
       console.error('Error creating reminder schedule:', error);
@@ -306,13 +302,13 @@ export class AppointmentNotificationService {
     try {
       const supabase = await createServerComponentClient();
       await supabase
-        .from('notification_schedules')
+        .from('notifications')
         .update({
-          sent: true,
-          sent_at: new Date().toISOString(),
+          is_read: true,
+          read_at: new Date().toISOString(),
         })
-        .eq('appointment_id', appointmentId)
-        .eq('notification_type', type);
+        .eq('data->>appointmentId', appointmentId)
+        .eq('type', type);
     } catch (error) {
       console.error('Error marking reminder as sent:', error);
     }
@@ -325,10 +321,10 @@ export class AppointmentNotificationService {
     try {
       const supabase = await createServerComponentClient();
       await supabase
-        .from('notification_schedules')
+        .from('notifications')
         .delete()
-        .eq('appointment_id', appointmentId)
-        .eq('sent', false);
+        .eq('data->>appointmentId', appointmentId)
+        .eq('is_read', false);
     } catch (error) {
       console.error('Error canceling pending reminders:', error);
     }
@@ -343,9 +339,9 @@ export class AppointmentNotificationService {
       const now = new Date().toISOString();
       
       const { data, error } = await supabase
-        .from('notification_schedules')
+        .from('notifications')
         .select('*')
-        .eq('sent', false)
+        .eq('is_read', false)
         .lte('scheduled_for', now)
         .order('scheduled_for', { ascending: true });
 
@@ -353,12 +349,12 @@ export class AppointmentNotificationService {
 
       return {
         data: (data || []).map((item: any) => ({
-          appointmentId: item.appointment_id,
+          appointmentId: item.data.appointmentId,
           userId: item.user_id,
           scheduledFor: item.scheduled_for,
-          type: item.notification_type,
-          sent: item.sent,
-          metadata: item.metadata,
+          type: item.type,
+          sent: item.is_read,
+          metadata: item.data,
         })),
         error: null,
       };

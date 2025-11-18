@@ -3,7 +3,7 @@ import { TransactionService } from './transactionService';
 import { createServerComponentClient } from '~/lib/supabase/server';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-11-20.acacia',
+  apiVersion: '2025-10-29.clover',
 });
 
 export class StripeService {
@@ -82,25 +82,21 @@ export class StripeService {
         if (transactionId) {
           // Atualizar transação existente
           await supabase
-            .from('financial_transactions')
+            .from('payment_transactions')
             .update({
-              payment_status: 'pago',
-              payment_method: paymentIntent.payment_method_types[0] || 'card',
-              external_payment_id: paymentIntent.id,
-              paid_at: new Date().toISOString(),
+              status: 'pago',
+              provider_event_id: paymentIntent.id,
             })
             .eq('id', transactionId);
         } else if (patientId) {
           // Criar nova transação
           await TransactionService.create({
             patient_id: patientId,
-            transaction_type: 'receita',
-            amount: (paymentIntent.amount / 100).toString(),
-            payment_status: 'pago',
-            payment_method: paymentIntent.payment_method_types[0] || 'card',
-            external_payment_id: paymentIntent.id,
+            event_type: 'receita',
+            amount: (paymentIntent.amount / 100),
+            status: 'pago',
+            provider_event_id: paymentIntent.id,
             description: paymentIntent.description || 'Pagamento via Stripe',
-            paid_at: new Date().toISOString(),
           });
         }
         break;
@@ -112,10 +108,10 @@ export class StripeService {
 
         if (transactionId) {
           await supabase
-            .from('financial_transactions')
+            .from('payment_transactions')
             .update({
-              payment_status: 'falhou',
-              external_payment_id: paymentIntent.id,
+              status: 'falhou',
+              provider_event_id: paymentIntent.id,
             })
             .eq('id', transactionId);
         }
@@ -129,23 +125,20 @@ export class StripeService {
 
         if (transactionId) {
           await supabase
-            .from('financial_transactions')
+            .from('payment_transactions')
             .update({
-              payment_status: 'pago',
-              external_payment_id: session.payment_intent as string,
-              paid_at: new Date().toISOString(),
+              status: 'pago',
+              provider_event_id: session.payment_intent as string,
             })
             .eq('id', transactionId);
         } else if (patientId && session.amount_total) {
           await TransactionService.create({
             patient_id: patientId,
-            transaction_type: 'receita',
-            amount: (session.amount_total / 100).toString(),
-            payment_status: 'pago',
-            payment_method: 'card',
-            external_payment_id: session.payment_intent as string,
+            event_type: 'receita',
+            amount: (session.amount_total / 100),
+            status: 'pago',
+            provider_event_id: session.payment_intent as string,
             description: 'Pagamento via Checkout Stripe',
-            paid_at: new Date().toISOString(),
           });
         }
         break;

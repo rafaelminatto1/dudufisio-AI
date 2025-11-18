@@ -1,15 +1,15 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
 
-type Transaction = Database['public']['Tables']['financial_transactions']['Row'];
-type TransactionInsert = Database['public']['Tables']['financial_transactions']['Insert'];
+type Transaction = Database['public']['Tables']['payment_transactions']['Row'];
+type TransactionInsert = Database['public']['Tables']['payment_transactions']['Insert'];
 
 export class TransactionService {
   static async create(data: TransactionInsert) {
     try {
       const supabase = await createServerComponentClient();
       const { data: transaction, error } = await supabase
-        .from('financial_transactions')
+        .from('payment_transactions')
         .insert(data)
         .select()
         .single();
@@ -29,7 +29,7 @@ export class TransactionService {
     try {
       const supabase = await createServerComponentClient();
       let query = supabase
-        .from('financial_transactions')
+        .from('payment_transactions')
         .select('*')
         .order('created_at', { ascending: false });
       
@@ -49,7 +49,7 @@ export class TransactionService {
   static async getStats(startDate?: string, endDate?: string) {
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase.from('financial_transactions').select('transaction_type, amount, payment_status');
+      let query = supabase.from('payment_transactions').select('event_type, amount, status');
       if (startDate) query = query.gte('created_at', startDate);
       if (endDate) query = query.lte('created_at', endDate);
       
@@ -64,13 +64,13 @@ export class TransactionService {
       };
       
       data?.forEach(t => {
-        if (t.transaction_type === 'receita') {
+        if (t.event_type === 'receita') {
           stats.totalReceita += Number(t.amount);
-          if (t.payment_status === 'pago') stats.pago += Number(t.amount);
-        } else if (t.transaction_type === 'despesa') {
+          if (t.status === 'pago') stats.pago += Number(t.amount);
+        } else if (t.event_type === 'despesa') {
           stats.totalDespesa += Number(t.amount);
         }
-        if (t.payment_status === 'pendente') {
+        if (t.status === 'pendente') {
           stats.pendente += Number(t.amount);
         }
       });

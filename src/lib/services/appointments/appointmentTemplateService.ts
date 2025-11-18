@@ -1,31 +1,10 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
 
-export interface AppointmentTemplate {
-  id: string;
-  name: string;
-  description?: string;
-  icon?: string;
-  type: string;
-  duration: number; // em minutos
-  value?: number;
-  color?: string;
-  is_default?: boolean;
-  settings: {
-    allow_recurrence?: boolean;
-    default_recurrence?: 'weekly' | 'biweekly' | 'monthly';
-    requires_room?: boolean;
-    requires_equipment?: string[];
-    max_sessions?: number;
-  };
-  created_at: string;
-  updated_at: string;
-  created_by: string;
-  usage_count: number;
-}
+export type DocumentTemplate = Database['public']['Tables']['document_templates']['Row'];
 
 /**
- * Service para gerenciar templates de agendamento
+ * Service para gerenciar templates de documentos
  * Adaptado para Next.js App Router com Supabase
  */
 export class AppointmentTemplateService {
@@ -36,12 +15,12 @@ export class AppointmentTemplateService {
     try {
       const supabase = await createServerComponentClient();
       let query = supabase
-        .from('appointment_templates')
+        .from('document_templates')
         .select('*')
         .order('usage_count', { ascending: false });
 
       if (userId) {
-        query = query.or(`created_by.eq.${userId},is_default.eq.true`);
+        query = query.or(`created_by.eq.${userId},is_public.eq.true`);
       }
 
       const { data, error } = await query;
@@ -60,7 +39,7 @@ export class AppointmentTemplateService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('appointment_templates')
+        .from('document_templates')
         .select('*')
         .eq('id', id)
         .single();
@@ -77,22 +56,18 @@ export class AppointmentTemplateService {
    * Cria um novo template
    */
   static async createTemplate(
-    template: Omit<AppointmentTemplate, 'id' | 'created_at' | 'updated_at' | 'usage_count'>
+    template: Omit<DocumentTemplate, 'id' | 'created_at' | 'updated_at' | 'usage_count' | 'last_used'>
   ) {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('appointment_templates')
+        .from('document_templates')
         .insert({
-          name: template.name,
-          description: template.description,
-          icon: template.icon,
-          type: template.type,
-          duration: template.duration,
-          value: template.value,
-          color: template.color,
-          is_default: template.is_default || false,
-          settings: template.settings,
+          title: template.title,
+          content: template.content,
+          category: template.category,
+          tags: template.tags,
+          is_public: template.is_public || false,
           created_by: template.created_by,
           usage_count: 0,
         })
@@ -112,12 +87,12 @@ export class AppointmentTemplateService {
    */
   static async updateTemplate(
     id: string,
-    updates: Partial<Omit<AppointmentTemplate, 'id' | 'created_at' | 'created_by' | 'usage_count'>>
+    updates: Partial<Omit<DocumentTemplate, 'id' | 'created_at' | 'created_by' | 'usage_count'>>
   ) {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('appointment_templates')
+        .from('document_templates')
         .update({
           ...updates,
           updated_at: new Date().toISOString(),
@@ -141,7 +116,7 @@ export class AppointmentTemplateService {
     try {
       const supabase = await createServerComponentClient();
       const { error } = await supabase
-        .from('appointment_templates')
+        .from('document_templates')
         .delete()
         .eq('id', id);
 
@@ -166,14 +141,14 @@ export class AppointmentTemplateService {
       if (error) {
         // Se a função RPC não existir, fazer update manual
         const { data: template } = await supabase
-          .from('appointment_templates')
+          .from('document_templates')
           .select('usage_count')
           .eq('id', id)
           .single();
 
         if (template) {
           await supabase
-            .from('appointment_templates')
+            .from('document_templates')
             .update({ usage_count: (template.usage_count || 0) + 1 })
             .eq('id', id);
         }
@@ -193,7 +168,7 @@ export class AppointmentTemplateService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('appointment_templates')
+        .from('document_templates')
         .select('*')
         .order('usage_count', { ascending: false })
         .limit(limit);
@@ -214,9 +189,9 @@ export class AppointmentTemplateService {
       const supabase = await createServerComponentClient();
       const lowerQuery = query.toLowerCase();
       const { data, error } = await supabase
-        .from('appointment_templates')
+        .from('document_templates')
         .select('*')
-        .or(`name.ilike.%${lowerQuery}%,type.ilike.%${lowerQuery}%,description.ilike.%${lowerQuery}%`)
+        .or(`title.ilike.%${lowerQuery}%,category.ilike.%${lowerQuery}%,content.ilike.%${lowerQuery}%`)
         .order('usage_count', { ascending: false });
 
       if (error) throw error;
@@ -234,9 +209,9 @@ export class AppointmentTemplateService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('appointment_templates')
+        .from('document_templates')
         .select('*')
-        .eq('is_default', true)
+        .eq('is_public', true)
         .order('usage_count', { ascending: false });
 
       if (error) throw error;

@@ -41,10 +41,10 @@ export class ExerciseProtocolService {
 
       // Buscar exercícios prescritos para este protocolo
       const { data: prescribedExercises, error } = await supabase
-        .from('prescribed_exercises')
-        .select('*, exercise:exercises_library(*)')
+        .from('protocol_exercises')
+        .select('*, exercise:exercises(*)')
         .eq('protocol_id', protocolId)
-        .order('order', { ascending: true });
+        .order('position', { ascending: true });
 
       if (error) throw error;
 
@@ -53,11 +53,10 @@ export class ExerciseProtocolService {
         link: {
           exercise_id: pe.exercise_id,
           protocol_id: protocolId,
-          phase: pe.phase,
-          order: pe.order,
+          order: pe.position,
           sets: pe.sets,
-          repetitions: pe.repetitions,
-          duration: pe.duration,
+          repetitions: pe.reps,
+          duration: pe.hold_time_seconds,
           notes: pe.notes,
         },
       }));
@@ -82,17 +81,15 @@ export class ExerciseProtocolService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('prescribed_exercises')
+        .from('protocol_exercises')
         .insert({
           exercise_id: link.exercise_id,
           protocol_id: link.protocol_id,
-          phase: link.phase,
-          order: link.order || 0,
+          position: link.order || 0,
           sets: link.sets,
-          repetitions: link.repetitions,
-          duration: link.duration,
+          reps: link.repetitions,
+          hold_time_seconds: link.duration,
           notes: link.notes,
-          status: 'ativo',
         })
         .select()
         .single();
@@ -112,7 +109,7 @@ export class ExerciseProtocolService {
     try {
       const supabase = await createServerComponentClient();
       const { error } = await supabase
-        .from('prescribed_exercises')
+        .from('protocol_exercises')
         .delete()
         .eq('exercise_id', exerciseId)
         .eq('protocol_id', protocolId);
@@ -136,13 +133,12 @@ export class ExerciseProtocolService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('prescribed_exercises')
+        .from('protocol_exercises')
         .update({
-          phase: updates.phase,
-          order: updates.order,
+          position: updates.order,
           sets: updates.sets,
-          repetitions: updates.repetitions,
-          duration: updates.duration,
+          reps: updates.repetitions,
+          hold_time_seconds: updates.duration,
           notes: updates.notes,
         })
         .eq('exercise_id', exerciseId)
@@ -172,8 +168,8 @@ export class ExerciseProtocolService {
       
       // Buscar exercícios que correspondem à categoria ou patologia do protocolo
       const exercisesResult = await ExerciseService.getExercises({
-        category: protocol.category,
-        search: protocol.pathology,
+        category: protocol.body_part,
+        search: protocol.name,
       });
 
       return exercisesResult;

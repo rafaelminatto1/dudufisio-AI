@@ -3,7 +3,7 @@ import { Database } from '~/types/database.types';
 
 type Appointment = Database['public']['Tables']['appointments']['Row'];
 type Patient = Database['public']['Tables']['patients']['Row'];
-type FinancialTransaction = Database['public']['Tables']['financial_transactions']['Row'];
+type FinancialTransaction = Database['public']['Tables']['payment_transactions']['Row'];
 
 export interface DashboardStats {
   appointments: {
@@ -85,7 +85,7 @@ export class AnalyticsService {
 
       const activePatients = allPatients?.filter((p) => p.status === 'ativo').length || 0;
       const newPatientsThisMonth = allPatients?.filter(
-        (p) => new Date(p.created_at) >= startOfMonth
+        (p) => p.created_at && new Date(p.created_at) >= startOfMonth
       ).length || 0;
 
       const patientsByStatus = {
@@ -97,34 +97,34 @@ export class AnalyticsService {
 
       // Financial
       const { data: transactions, error: financialError } = await supabase
-        .from('financial_transactions')
-        .select('amount, transaction_type, payment_status, created_at')
-        .eq('transaction_type', 'receita');
+        .from('payment_transactions')
+        .select('amount, event_type, status, created_at')
+        .eq('event_type', 'receita');
 
       if (financialError) throw financialError;
 
       const revenueThisMonth = transactions
         ?.filter(
           (t) =>
-            new Date(t.created_at) >= startOfMonth &&
-            t.payment_status === 'pago'
+            t.created_at && new Date(t.created_at) >= startOfMonth &&
+            t.status === 'pago'
         )
         .reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
 
       const revenueThisYear = transactions
         ?.filter(
           (t) =>
-            new Date(t.created_at) >= startOfYear &&
-            t.payment_status === 'pago'
+            t.created_at && new Date(t.created_at) >= startOfYear &&
+            t.status === 'pago'
         )
         .reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
 
       const pendingPayments = transactions
-        ?.filter((t) => t.payment_status === 'pendente')
+        ?.filter((t) => t.status === 'pendente')
         .reduce((sum, t) => sum + (t.amount || 0), 0) || 0;
 
       const transactionsThisMonth = transactions?.filter(
-        (t) => new Date(t.created_at) >= startOfMonth
+        (t) => t.created_at && new Date(t.created_at) >= startOfMonth
       ).length || 0;
 
       const stats: DashboardStats = {
@@ -205,9 +205,9 @@ export class AnalyticsService {
       startDate.setDate(startDate.getDate() - days);
 
       const { data, error } = await supabase
-        .from('financial_transactions')
-        .select('amount, created_at, payment_status')
-        .eq('transaction_type', 'receita')
+        .from('payment_transactions')
+        .select('amount, created_at, status, event_type')
+        .eq('event_type', 'receita')
         .gte('created_at', startDate.toISOString())
         .order('created_at', { ascending: true });
 
@@ -215,13 +215,14 @@ export class AnalyticsService {
 
       // Group by date
       const trend = data?.reduce((acc, transaction) => {
+        if (!transaction.created_at) return acc;
         const date = new Date(transaction.created_at).toISOString().split('T')[0];
         if (!acc[date]) {
           acc[date] = { date, revenue: 0, pending: 0 };
         }
-        if (transaction.payment_status === 'pago') {
+        if (transaction.status === 'pago') {
           acc[date].revenue += transaction.amount || 0;
-        } else if (transaction.payment_status === 'pendente') {
+        } else if (transaction.status === 'pendente') {
           acc[date].pending += transaction.amount || 0;
         }
         return acc;

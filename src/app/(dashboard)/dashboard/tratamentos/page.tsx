@@ -7,8 +7,10 @@ async function getTreatmentsData() {
   const supabase = await createServerComponentClient();
 
   const { data: treatments } = await supabase
-    .from('treatments')
-    .select('*, patient:patients(id, full_name), therapist:therapists(id, user_id)')
+    .from('patient_exercise_prescriptions')
+    .select(
+      'id, created_at, start_date, end_date, status, patient:patients(id, full_name), therapist:therapists(id, user_id)'
+    )
     .order('created_at', { ascending: false })
     .limit(10);
 

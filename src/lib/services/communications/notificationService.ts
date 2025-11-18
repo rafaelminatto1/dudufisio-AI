@@ -23,7 +23,6 @@ export interface NotificationCreateParams {
   icon?: string;
   url?: string;
   data?: Record<string, any>;
-  priority?: NotificationPriority;
   expiresAt?: string;
 }
 
@@ -57,9 +56,8 @@ export class NotificationService {
           icon: params.icon,
           url: params.url,
           data: params.data,
-          priority: params.priority || 'normal',
           expires_at: params.expiresAt,
-          read: false,
+          is_read: false,
         })
         .select()
         .single();
@@ -93,7 +91,7 @@ export class NotificationService {
         .eq('user_id', userId);
 
       if (onlyUnread) {
-        query = query.eq('read', false);
+        query = query.eq('is_read', false);
       }
 
       if (type) {
@@ -148,8 +146,7 @@ export class NotificationService {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
         .from('notifications')
-        .update({ read: true, read_at: new Date().toISOString() })
-        .eq('id', notificationId)
+        .update({ is_read: true, read_at: new Date().toISOString() })
         .select()
         .single();
 
@@ -169,9 +166,9 @@ export class NotificationService {
       const supabase = await createServerComponentClient();
       const { error } = await supabase
         .from('notifications')
-        .update({ read: true, read_at: new Date().toISOString() })
+        .update({ is_read: true, read_at: new Date().toISOString() })
         .eq('user_id', userId)
-        .eq('read', false);
+        .eq('is_read', false);
 
       if (error) throw error;
       return { data: true, error: null };
@@ -209,19 +206,18 @@ export class NotificationService {
       
       const { data: allNotifications } = await supabase
         .from('notifications')
-        .select('read, type, priority')
+        .select('is_read, type')
         .eq('user_id', userId);
 
       const total = allNotifications?.length || 0;
-      const unread = (allNotifications || []).filter(n => !n.read).length;
-      const urgent = (allNotifications || []).filter(n => n.priority === 'urgent' && !n.read).length;
+      const unread = (allNotifications || []).filter(n => !n.is_read).length;
 
       return {
         data: {
           totalNotifications: total,
           unreadCount: unread,
           readCount: total - unread,
-          urgentCount: urgent,
+          urgentCount: 0,
         },
         error: null,
       };
@@ -248,7 +244,6 @@ export class NotificationService {
         title: params.subject,
         message: params.body,
         type: 'system',
-        priority: 'normal',
       });
 
       // Aqui integraria com serviço de email (Resend, SendGrid, etc.)
@@ -281,7 +276,6 @@ export class NotificationService {
         title: 'SMS',
         message: params.message,
         type: 'system',
-        priority: 'high',
       });
 
       // Aqui integraria com serviço de SMS (Twilio, etc.)
@@ -315,7 +309,6 @@ export class NotificationService {
         title: params.title,
         message: params.body,
         type: 'system',
-        priority: 'normal',
         data: params.data,
       });
 
@@ -352,7 +345,6 @@ export class NotificationService {
         title: `Lembrete: Consulta em ${params.hoursBefore}h`,
         message: `Você tem uma consulta agendada para ${new Date(params.appointmentDate).toLocaleString('pt-BR')}`,
         type: params.hoursBefore === 24 ? 'appointment_reminder_24h' : 'appointment_reminder_2h',
-        priority: params.hoursBefore === 2 ? 'high' : 'normal',
         url: `/appointments/${params.appointmentId}`,
         data: { appointmentId: params.appointmentId },
         expiresAt: params.appointmentDate,
@@ -392,7 +384,6 @@ export class NotificationService {
         title: titles[params.status],
         message: messages[params.status],
         type: params.status === 'received' ? 'payment_received' : 'payment_due',
-        priority: params.status === 'overdue' ? 'urgent' : params.status === 'due' ? 'high' : 'normal',
         url: `/financial/transactions/${params.transactionId}`,
         data: { transactionId: params.transactionId, amount: params.amount },
       });

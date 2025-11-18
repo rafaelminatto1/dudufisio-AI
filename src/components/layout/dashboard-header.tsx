@@ -19,7 +19,7 @@ interface DashboardHeaderProps {
   user?: {
     email?: string;
     full_name?: string;
-    avatar_url?: string;
+    avatar_url?: string | null;
   };
 }
 
@@ -65,7 +65,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative h-10 w-10 rounded-full">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={user?.avatar_url} alt={user?.full_name} />
+              <AvatarImage src={user?.avatar_url || ''} alt={user?.full_name || ''} />
               <AvatarFallback>{initials}</AvatarFallback>
             </Avatar>
           </Button>

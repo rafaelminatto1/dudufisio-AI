@@ -210,15 +210,14 @@ export class WhatsAppService {
   }) {
     try {
       const supabase = await createServerComponentClient();
-      await supabase.from('whatsapp_messages').insert({
-        direction: params.direction,
-        to: params.to,
-        body: params.body,
+      await supabase.from('whatsapp_messages_log').insert({
+        phone_number: params.to,
+        message_content: params.body,
         whatsapp_message_id: params.whatsappMessageId,
         patient_id: params.patientId,
-        appointment_id: params.appointmentId,
         status: params.status || 'sent',
-        template: params.template,
+        template_id: params.template,
+        message_type: params.direction,
       });
     } catch (error) {
       console.error('Error logging WhatsApp message:', error);

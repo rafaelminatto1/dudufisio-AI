@@ -22,6 +22,7 @@ import {
 } from '~/components/ui/select';
 import { Textarea } from '~/components/ui/textarea';
 import { toast } from 'sonner';
+import { createCheckout } from '~/lib/actions/stripe';
 
 interface AddTransactionModalProps {
   open: boolean;
@@ -36,6 +37,7 @@ export function AddTransactionModal({
 }: AddTransactionModalProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [stripeLoading, setStripeLoading] = useState(false);
   const [formData, setFormData] = useState({
     transaction_type: 'receita',
     amount: '',
@@ -44,6 +46,32 @@ export function AddTransactionModal({
     description: '',
     patient_id: patientId || '',
   });
+
+  const handleStripeCheckout = async () => {
+    setStripeLoading(true);
+    try {
+      if (!formData.amount || !patientId) {
+        toast.error('Valor e paciente são obrigatórios para o pagamento com Stripe.');
+        return;
+      }
+
+      const result = await createCheckout({
+        amount: Number(formData.amount),
+        patientId: patientId,
+        description: formData.description,
+      });
+
+      if (result.error || !result.url) {
+        throw new Error(result.error || 'Erro ao criar checkout');
+      }
+
+      window.location.href = result.url;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Erro ao iniciar pagamento');
+    } finally {
+      setStripeLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,6 +186,7 @@ export function AddTransactionModal({
                 <SelectItem value="cartao_debito">Cartão Débito</SelectItem>
                 <SelectItem value="cartao_credito">Cartão Crédito</SelectItem>
                 <SelectItem value="transferencia">Transferência</SelectItem>
+                <SelectItem value="stripe">Stripe</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -177,13 +206,22 @@ export function AddTransactionModal({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={loading}
+              disabled={loading || stripeLoading}
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading || stripeLoading}>
               {loading ? 'Salvando...' : 'Salvar'}
             </Button>
+            {formData.payment_method === 'stripe' && (
+              <Button
+                type="button"
+                onClick={handleStripeCheckout}
+                disabled={stripeLoading || loading || !formData.amount || !patientId}
+              >
+                {stripeLoading ? 'Aguarde...' : 'Pagar com Stripe'}
+              </Button>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>

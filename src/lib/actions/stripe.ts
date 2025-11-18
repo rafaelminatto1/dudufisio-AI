@@ -1,28 +1,37 @@
-import { NextRequest, NextResponse } from 'next/server';
+'use server';
+
+import { z } from 'zod';
 import { StripeService } from '~/lib/services/financial/stripeService';
 import { TransactionService } from '~/lib/services/financial/transactionService';
-import { createServerComponentClient } from '~/lib/supabase/server';
+import { createServerActionClient } from '~/lib/supabase/server';
 
-export async function POST(request: NextRequest) {
+const CreateCheckoutSchema = z.object({
+  amount: z.number().positive(),
+  patientId: z.string().uuid(),
+  description: z.string().optional(),
+  transactionId: z.string().uuid().optional(),
+});
+
+export async function createCheckout(
+  input: z.infer<typeof CreateCheckoutSchema>
+) {
   try {
-    const supabase = await createServerComponentClient();
+    const supabase = await createServerActionClient();
     const {
       data: { session: authSession },
     } = await supabase.auth.getSession();
 
     if (!authSession) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return { error: 'Unauthorized' };
     }
 
-    const body = await request.json();
-    const { amount, patientId, description, transactionId } = body;
+    const validatedInput = CreateCheckoutSchema.safeParse(input);
 
-    if (!amount || !patientId) {
-      return NextResponse.json(
-        { error: 'Amount and patientId are required' },
-        { status: 400 }
-      );
+    if (!validatedInput.success) {
+      return { error: 'Invalid input', details: validatedInput.error.issues };
     }
+
+    const { amount, patientId, description, transactionId } = validatedInput.data;
 
     // Criar transação pendente se não existir
     let transId = transactionId;
@@ -36,10 +45,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (transResult.error || !transResult.data) {
-        return NextResponse.json(
-          { error: 'Failed to create transaction' },
-          { status: 500 }
-        );
+        return { error: 'Failed to create transaction' };
       }
 
       transId = transResult.data.id;
@@ -48,7 +54,7 @@ export async function POST(request: NextRequest) {
     // Criar checkout session
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const sessionResult = await StripeService.createCheckoutSession({
-      priceAmount: Math.round(Number(amount) * 100), // Converter para centavos
+      priceAmount: Math.round(amount * 100), // Converter para centavos
       successUrl: `${baseUrl}/dashboard/financeiro?success=true&transaction_id=${transId}`,
       cancelUrl: `${baseUrl}/dashboard/financeiro?canceled=true`,
       metadata: {
@@ -58,10 +64,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (sessionResult.error || !sessionResult.data) {
-      return NextResponse.json(
-        { error: 'Failed to create checkout session' },
-        { status: 500 }
-      );
+      return { error: 'Failed to create checkout session' };
     }
 
     // Atualizar transação com metadata do Stripe
@@ -72,16 +75,12 @@ export async function POST(request: NextRequest) {
       })
       .eq('id', transId);
 
-    return NextResponse.json({
+    return {
       sessionId: sessionResult.data.id,
       url: sessionResult.data.url,
-    });
+    };
   } catch (error) {
     console.error('Error creating checkout:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return { error: 'Internal server error' };
   }
 }
-

@@ -1,10 +1,10 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
 
-type ClinicalMaterial = Database['public']['Tables']['clinical_materials']['Row'];
-type ClinicalMaterialInsert = Database['public']['Tables']['clinical_materials']['Insert'];
-type ClinicalMaterialUpdate = Database['public']['Tables']['clinical_materials']['Update'];
-type ClinicalMaterialCategory = Database['public']['Tables']['clinical_material_categories']['Row'];
+type ClinicalMaterial = Database['public']['Tables']['materials_library']['Row'];
+type ClinicalMaterialInsert = Database['public']['Tables']['materials_library']['Insert'];
+type ClinicalMaterialUpdate = Database['public']['Tables']['materials_library']['Update'];
+
 
 export interface MaterialSearchParams {
   query?: string;
@@ -27,24 +27,7 @@ export interface MaterialCreateData {
 }
 
 export class ClinicalMaterialService {
-  /**
-   * Get all categories
-   */
-  static async getCategories() {
-    try {
-      const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('clinical_material_categories')
-        .select('*')
-        .order('name', { ascending: true });
 
-      if (error) throw error;
-      return { data, error: null };
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-      return { data: null, error };
-    }
-  }
 
   /**
    * Get materials by category
@@ -53,9 +36,9 @@ export class ClinicalMaterialService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('clinical_materials')
-        .select('*, category:clinical_material_categories(*)')
-        .eq('category_id', categoryId)
+        .from('materials_library')
+        .select('id, title, description, file_url, file_type, category, tags, is_public, download_count, version, author, owner_id, created_at, updated_at, thumbnail_url')
+        .eq('category', categoryId)
         .order('updated_at', { ascending: false });
 
       if (error) throw error;
@@ -73,23 +56,19 @@ export class ClinicalMaterialService {
     try {
       const supabase = await createServerComponentClient();
       let query = supabase
-        .from('clinical_materials')
-        .select('*, category:clinical_material_categories(*)');
+        .from('materials_library')
+        .select('id, title, description, file_url, file_type, category, tags, is_public, download_count, version, author, owner_id, created_at, updated_at, thumbnail_url');
 
       if (params.query) {
-        query = query.or(`name.ilike.%${params.query}%,description.ilike.%${params.query}%,content.ilike.%${params.query}%`);
+        query = query.or(`title.ilike.%${params.query}%,description.ilike.%${params.query}%`);
       }
 
       if (params.categoryId) {
-        query = query.eq('category_id', params.categoryId);
+        query = query.eq('category', params.categoryId);
       }
 
       if (params.tags && params.tags.length > 0) {
         query = query.contains('tags', params.tags);
-      }
-
-      if (params.status) {
-        query = query.eq('status', params.status);
       }
 
       if (params.createdBy) {
@@ -120,8 +99,8 @@ export class ClinicalMaterialService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('clinical_materials')
-        .select('*, category:clinical_material_categories(*)')
+        .from('materials_library')
+        .select('id, title, description, file_url, file_type, category, tags, is_public, download_count, version, author, owner_id, created_at, updated_at, thumbnail_url')
         .eq('id', id)
         .single();
 
@@ -141,19 +120,20 @@ export class ClinicalMaterialService {
       const supabase = await createServerComponentClient();
       
       const insertData: ClinicalMaterialInsert = {
-        name: materialData.name,
+        title: materialData.name,
         description: materialData.description,
-        type: materialData.type,
-        category_id: materialData.category_id,
-        content: materialData.content,
+        file_type: materialData.type,
+        category: materialData.category_id,
         tags: materialData.tags || [],
-        status: materialData.status || 'draft',
+        is_public: false,
+        download_count: 0,
+        file_url: '', // Add a default value for file_url
       };
 
       const { data, error } = await supabase
-        .from('clinical_materials')
+        .from('materials_library')
         .insert(insertData)
-        .select('*, category:clinical_material_categories(*)')
+        .select('id, title, description, file_url, file_type, category, tags, is_public, download_count, version, author, owner_id, created_at, updated_at, thumbnail_url')
         .single();
 
       if (error) throw error;
@@ -172,13 +152,11 @@ export class ClinicalMaterialService {
       const supabase = await createServerComponentClient();
       
       const updateData: ClinicalMaterialUpdate = {
-        name: updates.name,
+        title: updates.name,
         description: updates.description,
-        type: updates.type,
-        category_id: updates.category_id,
-        content: updates.content,
+        file_type: updates.type,
+        category: updates.category_id,
         tags: updates.tags,
-        status: updates.status,
         updated_at: new Date().toISOString(),
       };
 
@@ -188,10 +166,10 @@ export class ClinicalMaterialService {
       );
 
       const { data, error } = await supabase
-        .from('clinical_materials')
+        .from('materials_library')
         .update(updateData)
         .eq('id', id)
-        .select('*, category:clinical_material_categories(*)')
+        .select('id, title, description, file_url, file_type, category, tags, is_public, download_count, version, author, owner_id, created_at, updated_at, thumbnail_url')
         .single();
 
       if (error) throw error;
@@ -209,7 +187,7 @@ export class ClinicalMaterialService {
     try {
       const supabase = await createServerComponentClient();
       const { error } = await supabase
-        .from('clinical_materials')
+        .from('materials_library')
         .delete()
         .eq('id', id);
 
@@ -229,37 +207,31 @@ export class ClinicalMaterialService {
       const supabase = await createServerComponentClient();
       
       const { count: total, error: totalError } = await supabase
-        .from('clinical_materials')
+        .from('materials_library')
         .select('id', { count: 'exact', head: true });
 
       if (totalError) throw totalError;
 
       const { count: published, error: publishedError } = await supabase
-        .from('clinical_materials')
+        .from('materials_library')
         .select('id', { count: 'exact', head: true })
         .eq('status', 'published');
 
       if (publishedError) throw publishedError;
 
       const { count: draft, error: draftError } = await supabase
-        .from('clinical_materials')
+        .from('materials_library')
         .select('id', { count: 'exact', head: true })
         .eq('status', 'draft');
 
       if (draftError) throw draftError;
-
-      const { count: categories, error: categoriesError } = await supabase
-        .from('clinical_material_categories')
-        .select('id', { count: 'exact', head: true });
-
-      if (categoriesError) throw categoriesError;
 
       return {
         data: {
           total: total || 0,
           published: published || 0,
           draft: draft || 0,
-          categories: categories || 0,
+          categories: 0,
         },
         error: null,
       };

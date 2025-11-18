@@ -1,21 +1,7 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
 
-type Treatment = Database['public']['Tables']['treatments']['Row'];
-
-export interface Protocol {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  pathology: string;
-  phase: 'acute' | 'subacute' | 'chronic' | 'maintenance';
-  duration_weeks: number;
-  frequency_per_week: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
+export type Protocol = Database['public']['Tables']['exercise_protocols']['Row'];
 
 /**
  * Service para gerenciar protocolos de tratamento
@@ -26,28 +12,27 @@ export class ProtocolService {
    * Lista todos os protocolos
    */
   static async getProtocols(filters?: {
-    pathology?: string;
-    phase?: string;
-    category?: string;
+    body_part?: string;
+    difficulty?: string;
+    tags?: string[];
   }) {
     try {
       const supabase = await createServerComponentClient();
       let query = supabase
-        .from('treatment_protocols')
+        .from('exercise_protocols')
         .select('*')
-        .eq('is_active', true)
         .order('name', { ascending: true });
 
-      if (filters?.pathology) {
-        query = query.ilike('pathology', `%${filters.pathology}%`);
+      if (filters?.body_part) {
+        query = query.ilike('body_part', `%${filters.body_part}%`);
       }
 
-      if (filters?.phase) {
-        query = query.eq('phase', filters.phase);
+      if (filters?.difficulty) {
+        query = query.eq('difficulty', filters.difficulty);
       }
 
-      if (filters?.category) {
-        query = query.eq('category', filters.category);
+      if (filters?.tags) {
+        query = query.contains('tags', filters.tags);
       }
 
       const { data, error } = await query;
@@ -66,7 +51,7 @@ export class ProtocolService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('treatment_protocols')
+        .from('exercise_protocols')
         .select('*')
         .eq('id', id)
         .single();
@@ -85,7 +70,7 @@ export class ProtocolService {
   static async getProtocolSuggestions(diagnosis: string) {
     try {
       const lowerDiagnosis = diagnosis.toLowerCase();
-      return await this.getProtocols({ pathology: lowerDiagnosis });
+      return await this.getProtocols({ body_part: lowerDiagnosis });
     } catch (error) {
       console.error('Error getting protocol suggestions:', error);
       return { data: null, error };
@@ -99,16 +84,15 @@ export class ProtocolService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('treatment_protocols')
+        .from('exercise_protocols')
         .insert({
           name: protocol.name,
           description: protocol.description,
-          category: protocol.category,
-          pathology: protocol.pathology,
-          phase: protocol.phase,
-          duration_weeks: protocol.duration_weeks,
-          frequency_per_week: protocol.frequency_per_week,
-          is_active: protocol.is_active ?? true,
+          body_part: protocol.body_part,
+          difficulty: protocol.difficulty,
+          tags: protocol.tags,
+          is_public: protocol.is_public ?? false,
+          owner_id: protocol.owner_id,
         })
         .select()
         .single();
@@ -128,7 +112,7 @@ export class ProtocolService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('treatment_protocols')
+        .from('exercise_protocols')
         .update(updates)
         .eq('id', id)
         .select()
@@ -149,7 +133,7 @@ export class ProtocolService {
     try {
       const supabase = await createServerComponentClient();
       const { error } = await supabase
-        .from('treatment_protocols')
+        .from('exercise_protocols')
         .delete()
         .eq('id', id);
 
