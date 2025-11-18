@@ -205,7 +205,7 @@ export async function getPackages(
       return { data: null, error: { message: 'Failed to fetch packages' } };
     }
 
-    return { data };
+    return { data, error: null };
   } catch (error) {
     console.error('Error fetching packages:', error);
     return { data: null, error: { message: 'Internal server error' } };
