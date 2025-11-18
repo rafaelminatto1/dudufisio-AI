@@ -26,15 +26,11 @@ export async function processDailyReminders(): Promise<ReminderProcessingResult>
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Buscar consultas agendadas para hoje e amanhã
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    
-    const amanha = new Date(hoje);
-    amanha.setDate(amanha.getDate() + 1);
-    amanha.setHours(23, 59, 59, 999);
+    const now = new Date();
+    const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const twentyFourHoursAndFifteenMinutesFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000 + 15 * 60 * 1000); // Adiciona um buffer de 15 minutos
 
-    // Buscar consultas agendadas
+    // Buscar consultas agendadas para aproximadamente 24 horas a partir de agora
     const { data: appointments, error: appointmentsError } = await supabase
       .from('appointments')
       .select(`
@@ -58,8 +54,8 @@ export async function processDailyReminders(): Promise<ReminderProcessingResult>
           )
         )
       `)
-      .gte('start_time', hoje.toISOString())
-      .lte('start_time', amanha.toISOString())
+      .gte('start_time', twentyFourHoursFromNow.toISOString())
+      .lte('start_time', twentyFourHoursAndFifteenMinutesFromNow.toISOString()) // Busca em uma janela de 15 minutos
       .eq('status', 'scheduled')
       .is('reminder_sent', false)
       .limit(100);
@@ -91,8 +87,10 @@ export async function processDailyReminders(): Promise<ReminderProcessingResult>
 
     for (const appointment of appointments) {
       try {
-        // Aqui você pode implementar a lógica de envio de notificação
-        // Por exemplo: email, SMS, WhatsApp, etc.
+        // Lógica de envio de notificação via Evolution API (WhatsApp)
+        console.log(`[CronLembretes] Simulando envio de lembrete para paciente ${appointment.patients?.full_name} (${appointment.patients?.phone}) sobre consulta ${appointment.id} em ${appointment.start_time}`);
+        // TODO: Implementar a chamada real à Evolution API aqui
+        // Exemplo: await EvolutionAPIService.sendMessage(appointment.patients?.phone, "Seu lembrete de consulta...");
         
         // Por enquanto, apenas marcar como enviado
         const { error: updateError } = await supabase

@@ -1,0 +1,140 @@
+flowchart TD
+    Start([Paciente Recebe Código]) --> Login[Login com Código de 6 Dígitos]
+    Login --> ValidaCodigo{Código Válido?}
+    
+    ValidaCodigo -->|Não| ErroLogin[Mensagem de Erro]
+    ErroLogin --> Login
+    
+    ValidaCodigo -->|Sim| Dashboard[Dashboard Principal]
+    
+    Dashboard --> MenuPrincipal{Menu de Navegação}
+    
+    %% Fluxo de Exercícios
+    MenuPrincipal -->|Meus Exercícios| ListaExercicios[Lista de Exercícios Prescritos]
+    ListaExercicios --> FiltroExercicios{Filtrar}
+    FiltroExercicios -->|Todos| ListaExercicios
+    FiltroExercicios -->|Concluídos| ExerciciosConcluidos[Exercícios Concluídos]
+    FiltroExercicios -->|Pendentes| ExerciciosPendentes[Exercícios Pendentes]
+    
+    ExerciciosConcluidos --> ListaExercicios
+    ExerciciosPendentes --> ListaExercicios
+    
+    ListaExercicios --> SelecionaExercicio[Seleciona Exercício]
+    SelecionaExercicio --> DetalheExercicio[Tela de Detalhes]
+    
+    DetalheExercicio --> VideoExercicio[Vídeo Demonstrativo]
+    DetalheExercicio --> InstrucoesExercicio[Instruções Detalhadas]
+    DetalheExercicio --> ParametrosExercicio[Séries, Reps, Duração]
+    
+    DetalheExercicio --> MarcarConcluido{Marcar como Concluído?}
+    MarcarConcluido -->|Sim| RegistraConclusao[Registra Conclusão no Sistema]
+    RegistraConclusao --> FeedbackExercicio[Feedback com Emoji]
+    FeedbackExercicio --> ListaExercicios
+    MarcarConcluido -->|Não| ListaExercicios
+    
+    %% Fluxo de Progresso
+    MenuPrincipal -->|Meu Progresso| TelaProgresso[Tela de Progresso]
+    TelaProgresso --> GraficoEvolucao[Gráfico de Evolução]
+    TelaProgresso --> HistoricoSessoes[Histórico de Sessões]
+    TelaProgresso --> EstatisticasGerais[Estatísticas Gerais]
+    
+    GraficoEvolucao --> TipoGrafico{Tipo de Visualização}
+    TipoGrafico -->|Semanal| GraficoSemanal[Gráfico Semanal]
+    TipoGrafico -->|Mensal| GraficoMensal[Gráfico Mensal]
+    TipoGrafico -->|Anual| GraficoAnual[Gráfico Anual]
+    
+    GraficoSemanal --> TelaProgresso
+    GraficoMensal --> TelaProgresso
+    GraficoAnual --> TelaProgresso
+    
+    HistoricoSessoes --> DetalheSessao[Detalhes da Sessão]
+    DetalheSessao --> TelaProgresso
+    
+    %% Fluxo de Próximas Sessões
+    MenuPrincipal -->|Próximas Sessões| AgendaSessoes[Agenda de Sessões]
+    AgendaSessoes --> ProximaSessao[Próxima Sessão Agendada]
+    ProximaSessao --> DetalhesSessao[Data, Hora, Profissional]
+    DetalhesSessao --> AdicionarCalendario[Adicionar ao Calendário]
+    AdicionarCalendario --> AgendaSessoes
+    
+    %% Fluxo de Chat
+    MenuPrincipal -->|Chat| TelaChatLista[Lista de Conversas]
+    TelaChatLista --> SelecionaFisio[Seleciona Fisioterapeuta]
+    SelecionaFisio --> TelaChatConversa[Tela de Conversa]
+    
+    TelaChatConversa --> EnviaMensagem[Envia Mensagem]
+    EnviaMensagem --> TelaChatConversa
+    
+    TelaChatConversa --> EnviaFoto[Envia Foto]
+    EnviaFoto --> TelaChatConversa
+    
+    TelaChatConversa --> EnviaAudio[Envia Áudio]
+    EnviaAudio --> TelaChatConversa
+    
+    TelaChatConversa --> TelaChatLista
+    
+    %% Fluxo de Perfil
+    MenuPrincipal -->|Meu Perfil| TelaPerfil[Tela de Perfil]
+    TelaPerfil --> DadosPessoais[Dados Pessoais]
+    TelaPerfil --> FotoPerfil[Foto de Perfil]
+    TelaPerfil --> ConfiguracoesPerfil[Configurações]
+    
+    DadosPessoais --> EditarDados[Editar Dados]
+    EditarDados --> SalvarDados[Salvar Alterações]
+    SalvarDados --> TelaPerfil
+    
+    FotoPerfil --> AlterarFoto[Alterar Foto]
+    AlterarFoto --> TelaPerfil
+    
+    ConfiguracoesPerfil --> Notificacoes[Configurar Notificações]
+    ConfiguracoesPerfil --> Privacidade[Configurar Privacidade]
+    ConfiguracoesPerfil --> Idioma[Alterar Idioma]
+    
+    Notificacoes --> TelaPerfil
+    Privacidade --> TelaPerfil
+    Idioma --> TelaPerfil
+    
+    %% Fluxo de Registro de Sintomas
+    MenuPrincipal -->|Registrar Sintomas| TelaRegistroSintomas[Tela de Registro]
+    TelaRegistroSintomas --> MapaDor[Mapa de Dor Corporal]
+    TelaRegistroSintomas --> EscalaDor[Escala de Dor EVA]
+    TelaRegistroSintomas --> DescricaoSintomas[Descrição de Sintomas]
+    
+    MapaDor --> SelecionaRegiao[Seleciona Região do Corpo]
+    SelecionaRegiao --> IntensidadeDor[Define Intensidade]
+    IntensidadeDor --> TelaRegistroSintomas
+    
+    EscalaDor --> SelecionaNivel[Seleciona Nível 0-10]
+    SelecionaNivel --> TelaRegistroSintomas
+    
+    DescricaoSintomas --> TextoLivre[Texto Livre]
+    TextoLivre --> TelaRegistroSintomas
+    
+    TelaRegistroSintomas --> SalvarRegistro[Salvar Registro]
+    SalvarRegistro --> ConfirmacaoRegistro[Confirmação]
+    ConfirmacaoRegistro --> Dashboard
+    
+    %% Fluxo de Notificações
+    Dashboard --> Notificacao[Notificações]
+    Notificacao --> LembreteExercicio[Lembrete de Exercício]
+    Notificacao --> LembreteSessao[Lembrete de Sessão]
+    Notificacao --> MensagemFisio[Mensagem do Fisio]
+    
+    LembreteExercicio --> ListaExercicios
+    LembreteSessao --> AgendaSessoes
+    MensagemFisio --> TelaChatConversa
+    
+    %% Logout
+    MenuPrincipal -->|Sair| Logout[Logout]
+    Logout --> Login
+    
+    %% Estilos
+    classDef primaryClass fill:#5034FF,stroke:#4028E0,stroke-width:2px,color:#fff
+    classDef secondaryClass fill:#00CA72,stroke:#00B366,stroke-width:2px,color:#fff
+    classDef accentClass fill:#FDAB3D,stroke:#E89A2C,stroke-width:2px,color:#fff
+    classDef errorClass fill:#E44258,stroke:#D03247,stroke-width:2px,color:#fff
+    
+    class Login,Dashboard,MenuPrincipal primaryClass
+    class ListaExercicios,TelaProgresso,AgendaSessoes,TelaChatLista,TelaPerfil secondaryClass
+    class DetalheExercicio,VideoExercicio,GraficoEvolucao,ProximaSessao accentClass
+    class ErroLogin errorClass
