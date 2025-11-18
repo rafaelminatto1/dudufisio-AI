@@ -23,7 +23,7 @@ const CreateTransactionSchema = z.object({
 
 export async function createTransaction(
   input: z.infer<typeof CreateTransactionSchema>
-) {
+): Promise<{ data: Transaction | null; error: { message: string; details?: any } | null }> {
   try {
     const supabase = await createServerActionClient();
     const {
@@ -31,25 +31,25 @@ export async function createTransaction(
     } = await supabase.auth.getSession();
 
     if (!session) {
-      return { error: 'Unauthorized' };
+      return { error: { message: 'Unauthorized' } };
     }
 
     const validatedInput = CreateTransactionSchema.safeParse(input);
 
     if (!validatedInput.success) {
-      return { error: 'Invalid input', details: validatedInput.error.issues };
+      return { error: { message: 'Invalid input', details: validatedInput.error.issues } };
     }
 
     const result = await TransactionService.create(validatedInput.data);
 
     if (result.error) {
-      return { error: 'Failed to create transaction' };
+      return { error: { message: 'Failed to create transaction' } };
     }
 
     return result;
   } catch (error) {
     console.error('Error creating transaction:', error);
-    return { error: 'Internal server error' };
+    return { error: { message: 'Internal server error' } };
   }
 }
 
@@ -135,7 +135,9 @@ const GetPackagesSchema = z.object({
   patientId: z.string().uuid().optional(),
 });
 
-export async function getPackages(input: z.infer<typeof GetPackagesSchema>) {
+export async function getPackages(
+  input: z.infer<typeof GetPackagesSchema>
+): Promise<{ data: Package[] | null; error: { message: string; details?: any } | null }> {
   try {
     const supabase = await createServerActionClient();
     const {
@@ -167,9 +169,13 @@ export async function getPackages(input: z.infer<typeof GetPackagesSchema>) {
       .from('patient_package_purchases')
       .select(`
         id,
+        package_id,
+        patient_id,
         purchase_date,
         sessions_remaining,
         status,
+        created_at,
+        expires_at,
         patient:patients(id, full_name),
         package:financial_packages(name, price)
       `)

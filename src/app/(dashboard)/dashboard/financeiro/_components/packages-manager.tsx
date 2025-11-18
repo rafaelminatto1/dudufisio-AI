@@ -34,7 +34,7 @@ interface Package {
     name: string;
     price: number;
   } | null;
-  created_at: string;
+  created_at: string | null;
   expires_at: string | null;
 }
 
@@ -67,17 +67,7 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
         throw new Error(errorMessage);
       }
       // Mapear dados para o formato esperado
-      const mappedPackages = (result.data || []).map((pkg: any) => ({
-        id: pkg.id,
-        patient_id: pkg.patient_id,
-        total_sessions: pkg.sessions_remaining || 0,
-        used_sessions: 0,
-        price: pkg.package?.price || pkg.price || '0',
-        expires_at: pkg.expires_at || '',
-        created_at: pkg.created_at || pkg.purchase_date || '',
-        patient: pkg.patient ? { full_name: pkg.patient.full_name } : undefined,
-      }));
-      setPackages(mappedPackages);
+        setPackages(result.data || []);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Erro ao buscar pacotes');
     } finally {
