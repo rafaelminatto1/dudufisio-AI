@@ -16,6 +16,7 @@ import {
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { toast } from 'sonner';
 import { createPackage, getPackages } from '~/lib/actions/financial';
 
@@ -33,6 +34,7 @@ interface Package {
   package: {
     name: string;
     price: number;
+    sessions_count: number;
   } | null;
   created_at: string | null;
   expires_at: string | null;
