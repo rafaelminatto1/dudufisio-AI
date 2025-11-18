@@ -106,9 +106,10 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
       loadPackages();
       setFormData({
         patient_id: patientId || '',
-        total_sessions: '',
-        price: '',
-        expires_at: '',
+        package_id: '',
+        purchase_date: new Date().toISOString().split('T')[0],
+        sessions_remaining: 0,
+        status: 'active',
       });
     } catch (error) {
       toast.error('Erro ao criar pacote');
