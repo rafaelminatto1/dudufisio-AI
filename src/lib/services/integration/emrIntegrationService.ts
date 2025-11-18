@@ -71,11 +71,8 @@ export class EMRIntegrationService {
     try {
       const supabase = await createServerComponentClient();
       // @ts-expect-error - external_systems table not in schema yet
-      const { data, error } = await (supabase
-        .from('external_systems')
-        .insert(system as any)
-        .select()
-        .single() as any);
+      let query = supabase.from('external_systems').insert(system as any).select().single() as any;
+      const { data, error } = await query;
 
       if (error) throw error;
       return { data, error: null };
