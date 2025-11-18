@@ -21,15 +21,19 @@ import { createPackage, getPackages } from '~/lib/actions/financial';
 
 interface Package {
   id: string;
-  patient_id: string;
-  total_sessions: number;
-  used_sessions: number;
-  price: string;
-  expires_at: string;
-  created_at: string;
-  patient?: {
+  purchase_date: string;
+  sessions_remaining: number;
+  status: string | null;
+  patient: {
+    id: string;
     full_name: string;
-  };
+  } | null;
+  package: {
+    name: string;
+    price: number;
+  } | null;
+  created_at: string;
+  expires_at: string | null;
 }
 
 interface PackagesManagerProps {
@@ -42,9 +46,10 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     patient_id: patientId || '',
-    total_sessions: '',
-    price: '',
-    expires_at: '',
+    package_id: '',
+    purchase_date: new Date().toISOString().split('T')[0],
+    sessions_remaining: 0,
+    status: 'active',
   });
 
   const loadPackages = useCallback(async () => {
@@ -59,7 +64,18 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
           : 'Erro desconhecido';
         throw new Error(errorMessage);
       }
-      setPackages(result.data || []);
+      // Mapear dados para o formato esperado
+      const mappedPackages = (result.data || []).map((pkg: any) => ({
+        id: pkg.id,
+        patient_id: pkg.patient_id,
+        total_sessions: pkg.sessions_remaining || 0,
+        used_sessions: 0,
+        price: pkg.package?.price || pkg.price || '0',
+        expires_at: pkg.expires_at || '',
+        created_at: pkg.created_at || pkg.purchase_date || '',
+        patient: pkg.patient ? { full_name: pkg.patient.full_name } : undefined,
+      }));
+      setPackages(mappedPackages);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Erro ao buscar pacotes');
     } finally {
@@ -76,7 +92,13 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
     setLoading(true);
 
     try {
-      const result = await createPackage(formData);
+      const result = await createPackage({
+        patient_id: formData.patient_id,
+        package_id: formData.package_id,
+        purchase_date: formData.purchase_date,
+        sessions_remaining: formData.sessions_remaining,
+        status: formData.status as 'active' | 'inactive' | 'completed',
+      });
 
       if (result.error) {
         throw new Error(result.error);
@@ -122,8 +144,10 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {packages.map((pkg) => {
-            const remaining = pkg.total_sessions - pkg.used_sessions;
-            const progress = (pkg.used_sessions / pkg.total_sessions) * 100;
+            const remaining = pkg.sessions_remaining;
+            const totalSessions = pkg.package?.sessions_count || 1; // Assuming sessions_count from financial_packages
+            const usedSessions = totalSessions - remaining;
+            const progress = (usedSessions / totalSessions) * 100;
 
             return (
               <Card key={pkg.id}>
@@ -136,7 +160,7 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
                       variant={
                         remaining === 0
                           ? 'destructive'
-                          : remaining <= pkg.total_sessions * 0.2
+                          : remaining <= totalSessions * 0.2
                             ? 'secondary'
                             : 'default'
                       }
@@ -150,7 +174,7 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-muted-foreground">Sessões</span>
                       <span>
-                        {pkg.used_sessions} / {pkg.total_sessions}
+                        {usedSessions} / {totalSessions}
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
@@ -164,11 +188,11 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Valor:</span>
-                      <span className="font-medium">{formatCurrency(Number(pkg.price))}</span>
+                      <span className="font-medium">{formatCurrency(Number(pkg.package?.price))}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Expira em:</span>
-                      <span>{formatDate(new Date(pkg.expires_at))}</span>
+                      <span>{formatDate(new Date(pkg.expires_at || ''))}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -189,41 +213,65 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="total_sessions">Total de Sessões</Label>
+              <Label htmlFor="package_id">Pacote</Label>
+              <Select
+                value={formData.package_id}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, package_id: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {/* TODO: Fetch actual financial packages */}
+                  <SelectItem value="some-package-id">Pacote Padrão</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="sessions_remaining">Sessões Restantes</Label>
               <Input
-                id="total_sessions"
+                id="sessions_remaining"
                 type="number"
                 min="1"
-                value={formData.total_sessions}
+                value={formData.sessions_remaining}
                 onChange={(e) =>
-                  setFormData({ ...formData, total_sessions: e.target.value })
+                  setFormData({ ...formData, sessions_remaining: Number(e.target.value) })
                 }
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">Preço (R$)</Label>
+              <Label htmlFor="purchase_date">Data da Compra</Label>
               <Input
-                id="price"
-                type="number"
-                step="0.01"
-                min="0"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                id="purchase_date"
+                type="date"
+                value={formData.purchase_date}
+                onChange={(e) => setFormData({ ...formData, purchase_date: e.target.value })}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="expires_at">Data de Expiração</Label>
-              <Input
-                id="expires_at"
-                type="date"
-                value={formData.expires_at}
-                onChange={(e) => setFormData({ ...formData, expires_at: e.target.value })}
-                required
-              />
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, status: value as 'active' | 'inactive' | 'completed' })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Ativo</SelectItem>
+                  <SelectItem value="inactive">Inativo</SelectItem>
+                  <SelectItem value="completed">Concluído</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <DialogFooter>
