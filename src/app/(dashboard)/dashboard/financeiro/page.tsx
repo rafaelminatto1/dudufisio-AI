@@ -1,6 +1,10 @@
 import { Suspense } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { getTransactions } from '~/lib/actions/financial';
+import { FinancialDashboard } from './_components/financial-dashboard';
+import { PackagesManager } from './_components/packages-manager';
+import { Loading } from '~/components/ui/loading';
 
 async function getFinancialData() {
   const supabase = await createServerComponentClient();
