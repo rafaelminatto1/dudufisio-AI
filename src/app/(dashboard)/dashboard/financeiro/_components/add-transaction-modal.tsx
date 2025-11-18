@@ -88,7 +88,12 @@ export function AddTransactionModal({
       });
 
       if (result.error) {
-        throw new Error(result.error.message || 'Erro desconhecido');
+        const errorMessage = typeof result.error === 'string' 
+          ? result.error 
+          : result.error instanceof Error 
+          ? result.error.message 
+          : 'Erro desconhecido';
+        throw new Error(errorMessage);
       }
 
       toast.success('Transação criada com sucesso!');
