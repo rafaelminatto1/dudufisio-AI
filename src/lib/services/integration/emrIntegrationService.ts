@@ -113,11 +113,8 @@ export class EMRIntegrationService {
 
       // Buscar configuração do sistema
       // @ts-expect-error - external_systems table not in schema yet
-      const { data: system, error: systemError } = await (supabase
-        .from('external_systems')
-        .select('*')
-        .eq('id', systemId)
-        .single() as any);
+      let systemQuery = supabase.from('external_systems').select('*').eq('id', systemId).single() as any;
+      const { data: system, error: systemError } = await systemQuery;
 
       if (systemError || !system) {
         throw new Error('External system not found');
@@ -138,11 +135,8 @@ export class EMRIntegrationService {
       };
 
       // @ts-expect-error - data_imports table not in schema yet
-      const { data: createdImport, error: importError } = await (supabase
-        .from('data_imports')
-        .insert(importRecord as any)
-        .select()
-        .single() as any);
+      let insertQuery = supabase.from('data_imports').insert(importRecord as any).select().single() as any;
+      const { data: createdImport, error: importError } = await insertQuery;
 
       if (importError) throw importError;
 
@@ -164,8 +158,7 @@ export class EMRIntegrationService {
       // Atualizar registro de importação
       const duration = (Date.now() - startTime) / 1000;
       // @ts-expect-error - data_imports table not in schema yet
-      const { data: updatedImport, error: updateError } = await (supabase
-        .from('data_imports')
+      let updateQuery = supabase.from('data_imports')
         .update({
           records_total: result.total,
           records_imported: result.imported,
@@ -177,7 +170,8 @@ export class EMRIntegrationService {
         } as any)
         .eq('id', createdImport.id)
         .select()
-        .single() as any);
+        .single() as any;
+      const { data: updatedImport, error: updateError } = await updateQuery;
 
       if (updateError) throw updateError;
 
@@ -296,11 +290,8 @@ export class EMRIntegrationService {
     try {
       const supabase = await createServerComponentClient();
       // @ts-expect-error - external_systems table not in schema yet
-      const { data: system } = await (supabase
-        .from('external_systems')
-        .select('*')
-        .eq('id', systemId)
-        .single() as any);
+      let query = supabase.from('external_systems').select('*').eq('id', systemId).single() as any;
+      const { data: system } = await query;
 
       if (!system) {
         throw new Error('System not found');
