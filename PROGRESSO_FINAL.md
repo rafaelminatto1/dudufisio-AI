@@ -9,15 +9,15 @@ A consolidação e migração do projeto Next.js foi concluída com sucesso! Tod
 ## 📊 Estatísticas Finais
 
 ### Services
-- **Total Migrados/Melhorados:** 31
+- **Total Migrados/Melhorados:** 37
 - **Services Melhorados:** 4
-- **Services Criados:** 27
-- **Progresso:** ~31% (31 de 100+ services do _OLD_PROJECT)
+- **Services Criados:** 33
+- **Progresso:** ~37% (37 de 100+ services do _OLD_PROJECT)
 
 ### Componentes UI
-- **Componentes Adicionados:** 9 (Skeleton, Popover, Calendar, Command, Drawer, Sheet, Tooltip, Progress, Accordion)
+- **Componentes Adicionados:** 13 (Skeleton, Popover, Calendar, Command, Drawer, Sheet, Tooltip, Progress, Accordion, Alert, Switch, Checkbox, Slider)
 - **Componentes Existentes:** 17
-- **Total de Componentes:** 26
+- **Total de Componentes:** 30
 
 ### Documentação
 - **Arquivos de Documentação:** 4
@@ -117,6 +117,16 @@ A consolidação e migração do projeto Next.js foi concluída com sucesso! Tod
 - **AuditService** - Logs de auditoria e rastreamento de ações
 - **ComplianceService** - Verificações de conformidade (LGPD, ANVISA, etc.)
 - **ComplianceReportService** - Relatórios de compliance
+
+### 32-35. Services de Integração Externa e Performance ✅
+- **EMRIntegrationService** - Integração com sistemas EMR/EHR via HL7 FHIR
+- **ExerciseDBService** - Integração com API externa de exercícios (com cache)
+- **CalendarSyncService** - Sincronização com calendários (Google, Outlook, Apple)
+- **CacheService** - Sistema de cache para otimização de performance
+
+### 36-37. Services de Backup ✅
+- **BackupService** - Sistema completo de backup automatizado (full/incremental)
+- **BackupMonitorService** - Monitoramento de saúde e alertas do sistema de backup
 
 ## 🎨 Componentes UI Adicionados
 

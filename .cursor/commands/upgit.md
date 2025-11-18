@@ -1,0 +1,1 @@
+faça comit, faça ereg, resolva conflitos e faça o push  de tudo
