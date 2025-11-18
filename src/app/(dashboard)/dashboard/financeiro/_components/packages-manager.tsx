@@ -93,7 +93,12 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
       });
 
       if (result.error) {
-        throw new Error(result.error);
+        const errorMessage = typeof result.error === 'string' 
+          ? result.error 
+          : (result.error && typeof result.error === 'object' && 'message' in result.error)
+          ? String(result.error.message)
+          : 'Erro ao criar pacote';
+        throw new Error(errorMessage);
       }
 
       toast.success('Pacote criado com sucesso!');
@@ -137,9 +142,11 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {packages.map((pkg) => {
             const remaining = pkg.sessions_remaining;
-            const totalSessions = pkg.package?.sessions_count || 1; // Assuming sessions_count from financial_packages
-            const usedSessions = totalSessions - remaining;
-            const progress = (usedSessions / totalSessions) * 100;
+            // Calcular total de sessões baseado no que foi comprado
+            // Se não temos o total original, usar sessions_remaining como base
+            const totalSessions = remaining > 0 ? remaining + (pkg.package?.sessions_count || remaining) : (pkg.package?.sessions_count || 1);
+            const usedSessions = Math.max(0, totalSessions - remaining);
+            const progress = totalSessions > 0 ? (usedSessions / totalSessions) * 100 : 0;
 
             return (
               <Card key={pkg.id}>
