@@ -90,8 +90,8 @@ export function AddTransactionModal({
       if (result.error) {
         const errorMessage = typeof result.error === 'string' 
           ? result.error 
-          : result.error instanceof Error 
-          ? result.error.message 
+          : (result.error && typeof result.error === 'object' && 'message' in result.error)
+          ? String(result.error.message)
           : 'Erro desconhecido';
         throw new Error(errorMessage);
       }
