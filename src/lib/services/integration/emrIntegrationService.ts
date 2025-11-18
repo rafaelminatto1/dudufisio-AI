@@ -89,11 +89,8 @@ export class EMRIntegrationService {
     try {
       const supabase = await createServerComponentClient();
       // @ts-expect-error - data_imports table not in schema yet
-      const { data, error } = await (supabase
-        .from('data_imports')
-        .select('*')
-        .order('import_date', { ascending: false })
-        .limit(limit) as any);
+      let query = supabase.from('data_imports').select('*').order('import_date', { ascending: false }).limit(limit) as any;
+      const { data, error } = await query;
 
       if (error) throw error;
       return { data, error: null };
