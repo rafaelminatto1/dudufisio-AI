@@ -1,7 +1,7 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
 
-type Transaction = Database['public']['Tables']['financial_transactions']['Row'];
+export type Transaction = Database['public']['Tables']['financial_transactions']['Row'];
 type TransactionInsert = Database['public']['Tables']['financial_transactions']['Insert'];
 
 export class TransactionService {

@@ -177,10 +177,8 @@ export class EMRIntegrationService {
 
       // Atualizar última sincronização do sistema
       // @ts-expect-error - external_systems table not in schema yet
-      await (supabase
-        .from('external_systems')
-        .update({ last_sync_at: new Date().toISOString() } as any)
-        .eq('id', systemId) as any);
+      let updateQuery = supabase.from('external_systems').update({ last_sync_at: new Date().toISOString() } as any).eq('id', systemId) as any;
+      await updateQuery;
 
       return { data: updatedImport, error: null };
     } catch (error) {

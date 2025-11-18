@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { TransactionService } from '~/lib/services/financial/transactionService';
+import { TransactionService, type Transaction } from '~/lib/services/financial/transactionService';
 import { createServerActionClient } from '~/lib/supabase/server';
 import { PackageService } from '~/lib/services/financial/packageService';
 
