@@ -23,6 +23,7 @@ import {
 import { Textarea } from '~/components/ui/textarea';
 import { toast } from 'sonner';
 import { createCheckout } from '~/lib/actions/stripe';
+import { createTransaction } from '~/lib/actions/financial';
 
 interface AddTransactionModalProps {
   open: boolean;
@@ -78,16 +79,15 @@ export function AddTransactionModal({
     setLoading(true);
 
     try {
-      const response = await fetch('/api/financial/transactions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+      const result = await createTransaction({
+        ...formData,
+        transaction_type: formData.transaction_type as 'receita' | 'despesa',
+        payment_status: formData.payment_status as 'pendente' | 'pago' | 'cancelado',
+        amount: formData.amount,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao criar transação');
+      if (result.error) {
+        throw new Error(result.error);
       }
 
       toast.success('Transação criada com sucesso!');

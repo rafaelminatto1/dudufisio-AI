@@ -9,10 +9,10 @@ A consolidação e migração do projeto Next.js foi concluída com sucesso! Tod
 ## 📊 Estatísticas Finais
 
 ### Services
-- **Total Migrados/Melhorados:** 23
+- **Total Migrados/Melhorados:** 28
 - **Services Melhorados:** 4
-- **Services Criados:** 19
-- **Progresso:** ~23% (23 de 100+ services do _OLD_PROJECT)
+- **Services Criados:** 24
+- **Progresso:** ~28% (28 de 100+ services do _OLD_PROJECT)
 
 ### Componentes UI
 - **Componentes Adicionados:** 9 (Skeleton, Popover, Calendar, Command, Drawer, Sheet, Tooltip, Progress, Accordion)
@@ -103,6 +103,15 @@ A consolidação e migração do projeto Next.js foi concluída com sucesso! Tod
 ### 22-23. Services de Notificações Avançados ✅
 - **NotificationService** - Service avançado (melhorado)
 - **AppointmentNotificationService** - Notificações de agendamento
+
+### 24-25. Services de Mídia ✅
+- **MediaService** - Upload e gestão de mídia (Supabase Storage)
+- **VideoLibraryService** - Biblioteca de vídeos
+
+### 26-28. Services de IA Avançados ✅
+- **AIOrchestratorService** - Orquestrador multi-provider (OpenAI, Anthropic, Groq, Gemini)
+- **AIProviderService** - Gerenciamento de múltiplos providers (integrado no orchestrator)
+- **RecommendationService** - Recomendações personalizadas usando IA
 
 ## 🎨 Componentes UI Adicionados
 

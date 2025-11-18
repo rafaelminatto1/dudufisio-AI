@@ -3,6 +3,7 @@
 import { z } from 'zod';
 import { TransactionService } from '~/lib/services/financial/transactionService';
 import { createServerActionClient } from '~/lib/supabase/server';
+import { PackageService } from '~/lib/services/financial/packageService';
 
 const CreateTransactionSchema = z.object({
   patient_id: z.string().uuid(),
@@ -86,6 +87,101 @@ export async function getTransactions(
     return result;
   } catch (error) {
     console.error('Error fetching transactions:', error);
+    return { error: 'Internal server error' };
+  }
+}
+
+const CreatePackageSchema = z.object({
+  patient_id: z.string().uuid(),
+  package_id: z.string().uuid(),
+  purchase_date: z.string().datetime(),
+  sessions_remaining: z.number().int().positive(),
+  status: z.enum(['active', 'inactive', 'completed']),
+});
+
+export async function createPackage(
+  input: z.infer<typeof CreatePackageSchema>
+) {
+  try {
+    const supabase = await createServerActionClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      return { error: 'Unauthorized' };
+    }
+
+    const validatedInput = CreatePackageSchema.safeParse(input);
+
+    if (!validatedInput.success) {
+      return { error: 'Invalid input', details: validatedInput.error.issues };
+    }
+
+    const result = await PackageService.create(validatedInput.data);
+
+    if (result.error) {
+      return { error: 'Failed to create package' };
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error creating package:', error);
+    return { error: 'Internal server error' };
+  }
+}
+
+const GetPackagesSchema = z.object({
+  patientId: z.string().uuid().optional(),
+});
+
+export async function getPackages(input: z.infer<typeof GetPackagesSchema>) {
+  try {
+    const supabase = await createServerActionClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      return { error: 'Unauthorized' };
+    }
+
+    const validatedInput = GetPackagesSchema.safeParse(input);
+
+    if (!validatedInput.success) {
+      return { error: 'Invalid input', details: validatedInput.error.issues };
+    }
+
+    const { patientId } = validatedInput.data;
+
+    if (patientId) {
+      const result = await PackageService.getByPatient(patientId);
+      if (result.error) {
+        return { error: 'Failed to fetch packages' };
+      }
+      return result;
+    }
+
+    // Se não houver patientId, buscar todos com join em patients
+    const { data, error } = await supabase
+      .from('patient_package_purchases')
+      .select(`
+        id,
+        purchase_date,
+        sessions_remaining,
+        status,
+        patient:patients(id, full_name),
+        package:financial_packages(name, price)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      return { error: 'Failed to fetch packages' };
+    }
+
+    return { data };
+  } catch (error) {
+    console.error('Error fetching packages:', error);
     return { error: 'Internal server error' };
   }
 }

@@ -15,13 +15,13 @@ async function getAgendaData() {
 
   const { data: appointments, error } = await supabase
     .from('appointments')
-    .select('*, patient:patients(*), therapist:therapists(*)')
+    .select('id, start_time, end_time, status, patient_id, therapist_id, notes')
     .gte('start_time', startOfWeek.toISOString())
     .lte('start_time', endOfWeek.toISOString())
     .order('start_time', { ascending: true });
 
   const { data: patients } = await supabase.from('patients').select('id, full_name').order('full_name');
-  const { data: therapists } = await supabase.from('therapists').select('id, user_id, users:users(*)').eq('is_active', true);
+  const { data: therapists } = await supabase.from('therapists').select('id, user_id').eq('is_active', true);
 
   return {
     appointments: appointments || [],

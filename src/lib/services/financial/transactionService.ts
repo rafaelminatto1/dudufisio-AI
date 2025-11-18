@@ -1,16 +1,31 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
 
-type Transaction = Database['public']['Tables']['payment_transactions']['Row'];
-type TransactionInsert = Database['public']['Tables']['payment_transactions']['Insert'];
+type Transaction = Database['public']['Tables']['financial_transactions']['Row'];
+type TransactionInsert = Database['public']['Tables']['financial_transactions']['Insert'];
 
 export class TransactionService {
-  static async create(data: TransactionInsert) {
+  static async create(input: {
+    patient_id: string;
+    transaction_type: 'receita' | 'despesa';
+    amount: string;
+    payment_status: 'pendente' | 'pago' | 'cancelado';
+    payment_method: string;
+    description?: string;
+  }) {
     try {
       const supabase = await createServerComponentClient();
       const { data: transaction, error } = await supabase
-        .from('payment_transactions')
-        .insert(data)
+        .from('financial_transactions')
+        .insert({
+          patient_id: input.patient_id,
+          transaction_type: input.transaction_type,
+          amount: parseFloat(input.amount),
+          payment_status: input.payment_status,
+          payment_method: input.payment_method,
+          description: input.description,
+          category: 'outro', // Default category
+        } as TransactionInsert)
         .select()
         .single();
       if (error) throw error;
@@ -29,7 +44,7 @@ export class TransactionService {
     try {
       const supabase = await createServerComponentClient();
       let query = supabase
-        .from('payment_transactions')
+        .from('financial_transactions')
         .select('*')
         .order('created_at', { ascending: false });
       
@@ -49,7 +64,7 @@ export class TransactionService {
   static async getStats(startDate?: string, endDate?: string) {
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase.from('payment_transactions').select('event_type, amount, status');
+      let query = supabase.from('financial_transactions').select('transaction_type, amount, payment_status');
       if (startDate) query = query.gte('created_at', startDate);
       if (endDate) query = query.lte('created_at', endDate);
       
@@ -64,13 +79,13 @@ export class TransactionService {
       };
       
       data?.forEach(t => {
-        if (t.event_type === 'receita') {
+        if (t.transaction_type === 'receita') {
           stats.totalReceita += Number(t.amount);
-          if (t.status === 'pago') stats.pago += Number(t.amount);
-        } else if (t.event_type === 'despesa') {
+          if (t.payment_status === 'pago') stats.pago += Number(t.amount);
+        } else if (t.transaction_type === 'despesa') {
           stats.totalDespesa += Number(t.amount);
         }
-        if (t.status === 'pendente') {
+        if (t.payment_status === 'pendente') {
           stats.pendente += Number(t.amount);
         }
       });

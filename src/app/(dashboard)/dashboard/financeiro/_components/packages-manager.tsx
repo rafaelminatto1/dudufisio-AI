@@ -17,6 +17,7 @@ import {
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { toast } from 'sonner';
+import { createPackage } from '~/lib/actions/financial';
 
 interface Package {
   id: string;
@@ -50,38 +51,31 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
     loadPackages();
   }, [patientId]);
 
-  const loadPackages = async () => {
-    try {
-      const url = patientId
-        ? `/api/financial/packages?patient_id=${patientId}`
-        : '/api/financial/packages';
-      const response = await fetch(url);
-      const data = await response.json();
-      setPackages(data || []);
-    } catch (error) {
-      toast.error('Erro ao carregar pacotes');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchPackages = async () => {
+      setLoading(true);
+      try {
+        const result = await getPackages({ patientId: patientId || undefined });
+        if (result.error) {
+          throw new Error(result.error);
+        }
+        setPackages(result.data || []);
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Erro ao buscar pacotes');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPackages();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const response = await fetch('/api/financial/packages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          total_sessions: Number(formData.total_sessions),
-          price: Number(formData.price),
-        }),
-      });
+      const result = await createPackage(formData);
 
-      if (!response.ok) {
-        throw new Error('Erro ao criar pacote');
+      if (result.error) {
+        throw new Error(result.error);
       }
 
       toast.success('Pacote criado com sucesso!');

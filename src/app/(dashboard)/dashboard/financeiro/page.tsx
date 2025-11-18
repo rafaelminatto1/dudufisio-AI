@@ -1,23 +1,16 @@
 import { Suspense } from 'react';
-import { createServerComponentClient } from '~/lib/supabase/server';
-import { FinancialDashboard } from './_components/financial-dashboard';
-import { PackagesManager } from './_components/packages-manager';
-import { Loading } from '~/components/ui/loading';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { getTransactions } from '~/lib/actions/financial';
 
 async function getFinancialData() {
-  const supabase = await createServerComponentClient();
   const today = new Date();
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  const { data: transactions } = await supabase
-    .from('payment_transactions')
-    .select('*')
-    .gte('created_at', startOfMonth.toISOString())
-    .order('created_at', { ascending: false });
+  const result = await getTransactions({
+    startDate: startOfMonth.toISOString(),
+  });
 
   return {
-    transactions: transactions || [],
+    transactions: result.data || [],
   };
 }
 
