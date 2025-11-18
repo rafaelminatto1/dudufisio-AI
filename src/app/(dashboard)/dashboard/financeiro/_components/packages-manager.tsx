@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
@@ -17,7 +17,7 @@ import {
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { toast } from 'sonner';
-import { createPackage } from '~/lib/actions/financial';
+import { createPackage, getPackages } from '~/lib/actions/financial';
 
 interface Package {
   id: string;
@@ -47,25 +47,29 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
     expires_at: '',
   });
 
-  useEffect(() => {
-    loadPackages();
+  const loadPackages = useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await getPackages({ patientId: patientId || undefined });
+      if (result.error) {
+        const errorMessage = typeof result.error === 'string' 
+          ? result.error 
+          : (result.error && typeof result.error === 'object' && 'message' in result.error)
+          ? String(result.error.message)
+          : 'Erro desconhecido';
+        throw new Error(errorMessage);
+      }
+      setPackages(result.data || []);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Erro ao buscar pacotes');
+    } finally {
+      setLoading(false);
+    }
   }, [patientId]);
 
-    const fetchPackages = async () => {
-      setLoading(true);
-      try {
-        const result = await getPackages({ patientId: patientId || undefined });
-        if (result.error) {
-          throw new Error(result.error);
-        }
-        setPackages(result.data || []);
-      } catch (error) {
-        toast.error(error instanceof Error ? error.message : 'Erro ao buscar pacotes');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPackages();
+  useEffect(() => {
+    loadPackages();
+  }, [loadPackages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
