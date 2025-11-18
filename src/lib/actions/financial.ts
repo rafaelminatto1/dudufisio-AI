@@ -31,25 +31,25 @@ export async function createTransaction(
     } = await supabase.auth.getSession();
 
     if (!session) {
-      return { error: { message: 'Unauthorized' } };
+      return { data: null, error: { message: 'Unauthorized' } };
     }
 
     const validatedInput = CreateTransactionSchema.safeParse(input);
 
     if (!validatedInput.success) {
-      return { error: { message: 'Invalid input', details: validatedInput.error.issues } };
+      return { data: null, error: { message: 'Invalid input', details: validatedInput.error.issues } };
     }
 
     const result = await TransactionService.create(validatedInput.data);
 
     if (result.error) {
-      return { error: { message: 'Failed to create transaction' } };
+      return { data: null, error: { message: 'Failed to create transaction' } };
     }
 
     return result;
   } catch (error) {
     console.error('Error creating transaction:', error);
-    return { error: { message: 'Internal server error' } };
+    return { data: null, error: { message: 'Internal server error' } };
   }
 }
 
@@ -135,6 +135,26 @@ const GetPackagesSchema = z.object({
   patientId: z.string().uuid().optional(),
 });
 
+type Package = {
+  id: string;
+  package_id: string;
+  patient_id: string;
+  purchase_date: string;
+  sessions_remaining: number;
+  status: string | null;
+  patient: {
+    id: string;
+    full_name: string;
+  } | null;
+  package: {
+    name: string;
+    price: number;
+    sessions_count: number;
+  } | null;
+  created_at: string | null;
+  expires_at: string | null;
+};
+
 export async function getPackages(
   input: z.infer<typeof GetPackagesSchema>
 ): Promise<{ data: Package[] | null; error: { message: string; details?: any } | null }> {
@@ -145,13 +165,13 @@ export async function getPackages(
     } = await supabase.auth.getSession();
 
     if (!session) {
-      return { error: 'Unauthorized' };
+      return { data: null, error: { message: 'Unauthorized' } };
     }
 
     const validatedInput = GetPackagesSchema.safeParse(input);
 
     if (!validatedInput.success) {
-      return { error: 'Invalid input', details: validatedInput.error.issues };
+      return { data: null, error: { message: 'Invalid input', details: validatedInput.error.issues } };
     }
 
     const { patientId } = validatedInput.data;
@@ -159,7 +179,7 @@ export async function getPackages(
     if (patientId) {
       const result = await PackageService.getByPatient(patientId);
       if (result.error) {
-        return { error: 'Failed to fetch packages' };
+        return { data: null, error: { message: 'Failed to fetch packages' } };
       }
       return result;
     }
@@ -182,12 +202,12 @@ export async function getPackages(
       .order('created_at', { ascending: false });
 
     if (error) {
-      return { error: 'Failed to fetch packages' };
+      return { data: null, error: { message: 'Failed to fetch packages' } };
     }
 
     return { data };
   } catch (error) {
     console.error('Error fetching packages:', error);
-    return { error: 'Internal server error' };
+    return { data: null, error: { message: 'Internal server error' } };
   }
 }
