@@ -10,7 +10,7 @@ export class TransactionService {
     transaction_type: 'receita' | 'despesa';
     amount: string;
     payment_status: 'pendente' | 'pago' | 'cancelado';
-    payment_method: string;
+    payment_method: 'dinheiro' | 'pix' | 'cartao_debito' | 'cartao_credito' | 'transferencia' | 'stripe' | string;
     description?: string;
   }) {
     try {

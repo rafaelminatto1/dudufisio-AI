@@ -83,11 +83,12 @@ export function AddTransactionModal({
         ...formData,
         transaction_type: formData.transaction_type as 'receita' | 'despesa',
         payment_status: formData.payment_status as 'pendente' | 'pago' | 'cancelado',
+        payment_method: formData.payment_method as 'dinheiro' | 'pix' | 'cartao_debito' | 'cartao_credito' | 'transferencia' | 'stripe',
         amount: formData.amount,
       });
 
       if (result.error) {
-        throw new Error(result.error);
+        throw new Error(result.error.message || 'Erro desconhecido');
       }
 
       toast.success('Transação criada com sucesso!');
