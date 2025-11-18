@@ -143,11 +143,11 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {packages.map((pkg) => {
             const remaining = pkg.sessions_remaining;
-            // Calcular total de sessões baseado no que foi comprado
-            // Se não temos o total original, usar sessions_remaining como base
-            const totalSessions = remaining > 0 ? remaining + (pkg.package?.sessions_count || remaining) : (pkg.package?.sessions_count || 1);
-            const usedSessions = Math.max(0, totalSessions - remaining);
-            const progress = totalSessions > 0 ? (usedSessions / totalSessions) * 100 : 0;
+            // Como não temos o total original, usar sessions_remaining como base
+            // Assumindo que o pacote começou com pelo menos o número de sessões restantes
+            const totalSessions = remaining || 1;
+            const usedSessions = 0; // Não temos informação sobre sessões usadas
+            const progress = 0; // Não podemos calcular progresso sem o total original
 
             return (
               <Card key={pkg.id}>
@@ -172,15 +172,15 @@ export function PackagesManager({ patientId }: PackagesManagerProps) {
                 <CardContent className="space-y-4">
                   <div>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-muted-foreground">Sessões</span>
+                      <span className="text-muted-foreground">Sessões Restantes</span>
                       <span>
-                        {usedSessions} / {totalSessions}
+                        {remaining}
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
                       <div
                         className="bg-primary h-2 rounded-full transition-all"
-                        style={{ width: `${progress}%` }}
+                        style={{ width: `${Math.min(100, (remaining / Math.max(1, totalSessions)) * 100)}%` }}
                       />
                     </div>
                   </div>
