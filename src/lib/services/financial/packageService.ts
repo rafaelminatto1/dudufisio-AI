@@ -1,16 +1,47 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 
+type Package = {
+  id: string;
+  package_id: string;
+  patient_id: string;
+  purchase_date: string;
+  sessions_remaining: number;
+  status: string | null;
+  patient: {
+    id: string;
+    full_name: string;
+  } | null;
+  package: {
+    name: string;
+    price: number;
+    sessions_count: number;
+  } | null;
+  created_at: string | null;
+  expires_at: string | null;
+};
+
 export class PackageService {
-  static async create(data: any) {
+  static async create(data: any): Promise<{ data: Package | null; error: { message: string } | null }> {
     try {
       const supabase = await createServerComponentClient();
       const { data: pkg, error } = await supabase
         .from('patient_package_purchases')
         .insert(data)
-        .select()
+        .select(`
+          id,
+          package_id,
+          patient_id,
+          purchase_date,
+          sessions_remaining,
+          status,
+          created_at,
+          expires_at,
+          patient:patients(id, full_name),
+          package:financial_packages(name, price, sessions_count)
+        `)
         .single();
       if (error) throw error;
-      return { data: pkg, error: null };
+      return { data: pkg as Package, error: null };
     } catch (error) {
       console.error('Error creating package:', error);
       return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
