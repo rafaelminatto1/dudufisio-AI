@@ -8,9 +8,7 @@ async function getTreatmentsData() {
 
   const { data: treatments } = await supabase
     .from('patient_exercise_prescriptions')
-    .select(
-      'id, created_at, start_date, end_date, status, patient:patients(id, full_name), therapist:therapists(id, user_id)'
-    )
+    .select('id, created_at, start_date, end_date, status, patient_id, therapist_id')
     .order('created_at', { ascending: false })
     .limit(10);
 
