@@ -31,7 +31,7 @@ export interface NotificationListOptions {
   offset?: number;
   onlyUnread?: boolean;
   type?: NotificationType;
-  orderBy?: 'created_at' | 'priority';
+  orderBy?: 'created_at';
   orderDirection?: 'asc' | 'desc';
 }
 

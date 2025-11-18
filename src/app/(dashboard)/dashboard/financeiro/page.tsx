@@ -1,16 +1,25 @@
 import { Suspense } from 'react';
+import { createServerComponentClient } from '~/lib/supabase/server';
 import { getTransactions } from '~/lib/actions/financial';
 
 async function getFinancialData() {
+  const supabase = await createServerComponentClient();
   const today = new Date();
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  const result = await getTransactions({
-    startDate: startOfMonth.toISOString(),
-  });
+  const { data: transactions, error } = await supabase
+    .from('payment_transactions')
+    .select('*')
+    .gte('created_at', startOfMonth.toISOString())
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching financial data:', error);
+    return { transactions: [] };
+  }
 
   return {
-    transactions: result.data || [],
+    transactions: transactions || [],
   };
 }
 

@@ -71,12 +71,12 @@ export class RecommendationService {
         useCase: 'patient_insight',
       });
 
-      if (aiResponse.error || !aiResponse.content) {
+      if (aiResponse.error || !aiResponse.data?.content) {
         throw new Error(aiResponse.error || 'Failed to generate recommendations');
       }
 
       // Parsear recomendações da resposta da IA
-      const recommendations = this.parseRecommendations(aiResponse.content, context);
+      const recommendations = this.parseRecommendations(aiResponse.data.content, context);
 
       // Salvar recomendações no banco
       await this.saveRecommendations(context.patientId, recommendations);
@@ -235,7 +235,10 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
         .from('ai_recommendations')
-        .update({ applied: true, applied_at: new Date().toISOString() })
+        .update({ 
+          status: 'applied',
+          applied_at: new Date().toISOString() 
+        } as any)
         .eq('id', recommendationId)
         .select()
         .single();

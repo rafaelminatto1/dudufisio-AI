@@ -177,7 +177,7 @@ export async function getPackages(
         created_at,
         expires_at,
         patient:patients(id, full_name),
-        package:financial_packages(name, price)
+        package:financial_packages(name, price, sessions_count)
       `)
       .order('created_at', { ascending: false });
 
