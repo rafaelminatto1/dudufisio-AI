@@ -21,6 +21,8 @@ import { createPackage, getPackages } from '~/lib/actions/financial';
 
 interface Package {
   id: string;
+  package_id: string;
+  patient_id: string;
   purchase_date: string;
   sessions_remaining: number;
   status: string | null;
