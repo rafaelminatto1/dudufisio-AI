@@ -13,7 +13,7 @@ export class PackageService {
       return { data: pkg, error: null };
     } catch (error) {
       console.error('Error creating package:', error);
-      return { data: null, error };
+      return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
     }
   }
 
@@ -22,14 +22,25 @@ export class PackageService {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
         .from('patient_package_purchases')
-        .select('*')
+        .select(`
+          id,
+          package_id,
+          patient_id,
+          purchase_date,
+          sessions_remaining,
+          status,
+          created_at,
+          expires_at,
+          patient:patients(id, full_name),
+          package:financial_packages(name, price, sessions_count)
+        `)
         .eq('patient_id', patientId)
         .order('created_at', { ascending: false });
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
       console.error('Error fetching packages:', error);
-      return { data: null, error };
+      return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
     }
   }
 
@@ -58,7 +69,7 @@ export class PackageService {
       return { data: updated, error: null };
     } catch (error) {
       console.error('Error using session:', error);
-      return { data: null, error };
+      return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
     }
   }
 }
