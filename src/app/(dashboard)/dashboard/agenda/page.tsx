@@ -1,11 +1,9 @@
 import { Suspense } from 'react';
-import { AgendaViewSelector } from '~/components/features/agenda/AgendaViewSelector';
-import { AgendaFilters } from '~/components/features/agenda/AgendaFilters';
-import { AgendaCalendarView } from '~/components/features/agenda/AgendaCalendarView';
 import { AgendaCalendarClient } from './_components/AgendaCalendarClient';
+import { AgendaControls } from './_components/AgendaControls';
 import { AppointmentsSkeleton } from '~/components/skeletons';
 
-export default function AgendaPage({
+export default async function AgendaPage({
   searchParams,
 }: {
   searchParams?: {
@@ -31,24 +29,11 @@ export default function AgendaPage({
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-4">
-        <AgendaViewSelector
-          currentView={currentView}
-          onViewChange={(view) => {
-            // TODO: Atualizar URL com novo view
-          }}
-        />
-        <AgendaFilters
-          selectedTherapist={therapistId}
-          selectedResource={resourceId}
-          onTherapistChange={(id) => {
-            // TODO: Atualizar URL
-          }}
-          onResourceChange={(id) => {
-            // TODO: Atualizar URL
-          }}
-        />
-      </div>
+      <AgendaControls
+        currentView={currentView}
+        therapistId={therapistId}
+        resourceId={resourceId}
+      />
 
       <Suspense fallback={<AppointmentsSkeleton />}>
         <AgendaCalendarClient
