@@ -56,7 +56,7 @@ export class RecommendationService {
         .limit(10);
 
       // Buscar tratamentos ativos
-      const { data: treatments } = await supabase
+      const { data: treatments } = await (supabase as any)
         .from('treatments')
         .select('*')
         .eq('patient_id', context.patientId)
@@ -72,7 +72,19 @@ export class RecommendationService {
       });
 
       if (aiResponse.error || !aiResponse.data?.content) {
-        throw new Error(aiResponse.error || 'Failed to generate recommendations');
+        let errorMessage = 'Failed to generate recommendations';
+        if (aiResponse.error) {
+          errorMessage = typeof aiResponse.error === 'string' 
+            ? aiResponse.error 
+            : aiResponse.error instanceof Error
+            ? aiResponse.error.message
+            : String(aiResponse.error);
+        } else if (aiResponse.data?.error) {
+          errorMessage = typeof aiResponse.data.error === 'string'
+            ? aiResponse.data.error
+            : String(aiResponse.data.error);
+        }
+        throw new Error(errorMessage);
       }
 
       // Parsear recomendações da resposta da IA
@@ -200,7 +212,7 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
         data: rec.data,
       }));
 
-      await supabase.from('ai_recommendations').insert(recommendationsToInsert);
+      await (supabase as any).from('ai_recommendations').insert(recommendationsToInsert);
     } catch (error) {
       console.error('Error saving recommendations:', error);
       // Não falhar se salvar falhar
@@ -213,7 +225,7 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
   static async getPatientRecommendations(patientId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('ai_recommendations')
         .select('*')
         .eq('patient_id', patientId)
@@ -233,7 +245,7 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
   static async markRecommendationApplied(recommendationId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('ai_recommendations')
         .update({ 
           status: 'applied',

@@ -1,5 +1,6 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
+import { unstable_cacheTag as cacheTag, unstable_noStore as noStore } from 'next/cache';
 
 export type Transaction = Database['public']['Tables']['financial_transactions']['Row'];
 type TransactionInsert = Database['public']['Tables']['financial_transactions']['Insert'];
@@ -41,17 +42,21 @@ export class TransactionService {
     startDate?: string;
     endDate?: string;
   }) {
+    // 'use cache' // TODO: Habilitar quando Next.js suportar;
+    cacheTag('transactions');
+    if (filters?.patientId) cacheTag(`transactions:patient:${filters.patientId}`);
+
     try {
       const supabase = await createServerComponentClient();
       let query = supabase
         .from('financial_transactions')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (filters?.patientId) query = query.eq('patient_id', filters.patientId);
       if (filters?.startDate) query = query.gte('created_at', filters.startDate);
       if (filters?.endDate) query = query.lte('created_at', filters.endDate);
-      
+
       const { data, error } = await query;
       if (error) throw error;
       return { data, error: null };
@@ -62,22 +67,25 @@ export class TransactionService {
   }
 
   static async getStats(startDate?: string, endDate?: string) {
+    // 'use cache' // TODO: Habilitar quando Next.js suportar;
+    cacheTag('transactions:stats');
+
     try {
       const supabase = await createServerComponentClient();
       let query = supabase.from('financial_transactions').select('transaction_type, amount, payment_status');
       if (startDate) query = query.gte('created_at', startDate);
       if (endDate) query = query.lte('created_at', endDate);
-      
+
       const { data, error } = await query;
       if (error) throw error;
-      
+
       const stats = {
         totalReceita: 0,
         totalDespesa: 0,
         pago: 0,
         pendente: 0,
       };
-      
+
       data?.forEach(t => {
         if (t.transaction_type === 'receita') {
           stats.totalReceita += Number(t.amount);
@@ -89,7 +97,7 @@ export class TransactionService {
           stats.pendente += Number(t.amount);
         }
       });
-      
+
       return { data: stats, error: null };
     } catch (error) {
       console.error('Error fetching stats:', error);

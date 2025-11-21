@@ -1,0 +1,30 @@
+
+> fisioflow-next@1.0.0 build
+> next build
+
+   Ôû▓ Next.js 16.0.3 (Turbopack)
+   - Environments: .env.local, .env
+   - Experiments (use with caution):
+     ┬À optimizePackageImports
+     ┬À serverActions
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully in 6.0s
+   Running TypeScript ...
+Failed to compile.
+
+./src/app/(dashboard)/layout.tsx:35:28
+Type error: Type '{ email: string; full_name: string | null; } | undefined' is not assignable to type '{ email?: string | undefined; full_name?: string | undefined; avatar_url?: string | null | undefined; } | undefined'.
+  Type '{ email: string; full_name: string | null; }' is not assignable to type '{ email?: string | undefined; full_name?: string | undefined; avatar_url?: string | null | undefined; }'.
+    Types of property 'full_name' are incompatible.
+      Type 'string | null' is not assignable to type 'string | undefined'.
+        Type 'null' is not assignable to type 'string | undefined'.
+
+  33 |       <div className="flex flex-1 flex-col overflow-hidden lg:pl-64">
+  34 |         <Suspense fallback={<Loading />}>
+> 35 |           <DashboardHeader user={user || undefined} />
+     |                            ^
+  36 |         </Suspense>
+  37 |         <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
+  38 |           {children}
+Next.js build worker exited with code: 1 and signal: null

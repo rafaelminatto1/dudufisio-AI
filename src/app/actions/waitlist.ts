@@ -137,3 +137,163 @@ export async function processPatientWaitlistResponse(
     };
   }
 }
+
+interface WaitlistEntry {
+  id: string;
+  patient_id: string;
+  priority: string;
+  status: string;
+  added_at: string;
+  notified_at: string | null;
+  expires_at: string | null;
+  created_at: string;
+  updated_at: string;
+  patients: {
+    full_name: string;
+    phone: string;
+  } | null;
+}
+
+interface GetWaitlistEntriesResult {
+  success: boolean;
+  message: string;
+  entries?: WaitlistEntry[];
+  error?: string;
+}
+
+export async function getWaitlistEntries(): Promise<GetWaitlistEntriesResult> {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Credenciais do Supabase não configuradas');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const { data, error: fetchError } = await supabase
+      .from('waitlist')
+      .select(`
+        id,
+        patient_id,
+        priority,
+        status,
+        added_at,
+        notified_at,
+        expires_at,
+        created_at,
+        updated_at,
+        patients:patient_id (
+          full_name,
+          phone
+        )
+      `)
+      .order('added_at', { ascending: true }); // Ordena os mais antigos primeiro
+
+    if (fetchError) {
+      console.error('[getWaitlistEntries] Erro ao buscar entradas da lista de espera:', fetchError.message);
+      return { success: false, message: 'Erro ao buscar entradas da lista de espera.' };
+    }
+
+    // Transformar dados: patients pode vir como array, mas esperamos um objeto único
+    const transformedEntries = (data || []).map((entry: any) => ({
+      ...entry,
+      patients: Array.isArray(entry.patients) 
+        ? (entry.patients.length > 0 ? entry.patients[0] : null)
+        : entry.patients,
+    }));
+
+    return {
+      success: true,
+      message: 'Lista de espera buscada com sucesso.',
+      entries: transformedEntries,
+    };
+  } catch (error) {
+    console.error('[getWaitlistEntries] Erro fatal:', error);
+    return {
+      success: false,
+      message: 'Ocorreu um erro inesperado ao buscar a lista de espera.',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+interface WaitlistMetrics {
+  totalActive: number;
+  totalNotified: number;
+  totalFilled: number;
+  totalExpired: number;
+  averageWaitTime?: string; // Exemplo: "2h 30m"
+}
+
+interface GetWaitlistMetricsResult {
+  success: boolean;
+  message: string;
+  metrics?: WaitlistMetrics;
+  error?: string;
+}
+
+export async function getWaitlistMetrics(): Promise<GetWaitlistMetricsResult> {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Credenciais do Supabase não configuradas');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Contagem de entradas por status
+    const { count: totalActive, error: activeError } = await supabase
+      .from('waitlist')
+      .select('id', { count: 'exact' })
+      .eq('status', 'Ativo');
+
+    const { count: totalNotified, error: notifiedError } = await supabase
+      .from('waitlist')
+      .select('id', { count: 'exact' })
+      .eq('status', 'Notificado');
+    
+    const { count: totalFilled, error: filledError } = await supabase
+      .from('waitlist')
+      .select('id', { count: 'exact' })
+      .eq('status', 'Preenchido');
+
+    const { count: totalExpired, error: expiredError } = await supabase
+      .from('waitlist')
+      .select('id', { count: 'exact' })
+      .eq('status', 'Expirado');
+
+    if (activeError || notifiedError || filledError || expiredError) {
+      console.error('[getWaitlistMetrics] Erro ao buscar contagens de métricas:', activeError || notifiedError || filledError || expiredError);
+      return { success: false, message: 'Erro ao buscar métricas da lista de espera.' };
+    }
+
+    // TODO: Cálculo de tempo médio de espera (mais complexo, requer mais dados ou funções SQL)
+    // Por enquanto, apenas um placeholder
+    const averageWaitTime = "Não implementado";
+
+    const metrics: WaitlistMetrics = {
+      totalActive: totalActive || 0,
+      totalNotified: totalNotified || 0,
+      totalFilled: totalFilled || 0,
+      totalExpired: totalExpired || 0,
+      averageWaitTime: averageWaitTime,
+    };
+
+    return {
+      success: true,
+      message: 'Métricas da lista de espera buscadas com sucesso.',
+      metrics: metrics,
+    };
+  } catch (error) {
+    console.error('[getWaitlistMetrics] Erro fatal:', error);
+    return {
+      success: false,
+      message: 'Ocorreu um erro inesperado ao buscar métricas da lista de espera.',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}

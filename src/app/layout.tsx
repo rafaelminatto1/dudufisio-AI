@@ -1,16 +1,14 @@
 import type { Metadata } from 'next';
 // import { Inter } from 'next/font/google';
 import './globals.css';
-import { SupabaseProvider } from '~/components/providers/supabase-provider';
-import { ThemeProvider } from '~/components/theme-provider';
-import { Toaster } from 'sonner';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Toaster } from '~/components/ui/sonner';
+import { PerformanceProvider } from '~/components/providers/PerformanceProvider';
+import { AccessibilityProvider } from '~/components/providers/AccessibilityProvider';
 
 // const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'FisioFlow - Gestão para Clínicas de Fisioterapia',
+  title: 'DuduFisio-AI - Sistema de Gestão de Clínica de Fisioterapia',
   description: 'Sistema completo de gestão para clínicas de fisioterapia',
 };
 
@@ -21,22 +19,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className="">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SupabaseProvider>
+      <body>
+        <PerformanceProvider>
+          <AccessibilityProvider>
             {children}
             <Toaster />
-            <Analytics />
-            <SpeedInsights />
-          </SupabaseProvider>
-        </ThemeProvider>
+          </AccessibilityProvider>
+        </PerformanceProvider>
       </body>
     </html>
   );
 }
-

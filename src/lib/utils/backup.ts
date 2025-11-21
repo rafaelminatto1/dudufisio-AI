@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 interface BackupResult {
   success: boolean;
+  message?: string;
   backup_id?: string;
   type?: string;
   stats?: {

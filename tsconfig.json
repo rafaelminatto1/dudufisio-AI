@@ -25,8 +25,14 @@
     "paths": {
       "~/*": [
         "./src/*"
+      ],
+      "@/*": [
+        "./src/*"
       ]
-    }
+    },
+    "types": [
+      "jest"
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -39,6 +45,7 @@
     "node_modules",
     "_OLD_PROJECT",
     "fisioflow-next",
-    "_fisioflow-next-legacy"
+    "_fisioflow-next-legacy",
+    "supabase/functions"
   ]
 }

@@ -55,7 +55,7 @@ export class AuditService {
   }) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await (supabase
+      const { data, error } = await ((supabase as any)
         .from('audit_logs')
         .insert({
           user_id: params.userId,
@@ -94,7 +94,7 @@ export class AuditService {
         offset = 0,
       } = filters || {};
 
-      let query = supabase
+      let query = (supabase as any)
         .from('audit_logs')
         .select('*', { count: 'exact' })
         .order('created_at', { ascending: false })
@@ -154,7 +154,7 @@ export class AuditService {
   static async getEntityAuditLogs(entityType: string, entityId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('audit_logs')
         .select('*, user:users(*)')
         .eq('entity_type', entityType)
@@ -179,7 +179,7 @@ export class AuditService {
   }) {
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase.from('audit_logs').select('action, created_at') as any;
+      let query = (supabase as any).from('audit_logs').select('action, created_at');
 
       if (params?.userId) {
         query = query.eq('user_id', params.userId);

@@ -15,6 +15,30 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '5mb',
     },
+    // Otimizar imports de pacotes grandes automaticamente
+    optimizePackageImports: [
+      'lucide-react',
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-alert-dialog',
+      '@radix-ui/react-avatar',
+      '@radix-ui/react-checkbox',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-label',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-progress',
+      '@radix-ui/react-radio-group',
+      '@radix-ui/react-scroll-area',
+      '@radix-ui/react-select',
+      '@radix-ui/react-separator',
+      '@radix-ui/react-slider',
+      '@radix-ui/react-slot',
+      '@radix-ui/react-switch',
+      '@radix-ui/react-tabs',
+      '@radix-ui/react-toast',
+      '@radix-ui/react-toggle-group',
+      '@radix-ui/react-tooltip',
+    ],
   },
   images: {
     remotePatterns: [
@@ -37,7 +61,11 @@ const nextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 60,
+    // Cache de imagens aumentado para 24 horas (Next.js 16 otimização)
+    minimumCacheTTL: 86400,
+    // Tamanhos otimizados para diferentes dispositivos
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   headers: async () => {
     return [
@@ -75,6 +103,10 @@ const nextConfig = {
   poweredByHeader: false,
   compress: true,
   reactStrictMode: true,
+
+  // Para usar Turbopack (5-10x mais rápido em dev):
+  // npm run dev --turbo
+  // ou adicione script no package.json: "dev:turbo": "next dev --turbo"
 };
 
 export default nextConfig;

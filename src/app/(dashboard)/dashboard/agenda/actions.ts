@@ -7,19 +7,22 @@ import { ConflictDetectionService } from '~/lib/services/appointments/conflictDe
 export async function createAppointment(formData: FormData) {
   const supabase = await createServerActionClient();
 
+  const start_time = formData.get('start_time') as string;
+
   const appointmentData = {
     patient_id: formData.get('patient_id') as string,
     therapist_id: formData.get('therapist_id') as string,
-    start_time: formData.get('start_time') as string,
-    end_time: formData.get('end_time') as string,
+    scheduled_at: start_time,
     status: (formData.get('status') as string) || 'agendado',
   };
 
   // Detectar conflitos
+  const end_time = formData.get('end_time') as string;
   const conflicts = await ConflictDetectionService.detectConflicts({
-    ...appointmentData,
-    start_time: new Date(appointmentData.start_time).toISOString(),
-    end_time: new Date(appointmentData.end_time).toISOString(),
+    patient_id: appointmentData.patient_id,
+    therapist_id: appointmentData.therapist_id,
+    start_time: new Date(start_time).toISOString(),
+    end_time: new Date(end_time).toISOString(),
   });
 
   if (conflicts.length > 0) {
@@ -47,19 +50,22 @@ export async function createAppointment(formData: FormData) {
 export async function updateAppointment(id: string, formData: FormData) {
   const supabase = await createServerActionClient();
 
+  const start_time = formData.get('start_time') as string;
+  const end_time = formData.get('end_time') as string;
+
   const appointmentData = {
     patient_id: formData.get('patient_id') as string,
     therapist_id: formData.get('therapist_id') as string,
-    start_time: formData.get('start_time') as string,
-    end_time: formData.get('end_time') as string,
+    scheduled_at: start_time,
     status: formData.get('status') as string,
   };
 
   // Detectar conflitos
   const conflicts = await ConflictDetectionService.detectConflicts({
-    ...appointmentData,
-    start_time: new Date(appointmentData.start_time).toISOString(),
-    end_time: new Date(appointmentData.end_time).toISOString(),
+    patient_id: appointmentData.patient_id,
+    therapist_id: appointmentData.therapist_id,
+    start_time: new Date(start_time).toISOString(),
+    end_time: new Date(end_time).toISOString(),
     id,
   });
 

@@ -1,17 +1,25 @@
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["gru1"],
   "crons": [
-    {
-      "path": "/api/cron/lembretes-diarios",
-      "schedule": "0 9 * * 1-5"
-    },
     {
       "path": "/api/cron/backup-database",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/lembretes-diarios",
+      "schedule": "0 9 * * 1-5"
     }
-  ]
+  ],
+  "github": {
+    "silent": false,
+    "autoAlias": true,
+    "autoAssignReviewers": true,
+    "autoMerge": false,
+    "enabled": true,
+    "checks": [
+      "npm run lint",
+      "npm run test",
+      "npm run e2e"
+    ]
+  }
 }

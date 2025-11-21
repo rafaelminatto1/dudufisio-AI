@@ -185,7 +185,7 @@ export async function getPackages(
     }
 
     // Se não houver patientId, buscar todos com join em patients
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('patient_package_purchases')
       .select(`
         id,
@@ -205,7 +205,7 @@ export async function getPackages(
       return { data: null, error: { message: 'Failed to fetch packages' } };
     }
 
-    return { data, error: null };
+    return { data: data as any, error: null };
   } catch (error) {
     console.error('Error fetching packages:', error);
     return { data: null, error: { message: 'Internal server error' } };

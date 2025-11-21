@@ -39,7 +39,7 @@ export class ComplianceService {
       const supabase = await createServerComponentClient();
 
       // Buscar checks de compliance
-      let query = supabase.from('compliance_checks').select('*') as any;
+      let query = (supabase as any).from('compliance_checks').select('*');
 
       if (category) {
         query = query.eq('category', category);
@@ -63,7 +63,7 @@ export class ComplianceService {
 
       // Atualizar checks no banco
       for (const check of checkedResults) {
-        await supabase
+        await (supabase as any)
           .from('compliance_checks')
           .update({
             status: check.status,
@@ -113,14 +113,14 @@ export class ComplianceService {
     const supabase = await createServerComponentClient();
 
       // Verificar se há política de privacidade
-      const { data: privacyPolicy } = await supabase
+      const { data: privacyPolicy } = await (supabase as any)
         .from('settings')
         .select('*')
         .eq('key', 'privacy_policy')
         .maybeSingle();
 
       // Verificar se há consentimento de pacientes
-      const { data: consents } = await supabase
+      const { data: consents } = await (supabase as any)
         .from('patient_consents')
         .select('*')
         .limit(1) as any;
@@ -268,7 +268,7 @@ export class ComplianceService {
   static async getComplianceStatus() {
     try {
       const supabase = await createServerComponentClient();
-      const { data: checks, error } = await supabase
+      const { data: checks, error } = await (supabase as any)
         .from('compliance_checks')
         .select('*')
         .order('category', { ascending: true });

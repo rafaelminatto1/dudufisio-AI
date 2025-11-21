@@ -51,7 +51,7 @@ export class PackageService {
   static async getByPatient(patientId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('patient_package_purchases')
         .select(`
           id,
@@ -68,7 +68,7 @@ export class PackageService {
         .eq('patient_id', patientId)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return { data, error: null };
+      return { data: data as any, error: null };
     } catch (error) {
       console.error('Error fetching packages:', error);
       return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };

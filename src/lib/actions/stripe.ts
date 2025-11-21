@@ -41,6 +41,7 @@ export async function createCheckout(
         transaction_type: 'receita',
         amount: amount.toString(),
         payment_status: 'pendente',
+        payment_method: 'stripe',
         description: description || 'Pagamento via Stripe',
       });
 
@@ -48,7 +49,7 @@ export async function createCheckout(
         return { error: 'Failed to create transaction' };
       }
 
-      transId = transResult.data.id;
+      transId = String(transResult.data.id);
     }
 
     // Criar checkout session
@@ -68,7 +69,7 @@ export async function createCheckout(
     }
 
     // Atualizar transação com metadata do Stripe
-    await supabase
+    await (supabase as any)
       .from('financial_transactions')
       .update({
         external_payment_id: sessionResult.data.id,

@@ -1,5 +1,6 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
+import { unstable_cacheTag as cacheTag, unstable_noStore as noStore } from 'next/cache';
 
 type Appointment = Database['public']['Tables']['appointments']['Row'];
 type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
@@ -16,9 +17,14 @@ export class AppointmentService {
     startDate?: Date | string;
     endDate?: Date | string;
   }) {
+    // 'use cache' // TODO: Habilitar quando Next.js suportar;
+    cacheTag('appointments');
+    if (filters?.patientId) cacheTag(`appointments:patient:${filters.patientId}`);
+    if (filters?.therapistId) cacheTag(`appointments:therapist:${filters.therapistId}`);
+
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase
+      let query = (supabase as any)
         .from('appointments')
         .select('*, patient:patients(*), therapist:therapists(*)')
         .order('start_time', { ascending: true });
@@ -54,6 +60,10 @@ export class AppointmentService {
    * Get appointment by ID
    */
   static async getById(id: string) {
+    // 'use cache' // TODO: Habilitar quando Next.js suportar;
+    cacheTag('appointments');
+    cacheTag(`appointments:${id}`);
+
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
@@ -143,23 +153,27 @@ export class AppointmentService {
     startDate?: Date | string;
     endDate?: Date | string;
   }) {
+    // 'use cache' // TODO: Habilitar quando Next.js suportar;
+    cacheTag('appointments:stats');
+    if (filters?.therapistId) cacheTag(`appointments:therapist:${filters.therapistId}`);
+
     try {
       const supabase = await createServerComponentClient();
-      
+
       let query = supabase
         .from('appointments')
         .select('status', { count: 'exact', head: false });
 
       if (filters?.therapistId) query = query.eq('therapist_id', filters.therapistId);
       if (filters?.startDate) {
-        const startDate = filters.startDate instanceof Date 
-          ? filters.startDate.toISOString() 
+        const startDate = filters.startDate instanceof Date
+          ? filters.startDate.toISOString()
           : filters.startDate;
         query = query.gte('start_time', startDate);
       }
       if (filters?.endDate) {
-        const endDate = filters.endDate instanceof Date 
-          ? filters.endDate.toISOString() 
+        const endDate = filters.endDate instanceof Date
+          ? filters.endDate.toISOString()
           : filters.endDate;
         query = query.lte('end_time', endDate);
       }

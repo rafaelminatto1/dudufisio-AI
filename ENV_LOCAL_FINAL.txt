@@ -1,0 +1,35 @@
+# ============================================
+# SUPABASE (OBRIGATÓRIO)
+# ============================================
+# Obtenha em: https://app.supabase.com → Settings → API
+NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_anon_key_aqui
+SUPABASE_SERVICE_ROLE_KEY=sua_service_role_key_aqui
+
+# ============================================
+# WHATSAPP BUSINESS API
+# ============================================
+WHATSAPP_PROVIDER=whatsapp_business
+WHATSAPP_API_KEY=EAAjPUGyZBQPoBP6VPXKdgqOPBzvmuxzQkaq1gzxl6ALoGtVTC3kI1keAWMm60AA3gt8JCl1KvlENDULm7buBSFLvqnRC6GTBU601Ba3IceXBo7XR6kLIu6fqFHDfko3TTRLwQeajNrcCfmYvMHQGdRwRD0TAQcGvm0fZAFs2kNkamkerJn2IxLljKsRsyOkgZDZD
+WHATSAPP_PHONE_NUMBER_ID=779431901927431
+WHATSAPP_BUSINESS_ACCOUNT_ID=806225345331804
+WHATSAPP_FROM_NUMBER=+551158749885
+WHATSAPP_WEBHOOK_VERIFY_TOKEN=CvdPuLDBi3tbVchqQOpGHfz7IsFl14eo
+
+# ============================================
+# EMAIL (RESEND)
+# ============================================
+EMAIL_PROVIDER=resend
+EMAIL_API_KEY=re_Mezq7Vga_HYycFnWej9d9EgGsjQdksWZg
+EMAIL_FROM=noreply@dudufisio.com
+
+# ============================================
+# CRON JOBS
+# ============================================
+CRON_SECRET=U8Ase5QuLpjkzNPVbw726IyYCTO0XJgv
+
+# ============================================
+# APP CONFIGURATION
+# ============================================
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+

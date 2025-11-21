@@ -6,6 +6,8 @@ import { Badge } from '~/components/ui/badge';
 
 interface TransactionsTableProps {
   transactions: any[];
+  onDelete?: (id: string) => Promise<void>;
+  onUpdateStatus?: (id: string, newStatus: string) => Promise<void>;
 }
 
 export function TransactionsTable({ transactions }: TransactionsTableProps) {

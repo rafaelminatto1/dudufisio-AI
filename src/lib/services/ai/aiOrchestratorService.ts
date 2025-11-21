@@ -298,7 +298,7 @@ export class AIOrchestratorService {
   private static async logRequest(request: AIRequest, response: AIResponse) {
     try {
       const supabase = await createServerComponentClient();
-      await supabase.from('ai_requests').insert({
+      await (supabase as any).from('ai_requests').insert({
         prompt: request.prompt,
         use_case: request.useCase,
         provider: response.provider,

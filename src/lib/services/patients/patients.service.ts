@@ -1,5 +1,6 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import type { Database } from '~/types/database.types';
+import { unstable_cacheTag as cacheTag, unstable_noStore as noStore } from 'next/cache';
 
 type Patient = Database['public']['Tables']['patients']['Row'];
 type PatientInsert = Database['public']['Tables']['patients']['Insert'];
@@ -7,6 +8,9 @@ type PatientUpdate = Database['public']['Tables']['patients']['Update'];
 
 export class PatientsService {
   async getAll(filters?: { status?: string; search?: string }) {
+    // 'use cache' // TODO: Habilitar quando Next.js suportar;
+    cacheTag('patients');
+
     const supabase = await createServerComponentClient();
     let query = supabase
       .from('patients')
@@ -27,6 +31,10 @@ export class PatientsService {
   }
 
   async getById(id: string) {
+    // 'use cache' // TODO: Habilitar quando Next.js suportar;
+    cacheTag('patients');
+    cacheTag(`patients:${id}`);
+
     const supabase = await createServerComponentClient();
     const { data, error } = await supabase
       .from('patients')
@@ -74,6 +82,9 @@ export class PatientsService {
   }
 
   async getStats() {
+    // 'use cache' // TODO: Habilitar quando Next.js suportar;
+    cacheTag('patients:stats');
+
     const supabase = await createServerComponentClient();
     const { count: totalCount } = await supabase
       .from('patients')
