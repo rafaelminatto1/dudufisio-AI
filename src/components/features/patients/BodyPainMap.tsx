@@ -18,6 +18,7 @@ interface PainPoint {
   intensity: number; // 0-10 (EVA)
   bodyPart: string;
   side?: 'left' | 'right' | 'center';
+  view?: 'front' | 'back'; // Vista onde o ponto foi marcado
 }
 
 interface BodyPainMapProps {
@@ -54,6 +55,7 @@ export function BodyPainMap({
         intensity: selectedIntensity,
         bodyPart: getBodyPartFromPosition(x, y, view),
         side: getSideFromPosition(x),
+        view: view, // Armazenar a vista atual
       };
 
       setPoints([...points, newPoint]);
@@ -187,7 +189,7 @@ export function BodyPainMap({
 
                 {/* Pontos de dor */}
                 {points
-                  .filter((p) => p.side !== 'back')
+                  .filter((p) => p.view !== 'back')
                   .map((point) => (
                     <g key={point.id}>
                       <circle
@@ -232,7 +234,7 @@ export function BodyPainMap({
 
                 {/* Pontos de dor */}
                 {points
-                  .filter((p) => p.side === 'back')
+                  .filter((p) => p.view === 'back')
                   .map((point) => (
                     <g key={point.id}>
                       <circle
