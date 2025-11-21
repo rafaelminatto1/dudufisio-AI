@@ -61,10 +61,10 @@ export async function PatientNextAppointments({ patientId }: { patientId: string
           <div key={appointment.id} className="flex items-center justify-between">
             <div>
               <p className="font-medium">
-                {formatDate(appointment.start_time)} às {formatTime(appointment.start_time)}
+                {formatDate((appointment as any).start_time)} às {formatTime((appointment as any).start_time)}
               </p>
-              {appointment.title && (
-                <p className="text-sm text-muted-foreground">{appointment.title}</p>
+              {(appointment as any).title && (
+                <p className="text-sm text-muted-foreground">{(appointment as any).title}</p>
               )}
             </div>
             <Badge variant={getStatusBadge(appointment.status)}>

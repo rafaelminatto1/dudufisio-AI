@@ -16,7 +16,7 @@ export async function PatientGoals({
 }) {
   const supabase = await createServerComponentClient();
 
-  const { data: goals } = await supabase
+  const { data: goals } = await (supabase as any)
     .from('patient_goals')
     .select('*')
     .eq('patient_id', patientId)
@@ -52,7 +52,7 @@ export async function PatientGoals({
   if (detailed) {
     return (
       <div className="space-y-4">
-        {goals.map((goal) => {
+        {goals.map((goal: any) => {
           const daysRemaining = calculateDaysRemaining(goal.target_date);
           const progress = (goal as any).progress_percentage || 0;
 
@@ -116,7 +116,7 @@ export async function PatientGoals({
         <CardDescription>{goals.length} objetivo(s) ativo(s)</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {goals.slice(0, 3).map((goal) => {
+        {goals.slice(0, 3).map((goal: any) => {
           const daysRemaining = calculateDaysRemaining(goal.target_date);
           const progress = (goal as any).progress_percentage || 0;
 
