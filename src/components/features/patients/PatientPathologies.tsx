@@ -15,7 +15,7 @@ export async function PatientPathologies({
 }) {
   const supabase = await createServerComponentClient();
 
-  const { data: pathologies } = await supabase
+  const { data: pathologies } = await (supabase as any)
     .from('pathologies')
     .select('*')
     .eq('patient_id', patientId)
@@ -62,7 +62,7 @@ export async function PatientPathologies({
   if (detailed) {
     return (
       <div className="space-y-4">
-        {pathologies.map((pathology) => (
+        {pathologies.map((pathology: any) => (
           <Card key={pathology.id}>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -104,7 +104,7 @@ export async function PatientPathologies({
         <CardDescription>{pathologies.length} patologia(s) ativa(s)</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {pathologies.slice(0, 3).map((pathology) => (
+        {pathologies.slice(0, 3).map((pathology: any) => (
           <div key={pathology.id} className="flex items-center justify-between">
             <div>
               <p className="font-medium">{pathology.name}</p>
