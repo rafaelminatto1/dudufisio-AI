@@ -84,7 +84,7 @@ export function ReplicateConductDialog({
         return;
       }
 
-      setSessions((result.data as PreviousSession[]) || []);
+      setSessions((result.data as unknown as PreviousSession[]) || []);
     } catch (error) {
       console.error('Erro ao carregar sessões:', error);
     } finally {
