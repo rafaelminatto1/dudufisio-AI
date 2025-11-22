@@ -8,7 +8,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export async function getTherapists() {
   const supabase = await createServerComponentClient();
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('therapists')
     .select('*')
     .eq('status', 'active')

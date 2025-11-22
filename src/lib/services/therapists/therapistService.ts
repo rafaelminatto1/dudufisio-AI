@@ -40,7 +40,7 @@ export class TherapistService {
   }) {
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase
+      let query = (supabase as any)
         .from('therapists')
         .select('*, user:users(*)')
         .is('deleted_at', null)
@@ -88,7 +88,7 @@ export class TherapistService {
   static async getTherapistById(id: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('therapists')
         .select('*, user:users(*)')
         .eq('id', id)
@@ -109,7 +109,7 @@ export class TherapistService {
   static async getTherapistByUserId(userId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('therapists')
         .select('*, user:users(*)')
         .eq('user_id', userId)
@@ -155,7 +155,7 @@ export class TherapistService {
         is_accepting_patients: therapistData.is_accepting_patients ?? true,
       };
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('therapists')
         .insert(insertData)
         .select('*, user:users(*)')
@@ -180,7 +180,7 @@ export class TherapistService {
         updated_at: new Date().toISOString(),
       };
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('therapists')
         .update(updateData)
         .eq('id', id)
@@ -201,7 +201,7 @@ export class TherapistService {
   static async deleteTherapist(id: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('therapists')
         .update({
           deleted_at: new Date().toISOString(),
@@ -223,7 +223,7 @@ export class TherapistService {
   static async setAcceptingPatients(id: string, isAccepting: boolean) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('therapists')
         .update({
           is_accepting_patients: isAccepting,
@@ -247,7 +247,7 @@ export class TherapistService {
   static async updateWorkingHours(id: string, workingHours: any) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('therapists')
         .update({
           working_hours: workingHours,
@@ -271,7 +271,7 @@ export class TherapistService {
   static async updateSpecialties(id: string, specialties: string[]) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('therapists')
         .update({
           specialties,
@@ -302,7 +302,7 @@ export class TherapistService {
   static async getStats() {
     try {
       const supabase = await createServerComponentClient();
-      const { data: therapists, error } = await supabase
+      const { data: therapists, error } = await (supabase as any)
         .from('therapists')
         .select('is_accepting_patients, specialties')
         .is('deleted_at', null);

@@ -197,7 +197,7 @@ export class ComplianceReportService {
     params: { startDate: string; endDate: string }
   ) {
     // Buscar terapeutas e suas certificações
-    const { data: therapists } = await supabase
+    const { data: therapists } = await (supabase as any)
       .from('therapists')
       .select('*, certifications:therapist_certifications(*)');
 

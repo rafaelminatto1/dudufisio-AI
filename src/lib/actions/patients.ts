@@ -111,8 +111,8 @@ export async function createPatient(data: CreatePatientData) {
   }
 
   revalidatePath('/dashboard/pacientes');
-  revalidateTag('patients', 'page');
-  revalidateTag('patients:stats', 'page');
+  revalidateTag('patients');
+  revalidateTag('patients:stats');
   return { data: patient };
 }
 
@@ -164,7 +164,7 @@ export async function updatePatient(data: UpdatePatientData) {
     // photo_url: data.photo_url, // Campo não existe na tabela patients
     // patient_origin: data.patient_origin, // Campo não existe na tabela patients
     notes: data.notes,
-    updated_by: user?.id,
+    // updated_by: user?.id, // Campo não existe na tabela patients
   };
 
   const { data: patient, error } = await supabase
@@ -180,9 +180,9 @@ export async function updatePatient(data: UpdatePatientData) {
 
   revalidatePath('/dashboard/pacientes');
   revalidatePath(`/dashboard/pacientes/${data.id}`);
-  revalidateTag('patients', 'page');
-  revalidateTag(`patients:${data.id}`, 'page');
-  revalidateTag('patients:stats', 'page');
+  revalidateTag('patients');
+  revalidateTag(`patients:${data.id}`);
+  revalidateTag('patients:stats');
   return { data: patient };
 }
 
@@ -202,9 +202,9 @@ export async function deletePatient(id: string) {
   }
 
   revalidatePath('/dashboard/pacientes');
-  revalidateTag('patients', 'page');
-  revalidateTag(`patients:${id}`, 'page');
-  revalidateTag('patients:stats', 'page');
+  revalidateTag('patients');
+  revalidateTag(`patients:${id}`);
+  revalidateTag('patients:stats');
   return { success: true };
 }
 

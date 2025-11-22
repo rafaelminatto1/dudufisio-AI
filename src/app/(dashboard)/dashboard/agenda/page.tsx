@@ -6,17 +6,18 @@ import { AppointmentsSkeleton } from '~/components/skeletons';
 export default async function AgendaPage({
   searchParams,
 }: {
-  searchParams?: {
+  searchParams: Promise<{
     view?: 'day' | 'week' | 'month';
     therapist?: string;
     resource?: string;
     date?: string;
-  };
+  }>;
 }) {
-  const currentView = (searchParams?.view || 'day') as 'day' | 'week' | 'month';
-  const currentDate = searchParams?.date ? new Date(searchParams.date) : new Date();
-  const therapistId = searchParams?.therapist;
-  const resourceId = searchParams?.resource;
+  const params = await searchParams;
+  const currentView = (params?.view || 'day') as 'day' | 'week' | 'month';
+  const currentDate = params?.date ? new Date(params.date) : new Date();
+  const therapistId = params?.therapist;
+  const resourceId = params?.resource;
 
   return (
     <div className="space-y-6">

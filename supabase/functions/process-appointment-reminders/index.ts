@@ -174,7 +174,7 @@ serve(async (req) => {
 
         let therapistName = reminder.metadata?.therapistName ?? null
         if (appt.therapist_id) {
-          const { data: therapistRecord } = await supabase
+          const { data: therapistRecord } = await (supabase as any)
             .from('therapists')
             .select('name, full_name, user_id')
             .eq('user_id', appt.therapist_id)
