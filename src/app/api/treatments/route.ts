@@ -67,22 +67,22 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
     return errorResponse('ID do paciente é obrigatório', 400);
   }
 
-  if (!body.therapist_id) {
+  if (!(body as any).therapist_id) {
     return errorResponse('ID do fisioterapeuta é obrigatório', 400);
   }
 
-  if (!body.session_date) {
+  if (!(body as any).session_date) {
     return errorResponse('Data da sessão é obrigatória', 400);
   }
 
   // Valida data
-  const sessionDate = new Date(body.session_date);
+  const sessionDate = new Date((body as any).session_date);
   if (isNaN(sessionDate.getTime())) {
     return errorResponse('Data da sessão inválida', 400);
   }
 
   // Valida pain_level se fornecido
-  if (body.pain_level !== undefined && (body.pain_level < 0 || body.pain_level > 10)) {
+  if ((body as any).pain_level !== undefined && ((body as any).pain_level < 0 || (body as any).pain_level > 10)) {
     return errorResponse('Nível de dor deve estar entre 0 e 10', 400);
   }
 
@@ -102,7 +102,7 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
   const { data: therapist, error: therapistError } = await (supabase as any)
     .from('therapists')
     .select('id')
-    .eq('id', body.therapist_id)
+    .eq('id', (body as any).therapist_id)
     .single();
 
   if (therapistError || !therapist) {
@@ -112,17 +112,17 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
   // Cria a sessão
   const result = await saveSessionEvolution(null, {
     patient_id: body.patient_id,
-    therapist_id: body.therapist_id,
-    treatment_id: body.treatment_id,
-    appointment_id: body.appointment_id,
-    session_number: body.session_number,
-    session_date: body.session_date,
-    subjective: body.subjective,
-    objective: body.objective,
-    assessment: body.assessment,
-    plan: body.plan,
-    conducts: body.conducts,
-    pain_level: body.pain_level,
+    therapist_id: (body as any).therapist_id,
+    treatment_id: (body as any).treatment_id,
+    appointment_id: (body as any).appointment_id,
+    session_number: (body as any).session_number,
+    session_date: (body as any).session_date,
+    subjective: (body as any).subjective,
+    objective: (body as any).objective,
+    assessment: (body as any).assessment,
+    plan: (body as any).plan,
+    conducts: (body as any).conducts,
+    pain_level: (body as any).pain_level,
   });
 
   if (result.error) {

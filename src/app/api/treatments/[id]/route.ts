@@ -74,7 +74,7 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
     return errorResponse('ID da sessão é obrigatório', 400);
   }
 
-  const { data: body, error: parseError } = await parseBody<SessionEvolutionUpdate>(request);
+  const { data: body, error: parseError } = await parseBody<any>(request);
 
   if (parseError || !body) {
     return errorResponse(parseError || 'Body inválido', 400);
@@ -89,12 +89,12 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
   }
 
   // Valida pain_level se fornecido
-  if (body.pain_level !== undefined && (body.pain_level < 0 || body.pain_level > 10)) {
+  if ((body as any).pain_level !== undefined && ((body as any).pain_level < 0 || (body as any).pain_level > 10)) {
     return errorResponse('Nível de dor deve estar entre 0 e 10', 400);
   }
 
-  // Verifica se sessão existe
-  const { data: existing, error: existingError } = await supabase
+  // Verifica se sessão existe e obtém therapist_id
+  const { data: existing, error: existingError } = await (supabase as any)
     .from('session_evolutions')
     .select('id, patient_id, therapist_id')
     .eq('id', sessionId)
@@ -104,17 +104,36 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
     return errorResponse('Sessão não encontrada', 404);
   }
 
+  // Se não tiver therapist_id na sessão, busca do usuário autenticado
+  let therapistId = (existing as any).therapist_id;
+  
+  if (!therapistId && user?.id) {
+    const { data: therapist, error: therapistError } = await (supabase as any)
+      .from('therapists')
+      .select('id')
+      .eq('user_id', user.id)
+      .single();
+    
+    if (!therapistError && therapist) {
+      therapistId = therapist.id;
+    }
+  }
+
+  if (!therapistId) {
+    return errorResponse('Não foi possível identificar o fisioterapeuta', 400);
+  }
+
   // Atualiza a sessão
   const result = await saveSessionEvolution(sessionId, {
-    patient_id: existing.patient_id,
-    therapist_id: existing.therapist_id,
-    session_date: body.session_date || new Date().toISOString(),
+    patient_id: (existing as any).patient_id,
+    therapist_id: therapistId,
+    session_date: (body as any).session_date || new Date().toISOString(),
     subjective: body.subjective,
     objective: body.objective,
     assessment: body.assessment,
     plan: body.plan,
     conducts: body.conducts,
-    pain_level: body.pain_level,
+    pain_level: (body as any).pain_level,
     session_number: body.session_number,
   });
 

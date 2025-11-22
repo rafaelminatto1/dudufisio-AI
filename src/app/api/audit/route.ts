@@ -36,7 +36,7 @@ export const GET = withAuth(async (request: NextRequest, { supabase }) => {
 
   try {
     // Verifica se tabela de auditoria existe
-    const { data: auditLogs, error, count } = await supabase
+    const { data: auditLogs, error, count } = await (supabase as any)
       .from('audit_logs')
       .select('*', { count: 'exact' })
       .order('created_at', { ascending: false })
