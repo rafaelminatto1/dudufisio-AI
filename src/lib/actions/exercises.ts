@@ -14,7 +14,7 @@ interface ExerciseFilters {
 export async function getExercises(filters: ExerciseFilters = {}) {
   const supabase = await createServerComponentClient();
 
-  let query = supabase
+  let query = (supabase as any)
     .from('exercises_library')
     .select('*')
     .order('name', { ascending: true });
@@ -67,7 +67,7 @@ export async function prescribeExercise(data: {
     return { error: 'Exercício não encontrado', data: null };
   }
 
-  const { data: prescribed, error } = await supabase
+  const { data: prescribed, error } = await (supabase as any)
     .from('patient_exercises')
     .insert({
       patient_id: data.patient_id,
