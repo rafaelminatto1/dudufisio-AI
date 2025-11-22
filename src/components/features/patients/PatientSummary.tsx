@@ -28,7 +28,7 @@ export async function PatientSummary({ patientId }: { patientId: string }) {
     .eq('patient_id', patientId);
 
   const { count: activeGoals } = await supabase
-    .from('patient_goals')
+    .from('patient_goals' as any)
     .select('id', { count: 'exact', head: true })
     .eq('patient_id', patientId)
     .eq('status', 'em_progresso');

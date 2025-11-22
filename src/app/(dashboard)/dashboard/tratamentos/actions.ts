@@ -28,8 +28,8 @@ export async function createSOAPNote(formData: FormData) {
     if (error) throw error;
 
     revalidatePath('/dashboard/tratamentos');
-    revalidateTag('evolutions', 'page');
-    revalidateTag(`evolutions:treatment:${treatmentId}`, 'page');
+    revalidateTag('evolutions');
+    revalidateTag(`evolutions:treatment:${treatmentId}`);
 
     return { success: true, data };
   } catch (error) {
@@ -66,7 +66,7 @@ export async function updateSOAPNote(id: string, formData: FormData) {
     if (error) throw error;
 
     revalidatePath('/dashboard/tratamentos');
-    revalidateTag('evolutions', 'page');
+    revalidateTag('evolutions');
 
     return { success: true, data };
   } catch (error) {
@@ -90,7 +90,7 @@ export async function deleteSOAPNote(id: string) {
     if (error) throw error;
 
     revalidatePath('/dashboard/tratamentos');
-    revalidateTag('evolutions', 'page');
+    revalidateTag('evolutions');
 
     return { success: true };
   } catch (error) {

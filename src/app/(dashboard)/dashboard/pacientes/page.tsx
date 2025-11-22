@@ -20,13 +20,13 @@ async function PatientsListAsync({
 }: {
   searchParams: { search?: string; status?: string; page?: string };
 }) {
-  const page = parseInt(searchParams.page || '1');
+  const page = parseInt(searchParams?.page || '1');
   const limit = 20;
   const offset = (page - 1) * limit;
 
   const result = await getPatients({
-    search: searchParams.search,
-    status: searchParams.status,
+    search: searchParams?.search,
+    status: searchParams?.status,
     limit,
     offset,
   });
@@ -75,11 +75,12 @@ async function PatientsListAsync({
   );
 }
 
-export default function PatientsPage({
+export default async function PatientsPage({
   searchParams,
 }: {
-  searchParams: { search?: string; status?: string; page?: string };
+  searchParams: Promise<{ search?: string; status?: string; page?: string }>;
 }) {
+  const params = await searchParams;
   return (
     <div className="space-y-6">
       {/* Header - Renderiza imediatamente */}
@@ -103,7 +104,7 @@ export default function PatientsPage({
 
       {/* Lista - Streaming SSR com skeleton */}
       <Suspense fallback={<TableSkeleton rows={10} columns={5} />}>
-        <PatientsListAsync searchParams={searchParams} />
+        <PatientsListAsync searchParams={params} />
       </Suspense>
     </div>
   );

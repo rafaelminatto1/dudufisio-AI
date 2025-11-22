@@ -30,8 +30,8 @@ export async function createTransaction(formData: FormData) {
     if (error) throw error;
 
     revalidatePath('/dashboard/financeiro');
-    revalidateTag('transactions', 'page');
-    revalidateTag('transactions:stats', 'page');
+    revalidateTag('transactions');
+    revalidateTag('transactions:stats');
 
     return { success: true, data };
   } catch (error) {
@@ -72,8 +72,8 @@ export async function updateTransaction(id: string, formData: FormData) {
     if (error) throw error;
 
     revalidatePath('/dashboard/financeiro');
-    revalidateTag('transactions', 'page');
-    revalidateTag('transactions:stats', 'page');
+    revalidateTag('transactions');
+    revalidateTag('transactions:stats');
 
     return { success: true, data };
   } catch (error) {
@@ -97,8 +97,8 @@ export async function deleteTransaction(id: string) {
     if (error) throw error;
 
     revalidatePath('/dashboard/financeiro');
-    revalidateTag('transactions', 'page');
-    revalidateTag('transactions:stats', 'page');
+    revalidateTag('transactions');
+    revalidateTag('transactions:stats');
 
     return { success: true };
   } catch (error) {
@@ -128,8 +128,8 @@ export async function updatePaymentStatus(id: string, status: string) {
     if (error) throw error;
 
     revalidatePath('/dashboard/financeiro');
-    revalidateTag('transactions', 'page');
-    revalidateTag('transactions:stats', 'page');
+    revalidateTag('transactions');
+    revalidateTag('transactions:stats');
 
     return { success: true, data };
   } catch (error) {

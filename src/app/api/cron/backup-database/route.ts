@@ -20,21 +20,27 @@ export async function GET(request: NextRequest) {
     // Verificar autenticação do cron job
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
+    const testMode = process.env.TEST_MODE === 'true' || process.env.NODE_ENV === 'development';
 
-    if (!cronSecret) {
-      console.error('[CronBackup] CRON_SECRET não configurado');
-      return NextResponse.json(
-        { error: 'Cron secret not configured' },
-        { status: 500 }
-      );
-    }
+    // Em modo de teste/desenvolvimento, não requer CRON_SECRET
+    if (!testMode) {
+      if (!cronSecret) {
+        console.error('[CronBackup] CRON_SECRET não configurado');
+        return NextResponse.json(
+          { error: 'Cron secret not configured' },
+          { status: 500 }
+        );
+      }
 
-    if (authHeader !== `Bearer ${cronSecret}`) {
-      console.error('[CronBackup] Autenticação falhou');
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      if (authHeader !== `Bearer ${cronSecret}`) {
+        console.error('[CronBackup] Autenticação falhou');
+        return NextResponse.json(
+          { error: 'Unauthorized' },
+          { status: 401 }
+        );
+      }
+    } else {
+      console.log('[CronBackup] Executando em modo de teste/desenvolvimento');
     }
 
     const result = await performDatabaseBackup();
@@ -52,7 +58,8 @@ export async function GET(request: NextRequest) {
       type: result.type,
       stats: result.stats,
       duration_ms: result.duration_ms,
-      timestamp: result.timestamp
+      timestamp: result.timestamp,
+      test_mode: testMode
     });
   } catch (error) {
     console.error('[CronBackup] Erro fatal:', error);

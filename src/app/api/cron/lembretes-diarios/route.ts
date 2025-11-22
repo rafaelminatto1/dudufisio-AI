@@ -9,9 +9,19 @@ export async function GET(request: Request) {
   // Verifica se é uma requisição autorizada (ex: header secreto)
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
+  const testMode = process.env.TEST_MODE === 'true' || process.env.NODE_ENV === 'development';
 
-  if (authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  // Em modo de teste/desenvolvimento, não requer CRON_SECRET
+  if (!testMode) {
+    if (!cronSecret) {
+      return NextResponse.json({ error: 'Cron secret not configured' }, { status: 500 });
+    }
+
+    if (authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  } else {
+    console.log('[CronReminders] Executando em modo de teste/desenvolvimento');
   }
 
   try {
@@ -25,6 +35,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
+      test_mode: testMode,
       reminders: {
         sent: remindersResult.sent,
         error: remindersResult.error,

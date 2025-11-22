@@ -3,8 +3,9 @@ import { PatientForm } from '~/components/features/patients/PatientForm';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { redirect, notFound } from 'next/navigation';
 
-export default async function EditPatientPage({ params }: { params: { id: string } }) {
-  const result = await getPatientById(params.id);
+export default async function EditPatientPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const result = await getPatientById(id);
 
   if (result.error || !result.data) {
     notFound();
@@ -45,7 +46,7 @@ export default async function EditPatientPage({ params }: { params: { id: string
               notes: (patient as any).notes || '',
             }}
             onSuccess={() => {
-              redirect(`/dashboard/pacientes/${params.id}`);
+              redirect(`/dashboard/pacientes/${id}`);
             }}
           />
         </CardContent>

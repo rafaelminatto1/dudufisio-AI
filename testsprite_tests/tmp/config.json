@@ -1,0 +1,19 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "backendAuthType": "basic token",
+  "backendUsername": "cursor@moocafisio.com.br",
+  "backendPassword": "256256",
+  "executionArgs": {
+    "projectName": "dudufisio-AI",
+    "projectPath": "C:\\Users\\rafal\\cursor\\dudufisio-ai\\dudufisio-AI",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-8bMuKGfFoUIqX4t6ssw0xomOk6IV_HwEsApfdFk6dKdt9VPWsfekx6ge2QgANJyDuJqx8YqFAdjprxq5X_3Q2zFH6fc-rKwMqPACaMgJCt_jXILdR2OZYzCuap6y0uLjI58"
+    }
+  },
+  "proxy": "http://4098a5b5-68dd-4b20-957f-37f4bd144322:3XXtJf4Dqb4ym5nJcCtrJEaJYvcXmWCH@tun.testsprite.com:8080"
+}

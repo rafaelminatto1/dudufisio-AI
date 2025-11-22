@@ -70,17 +70,17 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
     return errorResponse('ID do paciente é obrigatório', 400);
   }
 
-  if (!body.start_time) {
+  if (!(body as any).start_time) {
     return errorResponse('Data/hora de início é obrigatória', 400);
   }
 
-  if (!body.end_time) {
+  if (!(body as any).end_time) {
     return errorResponse('Data/hora de término é obrigatória', 400);
   }
 
   // Valida datas
-  const startTime = new Date(body.start_time);
-  const endTime = new Date(body.end_time);
+  const startTime = new Date((body as any).start_time);
+  const endTime = new Date((body as any).end_time);
 
   if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
     return errorResponse('Data/hora inválida', 400);
@@ -121,7 +121,7 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
     .select('id')
     .neq('status', 'cancelled')
     .or(
-      `and(start_time.lte.${body.start_time},end_time.gt.${body.start_time}),and(start_time.lt.${body.end_time},end_time.gte.${body.end_time})`
+      `and(start_time.lte.${(body as any).start_time},end_time.gt.${(body as any).start_time}),and(start_time.lt.${(body as any).end_time},end_time.gte.${(body as any).end_time})`
     );
 
   if (conflicts && conflicts.length > 0) {
@@ -129,11 +129,11 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
   }
 
   // Cria agendamento
-  const appointmentData: AppointmentInsert = {
+  const appointmentData: any = {
     patient_id: body.patient_id,
     therapist_id: body.therapist_id,
-    start_time: body.start_time,
-    end_time: body.end_time,
+    start_time: (body as any).start_time,
+    end_time: (body as any).end_time,
     service_type: body.service_type,
     status: body.status || 'scheduled',
     notes: body.notes,

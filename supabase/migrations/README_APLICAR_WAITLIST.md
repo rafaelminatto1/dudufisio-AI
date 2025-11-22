@@ -62,3 +62,4 @@ WHERE table_schema = 'public'
   AND table_name = 'waitlist';
 ```
 
+

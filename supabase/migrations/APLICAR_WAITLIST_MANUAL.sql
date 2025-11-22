@@ -74,3 +74,4 @@ SELECT
     COUNT(*) as total_registros
 FROM public.waitlist;
 
+

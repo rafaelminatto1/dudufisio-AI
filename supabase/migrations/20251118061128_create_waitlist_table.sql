@@ -48,3 +48,4 @@ CREATE POLICY "Enable delete for authenticated users"
     ON public.waitlist FOR DELETE 
     USING (auth.uid() IS NOT NULL);
 
+
