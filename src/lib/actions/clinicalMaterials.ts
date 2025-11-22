@@ -14,7 +14,7 @@ interface MaterialFilters {
 export async function getClinicalMaterials(filters: MaterialFilters = {}) {
   const supabase = await createServerComponentClient();
 
-  let query = supabase
+  let query = (supabase as any)
     .from('clinical_materials')
     .select('*')
     .order('name', { ascending: true });
