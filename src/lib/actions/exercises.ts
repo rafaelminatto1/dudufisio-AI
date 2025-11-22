@@ -57,7 +57,7 @@ export async function prescribeExercise(data: {
   const supabase = await createServerComponentClient();
 
   // Busca dados do exercício
-  const { data: exercise, error: exerciseError } = await supabase
+  const { data: exercise, error: exerciseError } = await (supabase as any)
     .from('exercises_library')
     .select('name')
     .eq('id', data.exercise_id)
