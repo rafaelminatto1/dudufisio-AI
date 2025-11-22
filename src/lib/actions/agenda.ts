@@ -28,7 +28,7 @@ export async function getResources() {
   const supabase = await createServerComponentClient();
 
   // Se não existir tabela resources, retorna vazio
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('resources')
     .select('*')
     .eq('status', 'active')
