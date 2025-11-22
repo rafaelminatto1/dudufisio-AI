@@ -26,8 +26,8 @@ export async function generateInvoicePDF(data: {
     // Gera PDF
     const pdfBlob = await generatePDF({
       invoiceNumber,
-      patientName: patient.full_name,
-      patientCPF: patient.cpf || undefined,
+      patientName: (patient as any).full_name || patient.name,
+      patientCPF: (patient as any).cpf || undefined,
       description: data.description,
       amount: data.amount,
       paymentMethod: data.payment_method,
