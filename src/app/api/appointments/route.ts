@@ -134,9 +134,9 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
     therapist_id: body.therapist_id,
     start_time: (body as any).start_time,
     end_time: (body as any).end_time,
-    service_type: body.service_type,
+    service_type: (body as any).service_type,
     status: body.status || 'scheduled',
-    notes: body.notes,
+    notes: (body as any).notes,
     created_by: user.id,
   };
 
