@@ -15,7 +15,7 @@ export async function PatientSurgeries({
 }) {
   const supabase = await createServerComponentClient();
 
-  const { data: surgeries } = await supabase
+  const { data: surgeries } = await (supabase as any)
     .from('surgeries')
     .select('*')
     .eq('patient_id', patientId)
@@ -52,7 +52,7 @@ export async function PatientSurgeries({
   if (detailed) {
     return (
       <div className="space-y-4">
-        {surgeries.map((surgery) => {
+        {surgeries.map((surgery: any) => {
           const phase = getPhaseBadge((surgery as any).current_phase);
           return (
             <Card key={surgery.id}>
@@ -89,7 +89,7 @@ export async function PatientSurgeries({
         <CardDescription>{surgeries.length} cirurgia(s) registrada(s)</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {surgeries.slice(0, 3).map((surgery) => {
+        {surgeries.slice(0, 3).map((surgery: any) => {
           const phase = getPhaseBadge((surgery as any).current_phase);
           return (
             <div key={surgery.id} className="flex items-center justify-between">

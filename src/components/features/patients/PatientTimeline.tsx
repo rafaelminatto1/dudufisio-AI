@@ -10,7 +10,7 @@ export async function PatientTimeline({ patientId }: { patientId: string }) {
   const [evolutions, appointments, surgeries, goals] = await Promise.all([
     supabase
       .from('session_evolutions')
-      .select('id, created_at, subjective, objective')
+      .select('id, created_at, session_date')
       .eq('patient_id', patientId)
       .order('created_at', { ascending: false })
       .limit(20),
@@ -20,13 +20,13 @@ export async function PatientTimeline({ patientId }: { patientId: string }) {
       .eq('patient_id', patientId)
       .order('start_time', { ascending: false })
       .limit(20),
-    supabase
+    (supabase as any)
       .from('surgeries')
       .select('id, surgery_date, surgery_name')
       .eq('patient_id', patientId)
       .order('surgery_date', { ascending: false })
       .limit(10),
-    supabase
+    (supabase as any)
       .from('patient_goals')
       .select('id, created_at, target_date, title, status')
       .eq('patient_id', patientId)
@@ -44,13 +44,13 @@ export async function PatientTimeline({ patientId }: { patientId: string }) {
     icon: React.ReactNode;
   }> = [];
 
-  evolutions.data?.forEach((evo) => {
+  evolutions.data?.forEach((evo: any) => {
     events.push({
       id: evo.id,
       date: evo.created_at || new Date().toISOString(),
       type: 'evolution',
       title: 'Evolução de Sessão',
-      description: evo.subjective || evo.objective || 'Evolução registrada',
+      description: 'Evolução registrada',
       icon: <FileText className="h-4 w-4" />,
     });
   });
