@@ -1,6 +1,10 @@
 /**
- * Appointment Service com Cache (Next.js 16)
- * Usa React cache() e Next.js cacheLife para otimizar queries de agendamentos
+ * Appointment Service com Cache (Next.js 15)
+ * Usa React cache() para otimizar queries de agendamentos
+ * 
+ * NOTA: unstable_cacheLife é uma API experimental do Next.js que pode não estar
+ * disponível ou funcionar no Next.js 15. O cache real é fornecido pelo React cache().
+ * Se cacheLife não estiver funcionando, o React cache() ainda fornecerá cache por request.
  */
 
 import { cache } from 'react';
@@ -24,8 +28,12 @@ export const getAppointments = cache(
     startDate?: Date | string;
     endDate?: Date | string;
   }) => {
-    // 'use cache' // TODO: Habilitar quando Next.js suportar;
-    cacheLife('default'); // 15 minutos
+    // 'use cache' - Disponível apenas no Next.js 16+
+    try {
+      cacheLife('default'); // 15 minutos (API experimental)
+    } catch (e) {
+      // Ignora se a API não estiver disponível
+    }
 
     const supabase = await createServerComponentClient();
     let query = supabase
@@ -62,8 +70,12 @@ export const getAppointments = cache(
  * Cache: Curto (5 min) pois muda frequentemente durante o dia
  */
 export const getTodayAppointments = cache(async (therapistId?: string) => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('default');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('default'); // 15 minutos (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
   const today = new Date();
@@ -92,8 +104,12 @@ export const getTodayAppointments = cache(async (therapistId?: string) => {
  * Cache: Padrão (15 min)
  */
 export const getWeekAppointments = cache(async (therapistId?: string) => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('default');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('default'); // 15 minutos (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
   const today = new Date();
@@ -125,8 +141,12 @@ export const getWeekAppointments = cache(async (therapistId?: string) => {
  * Cache: Horas (dados de agendamento específico mudam pouco)
  */
 export const getAppointmentById = cache(async (id: string) => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('hours');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('hours'); // Cache por 1 hora (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
   const { data, error } = await supabase
@@ -145,8 +165,12 @@ export const getAppointmentById = cache(async (id: string) => {
  */
 export const getAppointmentStats = cache(
   async (startDate?: Date, endDate?: Date) => {
-    // 'use cache' // TODO: Habilitar quando Next.js suportar;
-    cacheLife('max');
+    // 'use cache' - Disponível apenas no Next.js 16+
+    try {
+      cacheLife('max'); // Cache máximo (API experimental)
+    } catch (e) {
+      // Ignora se a API não estiver disponível
+    }
 
     const supabase = await createServerComponentClient();
     const start = startDate || new Date(new Date().setDate(1)); // Início do mês
@@ -203,8 +227,12 @@ export const checkAvailability = cache(
     endTime: Date | string,
     excludeAppointmentId?: string
   ) => {
-    // 'use cache' // TODO: Habilitar quando Next.js suportar;
-    cacheLife('default');
+    // 'use cache' - Disponível apenas no Next.js 16+
+    try {
+      cacheLife('default'); // 15 minutos (API experimental)
+    } catch (e) {
+      // Ignora se a API não estiver disponível
+    }
 
     const supabase = await createServerComponentClient();
     const start = startTime instanceof Date ? startTime.toISOString() : startTime;

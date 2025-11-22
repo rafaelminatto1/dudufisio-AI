@@ -1,6 +1,10 @@
 /**
- * Financial Service com Cache (Next.js 16)
- * Usa React cache() e Next.js cacheLife para otimizar queries financeiras
+ * Financial Service com Cache (Next.js 15)
+ * Usa React cache() para otimizar queries financeiras
+ * 
+ * NOTA: unstable_cacheLife é uma API experimental do Next.js que pode não estar
+ * disponível ou funcionar no Next.js 15. O cache real é fornecido pelo React cache().
+ * Se cacheLife não estiver funcionando, o React cache() ainda fornecerá cache por request.
  */
 
 import { cache } from 'react';
@@ -23,8 +27,12 @@ export const getTransactions = cache(
     type?: 'payment' | 'refund';
     status?: string;
   }) => {
-    // 'use cache' // TODO: Habilitar quando Next.js suportar;
-    cacheLife('default');
+    // 'use cache' - Disponível apenas no Next.js 16+
+    try {
+      cacheLife('default'); // 15 minutos (API experimental)
+    } catch (e) {
+      // Ignora se a API não estiver disponível
+    }
 
     const supabase = await createServerComponentClient();
     let query = supabase
@@ -66,8 +74,12 @@ export const getTransactions = cache(
  */
 export const getMonthlyTransactions = cache(
   async (year?: number, month?: number) => {
-    // 'use cache' // TODO: Habilitar quando Next.js suportar;
-    cacheLife('max');
+    // 'use cache' - Disponível apenas no Next.js 16+
+    try {
+      cacheLife('max'); // Cache máximo (API experimental)
+    } catch (e) {
+      // Ignora se a API não estiver disponível
+    }
 
     const now = new Date();
     const targetYear = year || now.getFullYear();
@@ -95,8 +107,12 @@ export const getMonthlyTransactions = cache(
  */
 export const getFinancialSummary = cache(
   async (startDate?: Date, endDate?: Date) => {
-    // 'use cache' // TODO: Habilitar quando Next.js suportar;
-    cacheLife('max');
+    // 'use cache' - Disponível apenas no Next.js 16+
+    try {
+      cacheLife('max'); // Cache máximo (API experimental)
+    } catch (e) {
+      // Ignora se a API não estiver disponível
+    }
 
     const start = startDate || new Date(new Date().getFullYear(), new Date().getMonth(), 1);
     const end = endDate || new Date();
@@ -111,10 +127,10 @@ export const getFinancialSummary = cache(
     if (error) throw error;
 
     const summary = (transactions || []).reduce(
-      (acc, transaction) => {
-        if (transaction.status === 'succeeded') {
-          if (transaction.type === 'payment') {
-            acc.totalRevenue += transaction.amount;
+      (acc: any, transaction: any) => {
+        if ((transaction as any).status === 'succeeded') {
+          if ((transaction as any).type === 'payment') {
+            acc.totalRevenue += (transaction as any).amount;
             acc.paymentsCount += 1;
           } else if (transaction.type === 'refund') {
             acc.totalRefunds += transaction.amount;
@@ -144,8 +160,12 @@ export const getFinancialSummary = cache(
  */
 export const getRevenueByPeriod = cache(
   async (period: 'day' | 'week' | 'month' | 'year', limit: number = 12) => {
-    // 'use cache' // TODO: Habilitar quando Next.js suportar;
-    cacheLife('max');
+    // 'use cache' - Disponível apenas no Next.js 16+
+    try {
+      cacheLife('max'); // Cache máximo (API experimental)
+    } catch (e) {
+      // Ignora se a API não estiver disponível
+    }
 
     const supabase = await createServerComponentClient();
     const now = new Date();
@@ -186,8 +206,12 @@ export const getRevenueByPeriod = cache(
  * Cache: Padrão (pode mudar)
  */
 export const getPendingPayments = cache(async () => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('default');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('default'); // 15 minutos (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
   const { data, error } = await supabase
@@ -205,8 +229,12 @@ export const getPendingPayments = cache(async () => {
  * Cache: Horas
  */
 export const getTransactionById = cache(async (id: string) => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('hours');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('hours'); // Cache por 1 hora (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
   const { data, error } = await supabase

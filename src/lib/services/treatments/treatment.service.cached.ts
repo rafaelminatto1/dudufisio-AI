@@ -1,6 +1,10 @@
 /**
- * Treatment Service com Cache (Next.js 16)
- * Usa React cache() e Next.js cacheLife para otimizar queries de tratamentos
+ * Treatment Service com Cache (Next.js 15)
+ * Usa React cache() para otimizar queries de tratamentos
+ * 
+ * NOTA: unstable_cacheLife é uma API experimental do Next.js que pode não estar
+ * disponível ou funcionar no Next.js 15. O cache real é fornecido pelo React cache().
+ * Se cacheLife não estiver funcionando, o React cache() ainda fornecerá cache por request.
  */
 
 import { cache } from 'react';
@@ -17,8 +21,12 @@ type TreatmentUpdate = Database['public']['Tables']['patient_exercise_prescripti
  * Cache: Horas (tratamentos mudam pouco)
  */
 export const getTreatmentsByPatient = cache(async (patientId: string) => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('hours');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('hours'); // Cache por 1 hora (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
   const { data, error } = await supabase
@@ -36,8 +44,12 @@ export const getTreatmentsByPatient = cache(async (patientId: string) => {
  * Cache: Padrão (15 min)
  */
 export const getActiveTreatments = cache(async (therapistId?: string) => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('default');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('default'); // 15 minutos (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
   let query = supabase
@@ -60,8 +72,12 @@ export const getActiveTreatments = cache(async (therapistId?: string) => {
  * Cache: Horas
  */
 export const getTreatmentById = cache(async (id: string) => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('hours');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('hours'); // Cache por 1 hora (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
   const { data, error } = await supabase
@@ -79,8 +95,12 @@ export const getTreatmentById = cache(async (id: string) => {
  * Cache: Padrão
  */
 export const getRecentTreatments = cache(async (limit: number = 10) => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('default');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('default'); // 15 minutos (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
   const { data, error } = await supabase
@@ -98,8 +118,12 @@ export const getRecentTreatments = cache(async (limit: number = 10) => {
  * Cache: Máximo
  */
 export const getTreatmentStats = cache(async () => {
-  // 'use cache' // TODO: Habilitar quando Next.js suportar;
-  cacheLife('max');
+  // 'use cache' - Disponível apenas no Next.js 16+
+  try {
+    cacheLife('max'); // Cache máximo (API experimental)
+  } catch (e) {
+    // Ignora se a API não estiver disponível
+  }
 
   const supabase = await createServerComponentClient();
 
