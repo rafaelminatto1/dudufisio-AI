@@ -16,9 +16,9 @@ export async function PatientTimeline({ patientId }: { patientId: string }) {
       .limit(20),
     supabase
       .from('appointments')
-      .select('id, start_time, title, status')
+      .select('id, scheduled_at, status')
       .eq('patient_id', patientId)
-      .order('start_time', { ascending: false })
+      .order('scheduled_at', { ascending: false })
       .limit(20),
     (supabase as any)
       .from('surgeries')
@@ -55,12 +55,12 @@ export async function PatientTimeline({ patientId }: { patientId: string }) {
     });
   });
 
-  appointments.data?.forEach((apt) => {
+  appointments.data?.forEach((apt: any) => {
     events.push({
       id: apt.id,
-      date: apt.start_time,
+      date: apt.scheduled_at,
       type: 'appointment',
-      title: apt.title || 'Agendamento',
+      title: 'Agendamento',
       description: `Status: ${apt.status}`,
       icon: <Calendar className="h-4 w-4" />,
     });
