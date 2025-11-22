@@ -66,7 +66,7 @@ export async function PatientTimeline({ patientId }: { patientId: string }) {
     });
   });
 
-  surgeries.data?.forEach((surgery) => {
+  surgeries.data?.forEach((surgery: any) => {
     events.push({
       id: surgery.id,
       date: surgery.surgery_date,
@@ -77,10 +77,10 @@ export async function PatientTimeline({ patientId }: { patientId: string }) {
     });
   });
 
-  goals.data?.forEach((goal) => {
+  goals.data?.forEach((goal: any) => {
     events.push({
       id: goal.id,
-      date: (goal as any).achieved_date || goal.created_at || new Date().toISOString(),
+      date: goal.achieved_date || goal.created_at || new Date().toISOString(),
       type: 'goal',
       title: goal.title,
       description: goal.status === 'alcancado' ? 'Objetivo alcançado' : 'Objetivo criado',
