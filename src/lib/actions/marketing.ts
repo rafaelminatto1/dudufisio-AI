@@ -29,7 +29,7 @@ export async function getInactivePatients(daysThreshold = 30) {
     .select(`
       *,
       appointments:appointments!patient_id (
-        start_time
+        scheduled_at
       )
     `)
     .eq('status', 'active')
@@ -44,7 +44,7 @@ export async function getInactivePatients(daysThreshold = 30) {
     .map((patient: Database['public']['Tables']['patients']['Row'] & { appointments: Database['public']['Tables']['appointments']['Row'][] }) => {
       const appointments = patient.appointments || [];
       const lastAppointment = appointments.length > 0
-        ? new Date(Math.max(...appointments.map((a: Database['public']['Tables']['appointments']['Row']) => new Date(a.start_time).getTime())))
+        ? new Date(Math.max(...appointments.map((a: any) => new Date(a.scheduled_at).getTime())))
         : null;
 
       const daysInactive = lastAppointment
@@ -53,7 +53,7 @@ export async function getInactivePatients(daysThreshold = 30) {
 
       return {
         id: patient.id,
-        full_name: patient.full_name,
+        full_name: (patient as any).full_name || patient.name,
         email: patient.email,
         phone: patient.phone,
         last_appointment_date: lastAppointment?.toISOString() || null,
