@@ -2,10 +2,6 @@ import { NextRequest } from 'next/server';
 import { withAuth, successResponse, errorResponse, getQueryParams } from '~/lib/api/middleware';
 import { getExecutiveKPIs } from '~/lib/actions/reports';
 
-interface RouteContext {
-  params: Promise<{ type: string }>;
-}
-
 /**
  * GET /api/reports/[type] - Gera relatório específico
  *
@@ -23,9 +19,13 @@ interface RouteContext {
  * - /api/reports/operational
  * - /api/reports/executive
  */
-export const GET = withAuth(async (request: NextRequest, { supabase }, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const reportType = params?.type;
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ type: string }> }
+) {
+  const params = await context.params;
+  return withAuth(async (req: NextRequest, { supabase }) => {
+    const reportType = params.type;
 
   if (!reportType) {
     return errorResponse('Tipo de relatório é obrigatório', 400);
@@ -105,7 +105,8 @@ export const GET = withAuth(async (request: NextRequest, { supabase }, routeCont
     console.error(`Error generating ${reportType} report:`, error);
     return errorResponse(error.message || 'Erro ao gerar relatório', 500);
   }
-});
+  })(request);
+}
 
 /**
  * Gera relatório financeiro

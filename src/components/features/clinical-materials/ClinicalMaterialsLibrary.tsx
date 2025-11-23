@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -32,11 +32,7 @@ export function ClinicalMaterialsLibrary() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>('all');
 
-  useEffect(() => {
-    loadMaterials();
-  }, [selectedSpecialty]);
-
-  const loadMaterials = async () => {
+  const loadMaterials = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getClinicalMaterials({
@@ -44,14 +40,18 @@ export function ClinicalMaterialsLibrary() {
         search: searchQuery || undefined,
       });
       if (result.data) {
-        setMaterials(result.data as ClinicalMaterial[]);
+        setMaterials(result.data as unknown as ClinicalMaterial[]);
       }
     } catch (error) {
       toast.error('Erro ao carregar materiais');
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedSpecialty, searchQuery]);
+
+  useEffect(() => {
+    loadMaterials();
+  }, [loadMaterials]);
 
   const handleDownload = (material: ClinicalMaterial) => {
     if (material.file_url) {

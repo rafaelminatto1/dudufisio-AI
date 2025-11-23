@@ -28,7 +28,18 @@
       "Bash(git reset:*)",
       "Bash(nul)",
       "Bash(curl:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(timeout 3 bash:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(npx playwright show-report)",
+      "Bash(sort:*)",
+      "Bash(npx supabase:*)",
+      "Bash(src/types/database.types.new.ts)",
+      "Bash(src/types/database.types.ts.clean)",
+      "Bash(src/types/database.types.ts)"
     ],
     "deny": [],
     "ask": []

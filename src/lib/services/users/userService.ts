@@ -51,7 +51,7 @@ export class UserService {
         .order('created_at', { ascending: false });
 
       if (filters?.role) {
-        query = query.eq('role', filters.role);
+        query = query.eq('role', filters.role as any);
       }
 
       if (filters?.isActive !== undefined) {
@@ -116,7 +116,7 @@ export class UserService {
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .eq('role', role)
+        .eq('role', role as any)
         .eq('is_active', true)
         .order('full_name');
 
@@ -194,7 +194,7 @@ export class UserService {
   static async updateUser(id: string, userData: UpdateUserRequest) {
     try {
       const supabase = await createServerComponentClient();
-      const updateData: UserUpdate = {
+      const updateData: any = {
         ...userData,
         updated_at: new Date().toISOString(),
       };

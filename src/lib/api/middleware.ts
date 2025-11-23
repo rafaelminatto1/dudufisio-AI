@@ -143,11 +143,10 @@ export function withAuth(
       user: { id: string; email?: string };
       supabase: ReturnType<typeof createServerClient<Database>>;
       testMode: boolean;
-    },
-    routeContext?: any
+    }
   ) => Promise<NextResponse>
 ) {
-  return async (request: NextRequest, routeContext?: any) => {
+  return async (request: NextRequest) => {
     const authResult = await authenticate(request);
 
     if (!authResult.authenticated) {
@@ -164,13 +163,16 @@ export function withAuth(
           user: authResult.user!,
           supabase: authResult.supabase!,
           testMode: authResult.testMode,
-        },
-        routeContext
+        }
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('API Error:', error);
+      let errorMessage = 'Erro interno do servidor';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       return NextResponse.json(
-        { error: error.message || 'Erro interno do servidor' },
+        { error: errorMessage },
         { status: 500 }
       );
     }
@@ -220,11 +222,15 @@ export function withCronAuth(
     }
 
     try {
-      return await handler(request, validation.testMode);
-    } catch (error: any) {
+      return await handler(request, validation.testMode ?? false);
+    } catch (error: unknown) {
       console.error('Cron Job Error:', error);
+      let errorMessage = 'Erro interno do servidor';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       return NextResponse.json(
-        { error: error.message || 'Erro interno do servidor' },
+        { error: errorMessage },
         { status: 500 }
       );
     }
@@ -248,12 +254,16 @@ export function getQueryParams(request: NextRequest) {
 /**
  * Helper para parse de body JSON com tratamento de erros
  */
-export async function parseBody<T = any>(request: NextRequest): Promise<{ data: T | null; error: string | null }> {
+export async function parseBody<T = unknown>(request: NextRequest): Promise<{ data: T | null; error: string | null }> {
   try {
     const body = await request.json();
     return { data: body as T, error: null };
-  } catch (error) {
-    return { data: null, error: 'Body inválido ou não é JSON' };
+  } catch (error: unknown) {
+    let errorMessage = 'Body inválido ou não é JSON';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return { data: null, error: errorMessage };
   }
 }
 

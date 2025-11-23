@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
@@ -32,11 +32,7 @@ export function InactivePatientsList() {
   const [loading, setLoading] = useState(true);
   const [daysThreshold, setDaysThreshold] = useState(30);
 
-  useEffect(() => {
-    loadInactivePatients();
-  }, [daysThreshold]);
-
-  const loadInactivePatients = async () => {
+  const loadInactivePatients = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getInactivePatients(daysThreshold);
@@ -48,7 +44,11 @@ export function InactivePatientsList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [daysThreshold]);
+
+  useEffect(() => {
+    loadInactivePatients();
+  }, [loadInactivePatients]);
 
   const handleSendCampaign = async (patientId: string) => {
     try {

@@ -44,16 +44,18 @@ export async function PatientTimeline({ patientId }: { patientId: string }) {
     icon: React.ReactNode;
   }> = [];
 
-  evolutions.data?.forEach((evo: any) => {
-    events.push({
-      id: evo.id,
-      date: evo.created_at || new Date().toISOString(),
-      type: 'evolution',
-      title: 'Evolução de Sessão',
-      description: 'Evolução registrada',
-      icon: <FileText className="h-4 w-4" />,
+  if (evolutions.data && Array.isArray(evolutions.data)) {
+    evolutions.data.forEach((evo: any) => {
+      events.push({
+        id: evo.id,
+        date: evo.created_at || new Date().toISOString(),
+        type: 'evolution',
+        title: 'Evolução de Sessão',
+        description: 'Evolução registrada',
+        icon: <FileText className="h-4 w-4" />,
+      });
     });
-  });
+  }
 
   appointments.data?.forEach((apt: any) => {
     events.push({

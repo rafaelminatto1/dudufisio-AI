@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import {
@@ -40,19 +40,7 @@ export function PatientAutocomplete({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    if (searchQuery.length >= 2) {
-      const timeoutId = setTimeout(() => {
-        loadPatients();
-      }, 300);
-
-      return () => clearTimeout(timeoutId);
-    } else {
-      setPatients([]);
-    }
-  }, [searchQuery]);
-
-  const loadPatients = async () => {
+  const loadPatients = useCallback(async () => {
     setLoading(true);
     try {
       const result = await searchPatients(searchQuery);
@@ -64,7 +52,19 @@ export function PatientAutocomplete({
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (searchQuery.length >= 2) {
+      const timeoutId = setTimeout(() => {
+        loadPatients();
+      }, 300);
+
+      return () => clearTimeout(timeoutId);
+    } else {
+      setPatients([]);
+    }
+  }, [searchQuery, loadPatients]);
 
   const handleSelect = (patient: any) => {
     onSelect(patient.id, patient.full_name);

@@ -101,7 +101,7 @@ export class AppointmentNotificationService {
       return { error: error?.message || 'Erro ao buscar pacientes', sent: 0 };
     }
 
-    const todayBirthdays = patients.filter((patient) => {
+    const todayBirthdays = patients.filter((patient: any) => {
       if (!patient.birth_date) return false;
       const birthDate = new Date(patient.birth_date);
       return birthDate.getMonth() + 1 === month && birthDate.getDate() === day;

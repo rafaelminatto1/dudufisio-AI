@@ -70,7 +70,7 @@ export function PatientsTable({ patients, currentPage, totalPages }: PatientsTab
           <TableBody>
             {patients.map((patient) => (
               <TableRow key={patient.id}>
-                <TableCell className="font-medium">{(patient as any).full_name || patient.name}</TableCell>
+                <TableCell className="font-medium">{(patient as any).full_name || (patient as any).full_name || (patient as any).name}</TableCell>
                 <TableCell>{(patient as any).cpf ? formatCPF((patient as any).cpf) : '-'}</TableCell>
                 <TableCell>{patient.email || '-'}</TableCell>
                 <TableCell>{patient.phone ? formatPhone(patient.phone) : '-'}</TableCell>

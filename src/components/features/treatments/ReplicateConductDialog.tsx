@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -68,13 +68,7 @@ export function ReplicateConductDialog({
   });
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (open && patientId) {
-      loadPreviousSessions();
-    }
-  }, [open, patientId]);
-
-  const loadPreviousSessions = async () => {
+  const loadPreviousSessions = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getPreviousSessions(patientId, currentSessionId, 10);
@@ -90,7 +84,13 @@ export function ReplicateConductDialog({
     } finally {
       setLoading(false);
     }
-  };
+  }, [patientId, currentSessionId]);
+
+  useEffect(() => {
+    if (open && patientId) {
+      loadPreviousSessions();
+    }
+  }, [open, patientId, loadPreviousSessions]);
 
   const handleReplicate = () => {
     if (!selectedSession) return;
@@ -334,4 +334,3 @@ export function ReplicateConductDialog({
     </Dialog>
   );
 }
-

@@ -5,6 +5,7 @@ import { formatDate } from '~/lib/utils';
 import { AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
+import type { Pathology } from '~/types/pathology.types';
 
 export async function PatientPathologies({
   patientId,
@@ -15,13 +16,15 @@ export async function PatientPathologies({
 }) {
   const supabase = await createServerComponentClient();
 
-  const { data: pathologies } = await (supabase as any)
+  const { data } = await (supabase as any)
     .from('pathologies')
     .select('*')
     .eq('patient_id', patientId)
     .in('status', ['ativa', 'controlada'])
     .order('diagnosis_date', { ascending: false })
     .limit(detailed ? 50 : 3);
+
+  const pathologies = (data as Pathology[]) || [];
 
   if (!pathologies || pathologies.length === 0) {
     return (
@@ -40,7 +43,7 @@ export async function PatientPathologies({
     );
   }
 
-  const getStatusBadge = (status: string | null) => {
+  const getStatusBadge = (status: string | null | undefined) => {
     const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
       ativa: 'destructive',
       controlada: 'secondary',
@@ -50,7 +53,7 @@ export async function PatientPathologies({
     return variants[status || ''] || 'outline';
   };
 
-  const getSeverityBadge = (severity: string | null) => {
+  const getSeverityBadge = (severity: string | null | undefined) => {
     const variants: Record<string, 'default' | 'secondary' | 'destructive'> = {
       leve: 'secondary',
       moderada: 'default',
@@ -62,14 +65,14 @@ export async function PatientPathologies({
   if (detailed) {
     return (
       <div className="space-y-4">
-        {pathologies.map((pathology: any) => (
+        {pathologies.map((pathology) => (
           <Card key={pathology.id}>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>{pathology.name}</CardTitle>
                 <div className="flex gap-2">
-                  <Badge variant={getStatusBadge((pathology as any).status)}>
-                    {(pathology as any).status === 'ativa' ? 'Ativa' : (pathology as any).status === 'controlada' ? 'Controlada' : (pathology as any).status || 'N/A'}
+                  <Badge variant={getStatusBadge(pathology.status)}>
+                    {pathology.status === 'ativa' ? 'Ativa' : pathology.status === 'controlada' ? 'Controlada' : pathology.status || 'N/A'}
                   </Badge>
                   {pathology.severity && (
                     <Badge variant={getSeverityBadge(pathology.severity)}>
@@ -79,13 +82,13 @@ export async function PatientPathologies({
                 </div>
               </div>
               <CardDescription>
-                {pathology.icd_code && `CID-10: ${pathology.icd_code} • `}
-                {(pathology as any).diagnosis_date && `Diagnóstico: ${formatDate((pathology as any).diagnosis_date)}`}
+                {pathology.cid10_code && `CID-10: ${pathology.cid10_code} • `}
+                {pathology.diagnosis_date && `Diagnóstico: ${formatDate(pathology.diagnosis_date)}`}
               </CardDescription>
             </CardHeader>
-            {(pathology as any).notes && (
+            {pathology.notes && (
               <CardContent>
-                <p className="text-sm">{(pathology as any).notes}</p>
+                <p className="text-sm">{pathology.notes}</p>
               </CardContent>
             )}
           </Card>
@@ -104,16 +107,16 @@ export async function PatientPathologies({
         <CardDescription>{pathologies.length} patologia(s) ativa(s)</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {pathologies.slice(0, 3).map((pathology: any) => (
+        {pathologies.slice(0, 3).map((pathology) => (
           <div key={pathology.id} className="flex items-center justify-between">
             <div>
               <p className="font-medium">{pathology.name}</p>
-              {(pathology as any).diagnosis_date && (
-                <p className="text-sm text-muted-foreground">{formatDate((pathology as any).diagnosis_date)}</p>
+              {pathology.diagnosis_date && (
+                <p className="text-sm text-muted-foreground">{formatDate(pathology.diagnosis_date)}</p>
               )}
             </div>
-            <Badge variant={getStatusBadge((pathology as any).status)}>
-              {(pathology as any).status === 'ativa' ? 'Ativa' : 'Controlada'}
+            <Badge variant={getStatusBadge(pathology.status)}>
+              {pathology.status === 'ativa' ? 'Ativa' : 'Controlada'}
             </Badge>
           </div>
         ))}
@@ -128,4 +131,3 @@ export async function PatientPathologies({
     </Card>
   );
 }
-

@@ -23,8 +23,8 @@ export class SOAPNoteService {
     try {
       const supabase = await createServerComponentClient();
       
-      const evolutionData: SessionEvolutionInsert = {
-        treatment_id: data.treatment_id,
+      const evolutionData: any = {
+        treatment_id: (data as any).treatment_id,
         patient_id: data.patient_id,
         therapist_id: data.therapist_id,
         subjective: data.subjective || null,

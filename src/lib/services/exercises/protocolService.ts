@@ -18,7 +18,7 @@ export class ProtocolService {
   }) {
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase
+      let query = (supabase as any)
         .from('exercise_protocols')
         .select('*')
         .order('name', { ascending: true });
@@ -50,7 +50,7 @@ export class ProtocolService {
   static async getProtocolById(id: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('exercise_protocols')
         .select('*')
         .eq('id', id)
@@ -83,16 +83,17 @@ export class ProtocolService {
   static async createProtocol(protocol: Omit<Protocol, 'id' | 'created_at' | 'updated_at'>) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const protocolData = protocol as unknown as Record<string, unknown>;
+      const { data, error } = await (supabase as any)
         .from('exercise_protocols')
         .insert({
           name: protocol.name,
           description: protocol.description,
-          body_part: protocol.body_part,
-          difficulty: protocol.difficulty,
-          tags: protocol.tags,
-          is_public: protocol.is_public ?? false,
-          owner_id: protocol.owner_id,
+          body_part: protocolData.body_part,
+          difficulty: protocolData.difficulty,
+          tags: protocolData.tags,
+          is_public: protocolData.is_public ?? false,
+          owner_id: protocolData.owner_id,
         })
         .select()
         .single();
@@ -111,7 +112,7 @@ export class ProtocolService {
   static async updateProtocol(id: string, updates: Partial<Protocol>) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('exercise_protocols')
         .update(updates)
         .eq('id', id)
@@ -132,7 +133,7 @@ export class ProtocolService {
   static async deleteProtocol(id: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('exercise_protocols')
         .delete()
         .eq('id', id);

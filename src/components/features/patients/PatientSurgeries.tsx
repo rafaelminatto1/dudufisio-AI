@@ -5,6 +5,7 @@ import { formatDate } from '~/lib/utils';
 import { Scale } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
+import type { Surgery } from '~/types';
 
 export async function PatientSurgeries({
   patientId,
@@ -15,12 +16,14 @@ export async function PatientSurgeries({
 }) {
   const supabase = await createServerComponentClient();
 
-  const { data: surgeries } = await (supabase as any)
+  const { data } = await (supabase as any)
     .from('surgeries')
     .select('*')
     .eq('patient_id', patientId)
     .order('surgery_date', { ascending: false })
     .limit(detailed ? 50 : 3);
+
+  const surgeries = (data as Surgery[]) || [];
 
   if (!surgeries || surgeries.length === 0) {
     return (
@@ -52,24 +55,24 @@ export async function PatientSurgeries({
   if (detailed) {
     return (
       <div className="space-y-4">
-        {surgeries.map((surgery: any) => {
-          const phase = getPhaseBadge((surgery as any).current_phase);
+        {surgeries.map((surgery) => {
+          const phase = getPhaseBadge((surgery as any).current_phase || null);
           return (
             <Card key={surgery.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>{surgery.surgery_name}</CardTitle>
+                  <CardTitle>{surgery.name}</CardTitle>
                   <Badge variant={phase.variant}>{phase.label}</Badge>
                 </div>
                 <CardDescription>
-                  {formatDate(surgery.surgery_date)}
-                  {surgery.surgeon_name && ` • ${surgery.surgeon_name}`}
-                  {(surgery as any).hospital && ` • ${(surgery as any).hospital}`}
+                  {surgery.surgery_date ? formatDate(surgery.surgery_date) : '-'}
+                  {surgery.surgeon && ` • ${surgery.surgeon}`}
+                  {surgery.hospital && ` • ${surgery.hospital}`}
                 </CardDescription>
               </CardHeader>
-              {(surgery as any).notes && (
+              {surgery.notes && (
                 <CardContent>
-                  <p className="text-sm">{(surgery as any).notes}</p>
+                  <p className="text-sm">{surgery.notes}</p>
                 </CardContent>
               )}
             </Card>
@@ -89,13 +92,13 @@ export async function PatientSurgeries({
         <CardDescription>{surgeries.length} cirurgia(s) registrada(s)</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {surgeries.slice(0, 3).map((surgery: any) => {
-          const phase = getPhaseBadge((surgery as any).current_phase);
+        {surgeries.slice(0, 3).map((surgery) => {
+          const phase = getPhaseBadge((surgery as any).current_phase || null);
           return (
             <div key={surgery.id} className="flex items-center justify-between">
               <div>
-                <p className="font-medium">{surgery.surgery_name}</p>
-                <p className="text-sm text-muted-foreground">{formatDate(surgery.surgery_date)}</p>
+                <p className="font-medium">{surgery.name}</p>
+                <p className="text-sm text-muted-foreground">{surgery.surgery_date ? formatDate(surgery.surgery_date) : '-'}</p>
               </div>
               <Badge variant={phase.variant}>{phase.label}</Badge>
             </div>

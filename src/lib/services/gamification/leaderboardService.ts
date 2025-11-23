@@ -40,23 +40,16 @@ export class LeaderboardService {
       // Calcular período
       const dateFilter = this.getDateFilter(period);
       
-      let query = supabase
+      const { data: patients, error } = await (supabase
         .from('patients')
         .select('id, full_name, xp_points, level')
         .order('xp_points', { ascending: false })
-        .limit(limit);
-
-      if (dateFilter) {
-        // Se houver filtro de data, precisaríamos calcular XP ganho no período
-        // Por enquanto, retornamos todos ordenados por XP total
-      }
-
-      const { data: patients, error } = await query;
+        .limit(limit) as any);
       if (error) throw error;
 
-      const entries: LeaderboardEntry[] = (patients || []).map((patient, index) => ({
+      const entries: LeaderboardEntry[] = (patients || []).map((patient: any, index: number) => ({
         rank: index + 1,
-        patientId: patient.id,
+        patientId: (patient as any).id,
         patientName: patient.full_name,
         score: patient.xp_points || 0,
         level: patient.level || 1,
@@ -195,7 +188,7 @@ export class LeaderboardService {
 
         if (error) throw error;
 
-        const rank = (patients || []).findIndex(p => p.id === patientId) + 1;
+        const rank = (patients || []).findIndex((p: any) => (p as any).id === patientId) + 1;
         return { data: rank || null, error: null };
       }
 

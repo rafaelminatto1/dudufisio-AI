@@ -1,11 +1,24 @@
 import { NextRequest } from 'next/server';
 import { withAuth, parseBody, successResponse, errorResponse } from '~/lib/api/middleware';
 import type { Database } from '~/types/database.types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 
 interface RouteContext {
   params: Promise<{ id: string }>;
+}
+
+// Tipo estendido para atualização de agendamento
+interface UpdateAppointmentRequest {
+  patient_id?: string;
+  therapist_id?: string;
+  start_time?: string;
+  end_time?: string;
+  service_type?: string;
+  status?: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+  notes?: string;
+  cancellation_reason?: string;
 }
 
 /**
@@ -75,16 +88,16 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
     return errorResponse('ID do agendamento é obrigatório', 400);
   }
 
-  const { data: body, error: parseError } = await parseBody<AppointmentUpdate>(request);
+  const { data: body, error: parseError } = await parseBody<UpdateAppointmentRequest>(request);
 
   if (parseError || !body) {
     return errorResponse(parseError || 'Body inválido', 400);
   }
 
   // Valida datas se fornecidas
-  if ((body as any).start_time && (body as any).end_time) {
-    const startTime = new Date((body as any).start_time);
-    const endTime = new Date((body as any).end_time);
+  if (body.start_time && body.end_time) {
+    const startTime = new Date(body.start_time);
+    const endTime = new Date(body.end_time);
 
     if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
       return errorResponse('Data/hora inválida', 400);
@@ -122,8 +135,8 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
 
   // Verifica se fisioterapeuta existe (se fornecido)
   if (body.therapist_id) {
-    const { data: therapist, error: therapistError } = await (supabase as any)
-      .from('therapists' as any)
+    const { data: therapist, error: therapistError } = await (supabase as SupabaseClient<Database>)
+      .from('therapists')
       .select('id')
       .eq('id', body.therapist_id)
       .single();
@@ -134,7 +147,7 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
   }
 
   // Se está mudando horário, verifica conflitos
-  if ((body as any).start_time || (body as any).end_time) {
+  if (body.start_time || body.end_time) {
     const { data: conflicts } = await supabase
       .from('appointments')
       .select('id')
@@ -218,7 +231,7 @@ export const DELETE = withAuth(async (request: NextRequest, { supabase, user }, 
       cancellation_reason: reason || undefined,
       cancelled_at: new Date().toISOString(),
       updated_by: user.id,
-    } as any)
+    } as AppointmentUpdate)
     .eq('id', appointmentId)
     .select()
     .single();

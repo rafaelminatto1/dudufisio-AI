@@ -24,7 +24,7 @@ export class PackageService {
   static async create(data: any): Promise<{ data: Package | null; error: { message: string } | null }> {
     try {
       const supabase = await createServerComponentClient();
-      const { data: pkg, error } = await supabase
+      const { data: pkg, error } = await (supabase as any)
         .from('patient_package_purchases')
         .insert(data)
         .select(`
@@ -78,7 +78,7 @@ export class PackageService {
   static async useSession(packageId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('patient_package_purchases')
         .select('*')
         .eq('id', packageId)
@@ -89,7 +89,7 @@ export class PackageService {
         throw new Error('Package has no remaining sessions');
       }
 
-      const { data: updated, error: updateError } = await supabase
+      const { data: updated, error: updateError } = await (supabase as any)
         .from('patient_package_purchases')
         .update({ sessions_remaining: data.sessions_remaining - 1 })
         .eq('id', packageId)

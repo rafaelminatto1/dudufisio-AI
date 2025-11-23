@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 /**
  * Webhook para receber confirmações de WhatsApp
@@ -38,7 +40,7 @@ export async function POST(request: Request) {
 
     let phoneNumber: string | null = null;
     let message: string | null = null;
-    let appointmentId: string | null = null;
+    const appointmentId: string | null = null;
 
     if (isTwilio) {
       // Formato Twilio
@@ -76,13 +78,13 @@ export async function POST(request: Request) {
 
     if (isConfirmation || isCancellation) {
       // Busca próximo agendamento do paciente
-      const { data: nextAppointment } = await (supabase as any)
+      const { data: nextAppointment } = await (supabase as SupabaseClient<Database>)
         .from('appointments')
         .select('id, start_time, status')
         .eq('patient_id', patient.id)
         .eq('status', 'scheduled')
-        .gte('start_time' as any, new Date().toISOString())
-        .order('start_time' as any, { ascending: true })
+        .gte('start_time', new Date().toISOString())
+        .order('start_time', { ascending: true })
         .limit(1)
         .single();
 
@@ -97,7 +99,7 @@ export async function POST(request: Request) {
           .eq('id', nextAppointment.id);
 
         // Log da interação
-        await (supabase as any)
+        await (supabase as SupabaseClient<Database>)
           .from('whatsapp_interactions')
           .insert({
             patient_id: patient.id,
@@ -122,12 +124,15 @@ export async function POST(request: Request) {
       success: true,
       message: 'Mensagem recebida',
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Erro no webhook WhatsApp:', error);
+    let errorMessage = 'Erro ao processar webhook';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
     return NextResponse.json(
-      { error: 'Erro ao processar webhook' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
 }
-

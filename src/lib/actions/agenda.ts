@@ -1,6 +1,8 @@
 'use server';
 
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 /**
  * Busca profissionais/fisioterapeutas
@@ -8,7 +10,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export async function getTherapists() {
   const supabase = await createServerComponentClient();
 
-  const { data, error } = await (supabase as any)
+  const { data, error } = await (supabase as SupabaseClient<Database>)
     .from('therapists')
     .select('*')
     .eq('status', 'active')
@@ -28,7 +30,7 @@ export async function getResources() {
   const supabase = await createServerComponentClient();
 
   // Se não existir tabela resources, retorna vazio
-  const { data, error } = await (supabase as any)
+  const { data, error } = await (supabase as SupabaseClient<Database>)
     .from('resources')
     .select('*')
     .eq('status', 'active')
@@ -97,4 +99,3 @@ export async function getAppointments(filters: {
 
   return { data, error: null };
 }
-

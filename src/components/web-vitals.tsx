@@ -64,8 +64,8 @@ export function WebVitals() {
     // Se quiser enviar para outro serviço, adicione aqui:
 
     // Exemplo: Google Analytics 4
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', metric.name, {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', metric.name, {
         event_category: 'Web Vitals',
         value: Math.round(metric.value),
         event_label: metric.id,

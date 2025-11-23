@@ -1,7 +1,14 @@
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
 import { AgendaCalendarClient } from './_components/AgendaCalendarClient';
 import { AgendaControls } from './_components/AgendaControls';
 import { AppointmentsSkeleton } from '~/components/skeletons';
+import { generateDashboardMetadata } from '~/lib/metadata';
+
+export const metadata: Metadata = generateDashboardMetadata(
+  'agenda',
+  'Agende e gerencie consultas, sessões de fisioterapia e recursos da clínica'
+);
 
 export default async function AgendaPage({
   searchParams,

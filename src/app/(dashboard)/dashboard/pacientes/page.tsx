@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
 import { getPatients } from '~/lib/actions/patients';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -8,6 +9,12 @@ import Link from 'next/link';
 import { PatientsTable } from './_components/PatientsTable';
 import { PatientsStats } from './_components/PatientsStats';
 import { DashboardStatsSkeleton, TableSkeleton } from '~/components/skeletons';
+import { generateDashboardMetadata } from '~/lib/metadata';
+
+export const metadata: Metadata = generateDashboardMetadata(
+  'pacientes',
+  'Gerencie todos os pacientes da clínica, prontuários eletrônicos e informações completas'
+);
 
 // Componente assíncrono separado para Stats (Next.js 16 Streaming SSR)
 async function PatientsStatsAsync() {

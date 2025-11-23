@@ -4,6 +4,7 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 import { validateCPF } from '~/lib/utils/validation';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import type { Database } from '~/types/database.types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 type PatientInsert = Database['public']['Tables']['patients']['Insert'];
 type PatientUpdate = Database['public']['Tables']['patients']['Update'];
@@ -305,7 +306,7 @@ export async function createPreRegistrationToken(patientData: Partial<CreatePati
   const random = Math.random().toString(36).substring(2, 15);
   const token = `${timestamp}${random}`.substring(0, 32);
 
-  const { data, error } = await (supabase as any)
+  const { data, error } = await supabase
     .from('patient_pre_registrations')
     .insert({
       token,
@@ -314,7 +315,7 @@ export async function createPreRegistrationToken(patientData: Partial<CreatePati
       phone: patientData.phone || '',
       cpf: patientData.cpf?.replace(/\D/g, ''),
       birth_date: patientData.birth_date,
-      data: patientData as any,
+      data: patientData,
     })
     .select()
     .single();
@@ -323,7 +324,7 @@ export async function createPreRegistrationToken(patientData: Partial<CreatePati
     return { error: error.message };
   }
 
-  return { data: data as any };
+  return { data };
 }
 
 /**
@@ -333,7 +334,7 @@ export async function completePreRegistration(token: string, additionalData: Cre
   const supabase = await createServerComponentClient();
 
   // Busca pré-cadastro
-  const { data: preReg, error: preRegError } = await (supabase as any)
+  const { data: preReg, error: preRegError } = await supabase
     .from('patient_pre_registrations')
     .select('*')
     .eq('token', token)
@@ -344,11 +345,11 @@ export async function completePreRegistration(token: string, additionalData: Cre
     return { error: 'Token inválido ou expirado' };
   }
 
-  const preRegData = preReg as any;
+  const preRegData = preReg;
 
   // Verifica se expirou
   if (new Date(preRegData.expires_at) < new Date()) {
-    await (supabase as any)
+    await supabase
       .from('patient_pre_registrations')
       .update({ status: 'expired' })
       .eq('id', preRegData.id);
@@ -367,7 +368,7 @@ export async function completePreRegistration(token: string, additionalData: Cre
   }
 
   // Atualiza pré-cadastro
-  await (supabase as any)
+  await supabase
     .from('patient_pre_registrations')
     .update({
       status: 'completed',
@@ -378,4 +379,3 @@ export async function completePreRegistration(token: string, additionalData: Cre
 
   return result;
 }
-

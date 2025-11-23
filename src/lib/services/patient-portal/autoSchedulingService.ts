@@ -21,7 +21,7 @@ export class AutoSchedulingService {
 
         // Generate slots for this day (8:00 to 18:00, every 30 minutes)
         for (let hour = 8; hour < 18; hour++) {
-          for (let minute of [0, 30]) {
+          for (const minute of [0, 30]) {
             const slotStart = new Date(checkDate);
             slotStart.setHours(hour, minute, 0, 0);
 

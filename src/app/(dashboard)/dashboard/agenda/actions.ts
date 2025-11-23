@@ -9,15 +9,16 @@ export async function createAppointment(formData: FormData) {
 
   const start_time = formData.get('start_time') as string;
 
+  const end_time = formData.get('end_time') as string;
   const appointmentData = {
     patient_id: formData.get('patient_id') as string,
     therapist_id: formData.get('therapist_id') as string,
-    scheduled_at: start_time,
+    start_time: start_time,
+    end_time: end_time || new Date(new Date(start_time).getTime() + 60 * 60 * 1000).toISOString(), // Default 1 hora se não fornecido
     status: (formData.get('status') as string) || 'agendado',
   };
 
   // Detectar conflitos
-  const end_time = formData.get('end_time') as string;
   const conflicts = await ConflictDetectionService.detectConflicts({
     patient_id: appointmentData.patient_id,
     therapist_id: appointmentData.therapist_id,
@@ -56,7 +57,8 @@ export async function updateAppointment(id: string, formData: FormData) {
   const appointmentData = {
     patient_id: formData.get('patient_id') as string,
     therapist_id: formData.get('therapist_id') as string,
-    scheduled_at: start_time,
+    start_time: start_time,
+    end_time: end_time,
     status: formData.get('status') as string,
   };
 
@@ -104,4 +106,3 @@ export async function deleteAppointment(id: string) {
   revalidatePath('/dashboard/agenda');
   return { success: true };
 }
-

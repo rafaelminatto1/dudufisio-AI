@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { TransactionService, type Transaction } from '~/lib/services/financial/transactionService';
 import { createServerActionClient } from '~/lib/supabase/server';
 import { PackageService } from '~/lib/services/financial/packageService';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 const CreateTransactionSchema = z.object({
   patient_id: z.string().uuid(),
@@ -23,7 +25,7 @@ const CreateTransactionSchema = z.object({
 
 export async function createTransaction(
   input: z.infer<typeof CreateTransactionSchema>
-): Promise<{ data: Transaction | null; error: { message: string; details?: any } | null }> {
+): Promise<{ data: Transaction | null; error: { message: string; details?: unknown } | null }> {
   try {
     const supabase = await createServerActionClient();
     const {
@@ -47,9 +49,13 @@ export async function createTransaction(
     }
 
     return result;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating transaction:', error);
-    return { data: null, error: { message: 'Internal server error' } };
+    let errorMessage = 'Internal server error';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return { data: null, error: { message: errorMessage } };
   }
 }
 
@@ -85,9 +91,13 @@ export async function getTransactions(
     }
 
     return result;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching transactions:', error);
-    return { error: 'Internal server error' };
+    let errorMessage = 'Internal server error';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return { error: errorMessage };
   }
 }
 
@@ -125,9 +135,13 @@ export async function createPackage(
     }
 
     return result;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating package:', error);
-    return { error: 'Internal server error' };
+    let errorMessage = 'Internal server error';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return { error: errorMessage };
   }
 }
 
@@ -157,7 +171,7 @@ type Package = {
 
 export async function getPackages(
   input: z.infer<typeof GetPackagesSchema>
-): Promise<{ data: Package[] | null; error: { message: string; details?: any } | null }> {
+): Promise<{ data: Package[] | null; error: { message: string; details?: unknown } | null }> {
   try {
     const supabase = await createServerActionClient();
     const {
@@ -185,7 +199,7 @@ export async function getPackages(
     }
 
     // Se não houver patientId, buscar todos com join em patients
-    const { data, error } = await (supabase as any)
+    const { data, error } = await (supabase as SupabaseClient<Database>)
       .from('patient_package_purchases')
       .select(`
         id,
@@ -205,9 +219,13 @@ export async function getPackages(
       return { data: null, error: { message: 'Failed to fetch packages' } };
     }
 
-    return { data: data as any, error: null };
-  } catch (error) {
+    return { data: data as Package[], error: null };
+  } catch (error: unknown) {
     console.error('Error fetching packages:', error);
-    return { data: null, error: { message: 'Internal server error' } };
+    let errorMessage = 'Internal server error';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return { data: null, error: { message: errorMessage } };
   }
 }

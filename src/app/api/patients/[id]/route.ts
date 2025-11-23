@@ -1,9 +1,16 @@
 import { NextRequest } from 'next/server';
 import { withAuth, parseBody, successResponse, errorResponse } from '~/lib/api/middleware';
 import { getPatientById, updatePatient, deletePatient, type UpdatePatientData } from '~/lib/actions/patients';
+import { User, SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '~/types/database.types';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
+}
+
+interface AuthContext {
+  supabase: SupabaseClient<Database>;
+  user: User;
 }
 
 /**
@@ -11,7 +18,7 @@ interface RouteContext {
  *
  * Exemplo: /api/patients/123e4567-e89b-12d3-a456-426614174000
  */
-export const GET = withAuth(async (request: NextRequest, context: any, routeContext?: RouteContext) => {
+export const GET = withAuth(async (request: NextRequest, { supabase, user }: AuthContext, routeContext?: RouteContext) => {
   const params = await routeContext?.params;
   const patientId = params?.id;
 
@@ -48,7 +55,7 @@ export const GET = withAuth(async (request: NextRequest, context: any, routeCont
  *   "notes": "string"
  * }
  */
-export const PUT = withAuth(async (request: NextRequest, context: any, routeContext?: RouteContext) => {
+export const PUT = withAuth(async (request: NextRequest, { supabase, user }: AuthContext, routeContext?: RouteContext) => {
   const params = await routeContext?.params;
   const patientId = params?.id;
 
@@ -100,7 +107,7 @@ export const PUT = withAuth(async (request: NextRequest, context: any, routeCont
  *
  * Exemplo: DELETE /api/patients/123e4567-e89b-12d3-a456-426614174000
  */
-export const DELETE = withAuth(async (request: NextRequest, context: any, routeContext?: RouteContext) => {
+export const DELETE = withAuth(async (request: NextRequest, { supabase, user }: AuthContext, routeContext?: RouteContext) => {
   const params = await routeContext?.params;
   const patientId = params?.id;
 

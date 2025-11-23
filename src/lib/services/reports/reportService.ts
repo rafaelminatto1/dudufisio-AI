@@ -113,7 +113,7 @@ export class ReportService {
     try {
       const supabase = await createServerComponentClient();
       let query = supabase
-        .from('report_templates')
+        .from('report_templates' as any)
         .select('*')
         .eq('is_active', true)
         .order('name', { ascending: true });
@@ -144,7 +144,7 @@ export class ReportService {
       
       // Buscar template
       const { data: template, error: templateError } = await supabase
-        .from('report_templates')
+        .from('report_templates' as any)
         .select('*')
         .eq('id', params.templateId)
         .single();
@@ -154,23 +154,23 @@ export class ReportService {
       }
 
       // Validar parâmetros
-      if (Array.isArray(template.parameters)) {
-        this.validateParameters(template.parameters, params.parameters);
+      if (Array.isArray((template as any).parameters)) {
+        this.validateParameters((template as any).parameters, params.parameters);
       }
 
       // Gerar dados do relatório baseado no tipo
-      const reportData = await this.generateReportData(template, params.parameters);
+      const reportData = await this.generateReportData(template as any, params.parameters);
 
       // Adicionar insights e recomendações
-      reportData.insights = this.generateInsights(reportData, template);
-      reportData.recommendations = this.generateRecommendations(reportData, template);
+      reportData.insights = this.generateInsights(reportData, template as any);
+      reportData.recommendations = this.generateRecommendations(reportData, template as any);
 
       // Salvar relatório gerado
       const { data: report, error: reportError } = await supabase
-        .from('generated_reports')
+        .from('generated_reports' as any)
         .insert({
           template_id: params.templateId,
-          title: template.name,
+          title: (template as any).name,
           parameters: params.parameters,
           data: reportData,
           generated_by: params.userId,
@@ -199,7 +199,7 @@ export class ReportService {
     const endDate = parameters.endDate || new Date().toISOString();
 
     // Baseado na categoria, buscar dados apropriados
-    switch (template.category) {
+    switch ((template as any).category) {
       case 'financial':
         return await this.generateFinancialData(startDate, endDate);
       case 'clinical':
@@ -218,13 +218,13 @@ export class ReportService {
     const supabase = await createServerComponentClient();
     
     const { data: transactions } = await supabase
-      .from('financial_transactions')
+      .from('financial_transactions' as any)
       .select('*')
       .gte('created_at', startDate)
       .lte('created_at', endDate)
       .eq('transaction_type', 'receita');
 
-    const totalRevenue = (transactions || []).reduce((sum, t) => sum + (t.amount || 0), 0);
+    const totalRevenue = (transactions || []).reduce((sum, t) => sum + ((t as any).amount || 0), 0);
 
     return {
       summary: {
@@ -250,12 +250,12 @@ export class ReportService {
     const supabase = await createServerComponentClient();
     
     const { data: appointments } = await supabase
-      .from('appointments')
+      .from('appointments' as any)
       .select('*')
       .gte('start_time', startDate)
       .lte('start_time', endDate);
 
-    const completed = (appointments || []).filter(a => a.status === 'concluido').length;
+    const completed = (appointments || []).filter(a => (a as any).status === 'concluido').length;
 
     return {
       summary: {
@@ -305,7 +305,7 @@ export class ReportService {
     try {
       const supabase = await createServerComponentClient();
       const { data: report, error } = await supabase
-        .from('generated_reports')
+        .from('generated_reports' as any)
         .select('*')
         .eq('id', reportId)
         .single();
@@ -335,7 +335,7 @@ export class ReportService {
     try {
       const supabase = await createServerComponentClient();
       let query = supabase
-        .from('generated_reports')
+        .from('generated_reports' as any)
         .select('*')
         .order('generated_at', { ascending: false });
 
@@ -488,7 +488,7 @@ export class ReportService {
     const recommendations: string[] = [];
 
     // Recomendações baseadas na categoria
-    switch (template.category) {
+    switch ((template as any).category) {
       case 'financial':
         const revenueMetric = reportData.summary.keyMetrics.find(m =>
           m.label.toLowerCase().includes('receita')
@@ -536,31 +536,31 @@ export class ReportService {
 
       // Buscar dados agregados
       const { data: appointments } = await supabase
-        .from('appointments')
+        .from('appointments' as any)
         .select('*')
         .gte('start_time', params.startDate)
         .lte('start_time', params.endDate);
 
       const { data: transactions } = await supabase
-        .from('financial_transactions')
+        .from('financial_transactions' as any)
         .select('*')
         .gte('created_at', params.startDate)
         .lte('created_at', params.endDate)
         .eq('transaction_type', 'receita');
 
       const { data: patients } = await supabase
-        .from('patients')
+        .from('patients' as any)
         .select('*')
         .gte('created_at', params.startDate)
         .lte('created_at', params.endDate);
 
       const totalRevenue = (transactions || []).reduce(
-        (sum, t) => sum + (t.amount || 0),
+        (sum, t) => sum + ((t as any).amount || 0),
         0
       );
       const totalSessions = appointments?.length || 0;
       const completedSessions = (appointments || []).filter(
-        a => a.status === 'concluido'
+        a => (a as any).status === 'concluido'
       ).length;
       const newPatients = patients?.length || 0;
 
@@ -622,7 +622,7 @@ export class ReportService {
 
       // Buscar dados históricos
       const { data: appointments } = await supabase
-        .from('appointments')
+        .from('appointments' as any)
         .select('*')
         .gte('start_time', params.startDate)
         .lte('start_time', params.endDate);
@@ -698,7 +698,7 @@ export class ReportService {
       const scheduleId = `schedule_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
       const { data, error } = await supabase
-        .from('report_schedules')
+        .from('report_schedules' as any)
         .insert({
           id: scheduleId,
           template_id: params.templateId,

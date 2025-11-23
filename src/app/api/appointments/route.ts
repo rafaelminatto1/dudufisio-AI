@@ -2,8 +2,21 @@ import { NextRequest } from 'next/server';
 import { withAuth, parseBody, successResponse, errorResponse, getQueryParams } from '~/lib/api/middleware';
 import { getAppointments } from '~/lib/actions/agenda';
 import type { Database } from '~/types/database.types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
+
+// Tipo estendido para criação de agendamento
+interface CreateAppointmentRequest {
+  patient_id: string;
+  therapist_id?: string;
+  start_time: string;
+  end_time: string;
+  service_type?: string;
+  status?: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+  notes?: string;
+  send_notification?: boolean;
+}
 
 /**
  * GET /api/appointments - Lista agendamentos com filtros
@@ -57,9 +70,7 @@ export const GET = withAuth(async (request: NextRequest, { supabase }) => {
  * }
  */
 export const POST = withAuth(async (request: NextRequest, { supabase, user }) => {
-  const { data: body, error: parseError } = await parseBody<AppointmentInsert & { send_notification?: boolean }>(
-    request
-  );
+  const { data: body, error: parseError } = await parseBody<CreateAppointmentRequest>(request);
 
   if (parseError || !body) {
     return errorResponse(parseError || 'Body inválido', 400);
@@ -70,17 +81,17 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
     return errorResponse('ID do paciente é obrigatório', 400);
   }
 
-  if (!(body as any).start_time) {
+  if (!body.start_time) {
     return errorResponse('Data/hora de início é obrigatória', 400);
   }
 
-  if (!(body as any).end_time) {
+  if (!body.end_time) {
     return errorResponse('Data/hora de término é obrigatória', 400);
   }
 
   // Valida datas
-  const startTime = new Date((body as any).start_time);
-  const endTime = new Date((body as any).end_time);
+  const startTime = new Date(body.start_time);
+  const endTime = new Date(body.end_time);
 
   if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
     return errorResponse('Data/hora inválida', 400);
@@ -104,7 +115,7 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
 
   // Verifica se fisioterapeuta existe (se fornecido)
   if (body.therapist_id) {
-    const { data: therapist, error: therapistError } = await (supabase as any)
+    const { data: therapist, error: therapistError } = await (supabase as SupabaseClient<Database>)
       .from('therapists')
       .select('id')
       .eq('id', body.therapist_id)
@@ -121,7 +132,7 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
     .select('id')
     .neq('status', 'cancelled')
     .or(
-      `and(start_time.lte.${(body as any).start_time},end_time.gt.${(body as any).start_time}),and(start_time.lt.${(body as any).end_time},end_time.gte.${(body as any).end_time})`
+      `and(start_time.lte.${body.start_time},end_time.gt.${body.start_time}),and(start_time.lt.${body.end_time},end_time.gte.${body.end_time})`
     );
 
   if (conflicts && conflicts.length > 0) {
@@ -129,14 +140,14 @@ export const POST = withAuth(async (request: NextRequest, { supabase, user }) =>
   }
 
   // Cria agendamento
-  const appointmentData: any = {
+  const appointmentData: AppointmentInsert = {
     patient_id: body.patient_id,
     therapist_id: body.therapist_id,
-    start_time: (body as any).start_time,
-    end_time: (body as any).end_time,
-    service_type: (body as any).service_type,
+    start_time: body.start_time,
+    end_time: body.end_time,
+    type: body.service_type, // Campo correto é 'type', não 'service_type'
     status: body.status || 'scheduled',
-    notes: (body as any).notes,
+    notes: body.notes,
     created_by: user.id,
   };
 

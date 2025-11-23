@@ -24,10 +24,6 @@ export default function TestFase7Page() {
     console.log(`[Test Fase7] ${message}`)
   }
 
-  useEffect(() => {
-    addLog("Página de teste carregada")
-  }, [])
-
   const testSystemHealth = async () => {
     try {
       addLog("Testando SystemHealthService...")

@@ -6,6 +6,7 @@ import { formatDate } from '~/lib/utils';
 import { Target } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
+import type { Goal } from '~/types';
 
 export async function PatientGoals({
   patientId,
@@ -16,13 +17,15 @@ export async function PatientGoals({
 }) {
   const supabase = await createServerComponentClient();
 
-  const { data: goals } = await (supabase as any)
+  const { data } = await (supabase as any)
     .from('patient_goals')
     .select('*')
     .eq('patient_id', patientId)
     .in('status', ['em_progresso', 'alcancado'])
     .order('target_date', { ascending: true })
     .limit(detailed ? 50 : 3);
+
+  const goals = (data as Goal[]) || [];
 
   if (!goals || goals.length === 0) {
     return (
@@ -52,17 +55,17 @@ export async function PatientGoals({
   if (detailed) {
     return (
       <div className="space-y-4">
-        {goals.map((goal: any) => {
-          const daysRemaining = calculateDaysRemaining(goal.target_date);
-          const progress = (goal as any).progress_percentage || 0;
+        {goals.map((goal) => {
+          const daysRemaining = calculateDaysRemaining(goal.target_date || null);
+          const progress = goal.progress || 0;
 
           return (
             <Card key={goal.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>{goal.title}</CardTitle>
-                  <Badge variant={goal.status === 'alcancado' ? 'default' : 'secondary'}>
-                    {goal.status === 'alcancado' ? 'Alcançado' : 'Em Progresso'}
+                  <Badge variant={goal.status === 'completed' ? 'default' : 'secondary'}>
+                    {goal.status === 'completed' ? 'Alcançado' : 'Em Progresso'}
                   </Badge>
                 </div>
                 {goal.description && <CardDescription>{goal.description}</CardDescription>}
@@ -75,17 +78,10 @@ export async function PatientGoals({
                   </div>
                   <Progress value={progress} />
                 </div>
-                {goal.target_value && goal.current_value !== null && (
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {goal.current_value} / {goal.target_value} {goal.unit || ''}
-                    </p>
-                  </div>
-                )}
                 {goal.target_date && (
                   <div>
                     <p className="text-sm text-muted-foreground">
-                      Data alvo: {formatDate(goal.target_date)}
+                      Data alvo: {goal.target_date ? formatDate(goal.target_date) : '-'}
                       {daysRemaining !== null && daysRemaining > 0 && (
                         <span className="ml-2 text-orange-600">
                           ({daysRemaining} {daysRemaining === 1 ? 'dia' : 'dias'} restantes)
@@ -97,7 +93,7 @@ export async function PatientGoals({
                     </p>
                   </div>
                 )}
-                {(goal as any).notes && <p className="text-sm">{(goal as any).notes}</p>}
+                {goal.notes && <p className="text-sm">{goal.notes}</p>}
               </CardContent>
             </Card>
           );
@@ -116,9 +112,9 @@ export async function PatientGoals({
         <CardDescription>{goals.length} objetivo(s) ativo(s)</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        {goals.slice(0, 3).map((goal: any) => {
-          const daysRemaining = calculateDaysRemaining(goal.target_date);
-          const progress = (goal as any).progress_percentage || 0;
+        {goals.slice(0, 3).map((goal) => {
+          const daysRemaining = calculateDaysRemaining(goal.target_date || null);
+          const progress = goal.progress || 0;
 
           return (
             <div key={goal.id} className="space-y-2">

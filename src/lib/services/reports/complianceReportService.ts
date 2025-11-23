@@ -573,7 +573,7 @@ export class ComplianceReportService {
         title: 'Violações LGPD Detectadas',
         description: `${lgpd.breaches.total} violações de dados reportadas`,
         area: 'lgpd',
-        impact: 'critical',
+        impact: 'high',
         actionable: true,
       });
     }

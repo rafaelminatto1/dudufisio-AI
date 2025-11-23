@@ -1,6 +1,8 @@
 'use server';
 
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 interface ExerciseFilters {
   category?: string;
@@ -14,7 +16,7 @@ interface ExerciseFilters {
 export async function getExercises(filters: ExerciseFilters = {}) {
   const supabase = await createServerComponentClient();
 
-  let query = (supabase as any)
+  let query = (supabase as SupabaseClient<Database>)
     .from('exercises_library')
     .select('*')
     .order('name', { ascending: true });
@@ -57,7 +59,7 @@ export async function prescribeExercise(data: {
   const supabase = await createServerComponentClient();
 
   // Busca dados do exercício
-  const { data: exercise, error: exerciseError } = await (supabase as any)
+  const { data: exercise, error: exerciseError } = await (supabase as SupabaseClient<Database>)
     .from('exercises_library')
     .select('name')
     .eq('id', data.exercise_id)
@@ -67,7 +69,7 @@ export async function prescribeExercise(data: {
     return { error: 'Exercício não encontrado', data: null };
   }
 
-  const { data: prescribed, error } = await (supabase as any)
+  const { data: prescribed, error } = await (supabase as SupabaseClient<Database>)
     .from('patient_exercises')
     .insert({
       patient_id: data.patient_id,
@@ -91,4 +93,3 @@ export async function prescribeExercise(data: {
 
   return { data: prescribed, error: null };
 }
-

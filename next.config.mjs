@@ -11,12 +11,9 @@ const nextConfig = {
     // Desabilitar verificação de tipos durante build (pode causar erro de memória)
     ignoreBuildErrors: false,
   },
-  // Server Actions são estáveis no Next.js 15 - movido para nível raiz
-  serverActions: {
-    bodySizeLimit: '5mb',
-  },
   // Otimizar imports de pacotes grandes automaticamente (estável no Next.js 15)
-  optimizePackageImports: [
+  experimental: {
+    optimizePackageImports: [
     'lucide-react',
     '@radix-ui/react-accordion',
     '@radix-ui/react-alert-dialog',
@@ -38,7 +35,8 @@ const nextConfig = {
     '@radix-ui/react-toast',
     '@radix-ui/react-toggle-group',
     '@radix-ui/react-tooltip',
-  ],
+    ],
+  },
   images: {
     remotePatterns: [
       {
@@ -69,6 +67,27 @@ const nextConfig = {
   headers: async () => {
     return [
       {
+        // Headers para assets estáticos - cache agressivo (1 ano)
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Headers para imagens - cache de 24 horas
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, s-maxage=86400',
+          },
+        ],
+      },
+      {
+        // Headers para todos os paths
         source: '/:path*',
         headers: [
           {
@@ -94,6 +113,10 @@ const nextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
           },
         ],
       },

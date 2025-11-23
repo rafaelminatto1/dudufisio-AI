@@ -1,8 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { AgendaCalendarView } from '~/components/features/agenda/AgendaCalendarView';
+import { useState, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
+import { AppointmentsSkeleton } from '~/components/skeletons';
+
+// Dynamic import do componente pesado de calendário para code splitting
+// Nota: Este componente já é 'use client', então o dynamic import funciona corretamente
+const AgendaCalendarView = dynamic(
+  () => import('~/components/features/agenda/AgendaCalendarView').then((mod) => mod.AgendaCalendarView),
+  {
+    loading: () => <AppointmentsSkeleton />,
+  }
+);
 
 interface AgendaCalendarClientProps {
   view: 'day' | 'week' | 'month';
@@ -41,15 +51,17 @@ export function AgendaCalendarClient({
   };
 
   return (
-    <AgendaCalendarView
-      view={view}
-      currentDate={currentDate}
-      onDateChange={handleDateChange}
-      onAppointmentClick={handleAppointmentClick}
-      onNewAppointment={handleNewAppointment}
-      therapistId={therapistId}
-      resourceId={resourceId}
-    />
+    <Suspense fallback={<AppointmentsSkeleton />}>
+      <AgendaCalendarView
+        view={view}
+        currentDate={currentDate}
+        onDateChange={handleDateChange}
+        onAppointmentClick={handleAppointmentClick}
+        onNewAppointment={handleNewAppointment}
+        therapistId={therapistId}
+        resourceId={resourceId}
+      />
+    </Suspense>
   );
 }
 

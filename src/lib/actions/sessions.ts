@@ -1,6 +1,8 @@
 'use server';
 
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 /**
  * Busca sessões anteriores de um paciente
@@ -12,7 +14,7 @@ export async function getPreviousSessions(
 ) {
   const supabase = await createServerComponentClient();
 
-  let query = supabase
+  let query = (supabase as SupabaseClient<Database>)
     .from('session_evolutions')
     .select('*')
     .eq('patient_id', patientId)
@@ -49,7 +51,7 @@ export async function saveSessionEvolution(
     objective?: string;
     assessment?: string;
     plan?: string;
-    conducts?: any;
+    conducts?: Record<string, unknown>;
     pain_level?: number;
     auto_saved_at?: string;
   }
@@ -58,7 +60,7 @@ export async function saveSessionEvolution(
 
   if (sessionId) {
     // Atualizar
-    const { data: updated, error } = await supabase
+    const { data: updated, error } = await (supabase as SupabaseClient<Database>)
       .from('session_evolutions')
       .update({
         ...data,
@@ -75,7 +77,7 @@ export async function saveSessionEvolution(
     return { data: updated, error: null };
   } else {
     // Criar
-    const { data: created, error } = await supabase
+    const { data: created, error } = await (supabase as SupabaseClient<Database>)
       .from('session_evolutions')
       .insert({
         ...data,
@@ -92,4 +94,3 @@ export async function saveSessionEvolution(
     return { data: created, error: null };
   }
 }
-

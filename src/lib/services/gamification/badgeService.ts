@@ -5,7 +5,7 @@ export class BadgeService {
     try {
       const supabase = await createServerComponentClient();
       const { data: existing } = await supabase
-        .from('patient_badges')
+        .from('patient_badges' as any)
         .select('*')
         .eq('patient_id', params.patientId)
         .eq('badge_id', params.badgeId)
@@ -16,7 +16,7 @@ export class BadgeService {
       }
 
       const { data, error } = await supabase
-        .from('patient_badges')
+        .from('patient_badges' as any)
         .insert({
           patient_id: params.patientId,
           badge_id: params.badgeId,
@@ -36,7 +36,7 @@ export class BadgeService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('patient_badges')
+        .from('patient_badges' as any)
         .select('*, badge:badges(*)')
         .eq('patient_id', patientId)
         .order('awarded_at', { ascending: false });

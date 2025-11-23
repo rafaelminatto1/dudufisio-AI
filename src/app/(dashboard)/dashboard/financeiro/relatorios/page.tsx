@@ -1,4 +1,17 @@
-import { FinancialReports } from '~/components/features/financial/FinancialReports';
+import { Suspense } from 'react';
+import dynamic from 'next/dynamic';
+import { FinancialSkeleton } from '~/components/skeletons';
+
+// Dynamic import do componente pesado de relatórios financeiros para code splitting
+const FinancialReports = dynamic(
+  () =>
+    import('~/components/features/financial/FinancialReports').then(
+      (mod) => mod.FinancialReports
+    ),
+  {
+    loading: () => <FinancialSkeleton />,
+  }
+);
 
 export default function FinancialReportsPage() {
   return (
@@ -9,7 +22,9 @@ export default function FinancialReportsPage() {
           Análise de fluxo de caixa e desempenho financeiro
         </p>
       </div>
-      <FinancialReports />
+      <Suspense fallback={<FinancialSkeleton />}>
+        <FinancialReports />
+      </Suspense>
     </div>
   );
 }

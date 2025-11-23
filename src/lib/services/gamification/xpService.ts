@@ -3,12 +3,13 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export type PointsType = 'sessao' | 'meta' | 'exercicio' | 'feedback' | 'sem_faltas' | 'bonus';
 
 export class XPService {
-  private static readonly POINTS_CONFIG = {
+  private static readonly POINTS_CONFIG: Record<PointsType, number> = {
     sessao: 10,
     meta: 50,
     exercicio: 5,
     feedback: 5,
     sem_faltas: 100,
+    bonus: 0, // Added to match PointsType
   };
 
   static async awardPoints(params: {
@@ -22,7 +23,7 @@ export class XPService {
       const pointsEarned = params.points || this.POINTS_CONFIG[params.pointsType] || 0;
 
       const { data, error } = await supabase
-        .from('gamification_points')
+        .from('gamification_points' as any)
         .insert({
           patient_id: params.patientId,
           points_earned: pointsEarned,
@@ -36,15 +37,15 @@ export class XPService {
 
       // Update patient XP
       const { data: patient } = await supabase
-        .from('patients')
+        .from('patients' as any)
         .select('xp_points')
         .eq('id', params.patientId)
         .single();
 
       if (patient) {
         await supabase
-          .from('patients')
-          .update({ xp_points: patient.xp_points + pointsEarned })
+          .from('patients' as any)
+          .update({ xp_points: (patient as any).xp_points + pointsEarned } as any)
           .eq('id', params.patientId);
       }
 
@@ -59,7 +60,7 @@ export class XPService {
     try {
       const supabase = await createServerComponentClient();
       const { data: patient, error } = await supabase
-        .from('patients')
+        .from('patients' as any)
         .select('xp_points, level')
         .eq('id', patientId)
         .single();
@@ -67,8 +68,8 @@ export class XPService {
       if (error) throw error;
       return {
         data: {
-          currentXP: patient?.xp_points || 0,
-          currentLevel: patient?.level || 1,
+          currentXP: (patient as any)?.xp_points || 0,
+          currentLevel: (patient as any)?.level || 1,
         },
         error: null,
       };

@@ -19,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { ConflictDetectionService } from '~/lib/services/appointments/conflictDetectionService';
 
 interface AppointmentFormModalProps {
   open: boolean;
@@ -50,13 +49,16 @@ export function AppointmentFormModal({
 
   useEffect(() => {
     if (appointment) {
-      setFormData({
-        patient_id: appointment.patient_id || '',
-        therapist_id: appointment.therapist_id || '',
-        start_time: new Date(appointment.start_time).toISOString().slice(0, 16),
-        end_time: new Date(appointment.end_time).toISOString().slice(0, 16),
-        status: appointment.status || 'agendado',
-      });
+      // Usar setTimeout para evitar chamada síncrona de setState
+      setTimeout(() => {
+        setFormData({
+          patient_id: appointment.patient_id || '',
+          therapist_id: appointment.therapist_id || '',
+          start_time: new Date(appointment.start_time).toISOString().slice(0, 16),
+          end_time: new Date(appointment.end_time).toISOString().slice(0, 16),
+          status: appointment.status || 'agendado',
+        });
+      }, 0);
     }
   }, [appointment]);
 

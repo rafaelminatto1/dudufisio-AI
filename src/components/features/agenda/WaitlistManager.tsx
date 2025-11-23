@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
@@ -42,11 +42,7 @@ export function WaitlistManager() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'active' | 'notified'>('all');
 
-  useEffect(() => {
-    loadWaitlist();
-  }, [filter]);
-
-  const loadWaitlist = async () => {
+  const loadWaitlist = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getWaitlist({ status: filter === 'all' ? undefined : filter });
@@ -58,7 +54,11 @@ export function WaitlistManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    loadWaitlist();
+  }, [loadWaitlist]);
 
   const handleNotify = async (itemId: string) => {
     try {

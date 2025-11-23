@@ -1,7 +1,14 @@
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { TreatmentsLayout } from './_components/treatments-layout';
 import { TreatmentsSkeleton } from '~/components/skeletons';
+import { generateDashboardMetadata } from '~/lib/metadata';
+
+export const metadata: Metadata = generateDashboardMetadata(
+  'tratamentos',
+  'Gerencie tratamentos, evoluções SOAP, prescrições de exercícios e acompanhamento dos pacientes'
+);
 
 // Componente assíncrono separado (Next.js 16 Streaming SSR)
 async function TreatmentsLayoutAsync() {

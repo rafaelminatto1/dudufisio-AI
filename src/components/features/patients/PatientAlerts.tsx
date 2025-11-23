@@ -3,6 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/com
 import { Badge } from '~/components/ui/badge';
 import { Bell } from 'lucide-react';
 
+const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+const today = new Date().toISOString().split('T')[0];
+
 export async function PatientAlerts({ patientId }: { patientId: string }) {
   const supabase = await createServerComponentClient();
 
@@ -38,6 +41,8 @@ export async function PatientAlerts({ patientId }: { patientId: string }) {
     });
   }
 
+
+
   // Verifica objetivos próximos do prazo
   const { data: urgentGoals } = await (supabase as any)
     .from('patient_goals')
@@ -45,8 +50,8 @@ export async function PatientAlerts({ patientId }: { patientId: string }) {
     .eq('patient_id', patientId)
     .eq('status', 'em_progresso')
     .not('target_date', 'is', null)
-    .lte('target_date', new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
-    .gt('target_date', new Date().toISOString().split('T')[0]);
+    .lte('target_date', sevenDaysFromNow)
+    .gt('target_date', today);
 
   if (urgentGoals && urgentGoals.length > 0) {
     urgentGoals.forEach((goal: any) => {

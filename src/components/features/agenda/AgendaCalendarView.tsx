@@ -64,29 +64,32 @@ export function AgendaCalendarView({
   // Carrega agendamentos
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     
-    getAppointments({
-      startDate: dateRange.start.toISOString(),
-      endDate: dateRange.end.toISOString(),
-      therapistId,
-      resourceId,
-    })
-      .then((result) => {
+    const fetchAppointments = async () => {
+      setLoading(true);
+      try {
+        const result = await getAppointments({
+          startDate: dateRange.start.toISOString(),
+          endDate: dateRange.end.toISOString(),
+          therapistId,
+          resourceId,
+        });
+
         if (!cancelled && result.data) {
           setAppointments(result.data as any[]);
         }
-      })
-      .catch((error) => {
+      } catch (error) {
         if (!cancelled) {
           console.error('Erro ao carregar agendamentos:', error);
         }
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) {
           setLoading(false);
         }
-      });
+      }
+    };
+
+    fetchAppointments();
 
     return () => {
       cancelled = true;

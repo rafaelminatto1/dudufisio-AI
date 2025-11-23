@@ -4,8 +4,8 @@ import { useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 
 interface UseAutoSaveOptions {
-  data: Record<string, any>;
-  onSave: (data: Record<string, any>) => Promise<void>;
+  data: Record<string, unknown>;
+  onSave: (data: Record<string, unknown>) => Promise<void>;
   interval?: number; // em milissegundos (padrão 45s)
   enabled?: boolean;
   onSaveStart?: () => void;
@@ -23,7 +23,7 @@ export function useAutoSave({
   onSaveError,
 }: UseAutoSaveOptions) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const lastSavedRef = useRef<Record<string, any>>({});
+  const lastSavedRef = useRef<Record<string, unknown>>({});
   const isSavingRef = useRef(false);
   const hasChangesRef = useRef(false);
 
@@ -46,9 +46,9 @@ export function useAutoSave({
       await onSave(data);
       lastSavedRef.current = JSON.parse(JSON.stringify(data));
       onSaveSuccess?.();
-    } catch (error) {
+    } catch (error: unknown) {
       hasChangesRef.current = true; // Marca como não salvo em caso de erro
-      const err = error instanceof Error ? error : new Error('Erro desconhecido');
+      const err = error instanceof Error ? error : new Error('Erro desconhecido no auto-save');
       onSaveError?.(err);
       console.error('Erro no auto-save:', err);
     } finally {
@@ -123,4 +123,3 @@ export function useAutoSave({
     hasUnsavedChanges: hasChangesRef.current,
   };
 }
-

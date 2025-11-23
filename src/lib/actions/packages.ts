@@ -1,6 +1,8 @@
 'use server';
 
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 /**
  * Busca pacotes de pacientes
@@ -29,7 +31,7 @@ export async function getPatientPackages(patientId?: string) {
   }
 
   // Transforma os dados
-  const transformed = (data || []).map((pkg: any) => ({
+  const transformed = (data || []).map((pkg: Database['public']['Tables']['patient_packages']['Row'] & { patients: { full_name: string | null } }) => ({
     ...pkg,
     patient_name: pkg.patients?.full_name || 'N/A',
     remaining_sessions: (pkg.total_sessions || 0) - (pkg.used_sessions || 0),
@@ -112,4 +114,3 @@ export async function debitSession(packageId: string) {
 
   return { data: updated, error: null };
 }
-

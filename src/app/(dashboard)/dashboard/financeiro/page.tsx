@@ -1,9 +1,16 @@
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { FinancialDashboard } from './_components/financial-dashboard';
 import { PackagesManager } from './_components/packages-manager';
 import { FinancialSkeleton, TableSkeleton } from '~/components/skeletons';
+import { generateDashboardMetadata } from '~/lib/metadata';
+
+export const metadata: Metadata = generateDashboardMetadata(
+  'financeiro',
+  'Controle financeiro completo: receitas, despesas, pagamentos, transações e pacotes de tratamento'
+);
 
 // Componente assíncrono para Dashboard Financeiro (Next.js 16 Streaming SSR)
 async function FinancialDashboardAsync() {
@@ -11,7 +18,7 @@ async function FinancialDashboardAsync() {
   const today = new Date();
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-  const { data: transactions, error } = await (supabase as any)
+  const { data: transactions, error } = await supabase
     .from('financial_transactions')
     .select('*')
     .gte('created_at', startOfMonth.toISOString())
@@ -60,4 +67,3 @@ export default function FinanceiroPage() {
     </div>
   );
 }
-

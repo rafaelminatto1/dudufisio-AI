@@ -168,8 +168,8 @@ export class ExerciseProtocolService {
       
       // Buscar exercícios que correspondem à categoria ou patologia do protocolo
       const exercisesResult = await ExerciseService.getExercises({
-        category: protocol.body_part,
-        search: protocol.name,
+        category: (protocol as any).body_part,
+        search: (protocol as any).name,
       });
 
       return exercisesResult;

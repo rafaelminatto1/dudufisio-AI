@@ -2,11 +2,31 @@ import { NextRequest } from 'next/server';
 import { withAuth, parseBody, successResponse, errorResponse } from '~/lib/api/middleware';
 import { saveSessionEvolution } from '~/lib/actions/sessions';
 import type { Database } from '~/types/database.types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 type SessionEvolutionUpdate = Database['public']['Tables']['session_evolutions']['Update'];
 
 interface RouteContext {
   params: Promise<{ id: string }>;
+}
+
+// Tipo para atualização de sessão
+interface UpdateSessionRequest {
+  session_date?: string;
+  subjective?: string;
+  objective?: string;
+  assessment?: string;
+  plan?: string;
+  conducts?: Record<string, unknown>;
+  pain_level?: number;
+  session_number?: number;
+}
+
+// Tipo para dados da sessão existente
+interface ExistingSession {
+  id: string;
+  patient_id: string;
+  therapist_id?: string;
 }
 
 /**
@@ -74,7 +94,7 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
     return errorResponse('ID da sessão é obrigatório', 400);
   }
 
-  const { data: body, error: parseError } = await parseBody<any>(request);
+  const { data: body, error: parseError } = await parseBody<UpdateSessionRequest>(request);
 
   if (parseError || !body) {
     return errorResponse(parseError || 'Body inválido', 400);
@@ -89,12 +109,12 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
   }
 
   // Valida pain_level se fornecido
-  if ((body as any).pain_level !== undefined && ((body as any).pain_level < 0 || (body as any).pain_level > 10)) {
+  if (body.pain_level !== undefined && (body.pain_level < 0 || body.pain_level > 10)) {
     return errorResponse('Nível de dor deve estar entre 0 e 10', 400);
   }
 
   // Verifica se sessão existe e obtém therapist_id
-  const { data: existing, error: existingError } = await (supabase as any)
+  const { data: existing, error: existingError } = await (supabase as SupabaseClient<Database>)
     .from('session_evolutions')
     .select('id, patient_id, therapist_id')
     .eq('id', sessionId)
@@ -104,16 +124,18 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
     return errorResponse('Sessão não encontrada', 404);
   }
 
+  const existingSession = existing as ExistingSession;
+
   // Se não tiver therapist_id na sessão, busca do usuário autenticado
-  let therapistId = (existing as any).therapist_id;
-  
+  let therapistId = existingSession.therapist_id;
+
   if (!therapistId && user?.id) {
-    const { data: therapist, error: therapistError } = await (supabase as any)
+    const { data: therapist, error: therapistError } = await (supabase as SupabaseClient<Database>)
       .from('therapists')
       .select('id')
       .eq('user_id', user.id)
       .single();
-    
+
     if (!therapistError && therapist) {
       therapistId = therapist.id;
     }
@@ -125,15 +147,15 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
 
   // Atualiza a sessão
   const result = await saveSessionEvolution(sessionId, {
-    patient_id: (existing as any).patient_id,
+    patient_id: existingSession.patient_id,
     therapist_id: therapistId,
-    session_date: (body as any).session_date || new Date().toISOString(),
+    session_date: body.session_date || new Date().toISOString(),
     subjective: body.subjective,
     objective: body.objective,
     assessment: body.assessment,
     plan: body.plan,
     conducts: body.conducts,
-    pain_level: (body as any).pain_level,
+    pain_level: body.pain_level,
     session_number: body.session_number,
   });
 
@@ -234,7 +256,13 @@ export const POST = withAuth(async (request: NextRequest, { supabase }, routeCon
 /**
  * Mock para geração de documento (substituir por IA real)
  */
-function generateMockDocument(type: string, session: any): string {
+function generateMockDocument(
+  type: string,
+  session: Database['public']['Tables']['session_evolutions']['Row'] & {
+    patients: Database['public']['Tables']['patients']['Row'] | null;
+    therapists: Database['public']['Tables']['therapists']['Row'] | null;
+  }
+): string {
   const patientName = session.patients?.full_name || 'Paciente';
   const therapistName = session.therapists?.full_name || 'Fisioterapeuta';
   const date = new Date(session.session_date).toLocaleDateString('pt-BR');

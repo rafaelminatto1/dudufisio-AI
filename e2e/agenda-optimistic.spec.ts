@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
 
 /**
@@ -189,7 +190,7 @@ test.describe('Agenda - Performance Tests', () => {
     const vitals: any[] = [];
 
     // Capturar Web Vitals
-    await page.evaluateOnNewDocument(() => {
+    await page.addInitScript(() => {
       new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
           (window as any).vitals = (window as any).vitals || [];

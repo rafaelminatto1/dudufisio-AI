@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { StripeService } from '~/lib/services/financial/stripeService';
 import { TransactionService } from '~/lib/services/financial/transactionService';
 import { createServerActionClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 const CreateCheckoutSchema = z.object({
   amount: z.number().positive(),
@@ -69,7 +71,7 @@ export async function createCheckout(
     }
 
     // Atualizar transação com metadata do Stripe
-    await (supabase as any)
+    await (supabase as SupabaseClient<Database>)
       .from('financial_transactions')
       .update({
         external_payment_id: sessionResult.data.id,
@@ -80,8 +82,12 @@ export async function createCheckout(
       sessionId: sessionResult.data.id,
       url: sessionResult.data.url,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error creating checkout:', error);
-    return { error: 'Internal server error' };
+    let errorMessage = 'Internal server error';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return { error: errorMessage };
   }
 }

@@ -6,10 +6,11 @@ test.describe('Ferramentas de IA', () => {
   test.beforeEach(async ({ page }) => {
     // Login antes de cada teste
     await page.goto(`${BASE_URL}/login`)
-    await page.fill('input[name="email"]', 'therapist@dudufisio.com')
-    await page.fill('input[name="password"]', 'Teste@123')
+    await page.waitForLoadState('networkidle')
+    await page.fill('input#email', 'cursor@moocafisio.com.br')
+    await page.fill('input#password', '256256')
     await page.click('button:has-text("Entrar")')
-    await page.waitForURL(/dashboard/)
+    await page.waitForURL(/dashboard/, { timeout: 15000 })
   })
 
   test('Deve carregar página de geração de laudo', async ({ page }) => {

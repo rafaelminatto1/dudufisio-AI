@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -34,11 +34,7 @@ export function ExerciseLibrary() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
 
-  useEffect(() => {
-    loadExercises();
-  }, [selectedCategory, selectedDifficulty]);
-
-  const loadExercises = async () => {
+  const loadExercises = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getExercises({
@@ -54,7 +50,11 @@ export function ExerciseLibrary() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory, selectedDifficulty, searchQuery]);
+
+  useEffect(() => {
+    loadExercises();
+  }, [loadExercises]);
 
   const filteredExercises = exercises.filter((exercise) => {
     if (searchQuery && !exercise.name.toLowerCase().includes(searchQuery.toLowerCase())) {

@@ -6,13 +6,15 @@ import { createClient } from '@supabase/supabase-js';
 // Criamos uma variável para o mock da função 'single' para que possamos alterá-la em testes específicos.
 const singleMock = jest.fn();
 
-// O mock principal agora é mais simples e usa a variável 'singleMock'.
-const fromMock = jest.fn((tableName: string) => ({
+const supabaseQueryBuilderMocks = {
   select: jest.fn().mockReturnThis(),
   insert: jest.fn().mockReturnThis(),
   eq: jest.fn().mockReturnThis(),
   single: singleMock,
-}));
+};
+
+// O mock principal agora é mais simples e usa a variável 'singleMock'.
+const fromMock = jest.fn((tableName: string) => supabaseQueryBuilderMocks);
 
 // Mock do createClient para retornar nosso 'fromMock'
 const createClientMock = jest.fn(() => ({
@@ -57,7 +59,7 @@ describe('addPatientToWaitlist (Integration Test)', () => {
     // Verifica se as funções do Supabase foram chamadas corretamente
     expect(createClientMock).toHaveBeenCalledTimes(1);
     expect(fromMock).toHaveBeenCalledWith('waitlist');
-    expect(fromMock().insert).toHaveBeenCalledWith({
+    expect(supabaseQueryBuilderMocks.insert).toHaveBeenCalledWith({
       patient_id: 'test-patient-id',
       priority: 'Alta',
       status: 'Ativo',
@@ -74,7 +76,7 @@ describe('addPatientToWaitlist (Integration Test)', () => {
     expect(result.success).toBe(false);
     expect(result.message).toBe('Paciente já está na lista de espera ativa.');
     // Garante que a função 'insert' não foi chamada
-    expect(fromMock().insert).not.toHaveBeenCalled();
+    expect(supabaseQueryBuilderMocks.insert).not.toHaveBeenCalled();
   });
 
   it('should return an error if Supabase credentials are not configured', async () => {

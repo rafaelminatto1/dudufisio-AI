@@ -1,4 +1,24 @@
-import { ExecutiveDashboard } from '~/components/features/reports/ExecutiveDashboard';
+import { Suspense } from 'react';
+import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+import { DashboardStatsSkeleton } from '~/components/skeletons';
+import { generateDashboardMetadata } from '~/lib/metadata';
+
+export const metadata: Metadata = generateDashboardMetadata(
+  'relatorios',
+  'Relatórios e análises clínicas e financeiras com KPIs e métricas em tempo real'
+);
+
+// Dynamic import do componente pesado de relatórios para code splitting
+const ExecutiveDashboard = dynamic(
+  () =>
+    import('~/components/features/reports/ExecutiveDashboard').then(
+      (mod) => mod.ExecutiveDashboard
+    ),
+  {
+    loading: () => <DashboardStatsSkeleton />,
+  }
+);
 
 export default function ReportsPage() {
   return (
@@ -9,7 +29,9 @@ export default function ReportsPage() {
           Acompanhe KPIs e métricas da clínica
         </p>
       </div>
-      <ExecutiveDashboard />
+      <Suspense fallback={<DashboardStatsSkeleton />}>
+        <ExecutiveDashboard />
+      </Suspense>
     </div>
   );
 }

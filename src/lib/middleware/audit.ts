@@ -14,7 +14,7 @@ interface AuditContext {
 /**
  * Wrapper para Server Actions com auditoria
  */
-export function withAudit<T extends (...args: any[]) => Promise<any>>(
+export function withAudit<T extends (...args: unknown[]) => Promise<unknown>>(
   action: T,
   resourceType: string,
   actionName: 'create' | 'read' | 'update' | 'delete'
@@ -52,7 +52,7 @@ export function withAudit<T extends (...args: any[]) => Promise<any>>(
       );
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       // Log de erro
       await logAuditEvent(
         `${actionName}_${resourceType}_error`,
@@ -90,4 +90,3 @@ export function auditDataAccess(
     }
   );
 }
-

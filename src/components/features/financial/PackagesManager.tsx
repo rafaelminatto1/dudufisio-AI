@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
@@ -44,11 +44,7 @@ export function PackagesManager({ patientId }: { patientId?: string }) {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  useEffect(() => {
-    loadPackages();
-  }, [patientId]);
-
-  const loadPackages = async () => {
+  const loadPackages = useCallback(async () => {
     setLoading(true);
     try {
       const result = await getPatientPackages(patientId);
@@ -60,7 +56,11 @@ export function PackagesManager({ patientId }: { patientId?: string }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [patientId]);
+
+  useEffect(() => {
+    loadPackages();
+  }, [loadPackages]);
 
   const getStatusBadge = (status: string) => {
     const variants = {

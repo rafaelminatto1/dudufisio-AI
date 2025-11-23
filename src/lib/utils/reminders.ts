@@ -1,5 +1,36 @@
-// src/lib/utils/reminders.ts
 import { createClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
+
+interface PatientForReminder {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+}
+
+interface UserForReminder {
+  email: string;
+}
+
+interface TherapistForReminder {
+  id: string;
+  user_id: string;
+  users: UserForReminder;
+}
+
+interface AppointmentWithPatientAndTherapist {
+  id: string;
+  start_time: string;
+  status: string;
+  patient_id: string;
+  therapist_id: string;
+  reminder_sent: boolean;
+  patient: PatientForReminder; // Changed from patients: PatientForReminder[] to patient: PatientForReminder
+  therapist_user: { // Adjusted to match the new select alias and structure
+    id: string;
+    email: string;
+  };
+}
 
 interface ReminderProcessingResult {
   success: boolean;
@@ -24,7 +55,7 @@ export async function processDailyReminders(): Promise<ReminderProcessingResult>
       throw new Error('Credenciais do Supabase não configuradas');
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
 
     const now = new Date();
     const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -40,18 +71,15 @@ export async function processDailyReminders(): Promise<ReminderProcessingResult>
         patient_id,
         therapist_id,
         reminder_sent,
-        patients:patient_id (
+        patient:users!appointments_patient_id_fkey (
           id,
           full_name,
           email,
           phone
         ),
-        therapists:therapist_id (
+        therapist_user:users!appointments_therapist_id_fkey (
           id,
-          user_id,
-          users:user_id (
-            email
-          )
+          email
         )
       `)
       .gte('start_time', twentyFourHoursFromNow.toISOString())
@@ -85,12 +113,12 @@ export async function processDailyReminders(): Promise<ReminderProcessingResult>
       errors: [] as string[]
     };
 
-    for (const appointment of appointments) {
+    for (const appointment of appointments as AppointmentWithPatientAndTherapist[]) {
       try {
         // Lógica de envio de notificação via Evolution API (WhatsApp)
-        console.log(`[CronLembretes] Simulando envio de lembrete para paciente ${appointment.patients?.full_name} (${appointment.patients?.phone}) sobre consulta ${appointment.id} em ${appointment.start_time}`);
+        console.log(`[CronLembretes] Simulando envio de lembrete para paciente ${appointment.patient?.full_name} (${appointment.patient?.phone}) sobre consulta ${appointment.id} em ${appointment.start_time}`);
         // TODO: Implementar a chamada real à Evolution API aqui
-        // Exemplo: await EvolutionAPIService.sendMessage(appointment.patients?.phone, "Seu lembrete de consulta...");
+        // Exemplo: await EvolutionAPIService.sendMessage(appointment.patients?.[0]?.phone, "Seu lembrete de consulta...");
         
         // Por enquanto, apenas marcar como enviado
         const { error: updateError } = await supabase

@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
 import { getPatientById } from '~/lib/actions/patients';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
@@ -9,6 +10,27 @@ import { Edit, ArrowLeft, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ProfileSkeleton } from '~/components/skeletons';
+import { toPatientExtended, type PatientExtended } from '~/types/patient.types';
+import { generateDetailMetadata } from '~/lib/metadata';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const result = await getPatientById(id);
+
+  if (result.error || !result.data) {
+    return generateDetailMetadata('paciente', 'Paciente não encontrado', id);
+  }
+
+  const patient = result.data;
+  const patientName = (patient as any).full_name || (patient as any).name || 'Paciente';
+  const description = `Prontuário eletrônico completo do paciente ${patientName}. Visualize histórico, tratamentos, evoluções e informações clínicas.`;
+
+  return generateDetailMetadata('paciente', patientName, id, description);
+}
 
 // Componente assíncrono para detalhes do paciente (Next.js 16 Streaming SSR)
 async function PatientDetailsAsync({ id }: { id: string }) {
@@ -18,9 +40,9 @@ async function PatientDetailsAsync({ id }: { id: string }) {
     notFound();
   }
 
-  const patient = result.data;
-  const address = ((patient as any).address as any) || {};
-  const emergencyContact = ((patient as any).emergency_contact as any) || {};
+  const patient: PatientExtended = toPatientExtended(result.data);
+  const address = patient.address || {};
+  const emergencyContact = patient.emergency_contact || {};
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -33,12 +55,12 @@ async function PatientDetailsAsync({ id }: { id: string }) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Nome Completo</p>
-                <p className="font-medium">{(patient as any).full_name || patient.name}</p>
+                <p className="font-medium">{patient.full_name || (patient as any).full_name}</p>
               </div>
-              {(patient as any).cpf && (
+              {patient.cpf && (
                 <div>
                   <p className="text-sm text-muted-foreground">CPF</p>
-                  <p className="font-medium">{formatCPF((patient as any).cpf)}</p>
+                  <p className="font-medium">{formatCPF(patient.cpf)}</p>
                 </div>
               )}
               {(patient as any).rg && (
@@ -53,15 +75,15 @@ async function PatientDetailsAsync({ id }: { id: string }) {
                   <p className="font-medium">{formatDate(patient.birth_date)}</p>
                 </div>
               )}
-              {(patient as any).gender && (
+              {patient.gender && (
                 <div>
                   <p className="text-sm text-muted-foreground">Gênero</p>
                   <p className="font-medium">
-                    {(patient as any).gender === 'male'
+                    {patient.gender === 'male'
                       ? 'Masculino'
-                      : (patient as any).gender === 'female'
+                      : patient.gender === 'female'
                         ? 'Feminino'
-                        : (patient as any).gender === 'other'
+                        : patient.gender === 'other'
                           ? 'Outro'
                           : 'Prefiro não dizer'}
                   </p>
@@ -81,8 +103,8 @@ async function PatientDetailsAsync({ id }: { id: string }) {
               )}
               <div>
                 <p className="text-sm text-muted-foreground">Status</p>
-                <Badge variant={(patient as any).status === 'active' || (patient as any).status === 'ativo' ? 'default' : 'secondary'}>
-                  {(patient as any).status === 'active' || (patient as any).status === 'ativo' ? 'Ativo' : (patient as any).status || 'N/A'}
+                <Badge variant={patient.status === 'active' || patient.status === 'ativo' ? 'default' : 'secondary'}>
+                  {patient.status === 'active' || patient.status === 'ativo' ? 'Ativo' : patient.status || 'N/A'}
                 </Badge>
               </div>
             </div>
@@ -118,7 +140,7 @@ async function PatientDetailsAsync({ id }: { id: string }) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Endereço</p>
                   <p className="font-medium">
-                    {[address.street, address.number, address.complement, address.neighborhood, address.city, address.state, address.zipcode]
+                    {[((address as any).street), ((address as any).number), ((address as any).complement), ((address as any).neighborhood), ((address as any).city), ((address as any).state), ((address as any).zipcode)]
                       .filter(Boolean)
                       .join(', ')}
                   </p>
@@ -128,9 +150,9 @@ async function PatientDetailsAsync({ id }: { id: string }) {
                 <div>
                   <p className="text-sm text-muted-foreground mb-2">Contato de Emergência</p>
                   <p className="font-medium">
-                    {emergencyContact.name}
-                    {emergencyContact.phone && ` - ${formatPhone(emergencyContact.phone)}`}
-                    {emergencyContact.relationship && ` (${emergencyContact.relationship})`}
+                    {((emergencyContact as any).name)}
+                    {((emergencyContact as any).phone) && ` - ${formatPhone((emergencyContact as any).phone)}`}
+                    {((emergencyContact as any).relationship) && ` (${(emergencyContact as any).relationship})`}
                   </p>
                 </div>
               )}

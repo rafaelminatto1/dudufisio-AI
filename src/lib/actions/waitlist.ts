@@ -1,6 +1,8 @@
 'use server';
 
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 interface WaitlistFilters {
   status?: 'active' | 'notified' | 'fulfilled';
@@ -40,7 +42,7 @@ export async function getWaitlist(filters: WaitlistFilters = {}) {
   }
 
   // Transforma os dados para incluir nome do paciente
-  const transformed = (data || []).map((item: any) => ({
+  const transformed = (data || []).map((item: Database['public']['Tables']['waitlist']['Row'] & { patients: { full_name: string | null; phone: string | null } | null }) => ({
     ...item,
     patient_name: item.patients?.full_name || 'N/A',
     patient_phone: item.patients?.phone || 'N/A',
@@ -131,4 +133,3 @@ export async function notifyWaitlist(itemId: string) {
 
   return { error: null };
 }
-

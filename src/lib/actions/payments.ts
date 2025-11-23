@@ -1,6 +1,8 @@
 'use server';
 
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 /**
  * Cria um pagamento/transação financeira
@@ -18,7 +20,7 @@ export async function createPayment(data: {
 }) {
   const supabase = await createServerComponentClient();
 
-  const { data: created, error } = await supabase
+  const { data: created, error } = await (supabase as SupabaseClient<Database>)
     .from('financial_transactions')
     .insert({
       patient_id: data.patient_id || null,
@@ -98,7 +100,7 @@ export async function getFinancialTransactions(filters: {
 export async function getCashFlowReport(startDate: string, endDate: string) {
   const supabase = await createServerComponentClient();
 
-  const { data: transactions, error } = await supabase
+  const { data: transactions, error } = await (supabase as SupabaseClient<Database>)
     .from('financial_transactions')
     .select('*')
     .eq('status', 'completed')
@@ -111,12 +113,12 @@ export async function getCashFlowReport(startDate: string, endDate: string) {
   }
 
   const income = (transactions || [])
-    .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + (t.amount || 0), 0);
+    .filter((t: Database['public']['Tables']['financial_transactions']['Row']) => t.type === 'income')
+    .reduce((sum: number, t: Database['public']['Tables']['financial_transactions']['Row']) => sum + (t.amount || 0), 0);
 
   const expenses = (transactions || [])
-    .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + (t.amount || 0), 0);
+    .filter((t: Database['public']['Tables']['financial_transactions']['Row']) => t.type === 'expense')
+    .reduce((sum: number, t: Database['public']['Tables']['financial_transactions']['Row']) => sum + (t.amount || 0), 0);
 
   const balance = income - expenses;
 
@@ -131,4 +133,3 @@ export async function getCashFlowReport(startDate: string, endDate: string) {
     error: null,
   };
 }
-

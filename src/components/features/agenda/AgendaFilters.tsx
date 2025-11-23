@@ -30,10 +30,6 @@ export function AgendaFilters({
   const [therapists, setTherapists] = useState<any[]>([]);
   const [resources, setResources] = useState<any[]>([]);
 
-  useEffect(() => {
-    loadFilters();
-  }, []);
-
   const loadFilters = async () => {
     const [therapistsResult, resourcesResult] = await Promise.all([
       getTherapists(),
@@ -47,6 +43,11 @@ export function AgendaFilters({
       setResources(resourcesResult.data);
     }
   };
+
+  useEffect(() => {
+    loadFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleClearFilters = () => {
     onTherapistChange(undefined);

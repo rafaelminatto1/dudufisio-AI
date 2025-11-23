@@ -22,7 +22,7 @@ export function Patient360Dashboard({ patientId, patient }: Patient360DashboardP
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Prontuário Eletrônico</h1>
-        <p className="text-muted-foreground">Visão 360° do paciente: {(patient as any).full_name || patient.name}</p>
+        <p className="text-muted-foreground">Visão 360° do paciente: {(patient as any).full_name || (patient as any).full_name || (patient as any).name}</p>
       </div>
 
       {/* Dashboard Cards */}

@@ -112,8 +112,7 @@ export class BackupService {
     try {
       const supabase = await createServerComponentClient();
       // @ts-expect-error - backup_config table not in schema yet
-      let query = supabase.from('backup_config').select('*').single() as any;
-      const { data, error } = await query;
+      const { data, error } = await (supabase.from('backup_config').select('*').single() as any);
 
       if (error && error.code !== 'PGRST116') {
         // PGRST116 = not found, usar padrão
@@ -137,8 +136,7 @@ export class BackupService {
     try {
       const supabase = await createServerComponentClient();
       // @ts-expect-error - backup_config table not in schema yet
-      let query = supabase.from('backup_config').upsert(config as any, { onConflict: 'id' }) as any;
-      const { error } = await query;
+      const { error } = await (supabase.from('backup_config').upsert(config as any, { onConflict: 'id' }) as any);
 
       if (error) throw error;
 
@@ -182,8 +180,7 @@ export class BackupService {
       };
 
       // @ts-expect-error - backups table not in schema yet
-      let insertQuery = supabase.from('backups').insert(backupMetadata as any).select().single() as any;
-      const { data: backup, error: backupError } = await insertQuery;
+      const { data: backup, error: backupError } = await (supabase.from('backups').insert(backupMetadata as any).select().single() as any);
 
       if (backupError) throw backupError;
 
@@ -204,7 +201,7 @@ export class BackupService {
       // Atualizar metadata
       const duration = Date.now() - startTime;
       // @ts-expect-error - backups table not in schema yet
-      let updateQuery = supabase.from('backups')
+      const { data: updatedBackup, error: updateError } = await (supabase.from('backups')
         .update({
           size: processedBackup.size,
           compressed: processedBackup.compressed,
@@ -217,8 +214,7 @@ export class BackupService {
         } as any)
         .eq('id', backup.id)
         .select()
-        .single() as any;
-      const { data: updatedBackup, error: updateError } = await updateQuery;
+        .single() as any);
 
       if (updateError) throw updateError;
 
@@ -350,8 +346,7 @@ export class BackupService {
     try {
       const supabase = await createServerComponentClient();
       // @ts-expect-error - backups table not in schema yet
-      let query = supabase.from('backups').select('*').order('timestamp', { ascending: false }).limit(limit) as any;
-      const { data, error } = await query;
+      const { data, error } = await (supabase.from('backups').select('*').order('timestamp', { ascending: false }).limit(limit) as any);
 
       if (error) throw error;
       return { data, error: null };
@@ -373,8 +368,7 @@ export class BackupService {
 
       // Buscar backup
       // @ts-expect-error - backups table not in schema yet
-      let query = supabase.from('backups').select('*').eq('id', backupId).single() as any;
-      const { data: backup, error: backupError } = await query;
+      const { data: backup, error: backupError } = await (supabase.from('backups').select('*').eq('id', backupId).single() as any);
 
       if (backupError || !backup) {
         throw new Error('Backup not found');
@@ -403,8 +397,7 @@ export class BackupService {
     try {
       const supabase = await createServerComponentClient();
       // @ts-expect-error - backups table not in schema yet
-      let query = supabase.from('backups').select('*').order('timestamp', { ascending: false }) as any;
-      const { data: backups } = await query;
+      const { data: backups } = await (supabase.from('backups').select('*').order('timestamp', { ascending: false }) as any);
 
       const backupsArray = (backups || []) as any[];
       const totalBackups = backupsArray.length;

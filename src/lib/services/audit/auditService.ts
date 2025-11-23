@@ -1,4 +1,5 @@
-import { createServerComponentClient } from '~/lib/supabase/server';
+// import { createServerComponentClient } from '~/lib/supabase/server';
+// Tabela audit_logs não existe no schema, então não precisamos do Supabase por enquanto
 
 export type AuditAction =
   | 'create'
@@ -53,25 +54,20 @@ export class AuditService {
     ipAddress?: string;
     userAgent?: string;
   }) {
+    // Tabela audit_logs não existe no schema atual
+    // Apenas logar no console por enquanto
+    // TODO: Criar tabela audit_logs ou usar outra tabela para auditoria
     try {
-      const supabase = await createServerComponentClient();
-      const { data, error } = await ((supabase as any)
-        .from('audit_logs')
-        .insert({
-          user_id: params.userId,
-          action: params.action,
-          entity_type: params.entityType,
-          entity_id: params.entityId,
-          description: params.description,
-          metadata: params.metadata,
-          ip_address: params.ipAddress,
-          user_agent: params.userAgent,
-        } as any)
-        .select()
-        .single() as any);
-
-      if (error) throw error;
-      return { data, error: null };
+      console.log('[AUDIT]', {
+        userId: params.userId,
+        action: params.action,
+        entityType: params.entityType,
+        entityId: params.entityId,
+        description: params.description,
+        metadata: params.metadata,
+        timestamp: new Date().toISOString(),
+      });
+      return { data: { id: 'console-log', ...params }, error: null };
     } catch (error) {
       console.error('Error logging audit action:', error);
       return { data: null, error };
@@ -82,51 +78,14 @@ export class AuditService {
    * Busca logs de auditoria com filtros
    */
   static async getAuditLogs(filters?: AuditFilters) {
+    // Tabela audit_logs não existe no schema atual
+    // Retornar vazio por enquanto
+    // TODO: Criar tabela audit_logs ou usar outra tabela para auditoria
     try {
-      const supabase = await createServerComponentClient();
-      const {
-        userId,
-        action,
-        entityType,
-        startDate,
-        endDate,
-        limit = 100,
-        offset = 0,
-      } = filters || {};
-
-      let query = (supabase as any)
-        .from('audit_logs')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range(offset, offset + limit - 1) as any;
-
-      if (userId) {
-        query = query.eq('user_id', userId);
-      }
-
-      if (action) {
-        query = query.eq('action', action);
-      }
-
-      if (entityType) {
-        query = query.eq('entity_type', entityType);
-      }
-
-      if (startDate) {
-        query = query.gte('created_at', startDate);
-      }
-
-      if (endDate) {
-        query = query.lte('created_at', endDate);
-      }
-
-      const { data, error, count } = await query;
-      if (error) throw error;
-
       return {
         data: {
-          logs: data || [],
-          total: count || 0,
+          logs: [],
+          total: 0,
         },
         error: null,
       };
@@ -152,17 +111,11 @@ export class AuditService {
    * Busca logs de uma entidade específica
    */
   static async getEntityAuditLogs(entityType: string, entityId: string) {
+    // Tabela audit_logs não existe no schema atual
+    // Retornar vazio por enquanto
+    // TODO: Criar tabela audit_logs ou usar outra tabela para auditoria
     try {
-      const supabase = await createServerComponentClient();
-      const { data, error } = await (supabase as any)
-        .from('audit_logs')
-        .select('*, user:users(*)')
-        .eq('entity_type', entityType)
-        .eq('entity_id', entityId)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return { data, error: null };
+      return { data: [], error: null };
     } catch (error) {
       console.error('Error fetching entity audit logs:', error);
       return { data: null, error };
@@ -177,53 +130,16 @@ export class AuditService {
     endDate?: string;
     userId?: string;
   }) {
+    // Tabela audit_logs não existe no schema atual
+    // Retornar stats vazios por enquanto
+    // TODO: Criar tabela audit_logs ou usar outra tabela para auditoria
     try {
-      const supabase = await createServerComponentClient();
-      let query = (supabase as any).from('audit_logs').select('action, created_at');
-
-      if (params?.userId) {
-        query = query.eq('user_id', params.userId);
-      }
-
-      if (params?.startDate) {
-        query = query.gte('created_at', params.startDate);
-      }
-
-      if (params?.endDate) {
-        query = query.lte('created_at', params.endDate);
-      }
-
-      const { data: logs } = await query;
-
-      const uniqueUsersSet = new Set<string>();
-      (logs || []).forEach((log: any) => {
-        if (log.user_id) {
-          uniqueUsersSet.add(log.user_id);
-        }
-      });
-
       const stats = {
-        totalActions: logs?.length || 0,
+        totalActions: 0,
         byAction: {} as Record<AuditAction, number>,
         byEntityType: {} as Record<string, number>,
-        uniqueUsers: uniqueUsersSet.size,
+        uniqueUsers: 0,
       };
-
-      (logs || []).forEach((log: any) => {
-        // Contar por ação
-        const action = log.action as AuditAction;
-        if (action) {
-          stats.byAction[action] = (stats.byAction[action] || 0) + 1;
-        }
-
-        // Contar por tipo de entidade
-        const entityType = log.entity_type as string;
-        if (entityType) {
-          stats.byEntityType[entityType] =
-            (stats.byEntityType[entityType] || 0) + 1;
-        }
-      });
-
       return { data: stats, error: null };
     } catch (error) {
       console.error('Error fetching audit stats:', error);

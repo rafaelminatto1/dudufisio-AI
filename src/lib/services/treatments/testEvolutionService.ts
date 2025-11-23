@@ -5,7 +5,7 @@ export class TestEvolutionService {
     try {
       const supabase = await createServerComponentClient();
       const { data: testResult, error } = await supabase
-        .from('test_results')
+        .from('test_results' as any)
         .insert(data)
         .select()
         .single();
@@ -21,7 +21,7 @@ export class TestEvolutionService {
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase
-        .from('test_results')
+        .from('test_results' as any)
         .select('*')
         .eq('patient_id', patientId)
         .order('test_date', { ascending: false });
