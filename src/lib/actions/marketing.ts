@@ -1,6 +1,18 @@
 'use server';
 
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
+
+interface InactivePatient {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  last_appointment_date: string | null;
+  days_inactive: number;
+  total_sessions: number;
+}
 
 /**
  * Busca pacientes inativos
@@ -29,10 +41,10 @@ export async function getInactivePatients(daysThreshold = 30) {
 
   // Filtra pacientes inativos
   const inactive = (patients || [])
-    .map((patient: any) => {
+    .map((patient: Database['public']['Tables']['patients']['Row'] & { appointments: Database['public']['Tables']['appointments']['Row'][] }) => {
       const appointments = patient.appointments || [];
       const lastAppointment = appointments.length > 0
-        ? new Date(Math.max(...appointments.map((a: any) => new Date(a.start_time).getTime())))
+        ? new Date(Math.max(...appointments.map((a: Database['public']['Tables']['appointments']['Row']) => new Date(a.start_time).getTime())))
         : null;
 
       const daysInactive = lastAppointment
@@ -49,8 +61,8 @@ export async function getInactivePatients(daysThreshold = 30) {
         total_sessions: appointments.length,
       };
     })
-    .filter((p: any) => p.days_inactive >= daysThreshold)
-    .sort((a: any, b: any) => b.days_inactive - a.days_inactive);
+    .filter((p: InactivePatient) => p.days_inactive >= daysThreshold)
+    .sort((a: InactivePatient, b: InactivePatient) => b.days_inactive - a.days_inactive);
 
   return { data: inactive, error: null };
 }
@@ -77,7 +89,7 @@ export async function sendReengagementCampaign(patientId: string) {
   // await sendWhatsApp(patient.phone, message);
 
   // Registra envio da campanha
-  await supabase
+  await (supabase as any)
     .from('marketing_campaigns')
     .insert({
       patient_id: patientId,
@@ -112,4 +124,3 @@ export async function createNPSSurvey(patientId: string) {
 
   return { data: survey, error: null };
 }
-
