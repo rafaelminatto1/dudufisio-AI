@@ -4,9 +4,10 @@ export class VoucherService {
   static async redeemVoucher(params: { patientId: string; voucherId: string }) {
     try {
       const supabase = await createServerComponentClient();
-      
-      const { data: voucher } = await supabase
-        .from('vouchers' as any)
+
+      // @ts-expect-error - vouchers table not in schema yet
+      const { data: voucher } = await (supabase as any)
+        .from('vouchers')
         .select('*')
         .eq('id', params.voucherId)
         .eq('is_active', true)
@@ -14,22 +15,31 @@ export class VoucherService {
 
       if (!voucher) throw new Error('Voucher not found');
 
+      const voucherData = voucher as Record<string, unknown>;
+      const voucherCost = typeof voucherData.xp_cost === 'number' ? voucherData.xp_cost : 0;
+
       const { data: patient } = await supabase
-        .from('patients' as any)
+        .from('patients')
         .select('xp_points')
         .eq('id', params.patientId)
         .single();
 
-      if (!patient || (patient as any).xp_points < (voucher as any).xp_cost) {
+      if (!patient) throw new Error('Patient not found');
+
+      const patientData = patient as Record<string, unknown>;
+      const patientXP = typeof patientData.xp_points === 'number' ? patientData.xp_points : 0;
+
+      if (patientXP < voucherCost) {
         throw new Error('Insufficient XP');
       }
 
-      const { data: redemption, error } = await supabase
-        .from('voucher_redemptions' as any)
+      // @ts-expect-error - voucher_redemptions table not in schema yet
+      const { data: redemption, error } = await (supabase as any)
+        .from('voucher_redemptions')
         .insert({
           voucher_id: params.voucherId,
           patient_id: params.patientId,
-          xp_spent: (voucher as any).xp_cost,
+          xp_spent: voucherCost,
         })
         .select('*, voucher:vouchers(*)')
         .single();
@@ -38,8 +48,8 @@ export class VoucherService {
 
       // Deduct XP
       await supabase
-        .from('patients' as any)
-        .update({ xp_points: (patient as any).xp_points - (voucher as any).xp_cost } as any)
+        .from('patients')
+        .update({ xp_points: patientXP - voucherCost })
         .eq('id', params.patientId);
 
       return { data: redemption, error: null };

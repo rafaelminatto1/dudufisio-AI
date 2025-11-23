@@ -22,8 +22,9 @@ export class XPService {
       const supabase = await createServerComponentClient();
       const pointsEarned = params.points || this.POINTS_CONFIG[params.pointsType] || 0;
 
-      const { data, error } = await supabase
-        .from('gamification_points' as any)
+      // @ts-expect-error - gamification_points table not in schema yet
+      const { data, error } = await (supabase as any)
+        .from('gamification_points')
         .insert({
           patient_id: params.patientId,
           points_earned: pointsEarned,
@@ -37,15 +38,17 @@ export class XPService {
 
       // Update patient XP
       const { data: patient } = await supabase
-        .from('patients' as any)
+        .from('patients')
         .select('xp_points')
         .eq('id', params.patientId)
         .single();
 
       if (patient) {
+        const patientData = patient as Record<string, unknown>;
+        const currentXP = typeof patientData.xp_points === 'number' ? patientData.xp_points : 0;
         await supabase
-          .from('patients' as any)
-          .update({ xp_points: (patient as any).xp_points + pointsEarned } as any)
+          .from('patients')
+          .update({ xp_points: currentXP + pointsEarned })
           .eq('id', params.patientId);
       }
 
@@ -60,16 +63,18 @@ export class XPService {
     try {
       const supabase = await createServerComponentClient();
       const { data: patient, error } = await supabase
-        .from('patients' as any)
+        .from('patients')
         .select('xp_points, level')
         .eq('id', patientId)
         .single();
 
       if (error) throw error;
+
+      const patientData = patient as Record<string, unknown>;
       return {
         data: {
-          currentXP: (patient as any)?.xp_points || 0,
-          currentLevel: (patient as any)?.level || 1,
+          currentXP: typeof patientData.xp_points === 'number' ? patientData.xp_points : 0,
+          currentLevel: typeof patientData.level === 'number' ? patientData.level : 1,
         },
         error: null,
       };
