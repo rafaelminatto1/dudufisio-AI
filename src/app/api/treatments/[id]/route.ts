@@ -6,10 +6,6 @@ import { SupabaseClient } from '@supabase/supabase-js';
 
 type SessionEvolutionUpdate = Database['public']['Tables']['session_evolutions']['Update'];
 
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
-
 // Tipo para atualização de sessão
 interface UpdateSessionRequest {
   session_date?: string;
@@ -34,9 +30,13 @@ interface ExistingSession {
  *
  * Exemplo: /api/treatments/123e4567-e89b-12d3-a456-426614174000
  */
-export const GET = withAuth(async (request: NextRequest, { supabase }, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const sessionId = params?.id;
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return withAuth(async (request: NextRequest, { supabase }) => {
+    const params = await context.params;
+    const sessionId = params.id;
 
   if (!sessionId) {
     return errorResponse('ID da sessão é obrigatório', 400);
@@ -68,8 +68,9 @@ export const GET = withAuth(async (request: NextRequest, { supabase }, routeCont
     return errorResponse('Sessão não encontrada', 404);
   }
 
-  return successResponse(data);
-});
+    return successResponse(data);
+  })(request);
+}
 
 /**
  * PUT /api/treatments/[id] - Atualiza sessão/evolução (SOAP notes)
@@ -86,9 +87,13 @@ export const GET = withAuth(async (request: NextRequest, { supabase }, routeCont
  *   "session_number": "number"
  * }
  */
-export const PUT = withAuth(async (request: NextRequest, { supabase, user }, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const sessionId = params?.id;
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return withAuth(async (request: NextRequest, { supabase, user }) => {
+    const params = await context.params;
+    const sessionId = params.id;
 
   if (!sessionId) {
     return errorResponse('ID da sessão é obrigatório', 400);
@@ -163,8 +168,9 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
     return errorResponse(result.error, 400);
   }
 
-  return successResponse(result.data);
-});
+    return successResponse(result.data);
+  })(request);
+}
 
 /**
  * POST /api/treatments/[id]/generate-document - Gera documento clínico com IA
@@ -186,9 +192,13 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
  *   }
  * }
  */
-export const POST = withAuth(async (request: NextRequest, { supabase }, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const sessionId = params?.id;
+export async function POST(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return withAuth(async (request: NextRequest, { supabase }) => {
+    const params = await context.params;
+    const sessionId = params.id;
 
   if (!sessionId) {
     return errorResponse('ID da sessão é obrigatório', 400);
@@ -245,23 +255,21 @@ export const POST = withAuth(async (request: NextRequest, { supabase }, routeCon
   // Por enquanto, retorna um mock
   const mockContent = generateMockDocument(body.document_type, session);
 
-  return successResponse({
-    document_type: body.document_type,
-    content: mockContent,
-    generated_at: new Date().toISOString(),
-    session_id: sessionId,
-  });
-});
+    return successResponse({
+      document_type: body.document_type,
+      content: mockContent,
+      generated_at: new Date().toISOString(),
+      session_id: sessionId,
+    });
+  })(request);
+}
 
 /**
  * Mock para geração de documento (substituir por IA real)
  */
 function generateMockDocument(
   type: string,
-  session: Database['public']['Tables']['session_evolutions']['Row'] & {
-    patients: Database['public']['Tables']['patients']['Row'] | null;
-    therapists: Database['public']['Tables']['therapists']['Row'] | null;
-  }
+  session: any
 ): string {
   const patientName = session.patients?.full_name || 'Paciente';
   const therapistName = session.therapists?.full_name || 'Fisioterapeuta';

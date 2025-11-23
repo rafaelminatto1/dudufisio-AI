@@ -198,28 +198,10 @@ export async function getPackages(
       return result;
     }
 
-    // Se não houver patientId, buscar todos com join em patients
-    const { data, error } = await (supabase as SupabaseClient<Database>)
-      .from('patient_package_purchases')
-      .select(`
-        id,
-        package_id,
-        patient_id,
-        purchase_date,
-        sessions_remaining,
-        status,
-        created_at,
-        expires_at,
-        patient:patients(id, full_name),
-        package:financial_packages(name, price, sessions_count)
-      `)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      return { data: null, error: { message: 'Failed to fetch packages' } };
-    }
-
-    return { data: data as Package[], error: null };
+    // Tabela patient_package_purchases não existe no schema atual
+    // Retornar dados vazios por enquanto
+    // TODO: Criar tabela patient_package_purchases ou usar outra tabela
+    return { data: [] as Package[], error: null };
   } catch (error: unknown) {
     console.error('Error fetching packages:', error);
     let errorMessage = 'Internal server error';

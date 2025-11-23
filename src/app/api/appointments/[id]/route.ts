@@ -5,10 +5,6 @@ import { SupabaseClient } from '@supabase/supabase-js';
 
 type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
-
 // Tipo estendido para atualização de agendamento
 interface UpdateAppointmentRequest {
   patient_id?: string;
@@ -26,9 +22,13 @@ interface UpdateAppointmentRequest {
  *
  * Exemplo: /api/appointments/123e4567-e89b-12d3-a456-426614174000
  */
-export const GET = withAuth(async (request: NextRequest, { supabase }, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const appointmentId = params?.id;
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return withAuth(async (request: NextRequest, { supabase }) => {
+    const params = await context.params;
+    const appointmentId = params.id;
 
   if (!appointmentId) {
     return errorResponse('ID do agendamento é obrigatório', 400);
@@ -62,8 +62,9 @@ export const GET = withAuth(async (request: NextRequest, { supabase }, routeCont
     return errorResponse('Agendamento não encontrado', 404);
   }
 
-  return successResponse(data);
-});
+    return successResponse(data);
+  })(request);
+}
 
 /**
  * PUT /api/appointments/[id] - Atualiza agendamento
@@ -80,9 +81,13 @@ export const GET = withAuth(async (request: NextRequest, { supabase }, routeCont
  *   "cancellation_reason": "string (se status=cancelled)"
  * }
  */
-export const PUT = withAuth(async (request: NextRequest, { supabase, user }, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const appointmentId = params?.id;
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return withAuth(async (request: NextRequest, { supabase, user }) => {
+    const params = await context.params;
+    const appointmentId = params.id;
 
   if (!appointmentId) {
     return errorResponse('ID do agendamento é obrigatório', 400);
@@ -186,8 +191,9 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
     return errorResponse(error.message, 400);
   }
 
-  return successResponse(appointment);
-});
+    return successResponse(appointment);
+  })(request);
+}
 
 /**
  * DELETE /api/appointments/[id] - Cancela agendamento
@@ -197,9 +203,13 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }, rou
  *
  * Exemplo: DELETE /api/appointments/123?reason=Paciente solicitou
  */
-export const DELETE = withAuth(async (request: NextRequest, { supabase, user }, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const appointmentId = params?.id;
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return withAuth(async (request: NextRequest, { supabase, user }) => {
+    const params = await context.params;
+    const appointmentId = params.id;
 
   if (!appointmentId) {
     return errorResponse('ID do agendamento é obrigatório', 400);
@@ -240,8 +250,9 @@ export const DELETE = withAuth(async (request: NextRequest, { supabase, user }, 
     return errorResponse(error.message, 400);
   }
 
-  return successResponse({
-    message: 'Agendamento cancelado com sucesso',
-    appointment,
-  });
-});
+    return successResponse({
+      message: 'Agendamento cancelado com sucesso',
+      appointment,
+    });
+  })(request);
+}

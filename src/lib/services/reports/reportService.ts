@@ -112,8 +112,9 @@ export class ReportService {
   static async getReportTemplates(category?: ReportCategory) {
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase
-        .from('report_templates' as any)
+      // @ts-expect-error - report_templates table not in schema yet
+      let query = (supabase as any)
+        .from('report_templates')
         .select('*')
         .eq('is_active', true)
         .order('name', { ascending: true });
@@ -143,8 +144,9 @@ export class ReportService {
       const supabase = await createServerComponentClient();
       
       // Buscar template
-      const { data: template, error: templateError } = await supabase
-        .from('report_templates' as any)
+      // @ts-expect-error - report_templates table not in schema yet
+      const { data: template, error: templateError } = await (supabase as any)
+        .from('report_templates')
         .select('*')
         .eq('id', params.templateId)
         .single();
@@ -153,24 +155,27 @@ export class ReportService {
         throw new Error('Template not found');
       }
 
+      const templateData = template as unknown as ReportTemplate;
+
       // Validar parâmetros
-      if (Array.isArray((template as any).parameters)) {
-        this.validateParameters((template as any).parameters, params.parameters);
+      if (Array.isArray(templateData.parameters)) {
+        this.validateParameters(templateData.parameters as ReportParameter[], params.parameters);
       }
 
       // Gerar dados do relatório baseado no tipo
-      const reportData = await this.generateReportData(template as any, params.parameters);
+      const reportData = await this.generateReportData(templateData, params.parameters);
 
       // Adicionar insights e recomendações
-      reportData.insights = this.generateInsights(reportData, template as any);
-      reportData.recommendations = this.generateRecommendations(reportData, template as any);
+      reportData.insights = this.generateInsights(reportData, templateData);
+      reportData.recommendations = this.generateRecommendations(reportData, templateData);
 
       // Salvar relatório gerado
-      const { data: report, error: reportError } = await supabase
-        .from('generated_reports' as any)
+      // @ts-expect-error - generated_reports table not in schema yet
+      const { data: report, error: reportError } = await (supabase as any)
+        .from('generated_reports')
         .insert({
           template_id: params.templateId,
-          title: (template as any).name,
+          title: templateData.name,
           parameters: params.parameters,
           data: reportData,
           generated_by: params.userId,
@@ -192,14 +197,14 @@ export class ReportService {
    * Gera dados do relatório baseado no template
    */
   private static async generateReportData(
-    template: any,
+    template: ReportTemplate,
     parameters: Record<string, any>
   ): Promise<ReportData> {
     const startDate = parameters.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const endDate = parameters.endDate || new Date().toISOString();
 
     // Baseado na categoria, buscar dados apropriados
-    switch ((template as any).category) {
+    switch (template.category) {
       case 'financial':
         return await this.generateFinancialData(startDate, endDate);
       case 'clinical':
@@ -216,15 +221,17 @@ export class ReportService {
    */
   private static async generateFinancialData(startDate: string, endDate: string): Promise<ReportData> {
     const supabase = await createServerComponentClient();
-    
-    const { data: transactions } = await supabase
-      .from('financial_transactions' as any)
+
+    // @ts-expect-error - financial_transactions table not in schema yet
+    const { data: transactions } = await (supabase as any)
+      .from('financial_transactions')
       .select('*')
       .gte('created_at', startDate)
       .lte('created_at', endDate)
       .eq('transaction_type', 'receita');
 
-    const totalRevenue = (transactions || []).reduce((sum, t) => sum + ((t as any).amount || 0), 0);
+    const transactionsArray = (transactions || []) as Array<Record<string, unknown>>;
+    const totalRevenue = transactionsArray.reduce((sum, t) => sum + (typeof t.amount === 'number' ? t.amount : 0), 0);
 
     return {
       summary: {
@@ -248,14 +255,15 @@ export class ReportService {
     parameters: Record<string, any>
   ): Promise<ReportData> {
     const supabase = await createServerComponentClient();
-    
+
     const { data: appointments } = await supabase
-      .from('appointments' as any)
+      .from('appointments')
       .select('*')
       .gte('start_time', startDate)
       .lte('start_time', endDate);
 
-    const completed = (appointments || []).filter(a => (a as any).status === 'concluido').length;
+    const appointmentsArray = (appointments || []) as Array<Record<string, unknown>>;
+    const completed = appointmentsArray.filter(a => a.status === 'concluido').length;
 
     return {
       summary: {
@@ -304,8 +312,9 @@ export class ReportService {
   static async exportReport(reportId: string, format: ExportFormat) {
     try {
       const supabase = await createServerComponentClient();
-      const { data: report, error } = await supabase
-        .from('generated_reports' as any)
+      // @ts-expect-error - generated_reports table not in schema yet
+      const { data: report, error } = await (supabase as any)
+        .from('generated_reports')
         .select('*')
         .eq('id', reportId)
         .single();
@@ -334,8 +343,9 @@ export class ReportService {
   }) {
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase
-        .from('generated_reports' as any)
+      // @ts-expect-error - generated_reports table not in schema yet
+      let query = (supabase as any)
+        .from('generated_reports')
         .select('*')
         .order('generated_at', { ascending: false });
 
@@ -488,7 +498,7 @@ export class ReportService {
     const recommendations: string[] = [];
 
     // Recomendações baseadas na categoria
-    switch ((template as any).category) {
+    switch (template.category) {
       case 'financial':
         const revenueMetric = reportData.summary.keyMetrics.find(m =>
           m.label.toLowerCase().includes('receita')
@@ -536,31 +546,35 @@ export class ReportService {
 
       // Buscar dados agregados
       const { data: appointments } = await supabase
-        .from('appointments' as any)
+        .from('appointments')
         .select('*')
         .gte('start_time', params.startDate)
         .lte('start_time', params.endDate);
 
-      const { data: transactions } = await supabase
-        .from('financial_transactions' as any)
+      // @ts-expect-error - financial_transactions table not in schema yet
+      const { data: transactions } = await (supabase as any)
+        .from('financial_transactions')
         .select('*')
         .gte('created_at', params.startDate)
         .lte('created_at', params.endDate)
         .eq('transaction_type', 'receita');
 
       const { data: patients } = await supabase
-        .from('patients' as any)
+        .from('patients')
         .select('*')
         .gte('created_at', params.startDate)
         .lte('created_at', params.endDate);
 
-      const totalRevenue = (transactions || []).reduce(
-        (sum, t) => sum + ((t as any).amount || 0),
+      const transactionsArray = (transactions || []) as Array<Record<string, unknown>>;
+      const appointmentsArray = (appointments || []) as Array<Record<string, unknown>>;
+
+      const totalRevenue = transactionsArray.reduce(
+        (sum, t) => sum + (typeof t.amount === 'number' ? t.amount : 0),
         0
       );
-      const totalSessions = appointments?.length || 0;
-      const completedSessions = (appointments || []).filter(
-        a => (a as any).status === 'concluido'
+      const totalSessions = appointmentsArray.length;
+      const completedSessions = appointmentsArray.filter(
+        a => a.status === 'concluido'
       ).length;
       const newPatients = patients?.length || 0;
 
@@ -622,12 +636,13 @@ export class ReportService {
 
       // Buscar dados históricos
       const { data: appointments } = await supabase
-        .from('appointments' as any)
+        .from('appointments')
         .select('*')
         .gte('start_time', params.startDate)
         .lte('start_time', params.endDate);
 
-      const averageDaily = (appointments?.length || 0) / 30; // Simplificado
+      const appointmentsArray = (appointments || []) as Array<Record<string, unknown>>;
+      const averageDaily = appointmentsArray.length / 30; // Simplificado
 
       return {
         data: {
@@ -648,7 +663,7 @@ export class ReportService {
           patientRisk: {
             dropoutPrediction: [], // Simplificado
             outcomePrediction: [], // Simplificado
-            noShowPrediction: (appointments || []).slice(0, 5).map((apt: any) => ({
+            noShowPrediction: appointmentsArray.slice(0, 5).map(apt => ({
               appointmentId: apt.id,
               risk: Math.random() * 0.5, // 0-50% risco
             })),
@@ -697,8 +712,9 @@ export class ReportService {
       // Criar agendamento (em produção, integraria com sistema de cron jobs)
       const scheduleId = `schedule_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
-      const { data, error } = await supabase
-        .from('report_schedules' as any)
+      // @ts-expect-error - report_schedules table not in schema yet
+      const { data, error } = await (supabase as any)
+        .from('report_schedules')
         .insert({
           id: scheduleId,
           template_id: params.templateId,

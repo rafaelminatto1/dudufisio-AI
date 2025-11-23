@@ -50,7 +50,7 @@ export class ComplianceService {
 
       // Executar verificações
       const checkedResults = await Promise.all(
-        (checks || []).map(async (check: any) => {
+        (checks || []).map(async (check: ComplianceCheck) => {
           const result = await this.executeCheck(check);
           return {
             ...check,
@@ -69,7 +69,7 @@ export class ComplianceService {
             status: check.status,
             last_checked: check.lastChecked,
             details: check.details,
-          } as any)
+          })
           .eq('id', check.id);
       }
 
@@ -83,7 +83,7 @@ export class ComplianceService {
   /**
    * Executa uma verificação específica
    */
-  private static async executeCheck(check: any): Promise<{
+  private static async executeCheck(check: ComplianceCheck): Promise<{
     status: ComplianceCheck['status'];
     details?: Record<string, any>;
   }> {
@@ -106,7 +106,7 @@ export class ComplianceService {
   /**
    * Verifica conformidade LGPD
    */
-  private static async checkLGPDCompliance(check: any): Promise<{
+  private static async checkLGPDCompliance(check: ComplianceCheck): Promise<{
     status: ComplianceCheck['status'];
     details?: Record<string, any>;
   }> {
@@ -123,7 +123,7 @@ export class ComplianceService {
       const { data: consents } = await (supabase as any)
         .from('patient_consents')
         .select('*')
-        .limit(1) as any;
+        .limit(1);
 
     const hasPrivacyPolicy = !!privacyPolicy;
     const hasConsentSystem = (consents || []).length > 0;

@@ -1,26 +1,19 @@
 import { NextRequest } from 'next/server';
 import { withAuth, parseBody, successResponse, errorResponse } from '~/lib/api/middleware';
 import { getPatientById, updatePatient, deletePatient, type UpdatePatientData } from '~/lib/actions/patients';
-import { User, SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '~/types/database.types';
-
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
-
-interface AuthContext {
-  supabase: SupabaseClient<Database>;
-  user: User;
-}
 
 /**
  * GET /api/patients/[id] - Busca paciente por ID
  *
  * Exemplo: /api/patients/123e4567-e89b-12d3-a456-426614174000
  */
-export const GET = withAuth(async (request: NextRequest, { supabase, user }: AuthContext, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const patientId = params?.id;
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return withAuth(async (request: NextRequest, { supabase, user }) => {
+    const params = await context.params;
+    const patientId = params.id;
 
   if (!patientId) {
     return errorResponse('ID do paciente é obrigatório', 400);
@@ -36,8 +29,9 @@ export const GET = withAuth(async (request: NextRequest, { supabase, user }: Aut
     return errorResponse('Paciente não encontrado', 404);
   }
 
-  return successResponse(result.data);
-});
+    return successResponse(result.data);
+  })(request);
+}
 
 /**
  * PUT /api/patients/[id] - Atualiza paciente
@@ -55,9 +49,13 @@ export const GET = withAuth(async (request: NextRequest, { supabase, user }: Aut
  *   "notes": "string"
  * }
  */
-export const PUT = withAuth(async (request: NextRequest, { supabase, user }: AuthContext, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const patientId = params?.id;
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return withAuth(async (request: NextRequest, { supabase, user }) => {
+    const params = await context.params;
+    const patientId = params.id;
 
   if (!patientId) {
     return errorResponse('ID do paciente é obrigatório', 400);
@@ -99,17 +97,22 @@ export const PUT = withAuth(async (request: NextRequest, { supabase, user }: Aut
     return errorResponse(result.error, 400);
   }
 
-  return successResponse(result.data);
-});
+    return successResponse(result.data);
+  })(request);
+}
 
 /**
  * DELETE /api/patients/[id] - Deleta paciente (soft delete)
  *
  * Exemplo: DELETE /api/patients/123e4567-e89b-12d3-a456-426614174000
  */
-export const DELETE = withAuth(async (request: NextRequest, { supabase, user }: AuthContext, routeContext?: RouteContext) => {
-  const params = await routeContext?.params;
-  const patientId = params?.id;
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  return withAuth(async (request: NextRequest, { supabase, user }) => {
+    const params = await context.params;
+    const patientId = params.id;
 
   if (!patientId) {
     return errorResponse('ID do paciente é obrigatório', 400);
@@ -121,5 +124,6 @@ export const DELETE = withAuth(async (request: NextRequest, { supabase, user }: 
     return errorResponse(result.error, 400);
   }
 
-  return successResponse({ message: 'Paciente deletado com sucesso', id: patientId });
-});
+    return successResponse({ message: 'Paciente deletado com sucesso', id: patientId });
+  })(request);
+}

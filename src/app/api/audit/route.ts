@@ -41,95 +41,27 @@ export const GET = withAuth(async (request: NextRequest, { supabase }) => {
     // Retornar dados vazios por enquanto
     // TODO: Criar tabela audit_logs ou usar outra tabela para auditoria
     const auditLogs: any[] = [];
-    const error = null;
     const count = 0;
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
 
-    // Se a tabela não existir, retorna dados mockados para conformidade LGPD
-    if (error && error.code === '42P01') {
-      // Código PostgreSQL para "tabela não existe"
-      return successResponse({
-        message: 'Tabela de auditoria não configurada. Usando logs do sistema.',
-        logs: [],
-        count: 0,
-        pagination: {
-          limit,
-          offset,
-          hasMore: false,
-        },
-        lgpd_compliance: {
-          status: 'pending',
-          message: 'Sistema de auditoria precisa ser configurado para conformidade LGPD',
-        },
-      });
-    }
-
-    if (error) {
-      throw error;
-    }
-
-    // Aplica filtros manualmente (idealmente seria no query)
-    let filteredLogs = auditLogs || [];
-
-    if (params.user_id) {
-      filteredLogs = filteredLogs.filter((log: Database['public']['Tables']['audit_logs']['Row']) => log.user_id === params.user_id);
-    }
-
-    if (params.action_type) {
-      filteredLogs = filteredLogs.filter((log: Database['public']['Tables']['audit_logs']['Row']) => log.action_type === params.action_type);
-    }
-
-    if (params.entity_type) {
-      filteredLogs = filteredLogs.filter((log: Database['public']['Tables']['audit_logs']['Row']) => log.entity_type === params.entity_type);
-    }
-
-    if (params.date_from) {
-      const dateFrom = new Date(params.date_from);
-      filteredLogs = filteredLogs.filter((log: Database['public']['Tables']['audit_logs']['Row']) => new Date(log.created_at) >= dateFrom);
-    }
-
-    if (params.date_to) {
-      const dateTo = new Date(params.date_to);
-      filteredLogs = filteredLogs.filter((log: Database['public']['Tables']['audit_logs']['Row']) => new Date(log.created_at) <= dateTo);
-    }
-
-    // Formata logs para conformidade LGPD
-    const formattedLogs = filteredLogs.map((log: Database['public']['Tables']['audit_logs']['Row']) => ({
-      id: log.id,
-      timestamp: log.created_at,
-      user_id: log.user_id,
-      user_email: log.user_email || 'N/A',
-      action_type: log.action_type,
-      entity_type: log.entity_type,
-      entity_id: log.entity_id,
-      ip_address: log.ip_address || 'N/A',
-      user_agent: log.user_agent || 'N/A',
-      changes: log.changes ? sanitizeChanges(log.changes) : null,
-      metadata: log.metadata || {},
-    }));
-
-    // Estatísticas
-    const stats = {
-      total_logs: count || 0,
-      filtered_logs: filteredLogs.length,
-      actions_by_type: getActionTypeStats(filteredLogs),
-      entities_by_type: getEntityTypeStats(filteredLogs),
-    };
-
+    // Retorna dados mockados para conformidade LGPD
     return successResponse({
-      logs: formattedLogs,
-      count: filteredLogs.length,
-      stats,
+      message: 'Tabela de auditoria não configurada. Usando logs do sistema.',
+      logs: [],
+      count: 0,
+      stats: {
+        total_logs: 0,
+        filtered_logs: 0,
+        actions_by_type: {},
+        entities_by_type: {},
+      },
       pagination: {
         limit,
         offset,
-        hasMore: (count || 0) > offset + limit,
+        hasMore: false,
       },
       lgpd_compliance: {
-        status: 'active',
-        retention_period_days: 365, // Configurável
-        anonymization_enabled: true,
+        status: 'pending',
+        message: 'Sistema de auditoria precisa ser configurado para conformidade LGPD',
       },
       filters_applied: {
         user_id: params.user_id || null,
@@ -176,8 +108,8 @@ function sanitizeChanges(changes: Record<string, unknown>): Record<string, unkno
 /**
  * Estatísticas por tipo de ação
  */
-function getActionTypeStats(logs: Database['public']['Tables']['audit_logs']['Row'][]): Record<string, number> {
-  return logs.reduce((acc: Record<string, number>, log: Database['public']['Tables']['audit_logs']['Row']) => {
+function getActionTypeStats(logs: any[]): Record<string, number> {
+  return logs.reduce((acc: Record<string, number>, log: any) => {
     const action = log.action_type || 'unknown';
     acc[action] = (acc[action] || 0) + 1;
     return acc;
@@ -187,8 +119,8 @@ function getActionTypeStats(logs: Database['public']['Tables']['audit_logs']['Ro
 /**
  * Estatísticas por tipo de entidade
  */
-function getEntityTypeStats(logs: Database['public']['Tables']['audit_logs']['Row'][]): Record<string, number> {
-  return logs.reduce((acc: Record<string, number>, log: Database['public']['Tables']['audit_logs']['Row']) => {
+function getEntityTypeStats(logs: any[]): Record<string, number> {
+  return logs.reduce((acc: Record<string, number>, log: any) => {
     const entity = log.entity_type || 'unknown';
     acc[entity] = (acc[entity] || 0) + 1;
     return acc;

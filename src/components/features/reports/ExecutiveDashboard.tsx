@@ -30,7 +30,15 @@ export function ExecutiveDashboard() {
     try {
       const result = await getExecutiveKPIs();
       if (result.data) {
-        setKpis(result.data as KPIs);
+        // Ajustar monthly_revenue se vier como objeto
+        const kpisData = result.data as any;
+        const adjustedKpis: KPIs = {
+          ...kpisData,
+          monthly_revenue: typeof kpisData.monthly_revenue === 'object' 
+            ? (kpisData.monthly_revenue?.amount || 0)
+            : (kpisData.monthly_revenue || 0),
+        };
+        setKpis(adjustedKpis);
       }
     } catch (error) {
       console.error('Erro ao carregar KPIs:', error);
