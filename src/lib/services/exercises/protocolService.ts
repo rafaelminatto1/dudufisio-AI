@@ -18,6 +18,7 @@ export class ProtocolService {
   }) {
     try {
       const supabase = await createServerComponentClient();
+      // exercise_protocols table not in schema yet
       let query = (supabase as any)
         .from('exercise_protocols')
         .select('*')
@@ -50,6 +51,7 @@ export class ProtocolService {
   static async getProtocolById(id: string) {
     try {
       const supabase = await createServerComponentClient();
+      // exercise_protocols table not in schema yet
       const { data, error } = await (supabase as any)
         .from('exercise_protocols')
         .select('*')
@@ -84,6 +86,7 @@ export class ProtocolService {
     try {
       const supabase = await createServerComponentClient();
       const protocolData = protocol as unknown as Record<string, unknown>;
+      // exercise_protocols table not in schema yet
       const { data, error } = await (supabase as any)
         .from('exercise_protocols')
         .insert({
@@ -112,6 +115,7 @@ export class ProtocolService {
   static async updateProtocol(id: string, updates: Partial<Protocol>) {
     try {
       const supabase = await createServerComponentClient();
+      // exercise_protocols table not in schema yet
       const { data, error } = await (supabase as any)
         .from('exercise_protocols')
         .update(updates)
@@ -133,6 +137,7 @@ export class ProtocolService {
   static async deleteProtocol(id: string) {
     try {
       const supabase = await createServerComponentClient();
+      // exercise_protocols table not in schema yet
       const { error } = await (supabase as any)
         .from('exercise_protocols')
         .delete()

@@ -111,7 +111,7 @@ export class BackupService {
   static async getConfig(): Promise<{ data: BackupConfig | null; error: any }> {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - backup_config table not in schema yet
+      // backup_config table not in schema yet
       const { data, error } = await (supabase as any).from('backup_config').select('*').single();
 
       if (error && error.code !== 'PGRST116') {
@@ -135,7 +135,7 @@ export class BackupService {
   ): Promise<{ data: boolean; error: any }> {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - backup_config table not in schema yet
+      // backup_config table not in schema yet
       const { error } = await (supabase as any).from('backup_config').upsert(config, { onConflict: 'id' });
 
       if (error) throw error;
@@ -179,7 +179,7 @@ export class BackupService {
         status: 'running',
       };
 
-      // @ts-expect-error - backups table not in schema yet
+      // backups table not in schema yet
       const { data: backup, error: backupError } = await (supabase as any).from('backups').insert(backupMetadata).select().single();
 
       if (backupError) throw backupError;
@@ -200,7 +200,7 @@ export class BackupService {
 
       // Atualizar metadata
       const duration = Date.now() - startTime;
-      // @ts-expect-error - backups table not in schema yet
+      // backups table not in schema yet
       const { data: updatedBackup, error: updateError } = await (supabase as any).from('backups')
         .update({
           size: processedBackup.size,
@@ -345,7 +345,7 @@ export class BackupService {
   static async listBackups(limit: number = 50) {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - backups table not in schema yet
+      // backups table not in schema yet
       const { data, error } = await (supabase as any).from('backups').select('*').order('timestamp', { ascending: false }).limit(limit);
 
       if (error) throw error;
@@ -367,7 +367,7 @@ export class BackupService {
       const supabase = await createServerComponentClient();
 
       // Buscar backup
-      // @ts-expect-error - backups table not in schema yet
+      // backups table not in schema yet
       const { data: backup, error: backupError } = await (supabase as any).from('backups').select('*').eq('id', backupId).single();
 
       if (backupError || !backup) {
@@ -396,7 +396,7 @@ export class BackupService {
   static async getBackupStats(): Promise<{ data: BackupStats | null; error: any }> {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - backups table not in schema yet
+      // backups table not in schema yet
       const { data: backups } = await (supabase as any).from('backups').select('*').order('timestamp', { ascending: false });
 
       const backupsArray = (backups || []) as BackupMetadata[];
