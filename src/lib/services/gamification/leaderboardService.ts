@@ -40,14 +40,15 @@ export class LeaderboardService {
       // Calcular período
       const dateFilter = this.getDateFilter(period);
 
-      const { data: patients, error } = await supabase
+      // Type cast: xp_points and level columns not in schema
+      const { data: patients, error } = await (supabase as any)
         .from('patients')
         .select('id, full_name, xp_points, level')
         .order('xp_points', { ascending: false })
         .limit(limit);
       if (error) throw error;
 
-      const entries: LeaderboardEntry[] = (patients || []).map((patient, index: number) => ({
+      const entries: LeaderboardEntry[] = (patients || []).map((patient: any, index: number) => ({
         rank: index + 1,
         patientId: patient.id,
         patientName: patient.full_name || 'Nome não informado',
@@ -181,14 +182,15 @@ export class LeaderboardService {
       const supabase = await createServerComponentClient();
       
       if (category === 'points') {
-        const { data: patients, error } = await supabase
+        // Type cast: xp_points column not in schema
+        const { data: patients, error } = await (supabase as any)
           .from('patients')
           .select('id, xp_points')
           .order('xp_points', { ascending: false });
 
         if (error) throw error;
 
-        const rank = (patients || []).findIndex((p) => p.id === patientId) + 1;
+        const rank = (patients || []).findIndex((p: any) => p.id === patientId) + 1;
         return { data: rank || null, error: null };
       }
 
