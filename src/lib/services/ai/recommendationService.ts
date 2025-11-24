@@ -63,6 +63,7 @@ export class RecommendationService {
         .limit(10);
 
       // Buscar tratamentos ativos
+      // treatments table not in schema yet
       const { data: treatments } = await (supabase as any)
         .from('treatments')
         .select('*')
@@ -223,7 +224,7 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
         priority: rec.priority,
         data: rec.data,
       }));
-
+      // ai_recommendations table not in schema yet
       await (supabase as any).from('ai_recommendations').insert(recommendationsToInsert);
     } catch (error: unknown) {
       let errorMessage = 'Error saving recommendations';
@@ -241,6 +242,7 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
   static async getPatientRecommendations(patientId: string) {
     try {
       const supabase = await createServerComponentClient();
+      // ai_recommendations table not in schema yet
       const { data, error } = await (supabase as any)
         .from('ai_recommendations')
         .select('*')
@@ -265,6 +267,7 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
   static async markRecommendationApplied(recommendationId: string) {
     try {
       const supabase = await createServerComponentClient();
+      // ai_recommendations table not in schema yet
       const { data, error} = await (supabase as any)
         .from('ai_recommendations')
         .update({

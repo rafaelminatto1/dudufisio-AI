@@ -35,6 +35,7 @@ export class ClinicalMaterialService {
   static async getMaterialsByCategory(categoryId: string) {
     try {
       const supabase = await createServerComponentClient();
+      // materials_library table not in schema yet
       const { data, error } = await (supabase as any)
         .from('materials_library')
         .select('id, title, description, file_url, file_type, category, tags, is_public, download_count, version, author, owner_id, created_at, updated_at, thumbnail_url')
@@ -55,6 +56,7 @@ export class ClinicalMaterialService {
   static async searchMaterials(params: MaterialSearchParams = {}) {
     try {
       const supabase = await createServerComponentClient();
+      // materials_library table not in schema yet
       let query = (supabase as any)
         .from('materials_library')
         .select('id, title, description, file_url, file_type, category, tags, is_public, download_count, version, author, owner_id, created_at, updated_at, thumbnail_url');
@@ -98,6 +100,7 @@ export class ClinicalMaterialService {
   static async getById(id: string) {
     try {
       const supabase = await createServerComponentClient();
+      // materials_library table not in schema yet
       const { data, error } = await (supabase as any)
         .from('materials_library')
         .select('id, title, description, file_url, file_type, category, tags, is_public, download_count, version, author, owner_id, created_at, updated_at, thumbnail_url')
@@ -130,6 +133,7 @@ export class ClinicalMaterialService {
         file_url: '', // Add a default value for file_url
       };
 
+      // materials_library table not in schema yet
       const { data, error } = await (supabase as any)
         .from('materials_library')
         .insert(insertData)
@@ -165,6 +169,7 @@ export class ClinicalMaterialService {
         (key) => updateData[key as keyof ClinicalMaterialUpdate] === undefined && delete updateData[key as keyof ClinicalMaterialUpdate]
       );
 
+      // materials_library table not in schema yet
       const { data, error } = await (supabase as any)
         .from('materials_library')
         .update(updateData)
@@ -186,6 +191,7 @@ export class ClinicalMaterialService {
   static async delete(id: string) {
     try {
       const supabase = await createServerComponentClient();
+      // materials_library table not in schema yet
       const { error } = await (supabase as any)
         .from('materials_library')
         .delete()
@@ -206,19 +212,20 @@ export class ClinicalMaterialService {
     try {
       const supabase = await createServerComponentClient();
       
+      // materials_library table not in schema yet
       const { count: total, error: totalError } = await (supabase as any)
         .from('materials_library')
         .select('id', { count: 'exact', head: true });
 
       if (totalError) throw totalError;
-
+      // materials_library table not in schema yet
       const { count: published, error: publishedError } = await (supabase as any)
         .from('materials_library')
         .select('id', { count: 'exact', head: true })
         .eq('status', 'published');
 
       if (publishedError) throw publishedError;
-
+      // materials_library table not in schema yet
       const { count: draft, error: draftError } = await (supabase as any)
         .from('materials_library')
         .select('id', { count: 'exact', head: true })

@@ -92,9 +92,9 @@ export class StripeService {
           // Criar nova transação
           await TransactionService.create({
             patient_id: patientId,
-            transaction_type: 'receita' as any,
+            transaction_type: 'receita',
             amount: String(paymentIntent.amount / 100),
-            payment_status: 'pago' as any,
+            payment_status: 'pago',
             payment_method: 'stripe',
             description: paymentIntent.description || 'Pagamento via Stripe',
           });
@@ -134,9 +134,9 @@ export class StripeService {
         } else if (patientId && session.amount_total) {
           await TransactionService.create({
             patient_id: patientId,
-            transaction_type: 'receita' as any,
+            transaction_type: 'receita',
             amount: String(session.amount_total / 100),
-            payment_status: 'pago' as any,
+            payment_status: 'pago',
             payment_method: 'stripe',
             description: 'Pagamento via Checkout Stripe',
           });
