@@ -28,13 +28,13 @@ export function withAudit<T extends (...args: unknown[]) => Promise<unknown>>(
 
     try {
       const result = await action(...args);
-      
+
       // Log de sucesso
       await logAuditEvent(
         `${actionName}_${resourceType}`,
         context.userId,
         resourceType,
-        result?.data?.id || 'unknown',
+        (result as any)?.data?.id || 'unknown',
         actionName,
         {
           success: true,

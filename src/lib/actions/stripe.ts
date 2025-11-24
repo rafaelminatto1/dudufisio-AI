@@ -71,7 +71,7 @@ export async function createCheckout(
     }
 
     // Atualizar transação com metadata do Stripe
-    await (supabase as SupabaseClient<Database>)
+    await (supabase as any)
       .from('financial_transactions')
       .update({
         external_payment_id: sessionResult.data.id,

@@ -112,9 +112,8 @@ export class ReportService {
   static async getReportTemplates(category?: ReportCategory) {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - report_templates table not in schema yet
-      let query = (supabase as any)
-        .from('report_templates')
+      // report_templates table not in schema yet
+      let query = (supabase as any).from('report_templates')
         .select('*')
         .eq('is_active', true)
         .order('name', { ascending: true });
@@ -144,9 +143,8 @@ export class ReportService {
       const supabase = await createServerComponentClient();
       
       // Buscar template
-      // @ts-expect-error - report_templates table not in schema yet
-      const { data: template, error: templateError } = await (supabase as any)
-        .from('report_templates')
+      // report_templates table not in schema yet
+      const { data: template, error: templateError } = await (supabase as any).from('report_templates')
         .select('*')
         .eq('id', params.templateId)
         .single();
@@ -170,9 +168,8 @@ export class ReportService {
       reportData.recommendations = this.generateRecommendations(reportData, templateData);
 
       // Salvar relatório gerado
-      // @ts-expect-error - generated_reports table not in schema yet
-      const { data: report, error: reportError } = await (supabase as any)
-        .from('generated_reports')
+      // generated_reports table not in schema yet
+      const { data: report, error: reportError } = await (supabase as any).from('generated_reports')
         .insert({
           template_id: params.templateId,
           title: templateData.name,
@@ -222,9 +219,8 @@ export class ReportService {
   private static async generateFinancialData(startDate: string, endDate: string): Promise<ReportData> {
     const supabase = await createServerComponentClient();
 
-    // @ts-expect-error - financial_transactions table not in schema yet
-    const { data: transactions } = await (supabase as any)
-      .from('financial_transactions')
+    // financial_transactions table not in schema yet
+    const { data: transactions } = await (supabase as any).from('financial_transactions')
       .select('*')
       .gte('created_at', startDate)
       .lte('created_at', endDate)
@@ -312,9 +308,8 @@ export class ReportService {
   static async exportReport(reportId: string, format: ExportFormat) {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - generated_reports table not in schema yet
-      const { data: report, error } = await (supabase as any)
-        .from('generated_reports')
+      // generated_reports table not in schema yet
+      const { data: report, error } = await (supabase as any).from('generated_reports')
         .select('*')
         .eq('id', reportId)
         .single();
@@ -343,9 +338,8 @@ export class ReportService {
   }) {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - generated_reports table not in schema yet
-      let query = (supabase as any)
-        .from('generated_reports')
+      // generated_reports table not in schema yet
+      let query = (supabase as any).from('generated_reports')
         .select('*')
         .order('generated_at', { ascending: false });
 
@@ -551,9 +545,8 @@ export class ReportService {
         .gte('start_time', params.startDate)
         .lte('start_time', params.endDate);
 
-      // @ts-expect-error - financial_transactions table not in schema yet
-      const { data: transactions } = await (supabase as any)
-        .from('financial_transactions')
+      // financial_transactions table not in schema yet
+      const { data: transactions } = await (supabase as any).from('financial_transactions')
         .select('*')
         .gte('created_at', params.startDate)
         .lte('created_at', params.endDate)
@@ -712,9 +705,8 @@ export class ReportService {
       // Criar agendamento (em produção, integraria com sistema de cron jobs)
       const scheduleId = `schedule_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
-      // @ts-expect-error - report_schedules table not in schema yet
-      const { data, error } = await (supabase as any)
-        .from('report_schedules')
+      // report_schedules table not in schema yet
+      const { data, error } = await (supabase as any).from('report_schedules')
         .insert({
           id: scheduleId,
           template_id: params.templateId,

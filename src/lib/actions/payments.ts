@@ -23,12 +23,12 @@ export async function createPayment(data: {
   const { data: created, error } = await (supabase as SupabaseClient<Database>)
     .from('financial_transactions')
     .insert({
-      patient_id: data.patient_id || null,
+      patient_id: data.patient_id ?? null,
       amount: data.amount,
       type: data.type,
       category: data.category,
       payment_method: data.payment_method,
-      description: data.description,
+      description: data.description ?? null,
       due_date: data.due_date,
       status: data.status,
       created_at: new Date().toISOString(),

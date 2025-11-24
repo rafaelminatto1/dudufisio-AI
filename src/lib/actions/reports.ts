@@ -38,7 +38,7 @@ export async function getExecutiveKPIs() {
     .eq('status', 'completed')
     .gte('created_at', thirtyDaysAgo.toISOString());
 
-  const monthlyRevenue = (recentPayments || []).reduce((sum: number, p: Database['public']['Tables']['financial_transactions']['Row']) => sum + (p.amount || 0), 0);
+  const monthlyRevenue = (recentPayments || []).reduce((sum: number, p: { amount: number }) => sum + (p.amount || 0), 0);
 
   // Taxa de no-show
   const noShowCount = recentAppointments?.filter((a: Database['public']['Tables']['appointments']['Row']) => a.status === 'no_show').length || 0;
@@ -51,13 +51,13 @@ export async function getExecutiveKPIs() {
     .not('score', 'is', null)
     .gte('created_at', thirtyDaysAgo.toISOString());
 
-  const npsScores = (npsSurveys || []).map((s: Database['public']['Tables']['nps_surveys']['Row']) => s.score || 0);
+  const npsScores = (npsSurveys || []).map((s: { score: number | null }) => s.score || 0);
   const nps = npsScores.length > 0
     ? Math.round(npsScores.reduce((a: number, b: number) => a + b, 0) / npsScores.length)
     : 0;
 
   // Tratamentos ativos
-  const { count: activeTreatments } = await (supabase as SupabaseClient<Database>)
+  const { count: activeTreatments } = await (supabase as any)
     .from('treatments')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'ativo');

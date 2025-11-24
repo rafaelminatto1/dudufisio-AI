@@ -64,6 +64,7 @@ export async function saveSessionEvolution(
       .from('session_evolutions')
       .update({
         ...data,
+        conducts: data.conducts as any,
         updated_at: new Date().toISOString(),
       })
       .eq('id', sessionId)
@@ -81,6 +82,7 @@ export async function saveSessionEvolution(
       .from('session_evolutions')
       .insert({
         ...data,
+        conducts: data.conducts as any,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })

@@ -52,7 +52,7 @@ export class EMRIntegrationService {
   static async getExternalSystems() {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - external_systems table not in schema yet
+      // external_systems table not in schema yet
       const { data, error } = await (supabase as any).from('external_systems').select('*').eq('is_active', true).order('system_name', { ascending: true });
 
       if (error) throw error;
@@ -69,7 +69,7 @@ export class EMRIntegrationService {
   static async addExternalSystem(system: Partial<ExternalSystem>) {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - external_systems table not in schema yet
+      // external_systems table not in schema yet
       const { data, error } = await (supabase as any).from('external_systems').insert(system).select().single();
 
       if (error) throw error;
@@ -86,7 +86,7 @@ export class EMRIntegrationService {
   static async getImportHistory(limit: number = 50) {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - data_imports table not in schema yet
+      // data_imports table not in schema yet
       const { data, error } = await (supabase as any).from('data_imports').select('*').order('import_date', { ascending: false }).limit(limit);
 
       if (error) throw error;
@@ -109,7 +109,7 @@ export class EMRIntegrationService {
       const startTime = Date.now();
 
       // Buscar configuração do sistema
-      // @ts-expect-error - external_systems table not in schema yet
+      // external_systems table not in schema yet
       const { data: system, error: systemError } = await (supabase as any).from('external_systems').select('*').eq('id', systemId).single();
 
       if (systemError || !system) {
@@ -130,7 +130,7 @@ export class EMRIntegrationService {
         imported_by: 'system',
       };
 
-      // @ts-expect-error - data_imports table not in schema yet
+      // data_imports table not in schema yet
       const { data: createdImport, error: importError } = await (supabase as any).from('data_imports').insert(importRecord).select().single();
 
       if (importError) throw importError;
@@ -152,9 +152,8 @@ export class EMRIntegrationService {
 
       // Atualizar registro de importação
       const duration = (Date.now() - startTime) / 1000;
-      // @ts-expect-error - data_imports table not in schema yet
-      const { data: updatedImport, error: updateError } = await (supabase as any)
-        .from('data_imports')
+      // data_imports table not in schema yet
+      const { data: updatedImport, error: updateError } = await (supabase as any).from('data_imports')
         .update({
           records_total: result.total,
           records_imported: result.imported,
@@ -171,7 +170,7 @@ export class EMRIntegrationService {
       if (updateError) throw updateError;
 
       // Atualizar última sincronização do sistema
-      // @ts-expect-error - external_systems table not in schema yet
+      // external_systems table not in schema yet
       await (supabase as any).from('external_systems').update({ last_sync_at: new Date().toISOString() }).eq('id', systemId);
 
       return { data: updatedImport, error: null };
@@ -268,6 +267,7 @@ export class EMRIntegrationService {
         break;
       default:
         // Armazenar em tabela genérica de dados externos
+        // external_data table not in schema yet
         await (supabase as any).from('external_data').insert({
           resource_type: resourceType,
           data: data.data,
@@ -281,7 +281,7 @@ export class EMRIntegrationService {
   static async syncWithExternalSystem(systemId: string) {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - external_systems table not in schema yet
+      // external_systems table not in schema yet
       const { data: system } = await (supabase as any).from('external_systems').select('*').eq('id', systemId).single();
 
       if (!system) {
