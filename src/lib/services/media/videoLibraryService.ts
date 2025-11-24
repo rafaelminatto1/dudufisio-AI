@@ -35,8 +35,8 @@ export class VideoLibraryService {
   static async getVideos(filters?: VideoLibraryFilters) {
     try {
       const supabase = await createServerComponentClient();
-      let query = (supabase as any)
-        .from('video_library')
+      // video_library table not in schema yet
+      let query = (supabase as any).from('video_library')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -71,8 +71,8 @@ export class VideoLibraryService {
   static async getVideoById(id: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await (supabase as any)
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data, error } = await (supabase as any).from('video_library')
         .select('*')
         .eq('id', id)
         .single();
@@ -83,8 +83,8 @@ export class VideoLibraryService {
       if (data) {
         const currentViews = (data as Record<string, unknown>).views;
         const views = typeof currentViews === 'number' ? currentViews : 0;
-        await (supabase as any)
-          .from('video_library')
+        // video_library table not in schema yet
+        await (supabase as any).from('video_library')
           .update({ views: views + 1 })
           .eq('id', id);
       }
@@ -102,6 +102,7 @@ export class VideoLibraryService {
   static async createVideo(video: Omit<VideoLibraryItem, 'id' | 'created_at' | 'updated_at'>) {
     try {
       const supabase = await createServerComponentClient();
+      // video_library table not in schema yet
       const { data, error } = await (supabase as any).from('video_library').insert({
         name: video.name,
         description: video.description,
@@ -130,8 +131,8 @@ export class VideoLibraryService {
   static async updateVideo(id: string, updates: Partial<VideoLibraryItem>) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await (supabase as any)
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data, error } = await (supabase as any).from('video_library')
         .update(updates)
         .eq('id', id)
         .select()
@@ -151,6 +152,7 @@ export class VideoLibraryService {
   static async deleteVideo(id: string) {
     try {
       const supabase = await createServerComponentClient();
+      // video_library table not in schema yet
       const { error } = await (supabase as any).from('video_library').delete().eq('id', id);
 
       if (error) throw error;
@@ -167,8 +169,8 @@ export class VideoLibraryService {
   static async linkVideoToExercises(videoId: string, exerciseIds: string[]) {
     try {
       const supabase = await createServerComponentClient();
-      const { data: video } = await (supabase as any)
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data: video } = await (supabase as any).from('video_library')
         .select('linked_exercises')
         .eq('id', videoId)
         .single();
@@ -180,8 +182,8 @@ export class VideoLibraryService {
       const currentLinks = ((video as Record<string, unknown>).linked_exercises as string[]) || [];
       const newLinks = Array.from(new Set([...currentLinks, ...exerciseIds]));
 
-      const { data, error } = await (supabase as any)
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data, error } = await (supabase as any).from('video_library')
         .update({ linked_exercises: newLinks })
         .eq('id', videoId)
         .select()
@@ -201,8 +203,8 @@ export class VideoLibraryService {
   static async getPopularVideos(limit: number = 10) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await (supabase as any)
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data, error } = await (supabase as any).from('video_library')
         .select('*')
         .order('views', { ascending: false })
         .limit(limit);
