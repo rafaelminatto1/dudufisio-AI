@@ -1,5 +1,6 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
+import { unstable_cacheTag as cacheTag, unstable_noStore as noStore } from 'next/cache';
 
 type SessionEvolution = Database['public']['Tables']['session_evolutions']['Row'];
 type SessionEvolutionInsert = Database['public']['Tables']['session_evolutions']['Insert'];
@@ -22,6 +23,10 @@ export class SessionEvolutionService {
   }
 
   static async getEvolutionsByTreatment(treatmentId: string) {
+    // 'use cache' // TODO: Habilitar quando Next.js suportar;
+    cacheTag('evolutions');
+    cacheTag(`evolutions:treatment:${treatmentId}`);
+
     try {
       const supabase = await createServerComponentClient();
       const { data, error } = await supabase

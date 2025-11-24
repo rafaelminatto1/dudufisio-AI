@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useOptimistic, useTransition } from 'react';
 import { Calendar, CalendarDays, List, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Card } from '~/components/ui/card';
@@ -19,13 +19,44 @@ interface AgendaCalendarProps {
   therapists: any[];
 }
 
+type OptimisticAction =
+  | { type: 'create'; appointment: any }
+  | { type: 'update'; appointment: any }
+  | { type: 'delete'; id: string }
+  | { type: 'move'; id: string; startTime: string; endTime: string };
+
 export function AgendaCalendar({ initialAppointments, patients, therapists }: AgendaCalendarProps) {
   const [view, setView] = useState<ViewType>('weekly');
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [appointments, setAppointments] = useState(initialAppointments);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
   const [conflictWarning, setConflictWarning] = useState<any>(null);
+  const [isPending, startTransition] = useTransition();
+
+  // React 19 useOptimistic - Atualização instantânea de UI
+  const [optimisticAppointments, updateOptimisticAppointments] = useOptimistic(
+    initialAppointments,
+    (state: any[], action: OptimisticAction) => {
+      switch (action.type) {
+        case 'create':
+          return [...state, action.appointment];
+        case 'update':
+          return state.map((apt) =>
+            apt.id === action.appointment.id ? action.appointment : apt
+          );
+        case 'delete':
+          return state.filter((apt) => apt.id !== action.id);
+        case 'move':
+          return state.map((apt) =>
+            apt.id === action.id
+              ? { ...apt, start_time: action.startTime, end_time: action.endTime }
+              : apt
+          );
+        default:
+          return state;
+      }
+    }
+  );
 
   const handleCreateAppointment = () => {
     setSelectedAppointment(null);
@@ -38,78 +69,133 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
   };
 
   const handleSaveAppointment = async (formData: FormData) => {
-    const { createAppointment, updateAppointment } = await import('../actions');
-    
-    let result;
-    if (selectedAppointment) {
-      result = await updateAppointment(selectedAppointment.id, formData);
-    } else {
-      result = await createAppointment(formData);
-    }
+    // Criar objeto temporário para atualização otimista
+    const tempAppointment = {
+      id: selectedAppointment?.id || `temp-${Date.now()}`,
+      patient_id: formData.get('patient_id') as string,
+      therapist_id: formData.get('therapist_id') as string,
+      start_time: formData.get('start_time') as string,
+      end_time: formData.get('end_time') as string,
+      status: formData.get('status') as string || 'scheduled',
+      notes: formData.get('notes') as string,
+    };
 
-    if (!result.success) {
-      if (result.conflicts) {
-        setConflictWarning(result.conflicts);
-        return;
+    // 1. Atualização otimista - UI atualiza IMEDIATAMENTE
+    startTransition(() => {
+      if (selectedAppointment) {
+        updateOptimisticAppointments({
+          type: 'update',
+          appointment: tempAppointment,
+        });
+      } else {
+        updateOptimisticAppointments({
+          type: 'create',
+          appointment: tempAppointment,
+        });
       }
-      alert(result.error || 'Erro ao salvar agendamento');
-      return;
-    }
+    });
 
+    // 2. Fechar modal imediatamente (melhor UX)
     setIsFormOpen(false);
     setSelectedAppointment(null);
-    window.location.reload(); // TODO: Usar router.refresh() quando disponível
+
+    // 3. Atualização real no servidor
+    try {
+      const { createAppointment, updateAppointment } = await import('../actions');
+
+      let result;
+      if (selectedAppointment) {
+        result = await updateAppointment(selectedAppointment.id, formData);
+      } else {
+        result = await createAppointment(formData);
+      }
+
+      if (!result.success) {
+        // React reverte automaticamente a mudança otimista
+        if (result.conflicts) {
+          setConflictWarning(result.conflicts);
+        } else {
+          alert(result.error || 'Erro ao salvar agendamento');
+        }
+        return;
+      }
+
+      // Sucesso! A mudança otimista permanece
+    } catch (error) {
+      // React reverte automaticamente em caso de erro
+      console.error('Erro ao salvar agendamento:', error);
+      alert('Erro ao salvar agendamento');
+    }
   };
 
   const handleDeleteAppointment = async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir este agendamento?')) return;
 
-    const { deleteAppointment } = await import('../actions');
-    const result = await deleteAppointment(id);
+    // 1. Atualização otimista - Remove da UI IMEDIATAMENTE
+    startTransition(() => {
+      updateOptimisticAppointments({ type: 'delete', id });
+    });
 
-    if (!result.success) {
-      alert(result.error || 'Erro ao excluir agendamento');
-      return;
+    // 2. Deleção real no servidor
+    try {
+      const { deleteAppointment } = await import('../actions');
+      const result = await deleteAppointment(id);
+
+      if (!result.success) {
+        // React reverte automaticamente
+        alert(result.error || 'Erro ao excluir agendamento');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir:', error);
+      alert('Erro ao excluir agendamento');
     }
-
-    setAppointments(appointments.filter((a) => a.id !== id));
   };
 
   const handleAppointmentMove = async (appointmentId: string, newDate: Date, newTime: string) => {
-    const appointment = appointments.find((a) => a.id === appointmentId);
+    const appointment = optimisticAppointments.find((a) => a.id === appointmentId);
     if (!appointment) return;
 
     const [hour, minute] = newTime.split(':').map(Number);
     const endTime = new Date(newDate);
     endTime.setHours(hour + 1, minute, 0, 0);
 
-    const formData = new FormData();
-    formData.append('patient_id', appointment.patient_id);
-    formData.append('therapist_id', appointment.therapist_id);
-    formData.append('start_time', newDate.toISOString());
-    formData.append('end_time', endTime.toISOString());
-    formData.append('status', appointment.status);
+    const startTimeISO = newDate.toISOString();
+    const endTimeISO = endTime.toISOString();
 
-    const { updateAppointment } = await import('../actions');
-    const result = await updateAppointment(appointmentId, formData);
+    // 1. Atualização otimista - Move IMEDIATAMENTE
+    startTransition(() => {
+      updateOptimisticAppointments({
+        type: 'move',
+        id: appointmentId,
+        startTime: startTimeISO,
+        endTime: endTimeISO,
+      });
+    });
 
-    if (!result.success) {
-      if (result.conflicts) {
-        setConflictWarning(result.conflicts);
-      } else {
-        alert(result.error || 'Erro ao mover agendamento');
+    // 2. Atualização real no servidor
+    try {
+      const formData = new FormData();
+      formData.append('patient_id', appointment.patient_id);
+      formData.append('therapist_id', appointment.therapist_id);
+      formData.append('start_time', startTimeISO);
+      formData.append('end_time', endTimeISO);
+      formData.append('status', appointment.status);
+
+      const { updateAppointment } = await import('../actions');
+      const result = await updateAppointment(appointmentId, formData);
+
+      if (!result.success) {
+        // React reverte automaticamente
+        if (result.conflicts) {
+          setConflictWarning(result.conflicts);
+        } else {
+          alert(result.error || 'Erro ao mover agendamento');
+        }
       }
-      return;
+    } catch (error) {
+      console.error('Erro ao mover:', error);
+      alert('Erro ao mover agendamento');
     }
-
-    // Atualizar lista local
-    setAppointments(
-      appointments.map((a) =>
-        a.id === appointmentId
-          ? { ...a, start_time: newDate.toISOString(), end_time: endTime.toISOString() }
-          : a
-      )
-    );
   };
 
   const renderView = () => {
@@ -118,7 +204,7 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
         return (
           <DailyView
             date={currentDate}
-            appointments={appointments}
+            appointments={optimisticAppointments}
             onAppointmentClick={handleEditAppointment}
             onSlotClick={handleCreateAppointment}
           />
@@ -127,7 +213,7 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
         return (
           <WeeklyView
             startDate={currentDate}
-            appointments={appointments}
+            appointments={optimisticAppointments}
             onAppointmentClick={handleEditAppointment}
             onSlotClick={handleCreateAppointment}
             onAppointmentMove={handleAppointmentMove}
@@ -137,7 +223,7 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
         return (
           <MonthlyView
             month={currentDate}
-            appointments={appointments}
+            appointments={optimisticAppointments}
             onAppointmentClick={handleEditAppointment}
             onDateClick={(date) => {
               setCurrentDate(date);
@@ -148,7 +234,7 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
       case 'list':
         return (
           <ListView
-            appointments={appointments}
+            appointments={optimisticAppointments}
             onAppointmentClick={handleEditAppointment}
             onDelete={handleDeleteAppointment}
           />
@@ -158,7 +244,7 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
 
   return (
     <>
-      <Card className="h-full">
+      <Card className={`h-full ${isPending ? 'opacity-70' : 'opacity-100'} transition-opacity`}>
         <div className="border-b p-4">
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
@@ -166,6 +252,7 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
                 variant={view === 'daily' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setView('daily')}
+                disabled={isPending}
               >
                 <Calendar className="mr-2 h-4 w-4" />
                 Diária
@@ -174,6 +261,7 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
                 variant={view === 'weekly' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setView('weekly')}
+                disabled={isPending}
               >
                 <CalendarDays className="mr-2 h-4 w-4" />
                 Semanal
@@ -182,6 +270,7 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
                 variant={view === 'monthly' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setView('monthly')}
+                disabled={isPending}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 Mensal
@@ -190,12 +279,15 @@ export function AgendaCalendar({ initialAppointments, patients, therapists }: Ag
                 variant={view === 'list' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setView('list')}
+                disabled={isPending}
               >
                 <List className="mr-2 h-4 w-4" />
                 Lista
               </Button>
             </div>
-            <Button onClick={handleCreateAppointment}>Novo Agendamento</Button>
+            <Button onClick={handleCreateAppointment} disabled={isPending}>
+              {isPending ? 'Salvando...' : 'Novo Agendamento'}
+            </Button>
           </div>
         </div>
         <div className="h-[calc(100vh-300px)] overflow-auto">{renderView()}</div>

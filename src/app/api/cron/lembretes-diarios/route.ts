@@ -1,69 +1,55 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { processDailyReminders } from '~/lib/utils/reminders';
+import { NextResponse } from 'next/server';
+import { AppointmentNotificationService } from '~/lib/services/communications/appointmentNotificationService';
 
 /**
- * Cron Job: Lembretes Diários
- * 
- * Executa: Segunda a Sexta às 9h (horário de Brasília)
- * Schedule: "0 9 * * 1-5" (vercel.json)
- * 
- * Funcionalidade:
- * - Envia lembretes de consultas para pacientes
- * - Processa notificações agendadas
- * - Atualiza status de lembretes enviados
+ * Cron job para enviar lembretes diários
+ * Executar via Vercel Cron ou similar
  */
-export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+export async function GET(request: Request) {
+  // Verifica se é uma requisição autorizada (ex: header secreto)
+  const authHeader = request.headers.get('authorization');
+  const cronSecret = process.env.CRON_SECRET;
+  const testMode = process.env.TEST_MODE === 'true' || process.env.NODE_ENV === 'development';
 
-export async function GET(request: NextRequest) {
-  try {
-    // Verificar autenticação do cron job
-    const authHeader = request.headers.get('authorization');
-    const cronSecret = process.env.CRON_SECRET;
-
+  // Em modo de teste/desenvolvimento, não requer CRON_SECRET
+  if (!testMode) {
     if (!cronSecret) {
-      console.error('[CronLembretes] CRON_SECRET não configurado');
-      return NextResponse.json(
-        { error: 'Cron secret not configured' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Cron secret not configured' }, { status: 500 });
     }
 
     if (authHeader !== `Bearer ${cronSecret}`) {
-      console.error('[CronLembretes] Autenticação falhou');
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+  } else {
+    console.log('[CronReminders] Executando em modo de teste/desenvolvimento');
+  }
 
-    const result = await processDailyReminders();
+  try {
+    const notificationService = new AppointmentNotificationService();
 
-    if (!result.success) {
-      return NextResponse.json(
-        { success: false, error: result.error, timestamp: result.timestamp },
-        { status: 500 }
-      );
-    }
+    // Envia lembretes 24h antes
+    const remindersResult = await notificationService.sendReminders24hBefore();
+
+    // Envia mensagens de aniversário
+    const birthdaysResult = await notificationService.sendBirthdayMessages();
 
     return NextResponse.json({
       success: true,
-      processed: result.processed,
-      sent: result.sent,
-      failed: result.failed,
-      errors: result.errors,
-      timestamp: result.timestamp
+      test_mode: testMode,
+      reminders: {
+        sent: remindersResult.sent,
+        error: remindersResult.error,
+      },
+      birthdays: {
+        sent: birthdaysResult.sent,
+        error: birthdaysResult.error,
+      },
     });
   } catch (error) {
-    console.error('[CronLembretes] Erro fatal:', error);
+    console.error('Erro no cron job:', error);
     return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
-      },
+      { error: 'Erro ao processar notificações' },
       { status: 500 }
     );
   }
 }
-

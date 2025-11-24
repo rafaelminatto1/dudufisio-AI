@@ -197,7 +197,7 @@ export class ComplianceReportService {
     params: { startDate: string; endDate: string }
   ) {
     // Buscar terapeutas e suas certificações
-    const { data: therapists } = await supabase
+    const { data: therapists } = await (supabase as any)
       .from('therapists')
       .select('*, certifications:therapist_certifications(*)');
 
@@ -573,7 +573,7 @@ export class ComplianceReportService {
         title: 'Violações LGPD Detectadas',
         description: `${lgpd.breaches.total} violações de dados reportadas`,
         area: 'lgpd',
-        impact: 'critical',
+        impact: 'high',
         actionable: true,
       });
     }

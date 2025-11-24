@@ -3,12 +3,13 @@ import { createServerComponentClient } from '~/lib/supabase/server';
 export type PointsType = 'sessao' | 'meta' | 'exercicio' | 'feedback' | 'sem_faltas' | 'bonus';
 
 export class XPService {
-  private static readonly POINTS_CONFIG = {
+  private static readonly POINTS_CONFIG: Record<PointsType, number> = {
     sessao: 10,
     meta: 50,
     exercicio: 5,
     feedback: 5,
     sem_faltas: 100,
+    bonus: 0, // Added to match PointsType
   };
 
   static async awardPoints(params: {
@@ -21,7 +22,7 @@ export class XPService {
       const supabase = await createServerComponentClient();
       const pointsEarned = params.points || this.POINTS_CONFIG[params.pointsType] || 0;
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('gamification_points')
         .insert({
           patient_id: params.patientId,
@@ -42,9 +43,11 @@ export class XPService {
         .single();
 
       if (patient) {
-        await supabase
+        const patientData = patient as any;
+        const currentXP = typeof patientData.xp_points === 'number' ? patientData.xp_points : 0;
+        await (supabase as any)
           .from('patients')
-          .update({ xp_points: patient.xp_points + pointsEarned })
+          .update({ xp_points: currentXP + pointsEarned })
           .eq('id', params.patientId);
       }
 
@@ -65,10 +68,12 @@ export class XPService {
         .single();
 
       if (error) throw error;
+
+      const patientData = patient as any;
       return {
         data: {
-          currentXP: patient?.xp_points || 0,
-          currentLevel: patient?.level || 1,
+          currentXP: typeof patientData.xp_points === 'number' ? patientData.xp_points : 0,
+          currentLevel: typeof patientData.level === 'number' ? patientData.level : 1,
         },
         error: null,
       };

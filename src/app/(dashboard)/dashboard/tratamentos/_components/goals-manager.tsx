@@ -15,7 +15,6 @@ export function GoalsManager({ patientId }: GoalsManagerProps) {
   useEffect(() => {
     if (patientId) {
       // TODO: Fetch goals from API
-      setGoals([]);
     }
   }, [patientId]);
 

@@ -1,9 +1,17 @@
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { TreatmentsLayout } from './_components/treatments-layout';
-import { Loading } from '~/components/ui/loading';
+import { TreatmentsSkeleton } from '~/components/skeletons';
+import { generateDashboardMetadata } from '~/lib/metadata';
 
-async function getTreatmentsData() {
+export const metadata: Metadata = generateDashboardMetadata(
+  'tratamentos',
+  'Gerencie tratamentos, evoluções SOAP, prescrições de exercícios e acompanhamento dos pacientes'
+);
+
+// Componente assíncrono separado (Next.js 16 Streaming SSR)
+async function TreatmentsLayoutAsync() {
   const supabase = await createServerComponentClient();
 
   const { data: treatments } = await supabase
@@ -12,16 +20,13 @@ async function getTreatmentsData() {
     .order('created_at', { ascending: false })
     .limit(10);
 
-  return {
-    treatments: treatments || [],
-  };
+  return <TreatmentsLayout initialTreatments={treatments || []} />;
 }
 
-export default async function TratamentosPage() {
-  const { treatments } = await getTreatmentsData();
-
+export default function TratamentosPage() {
   return (
     <div className="flex h-full flex-col">
+      {/* Header - Renderiza imediatamente */}
       <div className="border-b bg-background p-4">
         <div>
           <h1 className="text-2xl font-bold">Tratamentos</h1>
@@ -29,9 +34,10 @@ export default async function TratamentosPage() {
         </div>
       </div>
 
+      {/* Content - Streaming SSR com skeleton específico */}
       <div className="flex-1 overflow-auto p-4">
-        <Suspense fallback={<Loading />}>
-          <TreatmentsLayout initialTreatments={treatments} />
+        <Suspense fallback={<TreatmentsSkeleton />}>
+          <TreatmentsLayoutAsync />
         </Suspense>
       </div>
     </div>

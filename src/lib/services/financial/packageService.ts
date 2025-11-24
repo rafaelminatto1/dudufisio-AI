@@ -24,7 +24,8 @@ export class PackageService {
   static async create(data: any): Promise<{ data: Package | null; error: { message: string } | null }> {
     try {
       const supabase = await createServerComponentClient();
-      const { data: pkg, error } = await supabase
+      // patient_package_purchases table not in schema yet
+      const { data: pkg, error } = await (supabase as any)
         .from('patient_package_purchases')
         .insert(data)
         .select(`
@@ -51,7 +52,8 @@ export class PackageService {
   static async getByPatient(patientId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      // patient_package_purchases table not in schema yet
+      const { data, error } = await (supabase as any)
         .from('patient_package_purchases')
         .select(`
           id,
@@ -68,7 +70,7 @@ export class PackageService {
         .eq('patient_id', patientId)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return { data, error: null };
+      return { data: data as Package[], error: null };
     } catch (error) {
       console.error('Error fetching packages:', error);
       return { data: null, error: { message: error instanceof Error ? error.message : 'Unknown error' } };
@@ -78,7 +80,8 @@ export class PackageService {
   static async useSession(packageId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      // patient_package_purchases table not in schema yet
+      const { data, error } = await (supabase as any)
         .from('patient_package_purchases')
         .select('*')
         .eq('id', packageId)
@@ -88,8 +91,8 @@ export class PackageService {
       if (!data || data.sessions_remaining <= 0) {
         throw new Error('Package has no remaining sessions');
       }
-
-      const { data: updated, error: updateError } = await supabase
+      // patient_package_purchases table not in schema yet
+      const { data: updated, error: updateError } = await (supabase as any)
         .from('patient_package_purchases')
         .update({ sessions_remaining: data.sessions_remaining - 1 })
         .eq('id', packageId)

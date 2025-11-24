@@ -1,0 +1,31 @@
+
+> fisioflow-next@1.0.0 build
+> next build
+
+   Ôû▓ Next.js 16.0.3 (Turbopack)
+   - Environments: .env.local, .env
+   - Experiments (use with caution):
+     ┬À optimizePackageImports
+     ┬À serverActions
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully in 13.0s
+   Running TypeScript ...
+Failed to compile.
+
+./src/components/features/patients/BodyPainMap.tsx:190:34
+Type error: This comparison appears to be unintentional because the types '"left" | "right" | "center" | undefined' and '"back"' have no overlap.
+
+  188 |                 {/* Pontos de dor */}
+  189 |                 {points
+> 190 |                   .filter((p) => p.side !== 'back')
+      |                                  ^
+  191 |                   .map((point) => (
+  192 |                     <g key={point.id}>
+  193 |                       <circle
+Next.js build worker exited with code: 1 and signal: null
+npm notice
+npm notice New patch version of npm available! 11.6.2 -> 11.6.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.3
+npm notice To update run: npm install -g npm@11.6.3
+npm notice

@@ -26,6 +26,7 @@ import { createCheckout } from '~/lib/actions/stripe';
 import { createTransaction } from '~/lib/actions/financial';
 
 interface AddTransactionModalProps {
+  onSave?: (formData: FormData) => Promise<void>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   patientId?: string;

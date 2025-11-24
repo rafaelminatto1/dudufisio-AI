@@ -133,7 +133,7 @@ export class SystemHealthService {
    * Verifica saúde do serviço de autenticação
    */
   static async checkAuth(): Promise<HealthCheck> {
-    const startTime = performance.now();
+    const startTime = getPerformanceNow();
     try {
       const supabase = await createServerComponentClient();
       
@@ -178,7 +178,7 @@ export class SystemHealthService {
    * Verifica saúde do Supabase Storage
    */
   static async checkStorage(): Promise<HealthCheck> {
-    const startTime = performance.now();
+    const startTime = getPerformanceNow();
     try {
       const supabase = await createServerComponentClient();
       
@@ -244,7 +244,7 @@ export class SystemHealthService {
    * Verifica saúde do Twilio
    */
   private static async checkTwilio(): Promise<HealthCheck> {
-    const startTime = performance.now();
+    const startTime = getPerformanceNow();
     try {
       // Verificação básica - em produção, fazer request real à API
       const latency = Math.round(getPerformanceNow() - startTime);
@@ -274,7 +274,7 @@ export class SystemHealthService {
    * Verifica saúde do Resend
    */
   private static async checkResend(): Promise<HealthCheck> {
-    const startTime = performance.now();
+    const startTime = getPerformanceNow();
     try {
       // Verificação básica - em produção, fazer request real à API
       const latency = Math.round(getPerformanceNow() - startTime);

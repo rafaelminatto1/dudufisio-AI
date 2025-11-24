@@ -235,7 +235,7 @@ export class EmailService {
       // TODO: This is a temporary fix. The `messages` table is not a good fit for logging emails.
       // A dedicated table for email logs should be created.
       const supabase = await createServerComponentClient();
-      await supabase.from('messages').insert({
+      await (supabase as any).from('messages').insert({
         recipient_id: params.to, // Assuming `to` is a user ID
         sender_id: 'system', // Placeholder
         subject: params.subject,

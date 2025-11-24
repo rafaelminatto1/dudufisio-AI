@@ -1,18 +1,22 @@
 import type { Metadata } from 'next';
-// import { Inter } from 'next/font/google';
-import './globals.css';
-import { SupabaseProvider } from '~/components/providers/supabase-provider';
-import { ThemeProvider } from '~/components/theme-provider';
-import { Toaster } from 'sonner';
+import { Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import './globals.css';
+import { Toaster } from '~/components/ui/sonner';
+import { PerformanceProvider } from '~/components/providers/PerformanceProvider';
+import { AccessibilityProvider } from '~/components/providers/AccessibilityProvider';
+import { basePageMetadata } from '~/lib/metadata';
 
-// const inter = Inter({ subsets: ['latin'] });
+// Otimização de fontes com next/font/google
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+  preload: true,
+});
 
-export const metadata: Metadata = {
-  title: 'FisioFlow - Gestão para Clínicas de Fisioterapia',
-  description: 'Sistema completo de gestão para clínicas de fisioterapia',
-};
+export const metadata: Metadata = basePageMetadata;
 
 export default function RootLayout({
   children,
@@ -20,23 +24,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <body className="">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <SupabaseProvider>
+    <html lang="pt-BR" suppressHydrationWarning className={inter.variable}>
+      <body className={inter.className}>
+        <PerformanceProvider>
+          <AccessibilityProvider>
             {children}
             <Toaster />
-            <Analytics />
-            <SpeedInsights />
-          </SupabaseProvider>
-        </ThemeProvider>
+          </AccessibilityProvider>
+        </PerformanceProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
 }
-

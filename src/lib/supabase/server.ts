@@ -13,10 +13,9 @@ export async function createServerComponentClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          );
+        setAll() {
+          // Não podemos modificar cookies em Server Components
+          // Cookies só podem ser modificados em Server Actions ou Route Handlers
         },
       },
     }

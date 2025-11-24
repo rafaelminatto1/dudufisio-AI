@@ -1,13 +1,13 @@
 # FisioFlow Next.js
 
-Sistema de gestão completo para clínicas de fisioterapia, construído com Next.js 16, Supabase e shadcn/ui.
+Sistema de gestão completo para clínicas de fisioterapia, construído com Next.js 15, Supabase e shadcn/ui.
 
-> **📌 Migração Completa:** Este projeto foi migrado de React 18 + Vite para Next.js 16 em Novembro de 2025.  
+> **📌 Migração Completa:** Este projeto foi migrado de React 18 + Vite para Next.js 15 em Novembro de 2025.  
 > O código antigo está em `_OLD_PROJECT/` para referência.
 
 ## 🚀 Tecnologias
 
-- **Framework:** Next.js 16 (App Router)
+- **Framework:** Next.js 15.1.3 (App Router)
 - **React:** React 19
 - **Backend:** Supabase (PostgreSQL + Auth + Storage + Edge Functions)
 - **UI:** shadcn/ui + Tailwind CSS 3.4 + Radix UI

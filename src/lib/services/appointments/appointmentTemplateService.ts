@@ -1,7 +1,7 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
 import { Database } from '~/types/database.types';
 
-export type DocumentTemplate = Database['public']['Tables']['document_templates']['Row'];
+export type DocumentTemplate = any; // Database['public']['Tables']['document_templates']['Row'];
 
 /**
  * Service para gerenciar templates de documentos
@@ -14,8 +14,8 @@ export class AppointmentTemplateService {
   static async listTemplates(userId?: string) {
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase
-        .from('document_templates')
+      // document_templates table not in schema yet
+      let query = (supabase as any).from('document_templates')
         .select('*')
         .order('usage_count', { ascending: false });
 
@@ -38,8 +38,8 @@ export class AppointmentTemplateService {
   static async getTemplate(id: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('document_templates')
+      // document_templates table not in schema yet
+      const { data, error } = await (supabase as any).from('document_templates')
         .select('*')
         .eq('id', id)
         .single();
@@ -60,8 +60,8 @@ export class AppointmentTemplateService {
   ) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('document_templates')
+      // document_templates table not in schema yet
+      const { data, error } = await (supabase as any).from('document_templates')
         .insert({
           title: template.title,
           content: template.content,
@@ -91,8 +91,8 @@ export class AppointmentTemplateService {
   ) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('document_templates')
+      // document_templates table not in schema yet
+      const { data, error } = await (supabase as any).from('document_templates')
         .update({
           ...updates,
           updated_at: new Date().toISOString(),
@@ -115,8 +115,8 @@ export class AppointmentTemplateService {
   static async deleteTemplate(id: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { error } = await supabase
-        .from('document_templates')
+      // document_templates table not in schema yet
+      const { error } = await (supabase as any).from('document_templates')
         .delete()
         .eq('id', id);
 
@@ -140,16 +140,18 @@ export class AppointmentTemplateService {
 
       if (error) {
         // Se a função RPC não existir, fazer update manual
-        const { data: template } = await supabase
-          .from('document_templates')
+        // document_templates table not in schema yet
+        const { data: template } = await (supabase as any).from('document_templates')
           .select('usage_count')
           .eq('id', id)
           .single();
 
         if (template) {
-          await supabase
-            .from('document_templates')
-            .update({ usage_count: (template.usage_count || 0) + 1 })
+          const currentCount = (template as Record<string, unknown>).usage_count;
+          const usageCount = typeof currentCount === 'number' ? currentCount : 0;
+          // document_templates table not in schema yet
+          await (supabase as any).from('document_templates')
+            .update({ usage_count: usageCount + 1 })
             .eq('id', id);
         }
       }
@@ -167,8 +169,8 @@ export class AppointmentTemplateService {
   static async getMostUsed(limit: number = 5) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('document_templates')
+      // document_templates table not in schema yet
+      const { data, error } = await (supabase as any).from('document_templates')
         .select('*')
         .order('usage_count', { ascending: false })
         .limit(limit);
@@ -188,8 +190,8 @@ export class AppointmentTemplateService {
     try {
       const supabase = await createServerComponentClient();
       const lowerQuery = query.toLowerCase();
-      const { data, error } = await supabase
-        .from('document_templates')
+      // document_templates table not in schema yet
+      const { data, error } = await (supabase as any).from('document_templates')
         .select('*')
         .or(`title.ilike.%${lowerQuery}%,category.ilike.%${lowerQuery}%,content.ilike.%${lowerQuery}%`)
         .order('usage_count', { ascending: false });
@@ -208,8 +210,8 @@ export class AppointmentTemplateService {
   static async getDefaultTemplates() {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('document_templates')
+      // document_templates table not in schema yet
+      const { data, error } = await (supabase as any).from('document_templates')
         .select('*')
         .eq('is_public', true)
         .order('usage_count', { ascending: false });

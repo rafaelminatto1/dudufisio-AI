@@ -56,6 +56,8 @@ export class ClinicalReportService {
         throw new Error('Patient not found');
       }
 
+      const patientData = patient as Record<string, unknown>;
+
       // Buscar agendamentos no período
       const { data: appointments } = await supabase
         .from('appointments')
@@ -65,9 +67,10 @@ export class ClinicalReportService {
         .lte('start_time', params.endDate)
         .order('start_time', { ascending: true });
 
-      const totalSessions = appointments?.length || 0;
-      const completedSessions = (appointments || []).filter(a => a.status === 'concluido').length;
-      const missedSessions = (appointments || []).filter(a => a.status === 'falta').length;
+      const appointmentsArray = (appointments || []) as Array<Record<string, unknown>>;
+      const totalSessions = appointmentsArray.length;
+      const completedSessions = appointmentsArray.filter(a => a.status === 'concluido').length;
+      const missedSessions = appointmentsArray.filter(a => a.status === 'falta').length;
       const adherenceRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
 
       // Buscar notas SOAP para análise de evolução
@@ -79,19 +82,24 @@ export class ClinicalReportService {
         .lte('created_at', params.endDate)
         .order('created_at', { ascending: true });
 
+      const soapNotesArray = (soapNotes || []) as Array<Record<string, unknown>>;
+
       // Calcular evolução de dor (simplificado - precisa de dados reais)
-      const painEvolution = this.calculatePainEvolution(soapNotes || []);
+      const painEvolution = this.calculatePainEvolution(soapNotesArray);
 
       // Buscar metas do paciente
-      const { data: goals } = await supabase
+      // patient_goals table not in schema yet
+      const { data: goals } = await (supabase as any)
         .from('patient_goals')
         .select('*')
         .eq('patient_id', params.patientId)
         .order('target_date', { ascending: true });
 
+      const goalsArray = (goals || []) as Array<Record<string, unknown>>;
+
       const report: PatientEvolutionReport = {
         patientId: params.patientId,
-        patientName: patient.full_name,
+        patientName: typeof patientData.full_name === 'string' ? patientData.full_name : '',
         period: {
           start: params.startDate,
           end: params.endDate,
@@ -103,11 +111,11 @@ export class ClinicalReportService {
           adherenceRate: Math.round(adherenceRate),
         },
         painEvolution,
-        goals: (goals || []).map(g => ({
-          description: g.description || '',
-          targetDate: g.target_date || '',
-          status: g.status as any,
-          progress: g.progress || 0,
+        goals: goalsArray.map(g => ({
+          description: typeof g.description === 'string' ? g.description : '',
+          targetDate: typeof g.target_date === 'string' ? g.target_date : '',
+          status: (g.status as 'pending' | 'in_progress' | 'achieved' | 'missed') || 'pending',
+          progress: typeof g.progress === 'number' ? g.progress : 0,
         })),
         recommendations: this.generateRecommendations(adherenceRate, painEvolution),
       };
@@ -122,7 +130,7 @@ export class ClinicalReportService {
   /**
    * Calcula evolução de dor baseado em notas SOAP
    */
-  private static calculatePainEvolution(soapNotes: any[]) {
+  private static calculatePainEvolution(soapNotes: Array<Record<string, unknown>>) {
     if (soapNotes.length === 0) {
       return {
         initial: 0,
@@ -186,7 +194,8 @@ export class ClinicalReportService {
       const supabase = await createServerComponentClient();
 
       // Buscar tratamentos no período
-      let query = supabase
+      // treatments table not in schema yet
+      let query = (supabase as any)
         .from('treatments')
         .select('*, patient:patients(*)')
         .gte('created_at', params.startDate)
@@ -198,9 +207,10 @@ export class ClinicalReportService {
 
       const { data: treatments } = await query;
 
-      const totalPatients = treatments?.length || 0;
-      const activePatients = (treatments || []).filter(t => t.status === 'ativo').length;
-      const completedPatients = (treatments || []).filter(t => t.status === 'concluido').length;
+      const treatmentsArray = (treatments || []) as Array<Record<string, unknown>>;
+      const totalPatients = treatmentsArray.length;
+      const activePatients = treatmentsArray.filter(t => t.status === 'ativo').length;
+      const completedPatients = treatmentsArray.filter(t => t.status === 'concluido').length;
 
       // Calcular taxa de sucesso (simplificado)
       const successRate = totalPatients > 0 ? (completedPatients / totalPatients) * 100 : 0;

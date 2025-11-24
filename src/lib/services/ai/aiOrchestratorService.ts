@@ -1,4 +1,6 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 
 export type AIProvider = 'openai' | 'anthropic' | 'groq' | 'gemini';
 export type AIUseCase = 'soap_note' | 'exercise_suggestion' | 'treatment_plan' | 'patient_insight' | 'general';
@@ -9,7 +11,7 @@ export interface AIRequest {
   provider?: AIProvider;
   maxTokens?: number;
   temperature?: number;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 export interface AIResponse {
@@ -55,9 +57,13 @@ export class AIOrchestratorService {
       await this.logRequest(request, response);
 
       return { data: response, error: null };
-    } catch (error) {
-      console.error('Error generating AI response:', error);
-      return { data: null, error };
+    } catch (error: unknown) {
+      let errorMessage = 'Error generating AI response';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(errorMessage, error);
+      return { data: null, error: errorMessage };
     }
   }
 
@@ -121,11 +127,15 @@ export class AIOrchestratorService {
         tokensUsed: data.usage?.total_tokens,
         model: data.model,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let errorMessage = 'OpenAI API error';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       return {
         content: '',
         provider: 'openai',
-        error: error.message || 'OpenAI API error',
+        error: errorMessage,
       };
     }
   }
@@ -169,11 +179,15 @@ export class AIOrchestratorService {
         tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens,
         model: data.model,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let errorMessage = 'Anthropic API error';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       return {
         content: '',
         provider: 'anthropic',
-        error: error.message || 'Anthropic API error',
+        error: errorMessage,
       };
     }
   }
@@ -220,11 +234,15 @@ export class AIOrchestratorService {
         tokensUsed: data.usage?.total_tokens,
         model: data.model,
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let errorMessage = 'Groq API error';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       return {
         content: '',
         provider: 'groq',
-        error: error.message || 'Groq API error',
+        error: errorMessage,
       };
     }
   }
@@ -251,7 +269,9 @@ export class AIOrchestratorService {
               {
                 parts: [
                   {
-                    text: `${this.getSystemPrompt(request.useCase)}\n\n${request.prompt}`,
+                    text: `${this.getSystemPrompt(request.useCase)}
+
+${request.prompt}`,
                   },
                 ],
               },
@@ -268,11 +288,15 @@ export class AIOrchestratorService {
         provider: 'gemini',
         model: 'gemini-pro',
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      let errorMessage = 'Gemini API error';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       return {
         content: '',
         provider: 'gemini',
-        error: error.message || 'Gemini API error',
+        error: errorMessage,
       };
     }
   }
@@ -298,7 +322,7 @@ export class AIOrchestratorService {
   private static async logRequest(request: AIRequest, response: AIResponse) {
     try {
       const supabase = await createServerComponentClient();
-      await supabase.from('ai_requests').insert({
+      await (supabase as any).from('ai_requests').insert({
         prompt: request.prompt,
         use_case: request.useCase,
         provider: response.provider,
@@ -307,8 +331,12 @@ export class AIOrchestratorService {
         model: response.model,
         error: response.error,
       });
-    } catch (error) {
-      console.error('Error logging AI request:', error);
+    } catch (error: unknown) {
+      let errorMessage = 'Error logging AI request';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(errorMessage, error);
       // Não falhar se logging falhar
     }
   }
@@ -357,4 +385,3 @@ Forneça uma lista de exercícios com descrições, séries, repetições e prec
     });
   }
 }
-

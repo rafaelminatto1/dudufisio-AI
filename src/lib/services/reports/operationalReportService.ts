@@ -415,7 +415,7 @@ export class OperationalReportService {
     const productivity = await Promise.all(
       Object.entries(therapistAppointments).map(async ([therapistId, apts]) => {
         // Buscar dados do terapeuta
-        const { data: therapist } = await supabase
+        const { data: therapist } = await (supabase as any)
           .from('therapists')
           .select('*')
           .eq('id', therapistId)

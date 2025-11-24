@@ -1,4 +1,6 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '~/types/database.types';
 import { AIOrchestratorService } from './aiOrchestratorService';
 
 export interface Recommendation {
@@ -17,11 +19,16 @@ export interface RecommendationContext {
   patientId: string;
   diagnosis?: string;
   currentTreatment?: string;
-  sessionHistory?: any[];
+  sessionHistory?: Database['public']['Tables']['appointments']['Row'][];
   goals?: string[];
   painLevel?: number;
   functionalLevel?: number;
 }
+
+type RecommendationUpdate = {
+  status: 'applied';
+  applied_at: string; // ISO string
+};
 
 /**
  * Service para gerar recomendações usando IA
@@ -56,7 +63,8 @@ export class RecommendationService {
         .limit(10);
 
       // Buscar tratamentos ativos
-      const { data: treatments } = await supabase
+      // treatments table not in schema yet
+      const { data: treatments } = await (supabase as any)
         .from('treatments')
         .select('*')
         .eq('patient_id', context.patientId)
@@ -72,7 +80,20 @@ export class RecommendationService {
       });
 
       if (aiResponse.error || !aiResponse.data?.content) {
-        throw new Error(aiResponse.error || 'Failed to generate recommendations');
+        const error: any = aiResponse.error || aiResponse.data;
+        let errorMessage = 'Failed to generate recommendations';
+        if (aiResponse.error) {
+          errorMessage = typeof error === 'string'
+            ? error
+            : error instanceof Error
+            ? error.message
+            : String(error);
+        } else if (error?.error) {
+          errorMessage = typeof error.error === 'string'
+            ? error.error
+            : String(error.error);
+        }
+        throw new Error(errorMessage);
       }
 
       // Parsear recomendações da resposta da IA
@@ -82,9 +103,13 @@ export class RecommendationService {
       await this.saveRecommendations(context.patientId, recommendations);
 
       return { data: recommendations, error: null };
-    } catch (error) {
-      console.error('Error generating recommendations:', error);
-      return { data: null, error };
+    } catch (error: unknown) {
+      let errorMessage = 'Error generating recommendations';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(errorMessage, error);
+      return { data: null, error: errorMessage };
     }
   }
 
@@ -92,8 +117,8 @@ export class RecommendationService {
    * Constrói contexto para IA
    */
   private static buildAIContext(
-    patient: any,
-    sessions: any[],
+    patient: Database['public']['Tables']['patients']['Row'],
+    sessions: Database['public']['Tables']['appointments']['Row'][],
     treatments: any[],
     context: RecommendationContext
   ): string {
@@ -199,10 +224,14 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
         priority: rec.priority,
         data: rec.data,
       }));
-
-      await supabase.from('ai_recommendations').insert(recommendationsToInsert);
-    } catch (error) {
-      console.error('Error saving recommendations:', error);
+      // ai_recommendations table not in schema yet
+      await (supabase as any).from('ai_recommendations').insert(recommendationsToInsert);
+    } catch (error: unknown) {
+      let errorMessage = 'Error saving recommendations';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(errorMessage, error);
       // Não falhar se salvar falhar
     }
   }
@@ -213,7 +242,8 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
   static async getPatientRecommendations(patientId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      // ai_recommendations table not in schema yet
+      const { data, error } = await (supabase as any)
         .from('ai_recommendations')
         .select('*')
         .eq('patient_id', patientId)
@@ -221,9 +251,13 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
 
       if (error) throw error;
       return { data, error: null };
-    } catch (error) {
-      console.error('Error fetching recommendations:', error);
-      return { data: null, error };
+    } catch (error: unknown) {
+      let errorMessage = 'Error fetching recommendations';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(errorMessage, error);
+      return { data: null, error: errorMessage };
     }
   }
 
@@ -233,22 +267,26 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
   static async markRecommendationApplied(recommendationId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
+      // ai_recommendations table not in schema yet
+      const { data, error} = await (supabase as any)
         .from('ai_recommendations')
-        .update({ 
+        .update({
           status: 'applied',
-          applied_at: new Date().toISOString() 
-        } as any)
+          applied_at: new Date().toISOString()
+        } as RecommendationUpdate)
         .eq('id', recommendationId)
         .select()
         .single();
 
       if (error) throw error;
       return { data, error: null };
-    } catch (error) {
-      console.error('Error marking recommendation as applied:', error);
-      return { data: null, error };
+    } catch (error: unknown) {
+      let errorMessage = 'Error marking recommendation as applied';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      console.error(errorMessage, error);
+      return { data: null, error: errorMessage };
     }
   }
 }
-

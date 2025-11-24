@@ -16,7 +16,6 @@ export function SurgeriesList({ patientId }: SurgeriesListProps) {
   useEffect(() => {
     if (patientId) {
       // TODO: Fetch surgeries from API
-      setSurgeries([]);
     }
   }, [patientId]);
 

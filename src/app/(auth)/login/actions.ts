@@ -1,7 +1,6 @@
 'use server';
 
 import { createServerActionClient } from '~/lib/supabase/server';
-import { redirect } from 'next/navigation';
 
 export async function login(formData: { email: string; password: string }) {
   const supabase = await createServerActionClient();

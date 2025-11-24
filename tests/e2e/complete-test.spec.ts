@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test'
 // Configurações de teste
 const BASE_URL = 'http://localhost:3000'
 const TEST_USER = {
-  email: 'therapist@dudufisio.com',
-  password: 'Teste@123' // Você precisa definir a senha real
+  email: 'cursor@moocafisio.com.br',
+  password: '256256' // Credenciais corretas para testes
 }
 
 test.describe('FisioFlow Next.js - Teste Completo', () => {
@@ -44,9 +44,8 @@ test.describe('FisioFlow Next.js - Teste Completo', () => {
     await page.goto(`${BASE_URL}/login`)
     
     // Verificar elementos da página
-    await expect(page.locator('text=FisioFlow')).toBeVisible({ timeout: 10000 })
-    await expect(page.locator('input[name="email"]')).toBeVisible()
-    await expect(page.locator('input[name="password"]')).toBeVisible()
+    await expect(page.locator('input#email')).toBeVisible({ timeout: 10000 })
+    await expect(page.locator('input#password')).toBeVisible()
     await expect(page.locator('button:has-text("Entrar")')).toBeVisible()
     
     console.log('✅ Página de login carregada corretamente')
@@ -67,7 +66,7 @@ test.describe('FisioFlow Next.js - Teste Completo', () => {
     
     await expect(page).toHaveURL(/recuperar-senha/)
     await expect(page.locator('text=Recuperar Senha')).toBeVisible()
-    await expect(page.locator('input[name="email"]')).toBeVisible()
+    await expect(page.locator('input#email')).toBeVisible()
     
     console.log('✅ Página de recuperação de senha carregada')
     await page.screenshot({ path: 'tests/screenshots/02-recuperar-senha.png', fullPage: true })
@@ -84,8 +83,8 @@ test.describe('FisioFlow Next.js - Teste Completo', () => {
     await page.goto(`${BASE_URL}/login`)
     
     // Preencher formulário
-    await page.fill('input[name="email"]', TEST_USER.email)
-    await page.fill('input[name="password"]', TEST_USER.password)
+    await page.fill('input#email', TEST_USER.email)
+    await page.fill('input#password', TEST_USER.password)
     
     // Clicar em entrar
     await page.click('button:has-text("Entrar")')
@@ -104,8 +103,8 @@ test.describe('FisioFlow Next.js - Teste Completo', () => {
   test('5. Deve exibir dashboard principal', async ({ page, context }) => {
     // Fazer login primeiro
     await page.goto(`${BASE_URL}/login`)
-    await page.fill('input[name="email"]', TEST_USER.email)
-    await page.fill('input[name="password"]', TEST_USER.password)
+    await page.fill('input#email', TEST_USER.email)
+    await page.fill('input#password', TEST_USER.password)
     await page.click('button:has-text("Entrar")')
     await page.waitForURL(/dashboard/)
     
@@ -130,8 +129,8 @@ test.describe('FisioFlow Next.js - Teste Completo', () => {
   test('6. Deve navegar para módulo de Pacientes', async ({ page }) => {
     // Login
     await page.goto(`${BASE_URL}/login`)
-    await page.fill('input[name="email"]', TEST_USER.email)
-    await page.fill('input[name="password"]', TEST_USER.password)
+    await page.fill('input#email', TEST_USER.email)
+    await page.fill('input#password', TEST_USER.password)
     await page.click('button:has-text("Entrar")')
     await page.waitForURL(/dashboard/)
     
@@ -150,8 +149,8 @@ test.describe('FisioFlow Next.js - Teste Completo', () => {
   test('7. Deve navegar para módulo de Agenda', async ({ page }) => {
     // Login
     await page.goto(`${BASE_URL}/login`)
-    await page.fill('input[name="email"]', TEST_USER.email)
-    await page.fill('input[name="password"]', TEST_USER.password)
+    await page.fill('input#email', TEST_USER.email)
+    await page.fill('input#password', TEST_USER.password)
     await page.click('button:has-text("Entrar")')
     await page.waitForURL(/dashboard/)
     
@@ -169,8 +168,8 @@ test.describe('FisioFlow Next.js - Teste Completo', () => {
   test('8. Deve navegar para módulo de Tratamentos', async ({ page }) => {
     // Login
     await page.goto(`${BASE_URL}/login`)
-    await page.fill('input[name="email"]', TEST_USER.email)
-    await page.fill('input[name="password"]', TEST_USER.password)
+    await page.fill('input#email', TEST_USER.email)
+    await page.fill('input#password', TEST_USER.password)
     await page.click('button:has-text("Entrar")')
     await page.waitForURL(/dashboard/)
     
@@ -187,8 +186,8 @@ test.describe('FisioFlow Next.js - Teste Completo', () => {
   test('9. Deve navegar para módulo Financeiro', async ({ page }) => {
     // Login
     await page.goto(`${BASE_URL}/login`)
-    await page.fill('input[name="email"]', TEST_USER.email)
-    await page.fill('input[name="password"]', TEST_USER.password)
+    await page.fill('input#email', TEST_USER.email)
+    await page.fill('input#password', TEST_USER.password)
     await page.click('button:has-text("Entrar")')
     await page.waitForURL(/dashboard/)
     
@@ -209,8 +208,8 @@ test.describe('FisioFlow Next.js - Teste Completo', () => {
     
     // Login
     await page.goto(`${BASE_URL}/login`)
-    await page.fill('input[name="email"]', TEST_USER.email)
-    await page.fill('input[name="password"]', TEST_USER.password)
+    await page.fill('input#email', TEST_USER.email)
+    await page.fill('input#password', TEST_USER.password)
     await page.click('button:has-text("Entrar")')
     await page.waitForURL(/dashboard/)
     

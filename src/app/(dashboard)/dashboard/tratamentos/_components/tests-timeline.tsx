@@ -14,7 +14,6 @@ export function TestsTimeline({ patientId }: TestsTimelineProps) {
   useEffect(() => {
     if (patientId) {
       // TODO: Fetch tests from API
-      setTests([]);
     }
   }, [patientId]);
 

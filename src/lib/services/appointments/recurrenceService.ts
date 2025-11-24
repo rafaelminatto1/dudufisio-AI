@@ -47,23 +47,23 @@ export class RecurrenceService {
 
   private static generateRecurrenceDates(startDate: Date, pattern: RecurrencePattern): Date[] {
     const dates: Date[] = [];
-    let currentDate = new Date(startDate);
+    let processingDate = new Date(startDate);
     const maxOccurrences = pattern.occurrences || 52;
     const endDate = pattern.endDate ? new Date(pattern.endDate) : null;
 
     for (let i = 0; i < maxOccurrences; i++) {
-      if (endDate && currentDate > endDate) break;
-      dates.push(new Date(currentDate));
+      if (endDate && processingDate > endDate) break;
+      dates.push(new Date(processingDate));
 
       switch (pattern.frequency) {
         case 'daily':
-          currentDate.setDate(currentDate.getDate() + pattern.interval);
+          processingDate = new Date(processingDate.setDate(processingDate.getDate() + pattern.interval));
           break;
         case 'weekly':
-          currentDate.setDate(currentDate.getDate() + 7 * pattern.interval);
+          processingDate = new Date(processingDate.setDate(processingDate.getDate() + 7 * pattern.interval));
           break;
         case 'monthly':
-          currentDate.setMonth(currentDate.getMonth() + pattern.interval);
+          processingDate = new Date(processingDate.setMonth(processingDate.getMonth() + pattern.interval));
           break;
       }
     }

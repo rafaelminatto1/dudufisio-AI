@@ -23,16 +23,23 @@ export default async function DashboardLayout({
 
   const { data: user } = await supabase
     .from('users')
-    .select('email, full_name, avatar_url')
+    .select('email, full_name')
     .eq('id', session.user.id)
     .single();
+
+  // Converter null para undefined para compatibilidade de tipos
+  const userForHeader = user ? {
+    email: user.email,
+    full_name: user.full_name ?? undefined,
+    avatar_url: (user as any).avatar_url ?? undefined,
+  } : undefined;
 
   return (
     <div className="flex h-screen overflow-hidden">
       <DashboardSidebar />
       <div className="flex flex-1 flex-col overflow-hidden lg:pl-64">
         <Suspense fallback={<Loading />}>
-          <DashboardHeader user={user || undefined} />
+          <DashboardHeader user={userForHeader} />
         </Suspense>
         <main className="flex-1 overflow-y-auto pb-16 lg:pb-0">
           {children}

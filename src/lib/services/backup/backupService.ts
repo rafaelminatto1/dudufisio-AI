@@ -111,9 +111,8 @@ export class BackupService {
   static async getConfig(): Promise<{ data: BackupConfig | null; error: any }> {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - backup_config table not in schema yet
-      let query = supabase.from('backup_config').select('*').single() as any;
-      const { data, error } = await query;
+      // backup_config table not in schema yet
+      const { data, error } = await (supabase as any).from('backup_config').select('*').single();
 
       if (error && error.code !== 'PGRST116') {
         // PGRST116 = not found, usar padrão
@@ -136,9 +135,8 @@ export class BackupService {
   ): Promise<{ data: boolean; error: any }> {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - backup_config table not in schema yet
-      let query = supabase.from('backup_config').upsert(config as any, { onConflict: 'id' }) as any;
-      const { error } = await query;
+      // backup_config table not in schema yet
+      const { error } = await (supabase as any).from('backup_config').upsert(config, { onConflict: 'id' });
 
       if (error) throw error;
 
@@ -181,9 +179,8 @@ export class BackupService {
         status: 'running',
       };
 
-      // @ts-expect-error - backups table not in schema yet
-      let insertQuery = supabase.from('backups').insert(backupMetadata as any).select().single() as any;
-      const { data: backup, error: backupError } = await insertQuery;
+      // backups table not in schema yet
+      const { data: backup, error: backupError } = await (supabase as any).from('backups').insert(backupMetadata).select().single();
 
       if (backupError) throw backupError;
 
@@ -203,8 +200,8 @@ export class BackupService {
 
       // Atualizar metadata
       const duration = Date.now() - startTime;
-      // @ts-expect-error - backups table not in schema yet
-      let updateQuery = supabase.from('backups')
+      // backups table not in schema yet
+      const { data: updatedBackup, error: updateError } = await (supabase as any).from('backups')
         .update({
           size: processedBackup.size,
           compressed: processedBackup.compressed,
@@ -214,15 +211,14 @@ export class BackupService {
           destination: destinations.map((d) => d.id).join(','),
           status: 'completed',
           duration,
-        } as any)
+        })
         .eq('id', backup.id)
         .select()
-        .single() as any;
-      const { data: updatedBackup, error: updateError } = await updateQuery;
+        .single();
 
       if (updateError) throw updateError;
 
-      return { data: updatedBackup as unknown as BackupMetadata, error: null };
+      return { data: updatedBackup as BackupMetadata, error: null };
     } catch (error) {
       console.error('Error creating backup:', error);
       return { data: null, error };
@@ -349,9 +345,8 @@ export class BackupService {
   static async listBackups(limit: number = 50) {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - backups table not in schema yet
-      let query = supabase.from('backups').select('*').order('timestamp', { ascending: false }).limit(limit) as any;
-      const { data, error } = await query;
+      // backups table not in schema yet
+      const { data, error } = await (supabase as any).from('backups').select('*').order('timestamp', { ascending: false }).limit(limit);
 
       if (error) throw error;
       return { data, error: null };
@@ -372,9 +367,8 @@ export class BackupService {
       const supabase = await createServerComponentClient();
 
       // Buscar backup
-      // @ts-expect-error - backups table not in schema yet
-      let query = supabase.from('backups').select('*').eq('id', backupId).single() as any;
-      const { data: backup, error: backupError } = await query;
+      // backups table not in schema yet
+      const { data: backup, error: backupError } = await (supabase as any).from('backups').select('*').eq('id', backupId).single();
 
       if (backupError || !backup) {
         throw new Error('Backup not found');
@@ -402,24 +396,23 @@ export class BackupService {
   static async getBackupStats(): Promise<{ data: BackupStats | null; error: any }> {
     try {
       const supabase = await createServerComponentClient();
-      // @ts-expect-error - backups table not in schema yet
-      let query = supabase.from('backups').select('*').order('timestamp', { ascending: false }) as any;
-      const { data: backups } = await query;
+      // backups table not in schema yet
+      const { data: backups } = await (supabase as any).from('backups').select('*').order('timestamp', { ascending: false });
 
-      const backupsArray = (backups || []) as any[];
+      const backupsArray = (backups || []) as BackupMetadata[];
       const totalBackups = backupsArray.length;
       const totalSize = backupsArray.reduce((sum, b) => sum + (b.size || 0), 0);
       const lastBackup = backupsArray[0]?.timestamp || null;
-      const lastFullBackup = backupsArray.find((b: any) => b.type === 'full')?.timestamp || null;
-      const completed = backupsArray.filter((b: any) => b.status === 'completed').length;
+      const lastFullBackup = backupsArray.find((b) => b.type === 'full')?.timestamp || null;
+      const completed = backupsArray.filter((b) => b.status === 'completed').length;
       const successRate = totalBackups > 0 ? (completed / totalBackups) * 100 : 0;
       const avgBackupTime =
         completed > 0
           ? backupsArray
-              .filter((b: any) => b.status === 'completed')
-              .reduce((sum: number, b: any) => sum + (b.duration || 0), 0) / completed
+              .filter((b) => b.status === 'completed')
+              .reduce((sum, b) => sum + (b.duration || 0), 0) / completed
           : 0;
-      const failedBackups = backupsArray.filter((b: any) => b.status === 'failed').length;
+      const failedBackups = backupsArray.filter((b) => b.status === 'failed').length;
 
       return {
         data: {

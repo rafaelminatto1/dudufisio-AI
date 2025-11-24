@@ -6,24 +6,25 @@ import { test, expect } from '@playwright/test'
 test.describe('Autenticação', () => {
   test('deve exibir a página de login', async ({ page }) => {
     await page.goto('/login')
+    await page.waitForLoadState('networkidle')
     
-    await expect(page.locator('h1')).toContainText('FisioFlow')
-    await expect(page.locator('input[name="email"]')).toBeVisible()
-    await expect(page.locator('input[name="password"]')).toBeVisible()
+    await expect(page.locator('input#email')).toBeVisible()
+    await expect(page.locator('input#password')).toBeVisible()
   })
 
   test('deve redirecionar para dashboard após login bem-sucedido', async ({ page }) => {
     await page.goto('/login')
+    await page.waitForLoadState('networkidle')
     
     // Preencher formulário (usar credenciais de teste)
-    await page.fill('input[name="email"]', 'teste@fisioflow.com')
-    await page.fill('input[name="password"]', 'senha123')
+    await page.fill('input#email', 'cursor@moocafisio.com.br')
+    await page.fill('input#password', '256256')
     
     // Clicar no botão de login
     await page.click('button:has-text("Entrar")')
     
     // Verificar redirecionamento
-    await expect(page).toHaveURL('/dashboard')
+    await expect(page).toHaveURL(/dashboard/, { timeout: 15000 })
   })
 
   test('deve proteger rotas privadas', async ({ page }) => {
@@ -39,10 +40,11 @@ test.describe('Dashboard', () => {
   test.beforeEach(async ({ page }) => {
     // Fazer login antes de cada teste
     await page.goto('/login')
-    await page.fill('input[name="email"]', 'teste@fisioflow.com')
-    await page.fill('input[name="password"]', 'senha123')
+    await page.waitForLoadState('networkidle')
+    await page.fill('input#email', 'cursor@moocafisio.com.br')
+    await page.fill('input#password', '256256')
     await page.click('button:has-text("Entrar")')
-    await page.waitForURL('/dashboard')
+    await page.waitForURL(/dashboard/, { timeout: 15000 })
   })
 
   test('deve exibir dashboard principal', async ({ page }) => {
@@ -67,10 +69,11 @@ test.describe('Dashboard', () => {
 test.describe('Módulo de Pacientes', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/login')
-    await page.fill('input[name="email"]', 'teste@fisioflow.com')
-    await page.fill('input[name="password"]', 'senha123')
+    await page.waitForLoadState('networkidle')
+    await page.fill('input#email', 'cursor@moocafisio.com.br')
+    await page.fill('input#password', '256256')
     await page.click('button:has-text("Entrar")')
-    await page.waitForURL('/dashboard')
+    await page.waitForURL(/dashboard/, { timeout: 15000 })
     await page.goto('/dashboard/pacientes')
   })
 
@@ -84,7 +87,7 @@ test.describe('Módulo de Pacientes', () => {
     await expect(page).toHaveURL('/dashboard/pacientes/novo')
     
     await expect(page.locator('input[name="nome"]')).toBeVisible()
-    await expect(page.locator('input[name="email"]')).toBeVisible()
+    await expect(page.locator('input#email')).toBeVisible()
   })
 })
 

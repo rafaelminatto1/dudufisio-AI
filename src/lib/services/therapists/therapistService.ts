@@ -61,7 +61,7 @@ export class TherapistService {
       let filteredData = data || [];
       if (filters?.search) {
         const searchLower = filters.search.toLowerCase();
-        filteredData = filteredData.filter((therapist: any) => {
+        filteredData = filteredData.filter((therapist: TherapistWithUser) => {
           const user = therapist.user as User | undefined;
           return (
             user?.full_name?.toLowerCase().includes(searchLower) ||
@@ -309,18 +309,25 @@ export class TherapistService {
 
       if (error) throw error;
 
+      interface BasicTherapistInfo {
+        is_accepting_patients: boolean | null;
+        specialties: string[] | null;
+      }
+
+      const therapistsData: BasicTherapistInfo[] = therapists || [];
+
       const stats: TherapistStats = {
-        total: therapists?.length || 0,
+        total: therapistsData.length || 0,
         accepting_patients:
-          therapists?.filter(t => t.is_accepting_patients).length || 0,
+          therapistsData.filter((t: BasicTherapistInfo) => t.is_accepting_patients).length || 0,
         not_accepting_patients:
-          therapists?.filter(t => !t.is_accepting_patients).length || 0,
+          therapistsData.filter((t: BasicTherapistInfo) => !t.is_accepting_patients).length || 0,
         bySpecialty: {},
       };
 
-      therapists?.forEach(therapist => {
+      therapistsData.forEach((therapist: BasicTherapistInfo) => {
         if (therapist.specialties) {
-          therapist.specialties.forEach(specialty => {
+          therapist.specialties.forEach((specialty: string) => {
             stats.bySpecialty[specialty] =
               (stats.bySpecialty[specialty] || 0) + 1;
           });

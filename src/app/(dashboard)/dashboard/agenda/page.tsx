@@ -1,73 +1,56 @@
 import { Suspense } from 'react';
-import { createServerComponentClient } from '~/lib/supabase/server';
-import { AgendaCalendar } from './_components/agenda-calendar';
-import { AgendaStats } from './_components/agenda-stats';
-import { QuickActionsPanel } from './_components/quick-actions-panel';
-import { Loading } from '~/components/ui/loading';
+import type { Metadata } from 'next';
+import { AgendaCalendarClient } from './_components/AgendaCalendarClient';
+import { AgendaControls } from './_components/AgendaControls';
+import { AppointmentsSkeleton } from '~/components/skeletons';
+import { generateDashboardMetadata } from '~/lib/metadata';
 
-async function getAgendaData() {
-  const supabase = await createServerComponentClient();
-  const today = new Date();
-  const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - today.getDay());
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 6);
+export const metadata: Metadata = generateDashboardMetadata(
+  'agenda',
+  'Agende e gerencie consultas, sessões de fisioterapia e recursos da clínica'
+);
 
-  const { data: appointments, error } = await supabase
-    .from('appointments')
-    .select('id, start_time, end_time, status, patient_id, therapist_id, notes')
-    .gte('start_time', startOfWeek.toISOString())
-    .lte('start_time', endOfWeek.toISOString())
-    .order('start_time', { ascending: true });
-
-  const { data: patients } = await supabase.from('patients').select('id, full_name').order('full_name');
-  const { data: therapists } = await supabase.from('therapists').select('id, user_id').eq('is_active', true);
-
-  return {
-    appointments: appointments || [],
-    patients: patients || [],
-    therapists: therapists || [],
-    error,
-  };
-}
-
-export default async function AgendaPage() {
-  const { appointments, patients, therapists, error } = await getAgendaData();
-
-  if (error) {
-    return (
-      <div className="p-6">
-        <div className="text-destructive">Erro ao carregar agenda: {error.message}</div>
-      </div>
-    );
-  }
+export default async function AgendaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    view?: 'day' | 'week' | 'month';
+    therapist?: string;
+    resource?: string;
+    date?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const currentView = (params?.view || 'day') as 'day' | 'week' | 'month';
+  const currentDate = params?.date ? new Date(params.date) : new Date();
+  const therapistId = params?.therapist;
+  const resourceId = params?.resource;
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-b bg-background p-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Agenda</h1>
-            <p className="text-sm text-muted-foreground">Gerencie todos os agendamentos da clínica</p>
-          </div>
-          <QuickActionsPanel />
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Agenda</h1>
+          <p className="text-muted-foreground">
+            Gerencie agendamentos e visualize sua agenda
+          </p>
         </div>
       </div>
 
-      <Suspense fallback={<Loading />}>
-        <AgendaStats appointments={appointments} />
-      </Suspense>
+      <AgendaControls
+        currentView={currentView}
+        therapistId={therapistId}
+        resourceId={resourceId}
+      />
 
-      <div className="flex-1 overflow-auto p-4">
-        <Suspense fallback={<Loading />}>
-          <AgendaCalendar
-            initialAppointments={appointments}
-            patients={patients}
-            therapists={therapists}
-          />
-        </Suspense>
-      </div>
+      <Suspense fallback={<AppointmentsSkeleton />}>
+        <AgendaCalendarClient
+          view={currentView}
+          currentDate={currentDate}
+          therapistId={therapistId}
+          resourceId={resourceId}
+        />
+      </Suspense>
     </div>
   );
 }
-

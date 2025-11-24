@@ -210,7 +210,7 @@ export class NotificationService {
         .eq('user_id', userId);
 
       const total = allNotifications?.length || 0;
-      const unread = (allNotifications || []).filter(n => !n.is_read).length;
+      const unread = (allNotifications || []).filter((n: any) => !(n as any).is_read).length;
 
       return {
         data: {

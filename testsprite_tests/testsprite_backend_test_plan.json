@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "verify_patient_registration_validation",
+    "description": "Test the patient registration API endpoint to ensure validation of CPF, email, and phone number is correctly enforced according to the validation criteria."
+  },
+  {
+    "id": "TC002",
+    "title": "test_secure_authentication_and_access_control",
+    "description": "Verify the authentication API endpoints to ensure secure login using JWT and Row Level Security (RLS) for proper access control."
+  },
+  {
+    "id": "TC003",
+    "title": "validate_appointment_scheduling_notifications",
+    "description": "Test the appointment scheduling API to confirm that automatic confirmation and notifications are sent via WhatsApp, SMS, and email upon booking."
+  },
+  {
+    "id": "TC004",
+    "title": "test_clinical_document_generation_with_ai_support",
+    "description": "Verify the clinical documentation API endpoints to ensure documents can be generated automatically and manually with AI assistance and are editable."
+  },
+  {
+    "id": "TC005",
+    "title": "export_financial_and_clinical_reports",
+    "description": "Test the report generation API endpoints to ensure financial and clinical reports can be exported correctly in PDF and Excel formats."
+  },
+  {
+    "id": "TC006",
+    "title": "monitor_system_performance_and_uptime",
+    "description": "Test the system health and monitoring API endpoints to verify performance metrics such as page load time under 2 seconds and uptime greater than 99.9%."
+  },
+  {
+    "id": "TC007",
+    "title": "test_backup_and_recovery_processes",
+    "description": "Verify the backup API endpoints to ensure daily automatic backups are performed and data recovery mechanisms are functional."
+  },
+  {
+    "id": "TC008",
+    "title": "validate_responsive_accessibility_compliance",
+    "description": "Test the user interface API endpoints to ensure the system is responsive and meets WCAG 2.1 AA accessibility standards."
+  },
+  {
+    "id": "TC009",
+    "title": "audit_log_tracking_and_compliance",
+    "description": "Verify the audit API endpoints to ensure all user actions are logged properly for traceability and compliance with LGPD."
+  },
+  {
+    "id": "TC010",
+    "title": "test_automated_reminder_sending_via_multiple_channels",
+    "description": "Test the communication API endpoints to verify automated sending of reminders and confirmations through WhatsApp, SMS, and email with webhook response handling."
+  }
+]

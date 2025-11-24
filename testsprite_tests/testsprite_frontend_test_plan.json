@@ -1,0 +1,604 @@
+[
+  {
+    "id": "TC001",
+    "title": "User Authentication - Successful Login",
+    "description": "Verify that a user can log in successfully with valid credentials and is granted access according to their role.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Enter a valid username/email and correct password."
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user is successfully authenticated and redirected to the dashboard according to role."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User Authentication - Login Failure with Invalid Credentials",
+    "description": "Verify that login fails when invalid credentials are provided, showing appropriate error message.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Enter invalid username/email and/or password."
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error message is displayed and user is not authenticated."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Password Recovery Flow",
+    "description": "Verify that a user is able to initiate password recovery and reset password via email.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the password recovery page."
+      },
+      {
+        "type": "action",
+        "description": "Enter registered email address."
+      },
+      {
+        "type": "action",
+        "description": "Submit the password recovery request."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that a password reset email is sent."
+      },
+      {
+        "type": "action",
+        "description": "Follow the reset link and enter a new valid password."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that the password is successfully updated and user can login with new password."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Role-Based Access Control Enforcement",
+    "description": "Verify that users cannot access pages or functions not permitted by their assigned roles.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as a user with limited permissions (e.g., patient or receptionist)."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to access admin-only pages or features."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm access is denied and proper error or redirect is shown."
+      },
+      {
+        "type": "action",
+        "description": "Login as an administrator."
+      },
+      {
+        "type": "action",
+        "description": "Verify access to all admin functionalities."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm successful authorized access."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Patient Registration - Valid New Patient",
+    "description": "Verify the full patient registration flow including required fields and successful creation.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the patient registration page."
+      },
+      {
+        "type": "action",
+        "description": "Fill in all mandatory fields with valid data."
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify patient is created successfully and appears in patient list."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Patient Registration - Validation on Missing Required Fields",
+    "description": "Verify that validation errors appear when required fields are missing or invalid during patient registration.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the patient registration page."
+      },
+      {
+        "type": "action",
+        "description": "Fill fields leaving required fields blank or invalid."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to submit the registration form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation error messages are displayed for each missing or invalid field."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Patient Medical Record Editing and Auto-Save",
+    "description": "Verify editing the patient’s medical records including anamnese, exame físico, and pain map saves automatically without loss.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access an existing patient’s medical record."
+      },
+      {
+        "type": "action",
+        "description": "Modify anamnesis and physical exam fields."
+      },
+      {
+        "type": "action",
+        "description": "Interact with the interactive pain map to update pain areas."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that changes are auto-saved periodically without explicit save."
+      },
+      {
+        "type": "action",
+        "description": "Refresh the page."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the updates persist after refresh."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Appointment Scheduling - Create and Conflict Detection",
+    "description": "Verify appointment creation with valid inputs and system detects scheduling conflicts with warnings.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the appointment scheduling module."
+      },
+      {
+        "type": "action",
+        "description": "Create a new appointment for a patient in an available time slot."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm appointment is created and visible in the calendar."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to create another appointment that conflicts with an existing one for the same professional."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm system shows a conflict warning and prevents double booking."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Appointment Scheduling - Waitlist Management",
+    "description": "Verify proper handling of patients in the waitlist and notifying when slots become available.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Add a patient to the waitlist for a fully booked date and time."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm patient appears in waitlist view."
+      },
+      {
+        "type": "action",
+        "description": "Cancel an existing appointment freeing up a slot."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify patient on waitlist is notified automatically and can be scheduled."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Treatment Module - SOAP Form Auto-Save and Replication",
+    "description": "Verify soap note form auto-save functionality and replication of treatment conduct to other sessions.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open a treatment session and fill out the SOAP form partially."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the form auto-saves the data without manual save action."
+      },
+      {
+        "type": "action",
+        "description": "Replicate treatment conduct from a previous session to current session."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm replicated data fills the form correctly and allows editing."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Financial Management - Payment Creation and Stripe Integration",
+    "description": "Verify creation of payments and financial transactions and successful integration with Stripe payment gateway.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the financial payments module."
+      },
+      {
+        "type": "action",
+        "description": "Create a payment transaction for a patient’s session or package."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the payment is recorded correctly in the system."
+      },
+      {
+        "type": "action",
+        "description": "Process a payment via Stripe integration."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify payment completes successfully and status updates in system."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Financial Management - Invalid Payment Data Handling",
+    "description": "Verify validation errors shown for invalid financial inputs and failed payment attempts.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt to create a payment with invalid/missing mandatory fields."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate appropriate error messages are displayed."
+      },
+      {
+        "type": "action",
+        "description": "Simulate a declined payment via Stripe."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the system handles the failure gracefully and notifies the user."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Marketing Automation - Send Campaigns and Patient Reactivation",
+    "description": "Verify the marketing module can send automated WhatsApp, SMS, and email campaigns to inactive patients and reactivate them.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access the marketing campaigns interface."
+      },
+      {
+        "type": "action",
+        "description": "Create and configure a patient reactivation campaign targeting inactive patients."
+      },
+      {
+        "type": "action",
+        "description": "Send the campaign via enabled channels."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify campaign messages are sent successfully and patients receive correct notifications."
+      },
+      {
+        "type": "action",
+        "description": "Monitor patient activity post-campaign."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that reactivated patients are updated correctly in the system."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Artificial Intelligence - Clinical Report Generation and Suggestions",
+    "description": "Verify AI generates automated clinical reports (laudos) and provides treatment suggestions effectively based on patient data.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access a patient treatment session."
+      },
+      {
+        "type": "action",
+        "description": "Trigger AI assistant to generate report and treatment suggestions."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify generated reports are coherent, complete, and relevant."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm suggestions align with clinical guidelines and patient history."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Real-time Movement Analysis with MediaPipe",
+    "description": "Verify system captures and analyzes patient exercise movements in real-time and provides actionable feedback.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Initiate real-time movement analysis for a patient performing exercises."
+      },
+      {
+        "type": "assertion",
+        "description": "Check system detects movements accurately using MediaPipe and overlays feedback."
+      },
+      {
+        "type": "action",
+        "description": "Perform complex or edge movement patterns to test robustness."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm feedback and analysis remain reliable without crashes or lag."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Gamification - Points and Achievement Unlocking",
+    "description": "Verify patient engagement gamification features including earning points, unlocking achievements, and leaderboard updates.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Complete activities that award points in the system."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm points are accumulated correctly and displayed."
+      },
+      {
+        "type": "action",
+        "description": "Reach achievement triggers and verify notifications and unlocks."
+      },
+      {
+        "type": "assertion",
+        "description": "Leaderboard updates reflect current standings accurately."
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Patient Portal - Secure Access and Data Visibility",
+    "description": "Verify that patients can securely log into the portal and access only their own data including exercises, history, and communications.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Patient logs in with valid credentials."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm access is granted only to their own records."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to access another patient's data directly via URL."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access is denied with appropriate security enforcement."
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Admin Panel - User Management and Waitlist Control",
+    "description": "Verify administrative capabilities to create/edit users, assign roles, monitor KPIs, and manage the waitlist efficiently.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as administrator."
+      },
+      {
+        "type": "action",
+        "description": "Create a new user with defined role and permissions."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify new user is listed with correct role and can log in accordingly."
+      },
+      {
+        "type": "action",
+        "description": "Access waitlist management and modify patient positions."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm changes saved and reflected in patient scheduling."
+      },
+      {
+        "type": "action",
+        "description": "View KPIs and dashboard panels."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm accurate real-time display of metrics."
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "LGPD Compliance - Data Privacy and Audit Trails",
+    "description": "Verify all personal data handling complies with LGPD, including user consent, data encryption, and auditability of actions.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform actions involving personal data creation, modification, and deletion."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify audit logs are created for each action with timestamp and user identification."
+      },
+      {
+        "type": "action",
+        "description": "Attempt unauthorized data export or access."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm system blocks illegal access and logs security events."
+      }
+    ]
+  },
+  {
+    "id": "TC020",
+    "title": "Performance Testing - Load Time and Responsiveness",
+    "description": "Verify that main pages and critical workflows load within 2 seconds under normal load conditions.",
+    "category": "performance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Use automated tools to measure page load times for dashboard, patient management, scheduling, and financial modules."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm load times are below 2 seconds for 95% of requests."
+      },
+      {
+        "type": "action",
+        "description": "Simulate multiple concurrent users performing workflows."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify system remains responsive with no crashes or errors."
+      }
+    ]
+  },
+  {
+    "id": "TC021",
+    "title": "Backup and Recovery Process Verification",
+    "description": "Verify that scheduled backups occur correctly and data recovery procedures restore system state without loss.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Trigger automated backup process or execute scheduled backup."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm backup completes successfully without errors."
+      },
+      {
+        "type": "action",
+        "description": "Perform data recovery using a backup snapshot."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify data integrity and consistency post-recovery."
+      }
+    ]
+  },
+  {
+    "id": "TC022",
+    "title": "Notification System - Reminder Delivery via Multiple Channels",
+    "description": "Verify that appointment reminders and important communications are sent automatically via WhatsApp, SMS, and email.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Schedule an appointment with future date and time."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify reminders are sent automatically through enabled communication channels at configured times."
+      },
+      {
+        "type": "action",
+        "description": "Simulate communication failure on one channel."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm fallback or retry mechanisms trigger and alerts are logged."
+      }
+    ]
+  }
+]

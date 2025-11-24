@@ -3,7 +3,7 @@
 
 // Este arquivo abrigará Server Actions gerais de exemplo.
 
-let items: string[] = ["item inicial"];
+const items: string[] = ["item inicial"];
 
 export async function addItem(formData: FormData) {
   const newItem = formData.get("item") as string;

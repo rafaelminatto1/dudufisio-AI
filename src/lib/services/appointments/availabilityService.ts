@@ -184,6 +184,8 @@ export class AvailabilityService {
       const supabase = await createServerComponentClient();
       const updateData: ScheduleBlockUpdate = {
         ...blockData,
+        start_time: blockData.start_time instanceof Date ? blockData.start_time.toISOString() : blockData.start_time,
+        end_time: blockData.end_time instanceof Date ? blockData.end_time.toISOString() : blockData.end_time,
         updated_at: new Date().toISOString(),
       };
 
@@ -355,7 +357,7 @@ export class AvailabilityService {
 
       // Get appointments for this date (would need to import AppointmentService)
       // For now, just return based on blocks
-      const workingHours = therapist.data.working_hours as any;
+      const workingHours = therapistResult.data?.working_hours as any;
       const slots: Array<{ start: string; end: string }> = [];
 
       // This is a simplified implementation

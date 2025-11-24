@@ -39,7 +39,8 @@ export class ComplianceService {
       const supabase = await createServerComponentClient();
 
       // Buscar checks de compliance
-      let query = supabase.from('compliance_checks').select('*') as any;
+      // compliance_checks table not in schema yet
+      let query = (supabase as any).from('compliance_checks').select('*');
 
       if (category) {
         query = query.eq('category', category);
@@ -50,7 +51,7 @@ export class ComplianceService {
 
       // Executar verificações
       const checkedResults = await Promise.all(
-        (checks || []).map(async (check: any) => {
+        (checks || []).map(async (check: ComplianceCheck) => {
           const result = await this.executeCheck(check);
           return {
             ...check,
@@ -63,13 +64,14 @@ export class ComplianceService {
 
       // Atualizar checks no banco
       for (const check of checkedResults) {
-        await supabase
+        // compliance_checks table not in schema yet
+        await (supabase as any)
           .from('compliance_checks')
           .update({
             status: check.status,
             last_checked: check.lastChecked,
             details: check.details,
-          } as any)
+          })
           .eq('id', check.id);
       }
 
@@ -83,7 +85,7 @@ export class ComplianceService {
   /**
    * Executa uma verificação específica
    */
-  private static async executeCheck(check: any): Promise<{
+  private static async executeCheck(check: ComplianceCheck): Promise<{
     status: ComplianceCheck['status'];
     details?: Record<string, any>;
   }> {
@@ -106,24 +108,26 @@ export class ComplianceService {
   /**
    * Verifica conformidade LGPD
    */
-  private static async checkLGPDCompliance(check: any): Promise<{
+  private static async checkLGPDCompliance(check: ComplianceCheck): Promise<{
     status: ComplianceCheck['status'];
     details?: Record<string, any>;
   }> {
     const supabase = await createServerComponentClient();
 
       // Verificar se há política de privacidade
-      const { data: privacyPolicy } = await supabase
+      // settings table not in schema yet
+      const { data: privacyPolicy } = await (supabase as any)
         .from('settings')
         .select('*')
         .eq('key', 'privacy_policy')
         .maybeSingle();
 
       // Verificar se há consentimento de pacientes
-      const { data: consents } = await supabase
+      // patient_consents table not in schema yet
+      const { data: consents } = await (supabase as any)
         .from('patient_consents')
         .select('*')
-        .limit(1) as any;
+        .limit(1);
 
     const hasPrivacyPolicy = !!privacyPolicy;
     const hasConsentSystem = (consents || []).length > 0;
@@ -268,7 +272,8 @@ export class ComplianceService {
   static async getComplianceStatus() {
     try {
       const supabase = await createServerComponentClient();
-      const { data: checks, error } = await supabase
+      // compliance_checks table not in schema yet
+      const { data: checks, error } = await (supabase as any)
         .from('compliance_checks')
         .select('*')
         .order('category', { ascending: true });

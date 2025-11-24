@@ -1,0 +1,316 @@
+{
+  "meta": {
+    "project": "FisioFlow",
+    "date": "2025-11-19",
+    "prepared_by": "Equipe de Desenvolvimento FisioFlow"
+  },
+  "product_overview": "FisioFlow é um sistema integrado de gestão para clínicas de fisioterapia, combinando funcionalidades clínicas, administrativas e financeiras com tecnologias avançadas como Inteligência Artificial, análise de movimento em tempo real e automação de comunicação, especialmente desenvolvido para o mercado brasileiro.",
+  "core_goals": [
+    "Digitalizar e automatizar processos clínicos de fisioterapia",
+    "Centralizar operações da clínica em uma única plataforma",
+    "Melhorar a qualidade da documentação clínica com IA",
+    "Aumentar eficiência operacional e satisfação dos pacientes",
+    "Reduzir custos operacionais através de automação",
+    "Aumentar taxa de conversão de leads em pacientes",
+    "Reduzir no-shows por lembretes automatizados",
+    "Fornecer insights baseados em dados para tomada de decisão",
+    "Garantir conformidade com LGPD e regulamentações",
+    "Suportar múltiplas organizações e escalabilidade futura"
+  ],
+  "key_features": [
+    "Cadastro completo e validado de pacientes com prontuário eletrônico 360°",
+    "Gestão avançada de agendamento com visualização estilo calendário e lista de espera",
+    "Documentação clínica estruturada via evoluções SOAP com suporte de IA",
+    "Mapa de dor corporal interativo com visualização por intensidade e histórico",
+    "Gerenciamento de planos de tratamento, protocolos e biblioteca de exercícios",
+    "Controle financeiro completo com pagamentos, pacotes, faturamento e relatórios",
+    "Automação de comunicações via WhatsApp, SMS e email com integração de IA",
+    "Assistente de IA para geração de conteúdos clínicos e análises preditivas",
+    "Busca semântica em documentos e materiais clínicos via RAG",
+    "Análise de movimento em tempo real via MediaPipe para feedback e relatórios",
+    "Sistema de gamificação para engajamento de pacientes com pontos e badges",
+    "Portal do paciente para acesso a prontuário, exercícios e agendamentos",
+    "Sistema de mentoria para estagiários com acompanhamento e supervisão",
+    "Monitoramento, auditoria e backup automático para segurança e confiabilidade"
+  ],
+  "user_flow_summary": [
+    "Administrador configura clínica, gerencia usuários, acessa dashboards e relatórios financeiros",
+    "Recepcionista realiza cadastro de pacientes, agenda consultas, gerencia lista de espera e faz check-in",
+    "Fisioterapeuta acessa prontuário eletrônico, registra evoluções SOAP, prescreve exercícios e usa IA para laudos",
+    "Paciente acessa portal para visualizar prontuário, acompanhar exercícios, agendar e enviar feedback",
+    "Estagiário visualiza pacientes em modo leitura, acessa materiais de aprendizado e recebe supervisão",
+    "Sistema automatiza envio de lembretes e confirmações via WhatsApp, SMS e email com respostas webhook",
+    "Fluxo financeiro registra pagamentos, administra pacotes e gera notas fiscais automatizadas",
+    "IA processa dados clínicos para sugestões, análises preditivas e busca semântica",
+    "Monitoramento contínuo garante uptime, segurança e backups automáticos para dados clínicos"
+  ],
+  "validation_criteria": [
+    "Validação de CPF, email e telefone no cadastro de pacientes",
+    "Autenticação segura com JWT e RLS para controle de acesso",
+    "Confirmação e notificações automáticas de agendamentos via WhatsApp/SMS/email",
+    "Geração automática e manual de documentos clínicos com IA revisável",
+    "Exportação de relatórios financeiros e clínicos em PDF e Excel",
+    "Monitoramento de performance com tempo de carregamento <2s e uptime >99.9%",
+    "Backup diário automático e sistemas de recuperação",
+    "Testes automatizados cobrindo cadastro, agendamento, documentação e pagamentos",
+    "Interface responsiva e acessível seguindo WCAG 2.1 AA",
+    "Logs de auditoria para rastreamento de ações e compliance LGPD"
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "TypeScript",
+      "Next.js 15.1.3",
+      "Node.js",
+      "Supabase",
+      "PostgreSQL",
+      "Stripe",
+      "Zod",
+      "OpenAI",
+      "Anthropic Claude",
+      "Twilio",
+      "WhatsApp Business API"
+    ],
+    "features": [
+      {
+        "name": "API Routes",
+        "description": "Rotas de API Next.js para endpoints backend",
+        "files": [
+          "src/app/api/test-fase7/route.ts",
+          "src/app/api/cron/backup-database/route.ts",
+          "src/app/api/cron/lembretes-diarios/route.ts",
+          "src/app/api/stripe/webhook/route.ts",
+          "src/app/api/webhooks/whatsapp/route.ts"
+        ]
+      },
+      {
+        "name": "Appointment Services",
+        "description": "Serviços para gestão de agendamentos, disponibilidade, conflitos e lista de espera",
+        "files": [
+          "src/lib/services/appointments/appointmentService.ts",
+          "src/lib/services/appointments/appointment.service.cached.ts",
+          "src/lib/services/appointments/availabilityService.ts",
+          "src/lib/services/appointments/conflictDetectionService.ts",
+          "src/lib/services/appointments/recurrenceService.ts",
+          "src/lib/services/appointments/waitlistService.ts",
+          "src/lib/services/appointments/appointmentTemplateService.ts",
+          "src/lib/services/appointments/appointmentExportService.ts"
+        ]
+      },
+      {
+        "name": "AI Services",
+        "description": "Serviços de IA para orquestração e recomendações clínicas",
+        "files": [
+          "src/lib/services/ai/aiOrchestratorService.ts",
+          "src/lib/services/ai/recommendationService.ts"
+        ]
+      },
+      {
+        "name": "Financial Services",
+        "description": "Serviços financeiros para pagamentos, transações, pacotes e integração Stripe",
+        "files": [
+          "src/lib/services/financial/transactionService.ts",
+          "src/lib/services/financial/financial.service.cached.ts",
+          "src/lib/services/financial/packageService.ts",
+          "src/lib/services/financial/stripeService.ts"
+        ]
+      },
+      {
+        "name": "Patient Services",
+        "description": "Serviços para gestão de pacientes e dados clínicos",
+        "files": [
+          "src/lib/services/patients/patients.service.ts",
+          "src/lib/services/patients/patients.service.cached.ts"
+        ]
+      },
+      {
+        "name": "Treatment Services",
+        "description": "Serviços para gestão de tratamentos, sessões, SOAP notes e evoluções",
+        "files": [
+          "src/lib/services/treatments/treatment.service.cached.ts",
+          "src/lib/services/treatments/sessionEvolutionService.ts",
+          "src/lib/services/treatments/soapNoteService.ts",
+          "src/lib/services/treatments/conductLibraryService.ts",
+          "src/lib/services/treatments/conductReplicationService.ts",
+          "src/lib/services/treatments/patientGoalsService.ts",
+          "src/lib/services/treatments/pathologyService.ts",
+          "src/lib/services/treatments/surgeryService.ts",
+          "src/lib/services/treatments/testEvolutionService.ts"
+        ]
+      },
+      {
+        "name": "Exercise Services",
+        "description": "Serviços para gestão de exercícios, protocolos e biblioteca de exercícios",
+        "files": [
+          "src/lib/services/exercises/exerciseService.ts",
+          "src/lib/services/exercises/exerciseLibraryService.ts",
+          "src/lib/services/exercises/exerciseProtocolService.ts",
+          "src/lib/services/exercises/protocolService.ts"
+        ]
+      },
+      {
+        "name": "Communication Services",
+        "description": "Serviços de comunicação incluindo WhatsApp, email e notificações",
+        "files": [
+          "src/lib/services/communications/appointmentNotificationService.ts",
+          "src/lib/services/communications/emailService.ts",
+          "src/lib/services/communications/notificationService.ts",
+          "src/lib/services/communications/whatsappService.ts",
+          "src/lib/services/integrations/whatsappService.ts",
+          "src/lib/services/integrations/emailService.ts",
+          "src/lib/services/whatsapp_client.ts"
+        ]
+      },
+      {
+        "name": "Report Services",
+        "description": "Serviços para geração de relatórios clínicos, financeiros, operacionais e de compliance",
+        "files": [
+          "src/lib/services/reports/reportService.ts",
+          "src/lib/services/reports/clinicalReportService.ts",
+          "src/lib/services/reports/financialReportService.ts",
+          "src/lib/services/reports/operationalReportService.ts",
+          "src/lib/services/reports/complianceReportService.ts"
+        ]
+      },
+      {
+        "name": "Monitoring Services",
+        "description": "Serviços de monitoramento incluindo health checks, performance e error tracking",
+        "files": [
+          "src/lib/services/monitoring/systemHealthService.ts",
+          "src/lib/services/monitoring/performanceMonitorService.ts",
+          "src/lib/services/monitoring/errorTrackingService.ts"
+        ]
+      },
+      {
+        "name": "Backup Services",
+        "description": "Serviços de backup e monitoramento de banco de dados",
+        "files": [
+          "src/lib/services/backup/backupService.ts",
+          "src/lib/services/backup/backupMonitorService.ts"
+        ]
+      },
+      {
+        "name": "Audit Service",
+        "description": "Serviço de auditoria para rastreamento de ações e compliance",
+        "files": [
+          "src/lib/services/audit/auditService.ts"
+        ]
+      },
+      {
+        "name": "Compliance Service",
+        "description": "Serviço de conformidade com LGPD e regulamentações",
+        "files": [
+          "src/lib/services/compliance/complianceService.ts"
+        ]
+      },
+      {
+        "name": "Analytics Service",
+        "description": "Serviço de analytics para métricas e análise de dados",
+        "files": [
+          "src/lib/services/analytics/analyticsService.ts"
+        ]
+      },
+      {
+        "name": "Gamification Services",
+        "description": "Serviços de gamificação incluindo pontos, badges, leaderboard e vouchers",
+        "files": [
+          "src/lib/services/gamification/gamificationService.ts",
+          "src/lib/services/gamification/xpService.ts",
+          "src/lib/services/gamification/badgeService.ts",
+          "src/lib/services/gamification/leaderboardService.ts",
+          "src/lib/services/gamification/voucherService.ts"
+        ]
+      },
+      {
+        "name": "Patient Portal Services",
+        "description": "Serviços para portal do paciente incluindo agendamento automático",
+        "files": [
+          "src/lib/services/patient-portal/portalService.ts",
+          "src/lib/services/patient-portal/autoSchedulingService.ts"
+        ]
+      },
+      {
+        "name": "Therapist Service",
+        "description": "Serviço para gestão de fisioterapeutas",
+        "files": [
+          "src/lib/services/therapists/therapistService.ts"
+        ]
+      },
+      {
+        "name": "User Service",
+        "description": "Serviço para gestão de usuários",
+        "files": [
+          "src/lib/services/users/userService.ts"
+        ]
+      },
+      {
+        "name": "Clinical Material Service",
+        "description": "Serviço para gestão de materiais clínicos",
+        "files": [
+          "src/lib/services/clinical/clinicalMaterialService.ts"
+        ]
+      },
+      {
+        "name": "Media Services",
+        "description": "Serviços para gestão de mídia e biblioteca de vídeos",
+        "files": [
+          "src/lib/services/media/mediaService.ts",
+          "src/lib/services/media/videoLibraryService.ts"
+        ]
+      },
+      {
+        "name": "Integration Services",
+        "description": "Serviços de integração com sistemas externos",
+        "files": [
+          "src/lib/services/integration/calendarSyncService.ts",
+          "src/lib/services/integration/emrIntegrationService.ts",
+          "src/lib/services/integration/exerciseDBService.ts"
+        ]
+      },
+      {
+        "name": "Performance Services",
+        "description": "Serviços de performance e cache",
+        "files": [
+          "src/lib/services/performance/cacheService.ts"
+        ]
+      },
+      {
+        "name": "Cron Jobs",
+        "description": "Tarefas agendadas para backup e lembretes",
+        "files": [
+          "src/app/api/cron/backup-database/route.ts",
+          "src/app/api/cron/lembretes-diarios/route.ts"
+        ]
+      },
+      {
+        "name": "Webhooks",
+        "description": "Webhooks para integração com serviços externos",
+        "files": [
+          "src/app/api/stripe/webhook/route.ts",
+          "src/app/api/webhooks/whatsapp/route.ts"
+        ]
+      },
+      {
+        "name": "Supabase Integration",
+        "description": "Integração com Supabase para banco de dados e autenticação",
+        "files": [
+          "src/lib/supabase/client.ts",
+          "src/lib/supabase/server.ts",
+          "src/lib/supabase/middleware.ts"
+        ]
+      },
+      {
+        "name": "Server Actions",
+        "description": "Server Actions do Next.js para operações do servidor",
+        "files": [
+          "src/app/actions/agenda.ts",
+          "src/app/actions/cron.ts",
+          "src/app/actions/general.ts",
+          "src/app/actions/kpis.ts",
+          "src/app/actions/stripe.ts",
+          "src/app/actions/user_management.ts",
+          "src/app/actions/waitlist.ts"
+        ]
+      }
+    ]
+  }
+}

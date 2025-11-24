@@ -35,8 +35,8 @@ export class VideoLibraryService {
   static async getVideos(filters?: VideoLibraryFilters) {
     try {
       const supabase = await createServerComponentClient();
-      let query = supabase
-        .from('video_library')
+      // video_library table not in schema yet
+      let query = (supabase as any).from('video_library')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -71,8 +71,8 @@ export class VideoLibraryService {
   static async getVideoById(id: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data, error } = await (supabase as any).from('video_library')
         .select('*')
         .eq('id', id)
         .single();
@@ -81,9 +81,11 @@ export class VideoLibraryService {
 
       // Incrementar visualizações
       if (data) {
-        await supabase
-          .from('video_library')
-          .update({ views: (data.views || 0) + 1 })
+        const currentViews = (data as Record<string, unknown>).views;
+        const views = typeof currentViews === 'number' ? currentViews : 0;
+        // video_library table not in schema yet
+        await (supabase as any).from('video_library')
+          .update({ views: views + 1 })
           .eq('id', id);
       }
 
@@ -100,23 +102,20 @@ export class VideoLibraryService {
   static async createVideo(video: Omit<VideoLibraryItem, 'id' | 'created_at' | 'updated_at'>) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('video_library')
-        .insert({
-          name: video.name,
-          description: video.description,
-          video_url: video.video_url,
-          thumbnail_url: video.thumbnail_url,
-          category: video.category,
-          difficulty: video.difficulty,
-          linked_exercises: video.linked_exercises || [],
-          views: video.views || 0,
-          likes: video.likes || 0,
-          is_public: video.is_public ?? true,
-          created_by: video.created_by,
-        })
-        .select()
-        .single();
+      // video_library table not in schema yet
+      const { data, error } = await (supabase as any).from('video_library').insert({
+        name: video.name,
+        description: video.description,
+        video_url: video.video_url,
+        thumbnail_url: video.thumbnail_url,
+        category: video.category,
+        difficulty: video.difficulty,
+        linked_exercises: video.linked_exercises || [],
+        views: video.views || 0,
+        likes: video.likes || 0,
+        is_public: video.is_public ?? true,
+        created_by: video.created_by,
+      }).select().single();
 
       if (error) throw error;
       return { data, error: null };
@@ -132,8 +131,8 @@ export class VideoLibraryService {
   static async updateVideo(id: string, updates: Partial<VideoLibraryItem>) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data, error } = await (supabase as any).from('video_library')
         .update(updates)
         .eq('id', id)
         .select()
@@ -153,10 +152,8 @@ export class VideoLibraryService {
   static async deleteVideo(id: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { error } = await supabase
-        .from('video_library')
-        .delete()
-        .eq('id', id);
+      // video_library table not in schema yet
+      const { error } = await (supabase as any).from('video_library').delete().eq('id', id);
 
       if (error) throw error;
       return { data: true, error: null };
@@ -172,8 +169,8 @@ export class VideoLibraryService {
   static async linkVideoToExercises(videoId: string, exerciseIds: string[]) {
     try {
       const supabase = await createServerComponentClient();
-      const { data: video } = await supabase
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data: video } = await (supabase as any).from('video_library')
         .select('linked_exercises')
         .eq('id', videoId)
         .single();
@@ -182,11 +179,11 @@ export class VideoLibraryService {
         throw new Error('Video not found');
       }
 
-      const currentLinks = (video.linked_exercises as string[]) || [];
+      const currentLinks = ((video as Record<string, unknown>).linked_exercises as string[]) || [];
       const newLinks = Array.from(new Set([...currentLinks, ...exerciseIds]));
 
-      const { data, error } = await supabase
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data, error } = await (supabase as any).from('video_library')
         .update({ linked_exercises: newLinks })
         .eq('id', videoId)
         .select()
@@ -206,8 +203,8 @@ export class VideoLibraryService {
   static async getPopularVideos(limit: number = 10) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await supabase
-        .from('video_library')
+      // video_library table not in schema yet
+      const { data, error } = await (supabase as any).from('video_library')
         .select('*')
         .order('views', { ascending: false })
         .limit(limit);

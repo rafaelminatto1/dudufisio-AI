@@ -43,8 +43,8 @@ test.describe('FisioFlow - Verificação de Páginas', () => {
     await page.waitForLoadState('networkidle')
     
     // Verificar elementos
-    const hasEmailInput = await page.locator('input[name="email"]').count() > 0
-    const hasPasswordInput = await page.locator('input[name="password"]').count() > 0
+    const hasEmailInput = await page.locator('input#email').count() > 0
+    const hasPasswordInput = await page.locator('input#password').count() > 0
     const hasButton = await page.locator('button:has-text("Entrar")').count() > 0
     
     console.log(`✅ Página de login carregada`)
@@ -78,7 +78,7 @@ test.describe('FisioFlow - Verificação de Páginas', () => {
     await page.waitForLoadState('networkidle')
     
     const hasForm = await page.locator('form').count() > 0
-    const hasEmailInput = await page.locator('input[name="email"]').count() > 0
+    const hasEmailInput = await page.locator('input#email').count() > 0
     
     console.log(`✅ Página de recuperação de senha carregada`)
     console.log(`   - Formulário: ${hasForm ? '✅' : '❌'}`)
@@ -102,7 +102,7 @@ test.describe('FisioFlow - Verificação de Páginas', () => {
     await page.goto(`${BASE_URL}/login`)
     await page.waitForLoadState('networkidle')
     
-    const hasEmailInput = await page.locator('input[name="email"]').count() > 0
+    const hasEmailInput = await page.locator('input#email').count() > 0
     
     console.log(`✅ Teste mobile concluído`)
     console.log(`   - Layout mobile funcional: ${hasEmailInput ? '✅' : '❌'}`)

@@ -1,7 +1,6 @@
-[defaults]
-org=dudufisio
-project=dudufisio-ai
-
 [auth]
-# Token será carregado da variável de ambiente SENTRY_AUTH_TOKEN
+token=YOUR_SENTRY_AUTH_TOKEN
 
+[defaults]
+org=your-sentry-organization
+project=your-sentry-project

@@ -1,367 +1,196 @@
 import { createServerComponentClient } from '~/lib/supabase/server';
-import { NotificationService } from './notificationService';
-import { WhatsAppService } from './whatsappService';
-import { EmailService } from './emailService';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
-export interface NotificationSchedule {
-  appointmentId: string;
-  userId: string;
-  scheduledFor: string;
-  type: 'confirmation' | 'reminder_24h' | 'reminder_2h' | 'cancellation' | 'update';
-  sent: boolean;
-  metadata?: Record<string, any>;
+interface NotificationPreferences {
+  whatsapp: boolean;
+  sms: boolean;
+  email: boolean;
 }
 
 /**
- * Service para notificações de agendamento
- * Adaptado para Next.js App Router
+ * Serviço para envio de notificações de agendamento
  */
 export class AppointmentNotificationService {
-  /**
-   * Envia notificação de confirmação de agendamento
-   */
-  static async sendAppointmentConfirmation(params: {
-    appointmentId: string;
-    patientId: string;
-    patientName: string;
-    therapistName?: string;
-    startTime: string;
-    endTime: string;
-  }) {
-    try {
-      const supabase = await createServerComponentClient();
+  private supabase;
 
-      // Buscar dados do paciente
-      const { data: patient } = await supabase
-        .from('patients')
-        .select('user_id, email, phone')
-        .eq('id', params.patientId)
-        .single();
+  constructor() {
+    this.supabase = null as any;
+  }
 
-      if (!patient?.user_id) {
-        return { data: false, error: new Error('Patient not found') };
-      }
-
-      const appointmentDate = new Date(params.startTime);
-      const formattedDate = format(appointmentDate, "dd/MM/yyyy", { locale: ptBR });
-      const formattedTime = format(appointmentDate, "HH:mm", { locale: ptBR });
-
-      // Criar notificação
-      await NotificationService.create({
-        userId: patient.user_id,
-        title: '✅ Consulta Confirmada!',
-        message: `Sua consulta está agendada para ${formattedDate} às ${formattedTime}${params.therapistName ? ` com ${params.therapistName}` : ''}`,
-        type: 'appointment_confirmation',
-        url: `/dashboard/agenda?highlight=${params.appointmentId}`,
-        data: {
-          appointmentId: params.appointmentId,
-          patientId: params.patientId,
-          startTime: params.startTime,
-        },
-      });
-
-      // Enviar WhatsApp se disponível
-      if (patient.phone) {
-        await WhatsAppService.sendAppointmentConfirmation({
-          patientId: params.patientId,
-          phoneNumber: patient.phone,
-          patientName: params.patientName,
-          appointmentDate: formattedDate,
-          appointmentTime: formattedTime,
-          appointmentId: params.appointmentId,
-          therapistName: params.therapistName,
-        });
-      }
-
-      // Enviar Email se disponível
-      if (patient.email) {
-        await EmailService.sendAppointmentReminder({
-          patientId: params.patientId,
-          email: patient.email,
-          patientName: params.patientName,
-          appointmentDate: formattedDate,
-          appointmentTime: formattedTime,
-          appointmentId: params.appointmentId,
-          therapistName: params.therapistName,
-        });
-      }
-
-      // Agendar lembretes
-      await this.scheduleReminders({
-        appointmentId: params.appointmentId,
-        userId: patient.user_id,
-        startTime: params.startTime,
-      });
-
-      return { data: true, error: null };
-    } catch (error) {
-      console.error('Error sending appointment confirmation:', error);
-      return { data: false, error };
+  private async getSupabase() {
+    if (!this.supabase) {
+      this.supabase = await createServerComponentClient();
     }
+    return this.supabase;
   }
 
   /**
-   * Agenda lembretes automáticos (24h e 2h antes)
+   * Envia lembretes 24h antes do agendamento
    */
-  static async scheduleReminders(params: {
-    appointmentId: string;
-    userId: string;
-    startTime: string;
-  }) {
-    try {
-      const appointmentTime = new Date(params.startTime);
-      const now = new Date();
+  async sendReminders24hBefore() {
+    const supabase = await this.getSupabase();
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStart = new Date(tomorrow.setHours(0, 0, 0, 0));
+    const tomorrowEnd = new Date(tomorrow.setHours(23, 59, 59, 999));
 
-      // Lembrete 24h antes
-      const reminder24h = new Date(appointmentTime.getTime() - 24 * 60 * 60 * 1000);
-      if (reminder24h > now) {
-        await this.createReminderSchedule({
-          appointmentId: params.appointmentId,
-          userId: params.userId,
-          scheduledFor: reminder24h.toISOString(),
-          type: 'reminder_24h',
-          sent: false,
-        });
-      }
+    // Busca agendamentos de amanhã
+    const { data: appointments, error } = await supabase
+      .from('appointments')
+      .select(`
+        *,
+        patients:patient_id (*)
+      `)
+      .eq('status', 'scheduled')
+      .gte('start_time', tomorrowStart.toISOString())
+      .lte('start_time', tomorrowEnd.toISOString())
+      .is('reminder_sent', null);
 
-      // Lembrete 2h antes
-      const reminder2h = new Date(appointmentTime.getTime() - 2 * 60 * 60 * 1000);
-      if (reminder2h > now) {
-        await this.createReminderSchedule({
-          appointmentId: params.appointmentId,
-          userId: params.userId,
-          scheduledFor: reminder2h.toISOString(),
-          type: 'reminder_2h',
-          sent: false,
-        });
-      }
-
-      return { data: true, error: null };
-    } catch (error) {
-      console.error('Error scheduling reminders:', error);
-      return { data: false, error };
+    if (error || !appointments) {
+      return { error: error?.message || 'Erro ao buscar agendamentos', sent: 0 };
     }
-  }
 
-  /**
-   * Envia lembrete 24h antes
-   */
-  static async send24HourReminder(schedule: NotificationSchedule) {
-    try {
-      const supabase = await createServerComponentClient();
-      
-      const { data: appointment } = await supabase
-        .from('appointments')
-        .select('*, patient:patients(*), therapist:therapists(*)')
-        .eq('id', schedule.appointmentId)
-        .single();
+    let sent = 0;
+    for (const appointment of appointments) {
+      const patient = (appointment as any).patients;
+      if (!patient) continue;
 
-      if (!appointment) {
-        return { data: false, error: new Error('Appointment not found') };
+      // Envia notificações conforme preferências
+      const preferences = await this.getNotificationPreferences(patient.id);
+
+      if (preferences.whatsapp && patient.phone) {
+        await this.sendWhatsAppReminder(patient.phone, appointment);
       }
 
-      const appointmentDate = new Date(appointment.start_time);
-      const formattedDate = format(appointmentDate, "EEEE, dd 'de' MMMM", { locale: ptBR });
-      const formattedTime = format(appointmentDate, "HH:mm", { locale: ptBR });
-
-      await NotificationService.create({
-        userId: schedule.userId,
-        title: '🗓️ Lembrete: Consulta Amanhã',
-        message: `Sua consulta está marcada para ${formattedDate} às ${formattedTime}`,
-        type: 'appointment_reminder_24h',
-        url: `/dashboard/agenda?highlight=${schedule.appointmentId}`,
-      });
-
-      await this.markReminderAsSent(schedule.appointmentId, 'reminder_24h');
-      return { data: true, error: null };
-    } catch (error) {
-      console.error('Error sending 24h reminder:', error);
-      return { data: false, error };
-    }
-  }
-
-  /**
-   * Envia lembrete 2h antes
-   */
-  static async send2HourReminder(schedule: NotificationSchedule) {
-    try {
-      const supabase = await createServerComponentClient();
-      
-      const { data: appointment } = await supabase
-        .from('appointments')
-        .select('*, patient:patients(*)')
-        .eq('id', schedule.appointmentId)
-        .single();
-
-      if (!appointment) {
-        return { data: false, error: new Error('Appointment not found') };
+      if (preferences.sms && patient.phone) {
+        await this.sendSMSReminder(patient.phone, appointment);
       }
 
-      const appointmentDate = new Date(appointment.start_time);
-      const formattedTime = format(appointmentDate, "HH:mm", { locale: ptBR });
-
-      await NotificationService.create({
-        userId: schedule.userId,
-        title: '⏰ Consulta em 2 Horas!',
-        message: `Não esqueça da sua consulta às ${formattedTime}. Lembre-se de trazer seus documentos.`,
-        type: 'appointment_reminder_2h',
-        url: `/dashboard/agenda?highlight=${schedule.appointmentId}`,
-      });
-
-      await this.markReminderAsSent(schedule.appointmentId, 'reminder_2h');
-      return { data: true, error: null };
-    } catch (error) {
-      console.error('Error sending 2h reminder:', error);
-      return { data: false, error };
-    }
-  }
-
-  /**
-   * Notifica cancelamento de agendamento
-   */
-  static async sendCancellationNotification(params: {
-    appointmentId: string;
-    patientId: string;
-    patientName: string;
-    startTime: string;
-    reason?: string;
-  }) {
-    try {
-      const supabase = await createServerComponentClient();
-      
-      const { data: patient } = await supabase
-        .from('patients')
-        .select('user_id, email, phone')
-        .eq('id', params.patientId)
-        .single();
-
-      if (!patient?.user_id) {
-        return { data: false, error: new Error('Patient not found') };
+      if (preferences.email && patient.email) {
+        await this.sendEmailReminder(patient.email, appointment);
       }
 
-      const appointmentDate = new Date(params.startTime);
-      const formattedDate = format(appointmentDate, "dd/MM/yyyy", { locale: ptBR });
-      const formattedTime = format(appointmentDate, "HH:mm", { locale: ptBR });
-
-      await NotificationService.create({
-        userId: patient.user_id,
-        title: '❌ Consulta Cancelada',
-        message: `Sua consulta do dia ${formattedDate} às ${formattedTime} foi cancelada.${params.reason ? ` Motivo: ${params.reason}` : ''} Entre em contato para reagendar.`,
-        type: 'appointment_cancellation',
-        url: '/dashboard/agenda',
-      });
-
-      // Enviar WhatsApp
-      if (patient.phone) {
-        await WhatsAppService.sendAppointmentCancellation({
-          patientId: params.patientId,
-          phoneNumber: patient.phone,
-          patientName: params.patientName,
-          appointmentDate: formattedDate,
-          appointmentTime: formattedTime,
-          appointmentId: params.appointmentId,
-          reason: params.reason,
-        });
-      }
-
-      // Cancelar lembretes pendentes
-      await this.cancelPendingReminders(params.appointmentId);
-
-      return { data: true, error: null };
-    } catch (error) {
-      console.error('Error sending cancellation notification:', error);
-      return { data: false, error };
-    }
-  }
-
-  /**
-   * Cria agendamento de lembrete no banco
-   */
-  private static async createReminderSchedule(schedule: NotificationSchedule) {
-    try {
-      const supabase = await createServerComponentClient();
-      await supabase.from('notifications').insert({
-        user_id: schedule.userId,
-        scheduled_for: schedule.scheduledFor,
-        type: schedule.type,
-        data: schedule.metadata,
-        message: '', // Add a default value for message
-        title: '', // Add a default value for title
-      });
-    } catch (error) {
-      console.error('Error creating reminder schedule:', error);
-    }
-  }
-
-  /**
-   * Marca lembrete como enviado
-   */
-  private static async markReminderAsSent(appointmentId: string, type: string) {
-    try {
-      const supabase = await createServerComponentClient();
+      // Marca como enviado
       await supabase
-        .from('notifications')
-        .update({
-          is_read: true,
-          read_at: new Date().toISOString(),
-        })
-        .eq('data->>appointmentId', appointmentId)
-        .eq('type', type);
-    } catch (error) {
-      console.error('Error marking reminder as sent:', error);
+        .from('appointments')
+        .update({ reminder_sent: new Date().toISOString() })
+        .eq('id', appointment.id);
+
+      sent++;
     }
+
+    return { error: null, sent };
   }
 
   /**
-   * Cancela lembretes pendentes
+   * Envia mensagem de aniversário
    */
-  private static async cancelPendingReminders(appointmentId: string) {
-    try {
-      const supabase = await createServerComponentClient();
-      await supabase
-        .from('notifications')
-        .delete()
-        .eq('data->>appointmentId', appointmentId)
-        .eq('is_read', false);
-    } catch (error) {
-      console.error('Error canceling pending reminders:', error);
+  async sendBirthdayMessages() {
+    const supabase = await this.getSupabase();
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+
+    // Busca pacientes com aniversário hoje
+    const { data: patients, error } = await supabase
+      .from('patients')
+      .select('*')
+      .eq('status', 'active')
+      .not('birth_date', 'is', null);
+
+    if (error || !patients) {
+      return { error: error?.message || 'Erro ao buscar pacientes', sent: 0 };
     }
+
+    const todayBirthdays = patients.filter((patient: any) => {
+      if (!patient.birth_date) return false;
+      const birthDate = new Date(patient.birth_date);
+      return birthDate.getMonth() + 1 === month && birthDate.getDate() === day;
+    });
+
+    let sent = 0;
+    for (const patient of todayBirthdays) {
+      const preferences = await this.getNotificationPreferences(patient.id);
+
+      if (preferences.whatsapp && patient.phone) {
+        await this.sendWhatsAppBirthday(patient.phone, patient);
+      }
+
+      if (preferences.email && patient.email) {
+        await this.sendEmailBirthday(patient.email, patient);
+      }
+
+      sent++;
+    }
+
+    return { error: null, sent };
   }
 
   /**
-   * Busca lembretes pendentes que devem ser enviados
+   * Busca preferências de notificação do paciente
    */
-  static async getPendingReminders() {
-    try {
-      const supabase = await createServerComponentClient();
-      const now = new Date().toISOString();
-      
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('is_read', false)
-        .lte('scheduled_for', now)
-        .order('scheduled_for', { ascending: true });
+  private async getNotificationPreferences(patientId: string): Promise<NotificationPreferences> {
+    // TODO: Buscar do banco quando tabela existir
+    // Por enquanto, retorna padrão
+    return {
+      whatsapp: true,
+      sms: false,
+      email: true,
+    };
+  }
 
-      if (error) throw error;
+  /**
+   * Envia lembrete via WhatsApp
+   */
+  private async sendWhatsAppReminder(phone: string, appointment: any) {
+    const { whatsappService } = await import('~/lib/services/integrations/whatsappService');
+    const message = `Olá! Lembrete: Você tem uma consulta agendada para amanhã às ${new Date(appointment.start_time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}. Confirme sua presença respondendo SIM ou NÃO.`;
+    await whatsappService.sendMessage({ to: phone, message });
+  }
 
-      return {
-        data: (data || []).map((item: any) => ({
-          appointmentId: item.data.appointmentId,
-          userId: item.user_id,
-          scheduledFor: item.scheduled_for,
-          type: item.type,
-          sent: item.is_read,
-          metadata: item.data,
-        })),
-        error: null,
-      };
-    } catch (error) {
-      console.error('Error fetching pending reminders:', error);
-      return { data: null, error };
-    }
+  /**
+   * Envia lembrete via SMS
+   */
+  private async sendSMSReminder(phone: string, appointment: any) {
+    // TODO: Integrar com Twilio
+    const message = `Lembrete: Consulta agendada para amanhã às ${new Date(appointment.start_time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}.`;
+    console.log(`[SMS] Enviando para ${phone}: ${message}`);
+    // await smsService.send(phone, message);
+  }
+
+  /**
+   * Envia lembrete via Email
+   */
+  private async sendEmailReminder(email: string, appointment: any) {
+    const { emailService } = await import('~/lib/services/integrations/emailService');
+    const subject = 'Lembrete de Consulta';
+    const html = `
+      <h2>Lembrete de Consulta</h2>
+      <p>Você tem uma consulta agendada para amanhã às ${new Date(appointment.start_time).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}.</p>
+      <p>Por favor, confirme sua presença.</p>
+    `;
+    await emailService.sendEmail({ to: email, subject, html });
+  }
+
+  /**
+   * Envia mensagem de aniversário via WhatsApp
+   */
+  private async sendWhatsAppBirthday(phone: string, patient: any) {
+    const { whatsappService } = await import('~/lib/services/integrations/whatsappService');
+    const message = `🎉 Feliz Aniversário, ${patient.full_name}! Desejamos um dia especial e muita saúde! 🎂`;
+    await whatsappService.sendMessage({ to: phone, message });
+  }
+
+  /**
+   * Envia mensagem de aniversário via Email
+   */
+  private async sendEmailBirthday(email: string, patient: any) {
+    const { emailService } = await import('~/lib/services/integrations/emailService');
+    const subject = 'Feliz Aniversário!';
+    const html = `
+      <h2>🎉 Feliz Aniversário, ${patient.full_name}!</h2>
+      <p>Desejamos um dia especial e muita saúde!</p>
+      <p>Equipe DuduFisio</p>
+    `;
+    await emailService.sendEmail({ to: email, subject, html });
   }
 }
-

@@ -28,7 +28,11 @@ export class GamificationService {
         pointsType: 'sessao',
         description: 'Sessão completada',
       });
-      if (xpResult.data) rewards.push({ type: 'xp', value: xpResult.data.points_earned });
+      if (xpResult.data) {
+        const xpData = xpResult.data as Record<string, unknown>;
+        const pointsEarned = typeof xpData.points_earned === 'number' ? xpData.points_earned : 0;
+        rewards.push({ type: 'xp', value: pointsEarned });
+      }
 
       // Bônus por pontualidade
       if (params.wasOnTime) {
@@ -37,7 +41,11 @@ export class GamificationService {
           pointsType: 'sem_faltas',
           description: 'Sessão realizada sem atraso',
         });
-        if (bonusResult.data) rewards.push({ type: 'bonus', value: bonusResult.data.points_earned });
+        if (bonusResult.data) {
+          const bonusData = bonusResult.data as Record<string, unknown>;
+          const bonusPoints = typeof bonusData.points_earned === 'number' ? bonusData.points_earned : 0;
+          rewards.push({ type: 'bonus', value: bonusPoints });
+        }
       }
 
       // Pontos por exercícios completados
@@ -48,7 +56,11 @@ export class GamificationService {
           points: params.completedExercises * 5,
           description: `${params.completedExercises} exercícios completados`,
         });
-        if (exercisesResult.data) rewards.push({ type: 'exercises', value: exercisesResult.data.points_earned });
+        if (exercisesResult.data) {
+          const exercisesData = exercisesResult.data as Record<string, unknown>;
+          const exercisePoints = typeof exercisesData.points_earned === 'number' ? exercisesData.points_earned : 0;
+          rewards.push({ type: 'exercises', value: exercisePoints });
+        }
       }
 
       // Verificar se paciente atingiu novo nível
@@ -58,7 +70,7 @@ export class GamificationService {
         if (newLevel > xpData.data.currentLevel) {
           // Atualizar nível do paciente
           const supabase = await createServerComponentClient();
-          await supabase
+          await (supabase as any)
             .from('patients')
             .update({ level: newLevel })
             .eq('id', params.patientId);
@@ -136,7 +148,9 @@ export class GamificationService {
       }
 
       // Badge: Nível 5
-      if (patient.level >= 5) {
+      const patientData = patient as any;
+      const patientLevel = typeof patientData.level === 'number' ? patientData.level : 1;
+      if (patientLevel >= 5) {
         const level5Badge = allBadges?.find(b => b.slug === 'nivel-5');
         if (level5Badge) {
           const result = await BadgeService.awardBadge({
