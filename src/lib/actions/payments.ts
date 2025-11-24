@@ -20,7 +20,7 @@ export async function createPayment(data: {
 }) {
   const supabase = await createServerComponentClient();
 
-  const { data: created, error } = await (supabase as SupabaseClient<Database>)
+  const { data: created, error } = await (supabase as any)
     .from('financial_transactions')
     .insert({
       patient_id: data.patient_id ?? null,

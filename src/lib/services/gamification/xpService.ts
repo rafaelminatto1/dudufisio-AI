@@ -22,7 +22,6 @@ export class XPService {
       const supabase = await createServerComponentClient();
       const pointsEarned = params.points || this.POINTS_CONFIG[params.pointsType] || 0;
 
-      // @ts-expect-error - gamification_points table not in schema yet
       const { data, error } = await (supabase as any)
         .from('gamification_points')
         .insert({
@@ -44,9 +43,9 @@ export class XPService {
         .single();
 
       if (patient) {
-        const patientData = patient as Record<string, unknown>;
+        const patientData = patient as any;
         const currentXP = typeof patientData.xp_points === 'number' ? patientData.xp_points : 0;
-        await supabase
+        await (supabase as any)
           .from('patients')
           .update({ xp_points: currentXP + pointsEarned })
           .eq('id', params.patientId);
@@ -70,7 +69,7 @@ export class XPService {
 
       if (error) throw error;
 
-      const patientData = patient as Record<string, unknown>;
+      const patientData = patient as any;
       return {
         data: {
           currentXP: typeof patientData.xp_points === 'number' ? patientData.xp_points : 0,

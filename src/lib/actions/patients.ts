@@ -299,83 +299,16 @@ export async function getPatientById(id: string) {
  * Cria um link de pré-cadastro
  */
 export async function createPreRegistrationToken(patientData: Partial<CreatePatientData>) {
-  const supabase = await createServerComponentClient();
-
-  // Gera token único usando timestamp + random
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substring(2, 15);
-  const token = `${timestamp}${random}`.substring(0, 32);
-
-  const { data, error } = await supabase
-    .from('patient_pre_registrations')
-    .insert({
-      token,
-      full_name: patientData.full_name || '',
-      email: patientData.email || '',
-      phone: patientData.phone || '',
-      cpf: patientData.cpf?.replace(/\D/g, ''),
-      birth_date: patientData.birth_date,
-      data: patientData,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  return { data };
+  // Tabela patient_pre_registrations não existe no schema atual
+  // Retornar erro informando que a funcionalidade não está disponível
+  return { error: 'Funcionalidade de pré-cadastro não está disponível. Tabela patient_pre_registrations não existe no schema.' };
 }
 
 /**
  * Valida token de pré-cadastro e completa o cadastro
  */
 export async function completePreRegistration(token: string, additionalData: CreatePatientData) {
-  const supabase = await createServerComponentClient();
-
-  // Busca pré-cadastro
-  const { data: preReg, error: preRegError } = await supabase
-    .from('patient_pre_registrations')
-    .select('*')
-    .eq('token', token)
-    .eq('status', 'pending')
-    .single();
-
-  if (preRegError || !preReg) {
-    return { error: 'Token inválido ou expirado' };
-  }
-
-  const preRegData = preReg;
-
-  // Verifica se expirou
-  if (new Date(preRegData.expires_at) < new Date()) {
-    await supabase
-      .from('patient_pre_registrations')
-      .update({ status: 'expired' })
-      .eq('id', preRegData.id);
-
-    return { error: 'Token expirado' };
-  }
-
-  // Cria paciente
-  const result = await createPatient({
-    ...(preRegData.data || {}),
-    ...additionalData,
-  });
-
-  if (result.error) {
-    return result;
-  }
-
-  // Atualiza pré-cadastro
-  await supabase
-    .from('patient_pre_registrations')
-    .update({
-      status: 'completed',
-      patient_id: result.data?.id,
-      completed_at: new Date().toISOString(),
-    })
-    .eq('id', preRegData.id);
-
-  return result;
+  // Tabela patient_pre_registrations não existe no schema atual
+  // Retornar erro informando que a funcionalidade não está disponível
+  return { error: 'Funcionalidade de pré-cadastro não está disponível. Tabela patient_pre_registrations não existe no schema.' };
 }

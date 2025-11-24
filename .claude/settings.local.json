@@ -39,7 +39,9 @@
       "Bash(npx supabase:*)",
       "Bash(src/types/database.types.new.ts)",
       "Bash(src/types/database.types.ts.clean)",
-      "Bash(src/types/database.types.ts)"
+      "Bash(src/types/database.types.ts)",
+      "Bash(paste:*)",
+      "Bash(timeout 120 npm run build:*)"
     ],
     "deny": [],
     "ask": []

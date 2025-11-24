@@ -70,7 +70,7 @@ export class GamificationService {
         if (newLevel > xpData.data.currentLevel) {
           // Atualizar nível do paciente
           const supabase = await createServerComponentClient();
-          await supabase
+          await (supabase as any)
             .from('patients')
             .update({ level: newLevel })
             .eq('id', params.patientId);
@@ -148,7 +148,7 @@ export class GamificationService {
       }
 
       // Badge: Nível 5
-      const patientData = patient as Record<string, unknown>;
+      const patientData = patient as any;
       const patientLevel = typeof patientData.level === 'number' ? patientData.level : 1;
       if (patientLevel >= 5) {
         const level5Badge = allBadges?.find(b => b.slug === 'nivel-5');

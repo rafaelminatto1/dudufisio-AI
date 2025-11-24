@@ -88,7 +88,7 @@ export class ClinicalReportService {
       const painEvolution = this.calculatePainEvolution(soapNotesArray);
 
       // Buscar metas do paciente
-      // @ts-expect-error - patient_goals table not in schema yet
+
       const { data: goals } = await (supabase as any)
         .from('patient_goals')
         .select('*')

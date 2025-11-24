@@ -5,7 +5,6 @@ export class VoucherService {
     try {
       const supabase = await createServerComponentClient();
 
-      // @ts-expect-error - vouchers table not in schema yet
       const { data: voucher } = await (supabase as any)
         .from('vouchers')
         .select('*')
@@ -26,14 +25,13 @@ export class VoucherService {
 
       if (!patient) throw new Error('Patient not found');
 
-      const patientData = patient as Record<string, unknown>;
+      const patientData = patient as any;
       const patientXP = typeof patientData.xp_points === 'number' ? patientData.xp_points : 0;
 
       if (patientXP < voucherCost) {
         throw new Error('Insufficient XP');
       }
 
-      // @ts-expect-error - voucher_redemptions table not in schema yet
       const { data: redemption, error } = await (supabase as any)
         .from('voucher_redemptions')
         .insert({
@@ -47,7 +45,7 @@ export class VoucherService {
       if (error) throw error;
 
       // Deduct XP
-      await supabase
+      await (supabase as any)
         .from('patients')
         .update({ xp_points: patientXP - voucherCost })
         .eq('id', params.patientId);

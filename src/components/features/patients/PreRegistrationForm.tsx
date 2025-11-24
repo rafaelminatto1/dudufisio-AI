@@ -32,9 +32,8 @@ export function PreRegistrationForm() {
       if (result.error) {
         toast.error(result.error);
       } else {
-        const link = `${window.location.origin}/pre-cadastro/${result.data?.token}`;
-        setToken(link);
-        toast.success('Link de pré-cadastro criado com sucesso!');
+        // Funcionalidade de pré-cadastro não está disponível
+        toast.error('Funcionalidade de pré-cadastro não está disponível no momento.');
       }
     } catch (error) {
       toast.error('Erro ao criar link de pré-cadastro');

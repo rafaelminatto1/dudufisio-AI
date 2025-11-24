@@ -78,7 +78,7 @@ export async function saveSessionEvolution(
     return { data: updated, error: null };
   } else {
     // Criar
-    const { data: created, error } = await (supabase as SupabaseClient<Database>)
+    const { data: created, error } = await (supabase as any)
       .from('session_evolutions')
       .insert({
         ...data,

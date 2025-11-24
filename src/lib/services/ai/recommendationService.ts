@@ -63,7 +63,7 @@ export class RecommendationService {
         .limit(10);
 
       // Buscar tratamentos ativos
-      const { data: treatments } = await (supabase as SupabaseClient<Database>)
+      const { data: treatments } = await (supabase as any)
         .from('treatments')
         .select('*')
         .eq('patient_id', context.patientId)
@@ -79,17 +79,18 @@ export class RecommendationService {
       });
 
       if (aiResponse.error || !aiResponse.data?.content) {
+        const error: any = aiResponse.error || aiResponse.data;
         let errorMessage = 'Failed to generate recommendations';
         if (aiResponse.error) {
-          errorMessage = typeof aiResponse.error === 'string' 
-            ? aiResponse.error 
-            : aiResponse.error instanceof Error
-            ? aiResponse.error.message
-            : String(aiResponse.error);
-        } else if (aiResponse.data?.error) {
-          errorMessage = typeof aiResponse.data.error === 'string'
-            ? aiResponse.data.error
-            : String(aiResponse.data.error);
+          errorMessage = typeof error === 'string'
+            ? error
+            : error instanceof Error
+            ? error.message
+            : String(error);
+        } else if (error?.error) {
+          errorMessage = typeof error.error === 'string'
+            ? error.error
+            : String(error.error);
         }
         throw new Error(errorMessage);
       }
@@ -117,7 +118,7 @@ export class RecommendationService {
   private static buildAIContext(
     patient: Database['public']['Tables']['patients']['Row'],
     sessions: Database['public']['Tables']['appointments']['Row'][],
-    treatments: Database['public']['Tables']['treatments']['Row'][],
+    treatments: any[],
     context: RecommendationContext
   ): string {
     return `
@@ -223,7 +224,7 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
         data: rec.data,
       }));
 
-      await (supabase as SupabaseClient<Database>).from('ai_recommendations').insert(recommendationsToInsert);
+      await (supabase as any).from('ai_recommendations').insert(recommendationsToInsert);
     } catch (error: unknown) {
       let errorMessage = 'Error saving recommendations';
       if (error instanceof Error) {
@@ -240,7 +241,7 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
   static async getPatientRecommendations(patientId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await (supabase as SupabaseClient<Database>)
+      const { data, error } = await (supabase as any)
         .from('ai_recommendations')
         .select('*')
         .eq('patient_id', patientId)
@@ -264,11 +265,11 @@ Formate a resposta como uma lista de recomendações claras e acionáveis.`;
   static async markRecommendationApplied(recommendationId: string) {
     try {
       const supabase = await createServerComponentClient();
-      const { data, error } = await (supabase as SupabaseClient<Database>)
+      const { data, error} = await (supabase as any)
         .from('ai_recommendations')
         .update({
           status: 'applied',
-          applied_at: new Date().toISOString() 
+          applied_at: new Date().toISOString()
         } as RecommendationUpdate)
         .eq('id', recommendationId)
         .select()
