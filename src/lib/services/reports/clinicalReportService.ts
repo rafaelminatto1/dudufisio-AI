@@ -88,7 +88,7 @@ export class ClinicalReportService {
       const painEvolution = this.calculatePainEvolution(soapNotesArray);
 
       // Buscar metas do paciente
-
+      // patient_goals table not in schema yet
       const { data: goals } = await (supabase as any)
         .from('patient_goals')
         .select('*')
@@ -194,6 +194,7 @@ export class ClinicalReportService {
       const supabase = await createServerComponentClient();
 
       // Buscar tratamentos no período
+      // treatments table not in schema yet
       let query = (supabase as any)
         .from('treatments')
         .select('*, patient:patients(*)')

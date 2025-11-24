@@ -39,20 +39,20 @@ export class LeaderboardService {
       
       // Calcular período
       const dateFilter = this.getDateFilter(period);
-      
-      const { data: patients, error } = await (supabase
+
+      const { data: patients, error } = await supabase
         .from('patients')
         .select('id, full_name, xp_points, level')
         .order('xp_points', { ascending: false })
-        .limit(limit) as any);
+        .limit(limit);
       if (error) throw error;
 
-      const entries: LeaderboardEntry[] = (patients || []).map((patient: any, index: number) => ({
+      const entries: LeaderboardEntry[] = (patients || []).map((patient, index: number) => ({
         rank: index + 1,
-        patientId: (patient as any).id,
-        patientName: patient.full_name,
-        score: patient.xp_points || 0,
-        level: patient.level || 1,
+        patientId: patient.id,
+        patientName: patient.full_name || 'Nome não informado',
+        score: (patient.xp_points as number) || 0,
+        level: (patient.level as number) || 1,
         badge: index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : undefined,
       }));
 
@@ -188,7 +188,7 @@ export class LeaderboardService {
 
         if (error) throw error;
 
-        const rank = (patients || []).findIndex((p: any) => (p as any).id === patientId) + 1;
+        const rank = (patients || []).findIndex((p) => p.id === patientId) + 1;
         return { data: rank || null, error: null };
       }
 

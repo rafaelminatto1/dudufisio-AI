@@ -51,7 +51,7 @@ export class UserService {
         .order('created_at', { ascending: false });
 
       if (filters?.role) {
-        query = query.eq('role', filters.role as any);
+        query = query.eq('role', filters.role);
       }
 
       if (filters?.isActive !== undefined) {
@@ -116,7 +116,7 @@ export class UserService {
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .eq('role', role as any)
+        .eq('role', role)
         .eq('is_active', true)
         .order('full_name');
 
@@ -158,7 +158,7 @@ export class UserService {
       const insertData: UserInsert = {
         email: userData.email,
         full_name: userData.full_name,
-        role: userData.role as any,
+        role: userData.role,
         permissions: userData.permissions || null,
         profile_settings: userData.profile_settings || null,
         is_active: true,
