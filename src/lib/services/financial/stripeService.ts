@@ -2,9 +2,21 @@ import Stripe from 'stripe';
 import { TransactionService } from './transactionService';
 import { createServerComponentClient } from '~/lib/supabase/server';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-10-29.clover',
-});
+// Lazy initialization to avoid build-time errors
+let stripeInstance: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    const apiKey = process.env.STRIPE_SECRET_KEY || '';
+    if (!apiKey) {
+      throw new Error('STRIPE_SECRET_KEY is not configured');
+    }
+    stripeInstance = new Stripe(apiKey, {
+      apiVersion: '2025-10-29.clover',
+    });
+  }
+  return stripeInstance;
+}
 
 export class StripeService {
   static async createPaymentIntent(params: {
@@ -13,6 +25,7 @@ export class StripeService {
     customerId?: string;
   }) {
     try {
+      const stripe = getStripe();
       const paymentIntent = await stripe.paymentIntents.create({
         amount: params.amount,
         currency: params.currency || 'brl',
@@ -33,6 +46,7 @@ export class StripeService {
     metadata?: Record<string, string>;
   }) {
     try {
+      const stripe = getStripe();
       const session = await stripe.checkout.sessions.create({
         mode: 'payment',
         line_items: [{
@@ -56,11 +70,12 @@ export class StripeService {
 
   static async handleWebhook(payload: string, signature: string) {
     try {
+      const stripe = getStripe();
       const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
       const event = stripe.webhooks.constructEvent(payload, signature, webhookSecret);
-      
+
       await this.processStripeEvent(event);
-      
+
       return { success: true, error: null };
     } catch (error) {
       console.error('Error handling webhook:', error);
