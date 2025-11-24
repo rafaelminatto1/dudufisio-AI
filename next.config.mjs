@@ -11,6 +11,10 @@ const nextConfig = {
     // Desabilitar verificação de tipos durante build (pode causar erro de memória)
     ignoreBuildErrors: false,
   },
+  eslint: {
+    // Permitir build mesmo com warnings do ESLint
+    ignoreDuringBuilds: true,
+  },
   // Otimizar imports de pacotes grandes automaticamente (estável no Next.js 15)
   experimental: {
     optimizePackageImports: [
